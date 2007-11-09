@@ -1,0 +1,19 @@
+#summary Snippets and advice for how to extend Chronoscope.
+
+= How do I? =
+
+== Implement new curve renderer ==
+
+TBD
+
+== Implement a new Plot type ==
+
+TBD
+
+==  Implement a custom overlay ==
+
+TBD
+
+== Implement a new Canvas/View ==
+
+TBD
