@@ -1,0 +1,39 @@
+#summary Missing features that would be nice to have
+= Introduction =
+
+We are currently swamped with work on the main Timepedia website, so there were many features we had to scale back or remove for this release, the following is a list of major features we envision for future versions of Chronoscope
+
+
+= Alternate Rendering Platforms =
+
+  * Flash canvas implementation
+  * Applet/Consumer JRE
+  * J2ME
+
+= New Dataset Types =
+
+  * TupleDataset: values are (X,Y,Z,W,...), e.g. (X, Open, High, Low, Last)
+  * Dataset2D: indices are 2D, values can be scalar or tuple, e.g. d2d.getValue(i,j)
+    * LatLongDataset2D: lookup values by latitude/longitude, e.g. ll2d.getValue(lat, long)
+  * Category Dataset: XYDataset with X values as Strings
+  
+= New Plot Types =
+  * CategoryPlot
+  * Plot2D: plot Dataset2D
+  * TimelinePlot: 3 dimensional plot with third axis being a time slider
+
+= New Renderer Types =
+  * CategoryRenderer
+  * PieRenderer
+  * HeatMapRenderer: used by Plot2D
+  * CountourRenderer: used by Plot2D
+  * TimelineRenderer
+
+
+= New Axis Types =
+  * LogAxis
+  * CategoryAxis
+  * TimelineAxis
+
+= New Marker/Overlay Types =
+  *
