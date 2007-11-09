@@ -36,4 +36,23 @@ We are currently swamped with work on the main Timepedia website, so there were 
   * TimelineAxis
 
 = New Marker/Overlay Types =
-  *
+  * Axis Marker (like Google Finance 'split' symbols)
+  * Annotation (text like callout on a curve)
+  * MarkerGroup: multiresolution representation of markers, cut down on clutter when zoomed out, click to expand
+
+= Retained Mode Vector Graphics API =
+  * Create and position shapes on the canvas
+  * Bind shape properties to chart state
+  * Efficient hit detection and rendering via spatial partitioning
+  * Want to permit 'gapminder' style charts
+
+= Sparklines ==
+  * In legend
+  * anywhere in page as a link to a particular chart section
+  * minimize Chronoscope ChartPanel into a sparkline representation
+
+== SharedDomain and SharedRange Plots ==
+  * Combine any two plots into a SharedDomainXYPlot for example (like Google Finance)
+
+I'm sure there's alot more that *you* can think of, so free feel to suggest features, and don't shy away from contributing implementations!
+ 
