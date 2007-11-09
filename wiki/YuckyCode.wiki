@@ -1,0 +1,13 @@
+#summary Chronoscope code base needs a janitor.
+
+== Checkstyle ==
+
+In trying to rush this release, we haven't had time to fix checkstyle bugs. We welcome the help in cleaning up the code.
+
+== Missing Javadoc ==
+
+Not every class/method is documented, and many are only tersely documented. If you see a Javadoc entry that could be written better, feel free to suggest replacement text.
+
+== Abstraction issues ==
+
+Currently, Chronoscope is hardwired to XYDatasets. It would be nice if code could be generalized further *without sacrificing performance*. 
