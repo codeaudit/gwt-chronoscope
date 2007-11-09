@@ -9,3 +9,5 @@
   * Performance. Firebug profiler is your friend. 
 
   * GSS stylability (within limits)
+
+  * Javascript usage: GWT Exporter makes this easy.
