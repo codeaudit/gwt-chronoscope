@@ -1,4 +1,4 @@
-#Overall design philosophy for Chronoscope
+#summary Overall design philosophy for Chronoscope
 
 = Things to strive for =
 
