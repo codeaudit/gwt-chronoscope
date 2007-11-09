@@ -11,3 +11,5 @@ Not every class/method is documented, and many are only tersely documented. If y
 == Abstraction issues ==
 
 Currently, Chronoscope is hardwired to XYDatasets. It would be nice if code could be generalized further *without sacrificing performance*. 
+
+-Ray
