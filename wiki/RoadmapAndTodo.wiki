@@ -19,11 +19,13 @@ We are currently swamped with work on the main Timepedia website, so there were 
   
 = New Plot Types =
   * CategoryPlot
+  * TuplePlot
   * Plot2D: plot Dataset2D
   * TimelinePlot: 3 dimensional plot with third axis being a time slider
 
 = New Renderer Types =
   * CategoryRenderer
+  * CandleStickRenderer (TuplePlot)
   * PieRenderer
   * HeatMapRenderer: used by Plot2D
   * CountourRenderer: used by Plot2D
