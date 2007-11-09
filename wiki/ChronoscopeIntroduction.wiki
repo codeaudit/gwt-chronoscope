@@ -1,13 +1,11 @@
 #Overall design philosophy for Chronoscope
 
-= Introduction =
+= Things to strive for =
 
-Add your content here.
+* Scalable representations. For example, if you're implementing a category plot with pie chart rendering, don't just imagine a dataset with 5 items, imagine one with 500, like say, a hierarchical/zoomable piechart of the entire US Budget.
 
+* Platform independence. Please try to keep any non-JRE emulation layer code out of major packages. Also, try to limit any usage of GWT User.jar classes to the client.browser package. This is to allow one to Chronoscope for GWT as well as build a Swing/Java2d version, and eventually, a J2ME version.
 
-= Details =
+* Performance. Firebug profiler is your friend. 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+* GSS stylability (within limits)
