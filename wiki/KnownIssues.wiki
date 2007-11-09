@@ -1,0 +1,9 @@
+#summary Known bugs in current release.
+
+  * Vertical axis tick labels get clipped near origin
+  * Marker labels can sometimes show through outside the bounds of the chart
+  * Domain Axis labels sometimes disappear at weird places (mostly blank axis)
+  * FontBook rendering on Linux doesn't look as good as Windows/OSX
+  * GWT-Exporter can yield infinite loop in export() method in some instances
+  * GWT exporter doesn't automatically inherit exported methods from interfaces
+  * Axis precision does nothing right now
