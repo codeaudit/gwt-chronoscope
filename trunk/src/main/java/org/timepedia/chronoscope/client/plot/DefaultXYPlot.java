@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.IncrementalCommand;
 import org.timepedia.chronoscope.client.*;
@@ -125,8 +126,8 @@ public class DefaultXYPlot implements XYPlot, Exportable {
         MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
         overlays = new ArrayList();
         XYRenderers = new XYRenderer[dataSets.length];
-        computeVisibleDomainStartEnd();
-        initializeDomain();
+//        computeVisibleDomainStartEnd();
+//        initializeDomain();
 
         plotRenderer = new ScalableXYPlotRenderer(this);
         this.initialBounds = initialBounds;
@@ -162,7 +163,6 @@ public class DefaultXYPlot implements XYPlot, Exportable {
 
         overlays.add(over);
         over.setPlot(this);
-        redraw();
     }
 
     public void removeOverlay(Overlay over) {
@@ -170,6 +170,9 @@ public class DefaultXYPlot implements XYPlot, Exportable {
     }
 
 
+    /**
+     * @gwt.export
+     */
     public void redraw() {
         update();
         lastCurrentDomain = currentDomain;
@@ -225,8 +228,6 @@ public class DefaultXYPlot implements XYPlot, Exportable {
         lastCurrentDomain = currentDomain;
 
         initLayers();
-
-
     }
 
     private void clearDrawCaches() {
@@ -382,8 +383,7 @@ public class DefaultXYPlot implements XYPlot, Exportable {
         ArrayList oldOverlays = overlays;
         overlays = new ArrayList();
 
-        setDomainOrigin(domainStart);
-        setCurrentDomain(domainEnd - domainStart);
+        initializeDomain();
         redraw();
         setDomainOrigin(so);
         setCurrentDomain(scd);
@@ -391,7 +391,6 @@ public class DefaultXYPlot implements XYPlot, Exportable {
     }
 
     public void update() {
-
 
         Canvas backingCanvas = view.getCanvas();
         backingCanvas.beginFrame();
@@ -425,6 +424,14 @@ public class DefaultXYPlot implements XYPlot, Exportable {
 
         if (interactive) {
 
+             if (!overviewDrawn && overviewEnabled) {
+
+                overviewLayer.clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+
+                overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+                overviewDrawn = true;
+            }
+            
             boolean drawVertical = !drewVertical;
             for (int i = 0; i < axes.length; i++) {
                 drawVertical = drawVertical || axes[i].isAutoZoomVisibleRange();
@@ -458,13 +465,7 @@ public class DefaultXYPlot implements XYPlot, Exportable {
                               false);
                 drewTop = true;
             }
-            if (!overviewDrawn && overviewEnabled) {
 
-                overviewLayer.clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
-
-                overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
-                overviewDrawn = true;
-            }
             drawOverlays(plotLayer);
             drawHighlight(hightLightLayer);
         }
@@ -1111,17 +1112,20 @@ public class DefaultXYPlot implements XYPlot, Exportable {
 
     public void openInfoWindow(final String html, final double domainX,
 
-                               final double rangeY) {
+                               final double rangeY, final int seriesNum) {
+
 
         if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
 
             public void run(PortableTimer timer) {
-                view.openInfoWindow(html, domainToScreenX(domainX, 0), rangeToScreenY(rangeY, 0));
+                view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this, domainX, seriesNum),
+                        chart.rangeToWindowY(DefaultXYPlot.this, rangeY, seriesNum)+5);
             }
         })) {
 
         } else {
-            view.openInfoWindow(html, domainToScreenX(domainX, 0), rangeToScreenY(rangeY, 0));
+           view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this, domainX, seriesNum),
+                        chart.rangeToWindowY(DefaultXYPlot.this, rangeY, seriesNum)+5);
         }
 
     }

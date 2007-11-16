@@ -45,6 +45,9 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         double dDist = tickDist / axis.getHeight() * ( rangeHigh - rangeLow );
         double rangeSize = rangeHigh - rangeLow;
 
+        //TODO: FIXME: skip first tick to avoid clipping issue for now
+        range+= dDist;
+
         do {
             drawTick(plot, layer, range, rangeLow, rangeSize, axisBounds, gridOnly);
             range += dDist;

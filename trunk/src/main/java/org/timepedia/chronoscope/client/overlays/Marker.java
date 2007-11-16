@@ -236,8 +236,8 @@ public class Marker implements Overlay, GssElement, Exportable {
      * @gwt.export
      */
     public void openInfoWindow(String html) {
-        plot.getChart().getView().openInfoWindow(html, plot.getChart().domainToWindowX(plot, domainX, seriesNum),
-                                                 plot.getChart().rangeToWindowY(plot, rangeY, seriesNum) + 5);
+        plot.getChart().getPlot().openInfoWindow(html,  domainX, rangeY, seriesNum);
+
     }
 
     public GssElement getParentGssElement() {

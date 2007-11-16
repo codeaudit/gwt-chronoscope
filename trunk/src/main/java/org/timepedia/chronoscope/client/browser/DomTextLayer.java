@@ -276,7 +276,7 @@ public abstract class DomTextLayer extends AbstractLayer {
             int madv = rfm.stringWidth(label.toCharArray());
             x1 += madv * Math.cos(Math.abs(angle));
             y1 += madv * Math.sin(Math.abs(angle));
-            x1 -= rfm.stringWidth(String.valueOf(label.charAt(0)).toCharArray()) * Math.cos(Math.abs(angle)) + 5;
+            x1 -= rfm.stringWidth(String.valueOf(label.charAt(0)).toCharArray()) * Math.cos(Math.abs(angle));
             y1 -= rfm.stringWidth(String.valueOf(label.charAt(0)).toCharArray()) * Math.sin(Math.abs(angle)) + 5;
 
         }
