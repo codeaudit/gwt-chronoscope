@@ -4,6 +4,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.browser.FontRendererServiceAsyncJson;
+import org.timepedia.chronoscope.client.util.Util;
 
 /**
  * Service which uses Java2D to compute font metrics of a series of glyphs for the given font and rotation,
@@ -18,9 +20,14 @@ public interface FontRendererService extends RemoteService {
 
         public static synchronized FontRendererServiceAsync getInstance() {
             if (ourInstance == null) {
-                ourInstance = (FontRendererServiceAsync) GWT.create(FontRendererService.class);
                 String endpoint = Chronoscope.getFontBookServiceEndpoint();
-                ( (ServiceDefTarget) ourInstance ).setServiceEntryPoint(endpoint);
+                if (Util.isSameDomain(GWT.getHostPageBaseURL(), endpoint)) {
+                    ourInstance = (FontRendererServiceAsync) GWT.create(FontRendererService.class);
+                    ((ServiceDefTarget) ourInstance).setServiceEntryPoint(endpoint);
+
+                } else {
+                   ourInstance = new FontRendererServiceAsyncJson(endpoint);
+                }
             }
             return ourInstance;
         }

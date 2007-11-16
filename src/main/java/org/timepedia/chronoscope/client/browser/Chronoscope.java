@@ -272,7 +272,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
     public void onHistoryChanged(String historyToken) {
 
-        if (historyToken != null && historyToken.equals(previousHistory)) {
+        if (true || historyToken != null && historyToken.equals(previousHistory)) {
             return;
         }
 

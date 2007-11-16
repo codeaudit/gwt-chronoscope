@@ -81,12 +81,8 @@ public class BrowserView extends View implements Exportable {
      */
     public void ensureViewVisible() {
         super.ensureViewVisible();
-        ensureViewVisible0(containerDiv, ChartPanel.getAbsoluteTop(containerDiv));
+        DOM.scrollIntoView(containerDiv);
     }
-
-    private native void ensureViewVisible0(Element containerDiv, int absoluteTop) /*-{
-        $wnd.scrollTo($doc.body.scrollLeft, absoluteTop - containerDiv.offsetHeight / 2);
-    }-*/;
 
     /**
      * Opens an HTML popup info window at the given screen coordinates (within the plot bounds)

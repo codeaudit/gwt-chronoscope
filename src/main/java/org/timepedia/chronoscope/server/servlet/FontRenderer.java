@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.server.servlet;
 
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.timepedia.chronoscope.client.canvas.FontRendererService;
 import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
@@ -30,7 +32,8 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
 
     public void doGet(final HttpServletRequest req, final HttpServletResponse res)
             throws ServletException, IOException {
-        res.setContentType("image/png");
+
+        String json = req.getParameter("json");
 
         String font = req.getParameter("ff");
         int fontWeight = getFontWeight(req, "fw", 500);
@@ -42,8 +45,39 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
         double angle = getDouble(req, "a", 0.0);
         Color color = getColor(req.getParameter("c"));
 
-        ServletOutputStream out = res.getOutputStream();
-        renderFontBook(font, fontWeight, fontSize, angle, color, out);
+        if (json != null) {
+
+            RenderedFontMetrics rfm = getRenderedFontMetrics(req, font, "" + fontWeight, "" + fontSize + "pt", req.getParameter("c"), (float) angle);
+            res.setContentType("text/javascript");
+            ServletOutputStream out = res.getOutputStream();
+            writeJSON(out, rfm, json);
+        } else {
+            res.setContentType("image/png");
+            ServletOutputStream out = res.getOutputStream();
+            renderFontBook(req, font, fontWeight, fontSize, angle, color, out);
+        }
+    }
+
+    private void writeJSON(ServletOutputStream out, RenderedFontMetrics rfm, String json) throws IOException {
+        out.print(json + "(");
+        out.println("{");
+        out.println("leading: " + rfm.leading + ", ");
+        out.println("maxAscent: " + rfm.maxAscent + ", ");
+        out.println("maxAdvance: " + rfm.maxAdvance + ", ");
+        out.println("maxDescent: " + rfm.maxDescent + ", ");
+        out.println("maxBoundsHeight: " + rfm.maxBoundsHeight + ", ");
+        out.println("maxBoundsWidth: " + rfm.maxBoundsWidth + ", ");
+        out.println("url: \"" + rfm.url + "\", ");
+        out.println("advances: [");
+        for (int i = 0; i < rfm.advances.length; i++) {
+            out.print(rfm.advances[i]);
+            if (i < rfm.advances.length - 1)
+                out.print(", ");
+        }
+        out.println("]");
+        out.println("}");
+        out.println(");");
+        out.flush();
     }
 
     private Color getColor(String parameter) {
@@ -112,10 +146,10 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
         }
     }
 
-    private void renderFontBook(String font, int fontWeight, int fontSize, double angle, Color color,
+    private void renderFontBook(HttpServletRequest req, String font, int fontWeight, int fontSize, double angle, Color color,
                                 ServletOutputStream out) throws IOException {
-        RenderedFontMetrics rfm = getRenderedFontMetrics(font, fontWeight == Font.PLAIN ? "normal" : "bold",
-                                                         fontSize + "pt", toHex(color), (float) angle);
+        RenderedFontMetrics rfm = getRenderedFontMetrics(req, font, fontWeight == Font.PLAIN ? "normal" : "bold",
+                fontSize + "pt", toHex(color), (float) angle);
 
 
         int width = rfm.maxBoundsWidth * 16;
@@ -155,7 +189,7 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
                 g2.draw(new Rectangle2D.Float(0, 0, rfm.maxBoundsWidth, lineHeight));
             }
             // end DEBUG
-            int mid = ( lineHeight ) / 2;
+            int mid = (lineHeight) / 2;
             g2.translate(rfm.maxBoundsWidth / 2, mid);
             g2.rotate(angle);
             // DEBUG section
@@ -214,7 +248,13 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
         }
     }
 
+
     public RenderedFontMetrics getRenderedFontMetrics(String fontFamily, String fontWeight, String fontSize,
+                                                      String color, float angle) {
+        return getRenderedFontMetrics(getThreadLocalRequest(), fontFamily, fontWeight, fontSize, color, angle);
+    }
+
+    public RenderedFontMetrics getRenderedFontMetrics(HttpServletRequest req, String fontFamily, String fontWeight, String fontSize,
                                                       String color, float angle) {
         if ("Verdana".equalsIgnoreCase(fontFamily) && fontWeight.equalsIgnoreCase("10pt")) {
             fontWeight = "9pt";
@@ -236,10 +276,10 @@ public class FontRenderer extends RemoteServiceServlet implements FontRendererSe
         rfm.maxBoundsWidth = (int) cb.getWidth();
         rfm.maxBoundsHeight = (int) cb.getHeight();
 
-        HttpServletRequest req = getThreadLocalRequest();
         if (req != null) {
+            String host = req.getHeader("host");
 
-            rfm.url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + req.getRequestURI() +
+            rfm.url = req.getScheme() + "://" + host + req.getRequestURI() +
                     "?ff=" + fontFamily + "&fw=" + fontWeight + "&fs=" + fontSize + "&c=" + URLEncoder
                     .encode(color) + "&a=" + angle;
 

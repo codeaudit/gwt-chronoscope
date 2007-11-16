@@ -572,4 +572,12 @@ public interface XYPlot extends Exportable {
     void setOverviewEnabled(boolean overviewEnabled);
 
 
+    /**
+     * Open an info window at the specified coordinates in data space
+     * @param html
+     * @param domainX
+     * @param rangeY
+     * @param seriesNum the dataset these values come from (used to decide Axis used)
+     */
+    void openInfoWindow(String html, double domainX, double rangeY, int seriesNum);
 }
