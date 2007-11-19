@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.IncrementalCommand;
 import org.timepedia.chronoscope.client.*;
@@ -57,7 +56,7 @@ public class DefaultXYPlot implements XYPlot, Exportable {
     protected int selEnd;
     protected double domainStart;
     protected double domainEnd;
-    protected final XYRenderer[] XYRenderers;
+    protected final XYRenderer[] xyRenderers;
     protected Background background;
     protected DateAxis domainAxis;
     private double beginHighlight = Double.MIN_VALUE;
@@ -125,7 +124,7 @@ public class DefaultXYPlot implements XYPlot, Exportable {
 
         MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
         overlays = new ArrayList();
-        XYRenderers = new XYRenderer[dataSets.length];
+        xyRenderers = new XYRenderer[dataSets.length];
 //        computeVisibleDomainStartEnd();
 //        initializeDomain();
 
@@ -266,7 +265,8 @@ public class DefaultXYPlot implements XYPlot, Exportable {
 
     private void initDefaultRenderers() {
         for (int i = 0; i < dataSets.length; i++) {
-            XYRenderers[i] = new XYLineRenderer(i);
+            if(xyRenderers[i] == null)
+                xyRenderers[i] = new XYLineRenderer(i);
         }
     }
 
@@ -978,11 +978,11 @@ public class DefaultXYPlot implements XYPlot, Exportable {
     }
 
     public XYRenderer getRenderer(int seriesNum) {
-        return XYRenderers[seriesNum];
+        return xyRenderers[seriesNum];
     }
 
     public void setRenderer(int seriesNum, XYRenderer r) {
-        XYRenderers[seriesNum] = r;
+        xyRenderers[seriesNum] = r;
     }
 
 

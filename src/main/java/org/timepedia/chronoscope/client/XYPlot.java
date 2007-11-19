@@ -541,6 +541,17 @@ public interface XYPlot extends Exportable {
      */
     XYRenderer getRenderer(int seriesNum);
 
+
+    /**
+     * Set the renderer for a given dataset number
+     *
+     * @param seriesNum
+     * @param renderer
+     * @return
+     */
+    void setRenderer(int seriesNum, XYRenderer renderer);
+
+
     /**
      * Set the resolution level for a given dataset
      *

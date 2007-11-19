@@ -69,6 +69,7 @@ public class ChartPanel extends Widget
         initElement(container);
         this.plot = plot;
         chart = new Chart();
+        chart.setPlot(plot);
 
     }
 
@@ -107,6 +108,7 @@ public class ChartPanel extends Widget
         initElement(container);
         chart = new Chart();
         plot = new DefaultXYPlot(chart, datasets, true);
+        chart.setPlot(plot);
     }
 
 
