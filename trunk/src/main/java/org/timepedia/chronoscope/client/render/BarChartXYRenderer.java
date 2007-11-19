@@ -12,8 +12,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  */
 public class BarChartXYRenderer extends XYRenderer implements GssElement {
 
-    private double lx = -1, ly = -1;
-    private double ldx, ldy;
+    private double lx = -1;
     private boolean prevHover = false;
     private boolean prevFocus = false;
     private FocusPainter focusPainter;
@@ -43,15 +42,13 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         GssProperties prop = isDisabled ? disabledLineProperties : gssLineProperties;
         layer.save();
         layer.setLineWidth(prop.lineThickness);
-        layer.beginPath();
-        layer.moveTo(0, 0);
         layer.setTransparency((float) prop.transparency);
         layer.setShadowBlur(prop.shadowBlur);
         layer.setShadowColor(prop.shadowColor);
         layer.setShadowOffsetX(prop.shadowOffsetX);
         layer.setShadowOffsetY(prop.shadowOffsetY);
 
-        lx = ly = -1;
+        lx = -1;
         prevHover = false;
 
     }
@@ -74,40 +71,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
 
 
     public void endCurve(XYPlot plot, Layer layer, boolean inSelection, boolean isDisabled, int seriesNum) {
-        GssProperties lineProp = isDisabled ? disabledLineProperties : gssLineProperties;
-        GssProperties pointProp = isDisabled ? disabledPointProperties : gssPointProperties;
-
-        layer.setStrokeColor(lineProp.color);
-        layer.setFillColor(lineProp.bgColor);
-        if (lx > -1 && pointProp.visible) {
-
-            if (prevFocus) {
-                focusPainter.drawFocus(plot, layer, ldx, ldy, seriesNum);
-            }
-            layer.save();
-            layer.translate(lx, ly);
-            layer.beginPath();
-
-            if (prevHover) {
-                pointProp = gssHoverPointProperties;
-            }
-
-            layer.setFillColor(pointProp.bgColor);
-            layer.arc(0, 0, pointProp.size, 0, 2 * Math.PI, 1);
-            layer.setShadowBlur(0);
-            layer.fill();
-            layer.beginPath();
-            layer.setLineWidth(pointProp.lineThickness);
-            layer.arc(0, 0, pointProp.size, 0, 2 * Math.PI, 1);
-            layer.setStrokeColor(pointProp.color);
-            layer.setShadowBlur(pointProp.shadowBlur);
-
-            layer.stroke();
-            layer.restore();
-        }
-
         layer.restore();
-
     }
 
     public void drawCurvePart(XYPlot plot, Layer layer, double dataX, double dataY, int seriesNum, boolean isFocused,
@@ -118,7 +82,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         GssProperties pointProp = isDisabled ? disabledPointProperties : gssPointProperties;
         // guard webkit bug, coredump if draw two identical lineTo in a row
         if (ux - lx >= 1) {
-            if (lx != -1 && barProp.visible) {
+            if (barProp.visible) {
                 layer.setShadowBlur(barProp.shadowBlur);
                 layer.setShadowColor(barProp.shadowColor);
                 layer.setShadowOffsetX(barProp.shadowOffsetX);
@@ -128,7 +92,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
 
                 double barHeight = plot.getPlotBounds().height + plot.getPlotBounds().y;
                 layer.save();
-                layer.translate(lx - bw, ly);
+                layer.translate(ux - bw, uy);
 
                 layer.scale(bw * 2, barHeight);
                 layer.beginPath();
@@ -142,11 +106,12 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
                     layer.lineTo(1, 1);
                     layer.closePath();
                     layer.fill();
+                    lx = ux;
                 }
                 layer.restore();
             }
         }
-        if (lx > -1 && pointProp.visible) {
+        if (pointProp.visible) {
             if (isFocused) {
                 focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
             }
@@ -156,7 +121,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
             }
 
             layer.save();
-            layer.translate(lx, ly);
+            layer.translate(ux, uy);
 
             layer.beginPath();
 
@@ -175,18 +140,12 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
             layer.setLineWidth(pointProp.lineThickness);
             layer.stroke();
             layer.restore();
+            lx=ux;
         }
-        lx = ux;
-        ly = uy;
-        ldx = dataX;
-        ldy = dataY;
+
         prevHover = isHovered;
         prevFocus = isFocused;
-        if (barProp.visible) {
-            layer.beginPath();
-            layer.setStrokeColor(barProp.color);
-            layer.moveTo(ux, uy);
-        }
+
     }
 
 

@@ -126,7 +126,7 @@ fill.disabled {
 bar {
     color: #008000;
     background-color: #00FF00;
-
+    width: 10px;
     background-image: url( http://timepedia.org/lineargradient/0,0/0,1/0/00FF00/1/0030FF );
 
 }
