@@ -12,6 +12,7 @@
         <module>chronoscope</module>
         <module>samples</module>
         <module>widget</module>
+        <module>chronoscope-java2d</module>
     </modules>
     <pluginRepositories>
         <pluginRepository>
