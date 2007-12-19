@@ -1,6 +1,4 @@
 package org.timepedia.chronoscope.client.gss;
-
-import java.lang.reflect.Field;
 import java.util.HashSet;
 
 /**
