@@ -8,9 +8,7 @@ import org.timepedia.chronoscope.client.canvas.View;
  */
 public class GssContext {
 
-
     protected View view;
-
 
     public View getView() {
         return view;
@@ -20,14 +18,12 @@ public class GssContext {
         this.view = view;
     }
 
-
     public GssContext() {
     }
 
     public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
         return new MockGssProperties();
     }
-
 
     public void setView(View view) {
         this.view = view;
