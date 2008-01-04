@@ -23,9 +23,16 @@ public class GssDocGenerator {
                             System.out.println("\t\tProperty "+p.getName()+" \t\t: "+p.getDocString());
                         }
 
+                        System.out.println("classes: ");
+                        for(String gssClass: t.getClasses()) {
+                            System.out.println(gssClass);
+                        }
+
                         System.out.println("Example: ");
-                        System.out.println(t.getExampleString());
-                        
+                        for(String xmp: t.getExamples()) {
+                            System.out.println(xmp);
+                        }
+
                         System.out.println("\nChild elements:");
                         for(GssPropertyManager.GssElementType c : t.getChildTypes()) {
                             System.out.println("\t"+c.getName()+", ");
