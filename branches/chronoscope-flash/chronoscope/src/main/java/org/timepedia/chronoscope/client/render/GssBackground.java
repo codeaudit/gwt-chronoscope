@@ -42,13 +42,13 @@ public class GssBackground implements Background, GssElement {
 
         } else {
             layer.translate(0, 0);
-            layer.scale(b.width, b.height);
-            layer.clearRect(0, 0, 1, 1);
+//            layer.scale(b.width, b.height);
+//            layer.clearRect(0, 0, b.width, b.height);
             layer.setComposite(Layer.COPY);
             layer.setFillColor(gssPlotProperties.bgColor);
-            layer.beginPath();
-            layer.rect(0, 0, 1, 1);
-            layer.fill();
+//            layer.beginPath();
+            layer.fillRect(0, 0, b.width, b.height);
+//            layer.fill();
         }
         layer.restore();
     }

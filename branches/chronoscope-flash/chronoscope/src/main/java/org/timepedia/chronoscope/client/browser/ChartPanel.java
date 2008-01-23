@@ -6,6 +6,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.gss.MockGssContext;
+import org.timepedia.chronoscope.client.browser.flashcanvas.FlashView;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
@@ -32,7 +34,7 @@ import org.timepedia.exporter.client.Exportable;
 public class ChartPanel extends Widget
         implements ViewReadyCallback, WindowResizeListener, SafariKeyboardConstants, Exportable {
 
-    private BrowserView view;
+    private FlashView view;
     private boolean selectionMode;
     private int selStart;
     private boolean maybeDrag;
@@ -173,7 +175,7 @@ public class ChartPanel extends Widget
         DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(), "id") + "style");
         DOM.setElementAttribute(cssgss, "class", "chrono");
         appendBody(cssgss);
-        view = new BrowserView(getElement(), chartWidth, chartHeight, true, new CssGssContext(cssgss), this);
+        view = new FlashView(getElement(), chartWidth, chartHeight, true, new MockGssContext(cssgss), this);
         view.onAttach();
     }
 

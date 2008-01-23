@@ -91,17 +91,17 @@ public class Chronoscope implements Exportable, HistoryListener {
     private static boolean historySupport = false;
 
     protected void exportFunctions() {
-        Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
-        exporter.export();
-
-        Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
-        exporter2.export();
-
-        Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
-        exporter5.export();
-
-        Exporter exporter3 = (Exporter) GWT.create(BrowserView.class);
-        exporter3.export();
+//        Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
+//        exporter.export();
+//
+//        Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
+//        exporter2.export();
+//
+//        Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
+//        exporter5.export();
+//
+//        Exporter exporter3 = (Exporter) GWT.create(BrowserView.class);
+//        exporter3.export();
     }
 
 

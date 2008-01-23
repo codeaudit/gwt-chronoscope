@@ -37,7 +37,7 @@ public abstract class DomTextLayer extends AbstractLayer {
             DOM.setStyleAttribute(div, "margin", "0px");
             DOM.setStyleAttribute(div, "border", "0px");
             DOM.setStyleAttribute(div, "visibility", "hidden");
-            DOM.appendChild(( (BrowserView) getCanvas().getView() ).getGssCssElement(), div);
+            DOM.appendChild(((CssGssViewSupport) getCanvas().getView() ).getGssCssElement(), div);
             metricDiv = div;
         }
         return metricDiv;
@@ -66,7 +66,7 @@ public abstract class DomTextLayer extends AbstractLayer {
         return DOM.getElementPropertyInt(div, "clientHeight");
     }
 
-    protected Element createTextDiv() {
+    public Element createTextDiv() {
         Element textDiv = DOM.createElement("div");
         DOM.setStyleAttribute(textDiv, "position", "absolute");
 
@@ -75,7 +75,7 @@ public abstract class DomTextLayer extends AbstractLayer {
 
     }
 
-    protected TextLayer getTextLayer(String layerName) {
+    public TextLayer getTextLayer(String layerName) {
         TextLayer layer = (TextLayer) layers.get(layerName);
         if (layer == null) {
             Element layerElem;

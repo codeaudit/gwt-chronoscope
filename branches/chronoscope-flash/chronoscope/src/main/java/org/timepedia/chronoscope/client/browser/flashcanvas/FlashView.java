@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.browser;
+package org.timepedia.chronoscope.client.browser.flashcanvas;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
@@ -9,11 +9,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.browser.*;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
@@ -22,11 +24,11 @@ import java.util.Date;
 
 
 /**
- * A realization of a View on the browser using Safari JavaScript CANVAS and DOM Level 2 CSS
+ * A realization of a View on the browser using a Flash helper based on ASCanvas
  *
  * @gwt.exportPackage chronoscope
  */
-public class BrowserView extends View implements Exportable, CssGssViewSupport {
+public class FlashView extends View implements Exportable, CssGssViewSupport {
     static final FocusImpl focusImpl = (FocusImpl) GWT.create(FocusImpl.class);
 
     protected Element rootElem, containerDiv;
@@ -34,7 +36,7 @@ public class BrowserView extends View implements Exportable, CssGssViewSupport {
     private String id;
 
 
-    public BrowserView(final Element element, final int width, final int height, final boolean interactive,
+    public FlashView(final Element element, final int width, final int height, final boolean interactive,
                        GssContext gssContext, final ViewReadyCallback callback) {
         super(width, height, false, gssContext, callback);
         this.element = element;
@@ -65,8 +67,8 @@ public class BrowserView extends View implements Exportable, CssGssViewSupport {
 
 
     protected Element getElement(Layer layer) {
-        if (layer instanceof BrowserCanvas) {
-            return ( (BrowserCanvas) layer ).getElement();
+        if (layer instanceof FlashCanvas) {
+            return ( (FlashCanvas) layer ).getElement();
         }
         return null;
     }
@@ -113,11 +115,11 @@ public class BrowserView extends View implements Exportable, CssGssViewSupport {
      * @return
      */
     protected Canvas createCanvas(int width, int height) {
-        return new BrowserCanvas(this, width, height);
+        return new FlashCanvas(this, width, height);
     }
 
 
-    public BrowserView(Element element, boolean interactive, GssContext ctx, ViewReadyCallback callback) {
+    public FlashView(Element element, boolean interactive, GssContext ctx, ViewReadyCallback callback) {
         this(element, getClientWidthRecursive(element), getClientHeightRecursive(element), interactive, ctx, callback);
     }
 
@@ -228,7 +230,7 @@ public class BrowserView extends View implements Exportable, CssGssViewSupport {
     }
 
     public Element getGssCssElement() {
-        return ( (CssGssContext) gssContext ).getElement();
+        return ( (MockGssContext) gssContext ).getElement();
     }
 
 
