@@ -299,4 +299,5 @@ public interface Layer {
     DisplayList createDisplayList(String id);
 
 
+    void select();
 }

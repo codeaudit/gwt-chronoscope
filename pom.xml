@@ -41,7 +41,7 @@
             </activation>
 
             <properties>
-                <gwtversion>1.4.60</gwtversion>
+                <gwtversion>1.5-SNAP</gwtversion>
             </properties>
         </profile>
 
