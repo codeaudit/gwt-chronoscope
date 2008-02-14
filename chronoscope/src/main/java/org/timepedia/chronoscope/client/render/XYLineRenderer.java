@@ -88,11 +88,12 @@ public class XYLineRenderer extends XYRenderer implements GssElement {
         layer.setFillColor(lineProp.bgColor);
         layer.setStrokeColor(lineProp.color);
         GssProperties fillProp = isDisabled ? disabledFillProperties : gssFillProperties;
-        layer.stroke();
-
-        layer.setFillColor(fillProp.bgColor);
-        layer.setTransparency((float) fillProp.transparency);
-        layer.fill();
+        if(lineProp.visible) {
+            layer.stroke();
+            layer.setFillColor(fillProp.bgColor);
+            layer.setTransparency((float) fillProp.transparency);
+            layer.fill();
+        }
         layer.restore();
 
     }

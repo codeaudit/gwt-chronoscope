@@ -5,7 +5,8 @@ package org.timepedia.chronoscope.client.data;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class XYMultiresolution {
+public class
+        XYMultiresolution {
     private double[] domain;
     private double[] range;
     private double[][] multiDomain;
