@@ -117,7 +117,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
         return axisNum;
     }
 
-
+    /**
+     * @gwt.export
+     * @param autoZoom
+     */
     public void setAutoZoomVisibleRange(boolean autoZoom) {
 
         this.autoZoom = autoZoom;
