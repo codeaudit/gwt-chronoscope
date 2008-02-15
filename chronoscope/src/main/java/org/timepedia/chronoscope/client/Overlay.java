@@ -10,54 +10,42 @@ import org.timepedia.exporter.client.Exportable;
  * @gwt.exportPackage chronoscope
  */
 public interface Overlay extends Exportable {
-    public double getDomainX();
 
-    public double getRangeY();
+  /**
+   * Allows a caller to register for click events on this Overlay
+   *
+   * @gwt.export addOverlayListener
+   */
+  void addOverlayClickListener(OverlayClickListener cl);
 
-    /**
-     * Draw the overlay on the given layer, with text rendered on the given textLayer
-     *
-     * @param layer
-     * @param textLayer
-     */
-    void draw(Layer layer, String textLayer);
+  /**
+   * Fire a click event for this overlay
+   */
+  void click(int x, int y);
 
-    /**
-     * True if the screen coordinates (x,y) relative to the Plot bounds are inside the Overlay
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    boolean isHit(int x, int y);
+  /**
+   * Draw the overlay on the given layer, with text rendered on the given
+   * textLayer
+   */
+  void draw(Layer layer, String textLayer);
 
-    /**
-     * Fire a click event for this overlay
-     *
-     * @param x
-     * @param y
-     */
-    void click(int x, int y);
+  double getDomainX();
 
-    /**
-     * Allows a caller to register for click events on this Overlay
-     *
-     * @param cl
-     * @gwt.export addOverlayListener
-     */
-    void addOverlayClickListener(OverlayClickListener cl);
+  double getRangeY();
 
-    /**
-     * Removes an OverlayClickListener from this overlay
-     *
-     * @param cl
-     */
-    void removeOverlayClickListener(OverlayClickListener cl);
+  /**
+   * True if the screen coordinates (x,y) relative to the Plot bounds are inside
+   * the Overlay
+   */
+  boolean isHit(int x, int y);
 
-    /**
-     * Sets the plot on which this Overlay is bound
-     *
-     * @param view
-     */
-    void setPlot(XYPlot view);
+  /**
+   * Removes an OverlayClickListener from this overlay
+   */
+  void removeOverlayClickListener(OverlayClickListener cl);
+
+  /**
+   * Sets the plot on which this Overlay is bound
+   */
+  void setPlot(XYPlot view);
 }

@@ -7,21 +7,19 @@ import org.timepedia.chronoscope.client.data.DataSourceCallback;
  */
 public abstract class XYDataSource {
 
-    public static void setFactory(XYDataSourceFactory factoryInstance) {
-        XYDataSource.factoryInstance = factoryInstance;
-    }
+  private static XYDataSourceFactory factoryInstance;
 
-    private static XYDataSourceFactory factoryInstance;
+  public static XYDataSource getInstance(String uri) {
+    return factoryInstance.getInstance(uri);
+  }
 
-    public abstract void loadAsCSV(DataSourceCallback async);
+  public static void setFactory(XYDataSourceFactory factoryInstance) {
+    XYDataSource.factoryInstance = factoryInstance;
+  }
 
-    public abstract void loadAsJSON(DataSourceCallback async);
+  public abstract void loadAsCSV(DataSourceCallback async);
 
-    public abstract void loadAsXML(DataSourceCallback async);
+  public abstract void loadAsJSON(DataSourceCallback async);
 
-    public static XYDataSource getInstance(String uri) {
-        return factoryInstance.getInstance(uri);
-    }
-
-
+  public abstract void loadAsXML(DataSourceCallback async);
 }

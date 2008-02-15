@@ -11,55 +11,55 @@ import org.timepedia.chronoscope.client.render.LegendAxisRenderer;
  * An implementation of ValueAxis to render a chart Legend
  */
 public class LegendAxis extends ValueAxis {
-    private final LegendAxisRenderer renderer;
-    private DefaultXYPlot plot;
 
-    public LegendAxis(DefaultXYPlot plot, AxisPanel panel, String title) {
-        super(plot.getChart(), title, "");
-        this.plot = plot;
-        setAxisPanel(panel);
-        renderer = new LegendAxisRenderer(this);
+  private final LegendAxisRenderer renderer;
 
-    }
+  private DefaultXYPlot plot;
 
-    public void init() {
-        renderer.init(plot, this);
-    }
+  public LegendAxis(DefaultXYPlot plot, AxisPanel panel, String title) {
+    super(plot.getChart(), title, "");
+    this.plot = plot;
+    setAxisPanel(panel);
+    renderer = new LegendAxisRenderer(this);
+  }
 
+  public boolean click(int x, int y) {
+    return renderer.click(plot, x, y);
+  }
 
-    public double getWidth() {
-        return plot.getPlotBounds().width;
-    }
+  public double dataToUser(double dataValue) {
+    return 0;
+  }
 
-    public double getHeight() {
-        View view = plot.getChart().getView();
-        return renderer.getLabelHeight(view, "X") + renderer.getLegendLabelBounds(plot, view.getCanvas(),
-                                                                                  plot.getPlotBounds()).height + 20;
-    }
+  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
+      boolean gridOnly) {
+    renderer.drawLegend(plot, layer, axisBounds, gridOnly);
+  }
 
-    public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds, boolean gridOnly) {
-        renderer.drawLegend(plot, layer, axisBounds, gridOnly);
+  public double getHeight() {
+    View view = plot.getChart().getView();
+    return renderer.getLabelHeight(view, "X") + renderer.getLegendLabelBounds(
+        plot, view.getCanvas().getRootLayer(), plot.getPlotBounds()).height
+        + 20;
+  }
 
-    }
+  public double getRangeHigh() {
+    return 0;
+  }
 
-    public double getRangeLow() {
-        return 0;
-    }
+  public double getRangeLow() {
+    return 0;
+  }
 
-    public double getRangeHigh() {
-        return 0;
-    }
+  public double getWidth() {
+    return plot.getPlotBounds().width;
+  }
 
-    public double dataToUser(double dataValue) {
-        return 0;
-    }
+  public void init() {
+    renderer.init(plot, this);
+  }
 
-    public double userToData(double screenPosition) {
-        return 0;
-    }
-
-
-    public boolean click(int x, int y) {
-        return renderer.click(plot, x, y);
-    }
+  public double userToData(double screenPosition) {
+    return 0;
+  }
 }

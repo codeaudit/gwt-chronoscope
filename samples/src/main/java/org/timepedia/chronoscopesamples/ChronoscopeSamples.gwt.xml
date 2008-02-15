@@ -5,6 +5,7 @@
 
     <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemo'/>
 
+
 </module>
 
         

@@ -8,31 +8,31 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  * Draws a circle around a point with focus
  */
 public class CircleFocusPainter implements FocusPainter {
-    private String focusOutlineColor = "#B0B0B0";
-    private final GssProperties gss;
-    private final double focusRadius;
 
+  private String focusOutlineColor = "#B0B0B0";
 
-    public CircleFocusPainter(GssProperties gss) {
-        this.gss = gss;
-        this.focusRadius = gss.size;
-    }
+  private final GssProperties gss;
 
+  private final double focusRadius;
 
-    public void drawFocus(XYPlot plot, Layer layer, double x, double y, int seriesNum) {
-        layer.save();
-        double ux = plot.domainToScreenX(x, seriesNum);
-        double uy = plot.rangeToScreenY(y, seriesNum);
+  public CircleFocusPainter(GssProperties gss) {
+    this.gss = gss;
+    this.focusRadius = gss.size;
+  }
 
-        layer.setStrokeColor(gss.color);
-        double focusWidth = gss.lineThickness;
-        layer.setLineWidth(focusWidth);
-        layer.beginPath();
+  public void drawFocus(XYPlot plot, Layer layer, double x, double y,
+      int seriesNum) {
+    layer.save();
+    double ux = plot.domainToScreenX(x, seriesNum);
+    double uy = plot.rangeToScreenY(y, seriesNum);
 
-        layer.arc(ux, uy, focusRadius, 0, 2 * Math.PI, 1);
-        layer.stroke();
-        layer.restore();
-    }
+    layer.setStrokeColor(gss.color);
+    double focusWidth = gss.lineThickness;
+    layer.setLineWidth(focusWidth);
+    layer.beginPath();
 
-
+    layer.arc(ux, uy, focusRadius, 0, 2 * Math.PI, 1);
+    layer.stroke();
+    layer.restore();
+  }
 }

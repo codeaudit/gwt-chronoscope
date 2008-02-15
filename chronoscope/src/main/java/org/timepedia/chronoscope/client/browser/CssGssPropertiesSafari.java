@@ -7,8 +7,8 @@ import com.google.gwt.core.client.JavaScriptObject;
  */
 public class CssGssPropertiesSafari extends CssGssProperties {
 
-
-    protected native String getCssPropertyValueString(JavaScriptObject cssProperties, String propName) /*-{
+  protected native String getCssPropertyValueString(
+      JavaScriptObject cssProperties, String propName) /*-{
         var prop=cssProperties.getPropertyCSSValue(propName);
         var type = prop.primitiveType;
         if(prop.primitiveType == 25)
