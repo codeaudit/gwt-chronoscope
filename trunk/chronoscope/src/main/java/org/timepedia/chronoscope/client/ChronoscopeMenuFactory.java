@@ -6,5 +6,6 @@ package org.timepedia.chronoscope.client;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public interface ChronoscopeMenuFactory {
-    public ChronoscopeMenu createChronoscopeMenu(int x, int y);
+
+  public ChronoscopeMenu createChronoscopeMenu(int x, int y);
 }

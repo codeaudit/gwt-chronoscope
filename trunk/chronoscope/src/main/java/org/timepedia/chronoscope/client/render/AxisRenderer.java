@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 /**
- * TODO: javadoc
+ * TODO: javadoc.
  */
 public interface AxisRenderer {
 

@@ -14,131 +14,143 @@ import org.timepedia.exporter.client.Exportable;
  * @gwt.exportPackage chronoscope
  */
 public class RangeAxis extends ValueAxis implements Exportable {
-    private final int axisNum;
-    private final double rangeLow;
-    private final double rangeHigh;
-    private RangeAxisRenderer renderer = null;
-    private double maxLabelWidth;
-    private double maxLabelHeight;
-    private double axisLabelHeight;
-    private double axisLabelWidth;
-    private double visRangeMin;
-    private double visRangeMax;
-    private boolean autoZoom = false;
 
-    public double getRangeLow() {
-        return autoZoom ? visRangeMin : rangeLow;
+  private final int axisNum;
+
+  private final double rangeLow;
+
+  private final double rangeHigh;
+
+  private RangeAxisRenderer renderer = null;
+
+  private double maxLabelWidth;
+
+  private double maxLabelHeight;
+
+  private double axisLabelHeight;
+
+  private double axisLabelWidth;
+
+  private double visRangeMin;
+
+  private double visRangeMax;
+
+  private boolean autoZoom = false;
+
+  public RangeAxis(Chart chart, String label, String units, int axisNum,
+      double rangeLow, double rangeHigh, AxisPanel panel) {
+    super(chart, label, units);
+    this.axisNum = axisNum;
+    setAxisPanel(panel);
+    renderer = new RangeAxisRenderer(this);
+    this.rangeLow = rangeLow;
+    this.rangeHigh = rangeHigh;
+  }
+
+  public double dataToUser(double dataY) {
+    return (dataY - getRangeLow()) / getRange();
+  }
+
+  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
+      boolean gridOnly) {
+    renderer.drawAxis(plot, layer, axisBounds, gridOnly);
+  }
+
+  public double getAxisLabelHeight() {
+    return axisLabelHeight;
+  }
+
+  public double getAxisLabelWidth() {
+    return axisLabelWidth;
+  }
+
+  public int getAxisNumber() {
+    return axisNum;
+  }
+
+  public double getHeight() {
+    if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
+      return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
+    } else {
+      return getChart().getPlotForAxis(this).getPlotBounds().height;
     }
+  }
 
-    public double getRangeHigh() {
-        return autoZoom ? visRangeMax : rangeHigh;
+  public double getMaxLabelHeight() {
+    return maxLabelHeight;
+  }
+
+  public double getMaxLabelWidth() {
+    return maxLabelWidth;
+  }
+
+  public double getRangeHigh() {
+    return autoZoom ? visRangeMax : rangeHigh;
+  }
+
+  public double getRangeLow() {
+    return autoZoom ? visRangeMin : rangeLow;
+  }
+
+  public double getRotationAngle() {
+    return
+        (getAxisPanel().getPosition() == AxisPanel.RIGHT ? 1.0 : -1.0) * Math.PI
+            / 2;
+  }
+
+  public double getWidth() {
+    if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
+      return maxLabelWidth + 10 + axisLabelWidth;
+    } else {
+      return getChart().getPlotForAxis(this).getPlotBounds().width;
     }
+  }
 
-    public RangeAxis(Chart chart, String label, String units, int axisNum, double rangeLow, double rangeHigh,
-                     AxisPanel panel) {
-        super(chart, label, units);
-        this.axisNum = axisNum;
-        setAxisPanel(panel);
-        renderer = new RangeAxisRenderer(this);
-        this.rangeLow = rangeLow;
-        this.rangeHigh = rangeHigh;
-    }
+  public void init() {
+    computeLabelWidths(getChart().getView());
+  }
 
-    private void computeLabelWidths(View view) {
-        renderer.init(view);
+  public void initVisibleRange() {
+    visRangeMin = rangeLow;
+    visRangeMax = rangeHigh;
+  }
 
-        maxLabelWidth = renderer.getLabelWidth(view, "0.12") + 10;
-        maxLabelHeight = renderer.getLabelHeight(view, "0.12") + 10;
-        axisLabelHeight = renderer.getLabelWidth(view, getLabel());
-        axisLabelWidth = renderer.getLabelHeight(view, getLabel());
-    }
+  public boolean isAutoZoomVisibleRange() {
+    return autoZoom;
+  }
 
-    /**
-     * @param label
-     * @gwt.export
-     */
-    public void setLabel(String label) {
-        super.setLabel(label);
-        getChart().damageAxes(this);
-        computeLabelWidths(getChart().getView());
-    }
+  public void setAutoZoomVisibleRange(boolean autoZoom) {
 
-    public double getWidth() {
-        if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
-            return maxLabelWidth + 10 + axisLabelWidth;
-        } else {
-            return getChart().getPlotForAxis(this).getPlotBounds().width;
-        }
-    }
+    this.autoZoom = autoZoom;
+  }
 
-    public double getHeight() {
-        if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
-            return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
-        } else {
-            return getChart().getPlotForAxis(this).getPlotBounds().height;
-        }
-    }
+  /**
+   * @gwt.export
+   */
+  public void setLabel(String label) {
+    super.setLabel(label);
+    getChart().damageAxes(this);
+    computeLabelWidths(getChart().getView());
+  }
 
-    public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds, boolean gridOnly) {
-        renderer.drawAxis(plot, layer, axisBounds, gridOnly);
-    }
+  public void setVisibleRange(double visRangeMin, double visRangeMax) {
 
-    public double getMaxLabelWidth() {
-        return maxLabelWidth;
-    }
+    this.visRangeMin = visRangeMin;
+    this.visRangeMax = visRangeMax;
+  }
 
-    public double getMaxLabelHeight() {
-        return maxLabelHeight;
-    }
+  public double userToData(double userValue) {
+    return getRangeLow() + userValue * getRange();
+  }
 
-    public double getAxisLabelHeight() {
-        return axisLabelHeight;
-    }
+  private void computeLabelWidths(View view) {
+    renderer.init(view);
 
-    public double getAxisLabelWidth() {
-        return axisLabelWidth;
-    }
-
-    public double dataToUser(double dataY) {
-        return ( dataY - getRangeLow() ) / getRange();
-    }
-
-    public double userToData(double userValue) {
-        return getRangeLow() + userValue * getRange();
-    }
-
-    public void init() {
-        computeLabelWidths(getChart().getView());
-
-    }
-
-
-    public int getAxisNumber() {
-        return axisNum;
-    }
-
-    /**
-     * @gwt.export
-     * @param autoZoom
-     */
-    public void setAutoZoomVisibleRange(boolean autoZoom) {
-
-        this.autoZoom = autoZoom;
-
-    }
-
-    public void setVisibleRange(double visRangeMin, double visRangeMax) {
-
-        this.visRangeMin = visRangeMin;
-        this.visRangeMax = visRangeMax;
-    }
-
-    public void initVisibleRange() {
-        visRangeMin = rangeLow;
-        visRangeMax = rangeHigh;
-    }
-
-    public boolean isAutoZoomVisibleRange() {
-        return autoZoom;
-    }
+    maxLabelWidth = renderer.getLabelWidth(view, "0.12", 0) + 10;
+    maxLabelHeight = renderer.getLabelHeight(view, "0.12", 0) + 10;
+    axisLabelHeight = renderer
+        .getLabelHeight(view, getLabel(), getRotationAngle());
+    axisLabelWidth = renderer
+        .getLabelWidth(view, getLabel(), getRotationAngle());
+  }
 }

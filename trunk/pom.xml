@@ -10,10 +10,10 @@
     <url>http://timepedia.org/chronoscope</url>
     <modules>
         <module>chronoscope</module>
-        <module>samples</module>
+<!--        <module>samples</module> -->
         <module>widget</module>
-<!--        <module>chronoscope-java2d</module> -->
-    </modules>
+        <module>chronoscope-java2d</module> 
+   </modules>
     <pluginRepositories>
         <pluginRepository>
             <id>gwt-maven</id>
@@ -41,7 +41,7 @@
             </activation>
 
             <properties>
-                <gwtversion>1.4.60</gwtversion>
+                <gwtversion>1.4.61</gwtversion>
             </properties>
         </profile>
 
@@ -70,7 +70,8 @@
             <properties>
                 <gwtversion>1.4.61</gwtversion>
                 <gwtplatform>osx</gwtplatform>
-                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs>
+<!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
+                <google.webtoolkit.extrajvmargs>-Xmx512m</google.webtoolkit.extrajvmargs> 
             </properties>
         </profile>
 

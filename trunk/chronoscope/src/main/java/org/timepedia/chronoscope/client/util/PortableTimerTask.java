@@ -6,5 +6,6 @@ package org.timepedia.chronoscope.client.util;
  * @gwt.exportClosure
  */
 public interface PortableTimerTask {
-    public void run(PortableTimer timer);
+
+  public void run(PortableTimer timer);
 }

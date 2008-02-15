@@ -6,112 +6,134 @@ import org.timepedia.chronoscope.client.XYDataset;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class ArrayXYDataset implements XYDataset {
-    private final double[] domain;
-    private final double[] range;
-    private final String identifier;
-    private final String label;
-    private final String axisId;
-    private double rangeBottom, rangeTop;
-    private double[][] multiDomain;
-    private double[][] multiRange;
 
+  protected double[] domain;
 
-    public ArrayXYDataset(String identifier, double[] domain, double[] range, String label, String axisId) {
-        this(identifier, domain, range, label, axisId, XYMultiresolution.MEAN_STRATEGY);
+  protected double[] range;
+
+  protected double rangeBottom, rangeTop;
+
+  protected double[][] multiDomain;
+
+  protected double[][] multiRange;
+
+  protected int length;
+
+  protected int multiLengths[];
+
+  private final String identifier;
+
+  private final String label;
+
+  private final String axisId;
+
+  public ArrayXYDataset(String identifier, double[] domain, double[] range,
+      String label, String axisId) {
+    this(identifier, domain, range, label, axisId,
+        XYMultiresolution.MEAN_STRATEGY);
+  }
+
+  public ArrayXYDataset(String identifier, double[] domain, double[] range,
+      String label, String axisId, XYMultiresolution.XYStrategy strategy) {
+
+    this(identifier, domain, range, label, axisId, domain.length);
+    genMultiresolution(strategy);
+  }
+
+  public ArrayXYDataset(String identifier, double[][] domains,
+      double[][] ranges, double top, double bottom, String label,
+      String axisId) {
+    this(identifier, domains[0], ranges[0], label, axisId, domains[0].length);
+    multiDomain = domains;
+    multiRange = ranges;
+    rangeTop = top;
+    rangeBottom = bottom;
+  }
+
+  protected ArrayXYDataset(String identifier, double[] domain, double[] range,
+      String label, String axisId, int capacity) {
+    this.label = label;
+    this.identifier = identifier;
+    if (capacity > domain.length) {
+      this.domain = new double[capacity];
+      this.range = new double[capacity];
+      AppendableArrayXYDataset.MutableXYMultiresolution
+          .arraycopy(domain, 0, this.domain, 0, domain.length);
+      AppendableArrayXYDataset.MutableXYMultiresolution
+          .arraycopy(range, 0, this.range, 0, range.length);
+    } else {
+      this.domain = domain;
+      this.range = range;
     }
+    this.length = domain.length;
+    this.axisId = axisId;
+  }
 
+  public String getAxisId() {
+    return axisId;
+  }
 
-    public ArrayXYDataset(String identifier, double[] domain, double[] range, String label, String axisId,
-                          XYMultiresolution.XYStrategy strategy) {
-        this.label = label;
-        this.identifier = identifier;
-        this.domain = domain;
-        this.range = range;
-        this.axisId = axisId;
-        genMultiresolution(strategy);
-    }
+  public double[] getDomain() {
+    return domain;
+  }
 
+  public String getIdentifier() {
+    return identifier;
+  }
 
-    public ArrayXYDataset(String identifier, double[][] domains, double[][] ranges, double top, double bottom,
-                          String label, String axisId) {
-        this.identifier = identifier;
-        this.label = label;
-        this.domain = domains[0];
-        this.range = ranges[0];
-        multiDomain = domains;
-        multiRange = ranges;
-        rangeTop = top;
-        rangeBottom = bottom;
-        this.axisId = axisId;
-    }
+  public int getNumSamples() {
+    return length;
+  }
 
+  public int getNumSamples(int mipLevel) {
+    return multiLengths[mipLevel];
+  }
 
-    public int getNumSamples() {
-        return domain.length;
-    }
+  public double[] getRange() {
+    return range;
+  }
 
+  public double getRangeBottom() {
+    return rangeBottom;
+  }
 
-    protected void genMultiresolution(XYMultiresolution.XYStrategy strategy) {
-        XYMultiresolution xy = computeMultiresolution(strategy);
-        multiDomain = xy.getMultiDomain();
-        multiRange = xy.getMultiRange();
-        rangeTop = xy.getRangeTop();
-        rangeBottom = xy.getRangeBottom();
-        rangeBottom = Math.min(rangeBottom, 0);
-    }
+  public String getRangeLabel() {
+    return label;
+  }
 
-    protected XYMultiresolution computeMultiresolution(XYMultiresolution.XYStrategy strategy) {
-        return XYMultiresolution.createMultiresolutionWithStrategy(domain, range, strategy);
-    }
+  public double getRangeTop() {
+    return rangeTop;
+  }
 
+  public double getX(int index) {
+    return domain[index];
+  }
 
-    public int getNumSamples(int mipLevel) {
-        return multiDomain[mipLevel].length;
-    }
+  public double getX(int index, int mipLevel) {
+    return multiDomain[mipLevel][index];
+  }
 
-    public double getX(int index) {
-        return domain[index];
-    }
+  public double getY(int index) {
+    return range[index];
+  }
 
-    public double getY(int index) {
-        return range[index];
-    }
+  public double getY(int index, int mipLevel) {
+    return multiRange[mipLevel][index];
+  }
 
-    public double getX(int index, int mipLevel) {
-        return multiDomain[mipLevel][index];
-    }
+  protected XYMultiresolution computeMultiresolution(
+      XYMultiresolution.XYStrategy strategy) {
+    return XYMultiresolution
+        .createMultiresolutionWithStrategy(domain, range, length, strategy);
+  }
 
-    public double getY(int index, int mipLevel) {
-        return multiRange[mipLevel][index];
-    }
-
-
-    public double getRangeBottom() {
-        return rangeBottom;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public String getRangeLabel() {
-        return label;
-    }
-
-    public String getAxisId() {
-        return axisId;
-    }
-
-    public double getRangeTop() {
-        return rangeTop;
-
-    }
-
-    public double[] getDomain() {
-        return domain;
-    }
-
-    public double[] getRange() {
-        return range;
-    }
+  protected void genMultiresolution(XYMultiresolution.XYStrategy strategy) {
+    XYMultiresolution xy = computeMultiresolution(strategy);
+    multiDomain = xy.getMultiDomain();
+    multiRange = xy.getMultiRange();
+    multiLengths = xy.getMultiLength();
+    rangeTop = xy.getRangeTop();
+    rangeBottom = xy.getRangeBottom();
+    rangeBottom = Math.min(rangeBottom, 0);
+  }
 }

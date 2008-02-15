@@ -1,43 +1,94 @@
 <module>
 
-    <!-- Inherit the core Web Toolkit stuff.                  -->
-    <inherits name='com.google.gwt.user.User'/>
-    <inherits name='com.google.gwt.http.HTTP'/>
-    <inherits name='org.timepedia.exporter.Exporter'/>
+  <!-- Inherit the core Web Toolkit stuff.                  -->
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='com.google.gwt.http.HTTP'/>
+  <inherits name='org.timepedia.exporter.Exporter'/>
 
-    <stylesheet src="Chronoscope.css"/>
+  <stylesheet src="Chronoscope.css"/>
 
 
-    <servlet path="/fr"
-             class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+  <define-property name="hasflash" values="yes,no,force"/>
+  <property-provider name="hasflash"><![CDATA[
+    if(window.location.href.indexOf("_force_flash") != -1) return "force";      
+    if(navigator.plugins) {
+      var x = navigator.plugins['Shockwave Flash'];
+      if(x) {
+        var desc = x.description;
+        var ind = desc.indexOf('.');
+        if(ind > -1 && desc.charAt(ind-1) == '9') return "yes";
+      }
+    }
+    if(navigator.userAgent.indexOf("MSIE") != -1) {
+      var axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.9");
+      if(axo != null && axo != undefined) return "yes";
+    }
+    return "no";
+    ]]>
+  </property-provider>
 
-    <!-- Fall through to this rule is the browser isn't IE or Opera -->
-    <replace-with
-            class="org.timepedia.chronoscope.client.browser.CssGssProperties">
-        <when-type-is
-                class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
-    </replace-with>
+  <servlet path="/fr"
+           class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
 
-    <replace-with
-            class="org.timepedia.chronoscope.client.browser.CssGssPropertiesIE">
-        <when-type-is
-                class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
-        <when-property-is name="user.agent" value="ie6"/>
-    </replace-with>
+  <replace-with class="org.timepedia.chronoscope.client.browser.IEGssContext">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
+    <when-property-is name="user.agent" value="ie6"/>
+  </replace-with>
 
-    <replace-with
-            class="org.timepedia.chronoscope.client.browser.CssGssPropertiesOpera">
-        <when-type-is
-                class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
-        <when-property-is name="user.agent" value="opera"/>
-    </replace-with>
+  <replace-with class="org.timepedia.chronoscope.client.browser.IEGssContext">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
+    <none>
+      <when-property-is name="user.agent" value="ie6"/>
+    </none>
+  </replace-with>
 
-    <replace-with
-            class="org.timepedia.chronoscope.client.browser.CssGssPropertiesSafari">
-        <when-type-is
-                class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
-        <when-property-is name="user.agent" value="safari"/>
-    </replace-with>
+  <replace-with class="org.timepedia.chronoscope.client.browser.BrowserView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+  </replace-with>
+
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="ie6"/>
+    <when-property-is name="hasflash" value="yes"/>
+  </replace-with>
+
+
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="hasflash" value="force"/>
+  </replace-with>
+
+  <!-- Fall through to this rule is the browser isn't IE or Opera -->
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.CssGssProperties">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
+  </replace-with>
+
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.CssGssPropertiesIE">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
+    <when-property-is name="user.agent" value="ie6"/>
+  </replace-with>
+
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.CssGssPropertiesOpera">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
+    <when-property-is name="user.agent" value="opera"/>
+  </replace-with>
+
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.CssGssPropertiesSafari">
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
+    <when-property-is name="user.agent" value="safari"/>
+  </replace-with>
 
 
 </module>

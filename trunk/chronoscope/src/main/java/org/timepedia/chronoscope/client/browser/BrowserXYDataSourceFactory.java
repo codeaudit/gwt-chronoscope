@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.XYDataSourceFactory;
 
@@ -10,15 +11,16 @@ import org.timepedia.chronoscope.client.XYDataSourceFactory;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class BrowserXYDataSourceFactory implements XYDataSourceFactory {
-    public XYDataSource getInstance(String uri) {
-        if (isSameDomain(GWT.getHostPageBaseURL(), uri)) {
-            return new XMLHttpRequestXYDataSource(uri);
-        } else {
-            return new ScriptTagXYDataSource(uri);
-        }
-    }
 
-    private boolean isSameDomain(String uri, String uri2) {
-        return true;
+  public XYDataSource getInstance(String uri) {
+    if (isSameDomain(GWT.getHostPageBaseURL(), uri)) {
+      return new XMLHttpRequestXYDataSource(uri);
+    } else {
+      return new ScriptTagXYDataSource(uri);
     }
+  }
+
+  private boolean isSameDomain(String uri, String uri2) {
+    return true;
+  }
 }

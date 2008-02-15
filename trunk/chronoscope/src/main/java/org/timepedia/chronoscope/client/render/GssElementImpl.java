@@ -6,32 +6,33 @@ import org.timepedia.chronoscope.client.gss.GssElement;
  * Convenient class for creating named GssElements
  */
 public class GssElementImpl implements GssElement {
-    private final String type;
-    private final GssElement parent;
-    private String typeClass = null;
 
-    public GssElementImpl(String type, GssElement parent) {
-        this.type = type;
+  private final String type;
 
-        this.parent = parent;
-    }
+  private final GssElement parent;
 
-    public GssElementImpl(String type, GssElement parent, String typeClass) {
-        this(type, parent);
-        this.typeClass = typeClass;
-    }
+  private String typeClass = null;
 
-    public GssElement getParentGssElement() {
-        return parent;
-    }
+  public GssElementImpl(String type, GssElement parent) {
+    this.type = type;
 
-    public String getType() {
-        return type;
-    }
+    this.parent = parent;
+  }
 
-    public String getTypeClass() {
-        return typeClass;
-    }
+  public GssElementImpl(String type, GssElement parent, String typeClass) {
+    this(type, parent);
+    this.typeClass = typeClass;
+  }
 
+  public GssElement getParentGssElement() {
+    return parent;
+  }
 
+  public String getType() {
+    return type;
+  }
+
+  public String getTypeClass() {
+    return typeClass;
+  }
 }
