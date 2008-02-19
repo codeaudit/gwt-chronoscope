@@ -1,19 +1,13 @@
 #summary upcoming release milestones and roadmap
 
-= Introduction =
-
-We will try moving to at least weekly releases and prioritizing issues to upcoming weeks.
-
 = Milestones =
 
-== .85 (late February) ==
-
+== .85 (ETA: late February 2008) ==
   * RangeMutableXYDataset - all features of Appendable datasets, plus supports modifying Y values of already added points issue 2
   * Auto-precision/scaling of Axis labels issue 3
   * upside-down marker bug issue 6
 
 == .90 ==
- 
   * Flash canvas (IE) GSS support issue 4
   * Shared domain charts (two plots sharing X axis, eg price/vol)  issue 10
   * bar chart fixes issue 5
@@ -21,7 +15,6 @@ We will try moving to at least weekly releases and prioritizing issues to upcomi
   * interpolation options issue 1 
 
 == .95 ==
-
   * upside-down marker rendering bug issue 6
   * sparklines issue 7
   * limit scope to available data (eg don't zoom before/after or finer resolution than dataset)  issue 11
@@ -30,13 +23,11 @@ We will try moving to at least weekly releases and prioritizing issues to upcomi
 = Roadmap =
 
 == Alternate Rendering Platforms ==
-
   * Applet/Consumer JRE
   * J2ME
   * iPhone
 
 == New Dataset Types ==
-
   * TupleDataset: values are (X,Y,Z,W,...), e.g. (X, Open, High, Low, Last)
   * Dataset2D: indices are 2D, values can be scalar or tuple, e.g. d2d.getValue(i,j)
     * LatLongDataset2D: lookup values by latitude/longitude, e.g. ll2d.getValue(lat, long)
@@ -77,7 +68,7 @@ We will try moving to at least weekly releases and prioritizing issues to upcomi
   * anywhere in page as a link to a particular chart section
   * minimize Chronoscope ChartPanel into a sparkline representation
 
-== SharedDomain and SharedRange Plots ==
+== Shared Domain and Shared Range Plots ==
   * Combine any two plots into a SharedDomainXYPlot for example (like Google Finance)
 
 Add *your* [Issues bug, issues, and feature requests]
