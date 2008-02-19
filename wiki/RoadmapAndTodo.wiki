@@ -1,29 +1,54 @@
-#summary Missing features that would be nice to have
+#summary upcoming release milestones and roadmap
+
 = Introduction =
 
-We are currently swamped with work on the main Timepedia website, so there were many features we had to scale back or remove for this release, the following is a list of major features we envision for future versions of Chronoscope
+We will try moving to at least weekly releases and prioritizing issues to upcoming weeks.
 
+= Milestones =
 
-= Alternate Rendering Platforms =
+== .85 (late February) ==
 
-  * Flash canvas implementation
+  * RangeMutableXYDataset - all features of Appendable datasets, plus supports modifying Y values of already added points issue 2
+  * Auto-precision/scaling of Axis labels issue 3
+  * upside-down marker bug issue 6
+
+== .90 ==
+ 
+  * Flash canvas (IE) GSS support issue 4
+  * Shared domain charts (two plots sharing X axis, eg price/vol)  issue 10
+  * bar chart fixes issue 5
+  * generalized multi-resolution partitions algorithm  issue 8
+  * interpolation options issue 1 
+
+== .95 ==
+
+  * upside-down marker rendering bug issue 6
+  * sparklines issue 7
+  * limit scope to available data (eg don't zoom before/after or finer resolution than dataset)  issue 11
+  * support arbitrary x-axis plots (CategoryPlot) issue 12
+
+= Roadmap =
+
+== Alternate Rendering Platforms ==
+
   * Applet/Consumer JRE
   * J2ME
+  * iPhone
 
-= New Dataset Types =
+== New Dataset Types ==
 
   * TupleDataset: values are (X,Y,Z,W,...), e.g. (X, Open, High, Low, Last)
   * Dataset2D: indices are 2D, values can be scalar or tuple, e.g. d2d.getValue(i,j)
     * LatLongDataset2D: lookup values by latitude/longitude, e.g. ll2d.getValue(lat, long)
   * Category Dataset: XYDataset with X values as Strings
   
-= New Plot Types =
+== New Plot Types ==
   * CategoryPlot
   * TuplePlot
   * Plot2D: plot Dataset2D
   * TimelinePlot: 3 dimensional plot with third axis being a time slider
 
-= New Renderer Types =
+== New Renderer Types ==
   * CategoryRenderer
   * CandleStickRenderer (TuplePlot)
   * PieRenderer
@@ -31,24 +56,23 @@ We are currently swamped with work on the main Timepedia website, so there were 
   * CountourRenderer: used by Plot2D
   * TimelineRenderer
 
-
-= New Axis Types =
+== New Axis Types ==
   * LogAxis
   * CategoryAxis
   * TimelineAxis
 
-= New Marker/Overlay Types =
+== New Marker/Overlay Types ==
   * Axis Marker (like Google Finance 'split' symbols)
   * Annotation (text like callout on a curve)
   * MarkerGroup: multiresolution representation of markers, cut down on clutter when zoomed out, click to expand
 
-= Retained Mode Vector Graphics API =
+== Retained Mode Vector Graphics API ==
   * Create and position shapes on the canvas
   * Bind shape properties to chart state
   * Efficient hit detection and rendering via spatial partitioning
   * Want to permit 'gapminder' style charts
 
-= Sparklines ==
+== Sparklines ==
   * In legend
   * anywhere in page as a link to a particular chart section
   * minimize Chronoscope ChartPanel into a sparkline representation
@@ -56,5 +80,5 @@ We are currently swamped with work on the main Timepedia website, so there were 
 == SharedDomain and SharedRange Plots ==
   * Combine any two plots into a SharedDomainXYPlot for example (like Google Finance)
 
-I'm sure there's alot more that *you* can think of, so free feel to suggest features, and don't shy away from contributing implementations!
+Add *your* [Issues bug, issues, and feature requests]
  
