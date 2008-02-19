@@ -1,5 +1,5 @@
 #summary upcoming release milestones and roadmap
-#featured
+#labels Featured
 
 = Milestones =
 
