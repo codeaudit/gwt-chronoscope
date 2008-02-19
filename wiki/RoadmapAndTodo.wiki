@@ -5,7 +5,8 @@
 
 == .85 (ETA: late February 2008) ==
   * RangeMutableXYDataset - all features of Appendable datasets, plus supports modifying Y values of already added points issue 2
-  * Auto-precision/scaling of Axis labels issue 3
+  * Auto-precision/scaling of Axis labels issue 3 
+  * axis clipping bug issue 13
   * upside-down marker bug issue 6
 
 == .90 ==
@@ -20,6 +21,7 @@
   * sparklines issue 7
   * limit scope to available data (eg don't zoom before/after or finer resolution than dataset)  issue 11
   * support arbitrary x-axis plots (CategoryPlot) issue 12
+  * domain axis fixes issue 14
 
 = Roadmap =
 
