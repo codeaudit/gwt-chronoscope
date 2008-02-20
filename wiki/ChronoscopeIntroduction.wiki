@@ -1,4 +1,5 @@
 #summary Overall design philosophy for Chronoscope
+#labels Featured
 
 = Things to strive for =
 
