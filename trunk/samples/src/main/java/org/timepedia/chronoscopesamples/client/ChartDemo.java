@@ -3,10 +3,16 @@ package org.timepedia.chronoscopesamples.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
@@ -15,13 +21,11 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
+import org.timepedia.chronoscope.client.data.RangeMutableXYDataset;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.util.PortableTimer;
-import org.timepedia.chronoscope.client.util.PortableTimerTask;
 
 /**
  * @author Ray Cromwell <ray@timepedia.org>
@@ -55,15 +59,37 @@ public class ChartDemo implements EntryPoint {
     final ChartPanel chartPanel = Chronoscope
         .createTimeseriesChart(ds, chartWidth, chartHeight);
 
-     vp.add(new HTML("Hello World"), "Hello World");
-     vp.add(chartPanel, "Simple XYDataSource");
-    vp.selectTab(0);
-    XYDataset ds2[]=new XYDataset[1];
-    ds2[0]=Chronoscope.createXYDataset(getJson("unratedata"));
-    final ChartPanel chartPanel3 = Chronoscope
-            .createTimeseriesChart(ds2, 400, 300);
-    vp.add(chartPanel3, "Chart 3");
+    VerticalPanel vert = new VerticalPanel();
+    vp.add(new HTML("Hello World"), "Hello World");
+    HorizontalPanel hp = new HorizontalPanel();
     
+    final TextBox tb = new TextBox();
+    final Label l = new Label("Num Points: " + ds[0].getNumSamples());
+    hp.add(l);
+    hp.add(tb);
+    Button b = new Button("Mutate Range to Random Value");
+    b.addClickListener(new ClickListener() {
+
+      public void onClick(Widget sender) {
+        RangeMutableXYDataset rxy = (RangeMutableXYDataset) ds[0];
+        rxy.beginUpdate();
+        rxy.setY(Integer.parseInt(tb.getText()),
+            Math.random() * (ds[0].getRangeTop() - ds[0].getRangeBottom()));
+        rxy.endUpdate();
+      }
+    });
+    hp.add(b);
+    vert.add(chartPanel);
+    vert.add(hp);
+    vp.add(vert, "Mutable XYDatasSource");
+    
+    vp.selectTab(0);
+    XYDataset ds2[] = new XYDataset[1];
+    ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
+    final ChartPanel chartPanel3 = Chronoscope
+        .createTimeseriesChart(ds2, 400, 300);
+    vp.add(chartPanel3, "Chart 3");
+
 //     vp.add(chartPanel);
 
 //        XYDataset[] ds2 = new XYDataset[2];
@@ -118,12 +144,13 @@ public class ChartDemo implements EntryPoint {
                 //        count++
                 Math.random() * (mxy.getRangeTop() - mxy.getRangeBottom()));
             mxy.endUpdate();
+            l.setText("Num Points: "+ds[0].getNumSamples());
           }
         };
         t.scheduleRepeating(500);
       }
     });
-    
+
     RootPanel.get("chartdemo").add(vp);
 
     //currently, because of design issues in the initialization process,

@@ -16,12 +16,46 @@
   <url>http://timepedia.org/chronoscope</url>
   <dependencies>
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <type>jar</type>
+    </dependency>
+
+
+    <!-- Hack: ant and ant-junit included for antrun plugin to run junit tests 
+         since GWT breaks surefire -->
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.6.5</version>
+      <type>jar</type>
+    </dependency>
+
+
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant-junit</artifactId>
+      <version>1.6.5</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <version>${gwtversion}</version>
       <type>jar</type>
     </dependency>
 
+    <!--
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev-mac</artifactId>
+      <version>${gwtversion}</version>
+      <type>jar</type>
+    </dependency>
+
+-->
     <dependency>
       <groupId>org.timepedia.exporter</groupId>
       <artifactId>gwtexporter</artifactId>
@@ -35,8 +69,9 @@
       <artifactId>gwt-user</artifactId>
       <version>${gwtversion}</version>
       <type>jar</type>
-      <scope>provided</scope>
+      <!--<scope>provided</scope>-->
     </dependency>
+
   </dependencies>
   <build>
     <finalName>chronoscope</finalName>
@@ -48,6 +83,17 @@
         <directory>${basedir}/src/main/resources</directory>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/java</directory>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+
+    </testResources>
+
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -57,7 +103,96 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+
+      <!-- surefire doesn't work with GWT! We switch it off for now, see 
+
+Issue #1032 in GWT issue tracker -->
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.2</version>
+        <configuration>
+          <!--<argLine>-XstartOnFirstThread -Xmx512m -Xms512m -Dgwt.args="-web -port 8123"</argLine>-->
+          <!--<redirectTestOutputToFile>true</redirectTestOutputToFile>-->
+          <!--<childDelegation>true</childDelegation>-->
+          <!--<useSystemClassLoader>true</useSystemClassLoader> -->
+          <!--<forkMode>always</forkMode> -->
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
+
+      <!-- as a workaround to the surefire problem, we use maven-antrun to 
+            execute the junit task -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <configuration>
+              <tasks unless="maven.test.skip">
+
+
+                <property name="test_classpath" refid="maven.test.classpath"/>
+
+                <property name="reportOutput"
+                          value="${project.reporting.outputDirectory}/junitreports"/>
+
+
+                <property name="base"
+                          value="${basedir}"/>
+
+                <property name="gwtHome" value="${google.webtoolkit.home}"/>
+
+                <taskdef name="junit" classpath="${test_classpath}"
+                         classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+                </taskdef>
+
+                <!--<echo message="basedir ${basedir} gwtHome ${gwtHome}"/>-->
+                <!--<echo message="dependency ${maven.test.classpath}"/>-->
+
+                <!--<echo message="compile classpath: ${compile_classpath}"/>-->
+                <!--<echo message="runtime classpath: ${runtime_classpath}"/>-->
+                <!--<echo message="test classpath:    ${test_classpath}"/>-->
+                <mkdir dir="${reportOutput}"/>
+                <junit fork="yes" printsummary="yes" showoutput="true">
+                  <jvmarg value="-XstartOnFirstThread"/>
+
+                  <sysproperty key="java.awt.headless" value="true"/>
+                  <classpath>
+                    <pathelement path="${gwtHome}/gwt-dev-${gwtplatform}.jar"/>
+                    <pathelement path="${test_classpath}"/>
+                  </classpath>
+
+                  <batchtest todir="${reportOutput}">
+                    <fileset dir="${base}/src/test/java"
+                             includes="**/*Test*.java"/>
+                  </batchtest>
+
+                  <formatter type="brief" usefile="true"/>
+                </junit>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
     </plugins>
+    <!--<extensions>-->
+    <!--<extension>-->
+    <!--<groupId>com.google.gwt</groupId>-->
+    <!--<artifactId>gwt-customchecks</artifactId>-->
+    <!--<version>1.0</version>-->
+    <!--</extension>-->
+    <!--</extensions>-->
 
   </build>
+
 </project>

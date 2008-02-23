@@ -57,9 +57,9 @@ public class ArrayXYDataset implements XYDataset {
     if (capacity > domain.length) {
       this.domain = new double[capacity];
       this.range = new double[capacity];
-      AppendableArrayXYDataset.MutableXYMultiresolution
+      AbstractUpdateableArrayXYDataset.MutableXYMultiresolution
           .arraycopy(domain, 0, this.domain, 0, domain.length);
-      AppendableArrayXYDataset.MutableXYMultiresolution
+      AbstractUpdateableArrayXYDataset.MutableXYMultiresolution
           .arraycopy(range, 0, this.range, 0, range.length);
     } else {
       this.domain = domain;

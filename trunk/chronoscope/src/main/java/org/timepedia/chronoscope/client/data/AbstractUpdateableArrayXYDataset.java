@@ -10,9 +10,11 @@ import java.util.Iterator;
 public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
     implements UpdateableXYDataset {
 
+  static final int GROWTH_FACTOR = 2;
+
   protected static class Mutation {
 
-    public static final int SET = 0, INSERT = 1, REMOVE = 2;
+    public static final int SETRANGE = 0, INSERT = 1, REMOVE = 2;
 
     public static Mutation insert(double x, double y) {
       return new Mutation(INSERT, -1, x, y);
@@ -22,8 +24,8 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
       return new Mutation(REMOVE, i, 0, 0);
     }
 
-    public static Mutation set(int i, double x, double y) {
-      return new Mutation(SET, i, x, y);
+    public static Mutation setRange(int i,double y) {
+      return new Mutation(SETRANGE, i, 0, y);
     }
 
     public int index;
@@ -48,7 +50,7 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
 
   private ArrayList listeners = new ArrayList();
 
-  private boolean updating;
+  protected boolean updating;
 
   protected AbstractUpdateableArrayXYDataset(String identifier, double[] domain,
       double[] range, String label, String axisId) {
@@ -109,6 +111,91 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
     for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
       XYDatasetListener xyDatasetListener = (XYDatasetListener) iterator.next();
       xyDatasetListener.onDatasetChanged(modificationStart, modificationEnd);
+    }
+  }
+
+  static class MutableXYMultiresolution extends XYMultiresolution {
+
+//        public static native void arraycopy(double[] src, int srcOfs, double[] dest, int destOfs, int len) /*-{
+//             Array.prototype.splice.apply(dest, [destOfs, len].concat(src));
+//
+//        }-*/;
+
+    public static void arraycopy(double[] src, int srcOfs, double[] dest,
+        int destOfs, int len) {
+      for (int i = 0; i < len; i++) {
+        dest[destOfs + i] = src[srcOfs + i];
+      }
+    }
+
+    public MutableXYMultiresolution(double[] domain, double[] range, int length,
+        double[][] multiDomain, double[][] multiRange, int[] multiLength,
+        double rangeTop, double rangeBottom) {
+      super(domain, range, length);
+      this.multiDomain = multiDomain;
+      this.multiRange = multiRange;
+      this.multiLength = multiLength;
+      this.rangeTop = rangeTop;
+      this.rangeBottom = rangeBottom;
+    }
+
+    public void setDomainValue(int index, double x) {
+      if (index >= domain.length) {
+        realloc();
+      }
+      this.domain[index] = x;
+    }
+
+    public void setRangeValue(int index, double y) {
+      if (index >= domain.length) {
+        realloc();
+      }
+      this.range[index] = y;
+    }
+
+    public void updateMultiresolution(int index, int level,
+        XYStrategy strategy) {
+      int evenIndex = index - index % 2;
+      if (level == 0) {
+        multiDomain[level][index] = domain[index];
+        multiRange[level][index] = range[index];
+        multiLength[level] = index;
+        rangeTop = Math.max(rangeTop, range[index]);
+        rangeBottom = Math.min(rangeBottom, range[index]);
+        updateMultiresolution(evenIndex / 2, level + 1, strategy);
+      } else
+      if (level < multiDomain.length && evenIndex < multiDomain[level].length) {
+        multiDomain[level][evenIndex] = strategy
+            .getDomainValue(this, level, evenIndex);
+        multiRange[level][evenIndex] = strategy
+            .getRangeValue(this, level, evenIndex);
+        multiLength[level] = evenIndex + 1;
+        evenIndex = evenIndex / 2;
+        updateMultiresolution(evenIndex, level + 1, strategy);
+      }
+    }
+
+    double[] allocMultiresolution(int numSamples) {
+      return new double[numSamples * GROWTH_FACTOR];
+    }
+
+    private void realloc() {
+      double newdomain[] = new double[domain.length * GROWTH_FACTOR];
+      double newrange[] = new double[range.length * GROWTH_FACTOR];
+      double newMultiDomain[][] = new double[multiDomain.length][];
+      double newMultiRange[][] = new double[multiRange.length][];
+      for (int i = 0; i < multiDomain.length; i++) {
+        newMultiDomain[i] = new double[multiDomain[i].length * GROWTH_FACTOR];
+        newMultiRange[i] = new double[multiRange[i].length * GROWTH_FACTOR];
+        arraycopy(multiDomain[i], 0, newMultiDomain[i], 0, multiLength[i]);
+        arraycopy(multiRange[i], 0, newMultiRange[i], 0, multiLength[i]);
+      }
+      arraycopy(domain, 0, newdomain, 0, length);
+      arraycopy(range, 0, newrange, 0, length);
+      domain = newdomain;
+      range = newrange;
+      multiDomain = newMultiDomain;
+      multiRange = newMultiRange;
     }
   }
 }

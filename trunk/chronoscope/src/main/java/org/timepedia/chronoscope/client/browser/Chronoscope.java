@@ -18,6 +18,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableArrayXYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
+import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
+import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -79,6 +81,8 @@ public class Chronoscope implements Exportable, HistoryListener {
     XYDataSource.setFactory(new BrowserXYDataSourceFactory());
   }
 
+  public static final int IMMUTABLE=0, APPENDABLE=1, RANGEMUTABLE=2;
+  
   /**
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
@@ -111,9 +115,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new Marker(date, seriesNum, label);
   }
 
-  public static XYDataset createMutableXYDataset(JavaScriptObject json) {
-    return createXYDataset(json, true);
+  public static AppendableXYDataset createMutableXYDataset(JavaScriptObject json) {
+    return (AppendableXYDataset) createXYDataset(json, true);
   }
+  
 
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
@@ -238,7 +243,7 @@ public class Chronoscope implements Exportable, HistoryListener {
         ranges[i] = getArray(mrange, 1);
       }
       if (mutable) {
-        dataset = new AppendableArrayXYDataset(
+        dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
@@ -256,7 +261,7 @@ public class Chronoscope implements Exportable, HistoryListener {
       double domainVal[] = getArray(domain, 1000);
       double rangeVal[] = getArray(range, 1);
       if (mutable) {
-        dataset = new AppendableArrayXYDataset(
+        dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domainVal, rangeVal,
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"));
