@@ -16,7 +16,7 @@ public interface UpdateableXYDataset extends XYDataset {
   void addXYDatasetListener(XYDatasetListener dataListener);
 
   /**
-   * Prepare this dataset for modification. Must be called before setXY,
+   * Prepare this dataset for modification. Must be called before setY,
    * removeXY or insertXY methods.
    */
   void beginUpdate();
