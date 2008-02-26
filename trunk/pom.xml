@@ -66,9 +66,8 @@
   </scm>
 
   <modules>
-    <module>buildtools</module>
     <module>chronoscope</module>
-    <!--        <module>samples</module> -->
+    <module>samples</module> 
     <module>widget</module>
     <module>chronoscope-java2d</module>
   </modules>
@@ -91,12 +90,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.4.2</version>
         <configuration>
-          <!--<argLine>-XstartOnFirstThread -Xmx512m -Xms512m -Dgwt.args="-web -port 8123"</argLine>-->
-          <!--<redirectTestOutputToFile>true</redirectTestOutputToFile>-->
-          <!--<childDelegation>true</childDelegation>-->
-          <!--<useSystemClassLoader>true</useSystemClassLoader> -->
-          <!--<forkMode>always</forkMode> -->
-          <skipTests>true</skipTests>
+          <argLine>-XstartOnFirstThread -Xmx512m -Xms512m</argLine>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <childDelegation>true</childDelegation>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <forkMode>always</forkMode>
+          <!--<skipTests>true</skipTests>-->
         </configuration>
       </plugin>
 
@@ -112,6 +111,17 @@
         </dependencies>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+     
+
     </plugins>
 
 
@@ -120,14 +130,11 @@
   <reporting>
 
     <plugins>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <templateFile>${basedir}/src/site/chronoscope-site.vm</templateFile>
-          <locales>en</locales>
-        </configuration>
-      </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -135,6 +142,7 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
@@ -168,7 +176,7 @@
     </repository>
     <repository>
       <id>timepedia</id>
-      <url>http://gwt-chronoscope.googlecode.com/svn/trunk/lib/mavenrepo/</url>
+      <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
     </repository>
 
   </repositories>
@@ -181,7 +189,7 @@
       </activation>
 
       <properties>
-        <gwtversion>1.4.61patch</gwtversion>
+        <gwtversion>1.4.61timepedia</gwtversion>
         <!--		<maven.test.skip>true</maven.test.skip> -->
       </properties>
     </profile>
@@ -209,7 +217,6 @@
         </os>
       </activation>
       <properties>
-        <gwtversion>1.4.61patch</gwtversion>
         <gwtplatform>mac</gwtplatform>
         <!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
         <google.webtoolkit.extrajvmargs>-Xmx512m
