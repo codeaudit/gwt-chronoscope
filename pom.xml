@@ -205,9 +205,19 @@
       <properties>
         <gwtplatform>linux</gwtplatform>
       </properties>
-
     </profile>
 
+      <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <gwtplatform>windows</gwtplatform>
+      </properties>
+    </profile>
 
     <profile>
       <id>macosx</id>
