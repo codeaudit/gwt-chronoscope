@@ -95,6 +95,9 @@
           <childDelegation>true</childDelegation>
           <useSystemClassLoader>false</useSystemClassLoader>
           <forkMode>always</forkMode>
+          <environmentVariables>
+              <DISPLAY>:5</DISPLAY>
+          </environmentVariables>
           <!--<skipTests>true</skipTests>-->
         </configuration>
       </plugin>
