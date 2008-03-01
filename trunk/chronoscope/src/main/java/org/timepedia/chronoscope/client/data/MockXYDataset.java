@@ -19,6 +19,8 @@ public class MockXYDataset implements XYDataset {
 
   private static boolean cache = false;
 
+  private String axisId = "none";
+
   public MockXYDataset() {
     if (!cache) {
       genCache();
@@ -41,8 +43,12 @@ public class MockXYDataset implements XYDataset {
     cache = true;
   }
 
+  public void setAxisId(String axisId) {
+    this.axisId = axisId;
+  }
+
   public String getAxisId() {
-    return "none";
+    return axisId;
   }
 
   public String getIdentifier() {
