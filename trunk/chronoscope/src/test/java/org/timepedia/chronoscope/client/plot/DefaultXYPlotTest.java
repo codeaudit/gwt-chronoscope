@@ -5,8 +5,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.data.MockXYDataset;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 
@@ -29,11 +30,15 @@ public class DefaultXYPlotTest extends GWTTestCase {
     ds[0]=new MockXYDataset();
     ds[1]=new MockXYDataset();
     ChartPanel cp= Chronoscope.createTimeseriesChart(ds, 600, 400);
+    cp.setReadyListener(new ViewReadyCallback() {
+        public void onViewReady(View view) {
+            XYPlot plot = view.getChart().getPlot();
+            assertSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
+            finishTest();
+        }
+    });
+    delayTestFinish(2000);
     RootPanel.get().add(cp);
-    XYPlot plot = cp.getChart().getPlot();
-    
-    assertSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
-    
   }
   
   /**
@@ -49,11 +54,15 @@ public class DefaultXYPlotTest extends GWTTestCase {
     ds[1]= mds;
     
     ChartPanel cp= Chronoscope.createTimeseriesChart(ds, 600, 400);
+    cp.setReadyListener(new ViewReadyCallback() {
+        public void onViewReady(View view) {
+            XYPlot plot = view.getChart().getPlot();
+            assertNotSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
+            finishTest();
+        }
+    });
+    delayTestFinish(2000);
     RootPanel.get().add(cp);
-    XYPlot plot = cp.getChart().getPlot();
-    
-    assertNotSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
-    
   }
 }
 
