@@ -1099,7 +1099,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         - dataSets[seriesNum].getRangeBottom());
   }
 
-  private void autoAssignDatasetAxes() {
+  protected void autoAssignDatasetAxes() {
     for (int i = 0; i < dataSets.length; i++) {
       RangeAxis ra = (RangeAxis) axisMap.get(dataSets[i].getAxisId());
       if (ra == null) {
@@ -1107,6 +1107,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
             dataSets[i].getAxisId(), i, dataSets[i].getRangeBottom(),
             dataSets[i].getRangeTop(),
             i % 2 == 0 ? rangePanelLeft : rangePanelRight);
+        axisMap.put(ra.getUnitLabel(), ra);
         if (i % 2 == 0) {
           rangePanelLeft.add(ra);
         } else {
