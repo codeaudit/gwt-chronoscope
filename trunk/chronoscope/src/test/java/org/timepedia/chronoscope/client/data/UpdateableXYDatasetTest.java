@@ -136,7 +136,4 @@ public class UpdateableXYDatasetTest extends GWTTestCase {
     return xy;
   }
   
-  public void testFail() {
-    fail("Fail on purpose");
-  }
 }
