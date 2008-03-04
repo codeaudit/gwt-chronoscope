@@ -17,7 +17,7 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 public class DefaultXYPlotTest extends GWTTestCase {
 
   public String getModuleName() {
-    return "org.timepedia.chronoscope.Chronoscope";
+    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
   }
 
   /**

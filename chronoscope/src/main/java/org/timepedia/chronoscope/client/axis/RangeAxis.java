@@ -119,6 +119,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return autoZoom;
   }
 
+  /**
+   * @gwt.export
+   */
   public void setAutoZoomVisibleRange(boolean autoZoom) {
 
     this.autoZoom = autoZoom;
@@ -133,6 +136,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
     computeLabelWidths(getChart().getView());
   }
 
+  /**
+   * @gwt.export
+   */
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
 
     this.visRangeMin = visRangeMin;
