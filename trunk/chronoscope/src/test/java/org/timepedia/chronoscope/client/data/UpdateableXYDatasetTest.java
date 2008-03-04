@@ -14,7 +14,7 @@ public class UpdateableXYDatasetTest extends GWTTestCase {
   public boolean datasetChanged;
 
   public String getModuleName() {
-    return "org.timepedia.chronoscope.Chronoscope";
+    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
   }
 
   public void testInsertOperation() {
