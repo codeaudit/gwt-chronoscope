@@ -134,6 +134,8 @@
           <environmentVariables>
               <DISPLAY>:5</DISPLAY>
           </environmentVariables>
+          <testFailureIgnore>true</testFailureIgnore>
+          <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
           <!--<skipTests>true</skipTests>-->
         </configuration>
       </plugin>
