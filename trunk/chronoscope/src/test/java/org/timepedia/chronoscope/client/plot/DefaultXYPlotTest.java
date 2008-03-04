@@ -20,7 +20,7 @@ public class DefaultXYPlotTest extends GWTTestCase {
     return "org.timepedia.chronoscope.ChronoscopeTestSuite";
   }
 
-  /**
+  /**  
    * Test that issue #23 is fixed
    * http://code.google.com/p/gwt-chronoscope/issues/detail?id=23
    */
