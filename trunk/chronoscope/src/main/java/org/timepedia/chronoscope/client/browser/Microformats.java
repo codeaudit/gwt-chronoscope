@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
@@ -23,6 +24,12 @@ import java.util.Date;
  */
 public class Microformats {
 
+  static Command microformatReadyListener;
+
+  public static void setMicroformatsReadyListener(Command rdy) {
+    microformatReadyListener = rdy;
+  }
+
   private static class MicroformatViewReadyCallback
       implements ViewReadyCallback {
 
@@ -36,13 +43,17 @@ public class Microformats {
 
     private final Element elt;
 
+    private MicroformatCountdownLatch latch;
+
     public MicroformatViewReadyCallback(Element[] links, String id,
-        String chartId, XYDataset[] ds, Element elt) {
+        String chartId, XYDataset[] ds, Element elt,
+        MicroformatCountdownLatch latch) {
       this.links = links;
       this.id = id;
       this.chartId = chartId;
       this.ds = ds;
       this.elt = elt;
+      this.latch = latch;
     }
 
     public void onViewReady(View view) {
@@ -90,6 +101,7 @@ public class Microformats {
           }
         }
       }
+      latch.decrement();
       chart.redraw();
     }
   }
@@ -108,8 +120,21 @@ public class Microformats {
       Element table) /*-{
 
           var label="";
+  
           var thead = table.getElementsByTagName("thead");
-          var labels=[], axes=[];
+          var labels=[], axes=[], dateformat=null;
+          var colgroup = table.getElementsByTagName("colgroup");
+
+          if(colgroup && colgroup.item(0)) {
+            var cols = colgroup.item(0).getElementsByTagName("col");
+            if(cols && cols.length > 0) {
+              var datecol=cols.item(0);
+              if(datecol.getAttribute("class") == "cmf-dateformat") {
+                dateformat = datecol.getAttribute('title');
+              }
+            }
+          }
+          
           if(thead && thead.item(0)) {
             var r = thead.item(0).getElementsByTagName("tr");
             var c= r.item(0).getElementsByTagName("th");
@@ -136,7 +161,9 @@ public class Microformats {
             for(i = 0; i<rowList.length; i++)
             {
              var colList = rowList.item(i).getElementsByTagName("td");
-             domain.push(Date.parse(colList.item(0).innerHTML)/1000);
+             var date = colList.item(0).innerHTML;
+             var t = @org.timepedia.chronoscope.client.data.DateParser::parse(Ljava/lang/String;Ljava/lang/String;)(dateformat, date);
+             domain.push(t/1000);
               for(j = 1; j<colList.length; j++) {
                   range[j-1].push(parseFloat(colList.item(j).innerHTML));
               }
@@ -172,6 +199,8 @@ public class Microformats {
     final Element[] links = getElementsByClassName(null, "a",
         CMF_PREFIX + "-marker");
 
+    MicroformatCountdownLatch latch = new MicroformatCountdownLatch(
+        created.length, microformatReadyListener);
     for (int i = 0; i < elements.length; i++) {
       final Element elt = elements[i];
       final String id = DOM.getElementAttribute(elt, "id");
@@ -185,7 +214,7 @@ public class Microformats {
 //                DOM.setStyleAttribute(div, "height", "300px");
 
         Element par = DOM.getParent(elt);
-        DOM.insertChild(par, div, DOM.getChildIndex(par, elt) - 1);
+        DOM.insertBefore(par, div, elt);
         DOM.setStyleAttribute(elt, "display", "none");
 
         int candidateWidth = DOM.getElementPropertyInt(elt, "clientWidth");
@@ -195,12 +224,28 @@ public class Microformats {
         int candidateHeight = (int) (candidateWidth / 1.618);
         ChartPanel cp = Chronoscope.createTimeseriesChart(cid, ds,
             candidateWidth, candidateHeight,
-            new MicroformatViewReadyCallback(links, cid, id, ds, elt));
+            new MicroformatViewReadyCallback(links, cid, id, ds, elt, latch));
         created[i] = cp;
       }
     }
-    for (int i = 0; i < created.length; i++) {
-      created[i].onAttach();
+  }
+
+  static class MicroformatCountdownLatch {
+
+    private int latchCount;
+
+    private Command microformatReadyListener;
+
+    public MicroformatCountdownLatch(int length,
+        Command microformatReadyListener) {
+      latchCount = length;
+      this.microformatReadyListener = microformatReadyListener;
+    }
+
+    public void decrement() {
+      latchCount--;
+      if(latchCount == 0 && microformatReadyListener != null)
+        microformatReadyListener.execute();
     }
   }
 
