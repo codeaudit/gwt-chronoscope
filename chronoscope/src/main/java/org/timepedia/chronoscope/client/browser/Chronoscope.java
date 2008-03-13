@@ -82,7 +82,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public static final int IMMUTABLE=0, APPENDABLE=1, RANGEMUTABLE=2;
-  
+
   /**
    * A factory function to create a vertical marker given start and end dates,
    * and a label;

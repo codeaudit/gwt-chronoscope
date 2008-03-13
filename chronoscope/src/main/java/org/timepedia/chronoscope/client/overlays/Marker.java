@@ -232,7 +232,7 @@ public class Marker implements Overlay, GssElement, Exportable {
       endAngle = Math.PI * 2.0 - Math.PI / 2 + Math.PI / 4 + Math.PI / 8;
     }
 
-    backingCanvas.arc(x + width / 2, y + height / 2, width + 1, 0, Math.PI, 1);
+    backingCanvas.arc(x + width / 2, y + height / 2, width + 1, 0, Math.PI, dir);
     backingCanvas.lineTo(x + (width + 1) / 2, yp);
     backingCanvas.closePath();
 
