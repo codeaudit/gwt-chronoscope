@@ -222,13 +222,21 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
       animationTimer = null;
     }
-    final double destDom
-        = destinationDomain; //Fence domain, Math.min(destinationDomain, getDomainMax()-getDomainMin());
+    double maxDomain = getDomainMax() - getDomainMin();
+    final double destDom = Math.min(destinationDomain, maxDomain);
     double d = destinationOrigin;
 
 // fence in origin
-//        if(destinationOrigin < getDomainMin()) d = getDomainOrigin();
-//        else if(destinationOrigin + destDom > getDomainMax()) d = getDomainMax() - destDom;
+    if (destinationDomain >= maxDomain) {
+      d = getDomainMin();
+    } else if (destinationDomain < maxDomain) {
+      if (destinationOrigin < getDomainMin()) {
+        d = getDomainMin();
+      } else if (destinationOrigin + destDom > getDomainMax()) {
+        d = getDomainMax() - destDom;
+      }
+    }
+
     final double destOrig = d;
     animationContinuation = continuation;
 
@@ -801,6 +809,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     final double damt = (double) amt / plotBounds.width * currentDomain;
 
     domainOrigin += damt;
+    if (domainOrigin + currentDomain > getDomainMax()) {
+      domainOrigin = getDomainMax() - currentDomain;
+    } else if (domainOrigin < getDomainMin()) {
+      domainOrigin = getDomainMin();
+    }
+
     redraw();
     view.fireScrollEvent(DefaultXYPlot.this, damt, 0, XYPlotListener.DRAGGED,
         false);
@@ -1126,8 +1140,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void computeDomainMinMax() {
-    domainMin = Double.MAX_VALUE;
-    domainMax = Double.MIN_VALUE;
+    domainMin = Double.POSITIVE_INFINITY;
+    domainMax = Double.NEGATIVE_INFINITY;
     for (int i = 0; i < dataSets.length; i++) {
       double min = dataSets[i].getX(0);
       domainMin = Math.min(domainMin, min);
