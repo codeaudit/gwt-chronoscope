@@ -49,6 +49,7 @@ public class ChartDemo implements EntryPoint {
     Chronoscope.enableHistorySupport(true);
     Chronoscope.setFontBookRendering(true);
     Chronoscope.setErrorReporting(true);
+    Chronoscope.setMicroformatsEnabled(true);
     Chronoscope.initialize();
 
     TabPanel vp = new TabPanel();
