@@ -26,38 +26,66 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private String textLayerName;
 
+  private GssElementImpl tickGssElem;
+
+  private GssProperties tickLabelProperties;
+
+  private String labelFormat;
+
   public RangeAxisRenderer(RangeAxis rangeAxis) {
     this.axis = rangeAxis;
   }
 
+  public double[] computeTickPositions(double rangeLow, double rangeHigh,
+      double axisHeight, double tickLabelHeight, View view) {
+    double range = rangeHigh - rangeLow;
+    int maxNumLabels = (int) Math
+        .floor(axisHeight / (2 * tickLabelHeight));
+
+    double roughInterval = range / maxNumLabels;
+
+    int logRange = ((int) Math.floor(Math.log(roughInterval) / Math.log(10)))
+        - 1;
+    double exponent = Math.pow(10, logRange);
+
+    int smoothSigDigits = (int) (roughInterval / exponent);
+    smoothSigDigits = smoothSigDigits + 5;
+    smoothSigDigits = smoothSigDigits - (smoothSigDigits % 5);
+
+    double smoothInterval = smoothSigDigits * exponent;
+
+    double axisStart = rangeLow - view.remainder(rangeLow, smoothInterval);
+    int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
+    double tickPositions[] = new double[numTicks];
+    for (int i = 0; i < tickPositions.length; i++) {
+      tickPositions[i] = axisStart;
+      axisStart += smoothInterval;
+    }
+    return tickPositions;
+  }
+
   public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
-
-    double rangeLow = axis.getRangeLow();
-    double rangeHigh = axis.getRangeHigh();
-    double range = rangeLow;
+    double tickPositions[] = computeTickPositions(axis.getRangeLow(),
+        axis.getRangeHigh(), axis.getHeight(), axis.getMaxLabelHeight(),
+        layer.getCanvas().getView());
 
     if (!gridOnly) {
       clearAxis(layer, axisBounds);
-
       drawVerticalLine(layer, axisBounds);
     }
 
     layer.setTransparency(1.0f);
     layer.setFillColor("rgba(255,255,255,255)");
     layer.setStrokeColor("rgb(0,255,0)");
-    double valueHeight = axis.getMaxLabelHeight();
-    double tickDist = valueHeight + 20;
-    double dDist = tickDist / axis.getHeight() * (rangeHigh - rangeLow);
-    double rangeSize = rangeHigh - rangeLow;
 
-    // ODO: FIXME: skip first tick to avoid clipping issue for now
-    range += dDist;
+    double axisRange = axis.getRangeHigh() - tickPositions[0];
+    labelFormat = null;
 
-    do {
-      drawTick(plot, layer, range, rangeLow, rangeSize, axisBounds, gridOnly);
-      range += dDist;
-    } while (range < rangeHigh);
+    for (int i = 0; i < tickPositions.length; i++) {
+      drawTick(plot, layer, tickPositions[i], tickPositions[0], axisRange,
+          axisBounds, gridOnly);
+    }
 
     if (!gridOnly) {
       drawAxisLabel(layer, axisBounds);
@@ -93,8 +121,11 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       axisProperties = view.getGssProperties(this, "");
       labelProperties = view
           .getGssProperties(new GssElementImpl("label", this), "");
+      tickGssElem = new GssElementImpl("tick", this);
       tickProperties = view
-          .getGssProperties(new GssElementImpl("tick", this), "");
+          .getGssProperties(tickGssElem, "");
+      tickLabelProperties = view
+          .getGssProperties(new GssElementImpl("label", tickGssElem), "");
       gridProperties = view
           .getGssProperties(new GssElementImpl("grid", this), "");
       textLayerName = axis.getAxisPanel().getPanelName() + axis.getAxisPanel()
@@ -126,23 +157,24 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
   }
 
   private void drawAxisLabel(Layer layer, Bounds bounds) {
-    double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT ? bounds
-        .width - axis.getMaxLabelWidth() - 10 - axis.getAxisLabelWidth()
-        : axis.getMaxLabelWidth());
-    double x = bounds.x + dir;
-    double y = bounds.y + bounds.height / 2 - axis.getAxisLabelHeight() / 2;
-    layer.setStrokeColor(axisProperties.color);
-    String label = axis.getLabel();
+    if (labelProperties.visible) {
+      double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT ? bounds
+          .width - axis.getMaxLabelWidth() - 10 - axis.getAxisLabelWidth()
+          : axis.getMaxLabelWidth());
+      double x = bounds.x + dir;
+      double y = bounds.y + bounds.height / 2 - axis.getAxisLabelHeight() / 2;
+      layer.setStrokeColor(axisProperties.color);
+      String label = axis.getLabel();
 
-    layer.drawRotatedText(x, y, axis.getRotationAngle(), label,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize, textLayerName, axis.getChart());
+      layer.drawRotatedText(x, y, axis.getRotationAngle(), label,
+          axisProperties.fontFamily, axisProperties.fontWeight,
+          axisProperties.fontSize, textLayerName, axis.getChart());
+    }
   }
 
   private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
 
-    String label = String.valueOf(value);
-    label = label.substring(0, Math.min(4, label.length()));
+    String label = getFormattedLabel(value, layer.getCanvas().getView());
 
     double labelWidth = layer.stringWidth(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
@@ -158,6 +190,29 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName);
     }
+  }
+
+  private String getFormattedLabel(double label, View view) {
+    if (labelFormat == null) {
+      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
+      if (axis.isForceScientificNotation() || (axis.isAllowScientificNotation()
+          && (intDigits + 1 > axis.getMaxDigits() || Math.abs(intDigits) > axis
+          .getMaxDigits()))) {
+         labelFormat = "0." + "0#########".substring(axis.getMaxDigits()) + 
+             "E0";
+      }
+      else if (intDigits > 0) {
+        String digStr = "#########0";
+        labelFormat = digStr.substring(digStr.length() - intDigits);
+        int leftOver = Math.max(axis.getMaxDigits() - intDigits, 0);
+        if (leftOver > 0) {
+          labelFormat += "." + "0#########".substring(leftOver);
+        }
+      } else {
+        labelFormat = "0." + "0#########".substring(axis.getMaxDigits());
+      }
+    }
+    return view.numberFormat(labelFormat, label);
   }
 
   private void drawTick(XYPlot plot, Layer layer, double range, double rangeLow,

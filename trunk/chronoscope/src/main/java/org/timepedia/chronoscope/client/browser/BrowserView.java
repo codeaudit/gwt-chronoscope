@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
+import com.google.gwt.i18n.client.NumberFormat;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -176,6 +177,10 @@ public class BrowserView extends View
     return history.equals(previousHistory);
   }
 
+  public String numberFormat(String labelFormat, double value) {
+    return NumberFormat.getFormat(labelFormat).format(value);
+  }
+
   public void onAttach() {
     initContainer(element, viewWidth, viewHeight);
     super.onAttach();
@@ -208,6 +213,10 @@ public class BrowserView extends View
   public void pushHistory() {
     Chronoscope.pushHistory();
   }
+
+  public native double remainder(double numerator, double modulus) /*-{
+    return numerator % modulus;
+  }-*/;
 
   /**
    * Return a Browser (CANVAS tag) canvas. This may be extended in the future to

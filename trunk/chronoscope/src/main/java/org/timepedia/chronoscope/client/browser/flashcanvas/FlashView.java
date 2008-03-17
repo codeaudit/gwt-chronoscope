@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser.flashcanvas;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
@@ -38,6 +39,7 @@ public class FlashView extends View
     implements Exportable, CssGssViewSupport, DOMView {
 
   abstract static class BrowserTimer extends Timer implements PortableTimer {
+
   }
 
   static final FocusImpl focusImpl = (FocusImpl) GWT.create(FocusImpl.class);
@@ -97,9 +99,9 @@ public class FlashView extends View
       public double getTime() {
         return new Date().getTime();
       }
-      
+
       public void run() {
-             run.run(this);
+        run.run(this);
       }
     };
   }
@@ -182,6 +184,10 @@ public class FlashView extends View
     return history.equals(previousHistory);
   }
 
+  public String numberFormat(String labelFormat, double value) {
+    return NumberFormat.getFormat(labelFormat).format(value);
+  }
+
   public void onAttach() {
     initContainer(element, viewWidth, viewHeight);
     super.onAttach();
@@ -214,6 +220,10 @@ public class FlashView extends View
   public void pushHistory() {
     Chronoscope.pushHistory();
   }
+
+  public native double remainder(double numerator, double modulus) /*-{
+      return numerator % modulus;
+  }-*/;
 
   /**
    * Return a Browser (CANVAS tag) canvas. This may be extended in the future to
