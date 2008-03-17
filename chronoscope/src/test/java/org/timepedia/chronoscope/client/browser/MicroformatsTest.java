@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Command;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Fixtures;
 
 import java.util.Date;
 
@@ -15,38 +16,12 @@ import java.util.Date;
  */
 public class MicroformatsTest extends GWTTestCase {
 
-  String microformatData = "<table id=\"microformatdemo\" class=\"cmf-chart\">\n"
-      + "    <colgroup>\n"
-      + "      <col class=\"cmf-dateformat\" title=\"yyyy\">\n"
-      + "    </colgroup>\n" + "    <thead>\n" + "        <tr>\n"
-      + "            <th>Time</th>\n" + "            <th>GDP</th>\n"
-      + "        </tr>\n" + "    </thead>\n" + "    <tbody>\n"
-      + "        <tr>\n" + "            <td>1953</td>\n"
-      + "            <td>1000</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1954</td>\n" + "            <td>3000</td>\n"
-      + "        </tr>\n" + "        <tr>\n" + "            <td>1955</td>\n"
-      + "            <td>3100</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1956</td>\n" + "            <td>3200</td>\n"
-      + "        </tr>\n" + "        <tr>\n" + "            <td>1957</td>\n"
-      + "            <td>3250</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1958</td>\n" + "            <td>3300</td>\n"
-      + "        </tr>\n" + "        <tr>\n" + "            <td>1959</td>\n"
-      + "            <td>3325</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1960</td>\n" + "            <td>1900</td>\n"
-      + "        </tr>\n" + "        <tr>\n" + "            <td>1961</td>\n"
-      + "            <td>1800</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1962</td>\n" + "            <td>2000</td>\n"
-      + "        </tr>\n" + "        <tr>\n" + "            <td>1963</td>\n"
-      + "            <td>2100</td>\n" + "        </tr>\n" + "        <tr>\n"
-      + "            <td>1964</td>\n" + "            <td>2200</td>\n"
-      + "        </tr>\n" + "    </tbody>\n" + "</table>";
-  
   public String getModuleName() {
     return "org.timepedia.chronoscope.ChronoscopeTestSuite";
   }
   
   public void testCustomDateTimeFormat() {
-     HTML data = new HTML(microformatData);
+     HTML data = new HTML(Fixtures.microformatData);
      RootPanel.get().add(data);
      delayTestFinish(15000);
      Chronoscope.setMicroformatsEnabled(true);

@@ -199,6 +199,13 @@ public abstract class View implements Exportable {
   public abstract void openInfoWindow(String html, double x, double y);
 
   /**
+   * Hack, to add IEEERemainer function for GWT until fixed in JRE emul
+   */
+  public double remainder(double numerator, double modulus) {
+    return 0;
+  }
+
+  /**
    * Resizing the chart once displayed currently unsupported
    */
   public void resize(int width, int height) {
@@ -269,4 +276,6 @@ public abstract class View implements Exportable {
   private ChronoscopeMenu getContextMenu() {
     return contextMenu;
   }
+
+  public abstract String numberFormat(String labelFormat, double value);
 }

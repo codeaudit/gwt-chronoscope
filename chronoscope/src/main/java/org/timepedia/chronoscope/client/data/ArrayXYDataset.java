@@ -134,6 +134,5 @@ public class ArrayXYDataset implements XYDataset {
     multiLengths = xy.getMultiLength();
     rangeTop = xy.getRangeTop();
     rangeBottom = xy.getRangeBottom();
-    rangeBottom = Math.min(rangeBottom, 0);
   }
 }

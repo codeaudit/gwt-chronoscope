@@ -37,6 +37,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean autoZoom = false;
 
+  private boolean allowScientificNotation = true;
+
+  private boolean forceScientificNotation = false;
+
+  private int maxDigits = 4;
+
   public RangeAxis(Chart chart, String label, String units, int axisNum,
       double rangeLow, double rangeHigh, AxisPanel panel) {
     super(chart, label, units);
@@ -152,11 +158,57 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private void computeLabelWidths(View view) {
     renderer.init(view);
 
-    maxLabelWidth = renderer.getLabelWidth(view, "0.12", 0) + 10;
-    maxLabelHeight = renderer.getLabelHeight(view, "0.12", 0) + 10;
+    maxLabelWidth = renderer.getLabelWidth(view, getDummyLabel(), 0) + 10;
+    maxLabelHeight = renderer.getLabelHeight(view, getDummyLabel(), 0) + 10;
     axisLabelHeight = renderer
         .getLabelHeight(view, getLabel(), getRotationAngle());
     axisLabelWidth = renderer
         .getLabelWidth(view, getLabel(), getRotationAngle());
+  }
+
+  /**
+   * If enabled (true by default), when maxTickLabelDigits is exceeded, labels
+   * will be rendered in scientific notation.
+   *
+   * @gwt.export
+   */
+  public void setAllowScientificNotation(boolean enable) {
+    allowScientificNotation = enable;
+  }
+
+  /**
+   * Force tick labels to always be rendered in scientific notation. (Default
+   * false);
+   *
+   * @gwt.export
+   */
+  public void setForceScientificNotation(boolean force) {
+    forceScientificNotation = force;
+  }
+
+  /**
+   * The maximum number of digits allowed in a tick label, if scientific
+   * notation is enabled, it will automatically switch after this limit is
+   * reached. Minimum is 1 digit.
+   */
+  public void setMaxTickLabelDigits(int digits) {
+    maxDigits = Math.max(1, digits);
+  }
+
+  public boolean isAllowScientificNotation() {
+    return allowScientificNotation;
+  }
+
+  public boolean isForceScientificNotation() {
+    return forceScientificNotation;
+  }
+
+  public int getMaxDigits() {
+    return maxDigits;
+  }
+
+  public String getDummyLabel() {
+    return "0" + (maxDigits == 1 ? ""
+        : "." + "000000000".substring(0, maxDigits - 1));
   }
 }
