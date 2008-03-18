@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>com.google.gwt</groupId>
+  <artifactId>gwt-dev-mac</artifactId>
+  <version>1.4.60</version>
+  <versioning>
+    <versions>
+      <version>1.4.60</version>
+      <version>1.5-SNAP</version>
+      <version>1.4.61</version>
+      <version>1.4.61patch</version>
+      <version>1.4.61patched</version>
+      <version>1.4.61timepedia</version>
+    </versions>
+    <lastUpdated>20080318213427</lastUpdated>
+  </versioning>
+</metadata>
