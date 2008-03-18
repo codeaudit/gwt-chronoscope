@@ -32,6 +32,8 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private String labelFormat;
 
+  private boolean scientificNotationOn;
+
   public RangeAxisRenderer(RangeAxis rangeAxis) {
     this.axis = rangeAxis;
   }
@@ -47,7 +49,6 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     int logRange = ((int) Math.floor(Math.log(roughInterval) / Math.log(10)))
         - 1;
     double exponent = Math.pow(10, logRange);
-
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits + 5;
     smoothSigDigits = smoothSigDigits - (smoothSigDigits % 5);
@@ -134,6 +135,10 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 //        view.getCanvas().setStrokeColor(axisProperties.color);
   }
 
+  public boolean isScientificNotationOn() {
+    return scientificNotationOn;
+  }
+
   private void clearAxis(Layer layer, Bounds bounds) {
 
     layer.save();
@@ -174,6 +179,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
 
+    computeLabelFormat(axis.getRange());
     String label = getFormattedLabel(value, layer.getCanvas().getView());
 
     double labelWidth = layer.stringWidth(label, axisProperties.fontFamily,
@@ -190,29 +196,6 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName);
     }
-  }
-
-  private String getFormattedLabel(double label, View view) {
-    if (labelFormat == null) {
-      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
-      if (axis.isForceScientificNotation() || (axis.isAllowScientificNotation()
-          && (intDigits + 1 > axis.getMaxDigits() || Math.abs(intDigits) > axis
-          .getMaxDigits()))) {
-         labelFormat = "0." + "0#########".substring(axis.getMaxDigits()) + 
-             "E0";
-      }
-      else if (intDigits > 0) {
-        String digStr = "#########0";
-        labelFormat = digStr.substring(digStr.length() - intDigits);
-        int leftOver = Math.max(axis.getMaxDigits() - intDigits, 0);
-        if (leftOver > 0) {
-          labelFormat += "." + "0#########".substring(leftOver);
-        }
-      } else {
-        labelFormat = "0." + "0#########".substring(axis.getMaxDigits());
-      }
-    }
-    return view.numberFormat(labelFormat, label);
   }
 
   private void drawTick(XYPlot plot, Layer layer, double range, double rangeLow,
@@ -246,5 +229,36 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
         bounds.y + bounds.height);
+  }
+
+  private String getFormattedLabel(double label, View view) {
+    if(!Double.isNaN(axis.getScale()))
+      label /= axis.getScale();
+
+    String lab=view.numberFormat(labelFormat, label);
+    return lab;
+  }
+
+  private void computeLabelFormat(double label) {
+    if (labelFormat == null) {
+      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
+      if (axis.isForceScientificNotation() || (axis.isAllowScientificNotation()
+          && (intDigits + 1 > axis.getMaxDigits() || Math.abs(intDigits) > axis
+          .getMaxDigits()))) {
+        labelFormat = "0." + "0#########".substring(axis.getMaxDigits()) + "E0";
+        scientificNotationOn = true;
+      } else if (intDigits > 0) {
+        String digStr = "#########0";
+        labelFormat = digStr.substring(digStr.length() - intDigits);
+        int leftOver = Math.max(axis.getMaxDigits() - intDigits, 0);
+        if (leftOver > 0) {
+          labelFormat += "." + "0#########".substring(leftOver);
+        }
+        scientificNotationOn = false;
+      } else {
+        labelFormat = "0." + "0#########".substring(axis.getMaxDigits());
+        scientificNotationOn = false;
+      }
+    }
   }
 }

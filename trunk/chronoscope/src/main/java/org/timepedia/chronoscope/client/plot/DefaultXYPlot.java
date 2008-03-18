@@ -543,7 +543,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public String getSeriesLabel(int i) {
-    return dataSets[i].getRangeLabel();
+    return dataSets[i].getRangeLabel() + getRangeAxis(i)
+        .getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {

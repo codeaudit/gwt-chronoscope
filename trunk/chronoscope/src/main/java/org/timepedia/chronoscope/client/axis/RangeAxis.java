@@ -41,7 +41,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean forceScientificNotation = false;
 
+  private boolean showExponents = false;
+
   private int maxDigits = 4;
+
+  private double scale = Double.NaN;
 
   public RangeAxis(Chart chart, String label, String units, int axisNum,
       double rangeLow, double rangeHigh, AxisPanel panel) {
@@ -74,12 +78,21 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return axisNum;
   }
 
+  public String getDummyLabel() {
+    return "0" + (maxDigits == 1 ? ""
+        : "." + "000000000".substring(0, maxDigits - 1));
+  }
+
   public double getHeight() {
     if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
       return getChart().getPlotForAxis(this).getPlotBounds().height;
     }
+  }
+
+  public int getMaxDigits() {
+    return maxDigits;
   }
 
   public double getMaxLabelHeight() {
@@ -121,8 +134,39 @@ public class RangeAxis extends ValueAxis implements Exportable {
     visRangeMax = rangeHigh;
   }
 
+  public boolean isAllowScientificNotation() {
+    return allowScientificNotation;
+  }
+
   public boolean isAutoZoomVisibleRange() {
     return autoZoom;
+  }
+
+  public boolean isForceScientificNotation() {
+    return forceScientificNotation;
+  }
+
+  public boolean isShowScale() {
+    return showExponents;
+  }
+
+  /**
+   * Set a scale factor for displaying axis tick values
+   *
+   * @gwt.export
+   */
+  public void setScale(double scale) {
+    this.scale = scale;
+  }
+
+  /**
+   * If enabled (true by default), when maxTickLabelDigits is exceeded, labels
+   * will be rendered in scientific notation.
+   *
+   * @gwt.export
+   */
+  public void setAllowScientificNotation(boolean enable) {
+    allowScientificNotation = enable;
   }
 
   /**
@@ -134,12 +178,71 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   /**
+   * Force tick labels to always be rendered in scientific notation. (Default
+   * false);
+   *
+   * @gwt.export
+   */
+  public void setForceScientificNotation(boolean force) {
+    forceScientificNotation = force;
+  }
+
+  /**
    * @gwt.export
    */
   public void setLabel(String label) {
     super.setLabel(label);
     getChart().damageAxes(this);
     computeLabelWidths(getChart().getView());
+  }
+
+  /**
+   * The maximum number of digits allowed in a tick label, if scientific
+   * notation is enabled, it will automatically switch after this limit is
+   * reached. Minimum is 1 digit.
+   */
+  public void setMaxTickLabelDigits(int digits) {
+    maxDigits = Math.max(1, digits);
+  }
+
+  public void setShowExponents(boolean showExponents) {
+    this.showExponents = showExponents;
+  }
+
+  public String getLabel() {
+    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
+    return super.getLabel() + getLabelSuffix(getRange());
+  }
+
+  private static String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
+      "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
+      "(Millions)", "(Tens of Millions)", "(Hundreds of Millions)",
+      "(Billions)", "(Tens of Billions)", "(Hundreds of Billions)",
+      "(Trillions)", "(Tens of Trillions)", "(Hundreds of Trillions)"};
+
+  private static String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
+      "(Thousandths)", "(Ten Thousandths)", "(Hundred Thousandths)",
+      "(Millionths)", "(Ten Millionths)", "(Hundred Millionths)",
+      "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
+      "(Trillionths)", "(Ten Trillionths)", ("Hundred Trillionths")};
+
+  public String getLabelSuffix(double range) {
+    if (isForceScientificNotation() || (isAllowScientificNotation() && renderer
+        .isScientificNotationOn())) {
+      return "";
+    }
+    if (!Double.isNaN(getScale())) {
+      int intDigits = (int) Math.floor(Math.log(getRange()+1) / Math.log(10));
+      if (intDigits > 0) {
+        return " " + (intDigits < posExponentLabels.length
+            ? posExponentLabels[intDigits] : "E" + intDigits);
+      } else if (intDigits < 0) {
+        return " " + (-intDigits < negExponentLabels.length
+            ? negExponentLabels[-intDigits] : "E" + intDigits);
+      }
+    }
+
+    return "";
   }
 
   /**
@@ -166,49 +269,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         .getLabelWidth(view, getLabel(), getRotationAngle());
   }
 
-  /**
-   * If enabled (true by default), when maxTickLabelDigits is exceeded, labels
-   * will be rendered in scientific notation.
-   *
-   * @gwt.export
-   */
-  public void setAllowScientificNotation(boolean enable) {
-    allowScientificNotation = enable;
-  }
-
-  /**
-   * Force tick labels to always be rendered in scientific notation. (Default
-   * false);
-   *
-   * @gwt.export
-   */
-  public void setForceScientificNotation(boolean force) {
-    forceScientificNotation = force;
-  }
-
-  /**
-   * The maximum number of digits allowed in a tick label, if scientific
-   * notation is enabled, it will automatically switch after this limit is
-   * reached. Minimum is 1 digit.
-   */
-  public void setMaxTickLabelDigits(int digits) {
-    maxDigits = Math.max(1, digits);
-  }
-
-  public boolean isAllowScientificNotation() {
-    return allowScientificNotation;
-  }
-
-  public boolean isForceScientificNotation() {
-    return forceScientificNotation;
-  }
-
-  public int getMaxDigits() {
-    return maxDigits;
-  }
-
-  public String getDummyLabel() {
-    return "0" + (maxDigits == 1 ? ""
-        : "." + "000000000".substring(0, maxDigits - 1));
+  public double getScale() {
+    return scale;
   }
 }
