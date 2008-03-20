@@ -38,38 +38,10 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     this.axis = rangeAxis;
   }
 
-  public double[] computeTickPositions(double rangeLow, double rangeHigh,
-      double axisHeight, double tickLabelHeight, View view) {
-    double range = rangeHigh - rangeLow;
-    int maxNumLabels = (int) Math
-        .floor(axisHeight / (2 * tickLabelHeight));
-
-    double roughInterval = range / maxNumLabels;
-
-    int logRange = ((int) Math.floor(Math.log(roughInterval) / Math.log(10)))
-        - 1;
-    double exponent = Math.pow(10, logRange);
-    int smoothSigDigits = (int) (roughInterval / exponent);
-    smoothSigDigits = smoothSigDigits + 5;
-    smoothSigDigits = smoothSigDigits - (smoothSigDigits % 5);
-
-    double smoothInterval = smoothSigDigits * exponent;
-
-    double axisStart = rangeLow - view.remainder(rangeLow, smoothInterval);
-    int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
-    double tickPositions[] = new double[numTicks];
-    for (int i = 0; i < tickPositions.length; i++) {
-      tickPositions[i] = axisStart;
-      axisStart += smoothInterval;
-    }
-    return tickPositions;
-  }
-
   public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
-    double tickPositions[] = computeTickPositions(axis.getRangeLow(),
-        axis.getRangeHigh(), axis.getHeight(), axis.getMaxLabelHeight(),
-        layer.getCanvas().getView());
+    double tickPositions[] = axis.computeTickPositions(axis.getRangeLow(),
+        axis.getRangeHigh(), axis.getHeight(), axis.getMaxLabelHeight());
 
     if (!gridOnly) {
       clearAxis(layer, axisBounds);
