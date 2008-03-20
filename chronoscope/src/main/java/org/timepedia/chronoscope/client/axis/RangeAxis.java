@@ -15,6 +15,45 @@ import org.timepedia.exporter.client.Exportable;
  */
 public class RangeAxis extends ValueAxis implements Exportable {
 
+  private static String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
+      "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
+      "(Millions)", "(Tens of Millions)", "(Hundreds of Millions)",
+      "(Billions)", "(Tens of Billions)", "(Hundreds of Billions)",
+      "(Trillions)", "(Tens of Trillions)", "(Hundreds of Trillions)"};
+
+  private static String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
+      "(Thousandths)", "(Ten Thousandths)", "(Hundred Thousandths)",
+      "(Millionths)", "(Ten Millionths)", "(Hundred Millionths)",
+      "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
+      "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
+
+  public static double[] computeLinearTickPositions(double rangeLow,
+      double rangeHigh, double axisHeight, double tickLabelHeight) {
+    double range = rangeHigh - rangeLow;
+    int maxNumLabels = (int) Math
+        .floor(axisHeight / (2 * tickLabelHeight));
+
+    double roughInterval = range / maxNumLabels;
+
+    int logRange = ((int) Math.floor(Math.log(roughInterval) / Math.log(10)))
+        - 1;
+    double exponent = Math.pow(10, logRange);
+    int smoothSigDigits = (int) (roughInterval / exponent);
+    smoothSigDigits = smoothSigDigits + 5;
+    smoothSigDigits = smoothSigDigits - (smoothSigDigits % 5);
+
+    double smoothInterval = smoothSigDigits * exponent;
+
+    double axisStart = rangeLow - rangeLow % smoothInterval;
+    int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
+    double tickPositions[] = new double[numTicks];
+    for (int i = 0; i < tickPositions.length; i++) {
+      tickPositions[i] = axisStart;
+      axisStart += smoothInterval;
+    }
+    return tickPositions;
+  }
+
   private final int axisNum;
 
   private final double rangeLow;
@@ -57,6 +96,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.rangeHigh = rangeHigh;
   }
 
+  public double[] computeTickPositions(double rangeLow, double rangeHigh,
+      double axisHeight, double tickLabelHeight) {
+    return computeLinearTickPositions(rangeLow, rangeHigh, axisHeight,
+        tickLabelHeight);
+  }
+
   public double dataToUser(double dataY) {
     return (dataY - getRangeLow()) / getRange();
   }
@@ -91,6 +136,30 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
+  public String getLabel() {
+    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
+    return super.getLabel() + getLabelSuffix(getRange());
+  }
+
+  public String getLabelSuffix(double range) {
+    if (isForceScientificNotation() || (isAllowScientificNotation() && renderer
+        .isScientificNotationOn())) {
+      return "";
+    }
+    if (!Double.isNaN(getScale())) {
+      int intDigits = (int) Math.floor(Math.log(getRange() + 1) / Math.log(10));
+      if (intDigits > 0) {
+        return " " + (intDigits < posExponentLabels.length
+            ? posExponentLabels[intDigits] : "E" + intDigits);
+      } else if (intDigits < 0) {
+        return " " + (-intDigits < negExponentLabels.length
+            ? negExponentLabels[-intDigits] : "E" + intDigits);
+      }
+    }
+
+    return "";
+  }
+
   public int getMaxDigits() {
     return maxDigits;
   }
@@ -115,6 +184,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return
         (getAxisPanel().getPosition() == AxisPanel.RIGHT ? 1.0 : -1.0) * Math.PI
             / 2;
+  }
+
+  public double getScale() {
+    return scale;
   }
 
   public double getWidth() {
@@ -148,15 +221,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public boolean isShowScale() {
     return showExponents;
-  }
-
-  /**
-   * Set a scale factor for displaying axis tick values
-   *
-   * @gwt.export
-   */
-  public void setScale(double scale) {
-    this.scale = scale;
   }
 
   /**
@@ -205,44 +269,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
     maxDigits = Math.max(1, digits);
   }
 
+  /**
+   * Set a scale factor for displaying axis tick values
+   *
+   * @gwt.export
+   */
+  public void setScale(double scale) {
+    this.scale = scale;
+  }
+
   public void setShowExponents(boolean showExponents) {
     this.showExponents = showExponents;
-  }
-
-  public String getLabel() {
-    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
-    return super.getLabel() + getLabelSuffix(getRange());
-  }
-
-  private static String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
-      "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
-      "(Millions)", "(Tens of Millions)", "(Hundreds of Millions)",
-      "(Billions)", "(Tens of Billions)", "(Hundreds of Billions)",
-      "(Trillions)", "(Tens of Trillions)", "(Hundreds of Trillions)"};
-
-  private static String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
-      "(Thousandths)", "(Ten Thousandths)", "(Hundred Thousandths)",
-      "(Millionths)", "(Ten Millionths)", "(Hundred Millionths)",
-      "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
-      "(Trillionths)", "(Ten Trillionths)", ("Hundred Trillionths")};
-
-  public String getLabelSuffix(double range) {
-    if (isForceScientificNotation() || (isAllowScientificNotation() && renderer
-        .isScientificNotationOn())) {
-      return "";
-    }
-    if (!Double.isNaN(getScale())) {
-      int intDigits = (int) Math.floor(Math.log(getRange()+1) / Math.log(10));
-      if (intDigits > 0) {
-        return " " + (intDigits < posExponentLabels.length
-            ? posExponentLabels[intDigits] : "E" + intDigits);
-      } else if (intDigits < 0) {
-        return " " + (-intDigits < negExponentLabels.length
-            ? negExponentLabels[-intDigits] : "E" + intDigits);
-      }
-    }
-
-    return "";
   }
 
   /**
@@ -267,9 +304,5 @@ public class RangeAxis extends ValueAxis implements Exportable {
         .getLabelHeight(view, getLabel(), getRotationAngle());
     axisLabelWidth = renderer
         .getLabelWidth(view, getLabel(), getRotationAngle());
-  }
-
-  public double getScale() {
-    return scale;
   }
 }
