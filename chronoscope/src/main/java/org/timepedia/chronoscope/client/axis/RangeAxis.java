@@ -2,10 +2,10 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
 import org.timepedia.exporter.client.Exportable;
 
 /**
