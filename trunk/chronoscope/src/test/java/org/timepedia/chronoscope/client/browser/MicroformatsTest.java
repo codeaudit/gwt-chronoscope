@@ -8,17 +8,14 @@ import com.google.gwt.user.client.Command;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Fixtures;
+import org.timepedia.chronoscope.client.ChronoscopeTestCase;
 
 import java.util.Date;
 
 /**
  * Test microformat import facility
  */
-public class MicroformatsTest extends GWTTestCase {
-
-  public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
-  }
+public class MicroformatsTest extends ChronoscopeTestCase {
   
   public void testCustomDateTimeFormat() {
      HTML data = new HTML(Fixtures.microformatData);

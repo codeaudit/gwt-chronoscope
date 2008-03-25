@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.timepedia.chronoscope.client.Fixtures;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.ChronoscopeTestCase;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -15,11 +16,7 @@ import org.timepedia.chronoscope.client.data.MockXYDataset;
 /**
  * Test case for XYPlot interface
  */
-public class DefaultXYPlotTest extends GWTTestCase {
-
-  public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
-  }
+public class DefaultXYPlotTest extends ChronoscopeTestCase {
 
   /**
    * Test that issue #23 is fixed http://code.google.com/p/gwt-chronoscope/issues/detail?id=23

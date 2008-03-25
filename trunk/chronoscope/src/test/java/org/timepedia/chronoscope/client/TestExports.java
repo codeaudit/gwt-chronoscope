@@ -14,11 +14,7 @@ import org.timepedia.exporter.client.ExporterBase;
 /**
  *
  */
-public class TestExports extends GWTTestCase {
-
-  public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
-  }
+public class TestExports extends ChronoscopeTestCase {
 
   public void onChronoscopeLoaded() {
     finishTest();
