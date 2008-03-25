@@ -2,20 +2,18 @@ package org.timepedia.chronoscope.client.data;
 
 import com.google.gwt.junit.client.GWTTestCase;
 
+import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+
 /**
  * Test proper functioning of updateable datasets
  */
-public class UpdateableXYDatasetTest extends GWTTestCase {
+public class UpdateableXYDatasetTest extends ChronoscopeTestCase {
 
   private static final int TEST_X = 10;
 
   private static final int TEST_Y = 10;
 
   public boolean datasetChanged;
-
-  public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
-  }
 
   public void testInsertOperation() {
     final RangeMutableXYDataset xy = createTestDataset();
