@@ -7,9 +7,6 @@
   
   <inherits name='org.timepedia.exporter.Exporter'/>
 
-  <stylesheet src="Chronoscope.css"/>
-
-
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
     if(window.location.href.indexOf("_force_flash") != -1) return "force";      
