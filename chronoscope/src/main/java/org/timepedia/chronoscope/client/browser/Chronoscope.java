@@ -16,10 +16,9 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.AppendableArrayXYDataset;
+import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
-import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -54,6 +53,8 @@ public class Chronoscope implements Exportable, HistoryListener {
    */
   public static final int RENDERER_XYBAR = 1;
 
+  public static final int IMMUTABLE = 0, APPENDABLE = 1, RANGEMUTABLE = 2;
+
   private static final HashMap charts = new HashMap();
 
   /**
@@ -76,12 +77,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   private static Chronoscope instance;
 
   private static int globalChartNumber = 0;
-
-  static {
-    XYDataSource.setFactory(new BrowserXYDataSourceFactory());
-  }
-
-  public static final int IMMUTABLE=0, APPENDABLE=1, RANGEMUTABLE=2;
 
   /**
    * A factory function to create a vertical marker given start and end dates,
@@ -115,10 +110,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new Marker(date, seriesNum, label);
   }
 
-  public static AppendableXYDataset createMutableXYDataset(JavaScriptObject json) {
+  public static AppendableXYDataset createMutableXYDataset(
+      JavaScriptObject json) {
     return (AppendableXYDataset) createXYDataset(json, true);
   }
-  
 
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
@@ -307,8 +302,8 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public static String getFontBookServiceEndpoint() {
-    return fontBookServiceEndpoint == null ? GWT.getModuleBaseURL() + "fr"
-        : fontBookServiceEndpoint;
+    return fontBookServiceEndpoint == null ?
+        "http://api.timepedia.org/api/widget/" + "fr" : fontBookServiceEndpoint;
   }
 
   public static Chronoscope getInstance() {
@@ -403,6 +398,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new CssGssContext(id);
   }
 
+  static {
+    XYDataSource.setFactory(new BrowserXYDataSourceFactory());
+  }
+
   private static double[] getArray(JavaScriptObject jsArray, int preMul) {
     int len = JavascriptHelper.jsArrLength(jsArray);
 
@@ -450,20 +449,28 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public void init() {
 
+    try {
+      checkForChronoscopeCSS();
 //        tryInjectChronoscopeCSS(new Command() {
 //            public void execute() {
-    exportFunctions();
+      exportFunctions();
 
-    onChronoscopeLoad();
-    if (Chronoscope.isMicroformatsEnabled()) {
-      Microformats.initializeMicroformats(Chronoscope.this);
-    }
+      onChronoscopeLoad();
+      if (Chronoscope.isMicroformatsEnabled()) {
+        Microformats.initializeMicroformats(Chronoscope.this);
+      }
 
-    if (isHistorySupportEnabled()) {
-      initHistory();
-    }
+      if (isHistorySupportEnabled()) {
+        initHistory();
+      }
 //            }
 //        });
+    } catch (Exception e) {
+      if (isErrorReportingEnabled()) {
+        Window.alert(e.getMessage());
+      }
+      throw new RuntimeException(e.getMessage());
+    }
   }
 
   public void onHistoryChanged(String historyToken) {
@@ -545,6 +552,13 @@ public class Chronoscope implements Exportable, HistoryListener {
     }
   }
 
+  private void checkForChronoscopeCSS() {
+    if (!isCssIncluded("Chronoscope.css") && errorReportingEnabled) {
+      throw new RuntimeException(
+          "@import or inclusion of Chronoscope.css missing. To use Chronoscope, your host page, or CSS stylesheet must include Chronoscope.css");
+    }
+  }
+
   /**
    * Invoked after Chronoscope has exported the JS API and parsed microformats.
    * An instance of Chronoscope is passed to a Javascript callback.
@@ -584,13 +598,26 @@ public class Chronoscope implements Exportable, HistoryListener {
                  return true;
              }
             var k = 0;
-            for(k = 0; k<ss.cssRules.length; k++) {
-                var rule = ss.cssRules[k];
-                if(rule.href && rule.stylesheet) {
-                    if(rule.href.indexOf(css) != -1) return true;
-                    return isIncluded(rule.styleSheet);
-                }
+            if(ss.cssRules) {
+              for(k = 0; k<ss.cssRules.length; k++) {
+                  var rule = ss.cssRules[k];
+                  if(rule.href && rule.stylesheet) {
+                      if(rule.href.indexOf(css) != -1) return true;
+                      var isInc=isIncluded(rule.styleSheet);
+                      if(isInc) return true;
+                  }
+              }
             }
+            if(ss.imports) {
+              for(k=0; i<ss.imports.length; k++) {
+                if(ss.imports[k].href.indexOf(css) != -1) {
+                  return true;
+                }
+                var isInc = isIncluded(ss.imports[k]);
+                if(isInc) return true;
+              }
+            }
+           return false;
          }
     }-*/;
 
