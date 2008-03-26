@@ -175,6 +175,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private boolean domainAxisVisible = true;
 
+  private boolean highlightDrawn;
+
   public DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive,
       Bounds initialBounds) {
     this.chart = chart;
@@ -214,6 +216,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void animateTo(final double destinationOrigin,
       final double destinationDomain, final int eventType,
       final PortableTimerTask continuation) {
+    animateTo(destinationOrigin, destinationDomain, eventType, continuation,
+        true);
+  }
+
+  public void animateTo(final double destinationOrigin,
+      final double destinationDomain, final int eventType,
+      final PortableTimerTask continuation, boolean fence) {
 
     if (animationTimer != null) {
       animationTimer.cancelTimer();
@@ -223,17 +232,20 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       animationTimer = null;
     }
     double maxDomain = getDomainMax() - getDomainMin();
-    final double destDom = Math.min(destinationDomain, maxDomain);
+    final double destDom = fence ? Math.min(destinationDomain, maxDomain)
+        : destinationDomain;
     double d = destinationOrigin;
 
 // fence in origin
-    if (destinationDomain >= maxDomain) {
-      d = getDomainMin();
-    } else if (destinationDomain < maxDomain) {
-      if (destinationOrigin < getDomainMin()) {
+    if (fence) {
+      if (destinationDomain >= maxDomain) {
         d = getDomainMin();
-      } else if (destinationOrigin + destDom > getDomainMax()) {
-        d = getDomainMax() - destDom;
+      } else if (destinationDomain < maxDomain) {
+        if (destinationOrigin < getDomainMin()) {
+          d = getDomainMin();
+        } else if (destinationOrigin + destDom > getDomainMax()) {
+          d = getDomainMax() - destDom;
+        }
       }
     }
 
@@ -677,9 +689,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     animateTo(getDomainCenter() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
-  public void onDatasetChanged(double domainStart, double domainEnd) {
+  public void onDatasetChanged(XYDataset dataset, double domainStart,
+      double domainEnd) {
     computeDomainMinMax();
     computeVisibleDomainStartEnd();
+    damageAxes(getRangeAxis(getSeriesNumber(dataset)));
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
           new PortableTimerTask() {
@@ -687,11 +701,20 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
               overviewDrawn = false;
               redraw();
             }
-          });
+          }, false);
     } else {
       overviewDrawn = false;
       redraw();
     }
+  }
+
+  private int getSeriesNumber(XYDataset dataset) {
+    for (int i = 0; i < dataSets.length; i++) {
+      if (dataSets[i] == dataset) {
+        return i;
+      }
+    }
+    return 0; // TODO: silent fail
   }
 
   public void openInfoWindow(final String html, final double domainX,
@@ -1083,6 +1106,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
         beginHighlight > domainOrigin + currentDomain
             && endHighlight > domainOrigin + currentDomain)) {
+      if(highlightDrawn) {
+        layer.clear();
+        highlightDrawn=false;
+      }
       return;
     }
 
@@ -1098,6 +1125,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     layer.fillRect(ux, 0, ex - ux, plotBounds.height);
     layer.restore();
+    highlightDrawn=true;
   }
 
   protected void pushHistory() {

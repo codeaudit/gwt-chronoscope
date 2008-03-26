@@ -1,8 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.junit.client.GWTTestCase;
-
 import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+import org.timepedia.chronoscope.client.XYDataset;
 
 /**
  * Test proper functioning of updateable datasets
@@ -16,6 +15,7 @@ public class UpdateableXYDatasetTest extends ChronoscopeTestCase {
   public boolean datasetChanged;
 
   public void testInsertOperation() {
+    
     final RangeMutableXYDataset xy = createTestDataset();
     final int oldNumSamples = xy.getNumSamples();
 
@@ -23,7 +23,7 @@ public class UpdateableXYDatasetTest extends ChronoscopeTestCase {
 
     xy.addXYDatasetListener(new XYDatasetListener() {
 
-      public void onDatasetChanged(double domainStart, double domainEnd) {
+      public void onDatasetChanged(XYDataset dataset, double domainStart, double domainEnd) {
 
         assertTrue(
             "Domain Start and Domain End of datasetChanged should be " + TEST_X,
@@ -79,7 +79,7 @@ public class UpdateableXYDatasetTest extends ChronoscopeTestCase {
 
     xy.addXYDatasetListener(new XYDatasetListener() {
 
-      public void onDatasetChanged(double domainStart, double domainEnd) {
+      public void onDatasetChanged(XYDataset dataset, double domainStart, double domainEnd) {
 
         double domainVal = xy.getX(testindex);
         assertTrue("Domain Start and Domain End of datasetChanged should be "

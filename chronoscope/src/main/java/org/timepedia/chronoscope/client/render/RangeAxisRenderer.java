@@ -43,6 +43,14 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     double tickPositions[] = axis.computeTickPositions(axis.getRangeLow(),
         axis.getRangeHigh(), axis.getHeight(), axis.getMaxLabelHeight());
 
+    double rangeHigh = axis.getRangeHigh();
+    for(int i=0; i<tickPositions.length; i++) {
+      if(tickPositions[i] >= rangeHigh) {
+       rangeHigh=tickPositions[i];
+        break;
+      }
+    }
+    
     if (!gridOnly) {
       clearAxis(layer, axisBounds);
       drawVerticalLine(layer, axisBounds);
@@ -52,7 +60,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setFillColor("rgba(255,255,255,255)");
     layer.setStrokeColor("rgb(0,255,0)");
 
-    double axisRange = axis.getRangeHigh() - tickPositions[0];
+    double axisRange = rangeHigh - tickPositions[0];
     labelFormat = null;
 
     for (int i = 0; i < tickPositions.length; i++) {

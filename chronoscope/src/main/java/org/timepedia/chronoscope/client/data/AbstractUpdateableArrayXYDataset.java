@@ -110,7 +110,7 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
   private void fireDatasetChangeListeners() {
     for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
       XYDatasetListener xyDatasetListener = (XYDatasetListener) iterator.next();
-      xyDatasetListener.onDatasetChanged(modificationStart, modificationEnd);
+      xyDatasetListener.onDatasetChanged(this, modificationStart, modificationEnd);
     }
   }
 

@@ -38,8 +38,7 @@ public class TestExports extends ChronoscopeTestCase {
     XYDataset ds[] = new XYDataset[2];
     ds[0] = new MockXYDataset();
     ds[1] = new MockXYDataset();
-    ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
-    cp.setReadyListener(new ViewReadyCallback() {
+    runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
         assertTrue(isSetAutoZoomVisibleRange(ExporterBase.wrap(view)));
@@ -48,8 +47,6 @@ public class TestExports extends ChronoscopeTestCase {
         finishTest();
       }
     });
-    delayTestFinish(2000);
-    RootPanel.get().add(cp);
   }
 
   private native boolean isSetLabel(JavaScriptObject view) /*-{

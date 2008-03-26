@@ -29,7 +29,7 @@
   <servlet path="/fr"
            class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
 
-  <replace-with class="org.timepedia.chronoscope.client.browser.CssGssContext">
+  <replace-with class="org.timepedia.chronoscope.client.browser.IEGssContext">
     <when-type-is
         class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
     <when-property-is name="user.agent" value="ie6"/>
