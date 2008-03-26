@@ -353,7 +353,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static void putChart(String id, Chart chart) {
     charts.put(id, chart);
-    chart.setChartId(id);
+    chart.setChartId(id);   
   }
 
   /**
