@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.chronoscope.client.XYDataset;
+
 /**
  * An interface used to track modifications to an XYDataset.
  */
@@ -10,5 +12,5 @@ public interface XYDatasetListener {
    * which bounds the span of domain encompassing all the changes that took
    * place.
    */
-  void onDatasetChanged(double domainStart, double domainEnd);
+  void onDatasetChanged(XYDataset dataset, double domainStart, double domainEnd);
 }

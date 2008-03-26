@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Fixtures;
@@ -26,16 +25,14 @@ public class DefaultXYPlotTest extends ChronoscopeTestCase {
     XYDataset ds[] = new XYDataset[2];
     ds[0] = new MockXYDataset();
     ds[1] = new MockXYDataset();
-    ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
-    cp.setReadyListener(new ViewReadyCallback() {
+    runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
         assertSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
         finishTest();
       }
     });
-    delayTestFinish(2000);
-    RootPanel.get().add(cp);
+
   }
 
   /**
@@ -49,16 +46,13 @@ public class DefaultXYPlotTest extends ChronoscopeTestCase {
     mds.setAxisId("different");
     ds[1] = mds;
 
-    ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
-    cp.setReadyListener(new ViewReadyCallback() {
+    runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
         assertNotSame(plot.getRangeAxis(0), plot.getRangeAxis(1));
         finishTest();
       }
     });
-    delayTestFinish(2000);
-    RootPanel.get().add(cp);
   }
 
   /**
@@ -69,8 +63,7 @@ public class DefaultXYPlotTest extends ChronoscopeTestCase {
     ds[0] = Fixtures.getNegativeDomainAscendingRange();
     ds[1] = Fixtures.getPositiveDomainDescendingRange();
 
-    ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
-    cp.setReadyListener(new ViewReadyCallback() {
+    runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
         assertEquals(ds[0].getX(0), plot.getDomainMin(), 0.0);
@@ -79,8 +72,6 @@ public class DefaultXYPlotTest extends ChronoscopeTestCase {
         finishTest();
       }
     });
-    delayTestFinish(2000);
-    RootPanel.get().add(cp);
   }
 }
 

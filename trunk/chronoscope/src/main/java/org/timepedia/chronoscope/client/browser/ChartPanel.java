@@ -15,6 +15,7 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.exporter.client.Exportable;
 
@@ -36,6 +37,8 @@ import org.timepedia.exporter.client.Exportable;
  */
 public class ChartPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants, Exportable {
+
+  private GssContext gssContext;
 
   /**
    * May no longer be neccessarily now that some bugs got fixed.
@@ -453,22 +456,33 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
    */
   protected void onAttach() {
 
-    Element cssgss = DOM.createDiv();
-    DOM.setStyleAttribute(cssgss, "width", "0px");
-    DOM.setStyleAttribute(cssgss, "height", "0px");
+    Element cssgss = null;
+    if (gssContext == null) {
+      cssgss = DOM.createDiv();
+      DOM.setStyleAttribute(cssgss, "width", "0px");
+      DOM.setStyleAttribute(cssgss, "height", "0px");
 //        DOM.setStyleAttribute(cssgss, "visibility", "hidden");
-    DOM.setElementAttribute(cssgss, "id",
-        DOM.getElementAttribute(getElement(), "id") + "style");
-    DOM.setElementAttribute(cssgss, "class", "chrono");
-    appendBody(cssgss);
+      DOM.setElementAttribute(cssgss, "id",
+          DOM.getElementAttribute(getElement(), "id") + "style");
+      DOM.setElementAttribute(cssgss, "class", "chrono");
+      appendBody(cssgss);
+    }
     super.onAttach();
-    view = (View) GWT.create(DOMView.class);
-    BrowserGssContext gss = (BrowserGssContext) GWT
-        .create(BrowserGssContext.class);
-    gss.initialize(cssgss);
+    if (gssContext == null) {
+      view = (View) GWT.create(DOMView.class);
+      gssContext = (BrowserGssContext) GWT
+          .create(BrowserGssContext.class);
+      ((BrowserGssContext) gssContext).initialize(cssgss);
+    }
+
     ((DOMView) view)
-        .initialize(getElement(), chartWidth, chartHeight, true, gss, this);
+        .initialize(getElement(), chartWidth, chartHeight, true, gssContext,
+            this);
     view.onAttach();
+  }
+
+  public void setGssContext(GssContext context) {
+    gssContext = context;
   }
 
   private native void appendBody(Element cssgss) /*-{
@@ -489,6 +503,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
 
   private void initElement(Element container) {
     setElement(container);
+    DOM.setStyleAttribute(container, "overflow", "hidden");
     addStyleName("chrono");
     sinkEvents(Event.MOUSEEVENTS);
     sinkEvents(Event.KEYEVENTS);

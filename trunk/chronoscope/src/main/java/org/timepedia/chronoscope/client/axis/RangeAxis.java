@@ -46,6 +46,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double axisStart = rangeLow - rangeLow % smoothInterval;
     int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
+    
+    if(axisStart + smoothInterval * (numTicks-1) < rangeHigh)
+      numTicks++;
+    
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
       tickPositions[i] = axisStart;
