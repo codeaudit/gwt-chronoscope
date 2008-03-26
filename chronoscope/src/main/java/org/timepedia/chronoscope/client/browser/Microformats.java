@@ -129,7 +129,7 @@ public class Microformats {
             var cols = colgroup.item(0).getElementsByTagName("col");
             if(cols && cols.length > 0) {
               var datecol=cols.item(0);
-              if(datecol.getAttribute("class") == "cmf-dateformat") {
+              if(datecol.className == "cmf-dateformat") {
                 dateformat = datecol.getAttribute('title');
               }
             }
