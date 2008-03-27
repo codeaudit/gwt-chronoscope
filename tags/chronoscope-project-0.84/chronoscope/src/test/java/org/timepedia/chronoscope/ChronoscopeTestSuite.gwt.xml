@@ -1,0 +1,7 @@
+<module>
+        <inherits name="com.google.gwt.junit.JUnit"/>
+        <inherits name="org.timepedia.chronoscope.Chronoscope"/>
+        <set-property name="hasflash" value="force"/>
+  <stylesheet src="Chronoscope.css"/>
+  
+</module>

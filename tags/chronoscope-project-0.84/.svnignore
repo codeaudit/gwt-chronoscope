@@ -1,0 +1,11 @@
+*~
+*.log
+*.log.*
+*.ipr
+*.iml
+*.iws
+*.class
+target
+data
+curate-data
+
