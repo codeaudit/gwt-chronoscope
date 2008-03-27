@@ -60,6 +60,7 @@ public class ChartDemo implements EntryPoint {
     final ChartPanel chartPanel = Chronoscope
         .createTimeseriesChart(ds, chartWidth, chartHeight);
 
+   
     VerticalPanel vert = new VerticalPanel();
     vp.add(new HTML("Hello World"), "Hello World");
     HorizontalPanel hp = new HorizontalPanel();
