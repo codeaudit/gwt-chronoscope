@@ -29,7 +29,7 @@
             <artifactId>gwt-dev-${gwtplatform}</artifactId>
             <version>${gwtversion}</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -75,7 +75,7 @@
                 <jdk>1</jdk>
             </activation>
             <properties>
-		<gwtversion>1.4.61</gwtversion>
+		<gwtversion>1.4.61timepedia</gwtversion>
             </properties>
 	</profile>
         <profile>
