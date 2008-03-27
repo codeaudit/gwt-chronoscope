@@ -55,6 +55,7 @@ public abstract class GssProperties {
   public String fontSize;
 
   public int height;
+  
 
   public PaintStyle createGradient(Layer layer, double w, double h,
       String backStr) {
