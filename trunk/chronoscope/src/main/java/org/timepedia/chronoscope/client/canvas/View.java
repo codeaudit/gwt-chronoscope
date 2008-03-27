@@ -277,5 +277,7 @@ public abstract class View implements Exportable {
     return contextMenu;
   }
 
-  public abstract String numberFormat(String labelFormat, double value);
+  public  String numberFormat(String labelFormat, double value) {
+    return String.valueOf(value);
+  }
 }
