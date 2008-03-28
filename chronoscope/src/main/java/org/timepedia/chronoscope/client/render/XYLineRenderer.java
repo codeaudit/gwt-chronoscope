@@ -55,6 +55,8 @@ public class XYLineRenderer extends XYRenderer
 
   private GssElement pointElement = null;
 
+  private double fx = -1;
+  
   public XYLineRenderer(int seriesNum) {
 
     this.seriesNum = seriesNum;
@@ -72,6 +74,7 @@ public class XYLineRenderer extends XYRenderer
     layer.beginPath();
 
     lx = ly = -1;
+    fx = -1;
   }
 
   public void beginPoints(XYPlot plot, Layer layer, boolean inSelection,
@@ -90,12 +93,15 @@ public class XYLineRenderer extends XYRenderer
       return;
     }
     if (lx == -1) {
-      layer.moveTo(ux, layer.getHeight());
+      layer.moveTo(ux, uy);
+      fx = ux;
+      lx = ux;
+      return;
     }
 
     // previously, used to fix a bug in Safari canvas that would crash if two points in a path were
     // the same, commented out for now
-    if (ux - lx >= 0) {
+    if(ux - lx >= 0) {
 
       layer.lineTo(ux, uy);
       lx = ux;
@@ -196,7 +202,6 @@ public class XYLineRenderer extends XYRenderer
   public void endCurve(XYPlot plot, Layer layer, boolean inSelection,
       boolean isDisabled, int seriesNum) {
 
-    layer.lineTo(lx, layer.getHeight());
     layer.setLineWidth(lineProp.lineThickness);
     layer.setTransparency((float) lineProp.transparency);
     layer.setShadowBlur(lineProp.shadowBlur);
@@ -210,6 +215,8 @@ public class XYLineRenderer extends XYRenderer
         : gssFillProperties;
     layer.stroke();
 
+    layer.lineTo(lx, layer.getHeight());
+    layer.lineTo(fx, layer.getHeight());    
     layer.setFillColor(fillProp.bgColor);
     layer.setTransparency((float) fillProp.transparency);
     layer.fill();

@@ -745,12 +745,12 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     layer.rect(0, 0, 1, 1);
     layer.stroke();
     layer.fill();
-    layer.restore();
     if (!boundsSet) {
       layer.setTextLayerBounds(textLayerName, bounds);
       boundsSet = true;
     }
     layer.clearTextLayer(textLayerName);
+    layer.restore();
   }
 
   private double domainToScreenX(XYPlot plot, double dataX, Bounds bounds) {

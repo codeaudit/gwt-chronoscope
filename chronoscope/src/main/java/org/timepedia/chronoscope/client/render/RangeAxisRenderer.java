@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.AxisPanel;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
@@ -30,9 +32,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private GssProperties tickLabelProperties;
 
-  private String labelFormat;
-
-  private boolean scientificNotationOn;
+  private boolean boundsSet;
 
   public RangeAxisRenderer(RangeAxis rangeAxis) {
     this.axis = rangeAxis;
@@ -40,17 +40,9 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
-    double tickPositions[] = axis.computeTickPositions(axis.getRangeLow(),
-        axis.getRangeHigh(), axis.getHeight(), axis.getMaxLabelHeight());
+    double tickPositions[] = axis.computeTickPositions();
 
-    double rangeHigh = axis.getRangeHigh();
-    for(int i=0; i<tickPositions.length; i++) {
-      if(tickPositions[i] >= rangeHigh) {
-       rangeHigh=tickPositions[i];
-        break;
-      }
-    }
-    
+    layer.save();
     if (!gridOnly) {
       clearAxis(layer, axisBounds);
       drawVerticalLine(layer, axisBounds);
@@ -60,8 +52,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setFillColor("rgba(255,255,255,255)");
     layer.setStrokeColor("rgb(0,255,0)");
 
-    double axisRange = rangeHigh - tickPositions[0];
-    labelFormat = null;
+    double axisRange = axis.getRange();
 
     for (int i = 0; i < tickPositions.length; i++) {
       drawTick(plot, layer, tickPositions[i], tickPositions[0], axisRange,
@@ -71,6 +62,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if (!gridOnly) {
       drawAxisLabel(layer, axisBounds);
     }
+    layer.restore();
   }
 
   public int getLabelHeight(View view, String str, double rotationAngle) {
@@ -115,15 +107,17 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 //        view.getCanvas().setStrokeColor(axisProperties.color);
   }
 
-  public boolean isScientificNotationOn() {
-    return scientificNotationOn;
-  }
-
   private void clearAxis(Layer layer, Bounds bounds) {
 
     layer.save();
-    layer.setFillColor(axisProperties.bgColor);
+    if (!boundsSet) {
+      layer.setTextLayerBounds(textLayerName, bounds);
+      boundsSet = true;
+    }
+    GWT.log("Text layer name is " + textLayerName, null);
+    layer.clearTextLayer(textLayerName);
 
+    layer.setFillColor(axisProperties.bgColor);
     layer.setShadowBlur(0);
     layer.setShadowOffsetX(0);
     layer.setShadowOffsetY(0);
@@ -135,10 +129,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setLineWidth(1.0f / bounds.width);
     layer.stroke();
     layer.fill();
-
     layer.restore();
-
-    layer.clearTextLayer(textLayerName);
   }
 
   private void drawAxisLabel(Layer layer, Bounds bounds) {
@@ -159,8 +150,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
 
-    computeLabelFormat(axis.getRange());
-    String label = getFormattedLabel(value, layer.getCanvas().getView());
+    String label = axis.getFormattedLabel(value);
 
     double labelWidth = layer.stringWidth(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
@@ -168,6 +158,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         axisProperties.fontWeight, axisProperties.fontSize);
     double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT ? -5
         - labelWidth : 5 - bounds.width);
+    layer.save();
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
 
@@ -176,6 +167,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName);
     }
+    layer.restore();
   }
 
   private void drawTick(XYPlot plot, Layer layer, double range, double rangeLow,
@@ -200,6 +192,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if (!gridOnly) {
       drawLabel(layer, uy, bounds, range);
     }
+    
   }
 
   private void drawVerticalLine(Layer layer, Bounds bounds) {
@@ -209,36 +202,5 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
         bounds.y + bounds.height);
-  }
-
-  private String getFormattedLabel(double label, View view) {
-    if(!Double.isNaN(axis.getScale()))
-      label /= axis.getScale();
-
-    String lab=view.numberFormat(labelFormat, label);
-    return lab;
-  }
-
-  private void computeLabelFormat(double label) {
-    if (labelFormat == null) {
-      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
-      if (axis.isForceScientificNotation() || (axis.isAllowScientificNotation()
-          && (intDigits + 1 > axis.getMaxDigits() || Math.abs(intDigits) > axis
-          .getMaxDigits()))) {
-        labelFormat = "0." + "0#########".substring(axis.getMaxDigits()) + "E0";
-        scientificNotationOn = true;
-      } else if (intDigits > 0) {
-        String digStr = "#########0";
-        labelFormat = digStr.substring(digStr.length() - intDigits);
-        int leftOver = Math.max(axis.getMaxDigits() - intDigits, 0);
-        if (leftOver > 0) {
-          labelFormat += "." + "0#########".substring(leftOver);
-        }
-        scientificNotationOn = false;
-      } else {
-        labelFormat = "0." + "0#########".substring(axis.getMaxDigits());
-        scientificNotationOn = false;
-      }
-    }
   }
 }

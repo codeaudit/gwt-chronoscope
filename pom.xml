@@ -4,7 +4,7 @@
   <groupId>org.timepedia.chronoscope</groupId>
   <artifactId>chronoscope-project</artifactId>
   <packaging>pom</packaging>
-  <version>0.86-SNAPSHOT</version>
+  <version>0.85-SNAPSHOT</version>
   <name>Chronoscope Project</name>
   <url>http://timepedia.org/chronoscope</url>
   <description>Chronoscope is Timepedia's charting and visualization platform for GWT, used as the centerpiece of Timepedia's

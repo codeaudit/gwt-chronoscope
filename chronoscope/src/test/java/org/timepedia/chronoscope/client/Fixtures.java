@@ -81,4 +81,7 @@ public class Fixtures {
         return shapes;
     }
 
+  public static XYDataset[] getTestDataset() {
+    return new XYDataset[] { getPositiveDomainDescendingRange() };
+  }
 }
