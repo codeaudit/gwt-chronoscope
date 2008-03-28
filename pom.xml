@@ -113,6 +113,7 @@
           <tagBase>
             https://gwt-chronoscope.googlecode.com/svn/tags
           </tagBase>
+           <preparationGoals>clean install</preparationGoals>        
         </configuration>
       </plugin>
 
