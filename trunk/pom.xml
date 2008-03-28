@@ -4,7 +4,7 @@
   <groupId>org.timepedia.chronoscope</groupId>
   <artifactId>chronoscope-project</artifactId>
   <packaging>pom</packaging>
-  <version>0.85-SNAPSHOT</version>
+  <version>0.85</version>
   <name>Chronoscope Project</name>
   <url>http://timepedia.org/chronoscope</url>
   <description>Chronoscope is Timepedia's charting and visualization platform for GWT, used as the centerpiece of Timepedia's
@@ -52,9 +52,9 @@
   </mailingLists>
 
   <scm>
-    <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/trunk</connection>
-    <developerConnection>scm:svn:https://gwt-chronoscope.googlecode.com/svn/trunk</developerConnection>
-    <url>http://code.google.com/p/gwt-chronoscope/source/browse/trunk</url>
+    <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/tags/chronoscope-project-0.85</connection>
+    <developerConnection>scm:svn:https://gwt-chronoscope.googlecode.com/svn/tags/chronoscope-project-0.85</developerConnection>
+    <url>http://code.google.com/p/gwt-chronoscope/source/browse/tags/chronoscope-project-0.85</url>
   </scm>
 
   <modules>
