@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 /**
  * Auto-inject Chronoscope.css for testing
  */
-public class ChronoscopeTestCase extends GWTTestCase {
+public class ChronoscopeTestCaseBase extends GWTTestCase {
 
   private boolean injected;
 
@@ -24,6 +24,7 @@ public class ChronoscopeTestCase extends GWTTestCase {
     return $doc.getElementsByTagName("head")[0];
   }-*/;
 
+   
   protected void runChronoscopeTest(XYDataset ds[], ViewReadyCallback viewReadyCallback) {
     ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
     cp.setReadyListener(viewReadyCallback);
