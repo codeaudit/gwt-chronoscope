@@ -1,8 +1,9 @@
 package org.timepedia.chronoscope.client.axis;
 
+
 import org.timepedia.chronoscope.client.Fixtures;
 import org.timepedia.chronoscope.client.DataShape;
-import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+import org.timepedia.chronoscope.client.ChronoscopeTestCaseBase;
 
 import java.util.HashSet;
 
@@ -11,7 +12,7 @@ import java.util.HashSet;
  */
 
 @SuppressWarnings({"NonJREEmulationClassesInClientCode"})
-public class RangeAxisTest extends ChronoscopeTestCase {
+public class RangeAxisTest extends junit.framework.TestCase {
     private static final int LABEL_HEIGHT = 20;
     private static final int AXIS_HEIGHT = 400;
     private static final int LABEL_PADDING = 4;

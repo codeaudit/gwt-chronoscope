@@ -1,10 +1,7 @@
 package org.timepedia.chronoscope.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.junit.client.GWTTestCase;
-import com.google.gwt.user.client.ui.RootPanel;
 
-import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
@@ -14,7 +11,7 @@ import org.timepedia.exporter.client.ExporterBase;
 /**
  *
  */
-public class TestExports extends ChronoscopeTestCase {
+public class TestExports extends ChronoscopeTestCaseBase {
 
   public void onChronoscopeLoaded() {
     finishTest();
@@ -41,23 +38,23 @@ public class TestExports extends ChronoscopeTestCase {
     runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
-        assertTrue(isSetAutoZoomVisibleRange(ExporterBase.wrap(view)));
-        assertTrue(isSetVisibleRange(ExporterBase.wrap(view)));
-        assertTrue(isSetLabel(ExporterBase.wrap(view)));
+        assertTrue(isSetAutoZoomVisibleRange(ExporterBase.wrap(plot.getRangeAxis(0))));
+        assertTrue(isSetVisibleRange(ExporterBase.wrap(plot.getRangeAxis(0))));
+        assertTrue(isSetLabel(ExporterBase.wrap(plot.getRangeAxis(0))));
         finishTest();
       }
     });
   }
 
-  private native boolean isSetLabel(JavaScriptObject view) /*-{
-     return view.getChart().getPlot().getAxis(0).setLabel != undefined;
+  private native boolean isSetLabel(JavaScriptObject axis) /*-{
+     return axis.setLabel != undefined;
   }-*/;
 
-  private native boolean isSetVisibleRange(JavaScriptObject view) /*-{
-     return view.getChart().getPlot().getAxis(0).setVisibleRange != undefined;
+  private native boolean isSetVisibleRange(JavaScriptObject axis) /*-{
+     return axis.setVisibleRange != undefined;
   }-*/;
 
-  private native boolean isSetAutoZoomVisibleRange(JavaScriptObject view)/*-{
-     return view.getChart().getPlot().getAxis(0).setAutoZoomVisibleRange != undefined;
+  private native boolean isSetAutoZoomVisibleRange(JavaScriptObject axis)/*-{
+     return axis.setAutoZoomVisibleRange != undefined;
   }-*/;
 }

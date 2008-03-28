@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.user.client.ui.RootPanel;
 
-import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+import org.timepedia.chronoscope.client.ChronoscopeTestCaseBase;
 import org.timepedia.chronoscope.client.Fixtures;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -14,7 +14,7 @@ import org.timepedia.chronoscope.client.render.GssElementImpl;
 /**
  * Test methods of ChartPanel
  */
-public class ChartPanelTest extends ChronoscopeTestCase {
+public class ChartPanelTest extends ChronoscopeTestCaseBase {
 
   public void testGssContextOverride() {
     ChartPanel cp = Chronoscope
@@ -37,7 +37,7 @@ public class ChartPanelTest extends ChronoscopeTestCase {
       public void onViewReady(View view) {
         GssProperties props = view
             .getGssProperties(new GssElementImpl("axes", null), "");
-        assertEquals(color.toString(), "#ff000");
+        assertEquals(color.toString(), "#ff0000");
         finishTest();
       }
     });

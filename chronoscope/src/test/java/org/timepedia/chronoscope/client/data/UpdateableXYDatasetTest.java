@@ -1,12 +1,12 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+import org.timepedia.chronoscope.client.ChronoscopeTestCaseBase;
 import org.timepedia.chronoscope.client.XYDataset;
 
 /**
  * Test proper functioning of updateable datasets
  */
-public class UpdateableXYDatasetTest extends ChronoscopeTestCase {
+public class UpdateableXYDatasetTest extends ChronoscopeTestCaseBase {
 
   private static final int TEST_X = 10;
 

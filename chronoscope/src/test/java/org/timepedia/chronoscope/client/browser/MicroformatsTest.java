@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.Command;
@@ -8,14 +7,14 @@ import com.google.gwt.user.client.Command;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Fixtures;
-import org.timepedia.chronoscope.client.ChronoscopeTestCase;
+import org.timepedia.chronoscope.client.ChronoscopeTestCaseBase;
 
 import java.util.Date;
 
 /**
  * Test microformat import facility
  */
-public class MicroformatsTest extends ChronoscopeTestCase {
+public class MicroformatsTest extends ChronoscopeTestCaseBase {
   
   public void testCustomDateTimeFormat() {
      HTML data = new HTML(Fixtures.microformatData);
