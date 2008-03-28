@@ -237,7 +237,7 @@ public interface XYPlot extends Exportable {
   /**
    * @gwt.export getAxis
    */
-  RangeAxis getRangeAxis(int axisNumber);
+  RangeAxis getRangeAxis(int seriesNumber);
 
   /**
    * Return the renderer for a given dataset number
@@ -450,4 +450,17 @@ public interface XYPlot extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
+
+  /**
+   * Return number of unique Range axes in the plot
+   * @return
+   */
+  int getRangeAxisCount();
+
+  /**
+   * Return the mip level of the given series
+   * @return
+   * @param seriesNum
+   */
+  int getCurrentDatasetLevel(int seriesNum);
 }

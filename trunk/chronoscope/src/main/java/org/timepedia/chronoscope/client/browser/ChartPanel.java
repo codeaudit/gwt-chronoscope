@@ -468,8 +468,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
       appendBody(cssgss);
     }
     super.onAttach();
+    view = (View) GWT.create(DOMView.class);
     if (gssContext == null) {
-      view = (View) GWT.create(DOMView.class);
       gssContext = (BrowserGssContext) GWT
           .create(BrowserGssContext.class);
       ((BrowserGssContext) gssContext).initialize(cssgss);

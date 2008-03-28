@@ -2,10 +2,10 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -14,6 +14,54 @@ import org.timepedia.exporter.client.Exportable;
  * @gwt.exportPackage chronoscope
  */
 public class RangeAxis extends ValueAxis implements Exportable {
+
+  class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
+
+    String labelFormat = null;
+
+    public String format(double value) {
+      computeLabelFormat(value);
+      return getChart().getView().numberFormat(labelFormat, value);
+    }
+
+    private void computeLabelFormat(double label) {
+      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
+      if (isForceScientificNotation() || (isAllowScientificNotation() && (
+          intDigits + 1 > getMaxDigits()
+              || Math.abs(intDigits) > getMaxDigits()))) {
+        labelFormat = "0." + "0#########".substring(getMaxDigits()) + "E0";
+        scientificNotationOn = true;
+      } else if (intDigits > 0) {
+        String digStr = "#########0";
+        labelFormat = digStr.substring(digStr.length() - intDigits);
+        int leftOver = Math.max(getMaxDigits() - intDigits, 0);
+        if (leftOver > 0) {
+          labelFormat += "." + "0#########".substring(leftOver);
+        }
+        scientificNotationOn = false;
+      } else {
+        labelFormat = "0." + "0#########".substring(getMaxDigits());
+        scientificNotationOn = false;
+      }
+    }
+  }
+
+  private class UserTickLabelNumberFormatter
+      implements TickLabelNumberFormatter {
+
+    private View view;
+
+    private String format;
+
+    public UserTickLabelNumberFormatter(View view, String format) {
+      this.view = view;
+      this.format = format;
+    }
+
+    public String format(double value) {
+      return view.numberFormat(format, value);
+    }
+  }
 
   private static String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
       "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
@@ -46,10 +94,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double axisStart = rangeLow - rangeLow % smoothInterval;
     int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
-    
-    if(axisStart + smoothInterval * (numTicks-1) < rangeHigh)
+
+    if (axisStart + smoothInterval * (numTicks - 1) < rangeHigh) {
       numTicks++;
-    
+    }
+
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
       tickPositions[i] = axisStart;
@@ -58,11 +107,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return tickPositions;
   }
 
+  private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
+
+  private boolean scientificNotationOn;
+
+  private TickLabelNumberFormatter tickLabelNumberFormatter;
+
   private final int axisNum;
 
-  private final double rangeLow;
+  private double rangeLow;
 
-  private final double rangeHigh;
+  private double rangeHigh;
 
   private RangeAxisRenderer renderer = null;
 
@@ -90,20 +145,33 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private double scale = Double.NaN;
 
+  private double adjustedRangeLow, adjustedRangeHigh;
+
   public RangeAxis(Chart chart, String label, String units, int axisNum,
       double rangeLow, double rangeHigh, AxisPanel panel) {
     super(chart, label, units);
     this.axisNum = axisNum;
     setAxisPanel(panel);
+    tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
+        = new DefaultTickLabelNumberFormatter();
     renderer = new RangeAxisRenderer(this);
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
+    this.adjustedRangeLow = rangeLow;
+    this.adjustedRangeHigh = rangeHigh;
   }
 
-  public double[] computeTickPositions(double rangeLow, double rangeHigh,
-      double axisHeight, double tickLabelHeight) {
-    return computeLinearTickPositions(rangeLow, rangeHigh, axisHeight,
-        tickLabelHeight);
+  public double[] computeTickPositions() {
+    double ticks[] = computeLinearTickPositions(getUnadjustedRangeLow(),
+        getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight());
+    adjustedRangeLow = ticks[0];
+    for (int i = 0; i < ticks.length; i++) {
+      if (ticks[i] >= getUnadjustedRangeHigh()) {
+        adjustedRangeHigh = ticks[i];
+        break;
+      }
+    }
+    return ticks;
   }
 
   public double dataToUser(double dataY) {
@@ -132,6 +200,14 @@ public class RangeAxis extends ValueAxis implements Exportable {
         : "." + "000000000".substring(0, maxDigits - 1));
   }
 
+  public String getFormattedLabel(double label) {
+    if (!Double.isNaN(getScale())) {
+      label /= getScale();
+    }
+
+    return tickLabelNumberFormatter.format(label);
+  }
+
   public double getHeight() {
     if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
@@ -146,8 +222,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public String getLabelSuffix(double range) {
-    if (isForceScientificNotation() || (isAllowScientificNotation() && renderer
-        .isScientificNotationOn())) {
+    if (isForceScientificNotation() || (isAllowScientificNotation()
+        && isScientificNotationOn())) {
       return "";
     }
     if (!Double.isNaN(getScale())) {
@@ -177,11 +253,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double getRangeHigh() {
-    return autoZoom ? visRangeMax : rangeHigh;
+    return adjustedRangeHigh;
   }
 
   public double getRangeLow() {
-    return autoZoom ? visRangeMin : rangeLow;
+    return adjustedRangeLow;
   }
 
   public double getRotationAngle() {
@@ -192,6 +268,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public double getScale() {
     return scale;
+  }
+
+  public TickLabelNumberFormatter getTickLabelFormatter() {
+    return tickLabelNumberFormatter;
   }
 
   public double getWidth() {
@@ -221,6 +301,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public boolean isForceScientificNotation() {
     return forceScientificNotation;
+  }
+
+  public boolean isScientificNotationOn() {
+    return scientificNotationOn;
   }
 
   public boolean isShowScale() {
@@ -273,6 +357,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     maxDigits = Math.max(1, digits);
   }
 
+  public void setRange(double rangeLow, double rangeHigh) {
+    this.rangeLow = rangeLow;
+    this.rangeHigh = rangeHigh;
+  }
+
   /**
    * Set a scale factor for displaying axis tick values
    *
@@ -284,6 +373,30 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public void setShowExponents(boolean showExponents) {
     this.showExponents = showExponents;
+  }
+
+  /**
+   * Set custom TickLabelNumberFormatter callbacks.
+   * @gwt.export
+   * @param tickLabelNumberFormatter
+   */
+  public void setTickLabelNumberFormatter(
+      TickLabelNumberFormatter tickLabelNumberFormatter) {
+    this.tickLabelNumberFormatter = tickLabelNumberFormatter;
+  }
+
+  /**
+   * Set the number format used to render ticks
+   *
+   * @gwt.export
+   */
+  public void setTickNumberFormat(String format) {
+    if (format == null) {
+      tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER;
+    } else {
+      setTickLabelNumberFormatter(
+          new UserTickLabelNumberFormatter(getChart().getView(), format));
+    }
   }
 
   /**
@@ -308,5 +421,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
         .getLabelHeight(view, getLabel(), getRotationAngle());
     axisLabelWidth = renderer
         .getLabelWidth(view, getLabel(), getRotationAngle());
+  }
+
+  private double getUnadjustedRangeHigh() {
+    return autoZoom ? visRangeMax : rangeHigh;
+  }
+
+  private double getUnadjustedRangeLow() {
+    return autoZoom ? visRangeMin : rangeLow;
   }
 }

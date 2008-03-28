@@ -182,5 +182,6 @@ public class AxisPanel implements GssElement {
 //        layer.stroke();
     layer.clearRect(0, 0, 1, 1);
     layer.restore();
+    
   }
 }

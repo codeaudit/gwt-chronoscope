@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.axis.RangeAxis;
+import org.timepedia.chronoscope.client.axis.TickLabelNumberFormatter;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -90,6 +92,12 @@ public class ChartDemo implements EntryPoint {
     ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
     final ChartPanel chartPanel3 = Chronoscope
         .createTimeseriesChart(ds2, 400, 300);
+    chartPanel3.setReadyListener(new ViewReadyCallback() {
+      public void onViewReady(View view) {
+        RangeAxis ra = view.getChart().getPlot().getRangeAxis(0);
+        ra.setTickNumberFormat("$#0");
+      }
+    });
     vp.add(chartPanel3, "Chart 3");
 
 //     vp.add(chartPanel);
@@ -149,7 +157,7 @@ public class ChartDemo implements EntryPoint {
             l.setText("Num Points: "+ds[0].getNumSamples());
           }
         };
-        t.scheduleRepeating(500);
+      //  t.scheduleRepeating(500);
       }
     });
 

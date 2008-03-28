@@ -1096,6 +1096,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
+  public int getRangeAxisCount() {
+    return axisMap.size();
+  }
+
+  public int getCurrentDatasetLevel(int seriesNum) {
+    return currentMiplevels[seriesNum];
+  }
+
   protected void drawAxisPanel(Layer backingCanvas, AxisPanel axisPanel,
       Bounds bounds, boolean gridOnly) {
     axisPanel.drawAxisPanel(this, backingCanvas, bounds, gridOnly);
