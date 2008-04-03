@@ -35,7 +35,7 @@ public class BrowserView extends View
   abstract static class BrowserTimer extends Timer implements PortableTimer {
   }
 
-  static final FocusImpl focusImpl = (FocusImpl) GWT.create(FocusImpl.class);
+//  static final FocusImpl focusImpl = (FocusImpl) GWT.create(FocusImpl.class);
 
   private static int getClientHeightRecursive(Element element) {
     int height = DOM.getElementPropertyInt(element, "clientHeight");
@@ -124,7 +124,7 @@ public class BrowserView extends View
    * up
    */
   public void focus() {
-    focusImpl.focus(containerDiv);
+  //  focusImpl.focus(containerDiv);
   }
 
   /**
@@ -235,7 +235,7 @@ public class BrowserView extends View
 
   protected void initContainer(Element element, int width, int height) {
     this.rootElem = element;
-    this.containerDiv = focusImpl.createFocusable();
+    this.containerDiv = DOM.createDiv();//focusImpl.createFocusable();
     DOM.setInnerHTML(rootElem, "");
     DOM.setElementAttribute(containerDiv, "id",
         DOM.getElementAttribute(rootElem, "id") + "container");

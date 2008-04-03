@@ -48,10 +48,10 @@ public class ChartDemo implements EntryPoint {
     // you must specify the chart dimensions for now, rather than have the chart grow to fill its container
     int chartWidth = 1024, chartHeight = (int) (chartWidth / GOLDEN__RATIO);
 
-    Chronoscope.enableHistorySupport(true);
+   // Chronoscope.enableHistorySupport(true);
     Chronoscope.setFontBookRendering(true);
-    Chronoscope.setErrorReporting(true);
-    Chronoscope.setMicroformatsEnabled(true);
+    Chronoscope.setErrorReporting(false);
+  //  Chronoscope.setMicroformatsEnabled(true);
     Chronoscope.initialize();
 
     TabPanel vp = new TabPanel();
@@ -95,7 +95,11 @@ public class ChartDemo implements EntryPoint {
     chartPanel3.setReadyListener(new ViewReadyCallback() {
       public void onViewReady(View view) {
         RangeAxis ra = view.getChart().getPlot().getRangeAxis(0);
-        ra.setTickNumberFormat("$#0");
+        ra.setTickLabelNumberFormatter(new TickLabelNumberFormatter() {
+          public String format(double value) {
+            return "FOO:"+value;
+          }
+        });
       }
     });
     vp.add(chartPanel3, "Chart 3");
