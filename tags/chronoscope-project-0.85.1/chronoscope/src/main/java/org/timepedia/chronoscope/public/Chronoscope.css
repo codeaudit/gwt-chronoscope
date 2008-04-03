@@ -1,0 +1,266 @@
+.chrono, .chrono * {
+  outline: none !important;
+  -moz-outline: none;
+}
+
+axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, grid, fill {
+
+  color: white;
+  background-color: white;
+  width: 1px;
+  height: 1px;
+  font-size: 9pt;
+  border-left-width: 1px;
+  left: 1px;
+  top: 1px;
+
+}
+
+fill {
+  background-color: transparent;
+  opacity: 0;
+
+}
+
+.chrono, .chronoscope, .cmf-chart {
+  /*   width: 650px;
+height: 433px; */
+  -moz-outline: none; /* -moz-mac-focusring;  */
+  /* margin: auto;
+padding: 0px; */
+}
+
+.cmf-infowindow {
+  display: none
+}
+
+.chrono-MenuBar .chrono-MenuItem-selected {
+  background-color: #E8EEF7;
+}
+
+.chrono-MenuBar {
+  background-color: #C3D9FF;
+  border: 1px solid #87B3FF;
+  cursor: default;
+}
+
+.chrono-infoWindow {
+  max-width: 200px;
+  background-color: white;
+  padding: 8px;
+  -moz-border-radius: 10%;
+  border: 1px solid #87B3FF;
+  font-family: Verdana;
+  font-size: 90%;
+}
+
+.chrono-MenuBar .chrono-MenuItem {
+  padding: 1px 4px 1px 4px;
+  font-size: smaller;
+  cursor: default;
+}
+
+tick {
+  color: black;
+  border-width: 1px;
+
+}
+
+grid {
+  color: lightgray;
+  border-width: 1px;
+  opacity: 0.3;
+}
+
+axes axis {
+  background-color: white
+}
+
+axes axis {
+
+  font-family: Verdana;
+  font-size: 10pt;
+  color: black;
+}
+
+plot {
+
+  background-image: url( http://timepedia.org/lineargradient/0,0/0,1/0/00ABEb/1/FFFFFF )
+
+}
+
+plot {
+  background-color: white
+}
+
+axis label {
+  font-size: 10pt;
+}
+
+line {
+  color: #000040
+}
+
+.s1 line, axis.a1 label, axis.a1, axis.a1 tick {
+  color: rgb( 245, 86, 95 );
+}
+
+.s1 fill {
+  background-color: rgb( 245, 86, 95 );
+  opacity: 0.4;
+}
+
+fill {
+  background-color: transparent;
+  opacity: 0.4;
+}
+
+fill.disabled {
+  background-color: rgba( 0, 0, 0, 0 );
+  opacity: 0;
+}
+
+bar {
+  color: #008000;
+  background-color: #00FF00;
+  width: 10px;
+  background-image: url( http://timepedia.org/lineargradient/0,0/0,1/0/00FF00/1/0030FF );
+
+}
+
+bar.disabled {
+  background-image: none;
+}
+
+.s0 line, axis.a0 tick {
+/*color: rgb(141, 237,237)*/
+  color: rgb( 70, 118, 118 );
+
+}
+
+axis.a0 label, axis.a0 {
+  color: rgb( 70, 118, 118 );
+}
+
+.s0 fill {
+  background-color: transparent;
+  opacity: 0.4;
+}
+
+point {
+  color: #FFFFFF;
+  background-color: #000080
+}
+
+.s0 point {
+  color: #008000;
+  background-color: #004000
+}
+
+line.focus {
+  color: red;
+}
+
+shadow {
+  width: 2px;
+  top: 2px;
+  left: 2px;
+  color: black
+}
+
+point {
+  width: 2px;
+  border-width: 1px;
+  visibility: hidden
+}
+
+point.hover {
+  color: red;
+  width: 3px;
+  background-color: white;
+  visibility: visible;
+}
+
+point.focus {
+  color: gray;
+  width: 5px;
+  border-style: solid;
+  border-width: 2px;
+  visibility: visible;
+}
+
+line {
+  border-width: 2px;
+}
+
+point shadow {
+  width: 0px;
+}
+
+series.disabled line {
+  opacity: 0.2
+}
+
+series.disabled bar {
+  opacity: 0.2
+}
+
+series.disabled point {
+  visibility: hidden
+}
+
+div {
+  color: black;
+  background-color: transparent
+}
+
+axislegend {
+  font-family: Verdana;
+  font-size: 8pt;
+  color: black;
+  background-color: white; /* background-image:  url( http://timepedia.org/lineargradient/0,0/0,1/0/FFFFFF/1/00ABEb);  */
+
+}
+
+axislegend label {
+  background-color: white;
+  color: black;
+
+}
+
+rangemarker {
+  background-color: #f41010;
+  opacity: 1.0;
+}
+
+domainmarker {
+  background-color: #10f410;
+  border-left-width: 5px;
+  color: black;
+  opacity: 0.3;
+}
+
+domainmarker label, rangemarker label {
+  opacity: 1.0
+}
+
+label {
+  background-color: rgba( 0, 0, 0, 0 ) !important;
+  opacity: 0;
+  color: black
+}
+
+marker {
+  background-color: lightgray;
+  color: black;
+  border-left-width: 1px;
+  font-family: Verdana;
+  font-size: 9pt;
+}
+
+overview {
+  background-color: #99CCFF;
+  color: #0099FF;
+  opacity: 0.4;
+  border-width: 2px;
+}
