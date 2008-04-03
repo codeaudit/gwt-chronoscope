@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 
 import org.timepedia.chronoscope.client.canvas.Color;
@@ -27,18 +28,33 @@ public class CssGssProperties extends GssProperties {
       cssProperties = getCssProperties(styleElem, pseudoElt);
     }
 
-    return getCssPropertyValueString(cssProperties, propName);
+    try {
+      return getCssPropertyValueString(cssProperties, propName);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 
   public Color getColor(String propName) {
-    return new Color(get(propName));
+    try {
+      return new Color(get(propName));
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
+    return new Color("#000");
   }
 
   public double getFloat(String propName) {
     if (cssProperties == null) {
       cssProperties = getCssProperties(styleElem, pseudoElt);
     }
-    return getCssPropertyValueFloat(cssProperties, propName);
+    try {
+      return getCssPropertyValueFloat(cssProperties, propName);
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
+    return 1;
   }
 
   public int getInt(String propName) {
@@ -46,7 +62,12 @@ public class CssGssProperties extends GssProperties {
     if (cssProperties == null) {
       cssProperties = getCssProperties(styleElem, pseudoElt);
     }
-    return getCssPropertyValuePixels(cssProperties, propName);
+    try {
+      return getCssPropertyValuePixels(cssProperties, propName);
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
+    return 1;
   }
 
   /* String LINE_WIDTH = "width";

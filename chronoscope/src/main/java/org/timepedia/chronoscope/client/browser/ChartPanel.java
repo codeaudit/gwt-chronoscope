@@ -457,23 +457,20 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   protected void onAttach() {
 
     Element cssgss = null;
-    if (gssContext == null) {
-      cssgss = DOM.createDiv();
-      DOM.setStyleAttribute(cssgss, "width", "0px");
-      DOM.setStyleAttribute(cssgss, "height", "0px");
-//        DOM.setStyleAttribute(cssgss, "visibility", "hidden");
-      DOM.setElementAttribute(cssgss, "id",
-          DOM.getElementAttribute(getElement(), "id") + "style");
-      DOM.setElementAttribute(cssgss, "class", "chrono");
-      appendBody(cssgss);
-    }
+    cssgss = DOM.createDiv();
+    DOM.setStyleAttribute(cssgss, "width", "0px");
+    DOM.setStyleAttribute(cssgss, "height", "0px");
+    DOM.setElementAttribute(cssgss, "id",
+        DOM.getElementAttribute(getElement(), "id") + "style");
+    DOM.setElementAttribute(cssgss, "class", "chrono");
+    appendBody(cssgss);
     super.onAttach();
     view = (View) GWT.create(DOMView.class);
     if (gssContext == null) {
       gssContext = (BrowserGssContext) GWT
           .create(BrowserGssContext.class);
-      ((BrowserGssContext) gssContext).initialize(cssgss);
     }
+    ((BrowserGssContext) gssContext).initialize(cssgss);
 
     ((DOMView) view)
         .initialize(getElement(), chartWidth, chartHeight, true, gssContext,

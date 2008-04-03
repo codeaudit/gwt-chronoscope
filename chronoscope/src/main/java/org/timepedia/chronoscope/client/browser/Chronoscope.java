@@ -586,14 +586,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     }-*/;
 
   private native boolean isCssIncluded(String css) /*-{
-         var i;
-         for(i=0; i<$doc.styleSheets.length; i++) {
-             var ss = $doc.styleSheets[i];
-             if(isIncluded(ss)) return true;
-         }
-         return false;
-
-         function isIncluded(ss) {
+          function isIncluded(ss) {
             if(ss && ss.href.indexOf(css) != -1) {
                  return true;
              }
@@ -619,6 +612,15 @@ public class Chronoscope implements Exportable, HistoryListener {
             }
            return false;
          }
+  
+         var i;
+         for(i=0; i<$doc.styleSheets.length; i++) {
+             var ss = $doc.styleSheets[i];
+             if(isIncluded(ss)) return true;
+         }
+         return false;
+
+        
     }-*/;
 
   private void tryInjectChronoscopeCSS(final Command cmd) {

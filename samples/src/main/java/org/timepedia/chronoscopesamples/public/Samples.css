@@ -1,5 +1,5 @@
 
-@import "Chronoscope.css";
+@import url("Chronoscope.css");
 .gwt-Label {
     background-color: darkgray;
     color: white;

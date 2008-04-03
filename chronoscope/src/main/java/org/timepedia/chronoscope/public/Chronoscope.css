@@ -3,7 +3,7 @@
   -moz-outline: none;
 }
 
-axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, overview {
+axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, grid, fill {
 
   color: white;
   background-color: white;
