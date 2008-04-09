@@ -31,6 +31,13 @@
         <version>2.0</version>
         <configuration>
           <webXml>target/web.xml</webXml>
+		 <webResources>
+            <resource>
+               <directory>
+				 ${project.build.directory}/public/org.timepedia.chronoscope.widget.ChronoscopeWidget
+               </directory>
+             </resource>
+         </webResources>
         </configuration>
       </plugin>
 
@@ -42,7 +49,7 @@
           <!-- logLevel>ERROR</logLevel -->
           <style>DETAILED</style> 
           <!-- style>OBF</style -->
-		  <output>${project.build.directory}/tmp-public</output>
+		  <output>${project.build.directory}/public</output>
           <gwtVersion>${gwtversion}</gwtVersion>
           <runTarget>
              org.timepedia.chronoscope.widget.ChronoscopeWidget/index.html
@@ -71,23 +78,6 @@
           </execution>
         </executions>
       </plugin>
-	  <plugin>
-        <groupId>org.apache.myfaces.maven</groupId>
-        <artifactId>wagon-maven-plugin</artifactId>
-		<executions>
-		  <execution>
-			<phase>process-classes</phase>
-			<configuration>
-			  <id>clean-urls</id>
-			  <inputDirectory>${project.build.directory}/tmp-public/org.timepedia.chronoscope.widget.ChronoscopeWidget</inputDirectory>
-			<url>file:///${project.build.directory}/${project.build.finalName}</url>
-          </configuration>
-		  <goals>
-			<goal>deploy</goal>
-		  </goals>
-		  </execution>
-		</executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -98,8 +88,10 @@
             <configuration>
               <tasks>
                 <echo message="about to copy" />
-				<copy file="target/tmp-public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
-				    tofile="target/${project.build.finalName}/chronoscope.js" />
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
+  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/chronoscope.js" />
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
+  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/scope.js" />
               </tasks>
             </configuration>
             <goals>
