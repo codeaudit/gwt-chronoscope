@@ -16,6 +16,12 @@
       <version>${version}</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwtversion}</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -32,17 +38,20 @@
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
         <configuration>
+		  <logLevel>WARN</logLevel> 
+          <!-- logLevel>ERROR</logLevel -->
+          <style>DETAILED</style> 
+          <!-- style>OBF</style -->
+		  <output>${project.build.directory}/tmp-public</output>
           <gwtVersion>${gwtversion}</gwtVersion>
-          <logLevel>ERROR</logLevel>
           <runTarget>
-            org.timepedia.chronoscope.widget.ChronoscopeWidget/index.html
+             org.timepedia.chronoscope.widget.ChronoscopeWidget/index.html
           </runTarget>
           <compileTargets>
             <compileTarget>
               org.timepedia.chronoscope.widget.ChronoscopeWidget
             </compileTarget>
           </compileTargets>
-          <style>OBF</style>
         </configuration>
         <executions>
           <execution>
@@ -56,8 +65,45 @@
           <execution>
             <id>compilegwt</id>
             <goals>
-              <goal>mergewebxml</goal>
+              <goal>mergewebxml</goal> 
               <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+	  <plugin>
+        <groupId>org.apache.myfaces.maven</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+		<executions>
+		  <execution>
+			<phase>process-classes</phase>
+			<configuration>
+			  <id>clean-urls</id>
+			  <inputDirectory>${project.build.directory}/tmp-public/org.timepedia.chronoscope.widget.ChronoscopeWidget</inputDirectory>
+			<url>file:///${project.build.directory}/${project.build.finalName}</url>
+          </configuration>
+		  <goals>
+			<goal>deploy</goal>
+		  </goals>
+		  </execution>
+		</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>cp-chronoscope-js</id>
+            <phase>process-classes</phase>
+            <configuration>
+              <tasks>
+                <echo message="about to copy" />
+				<copy file="target/tmp-public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
+				    tofile="target/${project.build.finalName}/chronoscope.js" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
