@@ -615,8 +615,12 @@ public class Chronoscope implements Exportable, HistoryListener {
   
          var i;
          for(i=0; i<$doc.styleSheets.length; i++) {
+           try {
              var ss = $doc.styleSheets[i];
              if(isIncluded(ss)) return true;
+           } catch(e) {
+             // thrown exception when SS cross-domain
+           }
          }
          return false;
 
