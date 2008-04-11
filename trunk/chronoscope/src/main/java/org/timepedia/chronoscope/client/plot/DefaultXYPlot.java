@@ -1308,6 +1308,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       if (verticalAxisLayer != null) {
         backingCanvas.disposeLayer(verticalAxisLayer);
       }
+      
+      topBounds = new Bounds(0, 0, view.getViewWidth(), topPanel.getHeight());
+      topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
+      topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+      
       verticalAxisLayer = backingCanvas
           .createLayer("verticalAxis" + plotNumber, layerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
@@ -1328,9 +1333,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       hightLightLayer = backingCanvas
           .createLayer("highlight" + plotNumber, plotBounds);
       hightLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
-      topBounds = new Bounds(0, 0, view.getViewWidth(), topPanel.getHeight());
-      topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
-      topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+   
     }
   }
 
