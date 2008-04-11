@@ -25,7 +25,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
 
     private void computeLabelFormat(double label) {
-      int intDigits = (int) Math.floor(Math.log(label) / Math.log(10));
+      double scale = getScale(); 
+      scale = Double.isNaN(scale) ? 1 : scale;
+      
+      int intDigits = (int) Math.floor(Math.log(getRangeHigh()) / Math.log(10));
+      if(isAllowAutoScale() && Double.isNaN(getScale()) && intDigits+1 > maxDigits) {
+         scale =  Math.pow(1000, intDigits / 3);
+      }
       if (isForceScientificNotation() || (isAllowScientificNotation() && (
           intDigits + 1 > getMaxDigits()
               || Math.abs(intDigits) > getMaxDigits()))) {
@@ -135,13 +141,15 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean autoZoom = false;
 
-  private boolean allowScientificNotation = true;
+  private boolean allowScientificNotation = false;
 
   private boolean forceScientificNotation = false;
 
+  private boolean allowAutoScale = true;
+
   private boolean showExponents = false;
 
-  private int maxDigits = 4;
+  private int maxDigits = 5;
 
   private double scale = Double.NaN;
 
@@ -291,6 +299,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     visRangeMax = rangeHigh;
   }
 
+  public boolean isAllowAutoScale() {
+    return allowAutoScale;
+  }
+
   public boolean isAllowScientificNotation() {
     return allowScientificNotation;
   }
@@ -309,6 +321,19 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public boolean isShowScale() {
     return showExponents;
+  }
+
+  /**
+   * If set to true, allow axis ticks to be scaled automatically by powers of
+   * thousand if they exceeed maxDigits settings. For example, if max digits is
+   * 4, then the number 25000 will be rendered as 25, and the axis label will be
+   * modified to include the word "Thousands". setAllowScientificNotation() will
+   * override this and take priority, as well as setScale().
+   *
+   * @gwt.export
+   */
+  public void setAllowAutoScale(boolean allowAutoScale) {
+    this.allowAutoScale = allowAutoScale;
   }
 
   /**
@@ -377,8 +402,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * Set custom TickLabelNumberFormatter callbacks.
+   *
    * @gwt.export
-   * @param tickLabelNumberFormatter
    */
   public void setTickLabelNumberFormatter(
       TickLabelNumberFormatter tickLabelNumberFormatter) {
