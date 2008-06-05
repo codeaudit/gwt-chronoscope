@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>gwtquery</groupId>
+  <artifactId>gwtquery-project</artifactId>
+  <version>0.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20080603234324</lastUpdated>
+  </versioning>
+</metadata>
