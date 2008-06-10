@@ -3,6 +3,7 @@ package org.timepedia.chronoscopesamples.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -24,6 +25,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.data.RangeMutableXYDataset;
+import org.timepedia.chronoscope.client.data.MockXYDataset;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
@@ -37,7 +39,7 @@ public class ChartDemo implements EntryPoint {
   private static final String TIMEPEDIA_FONTBOOK_SERVICE
       = "http://api.timepedia.org/fr";
 
-  private static final double GOLDEN__RATIO = 1.618;
+  private static volatile double GOLDEN__RATIO = 1.618;
 
   private static native JavaScriptObject getJson(String varName) /*-{
        return $wnd[varName];   
@@ -47,8 +49,10 @@ public class ChartDemo implements EntryPoint {
 
     try {
 // you must specify the chart dimensions for now, rather than have the chart grow to fill its container
-      int chartWidth = 1024, chartHeight = (int) (chartWidth / GOLDEN__RATIO);
-
+      double GR = 1.618;
+      int chartWidth = 1024;
+      int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
+      Window.alert("ChartHeight = "+chartHeight);
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
       Chronoscope.setErrorReporting(false);

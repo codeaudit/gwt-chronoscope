@@ -3,7 +3,7 @@
   -moz-outline: none;
 }
 
-axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, grid, fill {
+axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, fill {
 
   color: white;
   background-color: white;
@@ -67,9 +67,11 @@ tick {
 }
 
 grid {
-  color: lightgray;
-  border-width: 1px;
-  opacity: 0.3;
+  color: transparent;
+  width: 0;
+  border-width: 0;
+  opacity: 0.05;
+  visibility: hidden !important;
 }
 
 axes axis {
@@ -216,34 +218,6 @@ div {
 
 axislegend {
   font-family: Verdana;
-  font-size: 8pt;
-  color: black;
-  background-color: white; /* background-image:  url( http://timepedia.org/lineargradient/0,0/0,1/0/FFFFFF/1/00ABEb);  */
-
-}
-
-axislegend label {
-  background-color: white;
-  color: black;
-
-}
-
-rangemarker {
-  background-color: #f41010;
-  opacity: 1.0;
-}
-
-domainmarker {
-  background-color: #10f410;
-  border-left-width: 5px;
-  color: black;
-  opacity: 0.3;
-}
-
-domainmarker label, rangemarker label {
-  opacity: 1.0
-}
-
 label {
   background-color: rgba( 0, 0, 0, 0 ) !important;
   opacity: 0;

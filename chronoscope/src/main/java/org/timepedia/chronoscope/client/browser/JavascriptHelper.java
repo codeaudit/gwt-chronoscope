@@ -28,7 +28,7 @@ public class JavascriptHelper {
 
   public static native JavaScriptObject jsPropGet(JavaScriptObject json,
       String propName) /*-{
-        return json[propName];
+        return json[propName] || null;
     }-*/;
 
   public static native double jsPropGetD(JavaScriptObject json, String propName) /*-{
@@ -41,4 +41,8 @@ public class JavascriptHelper {
         if(!s) return null;
         return ""+s;
     }-*/;
+
+  public static native double jsPropGetDor(JavaScriptObject json, String s, double def) /*-{
+    return json[s] || def;
+  }-*/;
 }

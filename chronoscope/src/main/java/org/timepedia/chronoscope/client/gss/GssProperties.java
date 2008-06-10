@@ -55,9 +55,11 @@ public abstract class GssProperties {
   public String fontSize;
 
   public int height;
-  
+  public String tickPosition="outside";
+    public String tickAlign="middle";
 
-  public PaintStyle createGradient(Layer layer, double w, double h,
+
+    public PaintStyle createGradient(Layer layer, double w, double h,
       String backStr) {
     if (backStr.startsWith(LINGRADFULLURI)
         || backStr.indexOf(LINEGRADHASHURI) != -1) {

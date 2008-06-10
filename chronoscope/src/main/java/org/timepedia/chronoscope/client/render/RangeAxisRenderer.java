@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.AxisPanel;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
@@ -121,15 +119,15 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setShadowBlur(0);
     layer.setShadowOffsetX(0);
     layer.setShadowOffsetY(0);
-    layer.translate(bounds.x-1, bounds.y-1);
-    layer.scale(bounds.width+1, bounds.height+1);
-    layer.fillRect(0,0,1,1);
+    layer.translate(bounds.x - 1, bounds.y - 1);
+    layer.scale(bounds.width + 1, bounds.height + 1);
+    layer.fillRect(0, 0, 1, 1);
 //    
 //    layer.beginPath();
 //    layer.rect(0, 0, 1, 1);
 //    layer.setLineWidth(1.0f / bounds.width);
 //    layer.stroke();
-   // layer.fill();
+    // layer.fill();
     layer.restore();
   }
 
@@ -140,7 +138,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
           : axis.getMaxLabelWidth());
       double x = bounds.x + dir;
       double y = bounds.y + bounds.height / 2 - axis.getAxisLabelHeight() / 2;
-      layer.setStrokeColor(axisProperties.color);
+      layer.setStrokeColor(labelProperties.color);
       String label = axis.getLabel();
 
       layer.drawRotatedText(x, y, axis.getRotationAngle(), label,
@@ -157,14 +155,29 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         axisProperties.fontWeight, axisProperties.fontSize);
     double labelHeight = layer.stringHeight(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
-    double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT ? -5
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    double dir = (isLeft ? -5
         - labelWidth : 5 - bounds.width);
+    if ("inside".equals(axisProperties.tickPosition)) {
+       dir = isLeft ? 5 + 1 : - labelWidth - 5 ;
+    }
+
     layer.save();
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
+    double alignAdjust = -labelHeight / 2;
 
+    if ("above".equals(labelProperties.tickAlign)) {
+      alignAdjust = -labelHeight;
+      dir = 1;
+      if(axis.getAxisPanel().getAxisNumber(axis) == axis.getAxisPanel().getAxisCount() - 1 ) 
+         dir = isLeft ? 1 : -labelWidth - 1;
+      else 
+         dir = isLeft ? - axis.getMaxLabelWidth() + 1 : axis.getMaxLabelWidth() - 1;
+      
+    }
     if (y >= bounds.y && y <= bounds.y + bounds.height) {
-      layer.drawText(bounds.x + bounds.width + dir, y - labelHeight / 2, label,
+      layer.drawText(bounds.x + bounds.width + dir, y + alignAdjust, label,
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName);
     }
@@ -177,8 +190,15 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
             + bounds
             .y;
-    double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT ? -5
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    double dir = (isLeft ? -5
         + bounds.width : 0);
+    if ("inside".equals(axisProperties.tickPosition)) {
+      if(axis.getAxisPanel().getAxisNumber(axis) == axis.getAxisPanel().getAxisCount() - 1 ) 
+         dir = isLeft ? bounds.width + 1 : -5;
+      else 
+         dir = isLeft ? bounds.width - axis.getMaxLabelWidth() - 1 : axis.getMaxLabelWidth() -5;
+    }
     layer.save();
     layer.setFillColor(tickProperties.color);
 
@@ -193,15 +213,34 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if (!gridOnly) {
       drawLabel(layer, uy, bounds, range);
     }
-    
   }
 
   private void drawVerticalLine(Layer layer, Bounds bounds) {
     layer.setFillColor(tickProperties.color);
-    double dir = (axis.getAxisPanel().getPosition() == AxisPanel.LEFT
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    double dir = (isLeft
         ? bounds.width : 0);
-
+     if ("inside".equals(axisProperties.tickPosition)) {
+      if(axis.getAxisPanel().getAxisNumber(axis) == axis.getAxisPanel().getAxisCount() - 1 ) 
+         dir = isLeft ? bounds.width : -1;
+      else 
+         dir = isLeft ? bounds.width - axis.getMaxLabelWidth() - 1 : axis.getMaxLabelWidth() + 1 ;
+    }
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
         bounds.y + bounds.height);
+  }
+
+  public TickPosition getTickPosition() {
+    return "inside".equals(axisProperties.tickPosition) ? TickPosition.INSIDE
+        : TickPosition.OUTSIDE;
+  }
+
+  public boolean isAxisLabelVisible() {
+    return labelProperties.visible;
+  }
+
+  public enum TickPosition {
+
+    INSIDE, OUTSIDE
   }
 }

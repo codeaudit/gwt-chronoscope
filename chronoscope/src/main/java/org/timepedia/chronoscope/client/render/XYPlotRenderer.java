@@ -37,12 +37,16 @@ public abstract class XYPlotRenderer {
 
     int numDatasets = plot.getNumDatasets();
     for (int seriesNum = 0; seriesNum < numDatasets; seriesNum++) {
+      
       XYDataset dataSet = plot.getDataset(seriesNum);
       int domainStart = 0, domainEnd = 0;
       int mipLevel = -1;
 
       double domainOrigin = plot.getDomainOrigin();
       double currentDomain = plot.getCurrentDomain();
+      if(!(dataSet.getDomainEnd() >= domainOrigin && dataSet.getDomainBegin() <= domainOrigin + currentDomain))
+        continue;
+      
       boolean inRegion = true;
       if (dataSet instanceof DeferredRegionalArrayXYDataset) {
         DeferredRegionalArrayXYDataset dDataset
@@ -78,6 +82,7 @@ public abstract class XYPlotRenderer {
             .binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
       } while (!inRegion || (inRegion && domainEnd - domainStart > maxPoints));
 
+      
       plot.setCurrentDatasetLevel(seriesNum, mipLevel);
 
       this.domainStart[seriesNum] = domainStart;

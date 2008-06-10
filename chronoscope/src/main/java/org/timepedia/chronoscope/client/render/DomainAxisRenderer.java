@@ -626,7 +626,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
   private static final String CREDITS_SIZE = "9pt";
 
-  private static final String TIME_LABEL = "(Time)";
+  private static final String TIME_LABEL = ""; // (Time)
 
   private static String pad(int num) {
     return num < 10 ? "0" + num : "" + num;

@@ -12,7 +12,6 @@ import org.timepedia.chronoscope.client.gss.MockGssContext;
 
 import java.util.ArrayList;
 
-import gquery.client.GQuery;
 
 /**
  *
@@ -31,36 +30,36 @@ public class GQueryGssContext extends CssGssContext {
 
   private boolean cssParsed = false;
 
-  protected GssProperties parseGssProperties(GssElement elem, String pseudoElt,
-      Element styleElem) {
-    if (!cssParsed) {
-      parseCss(new Command() {
+//  protected GssProperties parseGssProperties(GssElement elem, String pseudoElt,
+//      Element styleElem) {
+//    if (!cssParsed) {
+//      parseCss(new Command() {
+//
+//        public void execute() {
+//          applyGss();
+//        }
+//      });
+//      return new MockGssContext().getProperties(elem, pseudoElt);
+//    }
+//    applyGss();
+//    return new GQueryGssProperties(styleElem);
+//  }
 
-        public void execute() {
-          applyGss();
-        }
-      });
-      return new MockGssContext().getProperties(elem, pseudoElt);
-    }
-    applyGss();
-    return new GQueryGssProperties(styleElem);
-  }
-
-  private void applyGss() {
-    for (Rule rule : rules) {
-      for (Element e : GQuery.$(rule.getSelector()).elements()) {
-        String nodeName = e.getNodeName();
-        if (!nodeName.matches(
-            "tick|axis|label|axislegend|overview|.*marker|plot|line|bar|axes")) {
-          continue;
-        }
-        for (String property : rule.getProperties()) {
-          String keyval[] = property.split(":", 2);
-          e.setPropertyString(keyval[0], keyval[1]);
-        }
-      }
-    }
-  }
+//  private void applyGss() {
+//    for (Rule rule : rules) {
+//      for (Element e : GQuery.$(rule.getSelector()).elements()) {
+//        String nodeName = e.getNodeName();
+//        if (!nodeName.matches(
+//            "tick|axis|label|axislegend|overview|.*marker|plot|line|bar|axes")) {
+//          continue;
+//        }
+//        for (String property : rule.getProperties()) {
+//          String keyval[] = property.split(":", 2);
+//          e.setPropertyString(keyval[0], keyval[1]);
+//        }
+//      }
+//    }
+//  }
 
   private void parseCss(final Command continuation) {
      getAllCss(new Command() {

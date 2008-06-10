@@ -15,6 +15,8 @@ import org.timepedia.exporter.client.Exportable;
  */
 public class RangeAxis extends ValueAxis implements Exportable {
 
+  private double[] ticks;
+
   class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
 
     String labelFormat = null;
@@ -25,12 +27,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
 
     private void computeLabelFormat(double label) {
-      double scale = getScale(); 
+      double scale = getScale();
       scale = Double.isNaN(scale) ? 1 : scale;
-      
+
       int intDigits = (int) Math.floor(Math.log(getRangeHigh()) / Math.log(10));
-      if(isAllowAutoScale() && Double.isNaN(getScale()) && intDigits+1 > maxDigits) {
-         scale =  Math.pow(1000, intDigits / 3);
+      if (isAllowAutoScale() && Double.isNaN(getScale())
+          && intDigits + 1 > maxDigits) {
+        scale = Math.pow(1000, intDigits / 3);
       }
       if (isForceScientificNotation() || (isAllowScientificNotation() && (
           intDigits + 1 > getMaxDigits()
@@ -39,7 +42,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
         scientificNotationOn = true;
       } else if (intDigits > 0) {
         String digStr = "#########0";
-        labelFormat = digStr.substring(Math.max(digStr.length() - intDigits, 0));
+        labelFormat = digStr
+            .substring(Math.max(digStr.length() - intDigits, 0));
         int leftOver = Math.max(getMaxDigits() - intDigits, 0);
         if (leftOver > 0) {
           labelFormat += "." + "0#########".substring(leftOver);
@@ -170,7 +174,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double[] computeTickPositions() {
-    double ticks[] = computeLinearTickPositions(getUnadjustedRangeLow(),
+    if(ticks != null) return ticks;
+    ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
         getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight());
     adjustedRangeLow = ticks[0];
     for (int i = 0; i < ticks.length; i++) {
@@ -179,7 +184,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         break;
       }
     }
-    
+
     return ticks;
   }
 
@@ -284,8 +289,21 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double getWidth() {
+    double computedAxisLabelWidth = renderer.isAxisLabelVisible() ?
+        axisLabelWidth + 5 : 0;
+
     if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
-      return maxLabelWidth + 10 + axisLabelWidth;
+      if (axisPanel.getAxisNumber(this) == axisPanel.getAxisCount() - 1) {
+        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition
+            .INSIDE) {
+
+          return computedAxisLabelWidth;
+        } else {
+          return maxLabelWidth + 5 + computedAxisLabelWidth;
+        }
+      } else {
+        return maxLabelWidth + 5 + computedAxisLabelWidth;
+      }
     } else {
       return getChart().getPlotForAxis(this).getPlotBounds().width;
     }
@@ -296,6 +314,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public void initVisibleRange() {
+    ticks = null;
+    computeTickPositions();
     visRangeMin = rangeLow;
     visRangeMax = rangeHigh;
   }
@@ -386,6 +406,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setRange(double rangeLow, double rangeHigh) {
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
+    ticks = null;
   }
 
   /**
@@ -432,6 +453,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
+    ticks=null;
+    computeTickPositions();
   }
 
   public double userToData(double userValue) {
