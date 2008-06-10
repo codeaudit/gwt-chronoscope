@@ -501,7 +501,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   private void initElement(Element container) {
     setElement(container);
     DOM.setStyleAttribute(container, "overflow", "hidden");
-    addStyleName("chrono");
+//    addStyleName("chrono");
     sinkEvents(Event.MOUSEEVENTS);
     sinkEvents(Event.KEYEVENTS);
     sinkEvents(Event.ONCLICK);

@@ -19,6 +19,7 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
+import org.timepedia.chronoscope.client.data.DeferredRegionalArrayXYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -231,12 +232,20 @@ public class Chronoscope implements Exportable, HistoryListener {
       double domains[][] = new double[dmipLevels][];
       double ranges[][] = new double[dmipLevels][];
 
+      String prefix = JavascriptHelper.jsPropGetString(json, "prefix");
+      JavaScriptObject ivals = JavascriptHelper.jsPropGet(json, "intervals");
+      double domainBegin = JavascriptHelper.jsPropGetD(json, "domainBegin");
+      double domainEnd = JavascriptHelper.jsPropGetD(json, "domainEnd");
+      
+      boolean hasRegions = prefix != null && ivals != null;
+      
       for (int i = 0; i < dmipLevels; i++) {
         JavaScriptObject mdomain = JavascriptHelper.jsArrGet(domain, i);
         JavaScriptObject mrange = JavascriptHelper.jsArrGet(range, i);
-        domains[i] = getArray(mdomain, 1000);
+        domains[i] = getArray(mdomain, 1);
         ranges[i] = getArray(mrange, 1);
       }
+      
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
@@ -244,7 +253,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"));
-      } else {
+      } else if(!hasRegions) {
         dataset = new ArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
@@ -252,8 +261,19 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"));
       }
+      else {
+        dataset = new DeferredRegionalArrayXYDataset(
+            JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
+            JavascriptHelper.jsPropGetD(json, "rangeTop"),
+            JavascriptHelper.jsPropGetD(json, "rangeBottom"),
+            JavascriptHelper.jsPropGetString(json, "label"),
+            JavascriptHelper.jsPropGetString(json, "axis"),
+            domains[0][0], domains[0][domains[0].length-1],
+            getArray(ivals, 1),
+            prefix, domainBegin, domainEnd);
+      }
     } else {
-      double domainVal[] = getArray(domain, 1000);
+      double domainVal[] = getArray(domain, 1);
       double rangeVal[] = getArray(range, 1);
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(
@@ -402,7 +422,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     XYDataSource.setFactory(new BrowserXYDataSourceFactory());
   }
 
-  private static double[] getArray(JavaScriptObject jsArray, int preMul) {
+  public static double[] getArray(JavaScriptObject jsArray, int preMul) {
     int len = JavascriptHelper.jsArrLength(jsArray);
 
     double aVal[] = new double[len];

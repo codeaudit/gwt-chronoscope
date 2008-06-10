@@ -89,6 +89,12 @@ public class CssGssContext extends BrowserGssContext {
       styleElem = createAndAddStyleElements(elem, pseudoElt);
     }
 
+    GssProperties gss = parseGssProperties(elem, pseudoElt, styleElem);
+    return gss;
+  }
+
+  protected GssProperties parseGssProperties(GssElement elem, String pseudoElt,
+      Element styleElem) {
     CssGssProperties gss = (CssGssProperties) GWT
         .create(CssGssProperties.class);
     gss.init(this, elem, styleElem, pseudoElt, view);

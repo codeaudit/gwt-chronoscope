@@ -5,6 +5,9 @@
 *.iml
 *.iws
 *.class
+release.properties
+*.releaseBackup
+*.csv*.js
 target
 data
 curate-data

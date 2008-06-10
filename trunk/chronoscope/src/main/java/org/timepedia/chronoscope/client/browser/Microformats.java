@@ -124,13 +124,20 @@ public class Microformats {
           var thead = table.getElementsByTagName("thead");
           var labels=[], axes=[], dateformat=null;
           var colgroup = table.getElementsByTagName("colgroup");
-
+          var rangeFormats = [];
+          var i = 0;
           if(colgroup && colgroup.item(0)) {
             var cols = colgroup.item(0).getElementsByTagName("col");
             if(cols && cols.length > 0) {
               var datecol=cols.item(0);
               if(datecol.className == "cmf-dateformat") {
                 dateformat = datecol.getAttribute('title');
+              }
+              for(i=1; i<cols.length; i++) {
+                var rcol = cols.item(i);
+                if(rcol.className == "cmf-numberformat") {
+                  rangeFormats[i] = rcol.getAttribute("title");
+                }
               }
             }
           }
@@ -170,7 +177,8 @@ public class Microformats {
             }
             var result=[];
             for(i=0; i<numCols-1; i++) {
-               result.push({ id: id, domain: domain, range: range[i], label: labels[i+1], axis: axes[i+1]});
+               result.push({ id: id, domain: domain, range: range[i], label: labels[i+1], axis: axes[i+1],
+               format: rangeFormats[i+1]});
             }
             return result;
           }

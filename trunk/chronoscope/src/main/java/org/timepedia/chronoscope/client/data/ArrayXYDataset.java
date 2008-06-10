@@ -7,19 +7,18 @@ import org.timepedia.chronoscope.client.XYDataset;
  */
 public class ArrayXYDataset implements XYDataset {
 
-  protected double[] domain;
+  double[] domain;
+  double[] range;
 
-  protected double[] range;
+  double rangeBottom, rangeTop;
 
-  protected double rangeBottom, rangeTop;
+  double[][] multiDomain;
 
-  protected double[][] multiDomain;
+  double[][] multiRange;
 
-  protected double[][] multiRange;
+  int length;
 
-  protected int length;
-
-  protected int multiLengths[];
+  int multiLengths[];
 
   private final String identifier;
 
@@ -48,6 +47,9 @@ public class ArrayXYDataset implements XYDataset {
     multiRange = ranges;
     rangeTop = top;
     rangeBottom = bottom;
+    multiLengths = new int[multiDomain.length];
+    for(int i=0; i<domains.length; i++)
+     multiLengths[i]=domains[i].length;
   }
 
   protected ArrayXYDataset(String identifier, double[] domain, double[] range,
@@ -119,6 +121,14 @@ public class ArrayXYDataset implements XYDataset {
 
   public double getY(int index, int mipLevel) {
     return multiRange[mipLevel][index];
+  }
+
+  public double getDomainBegin() {
+    return getX(0);
+  }
+
+  public double getDomainEnd() {
+    return getX(getNumSamples()-1);
   }
 
   protected XYMultiresolution computeMultiresolution(

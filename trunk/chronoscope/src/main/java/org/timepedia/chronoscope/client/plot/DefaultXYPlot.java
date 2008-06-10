@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
@@ -11,6 +13,7 @@ import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
+import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -18,6 +21,8 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.data.HasRegions;
+import org.timepedia.chronoscope.client.data.RegionLoadListener;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -45,7 +50,8 @@ import java.util.Vector;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
-public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
+public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
+    RegionLoadListener {
 
   public static int MAX_DRAWABLE_DATAPOINTS = 400;
 
@@ -147,7 +153,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private Bounds domainBounds;
 
-  private Layer hightLightLayer;
+  private Layer highLightLayer;
 
   private Bounds topBounds;
 
@@ -231,6 +237,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
       animationTimer = null;
     }
+    fence = false;
     double maxDomain = getDomainMax() - getDomainMin();
     final double destDom = fence ? Math.min(destinationDomain, maxDomain)
         : destinationDomain;
@@ -573,7 +580,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
         AxisPanel.BOTTOM);
-    domainAxis = new DateAxis(this, domainPanel);
+    domainAxis = new StockMarketDateAxis(this, domainPanel);
 
     if (domainAxisVisible) {
       domainPanel.add(domainAxis);
@@ -844,6 +851,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         false);
   }
 
+  public boolean isAnimating() {
+    return isAnimating;
+  }
+
   public void setAnimating(boolean animating) {
     this.isAnimating = animating;
   }
@@ -873,6 +884,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     if (d instanceof UpdateableXYDataset) {
       UpdateableXYDataset ud = (UpdateableXYDataset) d;
       ud.addXYDatasetListener(this);
+    }
+    if(d instanceof HasRegions) {
+      ((HasRegions)d).addRegionLoadListener(this);
     }
   }
 
@@ -943,7 +957,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     beginHighlight = userXtoDomain(selStart, 0);
     endHighlight = userXtoDomain(selEnd, 0);
     redraw();
-//        drawHighlight(hightLightLayer, hightLightLayer);
+//        drawHighlight(highLightLayer, highLightLayer);
   }
 
   public boolean setHover(int x, int y) {
@@ -958,7 +972,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       double domainX = userXtoDomain(x, i);
       double rangeY = userYtoRange(y, i);
       Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
-          10);
+          15);
       if (nearest.nearest > -1 && nearest.dist < nearDist) {
         nearNum = nearest.nearest;
         nearSer = nearest.series;
@@ -970,13 +984,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       hoverPoint = nearNum + 1;
       hoverSeries = nearSer;
       if (lastHoverSeries != hoverSeries || lastHover != hoverPoint) {
-        // redraw();
+         redraw();
       }
       return true;
     } else {
       hoverPoint = -1;
       if (lastHoverSeries != hoverSeries || lastHover != hoverPoint) {
-        //  redraw();
+          redraw();
       }
     }
     return false;
@@ -1013,8 +1027,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     plotLayer.save();
     plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
     plotLayer.clear();
-    plotLayer.setFillColor("#FF0000");
-    plotLayer.fillRect(0, 0, 50, 50);
+//    plotLayer.setFillColor("#FF0000");
+//    plotLayer.fillRect(0, 0, 50, 50);
 
     if (interactive && !overviewDrawn && overviewEnabled) {
       double dO = domainOrigin;
@@ -1035,7 +1049,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       currentDomain = cD;
     }
 
-    drawPlot();
 
     if (interactive) {
 
@@ -1080,10 +1093,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         topLayer.restore();
       }
 
-      drawOverlays(plotLayer);
-      drawHighlight(hightLightLayer);
+      
     }
-
+    drawPlot();
+    drawOverlays(plotLayer);
+    drawHighlight(highLightLayer);
     plotLayer.restore();
     backingCanvas.endFrame();
   }
@@ -1180,9 +1194,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     domainMin = Double.POSITIVE_INFINITY;
     domainMax = Double.NEGATIVE_INFINITY;
     for (int i = 0; i < dataSets.length; i++) {
-      double min = dataSets[i].getX(0);
+      double min = dataSets[i].getDomainBegin();
       domainMin = Math.min(domainMin, min);
-      double max = dataSets[i].getX(dataSets[i].getNumSamples() - 1);
+      double max = dataSets[i].getDomainEnd();
       domainMax = Math.max(domainMax, max);
     }
   }
@@ -1216,7 +1230,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private double dist(double x1, double y1, double cx, double cy) {
-    return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
+    //TODO: we now ignore y dist to make hover easier
+    //return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
+    return Math.abs(x1-cx);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1330,9 +1346,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       domainLayer = backingCanvas
           .createLayer("domainAxis" + plotNumber, domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      hightLightLayer = backingCanvas
+      highLightLayer = backingCanvas
           .createLayer("highlight" + plotNumber, plotBounds);
-      hightLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
+      highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
    
     }
   }
@@ -1363,6 +1379,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       if (dataSet instanceof UpdateableXYDataset) {
         ((UpdateableXYDataset) dataSet).addXYDatasetListener(this);
       }
+      if(dataSet instanceof HasRegions) {
+        ((HasRegions)dataSet).addRegionLoadListener(this);
+      }
     }
+  }
+
+  public void onRegionLoaded(HasRegions h, int regionNumber) {
+    GWT.log("redrawing due to region load", null);
+    redraw();
   }
 }

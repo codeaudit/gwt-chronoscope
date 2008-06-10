@@ -43,7 +43,7 @@ public class FlashView extends View
 
   }
 
-  static final FocusImpl focusImpl = (FocusImpl) GWT.create(FocusImpl.class);
+  static final FocusImpl focusImpl = FocusImpl.getFocusImplForPanel();
 
   private static int getClientHeightRecursive(Element element) {
     int height = DOM.getElementPropertyInt(element, "clientHeight");

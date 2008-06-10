@@ -85,8 +85,8 @@ axes axis {
 
 plot {
 
-  background-image: url( http://timepedia.org/lineargradient/0,0/0,1/0/00ABEb/1/FFFFFF )
-
+ /* background-image: url( http://timepedia.org/lineargradient/0,0/0,1/0/00ABEb/1/FFFFFF ) */
+  background-color: transparent;
 }
 
 plot {

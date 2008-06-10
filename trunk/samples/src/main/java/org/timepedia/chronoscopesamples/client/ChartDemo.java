@@ -45,130 +45,131 @@ public class ChartDemo implements EntryPoint {
 
   public void onModuleLoad() {
 
-    // you must specify the chart dimensions for now, rather than have the chart grow to fill its container
-    int chartWidth = 1024, chartHeight = (int) (chartWidth / GOLDEN__RATIO);
+    try {
+// you must specify the chart dimensions for now, rather than have the chart grow to fill its container
+      int chartWidth = 1024, chartHeight = (int) (chartWidth / GOLDEN__RATIO);
 
-   // Chronoscope.enableHistorySupport(true);
-    Chronoscope.setFontBookRendering(true);
-    Chronoscope.setErrorReporting(false);
-  //  Chronoscope.setMicroformatsEnabled(true);
-    Chronoscope.initialize();
+      // Chronoscope.enableHistorySupport(true);
+      Chronoscope.setFontBookRendering(true);
+      Chronoscope.setErrorReporting(false);
+      Chronoscope.setMicroformatsEnabled(true);
+      Chronoscope.initialize();
 
-    TabPanel vp = new TabPanel();
+      TabPanel vp = new TabPanel();
 //    VerticalPanel vp = new VerticalPanel();
-    final XYDataset[] ds = new XYDataset[1];
-    ds[0] = Chronoscope.createMutableXYDataset(getJson("unratedata"));
+      final XYDataset[] ds = new XYDataset[1];
+      ds[0] = Chronoscope.createXYDataset(getJson("ibm"));
 //        ds[1]=new MockXYDataset();
-    final ChartPanel chartPanel = Chronoscope
-        .createTimeseriesChart(ds, chartWidth, chartHeight);
+      final ChartPanel chartPanel = Chronoscope
+          .createTimeseriesChart(ds, chartWidth, chartHeight);
 
-   
-    VerticalPanel vert = new VerticalPanel();
-    vp.add(new HTML("Hello World"), "Hello World");
-    HorizontalPanel hp = new HorizontalPanel();
-    
-    final TextBox tb = new TextBox();
-    final Label l = new Label("Num Points: " + ds[0].getNumSamples());
-    hp.add(l);
-    hp.add(tb);
-    Button b = new Button("Mutate Range to Random Value");
-    b.addClickListener(new ClickListener() {
-
-      public void onClick(Widget sender) {
-        RangeMutableXYDataset rxy = (RangeMutableXYDataset) ds[0];
-        rxy.beginUpdate();
-        rxy.setY(Integer.parseInt(tb.getText()),
-            Math.random() * (ds[0].getRangeTop() - ds[0].getRangeBottom()));
-        rxy.endUpdate();
-      }
-    });
-    hp.add(b);
-    vert.add(chartPanel);
-    vert.add(hp);
-    vp.add(vert, "Mutable XYDatasSource");
-    
-    vp.selectTab(0);
-    XYDataset ds2[] = new XYDataset[1];
-    ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-    final ChartPanel chartPanel3 = Chronoscope
-        .createTimeseriesChart(ds2, 400, 300);
-    chartPanel3.setReadyListener(new ViewReadyCallback() {
-      public void onViewReady(View view) {
-        RangeAxis ra = view.getChart().getPlot().getRangeAxis(0);
-        ra.setTickLabelNumberFormatter(new TickLabelNumberFormatter() {
-          public String format(double value) {
-            return "FOO:"+value;
-          }
-        });
-      }
-    });
-    vp.add(chartPanel3, "Chart 3");
-
-//     vp.add(chartPanel);
-
-//        XYDataset[] ds2 = new XYDataset[2];
-//        ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-//        ds2[1] = Chronoscope.createXYDataset(getJson("dffdata"));
-//        ChartPanel chartPanel2 = Chronoscope.createTimeseriesChart(ds2, chartWidth, chartHeight);
-//        vp.add(chartPanel2, "Two XYDataSources on separtate axes");
-
-//        XYDataset[] ds4 = new XYDataset[1];
-//        ds4[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-//        final ChartPanel chartPanel4 = Chronoscope.createTimeseriesChart(ds4, chartWidth, chartHeight);
-//        Marker marker = new Marker("1975/10/10", 0, "A");
-//        marker.addOverlayClickListener(new OverlayClickListener() {
-//            public void onOverlayClick(Overlay overlay, int x, int y) {
-//                ( (Marker) overlay ).openInfoWindow("You clicked on 'A'");
+//      VerticalPanel vert = new VerticalPanel();
+//      vp.add(new HTML("Hello World"), "Hello World");
+//      HorizontalPanel hp = new HorizontalPanel();
+//
+//      final TextBox tb = new TextBox();
+//      final Label l = new Label("Num Points: " + ds[0].getNumSamples());
+//      hp.add(l);
+//      hp.add(tb);
+//      Button b = new Button("Mutate Range to Random Value");
+//      b.addClickListener(new ClickListener() {
+//  
+//        public void onClick(Widget sender) {
+//          RangeMutableXYDataset rxy = (RangeMutableXYDataset) ds[0];
+//          rxy.beginUpdate();
+//          rxy.setY(Integer.parseInt(tb.getText()),
+//              Math.random() * (ds[0].getRangeTop() - ds[0].getRangeBottom()));
+//          rxy.endUpdate();
+//        }
+//      });
+//      hp.add(b);
+//      vert.add(chartPanel);
+//      vert.add(hp);
+//      vp.add(vert, "Mutable XYDatasSource");
+//
+//      vp.selectTab(0);
+//      XYDataset ds2[] = new XYDataset[1];
+//      ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
+//      final ChartPanel chartPanel3 = Chronoscope
+//          .createTimeseriesChart(ds2, 400, 300);
+//      chartPanel3.setReadyListener(new ViewReadyCallback() {
+//        public void onViewReady(View view) {
+//          RangeAxis ra = view.getChart().getPlot().getRangeAxis(0);
+//          ra.setTickLabelNumberFormatter(new TickLabelNumberFormatter() {
+//            public String format(double value) {
+//              return "FOO:"+value;
 //            }
+//          });
+//        }
+//      });
+//      vp.add(chartPanel3, "Chart 3");
+//
+////     vp.add(chartPanel);
+//
+////        XYDataset[] ds2 = new XYDataset[2];
+////        ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
+////        ds2[1] = Chronoscope.createXYDataset(getJson("dffdata"));
+////        ChartPanel chartPanel2 = Chronoscope.createTimeseriesChart(ds2, chartWidth, chartHeight);
+////        vp.add(chartPanel2, "Two XYDataSources on separtate axes");
+//
+////        XYDataset[] ds4 = new XYDataset[1];
+////        ds4[0] = Chronoscope.createXYDataset(getJson("unratedata"));
+////        final ChartPanel chartPanel4 = Chronoscope.createTimeseriesChart(ds4, chartWidth, chartHeight);
+////        Marker marker = new Marker("1975/10/10", 0, "A");
+////        marker.addOverlayClickListener(new OverlayClickListener() {
+////            public void onOverlayClick(Overlay overlay, int x, int y) {
+////                ( (Marker) overlay ).openInfoWindow("You clicked on 'A'");
+////            }
+//
+////        });
+////        vp.add(chartPanel4, "Markers");
+//      chartPanel.setReadyListener(new ViewReadyCallback() {
+//        public void onViewReady(final View view) {
+//  //                view.getChart().getPlot().setRenderer(0, new BarChartXYRenderer(0));
+//          Marker marker = new Marker("1977/10/10", 0, "A");
+//          marker.addOverlayClickListener(new OverlayClickListener() {
+//            public void onOverlayClick(Overlay overlay, int x, int y) {
+//              ((Marker) overlay).openInfoWindow("You clicked on 'A'");
+//            }
+//          });
+//          view.getChart().getPlot().addOverlay(marker);
+//          DomainBarMarker dm = new DomainBarMarker("1979/01/01", "1980/01/01",
+//              "1979");
+//          view.getChart().getPlot().addOverlay(dm);
+//          RangeBarMarker rm = new RangeBarMarker(2.0, 4.0, "Foobar");
+//          view.getChart().getPlot().addOverlay(rm);
+//  //                Date start = new Date();
+//  //                if(GWT.isScript()) {
+//  //                for(int i=0; i<25; i++) {
+//  //                    view.getChart().redraw();
+//  //                }
+//  //                Date end = new Date();
+//  //                Window.alert("Time taken for 25 redraws() = "+(end.getTime()-start.getTime()));
+//  //                }
+//          view.getChart().redraw();
+//          Timer t = new Timer() {
+//            int count = 0;
+//  
+//            public void run() {
+//              AppendableXYDataset mxy = (AppendableXYDataset) ds[0];
+//              mxy.beginUpdate();
+//              mxy.insertXY(mxy.getX(mxy.getNumSamples() - 1) + 86400 * 1000
+//                  + Math.random() * 5 * 86400 * 1000,
+//                  //        count++
+//                  Math.random() * (mxy.getRangeTop() - mxy.getRangeBottom()));
+//              mxy.endUpdate();
+//              l.setText("Num Points: "+ds[0].getNumSamples());
+//            }
+//          };
+//        //  t.scheduleRepeating(500);
+//        }
+//      });
+//
+//      RootPanel.get("chartdemo").add(vp);
+      RootPanel.get("chartdemo").add(chartPanel);
 
-//        });
-//        vp.add(chartPanel4, "Markers");
-    chartPanel.setReadyListener(new ViewReadyCallback() {
-      public void onViewReady(final View view) {
-//                view.getChart().getPlot().setRenderer(0, new BarChartXYRenderer(0));
-        Marker marker = new Marker("1977/10/10", 0, "A");
-        marker.addOverlayClickListener(new OverlayClickListener() {
-          public void onOverlayClick(Overlay overlay, int x, int y) {
-            ((Marker) overlay).openInfoWindow("You clicked on 'A'");
-          }
-        });
-        view.getChart().getPlot().addOverlay(marker);
-        DomainBarMarker dm = new DomainBarMarker("1979/01/01", "1980/01/01",
-            "1979");
-        view.getChart().getPlot().addOverlay(dm);
-        RangeBarMarker rm = new RangeBarMarker(2.0, 4.0, "Foobar");
-        view.getChart().getPlot().addOverlay(rm);
-//                Date start = new Date();
-//                if(GWT.isScript()) {
-//                for(int i=0; i<25; i++) {
-//                    view.getChart().redraw();
-//                }
-//                Date end = new Date();
-//                Window.alert("Time taken for 25 redraws() = "+(end.getTime()-start.getTime()));
-//                }
-        view.getChart().redraw();
-        Timer t = new Timer() {
-          int count = 0;
-
-          public void run() {
-            AppendableXYDataset mxy = (AppendableXYDataset) ds[0];
-            mxy.beginUpdate();
-            mxy.insertXY(mxy.getX(mxy.getNumSamples() - 1) + 86400 * 1000
-                + Math.random() * 5 * 86400 * 1000,
-                //        count++
-                Math.random() * (mxy.getRangeTop() - mxy.getRangeBottom()));
-            mxy.endUpdate();
-            l.setText("Num Points: "+ds[0].getNumSamples());
-          }
-        };
-      //  t.scheduleRepeating(500);
-      }
-    });
-
-    RootPanel.get("chartdemo").add(vp);
-
-    //currently, because of design issues in the initialization process,
-    // these must come after attachment
+      //currently, because of design issues in the initialization process,
+      // these must come after attachment
 
 //        chartPanel2.getChart().getPlot().setOverviewEnabled(false);
 //
@@ -178,7 +179,7 @@ public class ChartDemo implements EntryPoint {
 //        chartPanel4.getChart().redraw();
 //        vp.selectTab(0);
 
-    // hack to fix current bug when chart is hidden with display:none in a tab panel
+      // hack to fix current bug when chart is hidden with display:none in a tab panel
 //        vp.addTabListener(new TabListener() {
 //            public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 //                chartPanel4.getChart().redraw();
@@ -189,5 +190,8 @@ public class ChartDemo implements EntryPoint {
 //
 //            }
 //        });
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
   }
 }

@@ -5,8 +5,10 @@
   <inherits name='com.google.gwt.http.HTTP'/>
   <inherits name='com.google.gwt.i18n.I18N'/>
   
-  <inherits name='org.timepedia.exporter.Exporter'/>
+ <inherits name='org.timepedia.exporter.Exporter'/>
+ <inherits name='gquery.GQuery'/>
 
+   
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
     if(window.location.href.indexOf("_force_flash") != -1) return "force";      
@@ -43,6 +45,8 @@
     </none>
   </replace-with>
 
+  
+  
   <replace-with class="org.timepedia.chronoscope.client.browser.BrowserView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
   </replace-with>
