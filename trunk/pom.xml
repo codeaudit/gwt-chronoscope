@@ -60,6 +60,7 @@
   <modules>
     <module>chronoscope</module>
     <module>samples</module> 
+    <module>gadget</module>
     <module>widget</module>
     <module>chronoscope-java2d</module>
   </modules>
@@ -241,7 +242,7 @@
       </activation>
 
       <properties>
-       <gwtversion>1.5.0</gwtversion>
+       <gwtversion>1.5.0-rc1</gwtversion>
         <!--		<maven.test.skip>true</maven.test.skip> -->
       </properties>
     </profile>

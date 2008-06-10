@@ -6,7 +6,7 @@
   <inherits name='com.google.gwt.i18n.I18N'/>
   
  <inherits name='org.timepedia.exporter.Exporter'/>
- <inherits name='gquery.GQuery'/>
+ <inherits name='gwtquery.GwtQuery'/>
 
    
   <define-property name="hasflash" values="yes,no,force"/>

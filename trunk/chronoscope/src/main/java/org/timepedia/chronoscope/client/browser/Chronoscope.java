@@ -218,6 +218,9 @@ public class Chronoscope implements Exportable, HistoryListener {
     String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
     ArrayXYDataset dataset = null;
 
+    int domainscale = (int)JavascriptHelper.jsPropGetDor(json, "domainscale", 1);
+
+    
     if (mipped != null && mipped.equals("true")) {
 
       int dmipLevels = JavascriptHelper.jsArrLength(domain);
@@ -234,17 +237,19 @@ public class Chronoscope implements Exportable, HistoryListener {
 
       String prefix = JavascriptHelper.jsPropGetString(json, "prefix");
       JavaScriptObject ivals = JavascriptHelper.jsPropGet(json, "intervals");
-      double domainBegin = JavascriptHelper.jsPropGetD(json, "domainBegin");
-      double domainEnd = JavascriptHelper.jsPropGetD(json, "domainEnd");
+      
       
       boolean hasRegions = prefix != null && ivals != null;
       
       for (int i = 0; i < dmipLevels; i++) {
         JavaScriptObject mdomain = JavascriptHelper.jsArrGet(domain, i);
         JavaScriptObject mrange = JavascriptHelper.jsArrGet(range, i);
-        domains[i] = getArray(mdomain, 1);
+        domains[i] = getArray(mdomain, domainscale);
         ranges[i] = getArray(mrange, 1);
       }
+      
+      double domainBegin = hasRegions ? JavascriptHelper.jsPropGetD(json, "domainBegin") : domains[0][0] ;
+      double domainEnd = hasRegions ? JavascriptHelper.jsPropGetD(json, "domainEnd") : domains[0][domains[0].length-1];
       
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(
@@ -273,7 +278,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             prefix, domainBegin, domainEnd);
       }
     } else {
-      double domainVal[] = getArray(domain, 1);
+      double domainVal[] = getArray(domain, domainscale);
       double rangeVal[] = getArray(range, 1);
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(

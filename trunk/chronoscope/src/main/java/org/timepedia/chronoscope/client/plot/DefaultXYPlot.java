@@ -872,6 +872,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void setCurrentDatasetLevel(int seriesNum, int mipLevel) {
+    if(currentMiplevels[seriesNum] != mipLevel) {
+      hoverPoint = -1;
+      hoverSeries = -1;
+      // TODO: maybe adjust to nearest one in next level of detail
+      focusPoint = -1;
+      focusSeries = -1;
+    }
     currentMiplevels[seriesNum] = mipLevel;
   }
 
@@ -1083,7 +1090,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         domainLayer.restore();
       }
 
-      if (!drewTop && topPanel.getAxisCount() > 0) {
+      if (true && topPanel.getAxisCount() > 0) {
 
         topLayer.save();
         drawAxisPanel(topLayer, topPanel,
@@ -1165,19 +1172,25 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   protected void autoAssignDatasetAxes() {
+    int rangeAxisCount = -1;
     for (int i = 0; i < dataSets.length; i++) {
       RangeAxis ra = (RangeAxis) axisMap.get(dataSets[i].getAxisId());
       if (ra == null) {
+        rangeAxisCount++;
         ra = new RangeAxis(chart, dataSets[i].getRangeLabel(),
             dataSets[i].getAxisId(), i, dataSets[i].getRangeBottom(),
             dataSets[i].getRangeTop(),
-            i % 2 == 0 ? rangePanelLeft : rangePanelRight);
+            rangeAxisCount % 2 == 0 ? rangePanelLeft : rangePanelRight);
         axisMap.put(ra.getUnitLabel(), ra);
-        if (i % 2 == 0) {
+        if (rangeAxisCount % 2 == 0) {
           rangePanelLeft.add(ra);
         } else {
           rangePanelRight.add(ra);
         }
+      } else {
+        ra.setRange(Math.min(ra.getRangeLow(), dataSets[i].getRangeBottom()),
+            Math.max(ra.getRangeHigh(), dataSets[i].getRangeTop()));
+        
       }
 
       axes[i] = ra;
@@ -1231,8 +1244,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private double dist(double x1, double y1, double cx, double cy) {
     //TODO: we now ignore y dist to make hover easier
-    //return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
-    return Math.abs(x1-cx);
+    return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
+//    return Math.abs(x1-cx);
   }
 
   private void drawOverlays(Layer overviewLayer) {

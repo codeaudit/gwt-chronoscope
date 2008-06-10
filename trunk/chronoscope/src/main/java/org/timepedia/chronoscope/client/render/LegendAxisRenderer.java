@@ -17,25 +17,26 @@ import java.util.Date;
  */
 public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
-  private static final String ZOOM_COLON = "Zoom:";
+  // TODO: fix hotspots
+  private static final String ZOOM_COLON = "Zoom: [+ ";
 
-  private static final String ZOOM_1D = "1d";
+  private static final String ZOOM_1D = "day";
 
-  private static final String ZOOM_5D = "5d";
+  private static final String ZOOM_5D = ""; // - or + or (s) or days
 
-  private static final String ZOOM_1M = "1m";
+  private static final String ZOOM_1M = "month";
 
-  private static final String ZOOM_3M = "3m";
+  private static final String ZOOM_3M = ""; // ...
 
-  private static final String ZOOM_6M = "6m";
+  private static final String ZOOM_6M = ""; // ...
 
-  private static final String ZOOM_1Y = "1y";
+  private static final String ZOOM_1Y = "year";
 
-  private static final String ZOOM_5Y = "5y";
+  private static final String ZOOM_5Y = ""; // ...
 
-  private static final String ZOOM_10Y = "10y";
+  private static final String ZOOM_10Y = "decade";
 
-  private static final String ZOOM_MAX = "max";
+  private static final String ZOOM_MAX = " -]"; //max
 
   private static final String ZOOM_STRING = ZOOM_COLON + "\u00A0" + ZOOM_1D
       + "\u00A0" + ZOOM_5D + "\u00A0" + ZOOM_1M + "\u00A0" + ZOOM_3M + "\u00A0"
@@ -273,8 +274,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
     layer.save();
     layer.setFillColor(axisProperties.bgColor);
-    layer.translate(-1, bounds.y-1);
-    layer.scale(layer.getWidth()+1, bounds.height+1);
+    layer.translate(-1, bounds.y - 1);
+    layer.scale(layer.getWidth() + 1, bounds.height + 1);
     layer.beginPath();
     layer.rect(0, 0, 1, 1);
     layer.fill();
@@ -359,6 +360,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
+    if (lastSerNum != -1 & lastSerPer != -1) {
+      seriesLabel += " (" + plot.getRangeAxis(seriesNum).getFormattedLabel(plot.getDataY(lastSerNum, lastSerPer))
+          + ")";
+    }
     XYRenderer renderer = plot.getRenderer(seriesNum);
 
     double height = getLabelHeight(plot.getChart().getView(), "X");
@@ -395,7 +400,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     lastSerNum = serNum;
     lastSerPer = serPer;
 
-    if (lastSerNum != -1 && lastSerPer != -1) {
+    if (false && lastSerNum != -1 && lastSerPer != -1) {
       String val = String.valueOf(plot.getDataY(lastSerNum, lastSerPer));
       String status = "X: " + asDate(plot.getDataX(lastSerNum, lastSerPer))
           + ", Y: " + val.substring(0, Math.min(4, val.length()));
