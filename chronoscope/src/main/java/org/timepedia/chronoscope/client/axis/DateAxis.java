@@ -100,4 +100,8 @@ public class DateAxis extends ValueAxis {
   public double userToData(double userValue) {
     return getRangeLow() + userValue * getRange();
   }
+
+  public boolean isVisible(double tickPos) {
+    return true;
+  }
 }

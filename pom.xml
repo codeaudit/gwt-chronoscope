@@ -241,7 +241,7 @@
       </activation>
 
       <properties>
-        <gwtversion>1.4.61timepedia</gwtversion>
+       <gwtversion>1.5.0</gwtversion>
         <!--		<maven.test.skip>true</maven.test.skip> -->
       </properties>
     </profile>

@@ -43,6 +43,14 @@
       <type>jar</type>
     </dependency>
 
+
+    <dependency>
+      <groupId>gwtquery</groupId>
+      <artifactId>gwtquery</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+    </dependency>
+
     
     <!--<dependency>-->
       <!--<groupId>com.google.gwt</groupId>-->
@@ -71,10 +79,10 @@
   </dependencies>
   <build>
     <plugins>
+<!--
        <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-        <!--<inherited>false</inherited>-->
         <configuration>
           <gwtVersion>${gwtversion}</gwtVersion>
           <logLevel>ERROR</logLevel>
@@ -96,6 +104,7 @@
           </execution>
         </executions>
       </plugin>
+-->
     </plugins>
     <!--<finalName>chronoscope</finalName>-->
     <resources>

@@ -114,21 +114,22 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       layer.setTextLayerBounds(textLayerName, bounds);
       boundsSet = true;
     }
-    GWT.log("Text layer name is " + textLayerName, null);
+//    GWT.log("Text layer name is " + textLayerName, null);
     layer.clearTextLayer(textLayerName);
 
     layer.setFillColor(axisProperties.bgColor);
     layer.setShadowBlur(0);
     layer.setShadowOffsetX(0);
     layer.setShadowOffsetY(0);
-    layer.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-    layer.translate(bounds.x, bounds.y);
-    layer.scale(bounds.width, bounds.height);
-    layer.beginPath();
-    layer.rect(0, 0, 1, 1);
-    layer.setLineWidth(1.0f / bounds.width);
-    layer.stroke();
-    layer.fill();
+    layer.translate(bounds.x-1, bounds.y-1);
+    layer.scale(bounds.width+1, bounds.height+1);
+    layer.fillRect(0,0,1,1);
+//    
+//    layer.beginPath();
+//    layer.rect(0, 0, 1, 1);
+//    layer.setLineWidth(1.0f / bounds.width);
+//    layer.stroke();
+   // layer.fill();
     layer.restore();
   }
 

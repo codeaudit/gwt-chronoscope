@@ -88,9 +88,8 @@ public class Util {
   private static double findRenderedEnd(XYPlot plot, XYDataset dataSet) {
     int mipLevel = -1;
     int domainStart, domainEnd;
-    double domainOrigin = dataSet.getX(0);
-    double currentDomain = dataSet.getX(dataSet.getNumSamples() - 1)
-        - domainOrigin;
+    double domainOrigin = dataSet.getDomainBegin();
+    double currentDomain = dataSet.getDomainEnd() - domainOrigin;
 
     do {
       mipLevel++;
@@ -104,9 +103,8 @@ public class Util {
   private static double findRenderedStart(XYPlot plot, XYDataset dataSet) {
     int mipLevel = -1;
     int domainStart, domainEnd;
-    double domainOrigin = dataSet.getX(0);
-    double currentDomain = dataSet.getX(dataSet.getNumSamples() - 1)
-        - domainOrigin;
+    double domainOrigin = dataSet.getDomainBegin();
+    double currentDomain = dataSet.getDomainEnd() - domainOrigin;
 
     do {
       mipLevel++;

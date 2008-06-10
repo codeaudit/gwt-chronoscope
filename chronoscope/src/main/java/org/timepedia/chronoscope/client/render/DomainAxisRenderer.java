@@ -825,6 +825,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     for (; i < loop; i++) {
       double tickPos = tlf
           .getTick(intervalStart, intervalEnd, i, numTicks, maxTicks);
+      if(!axis.isVisible(tickPos)) continue;
 
       drawTick(plot, layer, tickPos, bounds, tlf);
       if (i <= numTicks) {

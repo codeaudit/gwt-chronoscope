@@ -273,8 +273,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
     layer.save();
     layer.setFillColor(axisProperties.bgColor);
-    layer.translate(0, bounds.y);
-    layer.scale(layer.getWidth(), bounds.height);
+    layer.translate(-1, bounds.y-1);
+    layer.scale(layer.getWidth()+1, bounds.height+1);
     layer.beginPath();
     layer.rect(0, 0, 1, 1);
     layer.fill();

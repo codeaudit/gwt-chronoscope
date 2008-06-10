@@ -39,7 +39,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         scientificNotationOn = true;
       } else if (intDigits > 0) {
         String digStr = "#########0";
-        labelFormat = digStr.substring(digStr.length() - intDigits);
+        labelFormat = digStr.substring(Math.max(digStr.length() - intDigits, 0));
         int leftOver = Math.max(getMaxDigits() - intDigits, 0);
         if (leftOver > 0) {
           labelFormat += "." + "0#########".substring(leftOver);
@@ -179,6 +179,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         break;
       }
     }
+    
     return ticks;
   }
 

@@ -111,4 +111,12 @@ public class MockXYDataset implements XYDataset {
     int ind = index * 2;
     return (getY(ind + 1, mipLevel - 1) + getY(ind, mipLevel - 1)) / 2.0;
   }
+
+  public double getDomainBegin() {
+    return getX(0);
+  }
+
+  public double getDomainEnd() {
+    return getX(getNumSamples()-1);
+  }
 }

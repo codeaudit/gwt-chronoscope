@@ -78,4 +78,16 @@ public interface XYDataset extends Exportable {
    * Return the Y value for the given index on the given leven
    */
   double getY(int index, int level);
+
+  /**
+   * Return the minimum X value datapoint in this dataset.
+   * Usually the same as getX(0) except for Regional datasets.
+   */
+  double getDomainBegin();
+
+  /**
+   * Return the maximum X value datapoint in this dataset.
+   * Usually the same as getX(getNumSamples()-1) except for Regional datasets.
+   */
+  double getDomainEnd();
 }
