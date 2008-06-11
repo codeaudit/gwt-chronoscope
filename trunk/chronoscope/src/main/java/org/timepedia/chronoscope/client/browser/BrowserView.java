@@ -7,6 +7,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -191,8 +192,8 @@ public class BrowserView extends View
    * plot bounds)
    */
   public void openInfoWindow(String html, double x, double y) {
-    PopupPanel pp = new PopupPanel(true);
-    pp.setStyleName("chrono-infoWindow");
+    PopupPanel pp = new DecoratedPopupPanel(true);
+   // pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
     pp.setPopupPosition(ChartPanel.getAbsoluteLeft(getElement()) + (int) x,
         ChartPanel.getAbsoluteTop(getElement()) + (int) y);
