@@ -18,8 +18,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
-import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
 import org.timepedia.chronoscope.client.data.DeferredRegionalArrayXYDataset;
+import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -44,6 +44,18 @@ import java.util.Iterator;
  */
 public class Chronoscope implements Exportable, HistoryListener {
 
+  static class NopURLResolver implements URLResolver {
+
+    public String resolveURL(String url) {
+      return url;
+    }
+  }
+
+  public interface URLResolver {
+
+    public String resolveURL(String url);
+  }
+
   /**
    * @gwt.export
    */
@@ -55,6 +67,8 @@ public class Chronoscope implements Exportable, HistoryListener {
   public static final int RENDERER_XYBAR = 1;
 
   public static final int IMMUTABLE = 0, APPENDABLE = 1, RANGEMUTABLE = 2;
+
+  static URLResolver urlResolver = new NopURLResolver();
 
   private static final HashMap charts = new HashMap();
 
@@ -218,9 +232,9 @@ public class Chronoscope implements Exportable, HistoryListener {
     String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
     ArrayXYDataset dataset = null;
 
-    int domainscale = (int)JavascriptHelper.jsPropGetDor(json, "domainscale", 1);
+    int domainscale = (int) JavascriptHelper
+        .jsPropGetDor(json, "domainscale", 1);
 
-    
     if (mipped != null && mipped.equals("true")) {
 
       int dmipLevels = JavascriptHelper.jsArrLength(domain);
@@ -237,20 +251,21 @@ public class Chronoscope implements Exportable, HistoryListener {
 
       String prefix = JavascriptHelper.jsPropGetString(json, "prefix");
       JavaScriptObject ivals = JavascriptHelper.jsPropGet(json, "intervals");
-      
-      
+
       boolean hasRegions = prefix != null && ivals != null;
-      
+
       for (int i = 0; i < dmipLevels; i++) {
         JavaScriptObject mdomain = JavascriptHelper.jsArrGet(domain, i);
         JavaScriptObject mrange = JavascriptHelper.jsArrGet(range, i);
         domains[i] = getArray(mdomain, domainscale);
         ranges[i] = getArray(mrange, 1);
       }
-      
-      double domainBegin = hasRegions ? JavascriptHelper.jsPropGetD(json, "domainBegin") : domains[0][0] ;
-      double domainEnd = hasRegions ? JavascriptHelper.jsPropGetD(json, "domainEnd") : domains[0][domains[0].length-1];
-      
+
+      double domainBegin = hasRegions ? JavascriptHelper
+          .jsPropGetD(json, "domainBegin") : domains[0][0];
+      double domainEnd = hasRegions ? JavascriptHelper
+          .jsPropGetD(json, "domainEnd") : domains[0][domains[0].length - 1];
+
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
@@ -258,24 +273,22 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"));
-      } else if(!hasRegions) {
+      } else if (!hasRegions) {
         dataset = new ArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"));
-      }
-      else {
+      } else {
         dataset = new DeferredRegionalArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"),
-            domains[0][0], domains[0][domains[0].length-1],
-            getArray(ivals, 1),
-            prefix, domainBegin, domainEnd);
+            JavascriptHelper.jsPropGetString(json, "axis"), domains[0][0],
+            domains[0][domains[0].length - 1], getArray(ivals, 1), prefix,
+            domainBegin, domainEnd);
       }
     } else {
       double domainVal[] = getArray(domain, domainscale);
@@ -322,6 +335,16 @@ public class Chronoscope implements Exportable, HistoryListener {
     return "ZZchrono" + globalChartNumber++;
   }
 
+  public static double[] getArray(JavaScriptObject jsArray, int preMul) {
+    int len = JavascriptHelper.jsArrLength(jsArray);
+
+    double aVal[] = new double[len];
+    for (int i = 0; i < len; i++) {
+      aVal[i] = JavascriptHelper.jsArrGetD(jsArray, i) * preMul;
+    }
+    return aVal;
+  }
+
   public static Chart getChartById(String id) {
     return (Chart) charts.get(id);
   }
@@ -337,6 +360,10 @@ public class Chronoscope implements Exportable, HistoryListener {
       instance.init();
     }
     return instance;
+  }
+
+  public static String getURL(String url) {
+    return urlResolver.resolveURL(url);
   }
 
   public static void initialize() {
@@ -378,7 +405,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static void putChart(String id, Chart chart) {
     charts.put(id, chart);
-    chart.setChartId(id);   
+    chart.setChartId(id);
   }
 
   /**
@@ -415,6 +442,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     showCreditsEnabled = enabled;
   }
 
+  public static void setUrlResolver(URLResolver urlr) {
+    urlResolver = urlr;
+  }
+
   /**
    * Given the ID of the DOM element containing the chart, we construct a
    * GssContext
@@ -425,16 +456,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   static {
     XYDataSource.setFactory(new BrowserXYDataSourceFactory());
-  }
-
-  public static double[] getArray(JavaScriptObject jsArray, int preMul) {
-    int len = JavascriptHelper.jsArrLength(jsArray);
-
-    double aVal[] = new double[len];
-    for (int i = 0; i < len; i++) {
-      aVal[i] = JavascriptHelper.jsArrGetD(jsArray, i) * preMul;
-    }
-    return aVal;
   }
 
   /**
