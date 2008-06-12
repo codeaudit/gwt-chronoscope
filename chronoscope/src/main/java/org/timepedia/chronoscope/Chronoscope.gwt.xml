@@ -92,6 +92,6 @@
         class="org.timepedia.chronoscope.client.browser.CssGssProperties"/>
     <when-property-is name="user.agent" value="safari"/>
   </replace-with>
-
+  <set-property name="export" value="yes"/>
 
 </module>

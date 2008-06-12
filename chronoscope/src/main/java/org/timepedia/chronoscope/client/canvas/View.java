@@ -11,6 +11,8 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.Vector;
 
@@ -22,6 +24,7 @@ import java.util.Vector;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public abstract class View implements Exportable {
 
   protected int viewWidth;
@@ -63,6 +66,7 @@ public abstract class View implements Exportable {
   /**
    * @gwt.export createMenu
    */
+  @Export("createMenu")
   public ChronoscopeMenu createChronoscopeMenu() {
     return createChronoscopeMenu(0, 0);
   }
@@ -128,6 +132,7 @@ public abstract class View implements Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public Chart getChart() {
     return chart;
   }
@@ -220,6 +225,7 @@ public abstract class View implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setContextMenu(ChronoscopeMenu cm) {
     if (contextMenu == null) {
       contextMenu = cm;

@@ -6,6 +6,8 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -13,6 +15,7 @@ import org.timepedia.exporter.client.Exportable;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class RangeAxis extends ValueAxis implements Exportable {
 
   private double[] ticks;
@@ -174,7 +177,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double[] computeTickPositions() {
-    if(ticks != null) return ticks;
+    if (ticks != null) {
+      return ticks;
+    }
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
         getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight());
     adjustedRangeLow = ticks[0];
@@ -353,6 +358,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setAllowAutoScale(boolean allowAutoScale) {
     this.allowAutoScale = allowAutoScale;
   }
@@ -363,6 +369,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setAllowScientificNotation(boolean enable) {
     allowScientificNotation = enable;
   }
@@ -370,6 +377,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
 
     this.autoZoom = autoZoom;
@@ -381,6 +389,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setForceScientificNotation(boolean force) {
     forceScientificNotation = force;
   }
@@ -388,6 +397,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public void setLabel(String label) {
     super.setLabel(label);
     getChart().damageAxes(this);
@@ -414,6 +424,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setScale(double scale) {
     this.scale = scale;
   }
@@ -427,6 +438,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setTickLabelNumberFormatter(
       TickLabelNumberFormatter tickLabelNumberFormatter) {
     this.tickLabelNumberFormatter = tickLabelNumberFormatter;
@@ -437,6 +449,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    *
    * @gwt.export
    */
+  @Export
   public void setTickNumberFormat(String format) {
     if (format == null) {
       tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER;
@@ -449,11 +462,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
 
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
-    ticks=null;
+    ticks = null;
     computeTickPositions();
   }
 

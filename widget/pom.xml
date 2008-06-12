@@ -88,9 +88,9 @@
             <configuration>
               <tasks>
                 <echo message="about to copy" />
-				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget.nocache.js" 
   					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/chronoscope.js" />
-				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget-xs.nocache.js" 
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget.nocache.js" 
   					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/scope.js" />
               </tasks>
             </configuration>

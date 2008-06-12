@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.exporter.client.Export;
 
 /**
  * An implementation of ChronoscopeMenu using GWT PopupPanel and
@@ -59,6 +60,7 @@ public class BrowserChronoscopeMenu extends PopupPanel
   /**
    * @gwt.export addMenu
    */
+  @Export("addMenu")
   public void addMenuBar(String label, ChronoscopeMenu subMenu) {
     items.addItem(label, ((BrowserChronoscopeMenu) subMenu).getMenuBar());
   }
@@ -66,6 +68,7 @@ public class BrowserChronoscopeMenu extends PopupPanel
   /**
    * @gwt.export
    */
+  @Export
   public void addMenuItem(final String label,
       final ChronoscopeClickListener ccl) {
     items.addItem(label, new Command() {
@@ -85,6 +88,7 @@ public class BrowserChronoscopeMenu extends PopupPanel
    *
    * @gwt.export
    */
+  @Export
   public void hide() {
 
     super.hide();
@@ -93,6 +97,7 @@ public class BrowserChronoscopeMenu extends PopupPanel
   /**
    * @gwt.export
    */
+  @Export
   public void show(int x, int y) {
     setPopupPosition(x, y);
     super.show();

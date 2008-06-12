@@ -34,6 +34,8 @@ import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import java.util.Vector;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     RegionLoadListener {
 
@@ -208,6 +211,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * @gwt.export
    */
+  @Export
   public void addOverlay(Overlay over) {
 
     overlays.add(over);
@@ -364,6 +368,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * @gwt.export
    */
+  @Export
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
     view.ensureViewVisible();
@@ -541,6 +546,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * @gwt.export getAxis
    */
+  @Export("getAxis")
   public RangeAxis getRangeAxis(int seriesNum) {
     return axes[seriesNum];
   }
@@ -798,6 +804,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * @gwt.export
    */
+  @Export
   public void redraw() {
     update();
     lastCurrentDomain = currentDomain;
@@ -808,6 +815,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * @gwt.export
    */
+  @Export
   public void reloadStyles() {
     overviewDrawn = false;
     double so = getDomainOrigin();

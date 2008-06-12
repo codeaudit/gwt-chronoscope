@@ -27,6 +27,7 @@ import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
+import org.timepedia.exporter.client.ExportPackage;
 
 import java.util.Date;
 
@@ -36,6 +37,7 @@ import java.util.Date;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class FlashView extends View
     implements Exportable, CssGssViewSupport, DOMView {
 
@@ -202,8 +204,8 @@ public class FlashView extends View
     PopupPanel pp = new PopupPanel(true);
     pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
-    pp.setPopupPosition(ChartPanel.getAbsoluteLeft(getElement()) + (int) x,
-        ChartPanel.getAbsoluteTop(getElement()) + (int) y);
+    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
+        DOM.getAbsoluteTop(getElement()) + (int) y);
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
   }
