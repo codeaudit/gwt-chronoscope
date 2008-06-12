@@ -18,6 +18,7 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
 
 /**
  * ChartPanel is a GWT Widget that intercepts events and translates them to the
@@ -196,6 +197,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   /**
    * @gwt.export
    */
+  @Export
   public Chart getChart() {
     return chart;
   }
@@ -210,10 +212,10 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
       return;
     }
 
-    int x = DOM.eventGetClientX(evt) - getAbsoluteLeft(getElement());
+    int x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
 
-    int absTop = getAbsoluteTop(getElement());
-    int y = DOM.eventGetClientY(evt) - absTop + getScrollTop();
+    int absTop = DOM.getAbsoluteTop(getElement());
+    int y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
 
     switch (DOM.eventGetType(evt)) {
 

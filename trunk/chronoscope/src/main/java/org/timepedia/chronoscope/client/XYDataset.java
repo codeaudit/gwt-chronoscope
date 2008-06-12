@@ -1,6 +1,8 @@
 package org.timepedia.chronoscope.client;
 
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 
 /**
  * An interface modeling a multiresolution dataset of two coordinates <p/> A
@@ -20,6 +22,8 @@ import org.timepedia.exporter.client.Exportable;
  * @gwt.exportPackage chronoscope
  * @gwt.export
  */
+@ExportPackage("chronoscope")
+@Export
 public interface XYDataset extends Exportable {
 
   /**

@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
 
 /**
  * The Chart class composes a Plot and a View. A plot is a platform independent
@@ -65,8 +66,8 @@ public class Chart implements Exportable {
    * expand, XYPlot will become a subinterface of a more general 'Plot'
    * interface
    *
-   * @gwt.export
    */
+  @Export
   public XYPlot getPlot() {
     return plot;
   }
@@ -190,9 +191,8 @@ public class Chart implements Exportable {
   /**
    * Redraw will redraw the the chart, swapping front/back buffers if
    * neccessarily in a double-buffered scenario.
-   *
-   * @gwt.export
    */
+  @Export
   public void redraw() {
     plot.redraw();
   }

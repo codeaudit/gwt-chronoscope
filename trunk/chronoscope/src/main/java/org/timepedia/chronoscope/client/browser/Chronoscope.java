@@ -30,7 +30,9 @@ import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
-import org.timepedia.exporter.client.ExporterBase;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,6 +44,7 @@ import java.util.Iterator;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class Chronoscope implements Exportable, HistoryListener {
 
   static class NopURLResolver implements URLResolver {
@@ -59,11 +62,13 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export
    */
+  @Export
   public static final int RENDERER_XYLINE = 0;
 
   /**
    * @gwt.export
    */
+  @Export
   public static final int RENDERER_XYBAR = 1;
 
   public static final int IMMUTABLE = 0, APPENDABLE = 1, RANGEMUTABLE = 2;
@@ -99,6 +104,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export
    */
+  @Export
   public static DomainBarMarker createBarMarker(String startDate,
       String endDate, String label) {
     return new DomainBarMarker(startDate, endDate, label);
@@ -110,6 +116,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export
    */
+  @Export
   public static RangeBarMarker createHorizontalBarMarker(double rangeLow,
       double rangeHigh, String label) {
     return new RangeBarMarker(rangeLow, rangeHigh, label);
@@ -121,6 +128,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export
    */
+  @Export
   public static Marker createMarker(String date, int seriesNum, String label) {
     return new Marker(date, seriesNum, label);
   }
@@ -135,6 +143,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export createTimeseriesChartByElement
    */
+  @Export("createTimeseriesChartByElement")
   public static ChartPanel createTimeseriesChart(Element elem,
       JavaScriptObject jsonDatasets, int chartWidth, int chartHeight) {
     return createTimeseriesChart(elem, createXYDatasets(jsonDatasets),
@@ -147,6 +156,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export createTimeseriesChartById
    */
+  @Export("createTimeseriesChartById")
   public static ChartPanel createTimeseriesChart(String id,
       JavaScriptObject jsonDatasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
@@ -220,6 +230,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export
    */
+  @Export
   public static XYDataset createXYDataset(JavaScriptObject json) {
     return createXYDataset(json, false);
   }
@@ -411,6 +422,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export
    */
+  @Export
   public static void setErrorReporting(boolean enabled) {
     errorReportingEnabled = enabled;
   }
@@ -418,6 +430,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export
    */
+  @Export
   public static void setFontBookRendering(boolean enabled) {
     fontBookRenderingEnabled = enabled;
   }
@@ -427,6 +440,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    *
    * @gwt.export
    */
+  @Export
   public static void setFontBookServiceEndpoint(String endpoint) {
     fontBookServiceEndpoint = endpoint;
   }
@@ -438,6 +452,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export
    */
+  @Export
   public static void setShowCredits(boolean enabled) {
     showCreditsEnabled = enabled;
   }
@@ -461,6 +476,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export createTimeseriesChartById
    */
+  @Export("createTimeseriesChartById")
   public ChartPanel createChartPanel(String id, JavaScriptObject datasets,
       ViewReadyCallback listener) {
     Element elem = DOM.getElementById(id);
@@ -473,6 +489,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export createTimeseriesChartByIdSized
    */
+  @Export("createTimeseriesChartByIdSized")
   public ChartPanel createChartPanel(String id, XYDataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     return createChartPanel(DOM.getElementById(id), datasets, chartWidth,
@@ -482,6 +499,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * @gwt.export createTimeseriesChartWithElement
    */
+  @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, XYDataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     if (elem == null) {
@@ -589,7 +607,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   protected void onChronoscopeLoad() {
     try {
-      JavaScriptObject foo = ExporterBase.wrap(this);
+      JavaScriptObject foo = ExporterUtil.wrap(this);
       chronoscopeLoaded(foo);
     } catch (Exception e) {
       if (Chronoscope.isErrorReportingEnabled()) {

@@ -3,12 +3,15 @@ package org.timepedia.chronoscope.client;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 /**
  * Interface implemented by Markers and other clases which overlay the plot
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public interface Overlay extends Exportable {
 
   /**
@@ -16,6 +19,7 @@ public interface Overlay extends Exportable {
    *
    * @gwt.export addOverlayListener
    */
+  @Export
   void addOverlayClickListener(OverlayClickListener cl);
 
   /**

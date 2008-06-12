@@ -7,6 +7,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +19,7 @@ import java.util.Date;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class Marker implements Overlay, GssElement, Exportable {
 
   private final double domainX;
@@ -45,6 +48,7 @@ public class Marker implements Overlay, GssElement, Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public Marker(String date, int seriesNum, String label) {
     this.label = label;
     this.domainX = Date.parse(date);
@@ -54,6 +58,7 @@ public class Marker implements Overlay, GssElement, Exportable {
   /**
    * @gwt.export addOverlayListener
    */
+  @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {
     if (clickListener == null) {
       clickListener = new ArrayList();
@@ -167,6 +172,7 @@ public class Marker implements Overlay, GssElement, Exportable {
   /**
    * @gwt.export
    */
+  @Export
   public void openInfoWindow(String html) {
     plot.getChart().getPlot().openInfoWindow(html, domainX, rangeY, seriesNum);
   }

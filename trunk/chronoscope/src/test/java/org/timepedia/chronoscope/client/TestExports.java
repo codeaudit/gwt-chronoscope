@@ -6,7 +6,7 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.MockXYDataset;
-import org.timepedia.exporter.client.ExporterBase;
+import org.timepedia.exporter.client.ExporterUtil;
 
 /**
  *
@@ -38,9 +38,9 @@ public class TestExports extends ChronoscopeTestCaseBase {
     runChronoscopeTest(ds, new ViewReadyCallback() {
       public void onViewReady(View view) {
         XYPlot plot = view.getChart().getPlot();
-        assertTrue(isSetAutoZoomVisibleRange(ExporterBase.wrap(plot.getRangeAxis(0))));
-        assertTrue(isSetVisibleRange(ExporterBase.wrap(plot.getRangeAxis(0))));
-        assertTrue(isSetLabel(ExporterBase.wrap(plot.getRangeAxis(0))));
+        assertTrue(isSetAutoZoomVisibleRange(ExporterUtil.wrap(plot.getRangeAxis(0))));
+        assertTrue(isSetVisibleRange(ExporterUtil.wrap(plot.getRangeAxis(0))));
+        assertTrue(isSetLabel(ExporterUtil.wrap(plot.getRangeAxis(0))));
         finishTest();
       }
     });

@@ -8,6 +8,8 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +20,7 @@ import java.util.Date;
  *
  * @gwt.exportPackage chronoscope
  */
+@ExportPackage("chronoscope")
 public class DomainBarMarker implements Exportable, Overlay, GssElement {
 
   private final double domainX;
@@ -51,6 +54,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   /**
    * @gwt.export
    */
+  @Export
   public DomainBarMarker(String startDate, String endDate, String label) {
     this.label = label;
 
@@ -61,6 +65,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   /**
    * @gwt.export addOverlayListener
    */
+  @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {
     if (clickListener == null) {
       clickListener = new ArrayList();

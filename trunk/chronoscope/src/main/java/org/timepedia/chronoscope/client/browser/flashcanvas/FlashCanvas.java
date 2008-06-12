@@ -133,14 +133,14 @@ public class FlashCanvas extends Canvas {
             + "<param name=\"bgcolor\" value=\"#FFFFFF\"> \n"
             + "<param name=\"wmode\" value=\"transparent\">\n"
             + "<param name=\"MENU\" value=\"false\">\n"
-            + "<param name=\"allowScriptAccess\" value=\"sameDomain\">\n"
+            + "<param name=\"allowScriptAccess\" value=\"always\">\n"
             + "<embed style=\"position:absolute;top:0px;left:0px;z-index: 0\" src=\""
             + swfUrl + "\" quality=\"high\" bgcolor=\"#FFFFFF\"\n" + "width=\""
             + width + "\" height=\"" + height + "\" \n" + "name=\"" + canvasId
             + "\" align=\"\" type=\"application/x-shockwave-flash\" \n"
             + "FlashVars=\"readyFn=" + readyFn + "\" "
             + "wmode=\"transparent\" " + "MENU=\"false\""
-            + "allowScriptAccess=\"sameDomain\" "
+            + "allowScriptAccess=\"always\" "
             + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");
     DOM.appendChild(canvasElement, glassPane);
