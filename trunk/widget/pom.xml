@@ -47,7 +47,7 @@
         <configuration>
 		  <logLevel>WARN</logLevel> 
           <!-- logLevel>ERROR</logLevel -->
-          <style>DETAILED</style> 
+          <style>PRETTY</style> 
           <!-- style>OBF</style -->
 		  <output>${project.build.directory}/public</output>
           <gwtVersion>${gwtversion}</gwtVersion>

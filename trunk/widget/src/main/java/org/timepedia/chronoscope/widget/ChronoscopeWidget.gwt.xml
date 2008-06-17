@@ -10,5 +10,5 @@
              class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
   <add-linker name="xs"/>
   <set-property name="selectorCapability" value="js"/>
-    
+  <set-property name="export" value="yes"/>    
 </module>
