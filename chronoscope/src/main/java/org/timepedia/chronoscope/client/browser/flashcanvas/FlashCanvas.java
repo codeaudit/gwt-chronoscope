@@ -606,7 +606,7 @@ public class FlashCanvas extends Canvas {
         FlashCanvas.super.attach(view, canvasReadyCallback);
       }
     };
-    t.schedule(100);
+    t.schedule(1000);
   }
 
   private native JavaScriptObject makectx() /*-{
