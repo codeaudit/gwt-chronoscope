@@ -51,7 +51,7 @@ public class DateAxis extends ValueAxis {
     if (getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
-      return plot.getPlotBounds().height;
+      return plot.getInnerPlotBounds().height;
     }
   }
 
@@ -79,7 +79,7 @@ public class DateAxis extends ValueAxis {
     if (getOrientation() == AxisPanel.VERTICAL_AXIS) {
       return getMaxLabelWidth() + 5 + axisLabelWidth + 10;
     } else {
-      return plot.getPlotBounds().width;
+      return plot.getInnerPlotBounds().width;
     }
   }
 

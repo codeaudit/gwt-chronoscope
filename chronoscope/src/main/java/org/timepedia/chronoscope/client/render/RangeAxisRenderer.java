@@ -206,7 +206,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if (gridProperties.visible && uy != bounds.y + bounds.height) {
       layer.setFillColor(gridProperties.color);
       layer.setTransparency((float) gridProperties.transparency);
-      layer.fillRect(bounds.x + bounds.width, uy, plot.getPlotBounds().width,
+      layer.fillRect(bounds.x + bounds.width, uy, plot.getInnerPlotBounds().width,
           gridProperties.lineThickness);
     }
     layer.restore();

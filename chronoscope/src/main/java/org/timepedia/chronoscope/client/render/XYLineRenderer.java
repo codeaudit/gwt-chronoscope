@@ -81,6 +81,7 @@ public class XYLineRenderer extends XYRenderer
       boolean isDisabled) {
     pointProp = isDisabled ? disabledPointProperties : gssPointProperties;
     lx = ly = -1;
+    layer.save();
   }
 
   public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
@@ -225,6 +226,7 @@ public class XYLineRenderer extends XYRenderer
 
   public void endPoints(XYPlot plot, Layer layer, boolean inSelection,
       boolean disabled, int seriesNum) {
+    layer.restore();
   }
 
   public GssElement getParentGssElement() {

@@ -94,13 +94,13 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     backingCanvas.setFillColor(markerProperties.bgColor);
     backingCanvas.setComposite(Layer.LIGHTER);
     backingCanvas.setTransparency((float) markerProperties.transparency);
-    backingCanvas.fillRect(x, y1, plot.getPlotBounds().width, y2 - y1);
+    backingCanvas.fillRect(x, y1, plot.getInnerPlotBounds().width, y2 - y1);
     backingCanvas.setComposite(Layer.SRC_OVER);
     if (markerProperties.lineThickness > 0) {
       backingCanvas.beginPath();
       backingCanvas.moveTo(x, y1);
-      backingCanvas.lineTo(x + plot.getPlotBounds().width, y1);
-      backingCanvas.lineTo(x + plot.getPlotBounds().width, y2);
+      backingCanvas.lineTo(x + plot.getInnerPlotBounds().width, y1);
+      backingCanvas.lineTo(x + plot.getInnerPlotBounds().width, y2);
       backingCanvas.lineTo(x, y2);
       backingCanvas.closePath();
       backingCanvas.setStrokeColor(markerProperties.color);
@@ -110,7 +110,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
       backingCanvas.drawText(x, y1 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer);
-    } else if (y1 - labelHeight - 4 < plot.getPlotBounds().y) {
+    } else if (y1 - labelHeight - 4 < plot.getInnerPlotBounds().y) {
       backingCanvas.drawText(x, y2 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer);

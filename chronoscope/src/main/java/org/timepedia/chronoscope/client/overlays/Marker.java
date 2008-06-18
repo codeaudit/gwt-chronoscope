@@ -93,23 +93,20 @@ public class Marker implements Overlay, GssElement, Exportable {
     }
     double x, y, yp;
     x = plot.domainToScreenX(domainX, 0);
-    y = plot.rangeToScreenY(rangeY, 0);
-    int bot = 0;
-    if (y - 15 - height <= plot.getPlotBounds().y) {
+
+    double x0 = plot.domainToScreenX(plot.getDataX(seriesNum, point), seriesNum);
+    double x1 = plot.domainToScreenX(plot.getDataX(seriesNum, point + 1), seriesNum);
+
+    double y1 = plot.rangeToScreenY(plot.getDataY(seriesNum, point), seriesNum);
+    double y2 = plot.rangeToScreenY(plot.getDataY(seriesNum, point + 1), seriesNum);
+    yp = y1 + (y2 - y1) * (x - x0) / (x1 - x0);
+
+    y = yp;
+    if (y - 15 - height <= plot.getInnerPlotBounds().y) {
       y = y + 5;
     } else {
       y = y - 15 - height;
-      bot = height;
     }
-
-    double x0 = plot.domainToScreenX(plot.getDataX(0, point), 0);
-    double x1 = plot.domainToScreenX(plot.getDataX(0, point + 1), 0);
-
-    x = plot.domainToScreenX(domainX, 0);
-    double y1 = plot.rangeToScreenY(plot.getDataY(0, point), 0);
-    double y2 = plot.rangeToScreenY(plot.getDataY(0, point + 1), 0);
-    yp = y1 + (y2 - y1) * (x - x0) / (x1 - x0);
-
     backingCanvas.save();
     x = drawOval(backingCanvas, x, y, yp, y < yp ? 1 : 0);
 
@@ -153,7 +150,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     double mx = plot.getChart().domainToWindowX(plot, domainX, seriesNum);
 
     double my = plot.getChart().rangeToWindowY(plot, rangeY, seriesNum) + 5;
-    if (my - 15 - height <= plot.getPlotBounds().y) {
+    if (my - 15 - height <= plot.getInnerPlotBounds().y) {
       my = my + 5;
     } else {
       my = my - 15 - height;
@@ -164,8 +161,8 @@ public class Marker implements Overlay, GssElement, Exportable {
       height = view.getCanvas().getRootLayer()
           .stringHeight(label, "Verdana", "normal", "9pt") + 2;
     }
-    mx -= width / 2;
-    my -= height / 2;
+    mx -= width / 2 + 2;
+    my -= height / 2 + 2;
     return x >= mx && x <= mx + width + 3 && y >= my && my <= y + height;
   }
 

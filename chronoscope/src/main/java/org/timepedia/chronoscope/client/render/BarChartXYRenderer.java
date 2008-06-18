@@ -101,7 +101,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         ow -= padding;
         bw -= padding * 2;
 
-        double barHeight = plot.getPlotBounds().height + plot.getPlotBounds().y;
+        double barHeight = plot.getInnerPlotBounds().height + plot.getInnerPlotBounds().y;
         layer.save();
         layer.translate(ux - ow, uy);
 
