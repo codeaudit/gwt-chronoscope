@@ -1153,14 +1153,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
     double ex = Math
-        .min(0 + plotBounds.width, domainToScreenX(endHighlight, 0));
+        .min(0 + getInnerPlotBounds().width, domainToScreenX(endHighlight, 0));
 
     layer.save();
     layer.setFillColor("#14FFFF");
 //        layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
     layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
-    layer.fillRect(ux, 0, ex - ux, plotBounds.height);
+    layer.fillRect(ux, 0, ex - ux, getInnerPlotBounds().height);
     layer.restore();
     highlightDrawn=true;
   }
@@ -1227,6 +1227,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         this.view.getViewWidth(), this.view.getViewHeight())
         : new Bounds(initialBounds);
 
+    innerBounds = new Bounds(plotBounds);
     // TODO: only in snapshot
     if (interactive) {
       plotBounds.x = rangePanelLeft.getWidth();
@@ -1240,7 +1241,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       }
     }
 
-    innerBounds = new Bounds(plotBounds);
     innerBounds.x = 0;
     innerBounds.y = 0;
   }

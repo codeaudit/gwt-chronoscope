@@ -231,7 +231,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
-      return getChart().getPlotForAxis(this).getPlotBounds().height;
+      return getChart().getPlotForAxis(this).getInnerPlotBounds().height;
     }
   }
 
@@ -310,7 +310,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         return maxLabelWidth + 5 + computedAxisLabelWidth;
       }
     } else {
-      return getChart().getPlotForAxis(this).getPlotBounds().width;
+      return getChart().getPlotForAxis(this).getInnerPlotBounds().width;
     }
   }
 

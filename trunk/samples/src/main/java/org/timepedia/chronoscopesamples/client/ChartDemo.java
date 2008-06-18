@@ -50,8 +50,8 @@ public class ChartDemo implements EntryPoint {
     try {
 // you must specify the chart dimensions for now, rather than have the chart grow to fill its container
       double GR = 1.618;
-      int chartWidth = 1024;
-      int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
+      int chartWidth = 450;
+      int chartHeight = 320; //(int) (chartWidth / GOLDEN__RATIO);
       Window.alert("ChartHeight = "+chartHeight);
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
@@ -62,10 +62,18 @@ public class ChartDemo implements EntryPoint {
       TabPanel vp = new TabPanel();
 //    VerticalPanel vp = new VerticalPanel();
       final XYDataset[] ds = new XYDataset[1];
-      ds[0] = Chronoscope.createXYDataset(getJson("ibm"));
+      ds[0] = Chronoscope.createXYDataset(getJson("unratedata"));
 //        ds[1]=new MockXYDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);
+      chartPanel.setReadyListener(new ViewReadyCallback() {
+        public void onViewReady(View view) {
+          Marker m = new Marker((ds[0].getDomainBegin()+ds[0].getDomainEnd())/2,
+              10, "A", 0);
+          view.getChart().getPlot().addOverlay(m);
+          view.getChart().redraw();
+        }
+      });
 
 //      VerticalPanel vert = new VerticalPanel();
 //      vp.add(new HTML("Hello World"), "Hello World");
