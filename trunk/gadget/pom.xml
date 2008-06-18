@@ -42,7 +42,7 @@
               org.timepedia.chronoscope.gviz.GVizChronoscopeWidget
             </compileTarget>
           </compileTargets>
-          <style>OBF</style>
+          <style>PRETTY</style>
         </configuration>
         <executions>
           <execution>
