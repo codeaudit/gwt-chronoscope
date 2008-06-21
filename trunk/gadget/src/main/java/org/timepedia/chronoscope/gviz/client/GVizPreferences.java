@@ -8,7 +8,7 @@ import com.google.gwt.gadgets.client.UserPreferences;
 /**
  *
  */
-public interface ChronoscopePreferences extends UserPreferences {
+public interface GVizPreferences extends UserPreferences {
 
   
 
@@ -67,11 +67,14 @@ public interface ChronoscopePreferences extends UserPreferences {
   @PreferenceAttributes(display_name = "Refresh Interval", default_value="ZERO", options = PreferenceAttributes.Options.NORMAL)
   EnumPreference<RefreshInterval> _table_query_refresh_interval();
 
-  @PreferenceAttributes(display_name = "Display Style", default_value="CLEAN", options = PreferenceAttributes.Options.NORMAL)
-  EnumPreference<Style> chartStyle();
+//  @PreferenceAttributes(display_name = "Display Style", default_value="CLEAN", options = PreferenceAttributes.Options.NORMAL)
+//  EnumPreference<Style> chartStyle();
   
-  @PreferenceAttributes(display_name = "Same Units share Same Axis?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
-  BooleanPreference sameUnitsShareSameAxis();
+//  @PreferenceAttributes(display_name = "Same Units share Same Axis?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
+//  BooleanPreference sameUnitsShareSameAxis();
+  
+//  @PreferenceAttributes(display_name = "Axis Labels?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
+//  BooleanPreference axisLabels();
   
   @PreferenceAttributes(display_name = "Overview enabled?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
   BooleanPreference overviewEnabled();

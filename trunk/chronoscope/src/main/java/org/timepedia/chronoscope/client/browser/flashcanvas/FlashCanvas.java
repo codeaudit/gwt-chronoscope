@@ -68,7 +68,8 @@ public class FlashCanvas extends Canvas {
   private String canvasId;
 
   private String readyFn = "";
-
+  private String clickHandlerFn = "";
+  
   private JavaScriptObject ctx = null;
 
   public FlashCanvas(View view, int width, int height) {
@@ -84,7 +85,7 @@ public class FlashCanvas extends Canvas {
     rootLayer.arc(x, y, radius, startAngle, endAngle, clockwise);
   }
 
-  public void attach(View view, final CanvasReadyCallback canvasReadyCallback) {
+  public void attach(final View view, final CanvasReadyCallback canvasReadyCallback) {
     final FlashView bv = (FlashView) view;
     exportReadyFn(readyFn, view, new CanvasReadyCallback() {
       boolean initalized = false;
@@ -96,6 +97,8 @@ public class FlashCanvas extends Canvas {
         } else {
           resyncLayers();
         }
+        exportClickHandler(clickHandlerFn);
+        addFlashClickHandler(canvasId, clickHandlerFn);
       }
     });
     DOM.appendChild(bv.getElement(), canvasElement);
@@ -145,6 +148,22 @@ public class FlashCanvas extends Canvas {
             + "</embed> \n" + "</object>");
     DOM.appendChild(canvasElement, glassPane);
   }
+
+  private void onFlashClick(int x, int y) {
+    getView().getChart().click(x,y);  
+  }
+  
+  private native void addFlashClickHandler(String canvasId, String clickHandlerFn) /*-{
+        var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
+        flashCanvas && flashCanvas.createCanvas && flashCanvas.addClickListener(clickHandlerFn);
+  }-*/;
+
+  private native void exportClickHandler(String clickHandlerFn) /*-{
+        var _this=this;
+        $wnd[clickHandlerFn] = function(x,y) {
+            _this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::onFlashClick(II)(x,y);
+        }
+    }-*/;
 
   public void beginFrame() {
     super.beginFrame();
@@ -582,6 +601,8 @@ public class FlashCanvas extends Canvas {
   void init(int width, int height) {
     canvasElement = DOM.createDiv();
     readyFn = "canvasReadyFn" + this.canvasId;
+    clickHandlerFn = "clickHandlerFn" + this.canvasId;
+    
     clearFlashDisplayList();
   }
 

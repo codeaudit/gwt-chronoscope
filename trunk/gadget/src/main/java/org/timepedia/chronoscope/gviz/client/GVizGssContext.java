@@ -14,39 +14,47 @@ public class GVizGssContext extends MockGssContext {
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
 
     if ("line".equals(gssElem.getType())) {
-      return new ShawnLineGssProperties(gssElem.getParentGssElement());
+      return new GVizLineGssProperties(gssElem.getParentGssElement());
     }
     if ("fill".equals(gssElem.getType())) {
-      return new ShawnFillGssProperties();
+      return new GVizFillGssProperties();
     }
     if ("point".equals(gssElem.getType())) {
-      return new ShawnPointGssProperties(pseudoElt);
+      return new GVizPointGssProperties(gssElem.getParentGssElement(), pseudoElt);
     } else if ("plot".equals(gssElem.getType())) {
-      return new ShawnPlotGssProperties();
+      return new GVizPlotGssProperties();
     } else if ("axis".equals(gssElem.getType())) {
-      return new ShawnRangeAxisGssProperties(pseudoElt);
+      return new GVizRangeAxisGssProperties(pseudoElt);
     } else if ("grid".equals(gssElem.getType())) {
-      return new ShawnGridGssProperties(pseudoElt);
+      return new GVizGridGssProperties(pseudoElt);
     } else if ("label".equals(gssElem.getType())) {
-      return new ShawnLabelGssProperties(gssElem.getParentGssElement());
+      return new GVizLabelGssProperties(gssElem.getParentGssElement());
     } else if ("tick".equals(gssElem.getType())) {
-      return new ShawnTickGssProperties();
+      return new GVizTickGssProperties();
     }
 
     return super.getProperties(gssElem, pseudoElt);
   }
 
-  static class ShawnLineGssProperties extends MockGssProperties {
+  static class GVizLineGssProperties extends MockGssProperties {
 
-    public ShawnLineGssProperties(GssElement parentGssElement) {
+    public GVizLineGssProperties(GssElement parentGssElement) {
       // contains s0, s1, ... s#
       String seriesNum = parentGssElement.getTypeClass();
-      if(seriesNum.indexOf("s0") == -1) {
-        this.color = new Color("rgb(255,0,255)");
-        
+      if(seriesNum.matches(".*\\bs\\d+\\b")) {
+        int ind = seriesNum.indexOf("s");
+        if(ind != -1) {
+          int snum = 0;
+          try {
+            snum = Integer.parseInt(seriesNum.substring(ind+1).trim());
+          } catch (NumberFormatException e) {
+          }
+          this.color = new Color(colors[Math.min(snum, colors.length-1)]);
+          
+        }
       }
       else {
-        this.color = new Color("rgb(0,0,255)");
+        this.color = new Color("rgb(255,0,255)");
       }
       this.lineThickness = 1;
       this.shadowBlur = 0;
@@ -55,17 +63,17 @@ public class GVizGssContext extends MockGssContext {
     }
   }
 
-  static class ShawnPlotGssProperties extends MockGssProperties {
+  static class GVizPlotGssProperties extends MockGssProperties {
 
-    public ShawnPlotGssProperties() {
+    public GVizPlotGssProperties() {
       this.bgColor = new Color("transparent");
       this.fontFamily = "Helvetica";
       this.fontSize = "12pt";
     }
   }
-  static class ShawnTickGssProperties extends MockGssProperties {
+  static class GVizTickGssProperties extends MockGssProperties {
 
-    public ShawnTickGssProperties() {
+    public GVizTickGssProperties() {
       this.bgColor = new Color("transparent");
       this.fontFamily = "Helvetica";
       this.fontSize = "12pt";
@@ -73,9 +81,9 @@ public class GVizGssContext extends MockGssContext {
     }
   }
 
-  static class ShawnLabelGssProperties extends MockGssProperties {
+  static class GVizLabelGssProperties extends MockGssProperties {
 
-    public ShawnLabelGssProperties(GssElement parentGssElement) {
+    public GVizLabelGssProperties(GssElement parentGssElement) {
       this.tickAlign = "above";
       if ("axis".equals(parentGssElement.getType())) {
         this.visible=false;
@@ -83,16 +91,16 @@ public class GVizGssContext extends MockGssContext {
     }
   }
 
-  private class ShawnFillGssProperties extends GssProperties {
+  private class GVizFillGssProperties extends GssProperties {
 
-    private ShawnFillGssProperties() {
+    private GVizFillGssProperties() {
       this.bgColor = new Color("rgba(0,0,0,0)");
     }
   }
 
-  private class ShawnRangeAxisGssProperties extends GssProperties {
+  private class GVizRangeAxisGssProperties extends GssProperties {
 
-    private ShawnRangeAxisGssProperties(String pseudoElt) {
+    private GVizRangeAxisGssProperties(String pseudoElt) {
       this.tickPosition = "inside";
       this.bgColor = new Color("#FFFFFF");
       this.fontFamily = "Helvetica";
@@ -101,9 +109,25 @@ public class GVizGssContext extends MockGssContext {
     }
   }
 
-  private class ShawnPointGssProperties extends GssProperties {
+  private class GVizPointGssProperties extends GssProperties {
 
-    private ShawnPointGssProperties(String pseudoElt) {
+    private GVizPointGssProperties(GssElement parentGssElement, String pseudoElt) {
+      String seriesNum = parentGssElement.getTypeClass();
+      if(seriesNum.matches(".*\\bs\\d+\\b")) {
+        int ind = seriesNum.indexOf("s");
+        if(ind != -1) {
+          int snum = 0;
+          try {
+            snum = Integer.parseInt(seriesNum.substring(ind+1).trim());
+          } catch (NumberFormatException e) {
+          }
+          this.color = new Color(colors[Math.min(snum, colors.length-1)]);
+          
+        }
+      }
+      else {
+        this.color = new Color("rgb(255,0,255)");
+      }
       this.visible = "hover".equals(pseudoElt) ? true : false;
       this.size = "hover".equals(pseudoElt) ? 5 : 5;
       this.bgColor = "hover".equals(pseudoElt) ? new Color("rgb(50,0,255)")
@@ -113,9 +137,9 @@ public class GVizGssContext extends MockGssContext {
     }
   }
 
-  private class ShawnGridGssProperties extends MockGssProperties {
+  private class GVizGridGssProperties extends MockGssProperties {
 
-    private ShawnGridGssProperties(String psuedoElt) {
+    private GVizGridGssProperties(String psuedoElt) {
       this.color = new Color("rgba(200,200,200,255)");
       this.fontFamily = "Helvetica";
       this.fontSize = "8pt";
@@ -123,4 +147,9 @@ public class GVizGssContext extends MockGssContext {
       this.lineThickness = 0;
     }
   }
+  
+  static String colors[] = {  "#2E43DF", "#2CAA1B", "#C21C1C",
+     "#E98419", "#F8DD0D", "#A72AA2" 
+      
+  };
 }

@@ -68,8 +68,13 @@ public class ChartDemo implements EntryPoint {
           .createTimeseriesChart(ds, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(View view) {
-          Marker m = new Marker((ds[0].getDomainBegin()+ds[0].getDomainEnd())/2,
+          final Marker m = new Marker((ds[0].getDomainBegin()+ds[0].getDomainEnd())/2,
               10, "A", 0);
+          m.addOverlayClickListener(new OverlayClickListener() {
+            public void onOverlayClick(Overlay overlay, int x, int y) {
+              m.openInfoWindow("Hello");
+            }
+          });
           view.getChart().getPlot().addOverlay(m);
           view.getChart().redraw();
         }

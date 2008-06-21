@@ -34,7 +34,7 @@ import java.util.ArrayList;
  */
 @Gadget.ModulePrefs(title = "Chronoscope", author = "Ray Cromwell",
     author_email = "ray@timefire.com")
-public class GVizChronoscopeWidget extends Gadget<ChronoscopePreferences>
+public class GVizChronoscopeWidget extends Gadget<GVizPreferences>
     implements NeedsIntrinsics, NeedsSetPrefs, NeedsSetTitle, NeedsIdi,
     NeedsLockedDomain {
 
@@ -56,7 +56,7 @@ public class GVizChronoscopeWidget extends Gadget<ChronoscopePreferences>
     this.setTitle = feature;
   }
 
-  protected void init(final ChronoscopePreferences prefs) {
+  protected void init(final GVizPreferences prefs) {
     ThemeStyleInjector.injectTheme();
     Chronoscope.setUrlResolver(new Chronoscope.URLResolver() {
       public String resolveURL(String s) {

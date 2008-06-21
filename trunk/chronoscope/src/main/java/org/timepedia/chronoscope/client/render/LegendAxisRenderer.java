@@ -17,26 +17,25 @@ import java.util.Date;
  */
 public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
-  // TODO: fix hotspots
-  private static final String ZOOM_COLON = "Zoom: [+ ";
+  private static final String ZOOM_COLON = "Zoom:";
 
-  private static final String ZOOM_1D = "day";
+  private static final String ZOOM_1D = "1d";
 
-  private static final String ZOOM_5D = ""; // - or + or (s) or days
+  private static final String ZOOM_5D = "5d";
 
-  private static final String ZOOM_1M = "month";
+  private static final String ZOOM_1M = "1m";
 
-  private static final String ZOOM_3M = ""; // ...
+  private static final String ZOOM_3M = "3m";
 
-  private static final String ZOOM_6M = ""; // ...
+  private static final String ZOOM_6M = "6m";
 
-  private static final String ZOOM_1Y = "year";
+  private static final String ZOOM_1Y = "1y";
 
-  private static final String ZOOM_5Y = ""; // ...
+  private static final String ZOOM_5Y = "5y";
 
-  private static final String ZOOM_10Y = "decade";
+  private static final String ZOOM_10Y = "10y";
 
-  private static final String ZOOM_MAX = " -]"; //max
+  private static final String ZOOM_MAX = "max";
 
   private static final String ZOOM_STRING = ZOOM_COLON + "\u00A0" + ZOOM_1D
       + "\u00A0" + ZOOM_5D + "\u00A0" + ZOOM_1M + "\u00A0" + ZOOM_3M + "\u00A0"
