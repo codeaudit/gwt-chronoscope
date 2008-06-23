@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
@@ -125,7 +126,10 @@ public class FlashCanvas extends Canvas {
     DOM.setStyleAttribute(glassPane, "zIndex", "1");
     //    addOnClick(glassPane);
 
-    String swfUrl = GWT.getModuleBaseURL() + "flcanvas.swf";
+    FlashResources flashResources = GWT.create(FlashResources.class);
+    
+    String swfUrl = Chronoscope.getURL(flashResources.flashCanvas().getUrl());
+    
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
             + "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
