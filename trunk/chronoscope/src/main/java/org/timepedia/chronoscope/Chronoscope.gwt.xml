@@ -4,6 +4,9 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.gwt.http.HTTP'/>
   <inherits name='com.google.gwt.i18n.I18N'/>
+  <!-- need immutable resource bundle for flash -->
+  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
+  <inherits name='com.google.gwt.libideas.StyleInjector'/>
   
  <inherits name='org.timepedia.exporter.Exporter'/>
  <inherits name='gwtquery.GwtQuery'/>
@@ -93,5 +96,6 @@
     <when-property-is name="user.agent" value="safari"/>
   </replace-with>
   <set-property name="export" value="yes"/>
-
+  <set-property name="selectorCapability" value="js"/>
+  
 </module>

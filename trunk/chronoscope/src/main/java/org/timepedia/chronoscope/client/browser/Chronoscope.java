@@ -14,6 +14,8 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlotListener;
+import org.timepedia.chronoscope.client.browser.theme.Theme;
+import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
@@ -28,10 +30,10 @@ import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.BarChartXYRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
-import org.timepedia.exporter.client.ExportPackage;
-import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
@@ -47,16 +49,16 @@ import java.util.Iterator;
 @ExportPackage("chronoscope")
 public class Chronoscope implements Exportable, HistoryListener {
 
+  public interface URLResolver {
+
+    public String resolveURL(String url);
+  }
+
   static class NopURLResolver implements URLResolver {
 
     public String resolveURL(String url) {
       return url;
     }
-  }
-
-  public interface URLResolver {
-
-    public String resolveURL(String url);
   }
 
   /**
@@ -74,6 +76,8 @@ public class Chronoscope implements Exportable, HistoryListener {
   public static final int IMMUTABLE = 0, APPENDABLE = 1, RANGEMUTABLE = 2;
 
   static URLResolver urlResolver = new NopURLResolver();
+
+  private static Theme currentTheme;
 
   private static final HashMap charts = new HashMap();
 
@@ -461,6 +465,11 @@ public class Chronoscope implements Exportable, HistoryListener {
     urlResolver = urlr;
   }
 
+  public static void useGwtTheme(Theme theme) {
+    currentTheme = theme;
+    ThemeStyleInjector.injectTheme(theme);
+  }
+
   /**
    * Given the ID of the DOM element containing the chart, we construct a
    * GssContext
@@ -514,6 +523,10 @@ public class Chronoscope implements Exportable, HistoryListener {
   public void init() {
 
     try {
+      if (currentTheme == null) {
+        Chronoscope.useGwtTheme(Theme.CHROME);
+      }
+
       checkForChronoscopeCSS();
 //        tryInjectChronoscopeCSS(new Command() {
 //            public void execute() {
