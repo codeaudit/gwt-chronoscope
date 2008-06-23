@@ -25,7 +25,8 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
-import org.timepedia.chronoscope.gviz.client.theme.chrome.ThemeStyleInjector;
+import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
+import org.timepedia.chronoscope.client.browser.theme.Theme;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,6 @@ public class GVizChronoscopeWidget extends Gadget<GVizPreferences>
   }
 
   protected void init(final GVizPreferences prefs) {
-    ThemeStyleInjector.injectTheme();
     Chronoscope.setUrlResolver(new Chronoscope.URLResolver() {
       public String resolveURL(String s) {
          return intrinsics.getCachedUrl(s);
