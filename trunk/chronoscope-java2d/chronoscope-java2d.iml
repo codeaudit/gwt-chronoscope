@@ -32,6 +32,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -63,15 +65,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="gwtquery:gwtquery:0.2-SNAPSHOT">
+      <library name="gwtquery:gwtquery:0.3-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.2-SNAPSHOT/gwtquery-0.2-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.2-SNAPSHOT/gwtquery-0.2-SNAPSHOT-javadoc.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.2-SNAPSHOT/gwtquery-0.2-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -102,15 +104,28 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="org.timepedia.exporter:gwtexporter:1.01">
+      <library name="com.google.gwt:gwt-incubator:1.0-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/1.01/gwtexporter-1.01.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/1.01/gwtexporter-1.01-javadoc.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/1.01/gwtexporter-1.01-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="org.timepedia.exporter:gwtexporter:2.0-SNAPSHOT">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
