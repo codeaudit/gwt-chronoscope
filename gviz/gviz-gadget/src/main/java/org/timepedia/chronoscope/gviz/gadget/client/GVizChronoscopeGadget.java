@@ -36,7 +36,7 @@ import org.timepedia.chronoscope.gviz.api.client.Query;
  */
 @Gadget.ModulePrefs(title = "Chronoscope", author = "Ray Cromwell",
     author_email = "ray@timefire.com")
-public class GVizChronoscopeWidget extends Gadget<GVizPreferences>
+public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
     implements NeedsIntrinsics, NeedsSetPrefs, NeedsSetTitle, NeedsIdi,
     NeedsLockedDomain {
 
