@@ -16,6 +16,7 @@
   </description>
   <modules>
     <module>gviz-api</module>
+    <module>gviz-api-export</module>
     <module>gviz-gadget</module> 
   </modules>
 </project>
