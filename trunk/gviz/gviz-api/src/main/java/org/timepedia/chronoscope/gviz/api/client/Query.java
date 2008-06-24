@@ -12,7 +12,7 @@ public final class Query extends JavaScriptObject {
 
   public native void send(QueryResponseHandler handler) /*-{
      this.send(function(resp) {
-       handler.@org.timepedia.chronoscope.gviz.gadget.client.QueryResponseHandler::onQueryResponse(Lorg/timepedia/chronoscope/gviz/client/QueryResponse;)(resp);
+       handler.@org.timepedia.chronoscope.gviz.api.client.QueryResponseHandler::onQueryResponse(Lorg/timepedia/chronoscope/gviz/api/client/QueryResponse;)(resp);
      })
    }-*/;
 }
