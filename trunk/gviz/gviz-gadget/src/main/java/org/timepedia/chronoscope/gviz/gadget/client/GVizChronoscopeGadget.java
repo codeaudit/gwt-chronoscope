@@ -92,8 +92,8 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
               public void onQueryResponse(QueryResponse response) {
                 try {
                   DataTable table = response.getDataTable();
-                  XYDataset ds[] = DataTableParser.parseDatasets(table);
-                  final Marker ms[] = DataTableParser.parseMarkers(table);
+                  XYDataset ds[] = DataTableParser.parseDatasets(table, null);
+                  final Marker ms[] = DataTableParser.parseMarkers(table, null);
 
                   ChartPanel cp = Chronoscope.createTimeseriesChart(ds,
                       Window.getClientWidth(), Window.getClientHeight());

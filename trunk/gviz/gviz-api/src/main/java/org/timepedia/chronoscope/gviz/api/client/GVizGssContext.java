@@ -128,11 +128,11 @@ public class GVizGssContext extends MockGssContext {
       else {
         this.color = new Color("rgb(255,0,255)");
       }
-      this.visible = "hover".equals(pseudoElt) ? true : false;
+      this.visible = ("hover".equals(pseudoElt) || "focus".equals(pseudoElt)) ? true : false;
       this.size = "hover".equals(pseudoElt) ? 5 : 5;
       this.bgColor = "hover".equals(pseudoElt) ? new Color("rgb(50,0,255)")
           : new Color("rgb(0,0,255)");
-      this.color = new Color("rgb(255,255,255)");
+      this.color = "focus".equals(pseudoElt) ? new Color("rgb(0,0,0)") : new Color("rgb(255,255,255)");
       this.lineThickness = 2;
     }
   }

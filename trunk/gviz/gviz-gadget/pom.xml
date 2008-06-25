@@ -46,7 +46,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0</version>
         <configuration>
-          <webXml>target/web.xml</webXml>
+<!--          <webXml>target/web.xml</webXml> -->
 		 <webResources>
             <resource>
                <directory>
@@ -87,7 +87,7 @@
             <id>compilegwt</id>
             <goals>
               <goal>compile</goal>
-              <goal>mergewebxml</goal>
+<!--              <goal>mergewebxml</goal> -->
             </goals>
           </execution>
         </executions>
