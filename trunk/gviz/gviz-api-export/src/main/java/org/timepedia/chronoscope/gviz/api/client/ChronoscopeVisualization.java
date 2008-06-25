@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.gviz.api.client;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -30,85 +31,100 @@ import gwtquery.client.Properties;
 @ExportPackage("chronoscope")
 public class ChronoscopeVisualization implements Exportable {
 
-  private Element element;
+    private Element element;
 
-  private ChartPanel cp;
+    private ChartPanel cp;
 
-  private boolean dontfire;
+    private boolean dontfire;
+    private static int vizCount = 0;
 
-  @Export("Visualization")
-  public ChronoscopeVisualization(Element element) {
-    this.element = element;
-  }
-
-  @Export
-  public JavaScriptObject getSelection() {
-    return GVizEventHelper.selection(dataset2Column.get(cp.getChart().getPlot().getFocusSeries()),
-        cp.getChart().getPlot().getFocusPoint());
-  }
-
-  @Export
-  void setSelection(JavaScriptObject selection) {
-    Properties sel = JavascriptHelper.jsArrGet(selection, 0).cast();
-    dontfire = true;
-    for(Map.Entry<Integer,Integer> e : dataset2Column.entrySet()) {
-      if(e.getValue() == sel.getInt("col")) {
-        cp.getChart().getPlot().setFocus(e.getKey(), sel.getInt("row"));
-        
-      }
+    @Export("Visualization")
+    public ChronoscopeVisualization(Element element) {
+        this.element = element;
     }
-  }
 
-  Map<Integer, Integer> dataset2Column = new HashMap<Integer, Integer>();
-  
-  @Export
-  public void draw(final DataTable table, JavaScriptObject options) {
-    try {
-      final Properties opts = options.cast();
+    @Export
+    public JavaScriptObject getSelection() {
+        int fs = cp.getChart().getPlot().getFocusSeries();
+        int fp = cp.getChart().getPlot().getFocusPoint();
+        if (fs == -1) return JavaScriptObject.createArray();
 
-      XYDataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
-      final Marker ms[] = DataTableParser.parseMarkers(table, dataset2Column);
+        return GVizEventHelper.selection(dataset2Column.get(fs),
+                fp);
+    }
 
-      cp = Chronoscope.createTimeseriesChart(ds, Window.getClientWidth(),
-          Window.getClientHeight());
-      cp.setGssContext(new GVizGssContext());
-      cp.setReadyListener(new ViewReadyCallback() {
-        public void onViewReady(View view) {
-          view.getChart().getPlot()
-              .setOverviewEnabled(!"false".equals(opts.get("overview")));
-          view.getChart().getPlot()
-              .setLegendEnabled(!"false".equals(opts.get("legend")));
-          for (Marker m : ms) {
-            view.getChart().getPlot().addOverlay(m);
-          }
-          view.addViewListener(new XYPlotListener() {
+    @Export
+    void setSelection(JavaScriptObject selection) {
+        Properties sel = JavascriptHelper.jsArrGet(selection, 0).cast();
+        dontfire = true;
+        for (Map.Entry<Integer, Integer> e : dataset2Column.entrySet()) {
+            if (e.getValue() == sel.getInt("col")) {
+                cp.getChart().getPlot().setFocus(e.getKey(), sel.getInt("row"));
 
-            public void onContextMenu(int x, int y) {
-              //To change body of implemented methods use File | Settings | File Templates.
             }
-
-            public void onFocusPointChanged(XYPlot plot, int focusSeries,
-                int focusPoint) {
-              if (!dontfire) {
-                GVizEventHelper
-                    .trigger(table, GVizEventHelper.SELECT_EVENT, null);
-              }
-              dontfire = false;
-            }
-
-            public void onPlotMoved(XYPlot plot, double amt, int seriesNum,
-                int type, boolean animated) {
-              //To change body of implemented methods use File | Settings | File Templates.
-            }
-          });
-          view.getChart().reloadStyles();
-          view.getChart().redraw();
         }
-      });
-      RootPanel.get().add(cp);
-    } catch (Throwable e) {
-      RootPanel.get()
-          .add(new Label("There was an error parsing the spreadsheet data."));
+
     }
-  }
+
+    Map<Integer, Integer> dataset2Column = new HashMap<Integer, Integer>();
+
+    @Export
+    public void draw(final DataTable table, JavaScriptObject options) {
+        try {
+            final Properties opts = options.cast();
+            String id = element.getId();
+            if (id == null || "".equals(id)) {
+                id = "__viz" + vizCount++;
+                element.setId(id);
+            }
+
+          
+
+            XYDataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
+            final Marker ms[] = DataTableParser.parseMarkers(table, dataset2Column);
+
+            cp = Chronoscope.createTimeseriesChart(ds, element.getPropertyInt("clientWidth"),
+                    element.getPropertyInt("clientHeight"));
+            cp.setGssContext(new GVizGssContext());
+            cp.setReadyListener(new ViewReadyCallback() {
+                public void onViewReady(View view) {
+                    view.getChart().getPlot()
+                            .setOverviewEnabled(!"false".equals(opts.get("overview")));
+                    view.getChart().getPlot()
+                            .setLegendEnabled(!"false".equals(opts.get("legend")));
+                    for (Marker m : ms) {
+                        view.getChart().getPlot().addOverlay(m);
+                    }
+                    view.addViewListener(new XYPlotListener() {
+
+                        public void onContextMenu(int x, int y) {
+                            //To change body of implemented methods use File | Settings | File Templates.
+                        }
+
+                        public void onFocusPointChanged(XYPlot plot, int focusSeries,
+                                                        int focusPoint) {
+                            if (!dontfire) {
+                                GVizEventHelper
+                                        .trigger(table, GVizEventHelper.SELECT_EVENT, null);
+                            }
+                            dontfire = false;
+                        }
+
+                        public void onPlotMoved(XYPlot plot, double amt, int seriesNum,
+                                                int type, boolean animated) {
+                            //To change body of implemented methods use File | Settings | File Templates.
+                        }
+                    });
+                    view.getChart().reloadStyles();
+                    view.getChart().redraw();
+                }
+            });
+
+            RootPanel.get(id).add(cp);
+        } catch (Throwable e) {
+            RootPanel.get()
+                    .add(new Label("There was an error parsing the spreadsheet data."));
+        }
+
+    }
 }

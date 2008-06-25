@@ -165,7 +165,7 @@ public class XYLineRenderer extends XYRenderer
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
 
-    if (prop.visible) {
+    if (prop.visible || isFocused) {
       if (isFocused) {
         focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
       }
