@@ -93,6 +93,11 @@ public interface XYPlot extends Exportable {
   Chart getChart();
 
   /**
+   * Return the mip level of the given series
+   */
+  int getCurrentDatasetLevel(int seriesNum);
+
+  /**
    * Gets the currently visible domain for the plot
    */
   double getCurrentDomain();
@@ -238,6 +243,11 @@ public interface XYPlot extends Exportable {
    * @gwt.export getAxis
    */
   RangeAxis getRangeAxis(int seriesNumber);
+
+  /**
+   * Return number of unique Range axes in the plot
+   */
+  int getRangeAxisCount();
 
   /**
    * Return the renderer for a given dataset number
@@ -392,10 +402,17 @@ public interface XYPlot extends Exportable {
   void setDomainOrigin(double domainOrigin);
 
   /**
+   * Set the focus to be dataset element {point} for series {series}
+   * @param series
+   * @param point
+   */
+  void setFocus(int series, int point);
+
+  /**
    * Attempt to set the datapoint located at the given screen space coordinates
    * as the current focus point, returns true if succesful.
    */
-  boolean setFocus(int x, int y);
+  boolean setFocusXY(int x, int y);
 
   /**
    * Sets the currently visible highlight to the domain interval specified
@@ -450,17 +467,4 @@ public interface XYPlot extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
-
-  /**
-   * Return number of unique Range axes in the plot
-   * @return
-   */
-  int getRangeAxisCount();
-
-  /**
-   * Return the mip level of the given series
-   * @return
-   * @param seriesNum
-   */
-  int getCurrentDatasetLevel(int seriesNum);
 }

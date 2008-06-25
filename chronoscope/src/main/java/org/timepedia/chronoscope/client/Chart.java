@@ -234,7 +234,7 @@ public class Chart implements Exportable {
    * as the current focus point, returns true if succesful.
    */
   public boolean setFocus(int x, int y) {
-    return plot.setFocus(x, y);
+    return plot.setFocusXY(x, y);
   }
 
   /**
