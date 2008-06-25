@@ -7,13 +7,15 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
  */
 public class DataTableParser {
 
-  public static Marker[] parseMarkers(DataTable table) {
+  public static Marker[] parseMarkers(final DataTable table,
+      Map<Integer, Integer> dataset2Column) {
     int startRow = -1;
     int curSeries = -1;
     ArrayList<Marker> markers = new ArrayList<Marker>();
@@ -25,6 +27,7 @@ public class DataTableParser {
       }
     }
 
+    
     for (int i = 1; i < table.getNumberOfColumns(); i++) {
 
       if (!Double.isNaN(table.getValueNumber(startRow, i))) {
@@ -36,10 +39,11 @@ public class DataTableParser {
                 "" + (char) ('A' + markers.size()), curSeries);
             final String info = table.getValueString(row, i);
             final String info2 = info != null ? info.trim() : "";
-
+            
             if (!"".equals(info2)) {
               m.addOverlayClickListener(new OverlayClickListener() {
                 public void onOverlayClick(Overlay overlay, int i, int i1) {
+                  GVizEventHelper.trigger(table, GVizEventHelper.SELECT_EVENT, null);
                   m.openInfoWindow(info2);
                 }
               });
@@ -52,8 +56,9 @@ public class DataTableParser {
     return markers.toArray(new Marker[markers.size()]);
   }
 
-  public static XYDataset[] parseDatasets(DataTable table) {
+  public static XYDataset[] parseDatasets(DataTable table, Map<Integer, Integer> dataset2Column) {
 
+    
     int startRow = -1;
     for (int row = 0; row < table.getNumberOfRows(); row++) {
       if (!Double.isNaN(table.getValueDate(row, 0))) {
@@ -93,6 +98,7 @@ public class DataTableParser {
       double range[] = table2range(table, startRow, i);
       ds[numCols++] = new ArrayXYDataset("col" + i, domain, range, label,
           units);
+      if(dataset2Column != null) dataset2Column.put(numCols-1, i);
     }
 
     return ds;
