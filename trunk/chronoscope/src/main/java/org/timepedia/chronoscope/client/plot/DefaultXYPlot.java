@@ -913,7 +913,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.domainOrigin = domainOrigin;
   }
 
-  public boolean setFocus(int x, int y) {
+  public boolean setFocusXY(int x, int y) {
     int lastFocus = focusPoint;
     int lastFocusSeries = focusSeries;
     int nearNum = -1;
@@ -1131,6 +1131,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   public int getCurrentDatasetLevel(int seriesNum) {
     return currentMiplevels[seriesNum];
+  }
+
+  public void setFocus(int series, int point) {
+    this.focusSeries=series;
+    this.focusPoint=point;
   }
 
   protected void drawAxisPanel(Layer backingCanvas, AxisPanel axisPanel,
