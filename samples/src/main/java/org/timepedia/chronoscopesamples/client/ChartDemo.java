@@ -61,9 +61,9 @@ public class ChartDemo implements EntryPoint {
 
       TabPanel vp = new TabPanel();
 //    VerticalPanel vp = new VerticalPanel();
-      final XYDataset[] ds = new XYDataset[1];
+      final XYDataset[] ds = new XYDataset[2];
       ds[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-//        ds[1]=new MockXYDataset();
+        ds[1]=new MockXYDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {

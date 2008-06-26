@@ -2,8 +2,6 @@ package org.timepedia.chronoscope.gviz.api.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -17,8 +15,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -57,9 +55,10 @@ public class ChronoscopeVisualization implements Exportable {
     void setSelection(JavaScriptObject selection) {
         Properties sel = JavascriptHelper.jsArrGet(selection, 0).cast();
         dontfire = true;
+        
         for (Map.Entry<Integer, Integer> e : dataset2Column.entrySet()) {
             if (e.getValue() == sel.getInt("col")) {
-                cp.getChart().getPlot().setFocus(e.getKey(), sel.getInt("row"));
+                cp.getChart().getPlot().setFocusXY(e.getKey(), sel.getInt("row"));
 
             }
         }
