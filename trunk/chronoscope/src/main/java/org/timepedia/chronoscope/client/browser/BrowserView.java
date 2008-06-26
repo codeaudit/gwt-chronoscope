@@ -197,10 +197,11 @@ public class BrowserView extends View
     PopupPanel pp = new DecoratedPopupPanel(true);
    // pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
-    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
-        DOM.getAbsoluteTop(getElement()) + (int) y);
+
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
+    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x - pp.getElement().getPropertyInt("clientWidth")/2,
+    DOM.getAbsoluteTop(getElement()) + (int) y);
   }
 
   /**
