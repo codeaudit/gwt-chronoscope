@@ -17,8 +17,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.Exportable;
 
 /**
  * ChartPanel is a GWT Widget that intercepts events and translates them to the
@@ -40,6 +40,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants, Exportable {
 
   private GssContext gssContext;
+
+  private static final int TAB_KEY = 9;
 
   /**
    * May no longer be neccessarily now that some bugs got fixed.
@@ -288,9 +290,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         if (keyCode2 == KeyboardListener.KEY_PAGEUP
             || keyCode2 == KeyboardListener.KEY_PAGEDOWN
             || keyCode2 == KeyboardListener.KEY_UP
-            || keyCode2 == KeyboardListener.KEY_DOWN) {
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
+            || keyCode2 == KeyboardListener.KEY_DOWN || keyCode2 == TAB_KEY) {
+          handleTabKey(evt, keyCode2);
         } else {
           super.onBrowserEvent(evt);
         }
@@ -338,7 +339,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         break;
       case Event.ONKEYPRESS:
         int keyCode3 = DOM.eventGetKeyCode(evt);
-        if (keyCode3 == 9) {
+        if (keyCode3 == TAB_KEY) {
           if (DOM.eventGetShiftKey(evt)) {
             chart.prevFocus();
           } else {
@@ -403,6 +404,19 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
       default:
         super.onBrowserEvent(evt);
     }
+  }
+
+  private void handleTabKey(Event evt, int keyCode2) {
+    if (keyCode2 == TAB_KEY) {
+      if (DOM.eventGetShiftKey(evt)) {
+        chart.prevFocus();
+      } else {
+        chart.nextFocus();
+      }
+    }
+
+    DOM.eventCancelBubble(evt, true);
+    DOM.eventPreventDefault(evt);
   }
 
   public void onMouseWheelDown(int intensity) {
