@@ -467,4 +467,6 @@ public interface XYPlot extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
+
+    double rangeToWindowY(double rangeY, int seriesNum);
 }

@@ -185,7 +185,7 @@ public class Chart implements Exportable {
    * Plot)
    */
   public double rangeToWindowY(XYPlot plot, double rangeY, int seriesNum) {
-    return plot.rangeToScreenY(rangeY, seriesNum) + plot.getPlotBounds().y;
+    return plot.rangeToWindowY(rangeY, seriesNum);
   }
 
   /**
