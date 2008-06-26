@@ -138,7 +138,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private LegendAxis legendAxis;
 
-  private final HashMap axisMap = new HashMap();
+  private final HashMap<String, RangeAxis> axisMap = new HashMap<String, RangeAxis>();
 
   private boolean drewBackground;
 
@@ -356,7 +356,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public double domainToWindowX(double dataX, int seriesNum) {
-    return domainToWindowX(dataX, seriesNum) + plotBounds.x;
+    return domainToScreenX(dataX, seriesNum) + plotBounds.x;
   }
 
   public boolean ensureVisible(int seriesNum, int pointNum,
@@ -381,8 +381,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   public Nearest findNearestWithin(Nearest nearestResult, double domainX,
       double rangeY, int seriesNum, int within) {
-    double cx = domainToScreenX(domainX, seriesNum);
-    double cy = rangeToScreenY(rangeY, seriesNum);
+    double cx = domainToWindowX(domainX, seriesNum);
+    double cy = rangeToWindowY(rangeY, seriesNum);
 
     int where = Util.binarySearch(dataSets[seriesNum], domainX,
         currentMiplevels[seriesNum]);
@@ -1179,6 +1179,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   protected double userYtoRange(int y, int seriesNum) {
+ //   RangeAxis axis = axisMap.get(dataSets[seriesNum].getAxisId());
     return dataSets[seriesNum].getRangeTop() - (y - plotBounds
         .y) / plotBounds.height * (dataSets[seriesNum].getRangeTop()
         - dataSets[seriesNum].getRangeBottom());
