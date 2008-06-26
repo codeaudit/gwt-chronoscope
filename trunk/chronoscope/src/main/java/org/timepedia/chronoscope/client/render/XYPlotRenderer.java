@@ -103,21 +103,21 @@ public abstract class XYPlotRenderer {
 
   private void putRangeMin(int seriesNum, double rangeMin) {
     this.rangeMin
-        .put(plot.getRangeAxis(seriesNum).getUnitLabel(), new Double(rangeMin));
+        .put(plot.getRangeAxis(seriesNum).getAxisId(), new Double(rangeMin));
   }
 
   private void putRangeMax(int seriesNum, double rangeMax) {
     this.rangeMax
-        .put(plot.getRangeAxis(seriesNum).getUnitLabel(), new Double(rangeMax));
+        .put(plot.getRangeAxis(seriesNum).getAxisId(), new Double(rangeMax));
   }
 
   private double getRangeMin(int seriesNum) {
-    return ((Double) rangeMin.get(plot.getRangeAxis(seriesNum).getUnitLabel()))
+    return ((Double) rangeMin.get(plot.getRangeAxis(seriesNum).getAxisId()))
         .doubleValue();
   }
 
   private double getRangeMax(int seriesNum) {
-    return ((Double) rangeMax.get(plot.getRangeAxis(seriesNum).getUnitLabel()))
+    return ((Double) rangeMax.get(plot.getRangeAxis(seriesNum).getAxisId()))
         .doubleValue();
   }
 
@@ -138,8 +138,8 @@ public abstract class XYPlotRenderer {
     for (int i = 0; i < numDatasets; i++) {
       RangeAxis ra = plot.getRangeAxis(i);
 
-      rangeMin.put(ra.getUnitLabel(), min);
-      rangeMax.put(ra.getUnitLabel(), max);
+      rangeMin.put(ra.getAxisId(), min);
+      rangeMax.put(ra.getAxisId(), max);
     }
   }
 

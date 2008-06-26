@@ -108,7 +108,7 @@ public abstract class ValueAxis {
   /**
    * Gets the short label representing the units of this axis (m/s, $, etc)
    */
-  public String getUnitLabel() {
+  public String getAxisId() {
     return unitLabel;
   }
 

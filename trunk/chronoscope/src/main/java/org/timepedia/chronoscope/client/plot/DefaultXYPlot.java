@@ -1168,7 +1168,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
                         dataSets[i].getAxisId(), i, dataSets[i].getRangeBottom(),
                         dataSets[i].getRangeTop(),
                         rangeAxisCount % 2 == 0 ? rangePanelLeft : rangePanelRight);
-                axisMap.put(ra.getUnitLabel(), ra);
+                axisMap.put(ra.getAxisId(), ra);
                 if (rangeAxisCount % 2 == 0) {
                     rangePanelLeft.add(ra);
                 } else {
