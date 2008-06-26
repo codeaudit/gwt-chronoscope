@@ -1272,7 +1272,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
                 plotBounds.width -= rangePanelRight.getWidth();
             }
         }
-
+        innerBounds.height = plotBounds.height;
+        innerBounds.width = plotBounds.width;
         innerBounds.x = 0;
         innerBounds.y = 0;
     }
