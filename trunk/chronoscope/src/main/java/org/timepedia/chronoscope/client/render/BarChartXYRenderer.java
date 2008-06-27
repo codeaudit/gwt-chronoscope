@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -8,41 +9,41 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
 /**
- * Renders BarCharts on an XYPlot
+ * Renders BarCharts on an XYPlot.
  */
 public class BarChartXYRenderer extends XYRenderer implements GssElement {
-
-  private double lx = -1;
-
-  private boolean prevHover = false;
-
-  private boolean prevFocus = false;
-
-  private FocusPainter focusPainter;
-
-  private boolean gssInited = false;
-
-  private GssProperties gssLineProperties;
-
-  private GssProperties focusGssProperties;
-
-  private GssProperties gssPointProperties;
 
   private GssProperties disabledLineProperties;
 
   private GssProperties disabledPointProperties;
 
+  private GssProperties focusGssProperties;
+
+  private FocusPainter focusPainter;
+
   private GssProperties gssHoverPointProperties;
 
-  private final int seriesNum;
+  private boolean gssInited = false;
+
+  private GssProperties gssLineProperties;
+
+  private GssProperties gssPointProperties;
 
   private double interval = -1;
+
+  private double lx = -1;
 
   private double offset = -1;
 
   private GssElement parentSeriesElement = null;
 
   private GssElement pointElement = null;
+
+  private boolean prevFocus = false;
+
+  private boolean prevHover = false;
+
+  private final int seriesNum;
 
   public BarChartXYRenderer(int seriesNum) {
 
@@ -101,7 +102,8 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         ow -= padding;
         bw -= padding * 2;
 
-        double barHeight = plot.getInnerPlotBounds().height + plot.getInnerPlotBounds().y;
+        double barHeight = plot.getInnerPlotBounds().height
+            + plot.getInnerPlotBounds().y;
         layer.save();
         layer.translate(ux - ow, uy);
 
@@ -162,13 +164,20 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
       int seriesNum) {
     layer.save();
     GssProperties lineProp, pointProp;
-    if (seriesNum != plot.getFocusSeries() && plot.getFocusSeries() != -1) {
+    Focus focus = plot.getFocus();
+    if (focus != null && focus.getDatasetIndex() != seriesNum) {
       lineProp = disabledLineProperties;
       pointProp = disabledPointProperties;
     } else {
       lineProp = gssLineProperties;
       pointProp = gssPointProperties;
     }
+    /*
+     * int focusSeries = plot.getFocus().getFocusSeries(); if (focusSeries !=
+     * seriesNum && focusSeries != -1) { lineProp = disabledLineProperties;
+     * pointProp = disabledPointProperties; } else { lineProp =
+     * gssLineProperties; pointProp = gssPointProperties; }
+     */
 
     layer.beginPath();
     layer.moveTo(x, y);

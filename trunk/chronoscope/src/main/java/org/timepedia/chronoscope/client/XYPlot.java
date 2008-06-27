@@ -38,7 +38,7 @@ import org.timepedia.exporter.client.Exportable;
 public interface XYPlot extends Exportable {
 
   /**
-   * Add an overlay to this plot
+   * Add an overlay to this plot.
    */
   void addOverlay(Overlay overlay);
 
@@ -65,7 +65,7 @@ public interface XYPlot extends Exportable {
       int eventType, PortableTimerTask continuation);
 
   /**
-   * Clears the current selection
+   * Clears the current selection.
    */
   void clearSelection();
 
@@ -77,50 +77,50 @@ public interface XYPlot extends Exportable {
 
   /**
    * Tell plot to discard cache of the axes layer containing this axis and
-   * redraw it on next update
+   * redraw it on next update.
    */
   void damageAxes(ValueAxis axis);
 
   /**
    * Convert a domain X value to a screen X value using the axis of the given
-   * series number
+   * dataset index.
    */
-  double domainToScreenX(double domainX, int seriesNumber);
+  double domainToScreenX(double domainX, int datasetIndex);
 
   /**
-   * Returns the chart to which this Plot is embedded
+   * Returns the chart to which this Plot is embedded.
    */
   Chart getChart();
 
   /**
-   * Return the mip level of the given series
+   * Return the mip level of the given dataset index.
    */
-  int getCurrentDatasetLevel(int seriesNum);
+  int getCurrentDatasetLevel(int datasetIndex);
 
   /**
-   * Gets the currently visible domain for the plot
+   * Gets the currently visible domain for the plot.
    */
   double getCurrentDomain();
 
   /**
-   * Return the ith dataset
+   * Return the ith dataset.
    */
   XYDataset getDataset(int i);
 
   /**
    * Retrieve X value for a given dataset and point at current visible
-   * resolution level
+   * resolution level.
    */
-  double getDataX(int seriesNumber, int pointIndex);
+  double getDataX(int datasetIndex, int pointIndex);
 
   /**
    * Retrieve Y value for a given dataset and point at current visible
-   * resolution level
+   * resolution level.
    */
-  double getDataY(int seriesNumber, int pointIndex);
+  double getDataY(int datasetIndex, int pointIndex);
 
   /**
-   * Return the current domain axis
+   * Return the current domain axis.
    */
   ValueAxis getDomainAxis();
 
@@ -136,17 +136,17 @@ public interface XYPlot extends Exportable {
   double getDomainEnd();
 
   /**
-   * Maximum domain value over all datasets in the Plot
+   * Maximum domain value over all datasets in the Plot.
    */
   double getDomainMax();
 
   /**
-   * Minimum domain value over all datasets in the Plot
+   * Minimum domain value over all datasets in the Plot.
    */
   double getDomainMin();
 
   /**
-   * Returns the current domain origin
+   * Returns the current domain origin.
    */
   double getDomainOrigin();
 
@@ -161,14 +161,10 @@ public interface XYPlot extends Exportable {
   double getDomainStart();
 
   /**
-   * Return the current point which has the focus within the focused series
+   * Returns the current focus point and series index within the focused series.
+   * 
    */
-  int getFocusPoint();
-
-  /**
-   * Return the current dataset index which has the focus
-   */
-  int getFocusSeries();
+  Focus getFocus();
 
   /**
    * Returns a string representing the current state of the plot, used to
@@ -198,10 +194,10 @@ public interface XYPlot extends Exportable {
   int getMaxDrawableDataPoints();
 
   /**
-   * Given a domain value, and dataset number, return the nearest index within
+   * Given a domain value, and dataset index, return the nearest index within
    * the dataset to the given domain value
    */
-  int getNearestVisiblePoint(double domainX, int seriesNum);
+  int getNearestVisiblePoint(double domainX, int datasetIndex);
 
   /**
    * Returns number of frames used during animateTo() calls
@@ -242,7 +238,7 @@ public interface XYPlot extends Exportable {
   /**
    * @gwt.export getAxis
    */
-  RangeAxis getRangeAxis(int seriesNumber);
+  RangeAxis getRangeAxis(int datasetIndex);
 
   /**
    * Return number of unique Range axes in the plot
@@ -250,9 +246,9 @@ public interface XYPlot extends Exportable {
   int getRangeAxisCount();
 
   /**
-   * Return the renderer for a given dataset number
+   * Return the renderer for a given dataset index
    */
-  XYRenderer getRenderer(int seriesNum);
+  XYRenderer getRenderer(int datasetIndex);
 
   /**
    * Get the domain value of the beginning of the current selection
@@ -312,11 +308,11 @@ public interface XYPlot extends Exportable {
   /**
    * Open an info window at the specified coordinates in data space
    *
-   * @param seriesNum the dataset these values come from (used to decide Axis
+   * @param datasetIndex the dataset these values come from (used to decide Axis
    *                  used)
    */
   void openInfoWindow(String html, double domainX, double rangeY,
-      int seriesNum);
+      int datasetIndex);
 
   /**
    * Animated pan to the left by the designated percentage (0.0, 1.0) of the
@@ -344,9 +340,11 @@ public interface XYPlot extends Exportable {
 
   /**
    * Convert a range Y value to a screen Y value using the axis of the given
-   * series number
+   * dataset index
    */
-  double rangeToScreenY(double rangeY, int seriesNumber);
+  double rangeToScreenY(double rangeY, int datasetIndex);
+
+  double rangeToWindowY(double rangeY, int datasetIndex);
 
   /**
    * Calls update(), and manages optionally swaps double-buffered canvases
@@ -384,7 +382,7 @@ public interface XYPlot extends Exportable {
   /**
    * Set the resolution level for a given dataset
    */
-  void setCurrentDatasetLevel(int seriesNum, int level);
+  void setCurrentDatasetLevel(int datasetIndex, int level);
 
   /**
    * Sets the currently visible domain
@@ -403,10 +401,8 @@ public interface XYPlot extends Exportable {
 
   /**
    * Set the focus to be dataset element {point} for series {series}
-   * @param series
-   * @param point
    */
-  void setFocus(int series, int point);
+  void setFocus(Focus focus);
 
   /**
    * Attempt to set the datapoint located at the given screen space coordinates
@@ -447,9 +443,9 @@ public interface XYPlot extends Exportable {
   void setOverviewEnabled(boolean overviewEnabled);
 
   /**
-   * Set the renderer for a given dataset number
+   * Set the renderer for a given dataset index
    */
-  void setRenderer(int seriesNum, XYRenderer renderer);
+  void setRenderer(int datasetIndex, XYRenderer renderer);
 
   /**
    * Set to true if you want drag operations on the plot to cause the selection
@@ -467,6 +463,4 @@ public interface XYPlot extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
-
-    double rangeToWindowY(double rangeY, int seriesNum);
 }
