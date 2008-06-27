@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.ClippedImageImpl;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -91,7 +92,8 @@ public abstract class DomTextLayer extends AbstractLayer {
         // needs better layout
         for (int i = 0; i < label.length(); i++) {
           String letter = String.valueOf(label.charAt(i));
-          drawText(tx, ty, letter, fontFamily, fontWeight, fontSize, layerName);
+          drawText(tx, ty, letter, fontFamily, fontWeight, fontSize, layerName,
+              Cursor.DEFAULT);
           ty += rmt.maxHeight - 3;
         }
         return;
@@ -162,7 +164,7 @@ public abstract class DomTextLayer extends AbstractLayer {
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String layerName) {
+      String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
     TextLayer layer = getTextLayer(layerName);
     Element layerElem = layer.layerElem;
     Element textDiv = createTextDiv();
@@ -173,6 +175,10 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.setStyleAttribute(textDiv, "fontWeight", fontWeight);
     DOM.setStyleAttribute(textDiv, "color", getStrokeColor());
     DOM.setStyleAttribute(textDiv, "opacity", getTransparency());
+    if(cursorStyle == Cursor.CLICKABLE) {
+      DOM.setStyleAttribute(textDiv, "textDecoration", "underline");
+      DOM.setStyleAttribute(textDiv, "cursor", "pointer");
+    }
     DOM.setInnerHTML(textDiv, label);
     DOM.appendChild(layerElem, textDiv);
   }

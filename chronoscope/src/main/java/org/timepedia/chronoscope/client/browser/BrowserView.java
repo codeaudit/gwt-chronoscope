@@ -236,9 +236,10 @@ public class BrowserView extends View
         break;
       case DRAGGABLE:
       case DRAGGING:
-      default:
         setCursorImpl("move");
         break;
+      default:
+        setCursorImpl("default");
     }
   }
 

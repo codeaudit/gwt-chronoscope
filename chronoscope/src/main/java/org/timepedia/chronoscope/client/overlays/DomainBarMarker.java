@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.overlays;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -110,7 +111,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
         plot.getInnerPlotBounds().height);
     backingCanvas.drawText(x2 + 1, /*view.getPlotBounds().y+*/10, label,
         markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
-        markerLabelProperties.fontSize, layer);
+        markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
     backingCanvas.restore();
   }
 

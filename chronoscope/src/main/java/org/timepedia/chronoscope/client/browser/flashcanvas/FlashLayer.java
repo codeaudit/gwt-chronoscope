@@ -5,6 +5,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -164,7 +165,7 @@ public class FlashLayer extends AbstractLayer {
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String layerName) {
+      String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
     selectLayer();
     cmd("DT", x, y, label, fontFamily, fontWeight, fontSize, layerName);
   }
