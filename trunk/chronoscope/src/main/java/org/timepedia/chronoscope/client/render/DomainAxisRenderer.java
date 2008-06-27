@@ -632,6 +632,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     return num < 10 ? "0" + num : "" + num;
   }
 
+  private double minTickSize = -1;
+
   private GssProperties axisProperties;
 
   private DateAxis axis;
@@ -695,6 +697,19 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     return view.getCanvas().getRootLayer().stringWidth(str,
         axisProperties.fontFamily, axisProperties.fontWeight,
         axisProperties.fontSize);
+  }
+
+  public double getMinimumTickSize() {
+    if (minTickSize == -1) {
+      TickLabelFormatter formatter = rootFormatter;
+      // walk formatter lis to find the smallest date formatter we support
+      do {
+        formatter = formatter.getSubIntervalFormatter();
+      } while (formatter.getSubIntervalFormatter() != null);
+      minTickSize = formatter.getInterval() / formatter
+          .getMinTicksBeforeSubInterval();
+    }
+    return minTickSize;
   }
 
   public GssElement getParentGssElement() {
@@ -825,7 +840,9 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     for (; i < loop; i++) {
       double tickPos = tlf
           .getTick(intervalStart, intervalEnd, i, numTicks, maxTicks);
-      if(!axis.isVisible(tickPos)) continue;
+      if (!axis.isVisible(tickPos)) {
+        continue;
+      }
 
       drawTick(plot, layer, tickPos, bounds, tlf);
       if (i <= numTicks) {

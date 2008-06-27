@@ -63,6 +63,10 @@ public class DateAxis extends ValueAxis {
     return maxLabelWidth;
   }
 
+  public double getMinimumTickSize() {
+    return renderer.getMinimumTickSize();
+  }
+
   public double getRangeHigh() {
     return plot.getDomainOrigin() + plot.getCurrentDomain();
   }
@@ -97,11 +101,11 @@ public class DateAxis extends ValueAxis {
         getOrientation() == AxisPanel.HORIZONTAL_AXIS ? "(Time)" : "X");
   }
 
-  public double userToData(double userValue) {
-    return getRangeLow() + userValue * getRange();
-  }
-
   public boolean isVisible(double tickPos) {
     return true;
+  }
+
+  public double userToData(double userValue) {
+    return getRangeLow() + userValue * getRange();
   }
 }

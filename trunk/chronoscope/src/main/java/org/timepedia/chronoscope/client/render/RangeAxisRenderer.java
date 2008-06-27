@@ -201,7 +201,8 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     }
     layer.save();
     layer.setFillColor(tickProperties.color);
-
+    layer.setTransparency(1);
+    
     layer.fillRect(bounds.x + dir, uy, 5, tickProperties.lineThickness);
     if (gridProperties.visible && uy != bounds.y + bounds.height) {
       layer.setFillColor(gridProperties.color);

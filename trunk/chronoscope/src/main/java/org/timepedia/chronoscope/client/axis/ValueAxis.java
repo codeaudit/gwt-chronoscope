@@ -56,6 +56,13 @@ public abstract class ValueAxis {
   public abstract void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly);
 
+  /**
+   * Gets the short label representing the units of this axis (m/s, $, etc)
+   */
+  public String getAxisId() {
+    return unitLabel;
+  }
+
   public AxisPanel getAxisPanel() {
     return axisPanel;
   }
@@ -82,6 +89,15 @@ public abstract class ValueAxis {
   }
 
   /**
+   * Returns the smallest range displayable on this axis, used to prevent
+   * zooming too far.
+   * @return
+   */
+  public double getMinimumTickSize() {
+      return Double.MIN_VALUE;
+  }
+
+  /**
    * Returns {@link AxisPanel#VERTICAL_AXIS} or {@link AxisPanel#HORIZONTAL_AXIS}
    */
   public int getOrientation() {
@@ -104,13 +120,6 @@ public abstract class ValueAxis {
    * Returns the minimum data value on the axis
    */
   public abstract double getRangeLow();
-
-  /**
-   * Gets the short label representing the units of this axis (m/s, $, etc)
-   */
-  public String getAxisId() {
-    return unitLabel;
-  }
 
   /**
    * The width in pixels this axis will consume when rendered (including
