@@ -249,8 +249,8 @@ public class Chart implements Exportable {
    * Attempt to set the datapoint at the screen space coordinates given to a
    * hover state.
    */
-  public void setHover(int x, int y) {
-    plot.setHover(x, y);
+  public boolean setHover(int x, int y) {
+    return plot.setHover(x, y);
   }
 
   public void setPlot(XYPlot plot) {
@@ -274,5 +274,9 @@ public class Chart implements Exportable {
    */
   public void zoomToHighlight() {
     plot.zoomToHighlight();
+  }
+
+  public void setCursor(Cursor cursor) {
+    view.setCursor(cursor);
   }
 }

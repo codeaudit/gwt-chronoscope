@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -175,6 +176,10 @@ public abstract class View implements Exportable {
     }
   }
 
+  public  String numberFormat(String labelFormat, double value) {
+    return String.valueOf(value);
+  }
+
   /**
    * Invoked when the parent element containing this view is added to the
    * visible UI hierarchy (e.g. DOM)
@@ -250,6 +255,14 @@ public abstract class View implements Exportable {
   }
 
   /**
+   * Hint to set the mouse cursor to a particular mode.
+   * @param cursor
+   */
+  public void setCursor(Cursor cursor) {
+    // default impl, ignore
+  }
+
+  /**
    * A menu factory is used to delegate the creation of Menu UI widgets
    */
   public void setMenuFactory(ChronoscopeMenuFactory menuFactory) {
@@ -281,9 +294,5 @@ public abstract class View implements Exportable {
 
   private ChronoscopeMenu getContextMenu() {
     return contextMenu;
-  }
-
-  public  String numberFormat(String labelFormat, double value) {
-    return String.valueOf(value);
   }
 }

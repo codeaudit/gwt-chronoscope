@@ -1,17 +1,18 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
-import com.google.gwt.i18n.client.NumberFormat;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -19,9 +20,9 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
-import org.timepedia.exporter.client.ExportPackage;
 
 import java.util.Date;
 
@@ -36,6 +37,7 @@ public class BrowserView extends View
     implements Exportable, CssGssViewSupport, DOMView {
 
   abstract static class BrowserTimer extends Timer implements PortableTimer {
+
   }
 
   static final FocusImpl focusImpl = FocusImpl.getFocusImplForPanel();
@@ -95,9 +97,9 @@ public class BrowserView extends View
       public double getTime() {
         return new Date().getTime();
       }
-      
+
       public void run() {
-              run.run(this);
+        run.run(this);
       }
     };
   }
@@ -195,13 +197,14 @@ public class BrowserView extends View
    */
   public void openInfoWindow(String html, double x, double y) {
     PopupPanel pp = new DecoratedPopupPanel(true);
-   // pp.setStyleName("chrono-infoWindow");
+    // pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
 
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
-    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x - pp.getElement().getPropertyInt("clientWidth")/2,
-    DOM.getAbsoluteTop(getElement()) + (int) y);
+    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x
+        - pp.getElement().getPropertyInt("clientWidth") / 2,
+        DOM.getAbsoluteTop(getElement()) + (int) y);
   }
 
   /**
@@ -221,6 +224,23 @@ public class BrowserView extends View
   public native double remainder(double numerator, double modulus) /*-{
     return numerator % modulus;
   }-*/;
+
+  public void setCursor(Cursor cursor) {
+    switch (cursor) {
+
+      case CLICKABLE:
+        setCursorImpl("pointer");
+        break;
+      case SELECTING:
+        setCursorImpl("text");
+        break;
+      case DRAGGABLE:
+      case DRAGGING:
+      default:
+        setCursorImpl("move");
+        break;
+    }
+  }
 
   /**
    * Return a Browser (CANVAS tag) canvas. This may be extended in the future to
@@ -250,5 +270,9 @@ public class BrowserView extends View
     DOM.appendChild(rootElem, containerDiv);
     DOM.setStyleAttribute(containerDiv, "height", height + "px");
     DOM.setStyleAttribute(containerDiv, "width", width + "px");
+  }
+
+  private void setCursorImpl(String cssCursor) {
+    getElement().getStyle().setProperty("cursor", cssCursor);
   }
 }

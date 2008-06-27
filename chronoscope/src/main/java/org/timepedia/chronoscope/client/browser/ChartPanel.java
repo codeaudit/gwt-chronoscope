@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -39,44 +40,7 @@ import org.timepedia.exporter.client.Exportable;
 public class ChartPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants, Exportable {
 
-  private GssContext gssContext;
-
   private static final int TAB_KEY = 9;
-
-  /**
-   * May no longer be neccessarily now that some bugs got fixed.
-   */
-  public static native int getAbsoluteLeft(Element elem) /*-{
-          var left = 0;
-          var curr = elem;
-
-          while (curr.offsetParent) {
-            left -= curr.scrollLeft;
-            curr = curr.parentNode;
-          }
-          while (elem) {
-            left += elem.offsetLeft;
-            elem = elem.offsetParent;
-          }
-          return left;
-        }-*/;
-
-  /**
-   * May no longer be neccessarily now that some bugs got fixed.
-   */
-  public static native int getAbsoluteTop(Element elem) /*-{
-          var top = 0;
-          var curr = elem;
-          while (curr.offsetParent) {
-            top -= curr.scrollTop;
-            curr = curr.parentNode;
-          }
-          while (elem) {
-            top += elem.offsetTop;
-            elem = elem.offsetParent;
-          }
-          return top;
-        }-*/;
 
   /**
    * Gets the window's scroll left.
@@ -97,6 +61,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
           // Standard mode || Quirks mode.
           return $doc.documentElement.scrollTop || $doc.body.scrollTop;
         }-*/;
+
+  private GssContext gssContext;
 
   private View view;
 
@@ -225,6 +191,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         if (selectionMode || DOM.eventGetShiftKey(evt)) {
           selStart = x;
           selectionMode = true;
+          chart.setCursor(Cursor.SELECTING);
         } else {
           maybeDrag = true;
 
@@ -236,11 +203,13 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         break;
       case Event.ONMOUSEOUT:
         chart.setAnimating(false);
+        chart.setCursor(Cursor.DRAGGABLE);
         chart.redraw();
         break;
 
       case Event.ONMOUSEOVER:
         chart.setPlotFocus(x, y);
+        chart.setCursor(Cursor.DRAGGABLE);
         ((DOMView) view).focus();
         maybeDrag = false;
         break;
@@ -258,6 +227,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
           chart.redraw();
         }
 
+        chart.setCursor(Cursor.DRAGGING);
         maybeDrag = false;
         ((DOMView) view).focus();
         DOM.eventCancelBubble(evt, true);
@@ -266,19 +236,27 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
       case Event.ONMOUSEMOVE:
         if (chart.isInsidePlot(x, y)) {
           if (selectionMode && selStart > -1) {
+            chart.setCursor(Cursor.SELECTING);
             chart.setAnimating(true);
             chart.setHighlight(selStart, x);
           } else {
             if (maybeDrag && Math.abs(startDragX - x) > 10) {
               chart.setAnimating(true);
+              chart.setCursor(Cursor.DRAGGING);
               chart.scrollPixels(startDragX - x);
               startDragX = x;
               DOM.eventCancelBubble(evt, true);
               DOM.eventPreventDefault(evt);
             } else {
-              chart.setHover(x, y);
+              if (chart.setHover(x, y)) {
+                chart.setCursor(Cursor.CLICKABLE);
+              } else {
+                chart.setCursor(Cursor.DRAGGABLE);
+              }
             }
           }
+        } else {
+          chart.setCursor(Cursor.CLICKABLE);
         }
 //              else if (maybeDrag && chart.getOverviewBounds().inside(x, y)) {
 //                    chart.getOverviewAxis().drag(view, startDragX, x, y);
@@ -406,19 +384,6 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
     }
   }
 
-  private void handleTabKey(Event evt, int keyCode2) {
-    if (keyCode2 == TAB_KEY) {
-      if (DOM.eventGetShiftKey(evt)) {
-        chart.prevFocus();
-      } else {
-        chart.nextFocus();
-      }
-    }
-
-    DOM.eventCancelBubble(evt, true);
-    DOM.eventPreventDefault(evt);
-  }
-
   public void onMouseWheelDown(int intensity) {
     maybeDrag = false;
     chart.prevZoom();
@@ -460,6 +425,10 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   public void resetDrag(int amt) {
   }
 
+  public void setGssContext(GssContext context) {
+    gssContext = context;
+  }
+
   public void setReadyListener(ViewReadyCallback readyListener) {
     this.readyListener = readyListener;
   }
@@ -494,10 +463,6 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
     view.onAttach();
   }
 
-  public void setGssContext(GssContext context) {
-    gssContext = context;
-  }
-
   private native void appendBody(Element cssgss) /*-{
         $doc.body.appendChild(cssgss);
     }-*/;
@@ -513,6 +478,19 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
            };
 
    }-*/;
+
+  private void handleTabKey(Event evt, int keyCode2) {
+    if (keyCode2 == TAB_KEY) {
+      if (DOM.eventGetShiftKey(evt)) {
+        chart.prevFocus();
+      } else {
+        chart.nextFocus();
+      }
+    }
+
+    DOM.eventCancelBubble(evt, true);
+    DOM.eventPreventDefault(evt);
+  }
 
   private void initElement(Element container) {
     setElement(container);
