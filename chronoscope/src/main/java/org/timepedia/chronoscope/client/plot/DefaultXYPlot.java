@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.plot;
 import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
@@ -12,17 +13,17 @@ import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
+import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.HasRegions;
-import org.timepedia.chronoscope.client.data.RegionLoadListener;
 import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.data.HasRegions;
+import org.timepedia.chronoscope.client.data.RegionLoadListener;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -33,9 +34,9 @@ import org.timepedia.chronoscope.client.util.Nearest;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
-import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,13 +49,13 @@ import java.util.Vector;
  * space by delegating to one or more ValueAxis implementations. Drawing for
  * each dataset is delegated to Renderers. A plot also maintains state like the
  * current selection and focus point.
- *
+ * 
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot
-    implements XYPlot, Exportable, XYDatasetListener, RegionLoadListener {
+public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
+RegionLoadListener {
 
   public static int MAX_DRAWABLE_DATAPOINTS = 400;
 
@@ -64,71 +65,117 @@ public class DefaultXYPlot
 
   private static int globalPlotNumber = 0;
 
-  protected Bounds plotBounds;
+  /**
+   * Determines if a and b are equal, taking into consideration that a or b (or
+   * both a and b) could be null.
+   * 
+   * TODO: Move this into a utility class
+   */
+  private static boolean isEqual(Object a, Object b) {
+    if (a == b) {
+      return true;
+    }
 
-  protected final boolean interactive;
+    if (a == null && b == null) {
+      return true;
+    }
 
-  protected XYDataset[] dataSets = null;
+    if ((a == null && b != null) || (b == null && a != null)) {
+      return false;
+    }
 
-  protected int focusSeries = -1;
-
-  protected int focusPoint = -1;
-
-  protected int hoverSeries = -1;
-
-  protected int hoverPoint = -1;
-
-  protected int currentMiplevels[];
-
-  protected Vector selections;
-
-  protected double domainMin, domainMax;
-
-  protected boolean selection;
-
-  protected int selStart;
-
-  protected int selEnd;
-
-  protected double domainStart;
-
-  protected double domainEnd;
-
-  protected final XYRenderer[] xyRenderers;
-
-  protected Background background;
-
-  protected DateAxis domainAxis;
-
-  protected final Nearest nearestSingleton = new Nearest();
-
-  protected AxisPanel domainPanel;
-
-  protected AxisPanel rangePanelLeft;
-
-  protected boolean drewVertical;
+    return a.equals(b);
+  }
 
   protected RangeAxis[] axes;
 
-  protected Layer overviewLayer;
-
-  protected boolean overviewEnabled = true;
+  protected Background background;
 
   protected double currentDomain;
 
+  protected int currentMiplevels[];
+
+  protected XYDataset[] datasets = null;
+
+  protected DateAxis domainAxis;
+
+  protected double domainEnd;
+
+  protected double domainMin, domainMax;
+
   protected double domainOrigin;
 
-  private boolean selectionMode;
+  protected AxisPanel domainPanel;
+
+  protected double domainStart;
+
+  protected boolean drewVertical;
+
+  protected int hoverPoint = -1;
+
+  protected int hoverSeries = -1;
+
+  protected final boolean interactive;
+
+  protected final Nearest nearestSingleton = new Nearest();
+
+  protected boolean overviewEnabled = true;
+
+  protected Layer overviewLayer;
+
+  protected Bounds plotBounds;
+
+  protected AxisPanel rangePanelLeft;
+
+  protected boolean selection;
+
+  protected Vector selections;
+
+  protected int selEnd;
+
+  protected int selStart;
+
+  protected final XYRenderer[] xyRenderers;
+
+  private PortableTimerTask animationContinuation;
+
+  private PortableTimer animationTimer;
+
+  private final HashMap<String, RangeAxis> axisMap = new HashMap<String, RangeAxis>();
 
   private double beginHighlight = Double.MIN_VALUE;
 
+  private Chart chart;
+
+  private boolean domainAxisVisible = true;
+
+  private Bounds domainBounds;
+
+  private Layer domainLayer;
+
+  private boolean drewBackground;
+
+  private boolean drewTop;
+
   private double endHighlight = Double.MIN_VALUE;
 
-  private AxisPanel rangePanelRight;
+  private Focus focus = null;
 
-  private boolean snapshotDrawn = false;
+  private boolean highlightDrawn;
 
-  private AxisPanel topPanel;
+  private Layer highLightLayer;
+
+  private Bounds initialBounds;
+
+  private Bounds innerBounds;
+
+  private boolean isAnimating = false;
+
+  private double lastCurrentDomain;
+
+  private double lastDomainOrigin;
+
+  private LegendAxis legendAxis;
 
   private ArrayList overlays;
 
@@ -136,77 +183,50 @@ public class DefaultXYPlot
 
   private boolean overviewDrawn = false;
 
-  private LegendAxis legendAxis;
-
-  private final HashMap<String, RangeAxis> axisMap
-      = new HashMap<String, RangeAxis>();
-
-  private boolean drewBackground;
-
-  private boolean drewTop;
-
-  private double lastCurrentDomain;
-
-  private double lastDomainOrigin;
-
   private Layer plotLayer;
 
-  private Layer verticalAxisLayer;
+  private int plotNumber = 0;
 
-  private Layer domainLayer;
+  private XYPlotRenderer plotRenderer;
 
-  private Bounds domainBounds;
+  private AxisPanel rangePanelRight;
 
-  private Layer highLightLayer;
+  private boolean selectionMode;
+
+  private boolean showLegend = true;
+
+  private boolean snapshotDrawn = false;
 
   private Bounds topBounds;
 
   private Layer topLayer;
 
-  private boolean showLegend = true;
+  private AxisPanel topPanel;
 
-  private boolean isAnimating = false;
-
-  private XYPlotRenderer plotRenderer;
+  private Layer verticalAxisLayer;
 
   private View view;
 
-  private Chart chart;
-
-  private Bounds initialBounds;
-
-  private int plotNumber = 0;
-
-  private Bounds innerBounds;
-
-  private PortableTimer animationTimer;
-
-  private PortableTimerTask animationContinuation;
-
-  private boolean domainAxisVisible = true;
-
-  private boolean highlightDrawn;
+  public DefaultXYPlot(Chart chart, XYDataset[] datasets, boolean interactive) {
+    this(chart, datasets, interactive, null);
+  }
 
   public DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive,
       Bounds initialBounds) {
     this.chart = chart;
-    this.dataSets = ds;
+    this.datasets = ds;
     this.interactive = interactive;
 
     MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
     overlays = new ArrayList();
-    xyRenderers = new XYRenderer[dataSets.length];
-//        computeVisibleDomainStartEnd();
-//        initializeDomain();
+    xyRenderers = new XYRenderer[datasets.length];
+    // computeVisibleDomainStartEnd();
+    // initializeDomain();
 
     plotRenderer = new ScalableXYPlotRenderer(this);
     this.initialBounds = initialBounds;
     plotNumber = globalPlotNumber++;
     setupDatasetListeners();
-  }
-
-  public DefaultXYPlot(Chart chart, XYDataset[] datasets, boolean interactive) {
-    this(chart, datasets, interactive, null);
   }
 
   /**
@@ -250,32 +270,33 @@ public class DefaultXYPlot
     animationContinuation = continuation;
 
     animationTimer = view.createTimer(new PortableTimerTask() {
-      double z = 1.0;
-
-      // zoom factor, ratio of destination domain to current domain
-      final double zf = fencedDomain / currentDomain;
-
-      // center of current domain, we want the zoom to keep the center point
-      // stable
-      double domainCenter = domainOrigin + currentDomain / 2;
-
-      // starting center point
-      final double sCenter = domainCenter;
+      boolean correct = false;
 
       // destination center
       final double destCenter = fencedDomainOrigin + fencedDomain / 2;
 
-      final double startOrigin = domainOrigin;
-
-      final double startDomain = currentDomain;
+      // center of current domain, we want the zoom to keep the center
+      // point
+      // stable
+      double domainCenter = domainOrigin + currentDomain / 2;
 
       double frames = 1;
 
+      boolean lastFrame = false;
+
+      // starting center point
+      final double sCenter = domainCenter;
+
+      final double startDomain = currentDomain;
+
+      final double startOrigin = domainOrigin;
+
       double startTime = 0;
 
-      boolean correct = false;
+      double z = 1.0;
 
-      boolean lastFrame = false;
+      // zoom factor, ratio of destination domain to current domain
+      final double zf = fencedDomain / currentDomain;
 
       public void run(PortableTimer t) {
         isAnimating = true;
@@ -342,18 +363,12 @@ public class DefaultXYPlot
     drewVertical = false;
   }
 
-  public double domainToScreenX(double dataX, int seriesNum) {
+  public double domainToScreenX(double dataX, int datasetIndex) {
     return userToScreenX(getDomainAxis().dataToUser(dataX));
   }
 
-  public double domainToWindowX(double dataX, int seriesNum) {
+  public double domainToWindowX(double dataX, int datasetIndex) {
     return userToWindowX(getDomainAxis().dataToUser(dataX));
-  }
-
-  public boolean ensureVisible(int seriesNum, int pointNum,
-      PortableTimerTask callback) {
-    return ensureVisible(dataSets[seriesNum].getX(pointNum),
-        dataSets[seriesNum].getY(pointNum), callback);
   }
 
   /**
@@ -370,77 +385,40 @@ public class DefaultXYPlot
     return false;
   }
 
-  public Nearest findNearestWithin(Nearest nearestResult, double domainX,
-      double rangeY, int seriesNum, int within) {
-    double cx = domainToScreenX(domainX, seriesNum);
-    double cy = rangeToScreenY(rangeY, seriesNum);
-
-    int where = Util.binarySearch(dataSets[seriesNum], domainX,
-        currentMiplevels[seriesNum]);
-
-    double x1 = domainToScreenX(
-        dataSets[seriesNum].getX(where, currentMiplevels[seriesNum]),
-        seriesNum);
-    double y1 = rangeToScreenY(
-        dataSets[seriesNum].getY(where, currentMiplevels[seriesNum]),
-        seriesNum);
-    double x2, y2;
-    if (where + 1 < dataSets[seriesNum]
-        .getNumSamples(currentMiplevels[seriesNum])) {
-      x2 = domainToScreenX(
-          dataSets[seriesNum].getX(where + 1, currentMiplevels[seriesNum]),
-          seriesNum);
-      y2 = rangeToScreenY(
-          dataSets[seriesNum].getY(where + 1, currentMiplevels[seriesNum]),
-          seriesNum);
-    } else {
-      x2 = x1;
-      y2 = y1;
-    }
-
-    double d1 = dist(x1, y1, cx, cy);
-    double d2 = dist(x2, y2, cx, cy);
-    nearestResult.nearest = -1;
-    nearestResult.series = seriesNum;
-
-    if (d1 <= d2) {
-      if (d1 < within) {
-        nearestResult.nearest = where - 1;
-        nearestResult.dist = d1;
-      }
-    } else if (d2 < within) {
-      nearestResult.nearest = where;
-      nearestResult.dist = d2;
-    }
-    return nearestResult;
+  public boolean ensureVisible(int datasetIndex, int pointIndex,
+      PortableTimerTask callback) {
+    return ensureVisible(datasets[datasetIndex].getX(pointIndex),
+        datasets[datasetIndex].getY(pointIndex), callback);
   }
 
   public Chart getChart() {
     return chart;
   }
 
-  public int getCurrentDatasetLevel(int seriesNum) {
-    return currentMiplevels[seriesNum];
+  public int getCurrentDatasetLevel(int datasetIndex) {
+    return currentMiplevels[datasetIndex];
   }
 
   public double getCurrentDomain() {
     return currentDomain;
   }
 
-  public int getCurrentMipLevel(int seriesNum) {
-    return currentMiplevels[seriesNum];
+  public int getCurrentMipLevel(int datasetIndex) {
+    return currentMiplevels[datasetIndex];
   }
 
-  public XYDataset getDataset(int i) {
-    return dataSets[i];
+  public XYDataset getDataset(int datasetIndex) {
+    return datasets[datasetIndex];
   }
 
-  public double getDataX(int serNum, int serPer) {
-    return dataSets[serNum].getX(serPer, currentMiplevels[serNum]);
+  public double getDataX(int datasetIndex, int pointIndex) {
+    return datasets[datasetIndex].getX(pointIndex,
+        currentMiplevels[datasetIndex]);
   }
 
-  public double getDataY(int serNum, int serPer) {
-    return dataSets[serNum].getY(serPer, currentMiplevels[serNum]);
+  public double getDataY(int datasetIndex, int pointIndex) {
+    return datasets[datasetIndex].getY(pointIndex,
+        currentMiplevels[datasetIndex]);
   }
 
   public ValueAxis getDomainAxis() {
@@ -472,17 +450,13 @@ public class DefaultXYPlot
     return domainStart;
   }
 
-  public int getFocusPoint() {
-    return focusPoint;
-  }
-
-  public int getFocusSeries() {
-    return focusSeries;
+  public Focus getFocus() {
+    return this.focus;
   }
 
   public String getHistoryToken() {
     return getChart().getChartId() + "(O" + getDomainOrigin() + ",D"
-        + getCurrentDomain() + ")";
+    + getCurrentDomain() + ")";
   }
 
   public int getHoverPoint() {
@@ -502,8 +476,8 @@ public class DefaultXYPlot
   }
 
   public int getNearestVisiblePoint(double domainX, int series) {
-    return Util
-        .binarySearch(dataSets[series], domainX, currentMiplevels[series]);
+    return Util.binarySearch(datasets[series], domainX,
+        currentMiplevels[series]);
   }
 
   public int getNumAnimationFrames() {
@@ -511,7 +485,7 @@ public class DefaultXYPlot
   }
 
   public int getNumDatasets() {
-    return dataSets == null ? 0 : dataSets.length;
+    return datasets == null ? 0 : datasets.length;
   }
 
   public OverviewAxis getOverviewAxis() {
@@ -542,16 +516,16 @@ public class DefaultXYPlot
    * @gwt.export getAxis
    */
   @Export("getAxis")
-  public RangeAxis getRangeAxis(int seriesNum) {
-    return axes[seriesNum];
+  public RangeAxis getRangeAxis(int datasetIndex) {
+    return axes[datasetIndex];
   }
 
   public int getRangeAxisCount() {
     return axisMap.size();
   }
 
-  public XYRenderer getRenderer(int seriesNum) {
-    return xyRenderers[seriesNum];
+  public XYRenderer getRenderer(int datasetIndex) {
+    return xyRenderers[datasetIndex];
   }
 
   public double getSelectionBegin() {
@@ -563,24 +537,27 @@ public class DefaultXYPlot
   }
 
   public int getSeriesCount() {
-    return dataSets.length;
+    return datasets.length;
   }
 
   public String getSeriesLabel(int i) {
-    return dataSets[i].getRangeLabel() + getRangeAxis(i)
-        .getLabelSuffix(getRangeAxis(i).getRange());
+    return datasets[i].getRangeLabel()
+    + getRangeAxis(i).getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {
     return topPanel.contains(theAxis) || domainPanel.contains(theAxis)
-        || rangePanelLeft.contains(theAxis) || rangePanelRight
-        .contains(theAxis);
+    || rangePanelLeft.contains(theAxis)
+    || rangePanelRight.contains(theAxis);
   }
 
   public void init(View view) {
 
     this.view = view;
-    focusPoint = 0;
+    this.focus = null;
+    // this.focus = new Focus();
+    // this.focus.setPointIndex(0);
+
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
@@ -602,7 +579,7 @@ public class DefaultXYPlot
         AxisPanel.LEFT);
     rangePanelRight = new AxisPanel("rangeAxisLayerRight" + plotNumber,
         AxisPanel.RIGHT);
-    axes = new RangeAxis[dataSets.length];
+    axes = new RangeAxis[datasets.length];
 
     autoAssignDatasetAxes();
 
@@ -650,24 +627,24 @@ public class DefaultXYPlot
 
   public boolean maxZoomTo(int x, int y) {
 
-    int nearNum = -1;
-    int nearSer = 0;
+    int nearPointIndex = -1;
+    int nearDataSetIndex = 0;
     double nearDist = Double.MAX_VALUE;
 
-    for (int i = 0; i < dataSets.length; i++) {
+    for (int i = 0; i < datasets.length; i++) {
       double domainX = windowXtoDomain(x, i);
       double rangeY = windowYtoRange(y, i);
       Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
           10);
       if (nearest.nearest > -1 && nearest.dist < nearDist) {
-        nearNum = nearest.nearest;
-        nearSer = nearest.series;
+        nearPointIndex = nearest.nearest;
+        nearDataSetIndex = nearest.series;
         nearDist = nearest.dist;
       }
     }
 
-    if (nearNum >= 0) {
-      maxZoomToPoint(nearNum, nearSer);
+    if (nearPointIndex >= 0) {
+      maxZoomToPoint(nearPointIndex, nearDataSetIndex);
       return true;
     } else {
       return false;
@@ -675,27 +652,28 @@ public class DefaultXYPlot
   }
 
   public void maxZoomToFocus() {
-    if (focusPoint != -1) {
-      maxZoomToPoint(focusPoint, focusSeries);
+    if (focus != null) {
+      maxZoomToPoint(focus.getPointIndex(), focus.getDatasetIndex());
     }
   }
 
   public void nextFocus() {
-
-    if (focusSeries == -1) {
-      setFocusPointImpl(0, 0);
+    if (focus == null) {
+      setFocusAndNotifyView(0, 0);
     } else {
+      int focusSeries = this.focus.getDatasetIndex();
+      int focusPoint = this.focus.getPointIndex();
       focusPoint++;
-      if (focusPoint >= dataSets[focusSeries]
-          .getNumSamples(currentMiplevels[focusSeries])) {
+      if (focusPoint >= datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])) {
         focusPoint = 0;
         focusSeries++;
-        if (focusSeries >= dataSets.length) {
+        if (focusSeries >= datasets.length) {
           focusSeries = 0;
         }
       }
-      setFocusPointImpl(focusSeries, focusPoint);
+      setFocusAndNotifyView(focusSeries, focusPoint);
     }
+
     redraw();
   }
 
@@ -709,15 +687,15 @@ public class DefaultXYPlot
       double domainEnd) {
     computeDomainMinMax();
     computeVisibleDomainStartEnd();
-    damageAxes(getRangeAxis(getSeriesNumber(dataset)));
+    damageAxes(getRangeAxis(findIndexForDataSet(dataset)));
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
           new PortableTimerTask() {
-            public void run(PortableTimer timer) {
-              overviewDrawn = false;
-              redraw();
-            }
-          }, false);
+        public void run(PortableTimer timer) {
+          overviewDrawn = false;
+          redraw();
+        }
+      }, false);
     } else {
       overviewDrawn = false;
       redraw();
@@ -730,22 +708,21 @@ public class DefaultXYPlot
   }
 
   public void openInfoWindow(final String html, final double domainX,
-
-      final double rangeY, final int seriesNum) {
+      final double rangeY, final int datasetIndex) {
 
     if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
 
       public void run(PortableTimer timer) {
-        view.openInfoWindow(html,
-            chart.domainToWindowX(DefaultXYPlot.this, domainX, seriesNum),
-            chart.rangeToWindowY(DefaultXYPlot.this, rangeY, seriesNum) + 5);
+        view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
+            domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
+                rangeY, datasetIndex) + 5);
       }
     })) {
 
     } else {
-      view.openInfoWindow(html,
-          chart.domainToWindowX(DefaultXYPlot.this, domainX, seriesNum),
-          chart.rangeToWindowY(DefaultXYPlot.this, rangeY, seriesNum) + 5);
+      view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
+          domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
+              rangeY, datasetIndex) + 5);
     }
   }
 
@@ -764,22 +741,20 @@ public class DefaultXYPlot
   }
 
   public void prevFocus() {
-
-    if (focusSeries == -1) {
-
-      setFocusPointImpl(0, 0);
+    if (this.focus == null) {
+      setFocusAndNotifyView(0, 0);
     } else {
+      int focusSeries = this.focus.getDatasetIndex();
+      int focusPoint = this.focus.getPointIndex();
       focusPoint--;
       if (focusPoint < 0) {
         focusSeries--;
         if (focusSeries < 0) {
-          focusSeries = dataSets.length - 1;
+          focusSeries = datasets.length - 1;
         }
-        focusPoint =
-            dataSets[focusSeries].getNumSamples(currentMiplevels[focusSeries])
-                - 1;
+        focusPoint = datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries]) - 1;
       }
-      setFocusPointImpl(focusSeries, focusPoint);
+      setFocusAndNotifyView(focusSeries, focusPoint);
     }
     redraw();
   }
@@ -791,12 +766,12 @@ public class DefaultXYPlot
     animateTo(getDomainCenter() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
-  public double rangeToScreenY(double dataY, int seriesNum) {
-    return userToScreenY(getRangeAxis(seriesNum).dataToUser(dataY));
+  public double rangeToScreenY(double dataY, int datasetIndex) {
+    return userToScreenY(getRangeAxis(datasetIndex).dataToUser(dataY));
   }
 
-  public double rangeToWindowY(double dataY, int seriesNum) {
-    return userToWindowY(getRangeAxis(seriesNum).dataToUser(dataY));
+  public double rangeToWindowY(double dataY, int datasetIndex) {
+    return userToWindowY(getRangeAxis(datasetIndex).dataToUser(dataY));
   }
 
   /**
@@ -861,8 +836,8 @@ public class DefaultXYPlot
     this.isAnimating = animating;
   }
 
-  public void setAutoZoomVisibleRange(int dataSet, boolean autoZoom) {
-    axes[dataSet].setAutoZoomVisibleRange(autoZoom);
+  public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
+    axes[dataset].setAutoZoomVisibleRange(autoZoom);
   }
 
   public void setAxisForDataset(RangeAxis ra, int datasetNum) {
@@ -873,15 +848,14 @@ public class DefaultXYPlot
     this.chart = chart;
   }
 
-  public void setCurrentDatasetLevel(int seriesNum, int mipLevel) {
-    if (currentMiplevels[seriesNum] != mipLevel) {
+  public void setCurrentDatasetLevel(int datasetIndex, int mipLevel) {
+    if (currentMiplevels[datasetIndex] != mipLevel) {
       hoverPoint = -1;
       hoverSeries = -1;
       // TODO: maybe adjust to nearest one in next level of detail
-      focusPoint = -1;
-      focusSeries = -1;
+      focus = null;
     }
-    currentMiplevels[seriesNum] = mipLevel;
+    currentMiplevels[datasetIndex] = mipLevel;
   }
 
   public void setCurrentDomain(double currentDomain) {
@@ -889,7 +863,7 @@ public class DefaultXYPlot
   }
 
   public void setDataset(int i, XYDataset d) {
-    dataSets[i] = d;
+    datasets[i] = d;
     if (d instanceof UpdateableXYDataset) {
       UpdateableXYDataset ud = (UpdateableXYDataset) d;
       ud.addXYDatasetListener(this);
@@ -907,29 +881,18 @@ public class DefaultXYPlot
     this.domainOrigin = domainOrigin;
   }
 
-  public void setFocus(int series, int point) {
-    this.focusSeries = series;
-    this.focusPoint = point;
-  }
-
-  public void setFocusPoint(int focusSeries, int focusPoint) {
-    setFocusPointImpl(focusSeries, focusPoint);
-    redraw();
-  }
-
-  public void setFocusPoint(int i, int point, int mip) {
-    currentMiplevels[i] = mip;
-    setFocusPoint(i, point);
+  public void setFocus(Focus focus) {
+    this.focus = focus;
   }
 
   public boolean setFocusXY(int x, int y) {
-    int lastFocus = focusPoint;
-    int lastFocusSeries = focusSeries;
+    Focus lastFocus = (focus == null) ? null : focus.copy();
+
     int nearNum = -1;
     int nearSer = 0;
     double nearDist = Double.MAX_VALUE;
 
-    for (int i = 0; i < dataSets.length; i++) {
+    for (int i = 0; i < datasets.length; i++) {
       double domainX = windowXtoDomain(x, i);
       double rangeY = windowYtoRange(y, i);
       Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
@@ -941,17 +904,20 @@ public class DefaultXYPlot
       }
     }
     if (nearNum >= 0) {
-      setFocusPointImpl(nearSer, nearNum + 1);
+      if (nearSer == -1) {
+        setFocusAndNotifyView(null);
+      } else {
+        setFocusAndNotifyView(nearSer, nearNum + 1);
+      }
 
-      if (lastFocusSeries != focusSeries || lastFocus != focusPoint) {
-
+      if (!isEqual(lastFocus, focus)) {
         redraw();
       }
       return true;
     } else {
 
-      setFocusPointImpl(-1, -1);
-      if (lastFocusSeries != focusSeries || lastFocus != focusPoint) {
+      setFocusAndNotifyView(null);
+      if (!isEqual(lastFocus, focus)) {
         redraw();
       }
     }
@@ -971,7 +937,7 @@ public class DefaultXYPlot
     beginHighlight = windowXtoDomain(selStart, 0);
     endHighlight = windowXtoDomain(selEnd, 0);
     redraw();
-//        drawHighlight(highLightLayer, highLightLayer);
+    // drawHighlight(highLightLayer, highLightLayer);
   }
 
   public boolean setHover(int x, int y) {
@@ -982,7 +948,7 @@ public class DefaultXYPlot
     int nearSer = 0;
     double nearDist = Double.MAX_VALUE;
 
-    for (int i = 0; i < dataSets.length; i++) {
+    for (int i = 0; i < datasets.length; i++) {
       double domainX = windowXtoDomain(x, i);
       double rangeY = windowYtoRange(y, i);
       Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
@@ -1022,8 +988,8 @@ public class DefaultXYPlot
     this.overviewEnabled = overviewEnabled;
   }
 
-  public void setRenderer(int seriesNum, XYRenderer r) {
-    xyRenderers[seriesNum] = r;
+  public void setRenderer(int datasetIndex, XYRenderer r) {
+    xyRenderers[datasetIndex] = r;
   }
 
   public void setSelectionMode(boolean b) {
@@ -1041,8 +1007,8 @@ public class DefaultXYPlot
     plotLayer.save();
     plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
     plotLayer.clear();
-//    plotLayer.setFillColor("#FF0000");
-//    plotLayer.fillRect(0, 0, 50, 50);
+    // plotLayer.setFillColor("#FF0000");
+    // plotLayer.fillRect(0, 0, 50, 50);
 
     if (interactive && !overviewDrawn && overviewEnabled) {
       double dO = domainOrigin;
@@ -1052,8 +1018,8 @@ public class DefaultXYPlot
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);
-      overviewLayer
-          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+      overviewLayer.clearRect(0, 0, overviewLayer.getWidth(),
+          overviewLayer.getHeight());
 
       overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
           overviewLayer.getHeight());
@@ -1090,18 +1056,16 @@ public class DefaultXYPlot
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         domainLayer.save();
-        drawAxisPanel(domainLayer, domainPanel,
-            new Bounds(plotBounds.x, 0, plotBounds.width, domainBounds.height),
-            false);
+        drawAxisPanel(domainLayer, domainPanel, new Bounds(plotBounds.x, 0,
+            plotBounds.width, domainBounds.height), false);
         domainLayer.restore();
       }
 
       if (true && topPanel.getAxisCount() > 0) {
 
         topLayer.save();
-        drawAxisPanel(topLayer, topPanel,
-            new Bounds(plotBounds.x, 0, plotBounds.width, topBounds.height),
-            false);
+        drawAxisPanel(topLayer, topPanel, new Bounds(plotBounds.x, 0,
+            plotBounds.width, topBounds.height), false);
         drewTop = true;
         topLayer.restore();
       }
@@ -1115,7 +1079,10 @@ public class DefaultXYPlot
 
   /**
    * Convert a value in user coordinates [0,1] to plot region screen-space
-   * coordinates [0, plotBounds.width]
+   * coordinates [0, plotBounds.width].
+   * 
+   * @param userX
+   * @return
    */
   public double userToScreenX(double userX) {
     return userX * plotBounds.width;
@@ -1128,6 +1095,9 @@ public class DefaultXYPlot
   /**
    * COnvert a value in user coordinates [0,1] to window screen-space
    * coordinates [plotBounds.x, plotBounds.width]
+   * 
+   * @param userX
+   * @return
    */
   public double userToWindowX(double userX) {
     return userToScreenX(userX) + plotBounds.x;
@@ -1151,14 +1121,14 @@ public class DefaultXYPlot
 
   protected void autoAssignDatasetAxes() {
     int rangeAxisCount = -1;
-    for (int i = 0; i < dataSets.length; i++) {
-      RangeAxis ra = (RangeAxis) axisMap.get(dataSets[i].getAxisId());
+    for (int i = 0; i < datasets.length; i++) {
+      RangeAxis ra = (RangeAxis) axisMap.get(datasets[i].getAxisId());
       if (ra == null) {
         rangeAxisCount++;
-        ra = new RangeAxis(chart, dataSets[i].getRangeLabel(),
-            dataSets[i].getAxisId(), i, dataSets[i].getRangeBottom(),
-            dataSets[i].getRangeTop(),
-            rangeAxisCount % 2 == 0 ? rangePanelLeft : rangePanelRight);
+        ra = new RangeAxis(chart, datasets[i].getRangeLabel(),
+            datasets[i].getAxisId(), i, datasets[i].getRangeBottom(),
+            datasets[i].getRangeTop(), rangeAxisCount % 2 == 0 ? rangePanelLeft
+                : rangePanelRight);
         axisMap.put(ra.getAxisId(), ra);
         if (rangeAxisCount % 2 == 0) {
           rangePanelLeft.add(ra);
@@ -1166,8 +1136,8 @@ public class DefaultXYPlot
           rangePanelRight.add(ra);
         }
       } else {
-        ra.setRange(Math.min(ra.getRangeLow(), dataSets[i].getRangeBottom()),
-            Math.max(ra.getRangeHigh(), dataSets[i].getRangeTop()));
+        ra.setRange(Math.min(ra.getRangeLow(), datasets[i].getRangeBottom()),
+            Math.max(ra.getRangeHigh(), datasets[i].getRangeTop()));
       }
 
       axes[i] = ra;
@@ -1181,9 +1151,9 @@ public class DefaultXYPlot
 
   protected void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
-        beginHighlight > domainOrigin + currentDomain
-            && endHighlight > domainOrigin + currentDomain)) {
+        || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
+        || (beginHighlight > domainOrigin + currentDomain && endHighlight > domainOrigin
+            + currentDomain)) {
       if (highlightDrawn) {
         layer.clear();
         highlightDrawn = false;
@@ -1193,12 +1163,12 @@ public class DefaultXYPlot
 
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math
-        .min(0 + getInnerPlotBounds().width, domainToScreenX(endHighlight, 0));
+    double ex = Math.min(0 + getInnerPlotBounds().width, domainToScreenX(
+        endHighlight, 0));
 
     layer.save();
     layer.setFillColor("#14FFFF");
-//        layer.setLayerAlpha(0.2f);
+    // layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
     layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     layer.fillRect(ux, 0, ex - ux, getInnerPlotBounds().height);
@@ -1210,12 +1180,12 @@ public class DefaultXYPlot
     Chronoscope.pushHistory();
   }
 
-  protected double windowXtoDomain(double x, int seriesNum) {
+  protected double windowXtoDomain(double x, int datasetIndex) {
     return getDomainAxis().userToData(windowXtoUser(x));
   }
 
-  protected double windowYtoRange(int y, int seriesNum) {
-    return getRangeAxis(seriesNum).userToData(windowYtoUser(y));
+  protected double windowYtoRange(int y, int datasetIndex) {
+    return getRangeAxis(datasetIndex).userToData(windowYtoUser(y));
   }
 
   private void clearDrawCaches() {
@@ -1227,18 +1197,18 @@ public class DefaultXYPlot
   private void computeDomainMinMax() {
     domainMin = Double.POSITIVE_INFINITY;
     domainMax = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < dataSets.length; i++) {
-      double min = dataSets[i].getDomainBegin();
+    for (int i = 0; i < datasets.length; i++) {
+      double min = datasets[i].getDomainBegin();
       domainMin = Math.min(domainMin, min);
-      double max = dataSets[i].getDomainEnd();
+      double max = datasets[i].getDomainEnd();
       domainMax = Math.max(domainMax, max);
     }
   }
 
   private void computePlotBounds() {
     plotBounds = initialBounds == null ? new Bounds(0, 0,
-        this.view.getViewWidth(), this.view.getViewHeight())
-        : new Bounds(initialBounds);
+        this.view.getViewWidth(), this.view.getViewHeight()) : new Bounds(
+            initialBounds);
 
     innerBounds = new Bounds(plotBounds);
     // TODO: only in snapshot
@@ -1260,14 +1230,14 @@ public class DefaultXYPlot
   }
 
   private void computeVisibleDomainStartEnd() {
-    domainStart = Util.computeDomainStart(this, dataSets);
-    domainEnd = Util.computeDomainEnd(this, dataSets);
+    domainStart = Util.computeDomainStart(this, datasets);
+    domainEnd = Util.computeDomainEnd(this, datasets);
   }
 
   private double dist(double x1, double y1, double cx, double cy) {
-    //TODO: we now ignore y dist to make hover easier
+    // TODO: we now ignore y dist to make hover easier
     return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
-//    return Math.abs(x1-cx);
+    // return Math.abs(x1-cx);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1292,7 +1262,8 @@ public class DefaultXYPlot
 
     double numPixels = doChange / currentDomain * plotLayer.getWidth();
     // disabled for now, implement smooth local scrolling by rendering
-    // a chart with overdraw clipped to the view, and scroll overdraw regions into view
+    // a chart with overdraw clipped to the view, and scroll overdraw
+    // regions into view
     // as needed
     if (false && cdChange == 0 && numPixels < plotLayer.getWidth() / 2) {
       plotLayer.setScrollLeft((int) (plotLayer.getScrollLeft() - numPixels));
@@ -1304,7 +1275,7 @@ public class DefaultXYPlot
       drewBackground = true;
 
       // reset the visible RangeAxis ticks if it's been zoomed
-      for (int i = 0; i < dataSets.length; i++) {
+      for (int i = 0; i < datasets.length; i++) {
         axes[i].initVisibleRange();
       }
 
@@ -1313,13 +1284,13 @@ public class DefaultXYPlot
   }
 
   private double fenceDomain(boolean fence, double destinationDomain) {
-    // first ensure that the destinationDomain is smaller than the 
+    // first ensure that the destinationDomain is smaller than the
     // difference between the minimum and maximum dataset date values
     // then ensure that the destinationDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
-    return fence ? Math.max(
-        Math.min(destinationDomain, getDomainMax() - getDomainMin()),
-        getDomainAxis().getMinimumTickSize()) : destinationDomain;
+    return fence ? Math.max(Math.min(destinationDomain, getDomainMax()
+        - getDomainMin()), getDomainAxis().getMinimumTickSize())
+        : destinationDomain;
   }
 
   private double fenceDomainOrigin(boolean fence, double destinationOrigin,
@@ -1336,14 +1307,16 @@ public class DefaultXYPlot
       d = getDomainMin();
     } else if (destinationDomain < maxDomain) {
       // else, our domain range is smaller than the max
-      // check to see if our origin is smaller than the smallest date range
+      // check to see if our origin is smaller than the smallest date
+      // range
       if (destinationOrigin < getDomainMin()) {
         // and force it to be the min dataset range value
         d = getDomainMin();
       } else if (destinationOrigin + destinationDomain > getDomainMax()) {
-        // we we check if the right side of the domain window 
+        // we we check if the right side of the domain window
         // is past the maximum dataset date range value
-        // and if it is, we place the domain origin so that the entire chart
+        // and if it is, we place the domain origin so that the entire
+        // chart
         // fits perfectly in view
         d = getDomainMax() - destinationDomain;
       }
@@ -1351,24 +1324,64 @@ public class DefaultXYPlot
     return d;
   }
 
-  private int getSeriesNumber(XYDataset dataset) {
-    for (int i = 0; i < dataSets.length; i++) {
-      if (dataSets[i] == dataset) {
+  private int findIndexForDataSet(XYDataset dataset) {
+    for (int i = 0; i < datasets.length; i++) {
+      if (datasets[i] == dataset) {
         return i;
       }
     }
     return 0; // TODO: silent fail
   }
 
+  private Nearest findNearestWithin(Nearest nearestResult, double domainX,
+      double rangeY, int datasetIndex, int within) {
+    double cx = domainToScreenX(domainX, datasetIndex);
+    double cy = rangeToScreenY(rangeY, datasetIndex);
+
+    int where = Util.binarySearch(datasets[datasetIndex], domainX,
+        currentMiplevels[datasetIndex]);
+
+    double x1 = domainToScreenX(datasets[datasetIndex].getX(where,
+        currentMiplevels[datasetIndex]), datasetIndex);
+    double y1 = rangeToScreenY(datasets[datasetIndex].getY(where,
+        currentMiplevels[datasetIndex]), datasetIndex);
+    double x2, y2;
+    if (where + 1 < datasets[datasetIndex].getNumSamples(currentMiplevels[datasetIndex])) {
+      x2 = domainToScreenX(datasets[datasetIndex].getX(where + 1,
+          currentMiplevels[datasetIndex]), datasetIndex);
+      y2 = rangeToScreenY(datasets[datasetIndex].getY(where + 1,
+          currentMiplevels[datasetIndex]), datasetIndex);
+    } else {
+      x2 = x1;
+      y2 = y1;
+    }
+
+    double d1 = dist(x1, y1, cx, cy);
+    double d2 = dist(x2, y2, cx, cy);
+    nearestResult.nearest = -1;
+    nearestResult.series = datasetIndex;
+
+    if (d1 <= d2) {
+      if (d1 < within) {
+        nearestResult.nearest = where - 1;
+        nearestResult.dist = d1;
+      }
+    } else if (d2 < within) {
+      nearestResult.nearest = where;
+      nearestResult.dist = d2;
+    }
+    return nearestResult;
+  }
+
   private void initDatasetLevels() {
-    currentMiplevels = new int[dataSets.length];
+    currentMiplevels = new int[datasets.length];
     for (int i = 0; i < currentMiplevels.length; i++) {
       currentMiplevels[i] = 0;
     }
   }
 
   private void initDefaultRenderers() {
-    for (int i = 0; i < dataSets.length; i++) {
+    for (int i = 0; i < datasets.length; i++) {
       if (xyRenderers[i] == null) {
         xyRenderers[i] = new XYLineRenderer(i);
       }
@@ -1397,8 +1410,8 @@ public class DefaultXYPlot
           backingCanvas.disposeLayer(overviewLayer);
         }
 
-        overviewLayer = backingCanvas
-            .createLayer("overviewLayer" + plotNumber, plotBounds);
+        overviewLayer = backingCanvas.createLayer("overviewLayer" + plotNumber,
+            plotBounds);
         overviewLayer.setVisibility(false);
       }
 
@@ -1412,8 +1425,8 @@ public class DefaultXYPlot
       topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
-      verticalAxisLayer = backingCanvas
-          .createLayer("verticalAxis" + plotNumber, layerBounds);
+      verticalAxisLayer = backingCanvas.createLayer(
+          "verticalAxis" + plotNumber, layerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
@@ -1426,49 +1439,63 @@ public class DefaultXYPlot
         backingCanvas.disposeLayer(domainLayer);
       }
 
-      domainLayer = backingCanvas
-          .createLayer("domainAxis" + plotNumber, domainBounds);
+      domainLayer = backingCanvas.createLayer("domainAxis" + plotNumber,
+          domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      highLightLayer = backingCanvas
-          .createLayer("highlight" + plotNumber, plotBounds);
+      highLightLayer = backingCanvas.createLayer("highlight" + plotNumber,
+          plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
     }
   }
 
-  private void maxZoomToPoint(int point, int series) {
+  private void maxZoomToPoint(int pointIndex, int datasetIndex) {
     pushHistory();
 
-    XYDataset dataset = dataSets[series];
-    point = Util.binarySearch(dataset,
-        dataset.getX(point, currentMiplevels[series]), 0);
+    XYDataset dataset = datasets[datasetIndex];
+    pointIndex = Util.binarySearch(dataset, dataset.getX(pointIndex,
+        currentMiplevels[datasetIndex]), 0);
 
-    final double newOrigin = dataset.getX(Math.max(0, point - 10));
-    double newdomain =
-        dataset.getX(Math.min(dataset.getNumSamples(), point + 10)) - newOrigin;
+    final double newOrigin = dataset.getX(Math.max(0, pointIndex - 10));
+    double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
+        pointIndex + 10))
+        - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
-  private void setFocusPointImpl(int focusSeries, int focusPoint) {
-    this.focusSeries = focusSeries;
-    this.focusPoint = focusPoint;
-    view.fireFocusEvent(this, focusSeries, focusPoint);
+  private void setFocusAndNotifyView(Focus focus) {
+    if (focus == null) {
+      this.focus = null;
+      view.fireFocusEvent(this, -1, -1);
+    } else {
+      setFocusAndNotifyView(focus.getDatasetIndex(), focus.getPointIndex());
+    }
+  }
+
+  private void setFocusAndNotifyView(int datasetIndex, int pointIndex) {
+    if (this.focus == null) {
+      this.focus = new Focus();
+    }
+    this.focus.setDatasetIndex(datasetIndex);
+    this.focus.setPointIndex(pointIndex);
+
+    view.fireFocusEvent(this, datasetIndex, pointIndex);
   }
 
   private void setupDatasetListeners() {
-    for (int i = 0; i < dataSets.length; i++) {
-      XYDataset dataSet = dataSets[i];
-      if (dataSet instanceof UpdateableXYDataset) {
-        ((UpdateableXYDataset) dataSet).addXYDatasetListener(this);
+    for (int i = 0; i < datasets.length; i++) {
+      XYDataset dataset = datasets[i];
+      if (dataset instanceof UpdateableXYDataset) {
+        ((UpdateableXYDataset) dataset).addXYDatasetListener(this);
       }
-      if (dataSet instanceof HasRegions) {
-        ((HasRegions) dataSet).addRegionLoadListener(this);
+      if (dataset instanceof HasRegions) {
+        ((HasRegions) dataset).addRegionLoadListener(this);
       }
     }
   }
 
   private double windowYtoUser(int y) {
-    return (plotBounds.height - (y - plotBounds
-        .y)) / plotBounds.height;
+    return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
   }
+
 }

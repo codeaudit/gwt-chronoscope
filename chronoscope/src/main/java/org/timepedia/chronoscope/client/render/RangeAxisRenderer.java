@@ -157,10 +157,9 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     double labelHeight = layer.stringHeight(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
     boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
-    double dir = (isLeft ? -5
-        - labelWidth : 5 - bounds.width);
+    double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
     if ("inside".equals(axisProperties.tickPosition)) {
-       dir = isLeft ? 5 + 1 : - labelWidth - 5 ;
+      dir = isLeft ? 5 + 1 : -labelWidth - 5;
     }
 
     layer.save();
@@ -171,11 +170,11 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if ("above".equals(labelProperties.tickAlign)) {
       alignAdjust = -labelHeight;
       dir = 1;
-      if(axis.getAxisPanel().getAxisNumber(axis) == axis.getAxisPanel().getAxisCount() - 1 ) 
-         dir = isLeft ? 1 : -labelWidth - 1;
-      else 
-         dir = isLeft ? - axis.getMaxLabelWidth() + 1 : axis.getMaxLabelWidth() - 1;
-      
+      if (axis.getAxisPanel().getAxisNumber(axis) == axis.getAxisPanel().getAxisCount() - 1)
+        dir = isLeft ? 1 : -labelWidth - 1;
+      else
+        dir = isLeft ? -axis.getMaxLabelWidth() + 1
+            : axis.getMaxLabelWidth() - 1;
     }
     if (y >= bounds.y && y <= bounds.y + bounds.height) {
       layer.drawText(bounds.x + bounds.width + dir, y + alignAdjust, label,

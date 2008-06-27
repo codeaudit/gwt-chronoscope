@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -114,14 +115,23 @@ public class XYLineRenderer extends XYRenderer
       int seriesNum) {
     layer.save();
     GssProperties alineProp, apointProp;
-    if (seriesNum != plot.getFocusSeries() && plot.getFocusSeries() != -1) {
+    if (plot.getFocus() != null) {
+        alineProp = disabledLineProperties;
+        apointProp = disabledPointProperties;
+    }
+    else {
+        alineProp = gssLineProperties;
+        apointProp = gssPointProperties;
+    }
+    /*
+    if (seriesNum != plot.getFocus().getFocusSeries() && plot.getFocusSeries() != -1) {
       alineProp = disabledLineProperties;
       apointProp = disabledPointProperties;
     } else {
       alineProp = gssLineProperties;
       apointProp = gssPointProperties;
     }
-
+	*/
     layer.beginPath();
     layer.moveTo(x, y);
     layer.setTransparency((float) alineProp.transparency);
