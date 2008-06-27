@@ -11,23 +11,22 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
-import org.timepedia.chronoscope.client.browser.ChartPanel;
+import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.CssGssViewSupport;
 import org.timepedia.chronoscope.client.browser.DOMView;
-import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
-import org.timepedia.exporter.client.ExportPackage;
 
 import java.util.Date;
 
@@ -228,6 +227,23 @@ public class FlashView extends View
       return numerator % modulus;
   }-*/;
 
+  public void setCursor(Cursor cursor) {
+    switch (cursor) {
+
+      case CLICKABLE:
+        setCursorImpl("pointer");
+        break;
+      case SELECTING:
+        setCursorImpl("text");
+        break;
+      case DRAGGABLE:
+      case DRAGGING:
+      default:
+        setCursorImpl("move");
+        break;
+    }
+  }
+
   /**
    * Return a Browser (CANVAS tag) canvas. This may be extended in the future to
    * support Flash, Silverlight, SVG, and Applet canvases for the Browser.
@@ -256,5 +272,9 @@ public class FlashView extends View
     DOM.appendChild(rootElem, containerDiv);
     DOM.setStyleAttribute(containerDiv, "height", height + "px");
     DOM.setStyleAttribute(containerDiv, "width", width + "px");
+  }
+
+  private void setCursorImpl(String cssCursor) {
+    getElement().getStyle().setProperty("cursor", cssCursor);
   }
 }
