@@ -203,13 +203,13 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         break;
       case Event.ONMOUSEOUT:
         chart.setAnimating(false);
-        chart.setCursor(Cursor.DRAGGABLE);
+        chart.setCursor(Cursor.DEFAULT);
         chart.redraw();
         break;
 
       case Event.ONMOUSEOVER:
         chart.setPlotFocus(x, y);
-        chart.setCursor(Cursor.DRAGGABLE);
+        chart.setCursor(chart.isInsidePlot(x,y) ? Cursor.DRAGGABLE : Cursor.DEFAULT);
         ((DOMView) view).focus();
         maybeDrag = false;
         break;
@@ -256,7 +256,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
             }
           }
         } else {
-          chart.setCursor(Cursor.CLICKABLE);
+          chart.setCursor(Cursor.DEFAULT);
         }
 //              else if (maybeDrag && chart.getOverviewBounds().inside(x, y)) {
 //                    chart.getOverviewAxis().drag(view, startDragX, x, y);

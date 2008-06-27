@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 /**
@@ -97,7 +98,7 @@ public interface Layer {
    * textLayer
    */
   void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String textLayer);
+      String fontWeight, String fontSize, String textLayer, Cursor cursorStyle);
 
   void fill();
 

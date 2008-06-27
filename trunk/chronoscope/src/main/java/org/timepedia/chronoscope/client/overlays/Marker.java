@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.overlays;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -111,7 +112,8 @@ public class Marker implements Overlay, GssElement, Exportable {
     x = drawOval(backingCanvas, x, y, yp, y < yp ? 1 : 0);
 
     backingCanvas.drawText(x, y, label, markerProperties.fontFamily,
-        markerProperties.fontWeight, markerProperties.fontSize, layer);
+        markerProperties.fontWeight, markerProperties.fontSize, layer,
+        Cursor.CLICKABLE);
     backingCanvas.restore();
   }
 

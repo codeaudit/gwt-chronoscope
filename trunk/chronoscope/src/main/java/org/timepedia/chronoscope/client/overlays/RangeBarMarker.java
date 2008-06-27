@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.overlays;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -109,15 +110,15 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     if (labelHeight + 4 < Math.abs(y1 - y2)) {
       backingCanvas.drawText(x, y1 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
-          layer);
+          layer, Cursor.DEFAULT);
     } else if (y1 - labelHeight - 4 < plot.getInnerPlotBounds().y) {
       backingCanvas.drawText(x, y2 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
-          layer);
+          layer, Cursor.DEFAULT);
     } else {
       backingCanvas.drawText(x, y1 - labelHeight - 2, label,
           markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
-          markerLabelProperties.fontSize, layer);
+          markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
     }
     backingCanvas.restore();
   }

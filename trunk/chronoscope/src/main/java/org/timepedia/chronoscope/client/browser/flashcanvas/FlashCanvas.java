@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -333,7 +334,8 @@ public class FlashCanvas extends Canvas {
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName) {
     rootLayer
-        .drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName);
+        .drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
+            Cursor.DEFAULT);
   }
 
   public void endFrame() {

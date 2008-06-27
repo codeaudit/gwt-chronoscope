@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
@@ -37,10 +38,12 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
   private static final String ZOOM_MAX = "max";
 
-  private static final String ZOOM_STRING = ZOOM_COLON + "\u00A0" + ZOOM_1D
-      + "\u00A0" + ZOOM_5D + "\u00A0" + ZOOM_1M + "\u00A0" + ZOOM_3M + "\u00A0"
-      + ZOOM_6M + "\u00A0" + ZOOM_1Y + "\u00A0" + ZOOM_5Y + "\u00A0" + ZOOM_10Y
-      + "\u00A0" + ZOOM_MAX;
+  private static final String ZSPACE = "\u00A0";
+
+  private static final String ZOOM_STRING = ZOOM_COLON + ZSPACE + ZOOM_1D
+      + ZSPACE + ZOOM_5D + ZSPACE + ZOOM_1M + ZSPACE + ZOOM_3M + ZSPACE
+      + ZOOM_6M + ZSPACE + ZOOM_1Y + ZSPACE + ZOOM_5Y + ZSPACE + ZOOM_10Y
+      + ZSPACE + ZOOM_MAX;
 
   private LegendAxis axis;
 
@@ -119,7 +122,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
       z5y = zw(ZOOM_5Y, layer);
       z10y = zw(ZOOM_10Y, layer);
       zmax = zw(ZOOM_MAX, layer);
-      zspace = zw("\u00A0", layer);
+      zspace = zw(ZSPACE, layer);
     }
     if (y >= bounds.y && y <= bounds.y + legendStringHeight) {
 
@@ -284,24 +287,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawHitDebugRegions(Layer layer, Bounds axisBounds) {
     layer.save();
-    if (legendStringHeight == -1) {
-
-      legendStringHeight = layer.stringHeight(ZOOM_STRING,
-          labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize);
-      zoomStringWidth = zw(ZOOM_STRING, layer);
-      zcolon = zw(ZOOM_COLON, layer);
-      z1d = zw(ZOOM_1D, layer);
-      z5d = zw(ZOOM_5D, layer);
-      z1m = zw(ZOOM_1M, layer);
-      z3m = zw(ZOOM_3M, layer);
-      z6m = zw(ZOOM_6M, layer);
-      z1y = zw(ZOOM_1Y, layer);
-      z5y = zw(ZOOM_5Y, layer);
-      z10y = zw(ZOOM_10Y, layer);
-      zmax = zw(ZOOM_MAX, layer);
-      zspace = zw("\u00A0", layer) + 1;
-    }
+    computeMetrics(layer);
 
     double bx = bounds.x;
     double be = bounds.x + zoomStringWidth;
@@ -356,12 +342,33 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     layer.restore();
   }
 
+  private void computeMetrics(Layer layer) {
+    if (legendStringHeight == -1) {
+
+      legendStringHeight = layer.stringHeight(ZOOM_STRING,
+          labelProperties.fontFamily, labelProperties.fontWeight,
+          labelProperties.fontSize);
+      zoomStringWidth = zw(ZOOM_STRING, layer);
+      zcolon = zw(ZOOM_COLON, layer);
+      z1d = zw(ZOOM_1D, layer);
+      z5d = zw(ZOOM_5D, layer);
+      z1m = zw(ZOOM_1M, layer);
+      z3m = zw(ZOOM_3M, layer);
+      z6m = zw(ZOOM_6M, layer);
+      z1y = zw(ZOOM_1Y, layer);
+      z5y = zw(ZOOM_5Y, layer);
+      z10y = zw(ZOOM_10Y, layer);
+      zmax = zw(ZOOM_MAX, layer);
+      zspace = zw(ZSPACE, layer) + 1;
+    }
+  }
+
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
-    if (lastSerNum != -1 & lastSerPer != -1) {
-      seriesLabel += " (" + plot.getRangeAxis(seriesNum).getFormattedLabel(plot.getDataY(lastSerNum, lastSerPer))
-          + ")";
+    if (lastSerNum != -1 & lastSerPer != -1 && seriesNum == lastSerNum) {
+      seriesLabel += " (" + plot.getRangeAxis(seriesNum)
+          .getFormattedLabel(plot.getDataY(lastSerNum, lastSerPer)) + ")";
     }
     XYRenderer renderer = plot.getRenderer(seriesNum);
 
@@ -377,7 +384,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
     layer.setStrokeColor(labelProperties.color);
     layer.drawText(x + b.width + 2, y, seriesLabel, labelProperties.fontFamily,
-        labelProperties.fontWeight, labelProperties.fontSize, layerName);
+        labelProperties.fontWeight, labelProperties.fontSize, layerName,
+        Cursor.DEFAULT);
     return b.width + lWidth + 20;
   }
 
@@ -385,9 +393,40 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
       Bounds axisBounds) {
 
     layer.setStrokeColor(labelProperties.color);
-    layer.drawText(axisBounds.x, axisBounds.y, ZOOM_STRING,
-        labelProperties.fontFamily, labelProperties.fontWeight,
-        labelProperties.fontSize, textLayerName);
+
+    double zx = axisBounds.x;
+    double zy = axisBounds.y;
+
+    computeMetrics(layer);
+    drawZoomLabel(layer, zx, zy, ZOOM_COLON, false);
+
+    zx += zcolon + zspace;
+    drawZoomLabel(layer, zx, zy, ZOOM_1D, true);
+    zx += z1d + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_5D, true);
+    zx += z5d + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_1M, true);
+    zx += z1m + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_3M, true);
+    zx += z3m + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_6M, true);
+    zx += z6m + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_1Y, true);
+    zx += z1y + zspace;
+
+    drawZoomLabel(layer, zx, zy, ZOOM_5Y, true);
+    zx += z5y + zspace;
+
+    drawZoomLabel(layer, zx, zy, ZOOM_10Y, true);
+    zx += z10y + zspace;
+    
+    drawZoomLabel(layer, zx, zy, ZOOM_MAX, true);
+
     int serNum = plot.getHoverSeries();
     int serPer = plot.getHoverPoint();
 
@@ -408,7 +447,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
       layer.drawText(axisBounds.x + axisBounds.width - width, axisBounds.y,
           status, labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize, textLayerName);
+          labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     } else {
 
       String status = asDate(plot.getDomainOrigin()) + " - " + asDate(
@@ -418,9 +457,16 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
       layer.drawText(axisBounds.x + axisBounds.width - width - 5, axisBounds.y,
           status, labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize, textLayerName);
+          labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     }
     //  drawHitDebugRegions(layer, axisBounds);
+  }
+
+  private void drawZoomLabel(Layer layer, double zx, double zy, String label,
+      boolean clickable) {
+    layer.drawText(zx, zy, label, labelProperties.fontFamily,
+        labelProperties.fontWeight, labelProperties.fontSize, textLayerName,
+        clickable ? Cursor.CLICKABLE : Cursor.DEFAULT);
   }
 
   private String fmt(int num) {

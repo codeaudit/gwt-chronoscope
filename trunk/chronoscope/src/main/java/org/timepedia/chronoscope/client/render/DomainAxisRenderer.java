@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -780,7 +781,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     layer.drawText(center - halfLabelWidth,
         bounds.y + axis.getMaxLabelHeight() + 5, TIME_LABEL,
         labelProperties.fontFamily, labelProperties.fontWeight,
-        labelProperties.fontSize, textLayerName);
+        labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     // only show if enabled and a collision with the axis label is avoided
     if (Chronoscope.isShowCreditsEnabled()
         && center + halfLabelWidth < bounds.x + bounds.width - creditsWidth) {
@@ -788,7 +789,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
       layer.setTransparency(0.2f);
       layer.drawText(bounds.x + bounds.width - creditsWidth,
           bounds.y + bounds.height - creditsHeight, CREDITS, CREDITS_FONT,
-          CREDITS_WEIGHT, CREDITS_SIZE, textLayerName);
+          CREDITS_WEIGHT, CREDITS_SIZE, textLayerName, Cursor.DEFAULT);
       layer.restore();
     }
   }
@@ -871,7 +872,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
     layer.drawText(ux - labelWidth / 2, bounds.y + 5, label,
         axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize, textLayerName);
+        axisProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
   private void drawTick(XYPlot plot, Layer layer, double tickLocation,

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.ArrayList;
@@ -143,11 +144,12 @@ public class DefaultDisplayListImpl implements DisplayList {
 
   public void drawText(final double x, final double y, final String label,
       final String fontFamily, final String fontWeight, final String fontSize,
-      final String textLayer) {
+      final String textLayer, Cursor cursorStyle) {
     cmdBuffer.add(new Cmd() {
       public void exec() {
         layer
-            .drawText(x, y, label, fontFamily, fontWeight, fontSize, textLayer);
+            .drawText(x, y, label, fontFamily, fontWeight, fontSize, textLayer,
+                Cursor.DEFAULT);
       }
     });
   }

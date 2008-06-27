@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.axis.AxisPanel;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -179,7 +180,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     if (y >= bounds.y && y <= bounds.y + bounds.height) {
       layer.drawText(bounds.x + bounds.width + dir, y + alignAdjust, label,
           axisProperties.fontFamily, axisProperties.fontWeight,
-          axisProperties.fontSize, textLayerName);
+          axisProperties.fontSize, textLayerName, Cursor.DEFAULT);
     }
     layer.restore();
   }
