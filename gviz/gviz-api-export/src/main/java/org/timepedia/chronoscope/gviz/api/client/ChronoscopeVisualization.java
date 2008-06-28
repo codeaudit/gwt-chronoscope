@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
+import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
@@ -43,12 +44,11 @@ public class ChronoscopeVisualization implements Exportable {
 
     @Export
     public JavaScriptObject getSelection() {
-        int fs = cp.getChart().getPlot().getFocusSeries();
-        int fp = cp.getChart().getPlot().getFocusPoint();
-        if (fs == -1) return JavaScriptObject.createArray();
+        Focus focus = cp.getChart().getPlot().getFocus();
+        if (focus == null) return JavaScriptObject.createArray();
 
-        return GVizEventHelper.selection(dataset2Column.get(fs),
-                fp);
+        return GVizEventHelper.selection(dataset2Column.get(focus.getDatasetIndex()),
+                focus.getPointIndex());
     }
 
     @Export
@@ -58,7 +58,10 @@ public class ChronoscopeVisualization implements Exportable {
         
         for (Map.Entry<Integer, Integer> e : dataset2Column.entrySet()) {
             if (e.getValue() == sel.getInt("col")) {
-                cp.getChart().getPlot().setFocusXY(e.getKey(), sel.getInt("row"));
+              Focus focus = new Focus();
+              focus.setDatasetIndex(e.getKey());
+              focus.setPointIndex(sel.getInt("row"));
+                cp.getChart().getPlot().setFocus(focus);
 
             }
         }

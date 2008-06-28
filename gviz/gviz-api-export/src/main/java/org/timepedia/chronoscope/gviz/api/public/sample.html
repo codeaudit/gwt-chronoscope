@@ -5,9 +5,9 @@
 <script>
 google.load("visualization", "1");
 google.setOnLoadCallback(drawVisualization);
-
+var c;
 function drawVisualization() {
-var c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
+c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
 
   var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
@@ -40,12 +40,14 @@ var c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'))
           alert("someone selected row="+sel[0].row+", col="+sel[0].col);
         })
         
-        c.draw(data, {});
+        c.draw(data, { legend: "false", overview: "false"});
 }
 </script>
 
 </head>
 <body>
-<div id="foo"></div>
+<div id="foo" style="width: 600px; height: 400px"></div>
+
+<input type="submit" onClick="c.setSelection([{col: 2, row: 3}])" value="Click Me">
 </body>
 </html>
