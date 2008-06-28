@@ -8,5 +8,6 @@
   <inherits name="org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPI" />
   <entry-point class="org.timepedia.chronoscope.gviz.api.client.GVizChronoscopeAPI" />
   <set-property name="export" value="yes"/>
+  <add-linker name="xs"/>
 </module>
     
