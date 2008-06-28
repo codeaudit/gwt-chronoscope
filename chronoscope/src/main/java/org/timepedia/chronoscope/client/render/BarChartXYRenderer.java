@@ -102,8 +102,8 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         ow -= padding;
         bw -= padding * 2;
 
-        double barHeight = plot.getInnerPlotBounds().height
-            + plot.getInnerPlotBounds().y;
+        double barHeight = plot.getInnerPlotBounds().height + plot
+            .getInnerPlotBounds().y;
         layer.save();
         layer.translate(ux - ow, uy);
 
@@ -163,6 +163,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
   public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
+    initGss(layer.getCanvas().getView());
     GssProperties lineProp, pointProp;
     Focus focus = plot.getFocus();
     if (focus != null && focus.getDatasetIndex() != seriesNum) {

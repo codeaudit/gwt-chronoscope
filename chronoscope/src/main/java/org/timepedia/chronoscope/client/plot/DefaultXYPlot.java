@@ -13,17 +13,17 @@ import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
+import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
-import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.data.HasRegions;
 import org.timepedia.chronoscope.client.data.RegionLoadListener;
+import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
+import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -34,9 +34,9 @@ import org.timepedia.chronoscope.client.util.Nearest;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,13 +49,13 @@ import java.util.Vector;
  * space by delegating to one or more ValueAxis implementations. Drawing for
  * each dataset is delegated to Renderers. A plot also maintains state like the
  * current selection and focus point.
- * 
+ *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
-RegionLoadListener {
+public class DefaultXYPlot
+    implements XYPlot, Exportable, XYDatasetListener, RegionLoadListener {
 
   public static int MAX_DRAWABLE_DATAPOINTS = 400;
 
@@ -65,10 +65,12 @@ RegionLoadListener {
 
   private static int globalPlotNumber = 0;
 
+  private static final double MIN_PLOT_HEIGHT = 50;
+
   /**
    * Determines if a and b are equal, taking into consideration that a or b (or
    * both a and b) could be null.
-   * 
+   *
    * TODO: Move this into a utility class
    */
   private static boolean isEqual(Object a, Object b) {
@@ -141,7 +143,8 @@ RegionLoadListener {
 
   private PortableTimer animationTimer;
 
-  private final HashMap<String, RangeAxis> axisMap = new HashMap<String, RangeAxis>();
+  private final HashMap<String, RangeAxis> axisMap
+      = new HashMap<String, RangeAxis>();
 
   private double beginHighlight = Double.MIN_VALUE;
 
@@ -412,13 +415,13 @@ RegionLoadListener {
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex].getX(pointIndex,
-        currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex]
+        .getX(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex].getY(pointIndex,
-        currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex]
+        .getY(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public ValueAxis getDomainAxis() {
@@ -456,7 +459,7 @@ RegionLoadListener {
 
   public String getHistoryToken() {
     return getChart().getChartId() + "(O" + getDomainOrigin() + ",D"
-    + getCurrentDomain() + ")";
+        + getCurrentDomain() + ")";
   }
 
   public int getHoverPoint() {
@@ -476,8 +479,8 @@ RegionLoadListener {
   }
 
   public int getNearestVisiblePoint(double domainX, int series) {
-    return Util.binarySearch(datasets[series], domainX,
-        currentMiplevels[series]);
+    return Util
+        .binarySearch(datasets[series], domainX, currentMiplevels[series]);
   }
 
   public int getNumAnimationFrames() {
@@ -541,14 +544,14 @@ RegionLoadListener {
   }
 
   public String getSeriesLabel(int i) {
-    return datasets[i].getRangeLabel()
-    + getRangeAxis(i).getLabelSuffix(getRangeAxis(i).getRange());
+    return datasets[i].getRangeLabel() + getRangeAxis(i)
+        .getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {
     return topPanel.contains(theAxis) || domainPanel.contains(theAxis)
-    || rangePanelLeft.contains(theAxis)
-    || rangePanelRight.contains(theAxis);
+        || rangePanelLeft.contains(theAxis) || rangePanelRight
+        .contains(theAxis);
   }
 
   public void init(View view) {
@@ -664,7 +667,8 @@ RegionLoadListener {
       int focusSeries = this.focus.getDatasetIndex();
       int focusPoint = this.focus.getPointIndex();
       focusPoint++;
-      if (focusPoint >= datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])) {
+      if (focusPoint >= datasets[focusSeries]
+          .getNumSamples(currentMiplevels[focusSeries])) {
         focusPoint = 0;
         focusSeries++;
         if (focusSeries >= datasets.length) {
@@ -691,11 +695,11 @@ RegionLoadListener {
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
           new PortableTimerTask() {
-        public void run(PortableTimer timer) {
-          overviewDrawn = false;
-          redraw();
-        }
-      }, false);
+            public void run(PortableTimer timer) {
+              overviewDrawn = false;
+              redraw();
+            }
+          }, false);
     } else {
       overviewDrawn = false;
       redraw();
@@ -713,16 +717,16 @@ RegionLoadListener {
     if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
 
       public void run(PortableTimer timer) {
-        view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
-            domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
-                rangeY, datasetIndex) + 5);
+        view.openInfoWindow(html,
+            chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
+            chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
       }
     })) {
 
     } else {
-      view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
-          domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
-              rangeY, datasetIndex) + 5);
+      view.openInfoWindow(html,
+          chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
+          chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
     }
   }
 
@@ -752,7 +756,9 @@ RegionLoadListener {
         if (focusSeries < 0) {
           focusSeries = datasets.length - 1;
         }
-        focusPoint = datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries]) - 1;
+        focusPoint =
+            datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])
+                - 1;
       }
       setFocusAndNotifyView(focusSeries, focusPoint);
     }
@@ -1018,8 +1024,8 @@ RegionLoadListener {
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);
-      overviewLayer.clearRect(0, 0, overviewLayer.getWidth(),
-          overviewLayer.getHeight());
+      overviewLayer
+          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
 
       overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
           overviewLayer.getHeight());
@@ -1056,16 +1062,18 @@ RegionLoadListener {
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         domainLayer.save();
-        drawAxisPanel(domainLayer, domainPanel, new Bounds(plotBounds.x, 0,
-            plotBounds.width, domainBounds.height), false);
+        drawAxisPanel(domainLayer, domainPanel,
+            new Bounds(plotBounds.x, 0, plotBounds.width, domainBounds.height),
+            false);
         domainLayer.restore();
       }
 
       if (true && topPanel.getAxisCount() > 0) {
 
         topLayer.save();
-        drawAxisPanel(topLayer, topPanel, new Bounds(plotBounds.x, 0,
-            plotBounds.width, topBounds.height), false);
+        drawAxisPanel(topLayer, topPanel,
+            new Bounds(plotBounds.x, 0, plotBounds.width, topBounds.height),
+            false);
         drewTop = true;
         topLayer.restore();
       }
@@ -1080,9 +1088,6 @@ RegionLoadListener {
   /**
    * Convert a value in user coordinates [0,1] to plot region screen-space
    * coordinates [0, plotBounds.width].
-   * 
-   * @param userX
-   * @return
    */
   public double userToScreenX(double userX) {
     return userX * plotBounds.width;
@@ -1095,9 +1100,6 @@ RegionLoadListener {
   /**
    * COnvert a value in user coordinates [0,1] to window screen-space
    * coordinates [plotBounds.x, plotBounds.width]
-   * 
-   * @param userX
-   * @return
    */
   public double userToWindowX(double userX) {
     return userToScreenX(userX) + plotBounds.x;
@@ -1127,8 +1129,8 @@ RegionLoadListener {
         rangeAxisCount++;
         ra = new RangeAxis(chart, datasets[i].getRangeLabel(),
             datasets[i].getAxisId(), i, datasets[i].getRangeBottom(),
-            datasets[i].getRangeTop(), rangeAxisCount % 2 == 0 ? rangePanelLeft
-                : rangePanelRight);
+            datasets[i].getRangeTop(),
+            rangeAxisCount % 2 == 0 ? rangePanelLeft : rangePanelRight);
         axisMap.put(ra.getAxisId(), ra);
         if (rangeAxisCount % 2 == 0) {
           rangePanelLeft.add(ra);
@@ -1151,9 +1153,9 @@ RegionLoadListener {
 
   protected void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
-        || (beginHighlight > domainOrigin + currentDomain && endHighlight > domainOrigin
-            + currentDomain)) {
+        || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
+        beginHighlight > domainOrigin + currentDomain
+            && endHighlight > domainOrigin + currentDomain)) {
       if (highlightDrawn) {
         layer.clear();
         highlightDrawn = false;
@@ -1163,8 +1165,8 @@ RegionLoadListener {
 
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math.min(0 + getInnerPlotBounds().width, domainToScreenX(
-        endHighlight, 0));
+    double ex = Math
+        .min(0 + getInnerPlotBounds().width, domainToScreenX(endHighlight, 0));
 
     layer.save();
     layer.setFillColor("#14FFFF");
@@ -1207,8 +1209,8 @@ RegionLoadListener {
 
   private void computePlotBounds() {
     plotBounds = initialBounds == null ? new Bounds(0, 0,
-        this.view.getViewWidth(), this.view.getViewHeight()) : new Bounds(
-            initialBounds);
+        this.view.getViewWidth(), this.view.getViewHeight())
+        : new Bounds(initialBounds);
 
     innerBounds = new Bounds(plotBounds);
     // TODO: only in snapshot
@@ -1217,7 +1219,22 @@ RegionLoadListener {
       plotBounds.width -= plotBounds.x;
       plotBounds.y += topPanel.getHeight();
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
-        plotBounds.height -= domainPanel.getHeight() + topPanel.getHeight();
+        double topHeight = topPanel.getHeight();
+        double topBottomHeight = domainPanel.getHeight() + topHeight;
+        if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
+          if (overviewEnabled) {
+            domainPanel.remove(overviewAxis);
+            overviewEnabled = false;
+          }
+          topBottomHeight = domainPanel.getHeight() + topPanel.getHeight();
+
+          if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
+            topPanel.remove(legendAxis);
+            showLegend = false;
+          }
+          topBottomHeight = domainPanel.getHeight() + topPanel.getHeight();
+        }
+        plotBounds.height -= topBottomHeight;
       }
       if (rangePanelRight.getAxisCount() > 0) {
         plotBounds.width -= rangePanelRight.getWidth();
@@ -1288,9 +1305,9 @@ RegionLoadListener {
     // difference between the minimum and maximum dataset date values
     // then ensure that the destinationDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
-    return fence ? Math.max(Math.min(destinationDomain, getDomainMax()
-        - getDomainMin()), getDomainAxis().getMinimumTickSize())
-        : destinationDomain;
+    return fence ? Math.max(
+        Math.min(destinationDomain, getDomainMax() - getDomainMin()),
+        getDomainAxis().getMinimumTickSize()) : destinationDomain;
   }
 
   private double fenceDomainOrigin(boolean fence, double destinationOrigin,
@@ -1341,12 +1358,15 @@ RegionLoadListener {
     int where = Util.binarySearch(datasets[datasetIndex], domainX,
         currentMiplevels[datasetIndex]);
 
-    double x1 = domainToScreenX(datasets[datasetIndex].getX(where,
-        currentMiplevels[datasetIndex]), datasetIndex);
-    double y1 = rangeToScreenY(datasets[datasetIndex].getY(where,
-        currentMiplevels[datasetIndex]), datasetIndex);
+    double x1 = domainToScreenX(
+        datasets[datasetIndex].getX(where, currentMiplevels[datasetIndex]),
+        datasetIndex);
+    double y1 = rangeToScreenY(
+        datasets[datasetIndex].getY(where, currentMiplevels[datasetIndex]),
+        datasetIndex);
     double x2, y2;
-    if (where + 1 < datasets[datasetIndex].getNumSamples(currentMiplevels[datasetIndex])) {
+    if (where + 1 < datasets[datasetIndex]
+        .getNumSamples(currentMiplevels[datasetIndex])) {
       x2 = domainToScreenX(datasets[datasetIndex].getX(where + 1,
           currentMiplevels[datasetIndex]), datasetIndex);
       y2 = rangeToScreenY(datasets[datasetIndex].getY(where + 1,
@@ -1410,8 +1430,8 @@ RegionLoadListener {
           backingCanvas.disposeLayer(overviewLayer);
         }
 
-        overviewLayer = backingCanvas.createLayer("overviewLayer" + plotNumber,
-            plotBounds);
+        overviewLayer = backingCanvas
+            .createLayer("overviewLayer" + plotNumber, plotBounds);
         overviewLayer.setVisibility(false);
       }
 
@@ -1425,8 +1445,8 @@ RegionLoadListener {
       topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
-      verticalAxisLayer = backingCanvas.createLayer(
-          "verticalAxis" + plotNumber, layerBounds);
+      verticalAxisLayer = backingCanvas
+          .createLayer("verticalAxis" + plotNumber, layerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
@@ -1439,11 +1459,11 @@ RegionLoadListener {
         backingCanvas.disposeLayer(domainLayer);
       }
 
-      domainLayer = backingCanvas.createLayer("domainAxis" + plotNumber,
-          domainBounds);
+      domainLayer = backingCanvas
+          .createLayer("domainAxis" + plotNumber, domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      highLightLayer = backingCanvas.createLayer("highlight" + plotNumber,
-          plotBounds);
+      highLightLayer = backingCanvas
+          .createLayer("highlight" + plotNumber, plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
     }
   }
@@ -1452,13 +1472,13 @@ RegionLoadListener {
     pushHistory();
 
     XYDataset dataset = datasets[datasetIndex];
-    pointIndex = Util.binarySearch(dataset, dataset.getX(pointIndex,
-        currentMiplevels[datasetIndex]), 0);
+    pointIndex = Util.binarySearch(dataset,
+        dataset.getX(pointIndex, currentMiplevels[datasetIndex]), 0);
 
     final double newOrigin = dataset.getX(Math.max(0, pointIndex - 10));
-    double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
-        pointIndex + 10))
-        - newOrigin;
+    double newdomain =
+        dataset.getX(Math.min(dataset.getNumSamples(), pointIndex + 10))
+            - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
@@ -1497,5 +1517,4 @@ RegionLoadListener {
   private double windowYtoUser(int y) {
     return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
   }
-
 }
