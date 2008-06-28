@@ -97,5 +97,5 @@
   </replace-with>
   <set-property name="export" value="yes"/>
   <set-property name="selectorCapability" value="js"/>
-  <set-property name="hasflash" value="yes"/>
+  <!--<set-property name="hasflash" value="yes"/>-->
 </module>

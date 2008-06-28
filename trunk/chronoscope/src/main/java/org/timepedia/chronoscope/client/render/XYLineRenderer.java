@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -57,7 +56,7 @@ public class XYLineRenderer extends XYRenderer
   private GssElement pointElement = null;
 
   private double fx = -1;
-  
+
   public XYLineRenderer(int seriesNum) {
 
     this.seriesNum = seriesNum;
@@ -103,7 +102,7 @@ public class XYLineRenderer extends XYRenderer
 
     // previously, used to fix a bug in Safari canvas that would crash if two points in a path were
     // the same, commented out for now
-    if(ux - lx >= 0) {
+    if (ux - lx >= 0) {
 
       layer.lineTo(ux, uy);
       lx = ux;
@@ -114,14 +113,15 @@ public class XYLineRenderer extends XYRenderer
   public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
+    initGss(layer.getCanvas().getView());
+
     GssProperties alineProp, apointProp;
     if (plot.getFocus() != null) {
-        alineProp = disabledLineProperties;
-        apointProp = disabledPointProperties;
-    }
-    else {
-        alineProp = gssLineProperties;
-        apointProp = gssPointProperties;
+      alineProp = disabledLineProperties;
+      apointProp = disabledPointProperties;
+    } else {
+      alineProp = gssLineProperties;
+      apointProp = gssPointProperties;
     }
     /*
     if (seriesNum != plot.getFocus().getFocusSeries() && plot.getFocusSeries() != -1) {
@@ -227,7 +227,7 @@ public class XYLineRenderer extends XYRenderer
     layer.stroke();
 
     layer.lineTo(lx, layer.getHeight());
-    layer.lineTo(fx, layer.getHeight());    
+    layer.lineTo(fx, layer.getHeight());
     layer.setFillColor(fillProp.bgColor);
     layer.setTransparency((float) fillProp.transparency);
     layer.fill();

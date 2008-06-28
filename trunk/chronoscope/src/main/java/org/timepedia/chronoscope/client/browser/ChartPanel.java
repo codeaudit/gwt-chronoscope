@@ -209,7 +209,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
 
       case Event.ONMOUSEOVER:
         chart.setPlotFocus(x, y);
-        chart.setCursor(chart.isInsidePlot(x,y) ? Cursor.DRAGGABLE : Cursor.DEFAULT);
+        chart.setCursor(
+            chart.isInsidePlot(x, y) ? Cursor.DRAGGABLE : Cursor.DEFAULT);
         ((DOMView) view).focus();
         maybeDrag = false;
         break;
@@ -317,7 +318,7 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         break;
       case Event.ONKEYPRESS:
         int keyCode3 = DOM.eventGetKeyCode(evt);
-        if (keyCode3 == TAB_KEY) {
+        if (false && keyCode3 == TAB_KEY) {
           if (DOM.eventGetShiftKey(evt)) {
             chart.prevFocus();
           } else {
