@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.chronoscope.client.util.MathUtil;
+
 /**
  * Class used to pre-process a domain/range of values into a multiresolution
  * representation using a given strategy
@@ -44,7 +46,7 @@ public class XYMultiresolution {
     }
 
     public int getNumLevels(XYMultiresolution m) {
-      return (int) (Math.log(m.getNumSamples()) / Math.log(2)) + 1;
+      return (int) MathUtil.log2(m.getNumSamples()) + 1;
     }
 
     public int getNumSamples(XYMultiresolution m, int level) {
@@ -76,7 +78,7 @@ public class XYMultiresolution {
     }
 
     public int getNumLevels(XYMultiresolution m) {
-      return (int) (Math.log(m.getNumSamples()) / Math.log(2)) + 1;
+      return (int) MathUtil.log2(m.getNumSamples()) + 1;
     }
 
     public int getNumSamples(XYMultiresolution m, int level) {
