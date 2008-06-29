@@ -33,7 +33,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       double scale = getScale();
       scale = Double.isNaN(scale) ? 1 : scale;
 
-      int intDigits = (int) Math.floor(Math.log(getRangeHigh()) / Math.log(10));
+      int intDigits = (int) Math.floor(Math.log10(getRangeHigh()));
       if (isAllowAutoScale() && Double.isNaN(getScale())
           && intDigits + 1 > maxDigits) {
         scale = Math.pow(1000, intDigits / 3);
@@ -96,7 +96,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double roughInterval = range / maxNumLabels;
 
-    int logRange = ((int) Math.floor(Math.log(roughInterval) / Math.log(10)))
+    int logRange = ((int) Math.floor(Math.log10(roughInterval)))
         - 1;
     double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
@@ -246,7 +246,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       return "";
     }
     if (!Double.isNaN(getScale())) {
-      int intDigits = (int) Math.floor(Math.log(getRange() + 1) / Math.log(10));
+      int intDigits = (int) Math.floor(Math.log10(getRange() + 1));
       if (intDigits > 0) {
         return " " + (intDigits < posExponentLabels.length
             ? posExponentLabels[intDigits] : "E" + intDigits);

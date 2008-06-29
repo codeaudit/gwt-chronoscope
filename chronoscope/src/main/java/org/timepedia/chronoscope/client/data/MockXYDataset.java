@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.Date;
 
@@ -29,7 +30,7 @@ public class MockXYDataset implements XYDataset {
 
   public void genCache() {
 
-    int levels = (int) (Math.log(1000) / Math.log(2)) + 1;
+    int levels = (int) (MathUtil.log2(1000)) + 1;
     xcache = new double[levels][];
     ycache = new double[levels][];
     for (int i = 0; i < levels; i++) {
