@@ -22,11 +22,6 @@ public class ChronoscopeMockTestCaseBase extends TestCase {
     return "org.timepedia.chronoscope.ChronoscopeMockTestSuite";
   }
   
-  private static native Element getHead() /*-{
-    return $doc.getElementsByTagName("head")[0];
-  }-*/;
-
-   
   protected void runChronoscopeTest(XYDataset ds[], ViewReadyCallback viewReadyCallback) {
     MockChartPanel cp = ChronoscopeMock.createTimeseriesChart(ds, 600, 400);
     cp.setViewReadyListener(viewReadyCallback);
