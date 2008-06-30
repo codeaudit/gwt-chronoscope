@@ -56,6 +56,11 @@ public class DataTableParser {
         return markers.toArray(new Marker[markers.size()]);
     }
 
+    static class DataPair {
+      public double domain[];
+      public double range[];
+    }
+  
     public static XYDataset[] parseDatasets(DataTable table, Map<Integer, Integer> dataset2Column) {
 
 
@@ -67,7 +72,6 @@ public class DataTableParser {
             }
         }
 
-        double domain[] = table2domain(table, startRow);
         int numCols = 0;
         for (int i = 1; i < table.getNumberOfColumns(); i++) {
             if (!Double.isNaN(table.getValueNumber(startRow, i))) {
@@ -95,8 +99,9 @@ public class DataTableParser {
                 label = label.substring(0, ind);
             }
 
-            double range[] = table2range(table, startRow, i);
-            ds[numCols++] = new ArrayXYDataset("col" + i, domain, range, label,
+            
+            DataPair pair = table2datapair(table, startRow, i);
+            ds[numCols++] = new ArrayXYDataset("col" + i, pair.domain, pair.range, label,
                     units);
             if (dataset2Column != null) dataset2Column.put(numCols - 1, i);
         }
@@ -104,17 +109,34 @@ public class DataTableParser {
         return ds;
     }
 
-    public static double[] table2range(DataTable table, int startRow, int col) {
-        double r[] = new double[table.getNumberOfRows() - startRow];
-        for (int i = startRow; i < r.length; i++) {
-            r[i] = table.getValueNumber(i, col);
+    public static DataPair table2datapair(DataTable table, int startRow, int col) {
+        DataPair pair=new DataPair();
+      
+        int rows=0;
+        for (int i = startRow; i < table.getNumberOfRows(); i++) {
+             double val=table.getValueNumber(i, col);
+             if(!Double.isNaN(val)) rows++;
         }
-        return r;
+        
+        int row=0;
+        pair.range = new double[rows];
+        pair.domain = new double[rows];
+      
+        for (int i = startRow; i < table.getNumberOfRows(); i++) {
+             double val=table.getValueNumber(i, col);
+             if(!Double.isNaN(val)) {
+               pair.range[row] = val;
+               pair.domain[row] = table.getValueDate(i, 0);
+               row++;
+             }
+        }
+       
+        return pair;
     }
 
     public static double[] table2domain(DataTable table, int startRow) {
         double d[] = new double[table.getNumberOfRows() - startRow];
-        for (int i = startRow; i < d.length; i++) {
+        for (int i = startRow; i < table.getNumberOfRows(); i++) {
             d[i] = table.getValueDate(i, 0);
         }
         return d;
