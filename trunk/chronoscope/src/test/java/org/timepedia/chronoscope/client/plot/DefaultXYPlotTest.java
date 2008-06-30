@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.Fixtures;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.ChronoscopeTestCaseBase;
+import org.timepedia.chronoscope.client.ChronoscopeMockTestCaseBase;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.MockXYDataset;
@@ -11,7 +12,7 @@ import org.timepedia.chronoscope.client.data.MockXYDataset;
 /**
  * Test case for XYPlot interface
  */
-public class DefaultXYPlotTest extends ChronoscopeTestCaseBase {
+public class DefaultXYPlotTest extends ChronoscopeMockTestCaseBase {
 
   /**
    * Test that issue #23 is fixed http://code.google.com/p/gwt-chronoscope/issues/detail?id=23

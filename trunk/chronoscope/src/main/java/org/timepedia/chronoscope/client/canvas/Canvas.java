@@ -22,8 +22,6 @@ public abstract class Canvas {
 
   private View view;
 
-  private Layer rootLayer;
-
   protected Canvas(View view) {
     super();
     this.view = view;
