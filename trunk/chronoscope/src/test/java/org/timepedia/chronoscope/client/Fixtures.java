@@ -58,7 +58,7 @@ public class Fixtures {
     private static double[] parseDomain(String[] dates) {
         double domain[] = new double[dates.length];
         for (int i = 0; i < dates.length; i++) {
-            domain[i] = DateParser.parse("yyyy", dates[i]);
+            domain[i] = MockDateParser.parse("yyyy", dates[i]);
         }
         return domain;
     }
