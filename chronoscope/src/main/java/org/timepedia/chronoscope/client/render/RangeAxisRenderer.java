@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
  * Renders vertical range axis
@@ -176,7 +177,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         dir = isLeft ? -axis.getMaxLabelWidth() + 1
             : axis.getMaxLabelWidth() - 1;
     }
-    if (y >= bounds.y && y <= bounds.y + bounds.height) {
+    if (MathUtil.isBounded(y, bounds.y, bounds.y + bounds.height)) {
       layer.drawText(bounds.x + bounds.width + dir, y + alignAdjust, label,
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName, Cursor.DEFAULT);

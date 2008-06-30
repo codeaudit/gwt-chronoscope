@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.data.DeferredRegionalArrayXYDataset;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
 import java.util.HashMap;
@@ -46,8 +47,8 @@ public abstract class XYPlotRenderer {
 
       double domainOrigin = plot.getDomainOrigin();
       double currentDomain = plot.getCurrentDomain();
-      if (!(dataSet.getDomainEnd() >= domainOrigin && dataSet.getDomainBegin() <= domainOrigin
-          + currentDomain)) {
+      if (!(MathUtil.isBounded(domainOrigin, dataSet.getDomainBegin()
+          - currentDomain, dataSet.getDomainEnd()))) {
         continue;
       }
 

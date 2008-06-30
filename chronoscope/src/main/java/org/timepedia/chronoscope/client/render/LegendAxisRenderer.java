@@ -11,6 +11,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.Date;
 
@@ -125,55 +126,55 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
       zmax = zw(ZOOM_MAX, layer);
       zspace = zw(ZSPACE, layer);
     }
-    if (y >= bounds.y && y <= bounds.y + legendStringHeight) {
+    if (MathUtil.isBounded(y, bounds.y, bounds.y + legendStringHeight)) {
 
       double bx = bounds.x;
       double be = bounds.x + zoomStringWidth;
-
-      if (x >= bx && x <= be) {
+      
+      if (MathUtil.isBounded(x, bx, be)) {
         bx = bounds.x + zcolon + zspace;
         be = bx + z1d;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400);
         }
         bx += z1d + zspace;
         be = bx + z5d;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 5);
         }
         bx += z5d + zspace;
         be = bx + z1m;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 30);
         }
         bx += z1m + zspace;
         be = bx + z3m;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 30 * 3);
         }
         bx += z3m + zspace;
         be = bx + z6m;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 30 * 6);
         }
         bx += z6m + zspace;
         be = bx + z1y;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 365);
         }
         bx += z1y + zspace;
         be = bx + z5y;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 365 * 5);
         }
         bx += z5y + zspace;
         be = bx + z10y;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           return zoom(plot, 86400 * 365 * 10);
         }
         bx += z10y + zspace;
         be = bx + zmax;
-        if (x >= bx && x <= be) {
+        if (MathUtil.isBounded(x, bx, be)) {
           plot.maxZoomOut();
           return true;
         }
