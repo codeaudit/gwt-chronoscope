@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
 /**
- * Helper class representing a rectangular bounds
+ * Helper class representing a rectangular bounds.
  */
 public class Bounds {
 
@@ -23,6 +23,9 @@ public class Bounds {
     this.height = height;
   }
 
+  /**
+   * Copy constructor.
+   */
   public Bounds(Bounds b) {
     x = b.x;
     y = b.y;
@@ -30,9 +33,18 @@ public class Bounds {
     height = b.height;
   }
 
+  /**
+   * Default constructor that initializes x, y, width, and height to 0.
+   */
   public Bounds() {
   }
 
+  /**
+   * Returns true only if the specified point (px,py) is inside this rectangular
+   * bounding box. Note that points on the perimeter are considered "inside"
+   * (e.g. <tt>new Bounds(0, 0, 100, 50).inside(100, 50)</tt> returns
+   * <tt>true</tt>).
+   */
   public boolean inside(int px, int py) {
     return px >= x && px <= x + width && py >= y && py <= y + height;
   }

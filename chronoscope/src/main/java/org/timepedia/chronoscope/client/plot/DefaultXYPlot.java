@@ -131,8 +131,6 @@ public class DefaultXYPlot
 
   protected boolean selection;
 
-  protected Vector selections;
-
   protected int selEnd;
 
   protected int selStart;
@@ -155,10 +153,6 @@ public class DefaultXYPlot
   private Bounds domainBounds;
 
   private Layer domainLayer;
-
-  private boolean drewBackground;
-
-  private boolean drewTop;
 
   private double endHighlight = Double.MIN_VALUE;
 
@@ -197,8 +191,6 @@ public class DefaultXYPlot
   private boolean selectionMode;
 
   private boolean showLegend = true;
-
-  private boolean snapshotDrawn = false;
 
   private Bounds topBounds;
 
@@ -273,7 +265,6 @@ public class DefaultXYPlot
     animationContinuation = continuation;
 
     animationTimer = view.createTimer(new PortableTimerTask() {
-      boolean correct = false;
 
       // destination center
       final double destCenter = fencedDomainOrigin + fencedDomain / 2;
@@ -282,8 +273,6 @@ public class DefaultXYPlot
       // point
       // stable
       double domainCenter = domainOrigin + currentDomain / 2;
-
-      double frames = 1;
 
       boolean lastFrame = false;
 
@@ -295,8 +284,6 @@ public class DefaultXYPlot
       final double startOrigin = domainOrigin;
 
       double startTime = 0;
-
-      double z = 1.0;
 
       // zoom factor, ratio of destination domain to current domain
       final double zf = fencedDomain / currentDomain;
@@ -555,11 +542,8 @@ public class DefaultXYPlot
   }
 
   public void init(View view) {
-
     this.view = view;
     this.focus = null;
-    // this.focus = new Focus();
-    // this.focus.setPointIndex(0);
 
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
@@ -1074,7 +1058,6 @@ public class DefaultXYPlot
         drawAxisPanel(topLayer, topPanel,
             new Bounds(plotBounds.x, 0, plotBounds.width, topBounds.height),
             false);
-        drewTop = true;
         topLayer.restore();
       }
     }
@@ -1193,7 +1176,6 @@ public class DefaultXYPlot
   private void clearDrawCaches() {
     drewVertical = false;
     overviewDrawn = false;
-    drewTop = false;
   }
 
   private void computeDomainMinMax() {
@@ -1254,7 +1236,7 @@ public class DefaultXYPlot
   private double dist(double x1, double y1, double cx, double cy) {
     // TODO: we now ignore y dist to make hover easier
     return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
-    // return Math.abs(x1-cx);
+    //return Math.abs(x1-cx);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1289,7 +1271,6 @@ public class DefaultXYPlot
       plotLayer.setScrollLeft(0);
 
       background.paint(this, plotLayer, domainOrigin, currentDomain);
-      drewBackground = true;
 
       // reset the visible RangeAxis ticks if it's been zoomed
       for (int i = 0; i < datasets.length; i++) {
