@@ -30,6 +30,7 @@ import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Nearest;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -336,7 +337,7 @@ public class DefaultXYPlot
     while (i.hasNext()) {
       Overlay o = (Overlay) i.next();
       double oPos = o.getDomainX();
-      if (oPos >= domainOrigin && oPos <= domainOrigin + currentDomain) {
+      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         if (o.isHit(x, y)) {
           o.click(x, y);
           return true;
@@ -1248,7 +1249,7 @@ public class DefaultXYPlot
     while (i.hasNext()) {
       Overlay o = (Overlay) i.next();
       double oPos = o.getDomainX();
-      if (oPos >= domainOrigin && oPos <= domainOrigin + currentDomain) {
+      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         o.draw(overviewLayer, "overlays");
       }
     }

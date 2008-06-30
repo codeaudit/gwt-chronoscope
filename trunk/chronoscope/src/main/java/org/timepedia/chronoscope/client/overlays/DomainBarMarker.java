@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
@@ -149,7 +150,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
     double mx = plot.domainToScreenX(domainX, 0);
     double mx2 = plot.domainToScreenX(domainX + domainWidth, 0);
 
-    return x >= mx && x <= mx2 && y > plot.getInnerPlotBounds().y
+    return MathUtil.isBounded(x, mx, mx2) && y > plot.getInnerPlotBounds().y
         && y < plot.getInnerPlotBounds().y + plot.getInnerPlotBounds().height;
   }
 

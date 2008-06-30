@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.Date;
 
@@ -69,7 +70,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return dsize >= DAY && dsize <= MONTH;
+      return MathUtil.isBounded(dsize, DAY, MONTH);
     }
 
     public int quantizeTicks(double ticks) {
@@ -149,7 +150,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return dsize >= HOUR && dsize <= DAY;
+      return MathUtil.isBounded(dsize, HOUR, DAY);
     }
 
     public int quantizeTicks(double ticks) {
@@ -231,7 +232,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return dsize >= MINUTE && dsize <= HOUR;
+      return MathUtil.isBounded(dsize, MINUTE, HOUR);
     }
 
     public int quantizeTicks(double ticks) {
@@ -479,7 +480,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return dsize >= SECOND && dsize <= MINUTE;
+      return MathUtil.isBounded(dsize, SECOND, MINUTE);
     }
 
     public int quantizeTicks(double ticks) {
@@ -574,7 +575,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return dsize >= 100 && dsize <= SECOND;
+      return MathUtil.isBounded(dsize, 100, SECOND);
     }
 
     public int quantizeTicks(double ticks) {
@@ -879,7 +880,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
       Bounds bounds, TickLabelFormatter tlf) {
 
     double ux = domainToScreenX(plot, tickLocation, bounds);
-    if (ux >= bounds.x && ux <= bounds.x + bounds.width) {
+    if (MathUtil.isBounded(ux, bounds.x, bounds.x + bounds.width)) {
       layer.save();
       layer.setFillColor(tickProperties.color);
 
