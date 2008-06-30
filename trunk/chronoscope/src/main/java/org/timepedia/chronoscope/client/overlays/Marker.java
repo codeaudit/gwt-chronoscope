@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
@@ -165,7 +166,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     }
     mx -= width / 2 + 2;
     my -= height / 2 + 2;
-    return x >= mx && x <= mx + width + 3 && y >= my && my <= y + height;
+    return MathUtil.isBounded(x, mx, mx + width + 3) && MathUtil.isBounded(y, my, my + height); 
   }
 
   /**
