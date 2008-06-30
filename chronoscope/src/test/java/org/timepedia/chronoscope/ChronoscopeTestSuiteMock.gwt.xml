@@ -2,7 +2,10 @@
         <inherits name="com.google.gwt.junit.JUnit"/>
         <inherits name="org.timepedia.chronoscope.Chronoscope"/>
         <set-property name="hasflash" value="no"/>
-       
+        <replace-with name="org.timepedia.chronoscope.client.canvas.MockView">
+          <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+            
+        </replace-with>
   <stylesheet src="Chronoscope.css"/>
   
 </module>
