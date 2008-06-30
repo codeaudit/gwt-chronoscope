@@ -19,7 +19,7 @@ public class ChronoscopeMockTestCaseBase extends TestCase {
   private boolean injected;
 
   public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
+    return "org.timepedia.chronoscope.ChronoscopeMockTestSuite";
   }
   
   private static native Element getHead() /*-{
