@@ -65,7 +65,7 @@ public class ChronoscopeVisualization implements Exportable {
 
             }
         }
-
+       cp.getChart().redraw();
     }
 
     Map<Integer, Integer> dataset2Column = new HashMap<Integer, Integer>();
