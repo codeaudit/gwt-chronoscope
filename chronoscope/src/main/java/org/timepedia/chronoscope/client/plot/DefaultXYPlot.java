@@ -42,7 +42,6 @@ import org.timepedia.exporter.client.Exportable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -333,14 +332,19 @@ public class DefaultXYPlot
   }
 
   public boolean click(int x, int y) {
-    Iterator i = overlays.iterator();
-    while (i.hasNext()) {
-      Overlay o = (Overlay) i.next();
-      double oPos = o.getDomainX();
-      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
-        if (o.isHit(x, y)) {
-          o.click(x, y);
-          return true;
+    if (setFocusXY(x, y)) {
+      return true;
+    } else {
+      Iterator i = overlays.iterator();
+      while (i.hasNext()) {
+        Overlay o = (Overlay) i.next();
+        double oPos = o.getDomainX();
+        if (MathUtil
+            .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+          if (o.isHit(x, y)) {
+            o.click(x, y);
+            return true;
+          }
         }
       }
     }
@@ -1249,7 +1253,8 @@ public class DefaultXYPlot
     while (i.hasNext()) {
       Overlay o = (Overlay) i.next();
       double oPos = o.getDomainX();
-      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+      if (MathUtil
+          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         o.draw(overviewLayer, "overlays");
       }
     }
