@@ -203,7 +203,13 @@ public class BrowserLayer extends DomTextLayer {
     save0(ctx);
   }
 
-  public native void scale(double sx, double sy) /*-{
+  public void scale(double sx, double sy) {
+      assert sx > 0.0 : "Scale X is zero";
+      assert sy > 0.0 : "Scale Y is zero";
+      scale0(sx, sy);
+
+  }
+  public native void scale0(double sx, double sy) /*-{
         this.@org.timepedia.chronoscope.client.browser.BrowserLayer::ctx.scale(sx, sy);
     }-*/;
 

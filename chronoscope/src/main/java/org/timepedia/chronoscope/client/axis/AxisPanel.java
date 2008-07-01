@@ -168,7 +168,7 @@ public class AxisPanel implements GssElement {
 
     if (position == BOTTOM || position == TOP) {
       layer.scale(layer.getWidth(), layer.getHeight());
-    } else {
+    } else if (panelPosition.area() > 0){
       layer.scale(panelPosition.width, panelPosition.height);
       layer.translate(panelPosition.x, panelPosition.y);
     }
