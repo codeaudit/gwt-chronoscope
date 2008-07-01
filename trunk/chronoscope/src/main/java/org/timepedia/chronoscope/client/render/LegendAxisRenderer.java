@@ -43,17 +43,34 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   private static final String ZSPACE = "\u00A0";
 
   private static final String ZOOM_STRING = ZOOM_COLON + ZSPACE + ZOOM_1D
-  + ZSPACE + ZOOM_5D + ZSPACE + ZOOM_1M + ZSPACE + ZOOM_3M + ZSPACE
-  + ZOOM_6M + ZSPACE + ZOOM_1Y + ZSPACE + ZOOM_5Y + ZSPACE + ZOOM_10Y
-  + ZSPACE + ZOOM_MAX;
+      + ZSPACE + ZOOM_5D + ZSPACE + ZOOM_1M + ZSPACE + ZOOM_3M + ZSPACE
+      + ZOOM_6M + ZSPACE + ZOOM_1Y + ZSPACE + ZOOM_5Y + ZSPACE + ZOOM_10Y
+      + ZSPACE + ZOOM_MAX;
+
+  private static final int SECONDS_IN_DAY = 86400;
+
+  /**
+   * Dictates the X-padding between each legend label.
+   */
+  private static final int LABEL_X_PAD = 28;
+
+  /**
+   * Dictates the Y-padding between the top of the legend and whatever's 
+   * on top of it.
+   */
+  private static final int LEGEND_Y_TOP_PAD = 3;
+
+  /**
+   * Dictates the Y-padding between the bottom of the legend and whatever's 
+   * below it.
+   */
+  private static final int LEGEND_Y_BOTTOM_PAD = 9;
 
   private LegendAxis axis;
 
   private GssProperties axisProperties;
 
   private Bounds bounds;
-
-  private Layer l;
 
   private GssProperties labelProperties;
 
@@ -98,14 +115,15 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
       axis = legendAxis;
 
       axisProperties = plot.getChart().getView().getGssProperties(this, "");
-      labelProperties = plot.getChart().getView()
-      .getGssProperties(new GssElementImpl("label", this), "");
-      textLayerName = axis.getAxisPanel().getPanelName() + axis.getAxisPanel()
-      .getAxisNumber(axis);
+      labelProperties = plot.getChart().getView().getGssProperties(
+          new GssElementImpl("label", this), "");
+      textLayerName = axis.getAxisPanel().getPanelName()
+          + axis.getAxisPanel().getAxisNumber(axis);
     }
   }
 
-  // Warning, Warning, total hack ahead. This will have to do until a retained mode shape layer which sits atop
+  // Warning, Warning, total hack ahead. This will have to do until a retained
+  // mode shape layer which sits atop
   // the Canvas abstraction can provide hit detection
   public boolean click(XYPlot plot, int x, int y) {
     if (legendStringHeight == -1) {
@@ -130,47 +148,47 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
       double bx = bounds.x;
       double be = bounds.x + zoomStringWidth;
-      
+
       if (MathUtil.isBounded(x, bx, be)) {
         bx = bounds.x + zcolon + zspace;
         be = bx + z1d;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400);
+          return zoom(plot, SECONDS_IN_DAY);
         }
         bx += z1d + zspace;
         be = bx + z5d;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 5);
+          return zoom(plot, SECONDS_IN_DAY * 5);
         }
         bx += z5d + zspace;
         be = bx + z1m;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 30);
+          return zoom(plot, SECONDS_IN_DAY * 30);
         }
         bx += z1m + zspace;
         be = bx + z3m;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 30 * 3);
+          return zoom(plot, SECONDS_IN_DAY * 30 * 3);
         }
         bx += z3m + zspace;
         be = bx + z6m;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 30 * 6);
+          return zoom(plot, SECONDS_IN_DAY * 30 * 6);
         }
         bx += z6m + zspace;
         be = bx + z1y;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 365);
+          return zoom(plot, SECONDS_IN_DAY * 365);
         }
         bx += z1y + zspace;
         be = bx + z5y;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 365 * 5);
+          return zoom(plot, SECONDS_IN_DAY * 365 * 5);
         }
         bx += z5y + zspace;
         be = bx + z10y;
         if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, 86400 * 365 * 10);
+          return zoom(plot, SECONDS_IN_DAY * 365 * 10);
         }
         bx += z10y + zspace;
         be = bx + zmax;
@@ -188,23 +206,28 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
   public void drawLegend(XYPlot xyplot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
+
     DefaultXYPlot plot = (DefaultXYPlot) xyplot;
+    View view = plot.getChart().getView();
+    final int labelHeight = getLabelHeight(view, "X");
+
     bounds = new Bounds(axisBounds);
     clearAxis(layer, axisBounds);
     drawZoomLinks(plot, layer, axisBounds);
     double x = axisBounds.x;
-    double y = axisBounds.y + getLabelHeight(plot.getChart().getView(), "X")
-    + 5;
+    double y = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
 
     for (int i = 0; i < plot.getSeriesCount(); i++) {
 
       double width = drawLegendLabel(x, y, plot, layer, i, textLayerName);
-      if (width < 0) {
-        x = axisBounds.x;
-        y += getLabelHeight(plot.getChart().getView(), "X");
-        x += drawLegendLabel(x, y, plot, layer, i, textLayerName);
-      } else {
+      boolean enoughRoomInCurrentRow = (width >= 0);
+
+      if (enoughRoomInCurrentRow) {
         x += width;
+      } else {
+        x = axisBounds.x;
+        y += labelHeight;
+        x += drawLegendLabel(x, y, plot, layer, i, textLayerName);
       }
     }
   }
@@ -218,29 +241,42 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   public int getLabelWidth(View view, String str) {
     return view.getCanvas().getRootLayer().stringWidth(str,
         axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize) + 12;
+        axisProperties.fontSize)
+        + +LABEL_X_PAD;
   }
 
   public Bounds getLegendLabelBounds(DefaultXYPlot plot, Layer layer,
       Bounds axisBounds) {
-    Bounds b = new Bounds();
-    int x = 0;
     View view = plot.getChart().getView();
+    int labelHeight = getLabelHeight(view, "X");
+
+    Bounds b = new Bounds();
+    double x = axisBounds.x;
+    b.height = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
 
     for (int i = 0; i < plot.getSeriesCount(); i++) {
-      String seriesLabel = plot.getSeriesLabel(i);
-      int x2 = getLabelWidth(view, seriesLabel);
-      if (x + x2 < axisBounds.width) {
-        x += x2;
+      int labelWidth = getLabelWidth(view, plot.getSeriesLabel(i));
+      boolean enoughRoomInCurrentRow = (x + labelWidth) < axisBounds.width;
+      if (enoughRoomInCurrentRow) {
+        x += labelWidth;
         b.width = Math.max(b.width, x);
       } else {
-        b.height += getLabelHeight(view, "X");
-        x = 0;
+        b.height += labelHeight;
+        x = axisBounds.x + labelWidth;
       }
     }
+
+    // Issue #41: For now, we add a LEGEND_Y_BOTTOM_PAD that's tall enough to
+    // allow for the possibility of an extra row of legend labels. This is to
+    // account for the case where the user hovers over a dataset point, causing
+    // the corresponding range value to be appended to the legend label, which
+    // in some cases could cause the remaining legend labels to run over into a
+    // new row.
+    b.height += labelHeight + LEGEND_Y_BOTTOM_PAD;
+    
     b.x = 0;
     b.y = 0;
-    b.height += getLabelHeight(view, "X");
+
     return b;
   }
 
@@ -263,14 +299,14 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   private String asDate(double dataX) {
     long ldate = (long) dataX;
     Date d = new Date(ldate);
-    return fmt(d.getMonth() + 1) + "/" + fmt(d.getDate()) + "/" + fmty(
-        d.getYear());
+    return fmt(d.getMonth() + 1) + "/" + fmt(d.getDate()) + "/"
+        + fmty(d.getYear());
   }
 
   private void box(String s, Layer layer, double bx, double be) {
     layer.setFillColor(s);
-//  layer.beginPath();
-//  layer.rect(bx, bounds.y, be-bx, legendStringHeight);
+    // layer.beginPath();
+    // layer.rect(bx, bounds.y, be-bx, legendStringHeight);
     layer.fillRect(bx, bounds.y, be - bx, legendStringHeight);
   }
 
@@ -315,13 +351,15 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     double bx = bounds.x;
     double be = bounds.x + zoomStringWidth;
     layer.setFillColor("#ff0000");
-//  layer.fillRect(bx, bounds.y+legendStringHeight, be-bx, legendStringHeight);
-//  layer.beginPath();
+    // layer.fillRect(bx, bounds.y+legendStringHeight, be-bx,
+    // legendStringHeight);
+    // layer.beginPath();
 
-    //    myrect(layer, bx, bounds.y+legendStringHeight, be-bx, legendStringHeight);
-//  layer.closePath();
-//  layer.setStrokeColor("#000000");
-//  layer.stroke();
+    // myrect(layer, bx, bounds.y+legendStringHeight, be-bx,
+    // legendStringHeight);
+    // layer.closePath();
+    // layer.setStrokeColor("#000000");
+    // layer.stroke();
     box("#FFFF00", layer, bx, bx + zcolon);
 
     bx = bounds.x + zcolon + zspace;
@@ -368,9 +406,12 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
-    if (lastSerNum != -1 & lastSerPer != -1 && seriesNum == lastSerNum) {
-      seriesLabel += " (" + plot.getRangeAxis(seriesNum)
-      .getFormattedLabel(plot.getDataY(lastSerNum, lastSerPer)) + ")";
+    boolean isThisSeriesHovered = lastSerNum != -1 & lastSerPer != -1
+        && seriesNum == lastSerNum;
+    if (isThisSeriesHovered) {
+      seriesLabel += " ("
+          + plot.getRangeAxis(seriesNum).getFormattedLabel(
+              plot.getDataY(lastSerNum, lastSerPer)) + ")";
     }
     XYRenderer renderer = plot.getRenderer(seriesNum);
 
@@ -381,14 +422,15 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
       return -1;
     }
 
-    Bounds b = renderer
-    .drawLegendIcon(plot, layer, x, y + height / 2, seriesNum);
+    Bounds b = renderer.drawLegendIcon(plot, layer, x, y + height / 2,
+        seriesNum);
 
     layer.setStrokeColor(labelProperties.color);
     layer.drawText(x + b.width + 2, y, seriesLabel, labelProperties.fontFamily,
         labelProperties.fontWeight, labelProperties.fontSize, layerName,
         Cursor.DEFAULT);
-    return b.width + lWidth + 20;
+
+    return lWidth;
   }
 
   private void drawZoomLabel(Layer layer, double zx, double zy, String label,
@@ -398,8 +440,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
         clickable ? Cursor.CLICKABLE : Cursor.DEFAULT);
   }
 
-  private void drawZoomLinks(DefaultXYPlot plot, Layer layer,
-      Bounds axisBounds) {
+  private void drawZoomLinks(DefaultXYPlot plot, Layer layer, Bounds axisBounds) {
 
     layer.setStrokeColor(labelProperties.color);
 
@@ -456,7 +497,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     if (false && lastSerNum != -1 && lastSerPer != -1) {
       String val = String.valueOf(plot.getDataY(lastSerNum, lastSerPer));
       String status = "X: " + asDate(plot.getDataX(lastSerNum, lastSerPer))
-      + ", Y: " + val.substring(0, Math.min(4, val.length()));
+          + ", Y: " + val.substring(0, Math.min(4, val.length()));
       int width = layer.stringWidth(status, labelProperties.fontFamily,
           labelProperties.fontWeight, labelProperties.fontSize);
 
@@ -465,8 +506,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
           labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     } else {
 
-      String status = asDate(plot.getDomainOrigin()) + " - " + asDate(
-          plot.getDomainOrigin() + plot.getCurrentDomain());
+      String status = asDate(plot.getDomainOrigin()) + " - "
+          + asDate(plot.getDomainOrigin() + plot.getCurrentDomain());
       int width = layer.stringWidth(status, labelProperties.fontFamily,
           labelProperties.fontWeight, labelProperties.fontSize);
 
@@ -474,7 +515,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
           status, labelProperties.fontFamily, labelProperties.fontWeight,
           labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     }
-    //  drawHitDebugRegions(layer, axisBounds);
+    // drawHitDebugRegions(layer, axisBounds);
   }
 
   private String fmt(int num) {
