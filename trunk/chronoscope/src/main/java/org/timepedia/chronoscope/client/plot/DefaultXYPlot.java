@@ -1206,7 +1206,7 @@ public class DefaultXYPlot
       plotBounds.width -= plotBounds.x;
       plotBounds.y += topPanel.getHeight();
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
-        double topHeight = topPanel.getHeight();
+        final double topHeight = topPanel.getHeight();
         double topBottomHeight = domainPanel.getHeight() + topHeight;
         if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
           if (overviewEnabled) {
@@ -1218,6 +1218,7 @@ public class DefaultXYPlot
           if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
             topPanel.remove(legendAxis);
             showLegend = false;
+            plotBounds.y -= topHeight;
           }
           topBottomHeight = domainPanel.getHeight() + topPanel.getHeight();
         }
