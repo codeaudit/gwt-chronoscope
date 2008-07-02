@@ -298,7 +298,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
         axisLabelWidth + 5 : 0;
 
     if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
-      if (axisPanel.getAxisNumber(this) == axisPanel.getAxisCount() - 1) {
+      boolean isLeft = axisPanel.getPosition() == AxisPanel.LEFT;
+      boolean isInner = axisPanel.getAxisNumber(this)
+          == (isLeft ? axisPanel.getAxisCount() - 1 : 0);
+      if (isInner) {
         if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition
             .INSIDE) {
 
