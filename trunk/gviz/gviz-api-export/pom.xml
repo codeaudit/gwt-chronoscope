@@ -61,18 +61,18 @@
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
         <configuration>
-		  <logLevel>ERROR</logLevel> 
+		  <logLevel>${gwt.loglevel}</logLevel> 
           <!-- logLevel>ERROR</logLevel -->
-          <style>OBF</style> 
+          <style>${gwt.outputstyle}</style>
 		  <output>${project.build.directory}/public</output>
           <gwtVersion>${gwtversion}</gwtVersion>
          <runTarget>
 	    <!-- not used -->
-            org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport/index.html
+            org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport${gwt.modulesuffix}/index.html
           </runTarget>
           <compileTargets>
             <compileTarget>
-              org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport
+              org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport${gwt.modulesuffix}
             </compileTarget>
           </compileTargets>
         </configuration>

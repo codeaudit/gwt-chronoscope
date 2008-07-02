@@ -62,17 +62,17 @@
         <!--<version>1.5.3-SNAPSHOT</version>-->
         <configuration>
           <gwtVersion>${gwtversion}</gwtVersion>
-          <logLevel>ERROR</logLevel>
+          <logLevel>${gwt.loglevel}</logLevel>
 	  <output>${project.build.directory}/public</output>
           <runTarget>
-            org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget/index.html
+            org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}/index.html
           </runTarget>
           <compileTargets>
             <compileTarget>
-              org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget
+              org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}
             </compileTarget>
           </compileTargets>
-          <style>OBF</style>
+          <style>${gwt.outputstyle}</style>
         </configuration>
         <executions>
           <execution>
