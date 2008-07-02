@@ -62,7 +62,7 @@
         <!--<version>1.5.3-SNAPSHOT</version>-->
         <configuration>
           <gwtVersion>${gwtversion}</gwtVersion>
-          <logLevel>INFO</logLevel>
+          <logLevel>ERROR</logLevel>
 	  <output>${project.build.directory}/public</output>
           <runTarget>
             org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget/index.html

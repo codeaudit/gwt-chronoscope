@@ -86,7 +86,7 @@ public class GVizGssContext extends MockGssContext {
     public GVizLabelGssProperties(GssElement parentGssElement) {
       this.tickAlign = "above";
       if ("axis".equals(parentGssElement.getType())) {
-        this.visible=false;
+   //     this.visible=false;
       }
     }
   }
@@ -133,7 +133,7 @@ public class GVizGssContext extends MockGssContext {
       this.bgColor = "hover".equals(pseudoElt) ? new Color("rgb(50,0,255)")
           : new Color("rgb(0,0,255)");
       this.color = "focus".equals(pseudoElt) ? new Color("rgb(0,0,0)") : new Color("rgb(255,255,255)");
-      this.lineThickness = 2;
+      this.lineThickness = "focus".equals(pseudoElt) ? 4 : 2;
     }
   }
 
