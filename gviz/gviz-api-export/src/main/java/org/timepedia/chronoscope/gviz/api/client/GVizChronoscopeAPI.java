@@ -12,7 +12,8 @@ import org.timepedia.exporter.client.Exporter;
 public class GVizChronoscopeAPI implements EntryPoint {
 
   public void onModuleLoad() {
-    Chronoscope.setMicroformatsEnabled(true);
+    Chronoscope.setFontBookRendering(true);
+    Chronoscope.setMicroformatsEnabled(false);
     Chronoscope.setErrorReporting(false);
     Chronoscope.getInstance();
     Exporter gvizExporter = GWT.create(ChronoscopeVisualization.class);
