@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
@@ -245,21 +246,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
 
     layer.setStrokeColor(labelProperties.color);
 
-    /*
-    double zx = axisBounds.x;
-    double zy = axisBounds.y;
-
-    computeMetrics(layer, false);
-    drawZoomLabel(layer, zx, zy, ZOOM_COLON, false);
-    zx += zcolon + zspace;
-    
-    int i = 0;
-    for (ZoomInterval zoom : zoomIntervals) {
-      drawZoomLabel(layer, zx, zy, zoom.getName(), true);
-      zx += zoomLinkWidths[i++] + zspace;
-      
-    }
-    
     int serNum = plot.getHoverSeries();
     int serPer = plot.getHoverPoint();
 
@@ -273,10 +259,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
         serPer = -1;
       }
     }
-
     lastSerNum = serNum;
     lastSerPer = serPer;
-     */
 
     // Draw date range
     String status = asDate(plot.getDomainOrigin()) + " - "
