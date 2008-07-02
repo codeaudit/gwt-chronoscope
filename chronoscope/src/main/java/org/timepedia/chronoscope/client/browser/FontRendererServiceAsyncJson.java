@@ -25,12 +25,16 @@ public class FontRendererServiceAsyncJson implements FontRendererServiceAsync {
       String fontSize, String color, float angle, AsyncCallback async) {
     String reqCallBack = "__jsonCallback" + jsonRequestNumber++;
 
-    String queryString = endpoint + "?ff=" + fontFamily + "&fw=" + fontWeight
-        + "&fs=" + fontSize + "&c=" + color + "&a=" + angle + "&json="
-        + reqCallBack;
-    String url = URL.encode(queryString);
+    String queryString = endpoint + "?ff=" + URL.encode(fontFamily) + "&fw=" + fontWeight
+        + "&fs=" + URL.encode(fontSize) + "&c=" + escape(color) + "&a=" + angle + "&json="
+        + URL.encode(reqCallBack);
+    String url = queryString;
     kickoffJsonRequest(url, reqCallBack, async);
   }
+
+  private static native String escape(String color) /*-{
+    return $wnd.escape(color);
+  }-*/;
 
   private void handle(JavaScriptObject jso, AsyncCallback async) {
     RenderedFontMetrics rfm = new RenderedFontMetrics();
