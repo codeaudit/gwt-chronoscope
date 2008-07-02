@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.java2d.canvas;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
@@ -124,9 +125,9 @@ public class CanvasJava2D extends Canvas {
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String textLayer) {
+      String fontWeight, String fontSize, String textLayer, Cursor cursor) {
     rootLayer
-        .drawText(x, y, label, fontFamily, fontWeight, fontSize, textLayer);
+        .drawText(x, y, label, fontFamily, fontWeight, fontSize, textLayer, cursor);
   }
 
   public void endFrame() {

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.java2d.canvas;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -218,7 +219,7 @@ public class LayerJava2D extends AbstractLayer {
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String layer) {
+      String fontWeight, String fontSize, String layer, Cursor cursor) {
     Font font = new Font(fontFamily, Font.PLAIN,
         Integer.parseInt(fontSize.substring(0, fontSize.length() - 2)));
     ctx.setPaint(strokeColor);
