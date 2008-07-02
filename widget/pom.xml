@@ -34,7 +34,7 @@
 		 <webResources>
             <resource>
                <directory>
-				 ${project.build.directory}/public/org.timepedia.chronoscope.widget.ChronoscopeWidget
+				 ${project.build.directory}/public/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}
                </directory>
              </resource>
          </webResources>
@@ -45,18 +45,18 @@
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
         <configuration>
-		  <logLevel>WARN</logLevel> 
+		  <logLevel>${gwt.loglevel}</logLevel> 
           <!-- logLevel>ERROR</logLevel -->
-          <style>PRETTY</style> 
+          <style>${gwt.outputstyle}</style>
           <!-- style>OBF</style -->
 		  <output>${project.build.directory}/public</output>
           <gwtVersion>${gwtversion}</gwtVersion>
           <runTarget>
-             org.timepedia.chronoscope.widget.ChronoscopeWidget/index.html
+             org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/index.html
           </runTarget>
           <compileTargets>
             <compileTarget>
-              org.timepedia.chronoscope.widget.ChronoscopeWidget
+              org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}
             </compileTarget>
           </compileTargets>
         </configuration>
@@ -88,10 +88,10 @@
             <configuration>
               <tasks>
                 <echo message="about to copy" />
-				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget.nocache.js" 
-  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/chronoscope.js" />
-				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/org.timepedia.chronoscope.widget.ChronoscopeWidget.nocache.js" 
-  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget/scope.js" />
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}.nocache.js"
+  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/chronoscope.js" />
+				<copy file="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}.nocache.js" 
+  					tofile="target/public/org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/scope.js" />
               </tasks>
             </configuration>
             <goals>

@@ -26,16 +26,16 @@
         <!--<version>1.5.3-SNAPSHOT</version>-->
         <configuration>
           <gwtVersion>${gwtversion}</gwtVersion>
-          <logLevel>INFO</logLevel>
+          <logLevel>${gwt.loglevel}</logLevel>
           <runTarget>
-            org.timepedia.chronoscopesamples.ChronoscopeSamples/index.html
+            org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}/index.html
           </runTarget>
           <compileTargets>
             <compileTarget>
-              org.timepedia.chronoscopesamples.ChronoscopeSamples
+              org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}
             </compileTarget>
           </compileTargets>
-          <style>OBF</style>
+          <style>${gwt.outputstyle}</style>
         </configuration>
         <executions>
           <execution>
