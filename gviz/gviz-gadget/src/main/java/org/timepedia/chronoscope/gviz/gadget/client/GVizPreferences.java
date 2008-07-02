@@ -12,9 +12,9 @@ public interface GVizPreferences extends UserPreferences {
 
   
 
-  @PreferenceAttributes(display_name = "Publish data to Timepedia.org",
-      default_value = "false", options = PreferenceAttributes.Options.NORMAL)
-  BooleanPreference allowSharing();
+//  @PreferenceAttributes(display_name = "Publish data to Timepedia.org",
+//      default_value = "false", options = PreferenceAttributes.Options.NORMAL)
+//  BooleanPreference allowSharing();
 
   
   
