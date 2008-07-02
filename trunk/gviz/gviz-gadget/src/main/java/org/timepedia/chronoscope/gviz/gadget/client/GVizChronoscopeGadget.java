@@ -34,8 +34,18 @@ import org.timepedia.chronoscope.gviz.api.client.Query;
 /**
  *
  */
-@Gadget.ModulePrefs(title = "Chronoscope", author = "Ray Cromwell",
-    author_email = "ray@timefire.com")
+@Gadget.ModulePrefs(title = "Chronoscope", author = "Timefire.com",
+    author_email = "support+gadget@timefire.com", 
+    author_aboutme="Timefire is a company focused on organizing the world's historical data.",
+    author_link="http://timepedia.org/chronoscope/gviz",
+    author_location="Mountain View, CA",
+    author_quote="Time is the fire in which we burn.",
+    description = "The Chronoscope Annotated Timeseries Gadget is a Google Visualization Gadget capable of rendering very large timeseries, Google Maps style markers, and multiple timeseries on multiple axes.",
+    directory_title="Chronoscope Timeseries Gadget",
+    title_url="http://timepedia.org/chronoscope",
+    screenshot = "http://timepedia.org/chronoscope/docs/gviz/screenshot.png",
+    thumbnail = "http://timepedia.org/chronoscope/docs/gviz/screenshot-120x60.png"
+    )
 public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
     implements NeedsIntrinsics, NeedsSetPrefs, NeedsSetTitle, NeedsIdi,
     NeedsLockedDomain {
@@ -91,6 +101,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
         q.send(new QueryResponseHandler() {
               public void onQueryResponse(QueryResponse response) {
                 try {
+                  setTitle.setTitle(prefs.chartTitle().getValue());
                   DataTable table = response.getDataTable();
                   XYDataset ds[] = DataTableParser.parseDatasets(table, null);
                   final Marker ms[] = DataTableParser.parseMarkers(table, null);
@@ -111,6 +122,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
                   });
                   RootPanel.get().add(cp);
                 } catch (Throwable e) {
+                  setTitle.setTitle("Chronoscope: Error in Data");
                   RootPanel.get().add(new Label(
                       "There was an error parsing the spreadsheet data."));
                 }
