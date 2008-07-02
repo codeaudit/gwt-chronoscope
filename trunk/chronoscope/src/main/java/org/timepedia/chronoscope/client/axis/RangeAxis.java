@@ -236,10 +236,14 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public String getLabel() {
-    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
-    return super.getLabel() + getLabelSuffix(getRange());
+//    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
+//    return super.getLabel() + getLabelSuffix(getRange());
+    String axisId = getAxisId();
+    if(axisId == null || "".equals(axisId)) 
+      axisId = super.getLabel() + getLabelSuffix(getRange());
+    return axisId;
   }
-
+  
   public String getLabelSuffix(double range) {
     if (isForceScientificNotation() || (isAllowScientificNotation()
         && isScientificNotationOn())) {

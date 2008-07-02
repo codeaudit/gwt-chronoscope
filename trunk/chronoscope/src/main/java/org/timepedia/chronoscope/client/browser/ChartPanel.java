@@ -348,11 +348,9 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
         if (DOM.eventGetButton(evt) == Event.BUTTON_RIGHT) {
 
           view.fireContextMenuEvent(x, y);
-        } else if (chart.setFocus(x, y)) {
+        } else if (chart.click(x, y)) {
           DOM.eventCancelBubble(evt, true);
           DOM.eventPreventDefault(evt);
-        } else if (chart.click(x, y)) {
-
         } else {
           super.onBrowserEvent(evt);
         }
