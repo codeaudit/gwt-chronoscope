@@ -214,7 +214,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return axisNum;
   }
 
-  public String getDummyLabel() {
+  private String getDummyLabel() {
     return "0" + (maxDigits == 1 ? ""
         : "." + "000000000".substring(0, maxDigits - 1));
   }
