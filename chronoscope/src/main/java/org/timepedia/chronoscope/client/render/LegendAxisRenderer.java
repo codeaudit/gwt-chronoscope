@@ -11,6 +11,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.Date;
@@ -20,34 +21,16 @@ import java.util.Date;
  */
 public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
-  private static final String ZOOM_10Y = "10y";
-
-  private static final String ZOOM_1D = "1d";
-
-  private static final String ZOOM_1M = "1m";
-
-  private static final String ZOOM_1Y = "1y";
-
-  private static final String ZOOM_3M = "3m";
-
-  private static final String ZOOM_5D = "5d";
-
-  private static final String ZOOM_5Y = "5y";
-
-  private static final String ZOOM_6M = "6m";
-
   private static final String ZOOM_COLON = "Zoom:";
-
-  private static final String ZOOM_MAX = "max";
 
   private static final String ZSPACE = "\u00A0";
 
-  private static final String ZOOM_STRING = ZOOM_COLON + ZSPACE + ZOOM_1D
-      + ZSPACE + ZOOM_5D + ZSPACE + ZOOM_1M + ZSPACE + ZOOM_3M + ZSPACE
-      + ZOOM_6M + ZSPACE + ZOOM_1Y + ZSPACE + ZOOM_5Y + ZSPACE + ZOOM_10Y
-      + ZSPACE + ZOOM_MAX;
 
-  private static final int SECONDS_IN_DAY = 86400;
+  private static final double DAY_INTERVAL = 86400 * 1000;
+  
+  private static final double MONTH_INTERVAL = DAY_INTERVAL * 30;
+
+  private static final double YEAR_INTERVAL = MONTH_INTERVAL * 12;
 
   /**
    * Dictates the X-padding between each legend label.
@@ -82,32 +65,46 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
   private String textLayerName;
 
-  private int z10y;
-
-  private int z1d;
-
-  private int z1m;
-
-  private int z1y;
-
-  private int z3m;
-
-  private int z5d;
-
-  private int z5y;
-
-  private int z6m;
-
+  // Temporary array of the zoom link label widths.  In the middle
+  // of working on "zoom link crowding" issue (#44)
+  private int[] zoomLinkWidths;
+  
+  private String fullZoomString;
+  
   private int zcolon;
-
-  private int zmax;
 
   private int zoomStringWidth = -1;
 
   private int zspace;
 
+  private ZoomIntervals zoomIntervals;
+  
   public LegendAxisRenderer(LegendAxis axis) {
+    ArgChecker.isNotNull(axis, "axis"); 
     this.axis = axis;
+    
+    // Configure the zoom intervals
+    zoomIntervals = new ZoomIntervals();
+    zoomIntervals.add(new ZoomInterval("1d", DAY_INTERVAL));
+    zoomIntervals.add(new ZoomInterval("5d", DAY_INTERVAL * 5));
+    zoomIntervals.add(new ZoomInterval("1m", MONTH_INTERVAL));
+    zoomIntervals.add(new ZoomInterval("3m", MONTH_INTERVAL * 3));
+    zoomIntervals.add(new ZoomInterval("6m", MONTH_INTERVAL * 6));
+    zoomIntervals.add(new ZoomInterval("1y", YEAR_INTERVAL));
+    zoomIntervals.add(new ZoomInterval("5y", YEAR_INTERVAL * 5));
+    zoomIntervals.add(new ZoomInterval("10y", YEAR_INTERVAL * 10));
+    zoomIntervals.add(new ZoomInterval("max", Double.MAX_VALUE));
+    
+    // this array is temporary!  Will go away when zoom refactoring is complete.
+    this.zoomLinkWidths = new int[9]; 
+    
+    StringBuilder str = new StringBuilder();
+    str.append(ZOOM_COLON);
+    for (ZoomInterval zoom : zoomIntervals) {
+      str.append(ZSPACE);
+      str.append(zoom.getName());
+    }
+    this.fullZoomString = str.toString();
   }
 
   public void begin(XYPlot plot, LegendAxis legendAxis) {
@@ -128,73 +125,23 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   public boolean click(XYPlot plot, int x, int y) {
     if (legendStringHeight == -1) {
       Layer layer = plot.getChart().getView().getCanvas().getRootLayer();
-      legendStringHeight = layer.stringHeight(ZOOM_STRING,
-          labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize);
-      zoomStringWidth = zw(ZOOM_STRING, layer);
-      zcolon = zw(ZOOM_COLON, layer);
-      z1d = zw(ZOOM_1D, layer);
-      z5d = zw(ZOOM_5D, layer);
-      z1m = zw(ZOOM_1M, layer);
-      z3m = zw(ZOOM_3M, layer);
-      z6m = zw(ZOOM_6M, layer);
-      z1y = zw(ZOOM_1Y, layer);
-      z5y = zw(ZOOM_5Y, layer);
-      z10y = zw(ZOOM_10Y, layer);
-      zmax = zw(ZOOM_MAX, layer);
-      zspace = zw(ZSPACE, layer);
+      computeMetrics(layer, true);
     }
+    
     if (MathUtil.isBounded(y, bounds.y, bounds.y + legendStringHeight)) {
-
       double bx = bounds.x;
       double be = bounds.x + zoomStringWidth;
 
       if (MathUtil.isBounded(x, bx, be)) {
+        // Move cursor to the 1st zoom link
         bx = bounds.x + zcolon + zspace;
-        be = bx + z1d;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY);
-        }
-        bx += z1d + zspace;
-        be = bx + z5d;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 5);
-        }
-        bx += z5d + zspace;
-        be = bx + z1m;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 30);
-        }
-        bx += z1m + zspace;
-        be = bx + z3m;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 30 * 3);
-        }
-        bx += z3m + zspace;
-        be = bx + z6m;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 30 * 6);
-        }
-        bx += z6m + zspace;
-        be = bx + z1y;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 365);
-        }
-        bx += z1y + zspace;
-        be = bx + z5y;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 365 * 5);
-        }
-        bx += z5y + zspace;
-        be = bx + z10y;
-        if (MathUtil.isBounded(x, bx, be)) {
-          return zoom(plot, SECONDS_IN_DAY * 365 * 10);
-        }
-        bx += z10y + zspace;
-        be = bx + zmax;
-        if (MathUtil.isBounded(x, bx, be)) {
-          plot.maxZoomOut();
-          return true;
+        int i = 0;
+        for (ZoomInterval zoom : zoomIntervals) {
+          be = bx + this.zoomLinkWidths[i++];
+          if (MathUtil.isBounded(x, bx, be)) {
+            return zoom(plot, zoom.getInterval());
+          }
+          bx = be + zspace;
         }
         return false;
       }
@@ -323,86 +270,63 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     layer.clearTextLayer(textLayerName);
   }
 
-  private void computeMetrics(Layer layer) {
-    if (legendStringHeight == -1) {
-
-      legendStringHeight = layer.stringHeight(ZOOM_STRING,
+  private void computeMetrics(Layer layer, boolean force) {
+    boolean doCompute = (force || legendStringHeight == -1);
+    
+    if (doCompute) {
+      legendStringHeight = layer.stringHeight(fullZoomString,
           labelProperties.fontFamily, labelProperties.fontWeight,
           labelProperties.fontSize);
-      zoomStringWidth = zw(ZOOM_STRING, layer);
-      zcolon = zw(ZOOM_COLON, layer);
-      z1d = zw(ZOOM_1D, layer);
-      z5d = zw(ZOOM_5D, layer);
-      z1m = zw(ZOOM_1M, layer);
-      z3m = zw(ZOOM_3M, layer);
-      z6m = zw(ZOOM_6M, layer);
-      z1y = zw(ZOOM_1Y, layer);
-      z5y = zw(ZOOM_5Y, layer);
-      z10y = zw(ZOOM_10Y, layer);
-      zmax = zw(ZOOM_MAX, layer);
-      zspace = zw(ZSPACE, layer) + 1;
+      
+      zoomStringWidth = labelWidth(fullZoomString, layer);
+      zcolon = labelWidth(ZOOM_COLON, layer);
+      zspace = labelWidth(ZSPACE, layer) + 1;
+  
+      int i = 0;
+      for (ZoomInterval zoom : this.zoomIntervals) {
+        this.zoomLinkWidths[i++] = labelWidth(zoom.getName(), layer);
+      }
     }
   }
 
-  private void drawHitDebugRegions(Layer layer, Bounds axisBounds) {
-    layer.save();
-    computeMetrics(layer);
-
-    double bx = bounds.x;
-    double be = bounds.x + zoomStringWidth;
-    layer.setFillColor("#ff0000");
-    // layer.fillRect(bx, bounds.y+legendStringHeight, be-bx,
-    // legendStringHeight);
-    // layer.beginPath();
-
-    // myrect(layer, bx, bounds.y+legendStringHeight, be-bx,
-    // legendStringHeight);
-    // layer.closePath();
-    // layer.setStrokeColor("#000000");
-    // layer.stroke();
-    box("#FFFF00", layer, bx, bx + zcolon);
-
-    bx = bounds.x + zcolon + zspace;
-    be = bx + z1d;
-    box("#00ffff", layer, bx, be);
-    layer.setTransparency(0.2f);
-
-    bx += z1d + zspace;
-    be = bx + z5d;
-    box("#00ff00", layer, bx, be);
-
-    bx += z5d + zspace;
-    be = bx + z1m;
-
-    box("#00ff00", layer, bx, be);
-
-    bx += z1m + zspace;
-    be = bx + z3m;
-
-    box("#00ff00", layer, bx, be);
-
-    bx += z3m + zspace;
-    be = bx + z6m;
-    box("#00ff00", layer, bx, be);
-
-    bx += z6m + zspace;
-    be = bx + z1y;
-    box("#00ff00", layer, bx, be);
-
-    bx += z1y + zspace;
-    be = bx + z5y;
-    box("#00ff00", layer, bx, be);
-
-    bx += z5y + zspace;
-    be = bx + z10y;
-    box("#00ff00", layer, bx, be);
-
-    bx += z10y + zspace;
-    be = bx + zmax;
-    box("#00ff00", layer, bx, be);
-    layer.restore();
-  }
-
+  /*
+   * private void drawHitDebugRegions(Layer layer, Bounds axisBounds) {
+   * layer.save(); computeMetrics(layer);
+   * 
+   * double bx = bounds.x; double be = bounds.x + zoomStringWidth;
+   * layer.setFillColor("#ff0000"); // layer.fillRect(bx,
+   * bounds.y+legendStringHeight, be-bx, // legendStringHeight); //
+   * layer.beginPath();
+   *  // myrect(layer, bx, bounds.y+legendStringHeight, be-bx, //
+   * legendStringHeight); // layer.closePath(); //
+   * layer.setStrokeColor("#000000"); // layer.stroke(); box("#FFFF00", layer,
+   * bx, bx + zcolon);
+   * 
+   * bx = bounds.x + zcolon + zspace; be = bx + z1d; box("#00ffff", layer, bx,
+   * be); layer.setTransparency(0.2f);
+   * 
+   * bx += z1d + zspace; be = bx + z5d; box("#00ff00", layer, bx, be);
+   * 
+   * bx += z5d + zspace; be = bx + z1m;
+   * 
+   * box("#00ff00", layer, bx, be);
+   * 
+   * bx += z1m + zspace; be = bx + z3m;
+   * 
+   * box("#00ff00", layer, bx, be);
+   * 
+   * bx += z3m + zspace; be = bx + z6m; box("#00ff00", layer, bx, be);
+   * 
+   * bx += z6m + zspace; be = bx + z1y; box("#00ff00", layer, bx, be);
+   * 
+   * bx += z1y + zspace; be = bx + z5y; box("#00ff00", layer, bx, be);
+   * 
+   * bx += z5y + zspace; be = bx + z10y; box("#00ff00", layer, bx, be);
+   * 
+   * bx += z10y + zspace; be = bx + zmax; box("#00ff00", layer, bx, be);
+   * layer.restore(); }
+   */
+  
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
@@ -447,36 +371,17 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     double zx = axisBounds.x;
     double zy = axisBounds.y;
 
-    computeMetrics(layer);
+    computeMetrics(layer, false);
     drawZoomLabel(layer, zx, zy, ZOOM_COLON, false);
-
     zx += zcolon + zspace;
-    drawZoomLabel(layer, zx, zy, ZOOM_1D, true);
-    zx += z1d + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_5D, true);
-    zx += z5d + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_1M, true);
-    zx += z1m + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_3M, true);
-    zx += z3m + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_6M, true);
-    zx += z6m + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_1Y, true);
-    zx += z1y + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_5Y, true);
-    zx += z5y + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_10Y, true);
-    zx += z10y + zspace;
-
-    drawZoomLabel(layer, zx, zy, ZOOM_MAX, true);
-
+    
+    int i = 0;
+    for (ZoomInterval zoom : zoomIntervals) {
+      drawZoomLabel(layer, zx, zy, zoom.getName(), true);
+      zx += zoomLinkWidths[i++] + zspace;
+      
+    }
+    
     int serNum = plot.getHoverSeries();
     int serPer = plot.getHoverPoint();
 
@@ -525,7 +430,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
   private String fmty(int year) {
     return "" + (year + 1900);
   }
-
+  
+  /*
   private void myrect(Layer layer, double bx, double v, double v1,
       int legendStringHeight) {
     layer.moveTo(bx, v);
@@ -534,15 +440,21 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     layer.lineTo(bx, v + legendStringHeight);
     layer.lineTo(bx, v);
   }
-
-  private boolean zoom(XYPlot plot, int secs) {
-    double cd = (double) secs * 1000;
-    double dc = plot.getDomainOrigin() + plot.getCurrentDomain() / 2;
-    plot.animateTo(dc - cd / 2, cd, XYPlotListener.ZOOMED, null);
+  */
+  
+  private boolean zoom(XYPlot plot, double intervalInMillis) {
+    if (intervalInMillis == Double.MAX_VALUE) {
+      plot.maxZoomOut();
+    }
+    else {
+      double cd = intervalInMillis;
+      double dc = plot.getDomainOrigin() + plot.getCurrentDomain() / 2;
+      plot.animateTo(dc - cd / 2, cd, XYPlotListener.ZOOMED, null);
+    }
     return true;
   }
 
-  private int zw(String zs, Layer layer) {
+  private int labelWidth(String zs, Layer layer) {
     return layer.stringWidth(zs, labelProperties.fontFamily,
         labelProperties.fontWeight, labelProperties.fontSize);
   }
