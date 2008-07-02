@@ -19,6 +19,7 @@ import com.google.gwt.libideas.client.StyleInjector;
 import com.google.gwt.libideas.resources.client.CssResource;
 import com.google.gwt.libideas.resources.client.DataResource;
 import com.google.gwt.libideas.resources.client.ImmutableResourceBundle;
+import com.google.gwt.libideas.resources.client.ImageResource;
 
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import static org.timepedia.chronoscope.client.browser.theme.Theme.*;
@@ -42,6 +43,8 @@ public class ThemeStyleInjector  {
     
     @Resource("chrome.css")
     CssResource css();
+    
+   
    
   }
 

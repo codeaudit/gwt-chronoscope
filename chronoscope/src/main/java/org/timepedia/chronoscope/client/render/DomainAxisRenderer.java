@@ -751,17 +751,22 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
   private void clearAxis(Layer layer, Bounds bounds) {
 
     layer.save();
+   
     layer.setFillColor(axisProperties.bgColor);
-    layer.setStrokeColor("rgba(0,0,0,0)");
-    layer.setShadowBlur(0);
-    layer.setShadowOffsetX(0);
-    layer.setShadowOffsetY(0);
-    layer.translate(bounds.x, bounds.y);
-    layer.scale(bounds.width, bounds.height);
-    layer.beginPath();
-    layer.rect(0, 0, 1, 1);
-    layer.stroke();
-    layer.fill();
+    layer.fillRect(bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2);
+//    layer.setStrokeColor("rgba(0,0,0,0)");
+//    layer.setLineWidth(0.0);
+//    layer.setShadowColor("rgba(0,0,0,0)");
+//    layer.setShadowBlur(0);
+//    layer.setShadowOffsetX(0);
+//    layer.setShadowOffsetY(0);
+//    layer.translate(bounds.x-1, bounds.y-1);
+//    layer.scale(bounds.width+2, bounds.height+2);
+//    layer.beginPath();
+//    layer.rect(0, 0, 1, 1);
+//    layer.closePath();
+  //  layer.stroke();
+//    layer.fill();
     if (!boundsSet) {
       layer.setTextLayerBounds(textLayerName, bounds);
       boundsSet = true;

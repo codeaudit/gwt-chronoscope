@@ -180,7 +180,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       dir = 1;
 
       if (isInnerMost) {
-        dir = isLeft ? 1 : -bounds.width - labelWidth - 1;
+        dir = isLeft ? 1 : -bounds.width - labelWidth - 3;
       } else {
         dir = isLeft ? -axis.getMaxLabelWidth() + 1
             : -labelWidth-axis.getAxisLabelWidth()-10;

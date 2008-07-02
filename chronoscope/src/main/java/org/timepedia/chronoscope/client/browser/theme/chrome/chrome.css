@@ -88,6 +88,8 @@ iframe {
   height: 5px;
   zoom: 1;
 }
+
+@if !user.agent ie6 {
 html>body .gwt-DecoratorPanel .topLeft {
   background: CORNER no-repeat 0px 0px;
 }
@@ -100,6 +102,14 @@ html>body .gwt-DecoratorPanel .bottomLeft {
 html>body .gwt-DecoratorPanel .bottomRight {
   background: CORNER no-repeat -5px -5px;
 }
+}
+
+@if user.agent ie6 {
+.chrono-infoWindow, .gwt-DecoratedPopupPanel {
+border: 2px solid gray;
+background-color: white;
+}
+
 * html .gwt-DecoratorPanel .topLeftInner {
   width: 5px;
   height: 5px;
@@ -129,6 +139,9 @@ html>body .gwt-DecoratorPanel .bottomRight {
   overflow: hidden;
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/corner.png',sizingMethod='crop');
 }
+}
+
+
 
 .gwt-DialogBox .Caption {
   background: #ebebeb HBORDER repeat-x 0px -2003px;
@@ -188,6 +201,7 @@ html>body .gwt-DialogBox .dialogBottomLeft {
 html>body .gwt-DialogBox .dialogBottomRight {
   background: CORNER no-repeat -5px -15px;
 }
+
 * html .gwt-DialogBox .dialogTopLeft {
   width: 5px;
   overflow: hidden;
@@ -436,7 +450,6 @@ html>body .gwt-DecoratedPopupPanel .popupBottomCenter {
   background: HBORDER repeat-x 0px -4px;
 }
 * html .gwt-DecoratedPopupPanel .popupBottomCenter {
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/ie6/hborder_blue_shadow.png',sizingMethod='scale');
 }
 .gwt-DecoratedPopupPanel .popupMiddleLeft {
   background: VBORDER repeat-y;
@@ -445,7 +458,6 @@ html>body .gwt-DecoratedPopupPanel .popupMiddleRight {
   background: VBORDER repeat-y -4px 0px;
 }
 * html .gwt-DecoratedPopupPanel .popupMiddleRight {
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/ie6/vborder_blue_shadow.png',sizingMethod='scale');
 }
 .gwt-DecoratedPopupPanel .popupTopLeftInner {
   width: 5px;
@@ -484,7 +496,6 @@ html>body .gwt-DecoratedPopupPanel .popupBottomRight {
   height: 15px;
   margin-top: -10px;
   overflow: hidden;
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/corner.png',sizingMethod='crop');
 }
 * html .gwt-DecoratedPopupPanel .popupTopRightInner {
   width: 13px;
@@ -492,14 +503,12 @@ html>body .gwt-DecoratedPopupPanel .popupBottomRight {
   margin-left: -5px;
   margin-top: -10px;
   overflow: hidden;
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/corner.png',sizingMethod='crop');
 }
 * html .gwt-DecoratedPopupPanel .popupBottomLeftInner {
   width: 5px;
   height: 23px;
   margin-top: -15px;
   overflow: hidden;
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/corner.png',sizingMethod='crop');
 }
 * html .gwt-DecoratedPopupPanel .popupBottomRightInner {
   width: 13px;
@@ -507,7 +516,6 @@ html>body .gwt-DecoratedPopupPanel .popupBottomRight {
   margin-left: -5px;
   margin-top: -15px;
   overflow: hidden;
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwt/chrome/images/corner.png',sizingMethod='crop');
 }
 
 .gwt-PushButton-up,

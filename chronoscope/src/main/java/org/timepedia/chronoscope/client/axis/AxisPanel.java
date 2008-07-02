@@ -165,7 +165,7 @@ public class AxisPanel implements GssElement {
   private void clearPanel(Layer layer, Bounds panelPosition) {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
-
+    layer.setStrokeColor("#ffffff");
     if (position == BOTTOM || position == TOP) {
       layer.scale(layer.getWidth(), layer.getHeight());
     } else if (panelPosition.area() > 0){
