@@ -79,20 +79,20 @@ public class ZoomPanel {
     return hitDetected;
   }
 
-  public void draw(Layer layer) {
+  /**
+   * Draws this panel at the specified (x,y) screen coordinate.
+   */
+  public void draw(double x, double y, Layer layer) {
     layer.setStrokeColor(gssProperties.color);
 
-    double zx = bounds.x;
-    double zy = bounds.y;
-
     computeMetrics(layer);
-    drawZoomLink(layer, zx, zy, ZOOM_PREFIX, false);
-    zx += zoomPrefixWidth + spaceWidth;
+    drawZoomLink(layer, x, y, ZOOM_PREFIX, false);
+    x += zoomPrefixWidth + spaceWidth;
 
     int i = 0;
     for (ZoomInterval zoom : zooms) {
-      drawZoomLink(layer, zx, zy, zoom.getName(), true);
-      zx += zoomLinkWidths[i++] + spaceWidth;
+      drawZoomLink(layer, x, y, zoom.getName(), true);
+      x += zoomLinkWidths[i++] + spaceWidth;
     }
   }
 

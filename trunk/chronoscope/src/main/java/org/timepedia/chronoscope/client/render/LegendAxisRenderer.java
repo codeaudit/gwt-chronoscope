@@ -51,9 +51,9 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
 
   private GssProperties labelProperties;
 
-  private int lastSerNum;
+  private int prevHoveredDatasetIdx;
 
-  private int lastSerPer;
+  private int prevHoveredPointIdx;
 
   private String textLayerName;
 
@@ -79,10 +79,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     View view = plot.getChart().getView();
     final int labelHeight = getLabelHeight(view, "X");
 
-    bounds = new Bounds(axisBounds);
+    copyState(axisBounds, bounds);
+    
     clearAxis(layer, axisBounds);
-    zoomPanel.setBounds(axisBounds);
-    zoomPanel.draw(layer);
+    zoomPanel.draw(axisBounds.x, axisBounds.y, layer);
     drawDateRange(plot, layer, axisBounds);
     double x = axisBounds.x;
     double y = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
@@ -177,9 +177,9 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
       zoomPanel.setTextLayerName(textLayerName);
       zoomPanel.addListener(this);
       zoomPanel.setZoomIntervals(createDefaultZoomIntervals());
-      //zoomPanel.setBounds(bounds); // this.bounds not computed yet?
       
       this.plot = plot;
+      this.bounds = new Bounds();
     }
   }
 
@@ -215,12 +215,12 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
-    boolean isThisSeriesHovered = lastSerNum != -1 & lastSerPer != -1
-        && seriesNum == lastSerNum;
+    boolean isThisSeriesHovered = prevHoveredDatasetIdx != -1 & prevHoveredPointIdx != -1
+        && seriesNum == prevHoveredDatasetIdx;
     if (isThisSeriesHovered) {
       seriesLabel += " ("
           + plot.getRangeAxis(seriesNum).getFormattedLabel(
-              plot.getDataY(lastSerNum, lastSerPer)) + ")";
+              plot.getDataY(prevHoveredDatasetIdx, prevHoveredPointIdx)) + ")";
     }
     XYRenderer renderer = plot.getRenderer(seriesNum);
 
@@ -246,21 +246,21 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
 
     layer.setStrokeColor(labelProperties.color);
 
-    int serNum = plot.getHoverSeries();
-    int serPer = plot.getHoverPoint();
+    int hoveredDatasetIdx = plot.getHoverSeries();
+    int hoveredPointIdx = plot.getHoverPoint();
 
-    if (serPer == -1) {
+    if (hoveredPointIdx == -1) {
       Focus focus = plot.getFocus();
       if (focus != null) {
-        serNum = focus.getDatasetIndex();
-        serPer = focus.getPointIndex();
+        hoveredDatasetIdx = focus.getDatasetIndex();
+        hoveredPointIdx = focus.getPointIndex();
       } else {
-        serNum = -1;
-        serPer = -1;
+        hoveredDatasetIdx = -1;
+        hoveredPointIdx = -1;
       }
     }
-    lastSerNum = serNum;
-    lastSerPer = serPer;
+    prevHoveredDatasetIdx = hoveredDatasetIdx;
+    prevHoveredPointIdx = hoveredPointIdx;
 
     // Draw date range
     String status = asDate(plot.getDomainOrigin()) + " - "
@@ -271,29 +271,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     layer.drawText(axisBounds.x + axisBounds.width - width - 5, axisBounds.y,
         status, labelProperties.fontFamily, labelProperties.fontWeight,
         labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
-    /*
-    if (false && lastSerNum != -1 && lastSerPer != -1) {
-      String val = String.valueOf(plot.getDataY(lastSerNum, lastSerPer));
-      String status = "X: " + asDate(plot.getDataX(lastSerNum, lastSerPer))
-          + ", Y: " + val.substring(0, Math.min(4, val.length()));
-      int width = layer.stringWidth(status, labelProperties.fontFamily,
-          labelProperties.fontWeight, labelProperties.fontSize);
 
-      layer.drawText(axisBounds.x + axisBounds.width - width, axisBounds.y,
-          status, labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
-    } else {
-
-      String status = asDate(plot.getDomainOrigin()) + " - "
-          + asDate(plot.getDomainOrigin() + plot.getCurrentDomain());
-      int width = layer.stringWidth(status, labelProperties.fontFamily,
-          labelProperties.fontWeight, labelProperties.fontSize);
-
-      layer.drawText(axisBounds.x + axisBounds.width - width - 5, axisBounds.y,
-          status, labelProperties.fontFamily, labelProperties.fontWeight,
-          labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
-    }
-     */
     // drawHitDebugRegions(layer, axisBounds);
   }
 
@@ -305,6 +283,13 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     return "" + (year + 1900);
   }
 
+  private static void copyState(Bounds source, Bounds target) {
+    target.x = source.x;
+    target.y = source.y;
+    target.height = source.height;
+    target.width = source.width;
+  }
+  
   private static ZoomIntervals createDefaultZoomIntervals() {
     ZoomIntervals zooms = new ZoomIntervals();
     zooms.add(new ZoomInterval("1d", DAY_INTERVAL));
