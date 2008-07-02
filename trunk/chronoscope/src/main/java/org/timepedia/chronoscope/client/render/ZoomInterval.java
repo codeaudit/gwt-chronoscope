@@ -9,11 +9,8 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * Represents one of the zoom intervals (1d, 1m, 1y, 10y, etc.) that appear in
  * the legend axis.
  * <p>
- * Two {@link ZoomInterval} objects are considered equal if their names are
- * identical, regardless of their other properties.
- * <p>
  * The natural ordering of {@link ZoomInterval} objects is ascending order based
- * on their {@link #getInterval() interval} values.
+ * first on their intervals, and second on their names.
  * 
  * @author chad takahashi &lt;chad@timepedia.org&gt;
  */
@@ -36,8 +33,8 @@ public class ZoomInterval implements Comparable<ZoomInterval> {
     } else if (this.interval > o.interval) {
       return 1;
     }
-
-    return 0;
+    
+    return this.name.compareTo(o.name);
   }
 
   public boolean equals(Object obj) {
@@ -48,7 +45,7 @@ public class ZoomInterval implements Comparable<ZoomInterval> {
     }
 
     ZoomInterval other = (ZoomInterval) obj;
-    return this.name.equals(other.name);
+    return this.name.equals(other.name) && this.interval == other.interval;
   }
 
   /**
