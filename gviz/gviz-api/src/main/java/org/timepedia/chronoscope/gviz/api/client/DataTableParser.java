@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  *
@@ -101,6 +102,7 @@ public class DataTableParser {
 
             
             DataPair pair = table2datapair(table, startRow, i);
+            sortAscendingDate(pair);
             ds[numCols++] = new ArrayXYDataset("col" + i, pair.domain, pair.range, label,
                     units);
             if (dataset2Column != null) dataset2Column.put(numCols - 1, i);
@@ -108,6 +110,31 @@ public class DataTableParser {
 
         return ds;
     }
+
+  private static void sortAscendingDate(DataPair pair) {
+    class Pair implements Comparable<Double> {
+      public double x, y;
+
+      public Pair(double x, double y) {
+        this.x = x;
+        this.y = y;
+      }
+
+      public int compareTo(Double o) {
+        return (int) (this.x - o.doubleValue());
+      }
+    }
+    
+    Pair[] p = new Pair[pair.domain.length];
+    for(int i=0; i<p.length; i++) 
+      p[i]=new Pair(pair.domain[i], pair.range[i]);
+    Arrays.sort(p);
+    for(int i=0; i<p.length; i++) {
+      pair.domain[i]=p[i].x;
+      pair.range[i]=p[i].y;
+    }
+   
+  }
 
     public static DataPair table2datapair(DataTable table, int startRow, int col) {
         DataPair pair=new DataPair();

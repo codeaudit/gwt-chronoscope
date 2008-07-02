@@ -64,6 +64,9 @@ public interface GVizPreferences extends UserPreferences {
     
   }
 
+  @PreferenceAttributes(display_name="Chart Title", default_value="Chronoscope")
+  StringPreference chartTitle();
+  
   @PreferenceAttributes(display_name = "Refresh Interval", default_value="ZERO", options = PreferenceAttributes.Options.NORMAL)
   EnumPreference<RefreshInterval> _table_query_refresh_interval();
 
