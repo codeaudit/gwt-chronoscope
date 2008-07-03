@@ -3,9 +3,9 @@
 <script src="http://www.google.com/jsapi"></script>
 <script src="gvizapi.nocache.js"></script>
 <script>
-google.load("visualization", "1");
+google.load("visualization", "1", {packages:["table"]});
 google.setOnLoadCallback(drawVisualization);
-var c;
+var c, table;
 function drawVisualization() {
 c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
 
@@ -35,19 +35,30 @@ c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
         data.setValue(5, 0, new Date(2008, 1 ,6));
         data.setValue(5, 1, 33322);
         data.setValue(5, 2, 39463);
-        google.visualization.events.addListener(data, 'select', function() {
+        google.visualization.events.addListener(c, 'select', function(f) {
           var sel = c.getSelection();
-          alert("someone selected row="+sel[0].row+", col="+sel[0].col);
+          table.setSelection(sel);
+
         })
+
         
         c.draw(data, { legend: "false", overview: "false"});
+       table = new google.visualization.Table(document.getElementById('table_div'));
+       table.draw(data, {showRowNumber: true});
+        google.visualization.events.addListener(table, 'select', function() {
+          var sel = table.getSelection();
+          c.setSelection([{row: sel[0].row, col: 1}]);
+        })
+
 }
+
+
 </script>
 
 </head>
 <body>
 <div id="foo" style="width: 600px; height: 400px"></div>
-
+<div id="table_div"></div>
 <input type="submit" onClick="c.setSelection([{col: 2, row: 3}])" value="Click Me">
 </body>
 </html>
