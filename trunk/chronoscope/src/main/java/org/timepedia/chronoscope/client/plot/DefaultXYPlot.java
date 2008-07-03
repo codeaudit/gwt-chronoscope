@@ -549,7 +549,10 @@ public class DefaultXYPlot
   public void init(View view) {
     this.view = view;
     this.focus = null;
+    
+    initViewIndependent();
 
+    
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
@@ -582,14 +585,6 @@ public class DefaultXYPlot
     }
 
     computePlotBounds();
-    initDefaultRenderers();
-    initDatasetLevels();
-
-
-    computeDomainMinMax();
-    computeVisibleDomainStartEnd();
-    initializeDomain();
-
     clearDrawCaches();
 
     lastDomainOrigin = domainOrigin;
@@ -599,6 +594,20 @@ public class DefaultXYPlot
     background = new GssBackground(this);
       
     view.canvasSetupDone();
+  }
+
+  /**
+   * Methods which do not depend on any visual state of the chart being
+   * initialized first. Can be moved early in Plot initialization.
+   * Put stuff here that doesn't depend on the axes or layers being
+   * initialized.
+   */
+  private void initViewIndependent() {
+    computeDomainMinMax();
+    computeVisibleDomainStartEnd();
+    initializeDomain();
+    initDefaultRenderers();
+    initDatasetLevels();
   }
 
   public boolean isAnimating() {
