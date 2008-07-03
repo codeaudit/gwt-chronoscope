@@ -17,14 +17,49 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 public class ZoomInterval implements Comparable<ZoomInterval> {
   private double interval;
   private String name;
-
+  private boolean isFilterExempt = false; 
+  
   /**
-   * Constructs a ZoomInterval having the specified label name and time interval.
+   * Constructs a ZoomInterval having the specified label name and time interval,
+   * and a default {@link #isFilterExempt()} value of <tt>false</tt>.
    */
   public ZoomInterval(String name, double interval) {
     ArgChecker.isNotNull(name, "name");
     this.name = name;
     this.interval = ArgChecker.isGT(interval, 0, "interval");
+  }
+  
+  public ZoomInterval copy() {
+    ZoomInterval zi = new ZoomInterval();
+    zi.name = this.name;
+    zi.interval = this.interval;
+    zi.isFilterExempt = this.isFilterExempt;
+    return zi;
+  }
+  
+  private ZoomInterval() {
+    // no-op
+  }
+  
+  /**
+   * True only if this zoom link should never be filtered, even if its interval falls 
+   * outside of some external filtering criteria (e.g. the "max" zoom link should 
+   * always be available to the user).
+   */
+  public boolean isFilterExempt() {
+    return isFilterExempt;
+  }
+  
+  /**
+   * Intended to be called "method chaining" style.  E.g. 
+   * <tt>ZoomInterval myZoom = new ZoomInterval("foo", 10000).filterExempt(true)</tt>.
+   * 
+   * @see #isFilterExempt()
+   */
+  public ZoomInterval filterExempt(boolean isFilterExempt) {
+    ZoomInterval zi = this.copy();
+    zi.isFilterExempt = isFilterExempt;
+    return zi;
   }
 
   public int compareTo(ZoomInterval o) {

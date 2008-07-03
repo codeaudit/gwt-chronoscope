@@ -34,6 +34,24 @@ public class ZoomIntervalTest extends TestCase {
     };
   }
   
+  public void testCopy() {
+    assertEquals(new ZoomInterval("foo", 1), new ZoomInterval("foo", 1).copy());
+  }
+  
+  public void testIsFilterExemptDefaultValue() {
+    assertFalse(new ZoomInterval("foo", 1).isFilterExempt());
+  }
+  
+  public void testFilterExemptChainedMethod() {
+    ZoomInterval zi = new ZoomInterval("foo", 1);
+    ZoomInterval zi2 = zi.filterExempt(true);
+    
+    assertTrue(zi2.isFilterExempt());
+    
+    // make sure original object's flag was not modified
+    assertFalse(zi.isFilterExempt());
+  }
+  
   public void testCompareTo() {
     assertTrue(new ZoomInterval("x", 100).compareTo(new ZoomInterval("x", 200)) < 0);
     assertTrue(new ZoomInterval("x", 200).compareTo(new ZoomInterval("x", 100)) > 0);

@@ -25,7 +25,7 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
     clearFilter();
     intervals = new TreeSet<ZoomInterval>();
   }
-  
+
   public boolean add(ZoomInterval zoomInterval) {
     return this.intervals.add(zoomInterval);
   }
@@ -50,7 +50,7 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
     }
     this.minInterval = minInterval;
   }
-  
+
   /**
    * Clears all filter criteria.
    */
@@ -58,7 +58,7 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
     this.minInterval = 0;
     this.maxInterval = Double.MAX_VALUE;
   }
-  
+
   /**
    * Iterates over the filtered {@link ZoomInterval} elements in this container.
    * 
@@ -67,7 +67,10 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
   public Iterator<ZoomInterval> iterator() {
     ArrayList<ZoomInterval> l = new ArrayList<ZoomInterval>(intervals.size());
     for (ZoomInterval zoom : intervals) {
-      if (MathUtil.isBounded(zoom.getInterval(), minInterval, maxInterval)) {
+      boolean wouldZoomHaveEffect = MathUtil.isBounded(zoom.getInterval(),
+          minInterval, maxInterval);
+      
+      if (wouldZoomHaveEffect || zoom.isFilterExempt()) {
         l.add(zoom);
       }
     }
