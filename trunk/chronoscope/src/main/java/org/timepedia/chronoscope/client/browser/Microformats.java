@@ -170,7 +170,7 @@ public class Microformats {
              var colList = rowList.item(i).getElementsByTagName("td");
              var date = colList.item(0).innerHTML;
              var t = @org.timepedia.chronoscope.client.data.DateParser::parse(Ljava/lang/String;Ljava/lang/String;)(dateformat, date);
-             domain.push(t/1000);
+             domain.push(t);
               for(j = 1; j<colList.length; j++) {
                   range[j-1].push(parseFloat(colList.item(j).innerHTML));
               }
