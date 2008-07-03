@@ -9,7 +9,7 @@ public class DefaultGssContext extends MockGssContext {
      public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
 
     if ("line".equals(gssElem.getType())) {
-      return new DefaultLineGssProperties(gssElem.getParentGssElement());
+      return new DefaultLineGssProperties(gssElem.getParentGssElement(), pseudoElt);
     }
     if ("fill".equals(gssElem.getType())) {
       return new DefaultFillGssProperties();
@@ -33,7 +33,8 @@ public class DefaultGssContext extends MockGssContext {
 
   static class DefaultLineGssProperties extends MockGssProperties {
 
-    public DefaultLineGssProperties(GssElement parentGssElement) {
+    public DefaultLineGssProperties(GssElement parentGssElement, String pseudoElt) {
+      if("disabled".equals(pseudoElt)) this.transparency=0.3;
       // contains s0, s1, ... s#
       String seriesNum = parentGssElement.getTypeClass();
       if(seriesNum.matches(".*\\bs\\d+\\b")) {
@@ -143,7 +144,7 @@ public class DefaultGssContext extends MockGssContext {
     }
   }
 
-  static String colors[] = {  "#2E43DF", "#2CAA1B", "#C21C1C",
+  protected static String colors[] = {  "#2E43DF", "#2CAA1B", "#C21C1C",
      "#E98419", "#F8DD0D", "#A72AA2"
       
   };
