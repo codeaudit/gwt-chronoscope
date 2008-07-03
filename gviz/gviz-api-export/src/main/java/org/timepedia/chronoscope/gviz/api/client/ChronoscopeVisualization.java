@@ -1,7 +1,15 @@
 package org.timepedia.chronoscope.gviz.api.client;
 
+import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.dom.client.TableElement;
+import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.dom.client.TableSectionElement;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -14,6 +22,7 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.data.DateParser;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -41,6 +50,136 @@ public class ChronoscopeVisualization implements Exportable {
   @Export("Visualization")
   public ChronoscopeVisualization(Element element) {
     this.element = element;
+  }
+
+  @Export
+  public static DataTable microformatToDataTable(String id) {
+    Element e = Document.get().getElementById(id);
+
+    assertTrue("table".equalsIgnoreCase(e.getNodeName()),
+        "Table Element with id " + id + " doesn't exist.");
+
+    TableElement te = TableElement.as(e);
+    TableSectionElement thead = te.getTHead();
+    assertNotNull(thead, "Table must contain THEAD element");
+    NodeList<TableRowElement> hrows = thead.getRows();
+    assertTrue(hrows.getLength() == 1, "Table THEAD must contain 1 TR element");
+
+    int numCols = 0;
+
+    DataTable table = DataTable.create();
+
+    if (hrows.getLength() == 1) {
+      TableRowElement tr = hrows.getItem(0);
+      NodeList<TableCellElement> hcols = tr.getCells();
+      assertTrue(hcols.getLength() > 1,
+          "THEAD TR contains less than 2 columns");
+      for (int i = 0; i < hcols.getLength(); i++) {
+        TableCellElement th = hcols.getItem(i);
+        assertTrue("th".equalsIgnoreCase(th.getNodeName()),
+            "Only TH elements should occur in THEAD TR");
+        String title = th.getInnerText().trim();
+        numCols++;
+        if (i == 0) {
+          table.addColumn("date", title);
+        } else {
+          if ("markers".equalsIgnoreCase(title)) {
+            table.addColumn("string", title);
+          } else {
+            table.addColumn("number", title);
+          }
+        }
+      }
+    } else {
+      throw new JavaScriptException("Table Element must ");
+    }
+
+    String dateFormat = "MM-dd-yy";
+    NumberFormat numberFormats[] = new NumberFormat[numCols];
+
+    NodeList<Element> colGroup = te.getElementsByTagName("colgroup");
+    assertTrue(colGroup != null && colGroup.getLength() == 1,
+        "Table must have exactly one COLGROUP element");
+
+    NodeList<Element> cols = colGroup.getItem(0).getElementsByTagName("col");
+    assertTrue(cols != null && cols.getLength() == numCols,
+        "COLGROUP must have one COL element for each TH in THEAD");
+
+    for (int i = 0; i < cols.getLength(); i++) {
+      Element col = cols.getItem(i);
+      String fmt = col.getAttribute("title");
+      String className = col.getClassName();
+      if (i == 0) {
+        assertTrue(fmt != null && !"".equals(fmt),
+            "COL for column 0 must have TITLE attribute containing date");
+        assertTrue("cmf-dateformat".equals(className),
+            "COL for column 0 must have CLASS of cmf-dateformat");
+      }
+      if (i == 0) {
+        dateFormat = fmt;
+      } else {
+        if (fmt != null && !"".equals(fmt)) {
+          assertTrue("cmf-numberformat".equals(className),
+              "Number format COL elements must have class of cmf-numberformat with title containing format according to GWT NumberFormat syntax at http://google-web-toolkit.googlecode.com/svn/javadoc/1.4/com/google/gwt/i18n/client/NumberFormat.html");
+          numberFormats[i] = NumberFormat.getFormat(fmt);
+        } else if ("cmf-numberformat".equals(className)) {
+          assertTrue(fmt != null && !"".equals(fmt),
+              "COL has class cmf-numberformat but missing title attribute with format string with syntax http://google-web-toolkit.googlecode.com/svn/javadoc/1.4/com/google/gwt/i18n/client/NumberFormat.html");
+          numberFormats[i] = NumberFormat.getFormat(fmt);
+        }
+      }
+    }
+
+    NodeList<TableSectionElement> tbodies = te.getTBodies();
+    assertNotNull(tbodies, "Table must contain TBODY elements");
+    assertTrue(tbodies.getLength() > 0, "Table must contain TBODY elements");
+    int totalAdded = 0;
+    for (int i = 0; i < tbodies.getLength(); i++) {
+      TableSectionElement tbody = tbodies.getItem(i);
+      NodeList<TableRowElement> drows = tbody.getRows();
+      table.addRows(drows.getLength());
+      for (int j = 0; j < drows.getLength(); j++) {
+        TableRowElement row = drows.getItem(j);
+        NodeList<TableCellElement> cells = row.getCells();
+        assertTrue(cells.getLength() == numCols,
+            "Number of TH header columns in THEAD must match number of TD columns in TBODY");
+
+        for (int k = 0; k < cells.getLength(); k++) {
+          TableCellElement cell = cells.getItem(k);
+          if (k == 0) {
+            table.setValueDate(totalAdded, k,
+                DateParser.parse(dateFormat, cell.getInnerText().trim()));
+          } else {
+            if ("string".equals(table.getColumnType(k))) {
+              table.setValue(totalAdded, k, cell.getInnerText().trim());
+            } else {
+              String cellText = cell.getInnerText().trim();
+              try {
+                double value = numberFormats[k] == null ? Double
+                    .parseDouble(cellText) : numberFormats[k].parse(cellText);
+                table.setValue(totalAdded, k, value);
+              } catch (NumberFormatException e1) {
+                // TODO: (ray) ? silently ignore parse errors
+              }
+            }
+          }
+        }
+        totalAdded++;
+      }
+    }
+    return table;
+  }
+
+  private static void assertTrue(boolean cont, String msg) {
+    if (!cont) {
+      throw new JavaScriptException(msg);
+    }
+  }
+
+  private static void assertNotNull(Object obj, String msg) {
+    if (obj == null) {
+      throw new JavaScriptException(msg);
+    }
   }
 
   @Export
@@ -79,10 +218,10 @@ public class ChronoscopeVisualization implements Exportable {
       id = "__viz" + vizCount++;
       element.setId(id);
     }
-    
+
     try {
       final Properties opts = options.cast();
-     
+
       XYDataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
       final Marker ms[] = DataTableParser.parseMarkers(table, dataset2Column);
 
