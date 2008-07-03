@@ -27,6 +27,7 @@ import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -223,7 +224,7 @@ public class ChronoscopeVisualization implements Exportable {
       final Properties opts = options.cast();
 
       XYDataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
-      final Marker ms[] = DataTableParser.parseMarkers(table, dataset2Column);
+      final Marker ms[] = DataTableParser.parseMarkers(ExporterUtil.wrap(this), table, dataset2Column);
 
       cp = Chronoscope.createTimeseriesChart(ds,
           element.getPropertyInt("clientWidth"),
@@ -248,7 +249,7 @@ public class ChronoscopeVisualization implements Exportable {
                 int focusPoint) {
               if (!dontfire) {
                 GVizEventHelper
-                    .trigger(table, GVizEventHelper.SELECT_EVENT, null);
+                    .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this), GVizEventHelper.SELECT_EVENT, null);
               }
               dontfire = false;
             }

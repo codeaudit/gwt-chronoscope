@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
 
+import com.google.gwt.core.client.JavaScriptObject;
+
 /**
  *
  */
 public class DataTableParser {
 
-    public static Marker[] parseMarkers(final DataTable table,
+    public static Marker[] parseMarkers(final JavaScriptObject eventSource, final DataTable table,
                                         Map<Integer, Integer> dataset2Column) {
         int startRow = -1;
         int curSeries = -1;
@@ -45,7 +47,7 @@ public class DataTableParser {
                             m.addOverlayClickListener(new OverlayClickListener() {
                                 public void onOverlayClick(Overlay overlay, int i, int i1) {
                                     m.openInfoWindow(info2);
-                                    GVizEventHelper.trigger(table, GVizEventHelper.SELECT_EVENT, null);
+                                    GVizEventHelper.trigger(eventSource, GVizEventHelper.SELECT_EVENT, null);
                                 }
                             });
                             markers.add(m);
