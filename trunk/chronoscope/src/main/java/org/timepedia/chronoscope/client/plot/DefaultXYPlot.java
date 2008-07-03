@@ -585,7 +585,6 @@ public class DefaultXYPlot
     initDefaultRenderers();
     initDatasetLevels();
 
-    background = new GssBackground(this);
 
     computeDomainMinMax();
     computeVisibleDomainStartEnd();
@@ -597,6 +596,8 @@ public class DefaultXYPlot
     lastCurrentDomain = currentDomain;
 
     initLayers();
+    background = new GssBackground(this);
+      
     view.canvasSetupDone();
   }
 
