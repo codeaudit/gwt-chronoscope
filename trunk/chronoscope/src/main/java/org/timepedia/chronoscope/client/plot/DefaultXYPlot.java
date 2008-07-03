@@ -549,10 +549,9 @@ public class DefaultXYPlot
   public void init(View view) {
     this.view = view;
     this.focus = null;
-    
+
     initViewIndependent();
 
-    
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
@@ -592,15 +591,14 @@ public class DefaultXYPlot
 
     initLayers();
     background = new GssBackground(this);
-      
+
     view.canvasSetupDone();
   }
 
   /**
    * Methods which do not depend on any visual state of the chart being
-   * initialized first. Can be moved early in Plot initialization.
-   * Put stuff here that doesn't depend on the axes or layers being
-   * initialized.
+   * initialized first. Can be moved early in Plot initialization. Put stuff
+   * here that doesn't depend on the axes or layers being initialized.
    */
   private void initViewIndependent() {
     computeDomainMinMax();
@@ -674,6 +672,9 @@ public class DefaultXYPlot
           focusSeries = 0;
         }
       }
+      int currentMip = currentMiplevels[focusSeries];
+      ensureVisible(datasets[focusSeries].getX(focusPoint, currentMip),
+          datasets[focusSeries].getY(focusPoint, currentMip), null);
       setFocusAndNotifyView(focusSeries, focusPoint);
     }
 
@@ -1071,8 +1072,7 @@ public class DefaultXYPlot
 
         topLayer.save();
         drawAxisPanel(topLayer, topPanel,
-            new Bounds(0, 0, view.getViewWidth(), topBounds.height),
-            false);
+            new Bounds(0, 0, view.getViewWidth(), topBounds.height), false);
         topLayer.restore();
       }
     }
