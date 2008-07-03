@@ -21,8 +21,23 @@ public class RangeMutableArrayXYDataset extends AppendableArrayXYDataset
   }
 
   public RangeMutableArrayXYDataset(String s, double[] domainVal,
-      double[] rangeVal, String s1, String s2) {
-    super(s, domainVal, rangeVal, s1, s2);
+      double[] rangeVal, String label, String axisId) {
+    super(s, domainVal, rangeVal, label, axisId);
+  }
+
+  public RangeMutableArrayXYDataset(String identifier, double[][] mdomains,
+      double[][] mranges, double rangeTop, double rangeBottom, String label,
+      String axisId, double approximateMinInterval) {
+    this(identifier, mdomains, mranges, rangeTop, rangeBottom, label, axisId);
+    this.approximateMinimumInterval = approximateMinInterval;
+  }
+
+  public RangeMutableArrayXYDataset(String identifier, double[] domainVal,
+      double[] rangeVal, String label, String axisId,
+      double approximateMinInterval) {
+    this(identifier, domainVal, rangeVal, label, axisId);
+    this.approximateMinimumInterval = approximateMinInterval;
+    
   }
 
   public void setY(int index, double y) {

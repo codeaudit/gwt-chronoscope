@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ScriptElement;
@@ -29,6 +29,16 @@ public class DeferredRegionalArrayXYDataset extends ArrayXYDataset
   private static long requestTimestamp = -1;
 
   private static Timer queueTimer;
+
+  public DeferredRegionalArrayXYDataset(String identifier, double[][] domains,
+      double[][] ranges, double top, double bottom, String label, String axisId,
+      double regionBegin, double regionEnd, double intervals[],
+      String filePrefix, double domainBegin, double domainEnd,
+      double approximateMinInterval) {
+    this(identifier, domains, ranges, top, bottom, label, axisId, regionBegin,
+        regionEnd, intervals, filePrefix, domainBegin, domainEnd);
+    this.approximateMinimumInterval = approximateMinInterval;
+  }
 
   public double getDomainBegin() {
     return domainBegin;
@@ -86,7 +96,7 @@ public class DeferredRegionalArrayXYDataset extends ArrayXYDataset
   }
 
   public void loadRegion(int i) {
-    GWT.log("Loading region "+i, null);
+    GWT.log("Loading region " + i, null);
     queue.add(new RegionLoadRequest(filePrefix + "." + i + ".js", this));
     processQueue();
     // queue.add pointer to this object instance/handler

@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.XYDataset;
 public class ArrayXYDataset implements XYDataset {
 
   double[] domain;
+
   double[] range;
 
   double rangeBottom, rangeTop;
@@ -25,6 +26,8 @@ public class ArrayXYDataset implements XYDataset {
   private final String label;
 
   private final String axisId;
+
+  protected double approximateMinimumInterval;
 
   public ArrayXYDataset(String identifier, double[] domain, double[] range,
       String label, String axisId) {
@@ -48,8 +51,9 @@ public class ArrayXYDataset implements XYDataset {
     rangeTop = top;
     rangeBottom = bottom;
     multiLengths = new int[multiDomain.length];
-    for(int i=0; i<domains.length; i++)
-     multiLengths[i]=domains[i].length;
+    for (int i = 0; i < domains.length; i++) {
+      multiLengths[i] = domains[i].length;
+    }
   }
 
   protected ArrayXYDataset(String identifier, double[] domain, double[] range,
@@ -69,6 +73,26 @@ public class ArrayXYDataset implements XYDataset {
     }
     this.length = domain.length;
     this.axisId = axisId;
+    this.approximateMinimumInterval = (getDomainEnd() - getDomainBegin())
+        / getNumSamples();
+  }
+
+  public ArrayXYDataset(String identifier, double[][] domains,
+      double[][] ranges, double top, double bottom, String label, String axisId,
+      double approximateMinInterval) {
+    this(identifier, domains, ranges, top, bottom, label, axisId);
+    this.approximateMinimumInterval = approximateMinInterval;
+  }
+
+  public ArrayXYDataset(String identifier, double[] domainVal,
+      double[] rangeVal, String label, String axisId,
+      double approximateMinInterval) {
+    this(identifier, domainVal, rangeVal, label, axisId);
+    this.approximateMinimumInterval = approximateMinInterval;
+  }
+
+  public double getApproximateMinimumInterval() {
+    return approximateMinimumInterval;
   }
 
   public String getAxisId() {
@@ -128,7 +152,7 @@ public class ArrayXYDataset implements XYDataset {
   }
 
   public double getDomainEnd() {
-    return getX(getNumSamples()-1);
+    return getX(getNumSamples() - 1);
   }
 
   protected XYMultiresolution computeMultiresolution(
@@ -144,5 +168,6 @@ public class ArrayXYDataset implements XYDataset {
     multiLengths = xy.getMultiLength();
     rangeTop = xy.getRangeTop();
     rangeBottom = xy.getRangeBottom();
+    approximateMinimumInterval = xy.getMinInterval();
   }
 }

@@ -48,6 +48,10 @@ public class MockXYDataset implements XYDataset {
     this.axisId = axisId;
   }
 
+  public double getApproximateMinimumInterval() {
+    return (getDomainEnd()-getDomainBegin())/getNumSamples();
+  }
+
   public String getAxisId() {
     return axisId;
   }
