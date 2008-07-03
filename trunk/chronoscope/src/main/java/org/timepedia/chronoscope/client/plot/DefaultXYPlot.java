@@ -1061,7 +1061,7 @@ public class DefaultXYPlot
 
         topLayer.save();
         drawAxisPanel(topLayer, topPanel,
-            new Bounds(plotBounds.x, 0, plotBounds.width, topBounds.height),
+            new Bounds(0, 0, view.getViewWidth(), topBounds.height),
             false);
         topLayer.restore();
       }

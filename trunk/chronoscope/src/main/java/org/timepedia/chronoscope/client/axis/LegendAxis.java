@@ -53,7 +53,7 @@ public class LegendAxis extends ValueAxis {
   }
 
   public double getWidth() {
-    return plot.getInnerPlotBounds().width;
+    return plot.getChart().getView().getViewWidth();
   }
 
   public void init() {
