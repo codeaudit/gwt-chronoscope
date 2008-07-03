@@ -108,7 +108,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
 
                   ChartPanel cp = Chronoscope.createTimeseriesChart(ds,
                       Window.getClientWidth(), Window.getClientHeight());
-                  cp.setGssContext(new GVizGssContext());
+                  cp.setGssContext(prefs.chartStyle().getValue().getGssContext());
                   cp.setReadyListener(new ViewReadyCallback() {
                     public void onViewReady(View view) {
                       view.getChart().getPlot().setOverviewEnabled(prefs.overviewEnabled().getValue());
