@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 /**
  * An interface modeling a multiresolution dataset of two coordinates <p/> A
@@ -18,13 +18,19 @@ import org.timepedia.exporter.client.ExportPackage;
  * <p/> It is recommended to use a method that makes successive levels half the
  * size of former levels, so that the height of the pyramid is
  * log_2(num_samples)
- * 
+ *
  * @gwt.exportPackage chronoscope
  * @gwt.export
  */
 @ExportPackage("chronoscope")
 @Export
 public interface XYDataset extends Exportable {
+
+  /**
+   * Returns <em>approximate</em> the smallest domain interval between two
+   * points.
+   */
+  double getApproximateMinimumInterval();
 
   /**
    * Return an id used to identify the axis this dataset should be assigned to,

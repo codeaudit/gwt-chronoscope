@@ -250,6 +250,9 @@ public class Chronoscope implements Exportable, HistoryListener {
     int domainscale = (int) JavascriptHelper
         .jsPropGetDor(json, "domainscale", 1);
 
+    double approximateMinInterval = JavascriptHelper
+        .jsPropGetDor(json, "minInterval", -1);
+
     if (mipped != null && mipped.equals("true")) {
 
       int dmipLevels = JavascriptHelper.jsArrLength(domain);
@@ -287,14 +290,16 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"));
+            JavascriptHelper.jsPropGetString(json, "axis"),
+            approximateMinInterval);
       } else if (!hasRegions) {
         dataset = new ArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
             JavascriptHelper.jsPropGetD(json, "rangeBottom"),
             JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"));
+            JavascriptHelper.jsPropGetString(json, "axis"),
+            approximateMinInterval);
       } else {
         dataset = new DeferredRegionalArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
@@ -303,7 +308,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"), domains[0][0],
             domains[0][domains[0].length - 1], getArray(ivals, 1), prefix,
-            domainBegin, domainEnd);
+            domainBegin, domainEnd, approximateMinInterval);
       }
     } else {
       double domainVal[] = getArray(domain, domainscale);
@@ -312,14 +317,14 @@ public class Chronoscope implements Exportable, HistoryListener {
         dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domainVal, rangeVal,
             JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"));
+            JavascriptHelper.jsPropGetString(json, "axis"),
+            approximateMinInterval);
       } else {
         dataset = new ArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domainVal, rangeVal,
             JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis")
-
-        );
+            JavascriptHelper.jsPropGetString(json, "axis"),
+                approximateMinInterval);
       }
     }
     return dataset;

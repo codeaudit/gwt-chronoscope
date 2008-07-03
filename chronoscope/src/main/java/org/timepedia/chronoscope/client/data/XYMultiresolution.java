@@ -117,6 +117,8 @@ public class XYMultiresolution {
     return xy;
   }
 
+  protected double minInterval;
+
   protected double[] domain;
 
   protected double[] range;
@@ -138,6 +140,10 @@ public class XYMultiresolution {
     this.length = length;
   }
 
+  public double getMinInterval() {
+    return minInterval;
+  }
+  
   public double[][] getMultiDomain() {
     return multiDomain;
   }
@@ -176,12 +182,17 @@ public class XYMultiresolution {
     multiDomain = new double[levels][];
     multiRange = new double[levels][];
     multiLength = new int[levels];
+    minInterval = Double.MAX_VALUE;
     for (int level = 0; level < levels; level++) {
       int numSamples = strategy.getNumSamples(this, level);
       multiDomain[level] = allocMultiresolution(numSamples);
       multiRange[level] = allocMultiresolution(numSamples);
       multiLength[level] = multiDomain[level].length;
       for (int index = 0; index < multiLength[level]; index++) {
+        if (level == 0 && index > 1) {
+          minInterval = Math.min(minInterval,
+              multiDomain[level][index] - multiDomain[level][index - 1]);
+        }
         multiDomain[level][index] = strategy.getDomainValue(this, level, index);
         multiRange[level][index] = strategy.getRangeValue(this, level, index);
         if (level == 0) {
