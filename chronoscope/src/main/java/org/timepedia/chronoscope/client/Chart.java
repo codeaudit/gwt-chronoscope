@@ -98,8 +98,8 @@ public class Chart implements Exportable {
   public void initPlot(XYPlot plot) {
     this.plot = plot;
     plot.setChart(this);
-    plot.init(view);
     view.setChart(this);
+    plot.init(view);
   }
 
   /**
