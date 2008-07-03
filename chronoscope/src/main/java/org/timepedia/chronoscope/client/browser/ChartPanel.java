@@ -4,14 +4,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -40,7 +37,7 @@ import org.timepedia.exporter.client.Exportable;
 public class ChartPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants, Exportable {
 
-  private static final int TAB_KEY = 9;
+  private ChartEventHandler chartEventHandler;
 
   /**
    * Gets the window's scroll left.
@@ -65,14 +62,6 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   private GssContext gssContext;
 
   private View view;
-
-  private boolean selectionMode;
-
-  private int selStart;
-
-  private boolean maybeDrag;
-
-  private int startDragX;
 
   private Chart chart;
 
@@ -175,222 +164,20 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
    * class.
    */
   public void onBrowserEvent(Event evt) {
-
     if (!isAttached() || !viewReady) {
       return;
     }
 
     int x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
-
     int absTop = DOM.getAbsoluteTop(getElement());
     int y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
 
-    switch (DOM.eventGetType(evt)) {
-
-      case Event.ONMOUSEDOWN:
-        if (selectionMode || DOM.eventGetShiftKey(evt)) {
-          selStart = x;
-          selectionMode = true;
-          chart.setCursor(Cursor.SELECTING);
-        } else {
-          maybeDrag = true;
-
-          startDragX = x;
-        }
-        chart.setPlotFocus(x, y);
-        DOM.eventCancelBubble(evt, true);
-        DOM.eventPreventDefault(evt);
-        break;
-      case Event.ONMOUSEOUT:
-        chart.setAnimating(false);
-        chart.setCursor(Cursor.DEFAULT);
-        chart.redraw();
-        break;
-
-      case Event.ONMOUSEOVER:
-        chart.setPlotFocus(x, y);
-        chart.setCursor(
-            chart.isInsidePlot(x, y) ? Cursor.DRAGGABLE : Cursor.DEFAULT);
-        ((DOMView) view).focus();
-        maybeDrag = false;
-        break;
-      case Event.ONMOUSEUP:
-        if (selectionMode) {
-          selectionMode = false;
-          chart.setAnimating(false);
-          selStart = -1;
-          if (DOM.eventGetShiftKey(evt)) {
-            chart.zoomToHighlight();
-          }
-        } else if (maybeDrag && x != startDragX) {
-          ((DOMView) view).pushHistory();
-          chart.setAnimating(false);
-          chart.redraw();
-        }
-
-        chart.setCursor(Cursor.DRAGGING);
-        maybeDrag = false;
-        ((DOMView) view).focus();
-        DOM.eventCancelBubble(evt, true);
-        DOM.eventPreventDefault(evt);
-        break;
-      case Event.ONMOUSEMOVE:
-        if (chart.isInsidePlot(x, y)) {
-          if (selectionMode && selStart > -1) {
-            chart.setCursor(Cursor.SELECTING);
-            chart.setAnimating(true);
-            chart.setHighlight(selStart, x);
-          } else {
-            if (maybeDrag && Math.abs(startDragX - x) > 10) {
-              chart.setAnimating(true);
-              chart.setCursor(Cursor.DRAGGING);
-              chart.scrollPixels(startDragX - x);
-              startDragX = x;
-              DOM.eventCancelBubble(evt, true);
-              DOM.eventPreventDefault(evt);
-            } else {
-              if (chart.setHover(x, y)) {
-                chart.setCursor(Cursor.CLICKABLE);
-              } else {
-                chart.setCursor(Cursor.DRAGGABLE);
-              }
-            }
-          }
-        } else {
-          chart.setCursor(Cursor.DEFAULT);
-        }
-//              else if (maybeDrag && chart.getOverviewBounds().inside(x, y)) {
-//                    chart.getOverviewAxis().drag(view, startDragX, x, y);
-//                }
-        break;
-
-      case Event.ONKEYDOWN:
-        int keyCode2 = DOM.eventGetKeyCode(evt);
-        if (keyCode2 == KeyboardListener.KEY_PAGEUP
-            || keyCode2 == KeyboardListener.KEY_PAGEDOWN
-            || keyCode2 == KeyboardListener.KEY_UP
-            || keyCode2 == KeyboardListener.KEY_DOWN || keyCode2 == TAB_KEY) {
-          handleTabKey(evt, keyCode2);
-        } else {
-          super.onBrowserEvent(evt);
-        }
-        break;
-      case Event.ONKEYUP:
-
-        int keyCode = DOM.eventGetKeyCode(evt);
-
-        if (keyCode == KeyboardListener.KEY_LEFT ||
-
-            keyCode == KeyboardListener.KEY_PAGEUP || keyCode == SAFARI_LEFT
-            || keyCode == SAFARI_LEFT || keyCode == SAFARI_PGUP) {
-          chart.pageLeft(keyCode == KeyboardListener.KEY_PAGEUP
-              || keyCode == SAFARI_PGUP ? 1.0 : 0.5);
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode == KeyboardListener.KEY_RIGHT ||
-
-            keyCode == KeyboardListener.KEY_PAGEDOWN || keyCode == SAFARI_RIGHT
-            || keyCode == SAFARI_RIGHT || keyCode == SAFARI_PDWN) {
-          chart.pageRight(keyCode == KeyboardListener.KEY_PAGEDOWN
-              || keyCode == SAFARI_PDWN ? 1.0 : 0.5);
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode == KeyboardListener.KEY_UP || keyCode == 90 + 32
-            || keyCode == SAFARI_UP) {
-          chart.nextZoom();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode == KeyboardListener.KEY_DOWN
-            || keyCode == SAFARI_DOWN || keyCode == 88 + 32) {
-          chart.prevZoom();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode == KeyboardListener.KEY_BACKSPACE) {
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-          History.back();
-        } else
-        if (keyCode == KeyboardListener.KEY_HOME || keyCode == SAFARI_HOME) {
-          chart.maxZoomOut();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        }
-        break;
-      case Event.ONKEYPRESS:
-        int keyCode3 = DOM.eventGetKeyCode(evt);
-        if (false && keyCode3 == TAB_KEY) {
-          if (DOM.eventGetShiftKey(evt)) {
-            chart.prevFocus();
-          } else {
-            chart.nextFocus();
-          }
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode3 == 90 + 32) {
-          chart.nextZoom();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode3 == 88 + 32) {
-          chart.prevZoom();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else if (keyCode3 == 83 + 32) {
-          selectionMode = !selectionMode;
-        } else if (keyCode3 == KeyboardListener.KEY_ENTER) {
-          chart.maxZoomToFocus();
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        }
-        break;
-      case Event.ONCLICK:
-        maybeDrag = false;
-        chart.setAnimating(false);
-        if (DOM.eventGetButton(evt) == Event.BUTTON_RIGHT) {
-
-          view.fireContextMenuEvent(x, y);
-        } else if (chart.click(x, y)) {
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else {
-          super.onBrowserEvent(evt);
-        }
-
-        ((DOMView) view).focus();
-        break;
-      case Event.ONDBLCLICK:
-        maybeDrag = false;
-        chart.setAnimating(false);
-        if (chart.maxZoomTo(x, y)) {
-          DOM.eventCancelBubble(evt, true);
-          DOM.eventPreventDefault(evt);
-        } else {
-          super.onBrowserEvent(evt);
-        }
-        break;
-
-      case Event.ONMOUSEWHEEL:
-        int dir = DOM.eventGetMouseWheelVelocityY(evt);
-        if (dir <= 0) {
-          onMouseWheelUp(dir);
-        } else {
-          onMouseWheelDown(dir);
-        }
-        DOM.eventCancelBubble(evt, true);
-        DOM.eventPreventDefault(evt);
-        break;
-      default:
-        super.onBrowserEvent(evt);
+    if (!chartEventHandler.handleChartEvent(evt, chart, x, y)) {
+      super.onBrowserEvent(evt);
+    } else {
+      DOM.eventCancelBubble(evt, true);
+      DOM.eventPreventDefault(evt);
     }
-  }
-
-  public void onMouseWheelDown(int intensity) {
-    maybeDrag = false;
-    chart.prevZoom();
-  }
-
-  public void onMouseWheelUp(int intensity) {
-    maybeDrag = false;
-    chart.nextZoom();
   }
 
   /**
@@ -440,6 +227,8 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
    */
   protected void onAttach() {
 
+    chartEventHandler = GWT.create(ChartEventHandler.class);
+
     Element cssgss = null;
     cssgss = DOM.createDiv();
     DOM.setStyleAttribute(cssgss, "width", "0px");
@@ -477,19 +266,6 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
            };
 
    }-*/;
-
-  private void handleTabKey(Event evt, int keyCode2) {
-    if (keyCode2 == TAB_KEY) {
-      if (DOM.eventGetShiftKey(evt)) {
-        chart.prevFocus();
-      } else {
-        chart.nextFocus();
-      }
-    }
-
-    DOM.eventCancelBubble(evt, true);
-    DOM.eventPreventDefault(evt);
-  }
 
   private void initElement(Element container) {
     setElement(container);
