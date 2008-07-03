@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
@@ -18,10 +20,11 @@ import java.util.Date;
 /**
  * Renderer used to draw Legend.
  */
-public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListener {
+public class LegendAxisRenderer implements AxisRenderer, GssElement,
+    ZoomListener {
 
   private static final double DAY_INTERVAL = 86400 * 1000;
-  
+
   private static final double MONTH_INTERVAL = DAY_INTERVAL * 30;
 
   private static final double YEAR_INTERVAL = MONTH_INTERVAL * 12;
@@ -58,31 +61,38 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
   private String textLayerName;
 
   private ZoomPanel zoomPanel;
-  
+
   private XYPlot plot;
-  
+
   public LegendAxisRenderer(LegendAxis axis) {
     ArgChecker.isNotNull(axis, "axis");
     this.axis = axis;
   }
 
   public boolean click(XYPlot plot, int x, int y) {
-    //GWT.log("TESTING: LegendAxisRenderer.click(" + x + ", " + y + "); bounds=" + bounds, null);
     zoomPanel.setBounds(bounds);
     return zoomPanel.click(x, y);
   }
 
   public void drawLegend(XYPlot xyplot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
-
+    
     DefaultXYPlot plot = (DefaultXYPlot) xyplot;
     View view = plot.getChart().getView();
     final int labelHeight = getLabelHeight(view, "X");
 
     copyState(axisBounds, bounds);
-    
+
     clearAxis(layer, axisBounds);
+    
+    // TODO: I'd rather put this filter assertion in this.init(), but apparently
+    // the plot's domainMin and domainMax properties have not yet been calculated.
+    // So for now, the filter is lazily applied here.
+    // Note: applyFilter() is extremely inexpensive (doesn't actually do any filtering 
+    // until the collection is iterated upon).
+    zoomPanel.getZoomIntervals().applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
     zoomPanel.draw(axisBounds.x, axisBounds.y, layer);
+    
     drawDateRange(plot, layer, axisBounds);
     double x = axisBounds.x;
     double y = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
@@ -162,7 +172,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
   }
 
   public void init(XYPlot plot, LegendAxis axis) {
-    
     View view = plot.getChart().getView();
 
     if (axisProperties == null) {
@@ -172,12 +181,16 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
       textLayerName = axis.getAxisPanel().getPanelName()
           + axis.getAxisPanel().getAxisNumber(axis);
 
+      ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
+      // See 'TODO:' in drawLegend() regarding the following commented-out line...
+      //zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
+      
       zoomPanel = new ZoomPanel();
       zoomPanel.setGssProperties(labelProperties);
       zoomPanel.setTextLayerName(textLayerName);
       zoomPanel.addListener(this);
-      zoomPanel.setZoomIntervals(createDefaultZoomIntervals());
-      
+      zoomPanel.setZoomIntervals(zoomIntervals);
+
       this.plot = plot;
       this.bounds = new Bounds();
     }
@@ -215,8 +228,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
   private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
       Layer layer, int seriesNum, String layerName) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
-    boolean isThisSeriesHovered = prevHoveredDatasetIdx != -1 & prevHoveredPointIdx != -1
-        && seriesNum == prevHoveredDatasetIdx;
+    boolean isThisSeriesHovered = prevHoveredDatasetIdx != -1
+        & prevHoveredPointIdx != -1 && seriesNum == prevHoveredDatasetIdx;
     if (isThisSeriesHovered) {
       seriesLabel += " ("
           + plot.getRangeAxis(seriesNum).getFormattedLabel(
@@ -289,7 +302,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     target.height = source.height;
     target.width = source.width;
   }
-  
+
   private static ZoomIntervals createDefaultZoomIntervals() {
     ZoomIntervals zooms = new ZoomIntervals();
     zooms.add(new ZoomInterval("1d", DAY_INTERVAL));
@@ -300,8 +313,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     zooms.add(new ZoomInterval("1y", YEAR_INTERVAL));
     zooms.add(new ZoomInterval("5y", YEAR_INTERVAL * 5));
     zooms.add(new ZoomInterval("10y", YEAR_INTERVAL * 10));
-    zooms.add(new ZoomInterval("max", Double.MAX_VALUE));
-
+    zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
+    
     return zooms;
   }
 
@@ -312,8 +325,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement, ZoomListene
     // layer.rect(bx, bounds.y, be-bx, legendStringHeight);
     layer.fillRect(bx, bounds.y, be - bx, legendStringHeight);
   }
-  */
-  
+   */
+
   /*
   private void myrect(Layer layer, double bx, double v, double v1,
       int legendStringHeight) {

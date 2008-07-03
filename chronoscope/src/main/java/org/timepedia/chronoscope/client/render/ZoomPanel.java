@@ -46,6 +46,10 @@ public class ZoomPanel {
     this.listeners = new ArrayList<ZoomListener>();
   }
 
+  public ZoomIntervals getZoomIntervals() {
+    return this.zooms;
+  }
+  
   public void setZoomIntervals(ZoomIntervals zooms) {
     this.zooms = zooms;
   }

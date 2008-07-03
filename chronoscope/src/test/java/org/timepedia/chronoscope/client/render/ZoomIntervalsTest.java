@@ -10,7 +10,7 @@ import java.util.Iterator;
  *
  */
 public class ZoomIntervalsTest extends TestCase {
-  private ZoomInterval z1d, z1m, z1y;
+  private ZoomInterval z1d, z1m, z1y, zMax;
   
   public ZoomIntervalsTest(String name) {
     super(name);
@@ -20,6 +20,7 @@ public class ZoomIntervalsTest extends TestCase {
     z1d = new ZoomInterval("1d", 1);
     z1m = new ZoomInterval("1m", 30);
     z1y = new ZoomInterval("1y", 365);
+    zMax = new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true);
   }
   
   public void testConstructor() {
@@ -49,17 +50,19 @@ public class ZoomIntervalsTest extends TestCase {
     z.add(z1d);
     z.add(z1m);
     z.add(z1y);
+    z.add(zMax); // aMax is filter-exempt.
     
     // Pick a start/end time whose interval is less than a year.
-    // We expect the year zoom to drop out.
+    // We expect the year zoom to drop out, however, 'max' should
+    // still hang around since it's filter-exempt.
     double timeStart = new Date().getTime();
     double timeEnd = timeStart + z1y.getInterval() - 1;
     z.applyFilter(timeStart, timeEnd, 0);
-    assertZoomEquals(z.iterator(), z1d, z1m);
+    assertZoomEquals(z.iterator(), z1d, z1m, zMax);
     
     // Now clear the filter and make sure it goes back to initial state
     z.clearFilter();
-    assertZoomEquals(z.iterator(), z1d, z1m, z1y);
+    assertZoomEquals(z.iterator(), z1d, z1m, z1y, zMax);
     
     // TODO: add more filter test cases
     
