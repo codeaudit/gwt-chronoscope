@@ -101,12 +101,6 @@
             <id>cp-chronoscope-js</id>
             <phase>process-classes</phase>
             <configuration>
-              <tasks>
-                <echo message="about to copy" />
-				<copy file="target/public/gviz/org.timepedia.chronoscope.gviz.gadget.client.GVizChronoscopeGadget.gadget.xml" 
-  					tofile="target/public/gviz/chronoscope.xml" />
-				
-              </tasks>
             </configuration>
             <goals>
               <goal>run</goal>
