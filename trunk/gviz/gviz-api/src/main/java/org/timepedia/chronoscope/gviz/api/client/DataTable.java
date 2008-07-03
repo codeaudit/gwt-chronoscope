@@ -44,4 +44,33 @@ public final class DataTable extends JavaScriptObject {
   public native String getColumnLabel(int col) /*-{
     return this.getColumnLabel(col);
   }-*/;
+
+  public static native DataTable create() /*-{
+    return new $wnd.google.visualization.DataTable();
+  }-*/;
+
+  public native void addColumn(String type, String title) /*-{
+    this.addColumn(type, title);
+  }-*/;
+
+  public native void addRows(int rows) /*-{
+    this.addRows(rows);
+  }-*/;
+
+  public native void setValue(int row, int col, String value) /*-{
+    this.setValue(row, col, value);
+  }-*/;
+  
+  public native void setValue(int row, int col, double value) /*-{
+    this.setValue(row, col, value);
+  }-*/;
+  
+  public native void setValue(int row, int col, int value) /*-{
+    this.setValue(row, col, value);
+  }-*/;
+  
+  public native void setValueDate(int row, int col, double value) /*-{
+    this.setValue(row, col, new $wnd.Date(value));
+  }-*/;
+  
 }
