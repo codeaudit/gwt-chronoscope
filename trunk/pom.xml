@@ -64,10 +64,10 @@
 
     <modules>
         <module>chronoscope</module>
-        <module>samples</module>
+<!--        <module>samples</module> -->
         <module>gviz</module>
-        <module>widget</module>
-        <module>chronoscope-java2d</module>
+<!--        <module>widget</module> -->
+<!--        <module>chronoscope-java2d</module> -->
     </modules>
 
     <build>

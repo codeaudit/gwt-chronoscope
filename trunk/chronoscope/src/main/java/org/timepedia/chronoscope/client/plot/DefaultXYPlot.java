@@ -348,7 +348,7 @@ public class DefaultXYPlot
         }
       }
     }
-    return legendAxis.click(x, y);
+    return showLegend ? legendAxis.click(x, y) : false;
   }
 
   /**
