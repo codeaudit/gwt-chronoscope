@@ -243,12 +243,13 @@ public class ChronoscopeVisualization implements Exportable {
           element.getPropertyInt("clientWidth"),
           element.getPropertyInt("clientHeight"));
       cp.setGssContext(gssContext);
+      cp.getChart().getPlot()
+              .setOverviewEnabled(!"false".equals(opts.get("overview")));
+      cp.getChart().getPlot()
+              .setLegendEnabled(!"false".equals(opts.get("legend")));
       cp.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(View view) {
-          view.getChart().getPlot()
-              .setOverviewEnabled(!"false".equals(opts.get("overview")));
-          view.getChart().getPlot()
-              .setLegendEnabled(!"false".equals(opts.get("legend")));
+          
           for (Marker m : ms) {
             view.getChart().getPlot().addOverlay(m);
           }
