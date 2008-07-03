@@ -17,6 +17,7 @@ import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
+import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
@@ -222,6 +223,18 @@ public class ChronoscopeVisualization implements Exportable {
 
     try {
       final Properties opts = options.cast();
+      String style = opts.get("style");
+      GssContext gssContext = new GVizGssContext();
+
+      if(style != null && !"".equals(style)) {
+          GVizAPIStyle gstyle = null;
+          try {
+              gstyle = GVizAPIStyle.valueOf(style.toUpperCase());
+          } catch (IllegalArgumentException e) {
+              throw new RuntimeException("Unknown Style "+style);
+          }
+          gssContext = gstyle.getGssContext();
+      }
 
       XYDataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
       final Marker ms[] = DataTableParser.parseMarkers(ExporterUtil.wrap(this), table, dataset2Column);
@@ -229,7 +242,7 @@ public class ChronoscopeVisualization implements Exportable {
       cp = Chronoscope.createTimeseriesChart(ds,
           element.getPropertyInt("clientWidth"),
           element.getPropertyInt("clientHeight"));
-      cp.setGssContext(new GVizGssContext());
+      cp.setGssContext(gssContext);
       cp.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(View view) {
           view.getChart().getPlot()
@@ -265,9 +278,9 @@ public class ChronoscopeVisualization implements Exportable {
       });
 
       RootPanel.get(id).add(cp);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       RootPanel.get(id)
-          .add(new Label("There was an error parsing the spreadsheet data. "));
+          .add(new Label("There was an error setting up the chart: "+e.getMessage()));
     }
   }
 }
