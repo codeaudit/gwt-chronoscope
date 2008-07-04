@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.StyleElement;
@@ -123,8 +124,8 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
                   RootPanel.get().add(cp);
                 } catch (Throwable e) {
                   setTitle.setTitle("Chronoscope: Error in Data");
-                  RootPanel.get().add(new Label(
-                      "There was an error parsing the spreadsheet data."));
+                  RootPanel.get().add(new HTML(
+                      "There was an error parsing the spreadsheet data. See <a href=\"http://spreadsheets.google.com/pub?key=pChH4pq_9_M63rOylnhf0KQ\">this Google Spreadsheet</a> for an example how of to format the data correctly. The data range must include the header rows as well as the data rows."));
                 }
               }
             });
