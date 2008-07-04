@@ -15,8 +15,6 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
-import java.util.Date;
-
 /**
  * Renderer used to draw Legend.
  */
@@ -35,13 +33,13 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   private static final int LABEL_X_PAD = 28;
 
   /**
-   * Dictates the Y-padding between the top of the legend and whatever's 
-   * on top of it.
+   * Dictates the Y-padding between the top of the legend and whatever's on top
+   * of it.
    */
   private static final int LEGEND_Y_TOP_PAD = 3;
 
   /**
-   * Dictates the Y-padding between the bottom of the legend and whatever's 
+   * Dictates the Y-padding between the bottom of the legend and whatever's
    * below it.
    */
   private static final int LEGEND_Y_BOTTOM_PAD = 9;
@@ -62,6 +60,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
 
   private ZoomPanel zoomPanel;
 
+  private DateRangePanel dateRangePanel;
+
   private XYPlot plot;
 
   public LegendAxisRenderer(LegendAxis axis) {
@@ -70,7 +70,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   }
 
   public boolean click(XYPlot plot, int x, int y) {
-    zoomPanel.setBounds(bounds);
+    zoomPanel.setLocation(bounds.x, bounds.y);
     return zoomPanel.click(x, y);
   }
 
@@ -82,18 +82,23 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     final int labelHeight = getLabelHeight(view, "X");
 
     copyState(axisBounds, bounds);
-
     clearAxis(layer, axisBounds);
+
+    zoomPanel.setLocation(axisBounds.x, axisBounds.y);
     
-    // TODO: I'd rather put this filter assertion in this.init(), but apparently
-    // the plot's domainMin and domainMax properties have not yet been calculated.
-    // So for now, the filter is lazily applied here.
-    // Note: applyFilter() is extremely inexpensive (doesn't actually do any filtering 
-    // until the collection is iterated upon).
-    zoomPanel.getZoomIntervals().applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
-    zoomPanel.draw(axisBounds.x, axisBounds.y, layer);
+    double startDate = plot.getDomainOrigin();
+    double endDate = startDate + plot.getCurrentDomain();
+    dateRangePanel.updateDomainInterval(startDate, endDate);
+    rightJustify(dateRangePanel, axisBounds);
     
-    drawDateRange(plot, layer, axisBounds);
+    layoutPanels(axisBounds);
+    
+    // Draw the panels
+    zoomPanel.draw(layer);
+    dateRangePanel.draw(layer);
+    
+    updateHoverInfo(plot);
+
     double x = axisBounds.x;
     double y = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
 
@@ -180,16 +185,26 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
           new GssElementImpl("label", this), "");
       textLayerName = axis.getAxisPanel().getPanelName()
           + axis.getAxisPanel().getAxisNumber(axis);
-
+      
       ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
-      // See 'TODO:' in drawLegend() regarding the following commented-out line...
-      //zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
+      zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
+      
+      Layer rootLayer = view.getCanvas().getRootLayer();
       
       zoomPanel = new ZoomPanel();
       zoomPanel.setGssProperties(labelProperties);
       zoomPanel.setTextLayerName(textLayerName);
       zoomPanel.addListener(this);
       zoomPanel.setZoomIntervals(zoomIntervals);
+      zoomPanel.init(rootLayer);
+      
+      dateRangePanel = new DateRangePanel();
+      dateRangePanel.setGssProperties(labelProperties);
+      dateRangePanel.setTextLayerName(textLayerName);
+      dateRangePanel.init(rootLayer);
+
+      dateRangePanel.updateDomainInterval(plot.getDomainMin(),
+          plot.getDomainMax());
 
       this.plot = plot;
       this.bounds = new Bounds();
@@ -204,13 +219,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       double dc = plot.getDomainOrigin() + plot.getCurrentDomain() / 2;
       plot.animateTo(dc - cd / 2, cd, XYPlotListener.ZOOMED, null);
     }
-  }
-
-  private String asDate(double dataX) {
-    long ldate = (long) dataX;
-    Date d = new Date(ldate);
-    return fmt(d.getMonth() + 1) + "/" + fmt(d.getDate()) + "/"
-        + fmty(d.getYear());
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
@@ -255,10 +263,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     return lWidth;
   }
 
-  private void drawDateRange(DefaultXYPlot plot, Layer layer, Bounds axisBounds) {
-
-    layer.setStrokeColor(labelProperties.color);
-
+  private void updateHoverInfo(XYPlot plot) {
     int hoveredDatasetIdx = plot.getHoverSeries();
     int hoveredPointIdx = plot.getHoverPoint();
 
@@ -274,26 +279,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     }
     prevHoveredDatasetIdx = hoveredDatasetIdx;
     prevHoveredPointIdx = hoveredPointIdx;
-
-    // Draw date range
-    String status = asDate(plot.getDomainOrigin()) + " - "
-        + asDate(plot.getDomainOrigin() + plot.getCurrentDomain());
-    int width = layer.stringWidth(status, labelProperties.fontFamily,
-        labelProperties.fontWeight, labelProperties.fontSize);
-
-    layer.drawText(axisBounds.x + axisBounds.width - width - 5, axisBounds.y,
-        status, labelProperties.fontFamily, labelProperties.fontWeight,
-        labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
-
-    // drawHitDebugRegions(layer, axisBounds);
-  }
-
-  private String fmt(int num) {
-    return num < 10 ? "0" + num : "" + num;
-  }
-
-  private String fmty(int year) {
-    return "" + (year + 1900);
   }
 
   private static void copyState(Bounds source, Bounds target) {
@@ -314,65 +299,82 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     zooms.add(new ZoomInterval("5y", YEAR_INTERVAL * 5));
     zooms.add(new ZoomInterval("10y", YEAR_INTERVAL * 10));
     zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
-    
+
     return zooms;
   }
 
-  /*
-  private void box(String s, Layer layer, double bx, double be) {
-    layer.setFillColor(s);
-    // layer.beginPath();
-    // layer.rect(bx, bounds.y, be-bx, legendStringHeight);
-    layer.fillRect(bx, bounds.y, be - bx, legendStringHeight);
-  }
+  
+  /**
+   * Currently, this method naively lays out the ZoomPanel and
+   * DateRangePanel on the X-axis.  Ultimately, layout rules and 
+   * heuristics will be split out into a separate LayoutStrategy 
+   * interface of some sort.
    */
+  private void layoutPanels(Bounds parentBounds) {
+    final int minCushion = 8;
+    double parentWidth = parentBounds.width;
+    
+    dateRangePanel.resizeToIdealWidth();
+    zoomPanel.resizeToIdealWidth();
+    double idealZoomPanelWidth = zoomPanel.getWidth();
+    
+    // First, see if the panels in their pretties form will 
+    //fit within the container's bounds
+    double cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
+    if (cushion >= minCushion) {
+      return;
+    }
+    
+    // Doesn't fit? Then compress only the date range panel
+    dateRangePanel.resizeToMinimalWidth();
+    rightJustify(dateRangePanel, parentBounds);
+    cushion = parentWidth - idealZoomPanelWidth - dateRangePanel.getWidth();
+    if (cushion >= minCushion) {
+      return;
+    }
+    
+    // Still doesn't fit? Then compress only the zoom link panel
+    zoomPanel.resizeToMinimalWidth();
+    dateRangePanel.resizeToIdealWidth();
+    rightJustify(dateRangePanel, parentBounds);
+    cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
+    if (cushion >= minCushion) {
+      return;
+    }
+    
+    // Still doesn't fit? Then compress both panels
+    dateRangePanel.resizeToMinimalWidth();
+    rightJustify(dateRangePanel, parentBounds);
 
-  /*
-  private void myrect(Layer layer, double bx, double v, double v1,
-      int legendStringHeight) {
-    layer.moveTo(bx, v);
-    layer.lineTo(bx + v1, v);
-    layer.lineTo(bx + v1, v + legendStringHeight);
-    layer.lineTo(bx, v + legendStringHeight);
-    layer.lineTo(bx, v);
+    // TODO:
+    // If still not enough cushion, maybe resort to hiding one of
+    // the panels, or dropping it to the next line.  Although the
+    // latter approach might not be desirable, as it would produce
+    // an ugly transition when dynamic chart resizing is available.
   }
+  
+  private void rightJustify(Panel p, Bounds parentBounds) {
+    p.setLocation(parentBounds.x + parentBounds.width - dateRangePanel.getWidth() - 2, parentBounds.y);
+  }
+  
+  /**
+   * For debugging purposes
    */
+  private static void hiliteBounds(Bounds b, Layer layer) {
+    layer.save();
 
-  /*
-   * private void drawHitDebugRegions(Layer layer, Bounds axisBounds) {
-   * layer.save(); computeMetrics(layer);
-   * 
-   * double bx = bounds.x; double be = bounds.x + zoomStringWidth;
-   * layer.setFillColor("#ff0000"); // layer.fillRect(bx,
-   * bounds.y+legendStringHeight, be-bx, // legendStringHeight); //
-   * layer.beginPath();
-   *  // myrect(layer, bx, bounds.y+legendStringHeight, be-bx, //
-   * legendStringHeight); // layer.closePath(); //
-   * layer.setStrokeColor("#000000"); // layer.stroke(); box("#FFFF00", layer,
-   * bx, bx + zcolon);
-   * 
-   * bx = bounds.x + zcolon + zspace; be = bx + z1d; box("#00ffff", layer, bx,
-   * be); layer.setTransparency(0.2f);
-   * 
-   * bx += z1d + zspace; be = bx + z5d; box("#00ff00", layer, bx, be);
-   * 
-   * bx += z5d + zspace; be = bx + z1m;
-   * 
-   * box("#00ff00", layer, bx, be);
-   * 
-   * bx += z1m + zspace; be = bx + z3m;
-   * 
-   * box("#00ff00", layer, bx, be);
-   * 
-   * bx += z3m + zspace; be = bx + z6m; box("#00ff00", layer, bx, be);
-   * 
-   * bx += z6m + zspace; be = bx + z1y; box("#00ff00", layer, bx, be);
-   * 
-   * bx += z1y + zspace; be = bx + z5y; box("#00ff00", layer, bx, be);
-   * 
-   * bx += z5y + zspace; be = bx + z10y; box("#00ff00", layer, bx, be);
-   * 
-   * bx += z10y + zspace; be = bx + zmax; box("#00ff00", layer, bx, be);
-   * layer.restore(); }
+    layer.setFillColor("#50D0FF");
+    layer.fillRect(b.x, b.y, b.width, b.height);
+
+    layer.restore();
+  }
+  
+  /**
+   * For debugging purposes
    */
+  private static void hiliteBounds(Panel p, Layer layer) {
+    Bounds b = new Bounds(p.getX(), p.getY(), p.getWidth(), p.getHeight());
+    hiliteBounds(b, layer);
+  }
+  
 }

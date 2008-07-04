@@ -17,6 +17,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 public class ZoomInterval implements Comparable<ZoomInterval> {
   private double interval;
   private String name;
+  private int pixelWidth = -1;
   private boolean isFilterExempt = false; 
   
   /**
@@ -34,6 +35,7 @@ public class ZoomInterval implements Comparable<ZoomInterval> {
     zi.name = this.name;
     zi.interval = this.interval;
     zi.isFilterExempt = this.isFilterExempt;
+    zi.pixelWidth = this.pixelWidth;
     return zi;
   }
   
@@ -93,6 +95,14 @@ public class ZoomInterval implements Comparable<ZoomInterval> {
 
   public String getName() {
     return this.name;
+  }
+  
+  /**
+   * Returns the width of the {@link #getName()} string, whic
+   * @return
+   */
+  public int getPixelWidth() {
+    return this.pixelWidth;
   }
 
   public int hashCode() {
