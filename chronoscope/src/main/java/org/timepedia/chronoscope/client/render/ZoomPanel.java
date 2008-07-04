@@ -1,14 +1,9 @@
-/**
- * 
- */
 package org.timepedia.chronoscope.client.render;
 
 import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.ArrayList;
@@ -21,29 +16,44 @@ import java.util.List;
  * 
  * @author Chad Takahashi
  */
-public class ZoomPanel {
-  
-  // TODO: Add a getBounds() method
-  
-  
+public class ZoomPanel extends AbstractPanel {
   private static final int MAX_ZOOM_LINKS = 20;
-
   private static final String SPACE = "\u00A0";
   private static final String ZOOM_PREFIX = "Zoom:";
-
-  private Bounds bounds;
-  private int fullZoomStringWidth;
-  private GssProperties gssProperties;
+  
+  //private int fullZoomStringWidth;
   private List<ZoomListener> listeners;
-  private int spaceWidth = -1;
-  private String textLayerName;
-  private int zoomLinkHeight = -1;
   private int[] zoomLinkWidths = new int[MAX_ZOOM_LINKS];
-  private int zoomPrefixWidth = -1;
   private ZoomIntervals zooms;
-
+  
+  private UIString spaceShort, spaceLong, space;
+  private UIString zoomPrefixShort, zoomPrefixLong, zoomPrefix;
+  
+  private boolean compactMode = false;
+  private boolean isMetricsComputed = false;
+  
   public ZoomPanel() {
     this.listeners = new ArrayList<ZoomListener>();
+  }
+  
+  public void init(Layer layer) { 
+    height = super.calcHeight("X", layer);
+    
+    // Store the short and long versions of the following strings
+    // so that during layout, the container can choose the best fit.
+    spaceShort = new UIString("", 2);
+    spaceLong = new UIString("", calcWidth(SPACE, layer) + 1);
+    zoomPrefixShort = new UIString("", 0);
+    zoomPrefixLong = new UIString(ZOOM_PREFIX, calcWidth(ZOOM_PREFIX, layer));
+    
+    computeMetrics(layer);
+    
+    if (compactMode) {
+      resizeToMinimalWidth();
+    }
+    else {
+      resizeToIdealWidth();
+    }
   }
 
   public ZoomIntervals getZoomIntervals() {
@@ -54,18 +64,6 @@ public class ZoomPanel {
     this.zooms = zooms;
   }
   
-  public void setTextLayerName(String textLayerName) {
-    this.textLayerName = textLayerName;
-  }
-
-  public void setBounds(Bounds bounds) {
-    this.bounds = bounds;
-  }
-
-  public void setGssProperties(GssProperties gssProperties) {
-    this.gssProperties = gssProperties;
-  }
-
   public void addListener(ZoomListener l) {
     this.listeners.add(l);
   }
@@ -83,55 +81,45 @@ public class ZoomPanel {
     return hitDetected;
   }
 
-  /**
-   * Draws this panel at the specified (x,y) screen coordinate.
-   */
-  public void draw(double x, double y, Layer layer) {
+  public void draw(Layer layer) {
     layer.setStrokeColor(gssProperties.color);
 
-    computeMetrics(layer);
-    drawZoomLink(layer, x, y, ZOOM_PREFIX, false);
-    x += zoomPrefixWidth + spaceWidth;
+    if (!isMetricsComputed) {
+      computeMetrics(layer);
+      isMetricsComputed = true;
+    }
+    
+    double xCursor = x;
+    drawZoomLink(layer, xCursor, y, zoomPrefix.value, false);
+    xCursor += zoomPrefix.pixelWidth + space.pixelWidth;
 
     int i = 0;
     for (ZoomInterval zoom : zooms) {
-      drawZoomLink(layer, x, y, zoom.getName(), true);
-      x += zoomLinkWidths[i++] + spaceWidth;
+      drawZoomLink(layer, xCursor, y, zoom.getName(), true);
+      xCursor += zoomLinkWidths[i++] + space.pixelWidth;
     }
   }
 
   /**
-   * Calculates the screen width for the specified string.
+   * TODO: This method only needs to be fired when a dataset has been
+   * updated (e.g. if there's only 4 years of data, and then someone
+   * adds another 2 years worth of data, then the "5y" zoom link
+   * will now need to be shown).
    */
-  private int calcWidth(String s, Layer layer) {
-    return layer.stringWidth(s, gssProperties.fontFamily,
-        gssProperties.fontWeight, gssProperties.fontSize);
-  }
-
   private void computeMetrics(Layer layer) {
-    boolean isInitialized = (zoomLinkHeight != -1);
-    
-    if (!isInitialized) {
-      spaceWidth = calcWidth(SPACE, layer) + 1; // Question: Whats "+1" for?
-      zoomPrefixWidth = calcWidth(ZOOM_PREFIX, layer);
-  
-      fullZoomStringWidth = zoomPrefixWidth;
-      int i = 0;
-      for (ZoomInterval zoom : zooms) {
-        fullZoomStringWidth += spaceWidth;
-        int w = calcWidth(zoom.getName(), layer);
-        zoomLinkWidths[i++] = w;
-        fullZoomStringWidth += w;
-      }
-  
-      zoomLinkHeight = layer.stringHeight("X", gssProperties.fontFamily,
-          gssProperties.fontWeight, gssProperties.fontSize);
+    //fullZoomStringWidth = zoomPrefix.pixelWidth;
+    int i = 0;
+    for (ZoomInterval zoom : zooms) {
+      //fullZoomStringWidth += space.pixelWidth;
+      int w = calcWidth(zoom.getName(), layer);
+      zoomLinkWidths[i++] = w;
+      //fullZoomStringWidth += w;
     }
   }
 
-  private void drawZoomLink(Layer layer, double zx, double zy, String label,
+  private void drawZoomLink(Layer layer, double x, double y, String label,
       boolean clickable) {
-    layer.drawText(zx, zy, label, gssProperties.fontFamily,
+    layer.drawText(x, y, label, gssProperties.fontFamily,
         gssProperties.fontWeight, gssProperties.fontSize, textLayerName,
         clickable ? Cursor.CLICKABLE : Cursor.DEFAULT);
   }
@@ -140,25 +128,21 @@ public class ZoomPanel {
    * If (x,y) falls on a zoom link, then return the corresponding ZoomInterval, or null if nothing was "hit".
    */
   private ZoomInterval detectHit(int x, int y) {
-    /*
-    if (zoomLinkHeight == -1) {
-      Layer layer = plot.getChart().getView().getCanvas().getRootLayer();
-      computeMetrics(layer, true);
-    }
-     */
-
-    if (!MathUtil.isBounded(y, bounds.y, bounds.y + zoomLinkHeight)) {
+    if (!MathUtil.isBounded(y, this.y, this.y + this.height)) {
       return null;
     }
-
-    double bx = bounds.x;
-    double be = bounds.x + fullZoomStringWidth;
+    
+    double bx, be;
+    /*
+    double bx = this.x;
+    double be = this.x + fullZoomStringWidth;
     if (!MathUtil.isBounded(x, bx, be)) {
       return null;
     }
-
+    */
+    
     // Move cursor to the 1st zoom link
-    bx = bounds.x + zoomPrefixWidth + spaceWidth;
+    bx = this.x + zoomPrefix.pixelWidth + space.pixelWidth;
 
     // Rifle through the zoom links and see if any of them were clicked on.
     int i = 0;
@@ -167,9 +151,52 @@ public class ZoomPanel {
       if (MathUtil.isBounded(x, bx, be)) {
         return zoom;
       }
-      bx = be + spaceWidth;
+      bx = be + space.pixelWidth;
     }
 
     return null;
+  }
+
+  public void resizeToMinimalWidth() {
+    if (!compactMode || zoomPrefix == null) {
+      zoomPrefix = zoomPrefixShort;
+      space = spaceShort;
+      width = calcPanelWidth();
+    }
+    compactMode = true;
+  }
+
+  public void resizeToIdealWidth() {
+    if (compactMode || zoomPrefix == null) {
+      zoomPrefix = zoomPrefixLong;
+      space = spaceLong;
+      width = calcPanelWidth();
+    }
+    compactMode = false;
+  }
+
+  private double calcPanelWidth() {
+    width = zoomPrefix.pixelWidth + space.pixelWidth;
+
+    int i = 0;
+    for (ZoomInterval zoom : zooms) {
+      width += zoomLinkWidths[i++];
+      width += space.pixelWidth;
+    }
+    
+    return width;
+  }
+  
+  /**
+   * Represents a string with an associated pixel width.
+   */
+  private static final class UIString {
+    public UIString(String value, int pixelWidth) {
+      this.value = value;
+      this.pixelWidth = pixelWidth;
+    }
+    
+    public String value;
+    public int pixelWidth;
   }
 }
