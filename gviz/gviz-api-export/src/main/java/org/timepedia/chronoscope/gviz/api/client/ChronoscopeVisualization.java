@@ -18,6 +18,7 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
@@ -224,7 +225,7 @@ public class ChronoscopeVisualization implements Exportable {
     try {
       final Properties opts = options.cast();
       String style = opts.get("style");
-      GssContext gssContext = new GVizGssContext();
+      GssContext gssContext = new DefaultGssContext();
 
       if(style != null && !"".equals(style)) {
           GVizAPIStyle gstyle = null;
@@ -242,6 +243,7 @@ public class ChronoscopeVisualization implements Exportable {
       cp = Chronoscope.createTimeseriesChart(ds,
           element.getPropertyInt("clientWidth"),
           element.getPropertyInt("clientHeight"));
+      ((DefaultGssContext)gssContext).setShowAxisLabels(!"false".equals(opts.get("axisLabels")));
       cp.setGssContext(gssContext);
       cp.getChart().getPlot()
               .setOverviewEnabled(!"false".equals(opts.get("overview")));

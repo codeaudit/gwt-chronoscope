@@ -18,6 +18,8 @@ import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.StyleElement;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -38,14 +40,14 @@ import org.timepedia.chronoscope.gviz.api.client.Query;
 @Gadget.ModulePrefs(title = "Chronoscope", author = "Timefire.com",
     author_email = "support+gadget@timefire.com", 
     author_aboutme="Timefire is a company focused on organizing the world's historical data.",
-    author_link="http://timepedia.org/chronoscope/gviz",
+    author_link="http://timepedia.org/chronoscope/docs/gadget",
     author_location="Mountain View, CA",
     author_quote="Time is the fire in which we burn.",
     description = "The Chronoscope Annotated Timeseries Gadget is a Google Visualization Gadget capable of rendering very large timeseries, Google Maps style markers, and multiple timeseries on multiple axes.",
     directory_title="Chronoscope Timeseries Gadget",
     title_url="http://timepedia.org/chronoscope",
-    screenshot = "http://timepedia.org/chronoscope/docs/gviz/screenshot.png",
-    thumbnail = "http://timepedia.org/chronoscope/docs/gviz/screenshot-120x60.png"
+    screenshot = "http://timepedia.org/chronoscope/docs/gadget/screenshot-280wide.png",
+    thumbnail = "http://timepedia.org/chronoscope/docs/gadget/screenshot-120x60.png"
     )
 public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
     implements NeedsIntrinsics, NeedsSetPrefs, NeedsSetTitle, NeedsIdi,
@@ -109,7 +111,10 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
 
                   ChartPanel cp = Chronoscope.createTimeseriesChart(ds,
                       Window.getClientWidth(), Window.getClientHeight());
-                  cp.setGssContext(prefs.chartStyle().getValue().getGssContext());
+                    GssContext gssContext = prefs.chartStyle().getValue().getGssContext();
+                    ((DefaultGssContext)gssContext).setShowAxisLabels(prefs.axisLabels().getValue());
+                    cp.setGssContext(gssContext);
+
                   cp.setReadyListener(new ViewReadyCallback() {
                     public void onViewReady(View view) {
                       view.getChart().getPlot().setOverviewEnabled(prefs.overviewEnabled().getValue());
