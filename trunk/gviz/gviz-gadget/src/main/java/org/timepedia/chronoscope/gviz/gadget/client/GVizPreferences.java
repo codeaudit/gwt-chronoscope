@@ -58,8 +58,8 @@ public interface GVizPreferences extends UserPreferences {
 //  @PreferenceAttributes(display_name = "Same Units share Same Axis?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
 //  BooleanPreference sameUnitsShareSameAxis();
 
-//    @PreferenceAttributes(display_name = "Axis Labels?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
-//    BooleanPreference axisLabels();
+    @PreferenceAttributes(display_name = "Show Axis Labels?", default_value="true", options = PreferenceAttributes.Options.NORMAL)
+    BooleanPreference axisLabels();
 
     @PreferenceAttributes(display_name = "Overview enabled?", default_value = "true", options = PreferenceAttributes.Options.NORMAL)
     BooleanPreference overviewEnabled();
