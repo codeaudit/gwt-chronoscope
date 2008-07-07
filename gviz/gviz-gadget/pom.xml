@@ -72,7 +72,7 @@
               org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}
             </compileTarget>
           </compileTargets>
-          <style>${gwt.outputstyle}</style>
+          <style>${gwt.outputstyle}</style> 
         </configuration>
         <executions>
           <execution>

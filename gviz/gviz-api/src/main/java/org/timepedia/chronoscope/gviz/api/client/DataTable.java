@@ -28,7 +28,7 @@ public final class DataTable extends JavaScriptObject {
   
   public native double getValueDate(int row, int column) /*-{
     var d=this.getValue(row, column);
-    return d ? d.getTime() : 1/0;
+    return d ? d.getTime() : 0/0;
   }-*/; 
   
   public native double getValueNumber(int row, int column) /*-{
