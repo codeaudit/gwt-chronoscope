@@ -9,6 +9,8 @@ public class GVizEventHelper {
 
   public static final String SELECT_EVENT = "select";
 
+  public static final String RANGECHANGE_EVENT = "rangechange";
+
   public static native void trigger(JavaScriptObject source, String eventName,
       JavaScriptObject eventData) /*-{
           $wnd.google.visualization.events.trigger(source, eventName, 

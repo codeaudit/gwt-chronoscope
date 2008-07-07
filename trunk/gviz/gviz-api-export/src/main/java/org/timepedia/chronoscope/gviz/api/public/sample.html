@@ -42,7 +42,7 @@ c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
         })
 
         
-        c.draw(data, { legend: "false", overview: "false"});
+        c.draw(data, { legend: "false", overview: "false", scaleType: "maximum" });
        table = new google.visualization.Table(document.getElementById('table_div'));
        table.draw(data, {showRowNumber: true});
         google.visualization.events.addListener(table, 'select', function() {
@@ -60,5 +60,16 @@ c = new chronoscope.ChronoscopeVisualization(document.getElementById('foo'));
 <div id="foo" style="width: 600px; height: 400px"></div>
 <div id="table_div"></div>
 <input type="submit" onClick="c.setSelection([{col: 2, row: 3}])" value="Click Me">
+<input type="submit" onClick="c.zoomIn()" value="Zoom In">
+<input type="submit" onClick="c.zoomOut()" value="Zoom Out">
+<input type="submit" onClick="c.pageLeft()" value="Page Left">
+
+<input type="submit" onClick="c.pageRight()" value="Page Right">
+<input type="submit" onClick="c.pageLeft(0.5)" value="Half Page Left">
+<input type="submit" onClick="c.pageRight(0.5)" value="Half Page Right">
+
+
+
+
 </body>
 </html>
