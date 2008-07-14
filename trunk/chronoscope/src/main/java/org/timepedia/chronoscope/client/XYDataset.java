@@ -10,14 +10,15 @@ import org.timepedia.exporter.client.Exportable;
  * level 0 being the bottom most level containing the original datasets. Levels
  * 1 and above represent a 'zoomed out' view of the data, filtered,
  * interpolated, scaled, or decimated as appropriate. The only requirement is
- * that if M and N are two levels in the dataset, and N > M, then
- * getNumSamples(M) < getNumSamples(N). A useful visualization is to imagine
- * levels stacking on top of one another like a pyramid. There is no requirement
- * that the pyramid contain a level Z such that getNumSamples(Z) == 1, but in
- * practice, getNumSamples(Z) should be less than XYPlot.getMaxDrawablePoints()
- * <p/> It is recommended to use a method that makes successive levels half the
- * size of former levels, so that the height of the pyramid is
- * log_2(num_samples)
+ * that if M and N are two levels in the dataset, and M > N, then
+ * getNumSamples(M) < getNumSamples(N). In other words, the number of samples
+ * (the resolution) must strictly decrease as the level increases.  A useful 
+ * visualization is to imagine levels stacking on top of one another like a 
+ * pyramid. There is no requirement that the pyramid contain a level Z such that 
+ * getNumSamples(Z) == 1, but in practice, getNumSamples(Z) should be less than 
+ * XYPlot.getMaxDrawablePoints() <p/> It is recommended to use a method that makes 
+ * successive levels half the size of former levels, so that the height of the 
+ * pyramid is log_2(num_samples)
  *
  * @gwt.exportPackage chronoscope
  * @gwt.export
