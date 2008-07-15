@@ -47,8 +47,8 @@ public interface Panel {
 
   /**
    * Causes this panel to shrink its width as much as possible, while still
-   * maintaining enough information for the user to make sense of it's usage.
-   * For example, a panel could reduce their width by decreasing the font 
+   * maintaining enough information for the user to make sense of its usage.
+   * For example, a panel could reduce its width by decreasing the font 
    * size, shrinking whitespace, or using abbreviated text.
    */
   void resizeToMinimalWidth();

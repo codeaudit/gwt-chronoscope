@@ -14,7 +14,15 @@ public final class ArgChecker {
 
   // Feel free to add more validation methods as necessary
 
-  public static double isNonNegative(int value, String argName) {
+  public static int isNonNegative(int value, String argName) {
+    if (value < 0) {
+      throw new IllegalArgumentException(quote(argName) + " was negative: "
+          + value);
+    }
+    return value;
+  }
+
+  public static double isNonNegative(double value, String argName) {
     if (value < 0) {
       throw new IllegalArgumentException(quote(argName) + " was negative: "
           + value);

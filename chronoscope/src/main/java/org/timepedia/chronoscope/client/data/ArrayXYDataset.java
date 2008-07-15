@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
@@ -58,6 +59,7 @@ public class ArrayXYDataset implements XYDataset {
 
   protected ArrayXYDataset(String identifier, double[] domain, double[] range,
       String label, String axisId, int capacity) {
+    validateDomainAndRange(domain, range);
     this.label = label;
     this.identifier = identifier;
     if (capacity > domain.length) {
@@ -169,5 +171,14 @@ public class ArrayXYDataset implements XYDataset {
     rangeTop = xy.getRangeTop();
     rangeBottom = xy.getRangeBottom();
     approximateMinimumInterval = xy.getMinInterval();
+  }
+  
+  private void validateDomainAndRange(double[] domain, double[] range) {
+    ArgChecker.isNotNull(domain, "domain");
+    ArgChecker.isNotNull(range, "range");
+    if (domain.length != range.length) {
+      throw new IllegalArgumentException("domain and range arrays are different lengths: "
+          + "(domain.length=" + domain.length + ", range.length=" + range.length + ")");
+    }
   }
 }

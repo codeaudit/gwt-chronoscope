@@ -189,12 +189,12 @@ public class XYMultiresolution {
       multiRange[level] = allocMultiresolution(numSamples);
       multiLength[level] = multiDomain[level].length;
       for (int index = 0; index < multiLength[level]; index++) {
-        if (level == 0 && index > 1) {
+        multiDomain[level][index] = strategy.getDomainValue(this, level, index);
+        multiRange[level][index] = strategy.getRangeValue(this, level, index);
+        if (level == 0 && index >= 1) {
           minInterval = Math.min(minInterval,
               multiDomain[level][index] - multiDomain[level][index - 1]);
         }
-        multiDomain[level][index] = strategy.getDomainValue(this, level, index);
-        multiRange[level][index] = strategy.getRangeValue(this, level, index);
         if (level == 0) {
           rangeBottom = Math.min(rangeBottom, multiRange[level][index]);
           rangeTop = Math.max(rangeTop, multiRange[level][index]);
