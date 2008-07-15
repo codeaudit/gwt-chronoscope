@@ -67,8 +67,16 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
   public Iterator<ZoomInterval> iterator() {
     ArrayList<ZoomInterval> l = new ArrayList<ZoomInterval>(intervals.size());
     for (ZoomInterval zoom : intervals) {
+      // Purpose of maxIntervalFactor is to prevent the largest zoom link
+      // (not including the "max" link) from displaying if the max interval 
+      // across all datasets is not significantly wider than the largest zoom 
+      // link.  
+      // For example, if the max interval is 10.5 years, then the "10y" 
+      // zoom link will not appear, because zooming from 10.5 years down to 10 
+      // years is not visually significant.
+      final double maxIntervalFactor = 0.75;
       boolean wouldZoomHaveEffect = MathUtil.isBounded(zoom.getInterval(),
-          minInterval, maxInterval);
+          minInterval, maxIntervalFactor * maxInterval);
       
       if (wouldZoomHaveEffect || zoom.isFilterExempt()) {
         l.add(zoom);
