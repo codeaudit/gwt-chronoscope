@@ -39,8 +39,14 @@ public class DateRangePanel extends AbstractPanel {
   public void init(Layer layer) {
     minPanelWidth = calcWidth("12/12/00" + DATE_DELIM_SHORT + "12/12/00", layer);
     idealPanelWidth = calcWidth("12/12/0000" + DATE_DELIM_LONG + "12/12/0000", layer);
+    
+    if (compactMode) {
+      resizeToMinimalWidth();
+    }
+    else {
+      resizeToIdealWidth();
+    }
 
-    width = compactMode ? minPanelWidth : idealPanelWidth;
     height = this.calcHeight("X", layer);
   }
 
