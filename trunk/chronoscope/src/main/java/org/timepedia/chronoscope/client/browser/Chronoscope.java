@@ -532,7 +532,7 @@ public class Chronoscope implements Exportable, HistoryListener {
         Chronoscope.useGwtTheme(Theme.CHROME);
       }
 
-      checkForChronoscopeCSS();
+//      checkForChronoscopeCSS();
 //        tryInjectChronoscopeCSS(new Command() {
 //            public void execute() {
       exportFunctions();

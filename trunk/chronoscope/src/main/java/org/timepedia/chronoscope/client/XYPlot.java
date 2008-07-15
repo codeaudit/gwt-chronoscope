@@ -357,6 +357,11 @@ public interface XYPlot extends Exportable {
   void reloadStyles();
 
   /**
+   * Remove an overlay from the Plot.
+   */
+  void removeOverlay(Overlay overlay);
+  
+  /**
    * Animated pan of the plot such that the given domain value is positioned in
    * the center, the continuation is called when finished.
    */

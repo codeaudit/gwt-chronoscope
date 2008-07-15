@@ -18,6 +18,9 @@ public class MockChronoscopeMenuJava2D implements ChronoscopeMenu {
       final ChronoscopeClickListener ccl) {
   }
 
+  public void removeAllMenuItems() {
+  }
+
   public void hide() {
   }
 

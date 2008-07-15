@@ -23,6 +23,9 @@ public class MockView extends View {
           ChronoscopeClickListener ccl) {
       }
 
+      public void removeAllMenuItems() {
+      }
+
       public void hide() {
       }
 
