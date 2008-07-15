@@ -24,6 +24,7 @@ import org.timepedia.chronoscope.client.data.HasRegions;
 import org.timepedia.chronoscope.client.data.RegionLoadListener;
 import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -1261,14 +1262,23 @@ public class DefaultXYPlot
     overviewLayer.setTextLayerBounds("overlays", new Bounds(0, 0,
         overviewLayer.getBounds().width, overviewLayer.getBounds().height));
     Iterator i = overlays.iterator();
+
+    char label = 'A';
+
     while (i.hasNext()) {
       Overlay o = (Overlay) i.next();
       double oPos = o.getDomainX();
       if (MathUtil
           .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
-        o.draw(overviewLayer, "overlays");
+        if (o instanceof Marker) {
+          Marker m = (Marker) o;
+          m.setLabel("" + label);
+          label++;
+        }
       }
+      o.draw(overviewLayer, "overlays");
     }
+
     overviewLayer.restore();
   }
 

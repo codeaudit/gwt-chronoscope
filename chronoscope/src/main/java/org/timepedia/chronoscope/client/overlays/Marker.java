@@ -28,7 +28,7 @@ public class Marker implements Overlay, GssElement, Exportable {
 
   private double rangeY;
 
-  private final String label;
+  private String label;
 
   private int width = -1, height;
 
@@ -110,7 +110,7 @@ public class Marker implements Overlay, GssElement, Exportable {
       y = y - 15 - height;
     }
     backingCanvas.save();
-    x = drawOval(backingCanvas, x, y, yp, y < yp ? 1 : 0);
+    x = drawOval(width, height, markerProperties, backingCanvas, x, y, yp, y < yp ? 1 : 0);
 
     backingCanvas.drawText(x, y, label, markerProperties.fontFamily,
         markerProperties.fontWeight, markerProperties.fontSize, layer,
@@ -143,6 +143,15 @@ public class Marker implements Overlay, GssElement, Exportable {
     return "marker";
   }
 
+  
+  public String getLabel() {
+    return label;
+  }
+  
+  public void setLabel(String label) {
+    this.label = label;
+  }
+  
   public String getTypeClass() {
     return label;
   }
@@ -220,8 +229,8 @@ public class Marker implements Overlay, GssElement, Exportable {
     return x;
   }
 
-  private double drawOval(Layer backingCanvas, double x, double y, double yp,
-      int dir) {
+  public static double drawOval(int width, int height, GssProperties markerProperties, Layer backingCanvas, double x,
+      double y, double yp, int dir) {
     backingCanvas.setStrokeColor(markerProperties.color);
     backingCanvas.setTransparency(1.0f);
     backingCanvas.beginPath();

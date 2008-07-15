@@ -40,9 +40,8 @@ public class BrowserChronoscopeMenu extends PopupPanel
      */
     protected void onAttach() {
       super.onAttach();
-      getParent().addStyleName("chronoscopeMenu");
       // HACK: until GWT RFE to set style on implicit PopupPanel is fixed
-      DOM.setIntStyleAttribute(getParent().getElement(), "zIndex", 100);
+      DOM.setIntStyleAttribute(getParent().getElement(), "zIndex", 999);
     }
   }
 
@@ -53,7 +52,6 @@ public class BrowserChronoscopeMenu extends PopupPanel
     setPopupPosition(x, y);
     items = new ChronoscopeMenuBar(true);
     setWidget(items);
-    setStyleName("chronoscopeMenu");
     items.setAutoOpen(true);
   }
 
@@ -83,6 +81,11 @@ public class BrowserChronoscopeMenu extends PopupPanel
     });
   }
 
+  @Export
+  public void removeAllMenuItems() {
+    items.clearItems();
+  }
+
   /**
    * Hides the popup. This has no effect if it is not currently visible.
    *
@@ -103,7 +106,7 @@ public class BrowserChronoscopeMenu extends PopupPanel
     super.show();
   }
 
-  MenuBar getMenuBar() {
+  public MenuBar getMenuBar() {
     return items;
   }
 }
