@@ -178,7 +178,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
 
   public void init(XYPlot plot, LegendAxis axis) {
     View view = plot.getChart().getView();
-
+    
     if (axisProperties == null) {
       axisProperties = view.getGssProperties(this, "");
       labelProperties = view.getGssProperties(
@@ -187,7 +187,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
           + axis.getAxisPanel().getAxisNumber(axis);
       
       ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
-      zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), 0);
+      final double approxMinInterval = Math.max(0, calcApproxMinInterval(plot));
+      zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), approxMinInterval);
       
       Layer rootLayer = view.getCanvas().getRootLayer();
       
@@ -298,6 +299,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     zooms.add(new ZoomInterval("1y", YEAR_INTERVAL));
     zooms.add(new ZoomInterval("5y", YEAR_INTERVAL * 5));
     zooms.add(new ZoomInterval("10y", YEAR_INTERVAL * 10));
+    zooms.add(new ZoomInterval("100y", YEAR_INTERVAL * 100));
+    zooms.add(new ZoomInterval("1000y", YEAR_INTERVAL * 1000));
     zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
 
     return zooms;
@@ -355,6 +358,18 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   
   private void rightJustify(Panel p, Bounds parentBounds) {
     p.setLocation(parentBounds.x + parentBounds.width - dateRangePanel.getWidth() - 2, parentBounds.y);
+  }
+  
+  /**
+   * Determines the approximate minimum domain interval across all datasets in the
+   * specified plot.
+   */
+  private static double calcApproxMinInterval(XYPlot plot) {
+    double min = Double.MAX_VALUE;
+    for (int i = 0; i < plot.getNumDatasets(); i++) {
+      min = Math.min(min, plot.getDataset(i).getApproximateMinimumInterval());
+    }
+    return min;
   }
   
   /**

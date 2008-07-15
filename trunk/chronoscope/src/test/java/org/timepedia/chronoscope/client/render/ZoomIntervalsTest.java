@@ -10,7 +10,7 @@ import java.util.Iterator;
  *
  */
 public class ZoomIntervalsTest extends TestCase {
-  private ZoomInterval z1d, z1m, z1y, zMax;
+  private ZoomInterval z1d, z1m, z1y, z5y, zMax;
   
   public ZoomIntervalsTest(String name) {
     super(name);
@@ -20,6 +20,7 @@ public class ZoomIntervalsTest extends TestCase {
     z1d = new ZoomInterval("1d", 1);
     z1m = new ZoomInterval("1m", 30);
     z1y = new ZoomInterval("1y", 365);
+    z5y = new ZoomInterval("5y", z1y.getInterval() * 5);
     zMax = new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true);
   }
   
@@ -50,19 +51,20 @@ public class ZoomIntervalsTest extends TestCase {
     z.add(z1d);
     z.add(z1m);
     z.add(z1y);
-    z.add(zMax); // aMax is filter-exempt.
+    z.add(z5y);
+    z.add(zMax); // zMax is filter-exempt.
     
-    // Pick a start/end time whose interval is less than a year.
-    // We expect the year zoom to drop out, however, 'max' should
-    // still hang around since it's filter-exempt.
+    // "1d" and "5y" should drop out, but "max" should still hang around since it's 
+    // filter-exempt.
+    double minInterval = z1d.getInterval() + 1;
     double timeStart = new Date().getTime();
-    double timeEnd = timeStart + z1y.getInterval() - 1;
-    z.applyFilter(timeStart, timeEnd, 0);
-    assertZoomEquals(z.iterator(), z1d, z1m, zMax);
+    double timeEnd = timeStart + z5y.getInterval() - 1;
+    z.applyFilter(timeStart, timeEnd, minInterval);
+    assertZoomEquals(z.iterator(), z1m, z1y, zMax);
     
     // Now clear the filter and make sure it goes back to initial state
     z.clearFilter();
-    assertZoomEquals(z.iterator(), z1d, z1m, z1y, zMax);
+    assertZoomEquals(z.iterator(), z1d, z1m, z1y, z5y, zMax);
     
     // TODO: add more filter test cases
     
