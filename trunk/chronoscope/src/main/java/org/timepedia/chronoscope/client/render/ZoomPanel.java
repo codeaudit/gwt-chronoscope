@@ -31,6 +31,7 @@ public class ZoomPanel extends AbstractPanel {
   
   private boolean compactMode = false;
   private boolean isMetricsComputed = false;
+  private boolean doShow = true;
   
   public ZoomPanel() {
     this.listeners = new ArrayList<ZoomListener>();
@@ -69,6 +70,10 @@ public class ZoomPanel extends AbstractPanel {
   }
 
   public boolean click(int x, int y) {
+    if (!doShow) {
+      return false;
+    }
+    
     ZoomInterval zoom = detectHit(x, y);
     boolean hitDetected = (zoom != null);
 
@@ -82,6 +87,10 @@ public class ZoomPanel extends AbstractPanel {
   }
 
   public void draw(Layer layer) {
+    if (!doShow) {
+      return;
+    }
+    
     layer.setStrokeColor(gssProperties.color);
 
     if (!isMetricsComputed) {
@@ -100,6 +109,10 @@ public class ZoomPanel extends AbstractPanel {
     }
   }
 
+  public void show(boolean b) {
+    doShow = b;
+  }
+  
   /**
    * TODO: This method only needs to be fired when a dataset has been
    * updated (e.g. if there's only 4 years of data, and then someone

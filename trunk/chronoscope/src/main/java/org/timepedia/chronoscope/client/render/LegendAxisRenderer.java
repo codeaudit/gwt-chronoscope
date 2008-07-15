@@ -14,18 +14,13 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.TimeUnit;
 
 /**
  * Renderer used to draw Legend.
  */
 public class LegendAxisRenderer implements AxisRenderer, GssElement,
     ZoomListener {
-
-  private static final double DAY_INTERVAL = 86400 * 1000;
-
-  private static final double MONTH_INTERVAL = DAY_INTERVAL * 30;
-
-  private static final double YEAR_INTERVAL = MONTH_INTERVAL * 12;
 
   /**
    * Dictates the X-padding between each legend label.
@@ -291,18 +286,25 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
 
   private static ZoomIntervals createDefaultZoomIntervals() {
     ZoomIntervals zooms = new ZoomIntervals();
-    zooms.add(new ZoomInterval("1d", DAY_INTERVAL));
-    zooms.add(new ZoomInterval("5d", DAY_INTERVAL * 5));
-    zooms.add(new ZoomInterval("1m", MONTH_INTERVAL));
-    zooms.add(new ZoomInterval("3m", MONTH_INTERVAL * 3));
-    zooms.add(new ZoomInterval("6m", MONTH_INTERVAL * 6));
-    zooms.add(new ZoomInterval("1y", YEAR_INTERVAL));
-    zooms.add(new ZoomInterval("5y", YEAR_INTERVAL * 5));
-    zooms.add(new ZoomInterval("10y", YEAR_INTERVAL * 10));
-    zooms.add(new ZoomInterval("100y", YEAR_INTERVAL * 100));
-    zooms.add(new ZoomInterval("1000y", YEAR_INTERVAL * 1000));
-    zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
+    
 
+    //final double DAY_INTERVAL = TimeUnit.DAY.ms();
+    //final double MONTH_INTERVAL = TimeUnit.MONTH.ms();
+    //final double YEAR_INTERVAL = TimeUnit.YR.ms();
+    zooms.add(new ZoomInterval("1d", TimeUnit.DAY.ms()));
+    zooms.add(new ZoomInterval("5d", TimeUnit.DAY.ms() * 5));
+    zooms.add(new ZoomInterval("1m", TimeUnit.MONTH.ms()));
+    zooms.add(new ZoomInterval("3m", TimeUnit.MONTH.ms() * 3));
+    zooms.add(new ZoomInterval("6m", TimeUnit.MONTH.ms() * 6));
+    zooms.add(new ZoomInterval("1y", TimeUnit.YR.ms()));
+    zooms.add(new ZoomInterval("5y", TimeUnit.YR.ms() * 5));
+    zooms.add(new ZoomInterval("10y", TimeUnit.DECADE.ms()));
+    zooms.add(new ZoomInterval("100y", TimeUnit.CENTURY.ms()));
+    zooms.add(new ZoomInterval("1000y", TimeUnit.MILLENIUM.ms()));
+    zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
+    
+    //GWT.log("TESTING: " + (long)TimeUnit.CENTURY.ms() + " : " + (long)(YEAR_INTERVAL*100), null);
+    
     return zooms;
   }
 
@@ -319,9 +321,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     
     dateRangePanel.resizeToIdealWidth();
     zoomPanel.resizeToIdealWidth();
+    zoomPanel.show(true);
     double idealZoomPanelWidth = zoomPanel.getWidth();
     
-    // First, see if the panels in their pretties form will 
+    // First, see if the panels in their prettiest form will 
     //fit within the container's bounds
     double cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
     if (cushion >= minCushion) {
@@ -348,12 +351,13 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     // Still doesn't fit? Then compress both panels
     dateRangePanel.resizeToMinimalWidth();
     rightJustify(dateRangePanel, parentBounds);
-
-    // TODO:
-    // If still not enough cushion, maybe resort to hiding one of
-    // the panels, or dropping it to the next line.  Although the
-    // latter approach might not be desirable, as it would produce
-    // an ugly transition when dynamic chart resizing is available.
+    cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
+    if (cushion >= minCushion) {
+      return;
+    }
+    
+    // Still doesn't fit? Then hide the zoom links completely.
+    zoomPanel.show(false);
   }
   
   private void rightJustify(Panel p, Bounds parentBounds) {
