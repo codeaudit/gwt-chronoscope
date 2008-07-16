@@ -84,6 +84,13 @@ public class XYLineRenderer extends XYRenderer
     layer.save();
   }
 
+  public double calcLegendIconWidth(XYPlot plot) {
+    GssProperties apointProp = 
+      (plot.getFocus() != null) ? gssPointProperties 
+                                : disabledPointProperties;
+    return apointProp.size + 10;
+  }
+
   public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
       double dataY, int seriesNum, boolean isFocused, boolean isHovered,
       boolean inSelection, boolean isDisabled) {
@@ -109,7 +116,7 @@ public class XYLineRenderer extends XYRenderer
       ly = uy;
     }
   }
-
+  
   public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
@@ -123,15 +130,7 @@ public class XYLineRenderer extends XYRenderer
       alineProp = gssLineProperties;
       apointProp = gssPointProperties;
     }
-    /*
-    if (seriesNum != plot.getFocus().getFocusSeries() && plot.getFocusSeries() != -1) {
-      alineProp = disabledLineProperties;
-      apointProp = disabledPointProperties;
-    } else {
-      alineProp = gssLineProperties;
-      apointProp = gssPointProperties;
-    }
-	*/
+
     layer.beginPath();
     layer.moveTo(x, y);
     layer.setTransparency((float) alineProp.transparency);

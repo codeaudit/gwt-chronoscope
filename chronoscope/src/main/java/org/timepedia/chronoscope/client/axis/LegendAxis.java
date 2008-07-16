@@ -37,11 +37,11 @@ public class LegendAxis extends ValueAxis {
   }
 
   public double getHeight() {
-    View view = plot.getChart().getView();
-    double height = renderer.getLabelHeight(view, "X") + renderer.getLegendLabelBounds(
-        plot, view.getCanvas().getRootLayer(), plot.getInnerPlotBounds()).height;
-    
-    return height;
+    Layer layer = plot.getChart().getView().getCanvas().getRootLayer();
+    return renderer.getHeight(plot, layer, plot.getInnerPlotBounds());
+    //View view = plot.getChart().getView();
+    //double height = renderer.getLabelHeight(view, "X") + renderer.getHeight(
+    //    plot, view.getCanvas().getRootLayer(), plot.getInnerPlotBounds());
   }
 
   public double getRangeHigh() {

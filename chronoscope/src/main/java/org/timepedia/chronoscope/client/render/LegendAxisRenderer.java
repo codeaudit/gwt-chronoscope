@@ -2,8 +2,6 @@ package org.timepedia.chronoscope.client.render;
 
 import com.google.gwt.core.client.GWT;
 
-import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
@@ -23,11 +21,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     ZoomListener {
 
   /**
-   * Dictates the X-padding between each legend label.
-   */
-  private static final int LABEL_X_PAD = 28;
-
-  /**
    * Dictates the Y-padding between the top of the legend and whatever's on top
    * of it.
    */
@@ -37,7 +30,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
    * Dictates the Y-padding between the bottom of the legend and whatever's
    * below it.
    */
-  private static final int LEGEND_Y_BOTTOM_PAD = 9;
+  private static final int LEGEND_Y_BOTTOM_PAD = 13;
 
   private LegendAxis axis;
 
@@ -47,12 +40,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
 
   private GssProperties labelProperties;
 
-  private int prevHoveredDatasetIdx;
-
-  private int prevHoveredPointIdx;
-
   private String textLayerName;
 
+  private DatasetLegendPanel dsLegendPanel;
+  
   private ZoomPanel zoomPanel;
 
   private DateRangePanel dateRangePanel;
@@ -73,77 +64,74 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       boolean gridOnly) {
     
     DefaultXYPlot plot = (DefaultXYPlot) xyplot;
-    View view = plot.getChart().getView();
-    final int labelHeight = getLabelHeight(view, "X");
+    final int labelHeight = (int)this.zoomPanel.height;
 
     copyState(axisBounds, bounds);
     clearAxis(layer, axisBounds);
-
-    zoomPanel.setLocation(axisBounds.x, axisBounds.y);
     
+    // Position and size the panels
+    zoomPanel.setLocation(axisBounds.x, axisBounds.y);
     double startDate = plot.getDomainOrigin();
     double endDate = startDate + plot.getCurrentDomain();
     dateRangePanel.updateDomainInterval(startDate, endDate);
     rightJustify(dateRangePanel, axisBounds);
-    
     layoutPanels(axisBounds);
+    dsLegendPanel.setLocation(axisBounds.x, axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD);
     
     // Draw the panels
     zoomPanel.draw(layer);
     dateRangePanel.draw(layer);
+    dsLegendPanel.draw(layer);
+  }
+
+  private int getLegendItemWidth(View view, String str) {
+    // TODO: This is very temporary.  Width and height calculations
+    // are going to be refactored in the next pass.
+    final int estimatedLegendIconWidth = 15;
     
-    updateHoverInfo(plot);
-
-    double x = axisBounds.x;
-    double y = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
-
-    for (int i = 0; i < plot.getSeriesCount(); i++) {
-      double width = drawLegendLabel(x, y, plot, layer, i, textLayerName);
-      boolean enoughRoomInCurrentRow = (width >= 0);
-
-      if (enoughRoomInCurrentRow) {
-        x += width;
-      } else {
-        x = axisBounds.x;
-        y += labelHeight;
-        x += drawLegendLabel(x, y, plot, layer, i, textLayerName);
-      }
-    }
+    Layer layer = view.getCanvas().getRootLayer();
+    return layer.stringWidth(str, axisProperties.fontFamily, axisProperties.fontWeight,
+        axisProperties.fontSize) 
+        + DatasetLegendPanel.DATASET_LEGEND_SPACER + estimatedLegendIconWidth;
   }
-
-  public int getLabelHeight(View view, String str) {
-    return view.getCanvas().getRootLayer().stringHeight(str,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize);
-  }
-
-  public int getLabelWidth(View view, String str) {
-    return view.getCanvas().getRootLayer().stringWidth(str,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize)
-        + +LABEL_X_PAD;
-  }
-
-  public Bounds getLegendLabelBounds(DefaultXYPlot plot, Layer layer,
+  
+  /**
+   * Returns the total height of the rendered legend axis
+   */
+  public double getHeight(XYPlot plot, Layer layer,
       Bounds axisBounds) {
+    
+    // TODO: This height should be computed from the consituent
+    // panels (zoom panel, daterange panel, and DatasetLegendPanel).
+    // The code below essentially duplicating the logic in
+    // DatasetLegendPanel.draw().
+    
     View view = plot.getChart().getView();
-    int labelHeight = getLabelHeight(view, "X");
-
-    Bounds b = new Bounds();
+    double labelHeight = zoomPanel.getHeight();
+    
+    double totalHeight = axisBounds.y + LEGEND_Y_TOP_PAD;
     double x = axisBounds.x;
-    b.height = axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD;
-
+    
+    // Add the height of the row containing the zoom links and date range
+    totalHeight += labelHeight;
+    
+    // Add height of 1st row of legend items (there's always at least 1 row).
+    totalHeight += labelHeight;
+    
+    // Here, we're determining how many rows are needed to
+    // fit all of the dataset legend elements.
     for (int i = 0; i < plot.getSeriesCount(); i++) {
-      int labelWidth = getLabelWidth(view, plot.getSeriesLabel(i));
+      int labelWidth = getLegendItemWidth(view, plot.getSeriesLabel(i));
       boolean enoughRoomInCurrentRow = (x + labelWidth) < axisBounds.width;
       if (enoughRoomInCurrentRow) {
         x += labelWidth;
-        b.width = Math.max(b.width, x);
       } else {
-        b.height += labelHeight;
+        totalHeight += labelHeight;
         x = axisBounds.x + labelWidth;
       }
     }
+
+    totalHeight += LEGEND_Y_BOTTOM_PAD;
 
     // Issue #41: For now, we add a LEGEND_Y_BOTTOM_PAD that's tall enough to
     // allow for the possibility of an extra row of legend labels. This is to
@@ -151,12 +139,9 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     // the corresponding range value to be appended to the legend label, which
     // in some cases could cause the remaining legend labels to run over into a
     // new row.
-    b.height += labelHeight + LEGEND_Y_BOTTOM_PAD;
-
-    b.x = 0;
-    b.y = 0;
-
-    return b;
+    totalHeight += labelHeight;
+    
+    return totalHeight;
   }
 
   public GssElement getParentGssElement() {
@@ -186,6 +171,12 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), approxMinInterval);
       
       Layer rootLayer = view.getCanvas().getRootLayer();
+      
+      dsLegendPanel = new DatasetLegendPanel();
+      dsLegendPanel.setPlot((DefaultXYPlot)plot);
+      dsLegendPanel.setGssProperties(labelProperties);
+      dsLegendPanel.setTextLayerName(textLayerName);
+      dsLegendPanel.init(rootLayer);
       
       zoomPanel = new ZoomPanel();
       zoomPanel.setGssProperties(labelProperties);
@@ -229,54 +220,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     layer.clearTextLayer(textLayerName);
   }
 
-  private double drawLegendLabel(double x, double y, DefaultXYPlot plot,
-      Layer layer, int seriesNum, String layerName) {
-    String seriesLabel = plot.getSeriesLabel(seriesNum);
-    boolean isThisSeriesHovered = prevHoveredDatasetIdx != -1
-        & prevHoveredPointIdx != -1 && seriesNum == prevHoveredDatasetIdx;
-    if (isThisSeriesHovered) {
-      seriesLabel += " ("
-          + plot.getRangeAxis(seriesNum).getFormattedLabel(
-              plot.getDataY(prevHoveredDatasetIdx, prevHoveredPointIdx)) + ")";
-    }
-    XYRenderer renderer = plot.getRenderer(seriesNum);
-
-    double height = getLabelHeight(plot.getChart().getView(), "X");
-    double lWidth = this.getLabelWidth(plot.getChart().getView(), seriesLabel);
-
-    if (x + lWidth >= bounds.x + bounds.width) {
-      return -1;
-    }
-
-    Bounds b = renderer.drawLegendIcon(plot, layer, x, y + height / 2,
-        seriesNum);
-
-    layer.setStrokeColor(labelProperties.color);
-    layer.drawText(x + b.width + 2, y, seriesLabel, labelProperties.fontFamily,
-        labelProperties.fontWeight, labelProperties.fontSize, layerName,
-        Cursor.DEFAULT);
-
-    return lWidth;
-  }
-
-  private void updateHoverInfo(XYPlot plot) {
-    int hoveredDatasetIdx = plot.getHoverSeries();
-    int hoveredPointIdx = plot.getHoverPoint();
-
-    if (hoveredPointIdx == -1) {
-      Focus focus = plot.getFocus();
-      if (focus != null) {
-        hoveredDatasetIdx = focus.getDatasetIndex();
-        hoveredPointIdx = focus.getPointIndex();
-      } else {
-        hoveredDatasetIdx = -1;
-        hoveredPointIdx = -1;
-      }
-    }
-    prevHoveredDatasetIdx = hoveredDatasetIdx;
-    prevHoveredPointIdx = hoveredPointIdx;
-  }
-
   private static void copyState(Bounds source, Bounds target) {
     target.x = source.x;
     target.y = source.y;
@@ -287,10 +230,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   private static ZoomIntervals createDefaultZoomIntervals() {
     ZoomIntervals zooms = new ZoomIntervals();
     
-
-    //final double DAY_INTERVAL = TimeUnit.DAY.ms();
-    //final double MONTH_INTERVAL = TimeUnit.MONTH.ms();
-    //final double YEAR_INTERVAL = TimeUnit.YR.ms();
     zooms.add(new ZoomInterval("1d", TimeUnit.DAY.ms()));
     zooms.add(new ZoomInterval("5d", TimeUnit.DAY.ms() * 5));
     zooms.add(new ZoomInterval("1m", TimeUnit.MONTH.ms()));
@@ -303,11 +242,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     zooms.add(new ZoomInterval("1000y", TimeUnit.MILLENIUM.ms()));
     zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
     
-    //GWT.log("TESTING: " + (long)TimeUnit.CENTURY.ms() + " : " + (long)(YEAR_INTERVAL*100), null);
-    
     return zooms;
   }
-
   
   /**
    * Currently, this method naively lays out the ZoomPanel and

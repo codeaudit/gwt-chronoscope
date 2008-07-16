@@ -74,7 +74,14 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
       boolean disabled) {
   }
 
-  public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
+  public double calcLegendIconWidth(XYPlot plot) {
+    GssProperties apointProp = 
+      (plot.getFocus() != null) ? gssPointProperties 
+                                : disabledPointProperties;
+    return apointProp.size + 10;
+  }
+
+ public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
       double dataY, int seriesNum, boolean isFocused, boolean isHovered,
       boolean inSelection, boolean isDisabled) {
     double ux = plot.domainToScreenX(dataX, seriesNum);
@@ -164,6 +171,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
+    
     GssProperties lineProp, pointProp;
     Focus focus = plot.getFocus();
     if (focus != null && focus.getDatasetIndex() != seriesNum) {
@@ -173,12 +181,6 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
       lineProp = gssLineProperties;
       pointProp = gssPointProperties;
     }
-    /*
-     * int focusSeries = plot.getFocus().getFocusSeries(); if (focusSeries !=
-     * seriesNum && focusSeries != -1) { lineProp = disabledLineProperties;
-     * pointProp = disabledPointProperties; } else { lineProp =
-     * gssLineProperties; pointProp = gssPointProperties; }
-     */
 
     layer.beginPath();
     layer.moveTo(x, y);
