@@ -23,6 +23,14 @@ public abstract class XYRenderer implements Exportable {
    */
   public abstract void beginPoints(XYPlot plot, Layer layer,
       boolean inSelection, boolean disabled);
+  
+  /**
+   * Calculates the pixel width of the legend icone.
+   * 
+   * @see #drawLegendIcon(XYPlot, Layer, double, double, int)
+   * @return
+   */
+  public abstract double calcLegendIconWidth(XYPlot plot);
 
   /**
    * Called for each visible data point, typically a segment is added to the

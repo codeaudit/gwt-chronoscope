@@ -260,6 +260,10 @@ public interface XYPlot extends Exportable {
    */
   double getSelectionEnd();
 
+  int getSeriesCount();
+  
+  String getSeriesLabel(int i);
+  
   /**
    * Returns true if this plot contains the axis
    */
