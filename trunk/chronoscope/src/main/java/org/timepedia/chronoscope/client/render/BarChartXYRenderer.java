@@ -75,6 +75,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
   }
 
   public double calcLegendIconWidth(XYPlot plot) {
+    initGss(plot.getChart().getView());
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
                                 : disabledPointProperties;

@@ -3,12 +3,11 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.LegendAxisRenderer;
 
 /**
- * An implementation of ValueAxis to render a chart Legend
+ * An implementation of ValueAxis to render a chart Legend.
  */
 public class LegendAxis extends ValueAxis {
 
@@ -39,9 +38,6 @@ public class LegendAxis extends ValueAxis {
   public double getHeight() {
     Layer layer = plot.getChart().getView().getCanvas().getRootLayer();
     return renderer.getHeight(plot, layer, plot.getInnerPlotBounds());
-    //View view = plot.getChart().getView();
-    //double height = renderer.getLabelHeight(view, "X") + renderer.getHeight(
-    //    plot, view.getCanvas().getRootLayer(), plot.getInnerPlotBounds());
   }
 
   public double getRangeHigh() {

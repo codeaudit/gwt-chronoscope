@@ -1209,13 +1209,19 @@ public class DefaultXYPlot
     plotBounds = initialBounds == null ? new Bounds(0, 0,
         this.view.getViewWidth(), this.view.getViewHeight())
         : new Bounds(initialBounds);
+    
+    // TODO: this padding is a workaround.  Apparently, the height computed
+    // for the main plot bounds does not take into consideration the highest
+    // range character (which "sits on top of" the northern-most range axis tick.
+    // Without this hardcoded padding, the highest range value within the
+    // plot are encroaches on the southern-most dataset legend row.
+    final double topPanelPad = 19;
 
-    innerBounds = new Bounds(plotBounds);
     // TODO: only in snapshot
     if (interactive) {
       plotBounds.x = rangePanelLeft.getWidth();
       plotBounds.width -= plotBounds.x;
-      plotBounds.y += topPanel.getHeight();
+      plotBounds.y += topPanel.getHeight() + topPanelPad;
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         final double topHeight = topPanel.getHeight();
         double topBottomHeight = domainPanel.getHeight() + topHeight;
@@ -1239,6 +1245,8 @@ public class DefaultXYPlot
         plotBounds.width -= rangePanelRight.getWidth();
       }
     }
+
+    innerBounds = new Bounds(plotBounds);
     innerBounds.height = plotBounds.height;
     innerBounds.width = plotBounds.width;
     innerBounds.x = 0;
