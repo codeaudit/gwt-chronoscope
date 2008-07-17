@@ -206,7 +206,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
    * interface of some sort.
    */
   private void layoutPanels(Bounds parentBounds) {
-    final int minCushion = 8;
+    // The minimum distance allowed between the zoom panel and the dataset 
+    // legend panel.
+    final int minCushion = 3;
+    
     double parentWidth = parentBounds.width;
     
     dateRangePanel.resizeToIdealWidth();

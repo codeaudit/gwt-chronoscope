@@ -146,13 +146,6 @@ public class ZoomPanel extends AbstractPanel {
     }
     
     double bx, be;
-    /*
-    double bx = this.x;
-    double be = this.x + fullZoomStringWidth;
-    if (!MathUtil.isBounded(x, bx, be)) {
-      return null;
-    }
-    */
     
     // Move cursor to the 1st zoom link
     bx = this.x + zoomPrefix.pixelWidth + space.pixelWidth;
