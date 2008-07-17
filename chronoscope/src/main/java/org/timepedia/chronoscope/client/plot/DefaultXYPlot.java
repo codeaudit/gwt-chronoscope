@@ -55,8 +55,8 @@ import java.util.Iterator;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot
-    implements XYPlot, Exportable, XYDatasetListener, RegionLoadListener {
+public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
+    RegionLoadListener {
 
   public static int MAX_DRAWABLE_DATAPOINTS = 400;
 
@@ -142,8 +142,7 @@ public class DefaultXYPlot
 
   private PortableTimer animationTimer;
 
-  private final HashMap<String, RangeAxis> axisMap
-      = new HashMap<String, RangeAxis>();
+  private final HashMap<String, RangeAxis> axisMap = new HashMap<String, RangeAxis>();
 
   private double beginHighlight = Double.MIN_VALUE;
 
@@ -340,8 +339,7 @@ public class DefaultXYPlot
       while (i.hasNext()) {
         Overlay o = (Overlay) i.next();
         double oPos = o.getDomainX();
-        if (MathUtil
-            .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+        if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
           if (o.isHit(x, y)) {
             o.click(x, y);
             return true;
@@ -408,13 +406,13 @@ public class DefaultXYPlot
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex]
-        .getX(pointIndex, currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex].getX(pointIndex,
+        currentMiplevels[datasetIndex]);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex]
-        .getY(pointIndex, currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex].getY(pointIndex,
+        currentMiplevels[datasetIndex]);
   }
 
   public ValueAxis getDomainAxis() {
@@ -472,8 +470,8 @@ public class DefaultXYPlot
   }
 
   public int getNearestVisiblePoint(double domainX, int series) {
-    return Util
-        .binarySearch(datasets[series], domainX, currentMiplevels[series]);
+    return Util.binarySearch(datasets[series], domainX,
+        currentMiplevels[series]);
   }
 
   public int getNumAnimationFrames() {
@@ -537,14 +535,14 @@ public class DefaultXYPlot
   }
 
   public String getSeriesLabel(int i) {
-    return datasets[i].getRangeLabel() + getRangeAxis(i)
-        .getLabelSuffix(getRangeAxis(i).getRange());
+    return datasets[i].getRangeLabel()
+        + getRangeAxis(i).getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {
     return topPanel.contains(theAxis) || domainPanel.contains(theAxis)
-        || rangePanelLeft.contains(theAxis) || rangePanelRight
-        .contains(theAxis);
+        || rangePanelLeft.contains(theAxis)
+        || rangePanelRight.contains(theAxis);
   }
 
   public void init(View view) {
@@ -594,19 +592,6 @@ public class DefaultXYPlot
     background = new GssBackground(this);
 
     view.canvasSetupDone();
-  }
-
-  /**
-   * Methods which do not depend on any visual state of the chart being
-   * initialized first. Can be moved early in Plot initialization. Put stuff
-   * here that doesn't depend on the axes or layers being initialized.
-   */
-  private void initViewIndependent() {
-    computeDomainMinMax();
-    computeVisibleDomainStartEnd();
-    initializeDomain();
-    initDefaultRenderers();
-    initDatasetLevels();
   }
 
   public boolean isAnimating() {
@@ -665,8 +650,7 @@ public class DefaultXYPlot
       int focusSeries = this.focus.getDatasetIndex();
       int focusPoint = this.focus.getPointIndex();
       focusPoint++;
-      if (focusPoint >= datasets[focusSeries]
-          .getNumSamples(currentMiplevels[focusSeries])) {
+      if (focusPoint >= datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])) {
         focusPoint = 0;
         focusSeries++;
         if (focusSeries >= datasets.length) {
@@ -718,16 +702,16 @@ public class DefaultXYPlot
     if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
 
       public void run(PortableTimer timer) {
-        view.openInfoWindow(html,
-            chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
-            chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
+        view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
+            domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
+            rangeY, datasetIndex) + 5);
       }
     })) {
 
     } else {
-      view.openInfoWindow(html,
-          chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
-          chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
+      view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
+          domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
+          rangeY, datasetIndex) + 5);
     }
   }
 
@@ -757,9 +741,7 @@ public class DefaultXYPlot
         if (focusSeries < 0) {
           focusSeries = datasets.length - 1;
         }
-        focusPoint =
-            datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])
-                - 1;
+        focusPoint = datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries]) - 1;
       }
       setFocusAndNotifyView(focusSeries, focusPoint);
     }
@@ -1025,8 +1007,8 @@ public class DefaultXYPlot
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);
-      overviewLayer
-          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+      overviewLayer.clearRect(0, 0, overviewLayer.getWidth(),
+          overviewLayer.getHeight());
 
       overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
           overviewLayer.getHeight());
@@ -1063,17 +1045,16 @@ public class DefaultXYPlot
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         domainLayer.save();
-        drawAxisPanel(domainLayer, domainPanel,
-            new Bounds(plotBounds.x, 0, plotBounds.width, domainBounds.height),
-            false);
+        drawAxisPanel(domainLayer, domainPanel, new Bounds(plotBounds.x, 0,
+            plotBounds.width, domainBounds.height), false);
         domainLayer.restore();
       }
 
       if (true && topPanel.getAxisCount() > 0) {
 
         topLayer.save();
-        drawAxisPanel(topLayer, topPanel,
-            new Bounds(0, 0, view.getViewWidth(), topBounds.height), false);
+        drawAxisPanel(topLayer, topPanel, new Bounds(0, 0, view.getViewWidth(),
+            topBounds.height), false);
         topLayer.restore();
       }
     }
@@ -1128,8 +1109,8 @@ public class DefaultXYPlot
         rangeAxisCount++;
         ra = new RangeAxis(chart, datasets[i].getRangeLabel(),
             datasets[i].getAxisId(), i, datasets[i].getRangeBottom(),
-            datasets[i].getRangeTop(),
-            rangeAxisCount % 2 == 0 ? rangePanelLeft : rangePanelRight);
+            datasets[i].getRangeTop(), rangeAxisCount % 2 == 0 ? rangePanelLeft
+                : rangePanelRight);
         axisMap.put(ra.getAxisId(), ra);
         if (rangeAxisCount % 2 == 0) {
           rangePanelLeft.add(ra);
@@ -1152,9 +1133,9 @@ public class DefaultXYPlot
 
   protected void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
-        beginHighlight > domainOrigin + currentDomain
-            && endHighlight > domainOrigin + currentDomain)) {
+        || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
+        || (beginHighlight > domainOrigin + currentDomain && endHighlight > domainOrigin
+            + currentDomain)) {
       if (highlightDrawn) {
         layer.clear();
         highlightDrawn = false;
@@ -1164,8 +1145,8 @@ public class DefaultXYPlot
 
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math
-        .min(0 + getInnerPlotBounds().width, domainToScreenX(endHighlight, 0));
+    double ex = Math.min(0 + getInnerPlotBounds().width, domainToScreenX(
+        endHighlight, 0));
 
     layer.save();
     layer.setFillColor("#14FFFF");
@@ -1207,9 +1188,9 @@ public class DefaultXYPlot
 
   private void computePlotBounds() {
     plotBounds = initialBounds == null ? new Bounds(0, 0,
-        this.view.getViewWidth(), this.view.getViewHeight())
-        : new Bounds(initialBounds);
-    
+        this.view.getViewWidth(), this.view.getViewHeight()) : new Bounds(
+        initialBounds);
+
     // TODO: this padding is a workaround.  Apparently, the height computed
     // for the main plot bounds does not take into consideration the highest
     // range character (which "sits on top of" the northern-most range axis tick.
@@ -1276,8 +1257,7 @@ public class DefaultXYPlot
     while (i.hasNext()) {
       Overlay o = (Overlay) i.next();
       double oPos = o.getDomainX();
-      if (MathUtil
-          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         if (o instanceof Marker) {
           Marker m = (Marker) o;
           m.setLabel("" + label);
@@ -1321,9 +1301,9 @@ public class DefaultXYPlot
     // difference between the minimum and maximum dataset date values
     // then ensure that the destinationDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
-    return fence ? Math.max(
-        Math.min(destinationDomain, getDomainMax() - getDomainMin()),
-        getDomainAxis().getMinimumTickSize()) : destinationDomain;
+    return fence ? Math.max(Math.min(destinationDomain, getDomainMax()
+        - getDomainMin()), getDomainAxis().getMinimumTickSize())
+        : destinationDomain;
   }
 
   private double fenceDomainOrigin(boolean fence, double destinationOrigin,
@@ -1374,15 +1354,12 @@ public class DefaultXYPlot
     int where = Util.binarySearch(datasets[datasetIndex], domainX,
         currentMiplevels[datasetIndex]);
 
-    double x1 = domainToScreenX(
-        datasets[datasetIndex].getX(where, currentMiplevels[datasetIndex]),
-        datasetIndex);
-    double y1 = rangeToScreenY(
-        datasets[datasetIndex].getY(where, currentMiplevels[datasetIndex]),
-        datasetIndex);
+    double x1 = domainToScreenX(datasets[datasetIndex].getX(where,
+        currentMiplevels[datasetIndex]), datasetIndex);
+    double y1 = rangeToScreenY(datasets[datasetIndex].getY(where,
+        currentMiplevels[datasetIndex]), datasetIndex);
     double x2, y2;
-    if (where + 1 < datasets[datasetIndex]
-        .getNumSamples(currentMiplevels[datasetIndex])) {
+    if (where + 1 < datasets[datasetIndex].getNumSamples(currentMiplevels[datasetIndex])) {
       x2 = domainToScreenX(datasets[datasetIndex].getX(where + 1,
           currentMiplevels[datasetIndex]), datasetIndex);
       y2 = rangeToScreenY(datasets[datasetIndex].getY(where + 1,
@@ -1446,8 +1423,8 @@ public class DefaultXYPlot
           backingCanvas.disposeLayer(overviewLayer);
         }
 
-        overviewLayer = backingCanvas
-            .createLayer("overviewLayer" + plotNumber, plotBounds);
+        overviewLayer = backingCanvas.createLayer("overviewLayer" + plotNumber,
+            plotBounds);
         overviewLayer.setVisibility(false);
       }
 
@@ -1461,8 +1438,8 @@ public class DefaultXYPlot
       topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
-      verticalAxisLayer = backingCanvas
-          .createLayer("verticalAxis" + plotNumber, layerBounds);
+      verticalAxisLayer = backingCanvas.createLayer(
+          "verticalAxis" + plotNumber, layerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
@@ -1475,26 +1452,39 @@ public class DefaultXYPlot
         backingCanvas.disposeLayer(domainLayer);
       }
 
-      domainLayer = backingCanvas
-          .createLayer("domainAxis" + plotNumber, domainBounds);
+      domainLayer = backingCanvas.createLayer("domainAxis" + plotNumber,
+          domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      highLightLayer = backingCanvas
-          .createLayer("highlight" + plotNumber, plotBounds);
+      highLightLayer = backingCanvas.createLayer("highlight" + plotNumber,
+          plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
     }
+  }
+
+  /**
+   * Methods which do not depend on any visual state of the chart being
+   * initialized first. Can be moved early in Plot initialization. Put stuff
+   * here that doesn't depend on the axes or layers being initialized.
+   */
+  private void initViewIndependent() {
+    computeDomainMinMax();
+    computeVisibleDomainStartEnd();
+    initializeDomain();
+    initDefaultRenderers();
+    initDatasetLevels();
   }
 
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
     pushHistory();
 
     XYDataset dataset = datasets[datasetIndex];
-    pointIndex = Util.binarySearch(dataset,
-        dataset.getX(pointIndex, currentMiplevels[datasetIndex]), 0);
+    pointIndex = Util.binarySearch(dataset, dataset.getX(pointIndex,
+        currentMiplevels[datasetIndex]), 0);
 
     final double newOrigin = dataset.getX(Math.max(0, pointIndex - 10));
-    double newdomain =
-        dataset.getX(Math.min(dataset.getNumSamples(), pointIndex + 10))
-            - newOrigin;
+    double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
+        pointIndex + 10))
+        - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
