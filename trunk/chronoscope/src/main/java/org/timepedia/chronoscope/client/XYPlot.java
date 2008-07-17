@@ -12,27 +12,43 @@ import org.timepedia.exporter.client.Exportable;
 
 /**
  * An interface to be implemented by classes implementing XY plots of XY
- * Datasets. <p/> Conceptually, a Plot is a class responsible for maintaining a
- * collection of datasets, axes, and graph state, and mapping data-space values
- * to screen-space values suitable for rendering on a View. More specifically, a
+ * Datasets.
+ * <p>
+ * Conceptually, a Plot is a class responsible for maintaining a collection of
+ * datasets, axes, and graph state, and mapping data-space values to
+ * screen-space values suitable for rendering on a View. More specifically, a
  * plot converts data-space values to user-space values by delegating to an Axis
- * implementation. <p/> <p/> User-space values are in the interval [0,1]
- * independent of the screen space size of the plot. For example, a ValueAxis
- * with a visible range of 0.0 to 500.0, will map a data-value of 250.0 to a
- * user-space value of 0.5. A renderer like XYLineRenderer or XYBarRenderer will
- * convert user-space values ot screen-space values before rendering. When
- * Chronoscope has CategoryPlot support, then a CategoryAxis would map x-axis
- * values like "Groceries", "Gas", "Utilities" to appropriate user-space values
- * (say, 0, 0.5, 1.0) <p/> <p/> An important feature of Chronoscope is support
- * for large dataset scalability. This is achieved using datasets with
- * multiresolution representation. At coarser levels of detail, a dataset may be
- * decimated, interpolated, or filtered in a myriad of ways to compress its
- * size, while hopefully preserving as much signal as possible. <p/> A plot
- * maintains some of the following important values: <ul> <li>Domain origin
- * <li>Visible Domain <li>Focus point and series <li>Hover point and series
- * <li>Current highlight/selection </ul> <p/> As well as some stylistic
- * overrides: <ul> <li>Legend enabled/disabled <li>Domain axis rendering
- * enabled/disabled <li>Overview enabled/disabled <li>Selection mode on/off
+ * implementation.
+ * <p>
+ * User-space values are in the interval [0,1] independent of the screen space
+ * size of the plot. For example, a ValueAxis with a visible range of 0.0 to
+ * 500.0, will map a data-value of 250.0 to a user-space value of 0.5. A
+ * renderer like XYLineRenderer or XYBarRenderer will convert user-space values
+ * to screen-space values before rendering. When Chronoscope has CategoryPlot
+ * support, then a CategoryAxis would map x-axis values like "Groceries", "Gas",
+ * "Utilities" to appropriate user-space values (say, 0, 0.5, 1.0)
+ * <p>
+ * An important feature of Chronoscope is support for large dataset scalability.
+ * This is achieved using datasets with multiresolution representation. At
+ * coarser levels of detail, a dataset may be decimated, interpolated, or
+ * filtered in a myriad of ways to compress its size, while hopefully preserving
+ * as much signal as possible.
+ * <p>
+ * A plot maintains some of the following important values:
+ * <ul>
+ * <li>Domain origin
+ * <li>Visible Domain
+ * <li>Focus point and series
+ * <li>Hover point and series
+ * <li>Current highlight/selection
+ * </ul>
+ * <p>
+ * As well as some stylistic overrides:
+ * <ul>
+ * <li>Legend enabled/disabled
+ * <li>Domain axis rendering enabled/disabled
+ * <li>Overview enabled/disabled
+ * <li>Selection mode on/off
  * </ul>
  */
 public interface XYPlot extends Exportable {
@@ -45,9 +61,9 @@ public interface XYPlot extends Exportable {
   /**
    * Animate the domainOrigin and currentDomain values interpolating to he
    * destination values.
-   *
+   * 
    * @param eventType hint to specify what kind of UI event this animation
-   *                  corresponds to (ZOOM, SCROLL, ETC)
+   *          corresponds to (ZOOM, SCROLL, ETC)
    */
   void animateTo(double destinationOrigin, double destinationDomain,
       int eventType);
@@ -56,9 +72,9 @@ public interface XYPlot extends Exportable {
    * Animate the domainOrigin and currentDomain values interpolating tot he
    * destination values. This version executes the continuation when the
    * animation finishes.
-   *
-   * @param eventType    hint to specify what kind of UI event this animation
-   *                     corresponds to (ZOOM, SCROLL, ETC)
+   * 
+   * @param eventType hint to specify what kind of UI event this animation
+   *          corresponds to (ZOOM, SCROLL, ETC)
    * @param continuation executed when animation finishes
    */
   void animateTo(double destinationOrigin, double destinationDomain,
@@ -261,9 +277,9 @@ public interface XYPlot extends Exportable {
   double getSelectionEnd();
 
   int getSeriesCount();
-  
+
   String getSeriesLabel(int i);
-  
+
   /**
    * Returns true if this plot contains the axis
    */
@@ -311,9 +327,9 @@ public interface XYPlot extends Exportable {
 
   /**
    * Open an info window at the specified coordinates in data space
-   *
+   * 
    * @param datasetIndex the dataset these values come from (used to decide Axis
-   *                  used)
+   *          used)
    */
   void openInfoWindow(String html, double domainX, double rangeY,
       int datasetIndex);
@@ -364,7 +380,7 @@ public interface XYPlot extends Exportable {
    * Remove an overlay from the Plot.
    */
   void removeOverlay(Overlay overlay);
-  
+
   /**
    * Animated pan of the plot such that the given domain value is positioned in
    * the center, the continuation is called when finished.
