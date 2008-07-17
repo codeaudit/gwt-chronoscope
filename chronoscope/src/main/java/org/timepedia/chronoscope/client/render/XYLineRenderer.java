@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -85,6 +87,7 @@ public class XYLineRenderer extends XYRenderer
   }
 
   public double calcLegendIconWidth(XYPlot plot) {
+    initGss(plot.getChart().getView());
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
                                 : disabledPointProperties;

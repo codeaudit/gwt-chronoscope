@@ -21,16 +21,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     ZoomListener {
 
   /**
-   * Dictates the Y-padding between the top of the legend and whatever's on top
-   * of it.
+   * Dictates the Y-padding between the top of the legend item bounds
+   * and the bottom of the zoom and date range panels.
    */
   private static final int LEGEND_Y_TOP_PAD = 3;
-
-  /**
-   * Dictates the Y-padding between the bottom of the legend and whatever's
-   * below it.
-   */
-  private static final int LEGEND_Y_BOTTOM_PAD = 13;
 
   private LegendAxis axis;
 
@@ -83,55 +77,15 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     dateRangePanel.draw(layer);
     dsLegendPanel.draw(layer);
   }
-
-  private int getLegendItemWidth(View view, String str) {
-    // TODO: This is very temporary.  Width and height calculations
-    // are going to be refactored in the next pass.
-    final int estimatedLegendIconWidth = 15;
-    
-    Layer layer = view.getCanvas().getRootLayer();
-    return layer.stringWidth(str, axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize) 
-        + DatasetLegendPanel.DATASET_LEGEND_SPACER + estimatedLegendIconWidth;
-  }
   
   /**
    * Returns the total height of the rendered legend axis
    */
-  public double getHeight(XYPlot plot, Layer layer,
-      Bounds axisBounds) {
-    
-    // TODO: This height should be computed from the consituent
-    // panels (zoom panel, daterange panel, and DatasetLegendPanel).
-    // The code below essentially duplicating the logic in
-    // DatasetLegendPanel.draw().
-    
-    View view = plot.getChart().getView();
-    double labelHeight = zoomPanel.getHeight();
-    
-    double totalHeight = axisBounds.y + LEGEND_Y_TOP_PAD;
-    double x = axisBounds.x;
-    
-    // Add the height of the row containing the zoom links and date range
-    totalHeight += labelHeight;
-    
-    // Add height of 1st row of legend items (there's always at least 1 row).
-    totalHeight += labelHeight;
-    
-    // Here, we're determining how many rows are needed to
-    // fit all of the dataset legend elements.
-    for (int i = 0; i < plot.getSeriesCount(); i++) {
-      int labelWidth = getLegendItemWidth(view, plot.getSeriesLabel(i));
-      boolean enoughRoomInCurrentRow = (x + labelWidth) < axisBounds.width;
-      if (enoughRoomInCurrentRow) {
-        x += labelWidth;
-      } else {
-        totalHeight += labelHeight;
-        x = axisBounds.x + labelWidth;
-      }
-    }
-
-    totalHeight += LEGEND_Y_BOTTOM_PAD;
+  public double getHeight(XYPlot plot, Layer layer, Bounds axisBounds) {
+    double totalHeight = 0;
+    totalHeight += zoomPanel.getHeight();
+    totalHeight += LEGEND_Y_TOP_PAD;
+    totalHeight += dsLegendPanel.getHeight();
 
     // Issue #41: For now, we add a LEGEND_Y_BOTTOM_PAD that's tall enough to
     // allow for the possibility of an extra row of legend labels. This is to
@@ -139,8 +93,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     // the corresponding range value to be appended to the legend label, which
     // in some cases could cause the remaining legend labels to run over into a
     // new row.
-    totalHeight += labelHeight;
-    
+    totalHeight += zoomPanel.getHeight();
+
     return totalHeight;
   }
 
@@ -317,7 +271,9 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
    */
   private static void hiliteBounds(Bounds b, Layer layer) {
     layer.save();
-
+   
+    layer.setLayerOrder(1);
+    //layer.setTransparency(.35f);
     layer.setFillColor("#50D0FF");
     layer.fillRect(b.x, b.y, b.width, b.height);
 
