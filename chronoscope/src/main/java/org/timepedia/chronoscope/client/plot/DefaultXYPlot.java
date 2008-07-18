@@ -42,7 +42,6 @@ import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -174,7 +173,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private LegendAxis legendAxis;
 
-  private ArrayList overlays;
+  private ArrayList<Overlay> overlays;
 
   private OverviewAxis overviewAxis;
 
@@ -213,7 +212,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.interactive = interactive;
 
     MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
-    overlays = new ArrayList();
+    overlays = new ArrayList<Overlay>();
     xyRenderers = new XYRenderer[datasets.length];
     // computeVisibleDomainStartEnd();
     // initializeDomain();
@@ -335,9 +334,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     if (setFocusXY(x, y)) {
       return true;
     } else {
-      Iterator i = overlays.iterator();
-      while (i.hasNext()) {
-        Overlay o = (Overlay) i.next();
+      for (Overlay o : overlays) {
         double oPos = o.getDomainX();
         if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
           if (o.isHit(x, y)) {
@@ -783,8 +780,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     double so = getDomainOrigin();
     double scd = getCurrentDomain();
     init(view);
-    ArrayList oldOverlays = overlays;
-    overlays = new ArrayList();
+    ArrayList<Overlay> oldOverlays = overlays;
+    overlays = new ArrayList<Overlay>();
 
     initializeDomain();
     redraw();
@@ -843,8 +840,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       hoverSeries = -1;
       // TODO: maybe adjust to nearest one in next level of detail
       focus = null;
+
+      currentMiplevels[datasetIndex] = mipLevel;
     }
-    currentMiplevels[datasetIndex] = mipLevel;
   }
 
   public void setCurrentDomain(double currentDomain) {
@@ -1250,12 +1248,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     overviewLayer.clearTextLayer("overlays");
     overviewLayer.setTextLayerBounds("overlays", new Bounds(0, 0,
         overviewLayer.getBounds().width, overviewLayer.getBounds().height));
-    Iterator i = overlays.iterator();
 
     char label = 'A';
-
-    while (i.hasNext()) {
-      Overlay o = (Overlay) i.next();
+    
+    for (Overlay o : overlays) {
       double oPos = o.getDomainX();
       if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         if (o instanceof Marker) {
