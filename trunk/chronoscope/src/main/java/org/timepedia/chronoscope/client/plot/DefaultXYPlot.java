@@ -1219,7 +1219,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    */
   private static double dist(double x1, double y1, double x2, double y2) {
     return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    //return Math.abs(x1-x2);
   }
 
   private void drawOverlays(Layer overviewLayer) {
