@@ -4,10 +4,20 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 
 /**
- * Utility class
+ * Conglomeration of common utility functions.
  */
-public class Util {
+public final class Util {
 
+  /**
+   * Analagous to <tt>java.lang.System.arraycopy()</tt>.
+   */
+  public static void arraycopy(double[] src, int srcOffset, double[] dest,
+      int destOffset, int length) {
+    for (int i = 0; i < length; i++) {
+      dest[destOffset + i] = src[srcOffset + i];
+    }
+  }
+  
   public static int binarySearch(XYDataset mds, double domainOrigin,
       int mipLevel) {
     int low = 0;
@@ -42,6 +52,28 @@ public class Util {
       start = Math.min(start, findRenderedStart(plot, dataSets[i]));
     }
     return start;
+  }
+
+  /**
+   * Determines if a and b are equal, taking into consideration that a or b (or
+   * both a and b) could be null.
+   * 
+   * TODO: Move this into a utility class
+   */
+  public static boolean isEqual(Object a, Object b) {
+    if (a == b) {
+      return true;
+    }
+
+    if (a == null && b == null) {
+      return true;
+    }
+
+    if ((a == null && b != null) || (b == null && a != null)) {
+      return false;
+    }
+
+    return a.equals(b);
   }
 
   public static boolean isSameDomain(String url1, String url2) {

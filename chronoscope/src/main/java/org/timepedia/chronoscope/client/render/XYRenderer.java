@@ -25,10 +25,9 @@ public abstract class XYRenderer implements Exportable {
       boolean inSelection, boolean disabled);
   
   /**
-   * Calculates the pixel width of the legend icone.
+   * Calculates the pixel width of the legend icon.
    * 
    * @see #drawLegendIcon(XYPlot, Layer, double, double, int)
-   * @return
    */
   public abstract double calcLegendIconWidth(XYPlot plot);
 

@@ -181,22 +181,20 @@ public interface XYPlot extends Exportable {
    * 
    */
   Focus getFocus();
-
+  
+  /**
+   * Returns an array of data point indices, which element k corresponds to
+   * the data point being hovered on in dataset k.  A value of -1 indicates 
+   * that no point in dataset [k] is currently being hovered.
+   * The length of the array is equal to {@link #getNumDatasets()}.
+   */
+  int[] getHoverPoints();
+  
   /**
    * Returns a string representing the current state of the plot, used to
    * reconstruct the state of the plot at a later time.
    */
   String getHistoryToken();
-
-  /**
-   * Return the dataset index of the point which is currently in a hover state
-   */
-  int getHoverPoint();
-
-  /**
-   * Return the dataset index of the series whose point is set to a hover state
-   */
-  int getHoverSeries();
 
   /**
    * Return the Bounds of the plot area relative to the plot layer

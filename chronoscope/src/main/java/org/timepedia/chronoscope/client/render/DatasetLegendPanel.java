@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
@@ -26,8 +27,6 @@ public class DatasetLegendPanel extends AbstractPanel {
 
   private XYPlot plot;
   private double lblHeight;
-  private int prevHoveredDatasetIdx;
-  private int prevHoveredPointIdx;
   
   public void init(Layer layer) {
     ArgChecker.isNotNull(plot, "plot");
@@ -60,7 +59,6 @@ public class DatasetLegendPanel extends AbstractPanel {
   }
 
   private void draw(Layer layer, boolean onlyCalcSize, Bounds b) {
-    updateHoverInfo();
     double xCursor = this.x;
     double yCursor = this.y;
     
@@ -105,12 +103,11 @@ public class DatasetLegendPanel extends AbstractPanel {
    */
   private double drawLegendLabel(double lblX, double lblY, Layer layer, int seriesNum, boolean onlyCalcWidth) {
     String seriesLabel = plot.getSeriesLabel(seriesNum);
-    boolean isThisSeriesHovered = prevHoveredDatasetIdx != -1
-        & prevHoveredPointIdx != -1 && seriesNum == prevHoveredDatasetIdx;
-    if (isThisSeriesHovered) {
-      seriesLabel += " ("
-          + plot.getRangeAxis(seriesNum).getFormattedLabel(
-              plot.getDataY(prevHoveredDatasetIdx, prevHoveredPointIdx)) + ")";
+    
+    int hoverPoint = plot.getHoverPoints()[seriesNum];
+    if (hoverPoint >= 0) {
+      double yData = plot.getDataY(seriesNum, hoverPoint);
+      seriesLabel += " (" + plot.getRangeAxis(seriesNum).getFormattedLabel(yData) + ")";
     }
     
     XYRenderer renderer = plot.getRenderer(seriesNum);
@@ -135,21 +132,4 @@ public class DatasetLegendPanel extends AbstractPanel {
     return totalWidth;
   }
 
-  private void updateHoverInfo() {
-    int hoveredDatasetIdx = plot.getHoverSeries();
-    int hoveredPointIdx = plot.getHoverPoint();
-
-    if (hoveredPointIdx == -1) {
-      Focus focus = plot.getFocus();
-      if (focus != null) {
-        hoveredDatasetIdx = focus.getDatasetIndex();
-        hoveredPointIdx = focus.getPointIndex();
-      } else {
-        hoveredDatasetIdx = -1;
-        hoveredPointIdx = -1;
-      }
-    }
-    prevHoveredDatasetIdx = hoveredDatasetIdx;
-    prevHoveredPointIdx = hoveredPointIdx;
-  }
 }

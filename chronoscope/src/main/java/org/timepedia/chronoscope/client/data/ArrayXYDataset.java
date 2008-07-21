@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Util;
 
 /**
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
@@ -65,10 +66,8 @@ public class ArrayXYDataset implements XYDataset {
     if (capacity > domain.length) {
       this.domain = new double[capacity];
       this.range = new double[capacity];
-      AbstractUpdateableArrayXYDataset.MutableXYMultiresolution
-          .arraycopy(domain, 0, this.domain, 0, domain.length);
-      AbstractUpdateableArrayXYDataset.MutableXYMultiresolution
-          .arraycopy(range, 0, this.range, 0, range.length);
+      Util.arraycopy(domain, 0, this.domain, 0, domain.length);
+      Util.arraycopy(range, 0, this.range, 0, range.length);
     } else {
       this.domain = domain;
       this.range = range;

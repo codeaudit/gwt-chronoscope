@@ -17,7 +17,7 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     super(plot);
   }
 
-  public void drawDataset(Layer can, XYDataset dataSet, XYRenderer renderer,
+  public void drawDataset(Layer layer, XYDataset dataSet, XYRenderer renderer,
       int seriesNum, XYPlot plot) {
 
     Focus focus = plot.getFocus();
@@ -30,40 +30,41 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
       focusPoint = focus.getPointIndex();
     }
 
-    int hoverSeries = plot.getHoverSeries();
-    int hoverPoint = plot.getHoverPoint();
-
     boolean disabled = focusSeries != -1 && focusSeries != seriesNum;
 
-    renderer.beginCurve(plot, can, false, disabled);
+    renderer.beginCurve(plot, layer, false, disabled);
 
     int domainStart = this.domainStart[seriesNum];
     int domainEnd = this.domainEnd[seriesNum];
     int mipLevel = plot.getCurrentDatasetLevel(seriesNum);
-
-    int inc = 1;
-    int end = Math.min(domainEnd + 1, dataSet.getNumSamples(mipLevel));
+    int numSamples = dataSet.getNumSamples(mipLevel);
+    
+    final int inc = 1;
+    int[] hoverPoints = plot.getHoverPoints();
+    
+    // Render the data curve
+    int end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
       boolean focused = focusSeries == seriesNum && focusPoint == i;
-      boolean hovered = hoverSeries == seriesNum && hoverPoint == i;
-      renderer.drawCurvePart(plot, can, x, y, seriesNum, focused, hovered,
+      boolean hovered = hoverPoints[seriesNum] == i;
+      renderer.drawCurvePart(plot, layer, x, y, seriesNum, focused, hovered,
           false, disabled);
     }
-    renderer.endCurve(plot, can, false, disabled, seriesNum);
+    renderer.endCurve(plot, layer, false, disabled, seriesNum);
 
-    renderer.beginPoints(plot, can, false, disabled);
-
-    for (int i = Math.max(0, domainStart - 2); i < Math.min(domainEnd + 1,
-        dataSet.getNumSamples(mipLevel)); i += inc) {
+    // Render hover and focus points on the curve
+    renderer.beginPoints(plot, layer, false, disabled);
+    end = Math.min(domainEnd + 1, numSamples);
+    for (int i = Math.max(0, domainStart - 2); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
       boolean focused = focusSeries == seriesNum && focusPoint == i;
-      boolean hovered = hoverSeries == seriesNum && hoverPoint == i;
-      renderer.drawPoint(plot, can, x, y, seriesNum, focused, hovered, false,
+      boolean hovered = hoverPoints[seriesNum] == i;
+      renderer.drawPoint(plot, layer, x, y, seriesNum, focused, hovered, false,
           disabled);
     }
-    renderer.endPoints(plot, can, false, disabled, seriesNum);
+    renderer.endPoints(plot, layer, false, disabled, seriesNum);
   }
 }

@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.chronoscope.client.util.Util;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -121,13 +123,6 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
 //
 //        }-*/;
 
-    public static void arraycopy(double[] src, int srcOfs, double[] dest,
-        int destOfs, int len) {
-      for (int i = 0; i < len; i++) {
-        dest[destOfs + i] = src[srcOfs + i];
-      }
-    }
-
     public MutableXYMultiresolution(double[] domain, double[] range, int length,
         double[][] multiDomain, double[][] multiRange, int[] multiLength,
         double rangeTop, double rangeBottom) {
@@ -187,11 +182,11 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
       for (int i = 0; i < multiDomain.length; i++) {
         newMultiDomain[i] = new double[multiDomain[i].length * GROWTH_FACTOR];
         newMultiRange[i] = new double[multiRange[i].length * GROWTH_FACTOR];
-        arraycopy(multiDomain[i], 0, newMultiDomain[i], 0, multiLength[i]);
-        arraycopy(multiRange[i], 0, newMultiRange[i], 0, multiLength[i]);
+        Util.arraycopy(multiDomain[i], 0, newMultiDomain[i], 0, multiLength[i]);
+        Util.arraycopy(multiRange[i], 0, newMultiRange[i], 0, multiLength[i]);
       }
-      arraycopy(domain, 0, newdomain, 0, length);
-      arraycopy(range, 0, newrange, 0, length);
+      Util.arraycopy(domain, 0, newdomain, 0, length);
+      Util.arraycopy(range, 0, newrange, 0, length);
       domain = newdomain;
       range = newrange;
       multiDomain = newMultiDomain;

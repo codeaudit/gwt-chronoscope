@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
@@ -181,6 +182,7 @@ public class ChartEventHandler {
         if (DOM.eventGetButton(evt) == Event.BUTTON_RIGHT) {
           chart.getView().fireContextMenuEvent(x, y);
         } else if (chart.click(x, y)) {
+          // do nothing
         } else {
           handled = false;
         }
@@ -210,6 +212,7 @@ public class ChartEventHandler {
       default:
         handled = false;
     }
+    
     return handled;
   }
 
