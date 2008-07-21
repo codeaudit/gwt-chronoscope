@@ -32,7 +32,6 @@ import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.Nearest;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
@@ -41,6 +40,7 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -49,46 +49,31 @@ import java.util.HashMap;
  * space by delegating to one or more ValueAxis implementations. Drawing for
  * each dataset is delegated to Renderers. A plot also maintains state like the
  * current selection and focus point.
- *
+ * 
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     RegionLoadListener {
+  
+  // The maximum distance that the mouse pointer can stray from a candidate
+  // dataset point and still be considered as referring to that point.
+  private static final int MAX_FOCUS_DIST = 10;
+  
+  private static int MAX_DRAWABLE_DATAPOINTS = 400;
 
-  public static int MAX_DRAWABLE_DATAPOINTS = 400;
-
-  public static final double ZOOM_FACTOR = 1.50d;
+  private static final double ZOOM_FACTOR = 1.50d;
 
   private static final int FRAMES = 8;
 
   private static int globalPlotNumber = 0;
 
   private static final double MIN_PLOT_HEIGHT = 50;
-
-  /**
-   * Determines if a and b are equal, taking into consideration that a or b (or
-   * both a and b) could be null.
-   *
-   * TODO: Move this into a utility class
-   */
-  private static boolean isEqual(Object a, Object b) {
-    if (a == b) {
-      return true;
-    }
-
-    if (a == null && b == null) {
-      return true;
-    }
-
-    if ((a == null && b != null) || (b == null && a != null)) {
-      return false;
-    }
-
-    return a.equals(b);
-  }
-
+  
+  // Indicator that nothing is selected (e.g. a data point or a data set).
+  private static final int NO_SELECTION = -1;
+  
   protected RangeAxis[] axes;
 
   protected Background background;
@@ -113,13 +98,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   protected boolean drewVertical;
 
-  protected int hoverPoint = -1;
-
-  protected int hoverSeries = -1;
-
   protected final boolean interactive;
-
-  protected final Nearest nearestSingleton = new Nearest();
 
   protected boolean overviewEnabled = true;
 
@@ -137,6 +116,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   protected final XYRenderer[] xyRenderers;
 
+  private enum DistanceFormula { XY, X_ONLY };
+  
   private PortableTimerTask animationContinuation;
 
   private PortableTimer animationTimer;
@@ -161,6 +142,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private Layer highLightLayer;
 
+  private int[] hoverPoints;
+  
   private Bounds initialBounds;
 
   private Bounds innerBounds;
@@ -173,6 +156,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private LegendAxis legendAxis;
 
+  private final NearestPoint nearestSingleton = new NearestPoint();
+
+  //private final NearestPoint nearestHoverSingleton = new NearestPoint();
+  
   private ArrayList<Overlay> overlays;
 
   private OverviewAxis overviewAxis;
@@ -213,10 +200,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
     MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
     overlays = new ArrayList<Overlay>();
-    xyRenderers = new XYRenderer[datasets.length];
+    xyRenderers = new XYRenderer[ds.length];
     // computeVisibleDomainStartEnd();
     // initializeDomain();
-
+    
+    hoverPoints = new int[ds.length];
+    resetHoverPoints();
+    
     plotRenderer = new ScalableXYPlotRenderer(this);
     this.initialBounds = initialBounds;
     plotNumber = globalPlotNumber++;
@@ -326,24 +316,25 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   public void clearSelection() {
     selection = false;
-    selStart = -1;
-    selEnd = -1;
+    selStart = NO_SELECTION;
+    selEnd = NO_SELECTION;
   }
 
   public boolean click(int x, int y) {
     if (setFocusXY(x, y)) {
       return true;
-    } else {
-      for (Overlay o : overlays) {
-        double oPos = o.getDomainX();
-        if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
-          if (o.isHit(x, y)) {
-            o.click(x, y);
-            return true;
-          }
+    } 
+    
+    for (Overlay o : overlays) {
+      double oPos = o.getDomainX();
+      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+        if (o.isHit(x, y)) {
+          o.click(x, y);
+          return true;
         }
       }
     }
+    
     return showLegend ? legendAxis.click(x, y) : false;
   }
 
@@ -444,18 +435,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   public Focus getFocus() {
     return this.focus;
   }
+  
+  public int[] getHoverPoints() {
+    return this.hoverPoints;
+  }
 
   public String getHistoryToken() {
     return getChart().getChartId() + "(O" + getDomainOrigin() + ",D"
         + getCurrentDomain() + ")";
-  }
-
-  public int getHoverPoint() {
-    return hoverPoint;
-  }
-
-  public int getHoverSeries() {
-    return hoverSeries;
   }
 
   public Bounds getInnerPlotBounds() {
@@ -609,24 +596,23 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public boolean maxZoomTo(int x, int y) {
-
-    int nearPointIndex = -1;
+    int nearPointIndex = NO_SELECTION;
     int nearDataSetIndex = 0;
-    double nearDist = Double.MAX_VALUE;
+    double minNearestDist = MAX_FOCUS_DIST;
 
     for (int i = 0; i < datasets.length; i++) {
       double domainX = windowXtoDomain(x, i);
       double rangeY = windowYtoRange(y, i);
-      Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
-          10);
-      if (nearest.nearest > -1 && nearest.dist < nearDist) {
-        nearPointIndex = nearest.nearest;
-        nearDataSetIndex = nearest.series;
-        nearDist = nearest.dist;
+      NearestPoint nearest = this.nearestSingleton;
+      findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
+      if (nearest.dist < minNearestDist) {
+        nearPointIndex = nearest.pointIndex;
+        nearDataSetIndex = i;
+        minNearestDist = nearest.dist;
       }
     }
 
-    if (nearPointIndex >= 0) {
+    if (pointExists(nearPointIndex)) {
       maxZoomToPoint(nearPointIndex, nearDataSetIndex);
       return true;
     } else {
@@ -836,8 +822,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   public void setCurrentDatasetLevel(int datasetIndex, int mipLevel) {
     if (currentMiplevels[datasetIndex] != mipLevel) {
-      hoverPoint = -1;
-      hoverSeries = -1;
+      resetHoverPoints();
       // TODO: maybe adjust to nearest one in next level of detail
       focus = null;
 
@@ -873,42 +858,33 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public boolean setFocusXY(int x, int y) {
-    Focus lastFocus = (focus == null) ? null : focus.copy();
-
-    int nearNum = -1;
-    int nearSer = 0;
-    double nearDist = Double.MAX_VALUE;
+    int nearestPt = NO_SELECTION;
+    int nearestSer = 0;
+    double minNearestDist = MAX_FOCUS_DIST;
 
     for (int i = 0; i < datasets.length; i++) {
       double domainX = windowXtoDomain(x, i);
       double rangeY = windowYtoRange(y, i);
-      Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
-          10);
-      if (nearest.nearest > -1 && nearest.dist < nearDist) {
-        nearNum = nearest.nearest;
-        nearSer = nearest.series;
-        nearDist = nearest.dist;
+      NearestPoint nearest = this.nearestSingleton;
+      findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
+      
+      if (nearest.dist < minNearestDist) {
+        nearestPt = nearest.pointIndex;
+        nearestSer = i;
+        minNearestDist = nearest.dist;
       }
     }
-    if (nearNum >= 0) {
-      if (nearSer == -1) {
-        setFocusAndNotifyView(null);
-      } else {
-        setFocusAndNotifyView(nearSer, nearNum + 1);
-      }
-
-      if (!isEqual(lastFocus, focus)) {
-        redraw();
-      }
-      return true;
-    } else {
-
+    
+    final boolean somePointHasFocus = pointExists(nearestPt);
+    if (somePointHasFocus) {
+      setFocusAndNotifyView(nearestSer, nearestPt);
+    }
+    else {
       setFocusAndNotifyView(null);
-      if (!isEqual(lastFocus, focus)) {
-        redraw();
-      }
     }
-    return false;
+    
+    redraw();
+    return somePointHasFocus;
   }
 
   public void setHighlight(double begin, double end) {
@@ -928,39 +904,39 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public boolean setHover(int x, int y) {
+    
+    // At the end of this method, this flag should be true iff *any* of the
+    // datasets are sufficiently close to 1 or more of the dataset curves to
+    // be considered "clickable".
+    // closenessThreshold is the cutoff for "sufficiently close".
+    boolean isCloseToCurve = false;
+    final int closenessThreshold = MAX_FOCUS_DIST;
+    
+    // True iff one or more hoverPoints have changed since the last call to this method
+    boolean isDirty = false;
 
-    int lastHover = hoverPoint;
-    int lastHoverSeries = hoverSeries;
-    int nearNum = -1;
-    int nearSer = 0;
-    double nearDist = Double.MAX_VALUE;
-
+    NearestPoint nearestHoverPt = this.nearestSingleton;
     for (int i = 0; i < datasets.length; i++) {
-      double domainX = windowXtoDomain(x, i);
-      double rangeY = windowYtoRange(y, i);
-      Nearest nearest = findNearestWithin(nearestSingleton, domainX, rangeY, i,
-          15);
-      if (nearest.nearest > -1 && nearest.dist < nearDist) {
-        nearNum = nearest.nearest;
-        nearSer = nearest.series;
-        nearDist = nearest.dist;
+      double dataX = windowXtoDomain(x, i);
+      double dataY = windowYtoRange(y, i);
+      findNearestPt(dataX, dataY, i, DistanceFormula.X_ONLY, nearestHoverPt);
+      int nearestPointIdx = nearestHoverPt.pointIndex;
+      if (nearestPointIdx != hoverPoints[i]) {
+        isDirty = true;
+      }
+      
+      hoverPoints[i] = pointExists(nearestPointIdx) ? nearestPointIdx : NO_SELECTION;
+      
+      if (nearestHoverPt.dist <= closenessThreshold) {
+        isCloseToCurve = true;
       }
     }
-
-    if (nearNum >= 0) {
-      hoverPoint = nearNum + 1;
-      hoverSeries = nearSer;
-      if (lastHoverSeries != hoverSeries || lastHover != hoverPoint) {
-        redraw();
-      }
-      return true;
-    } else {
-      hoverPoint = -1;
-      if (lastHoverSeries != hoverSeries || lastHover != hoverPoint) {
-        redraw();
-      }
+    
+    if (isDirty) {
+      redraw();
     }
-    return false;
+    
+    return isCloseToCurve;
   }
 
   public void setInitialBounds(Bounds initialBounds) {
@@ -1189,9 +1165,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         this.view.getViewWidth(), this.view.getViewHeight()) : new Bounds(
         initialBounds);
 
-    // TODO: this padding is a workaround.  Apparently, the height computed
+    // TODO: this padding is a workaround. Apparently, the height computed
     // for the main plot bounds does not take into consideration the highest
-    // range character (which "sits on top of" the northern-most range axis tick.
+    // range character (which "sits on top of" the northern-most range axis
+    // tick.
     // Without this hardcoded padding, the highest range value within the
     // plot are encroaches on the southern-most dataset legend row.
     final double topPanelPad = 19;
@@ -1237,10 +1214,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     domainEnd = Util.computeDomainEnd(this, datasets);
   }
 
-  private double dist(double x1, double y1, double cx, double cy) {
-    // TODO: we now ignore y dist to make hover easier
-    return Math.sqrt((x1 - cx) * (x1 - cx) + (y1 - cy) * (y1 - cy));
-    //return Math.abs(x1-cx);
+  /**
+   * Calculates the distance from (x1,y1) to (x2,y2).
+   */
+  private static double dist(double x1, double y1, double x2, double y2) {
+    return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    //return Math.abs(x1-x2);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1250,7 +1229,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         overviewLayer.getBounds().width, overviewLayer.getBounds().height));
 
     char label = 'A';
-    
+
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
       if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
@@ -1342,46 +1321,61 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     return 0; // TODO: silent fail
   }
 
-  private Nearest findNearestWithin(Nearest nearestResult, double domainX,
-      double rangeY, int datasetIndex, int within) {
-    double cx = domainToScreenX(domainX, datasetIndex);
-    double cy = rangeToScreenY(rangeY, datasetIndex);
+  /**
+   * Finds the data point on a given dataset whose location is closest to the
+   * specified (dataX, dataY) location.  This method modifies the fields in
+   * the input argument <tt>np</tt>.
+   * 
+   * @param dataX - the domain value in data space
+   * @param dataY - the range value in data space
+   * @param datasetIndex - the 0-based index of a dataset
+   * @param df - determines which distance formula to use when determining
+   *     the "closeness" of 2 points.
+   * @param np - result object that represents the point nearest to (dataX, dataY).
+   *   
+   */
+  private void findNearestPt(double dataX, double dataY, int datasetIndex, 
+      DistanceFormula df, NearestPoint np) {
+    
+    XYDataset ds = datasets[datasetIndex];
+    int currMipLevel = currentMiplevels[datasetIndex];
+    
+    // Find index of data point closest to the right of dataX at the current MIP level
+    int closestPtToRight = Util.binarySearch(ds, dataX, currMipLevel);
 
-    int where = Util.binarySearch(datasets[datasetIndex], domainX,
-        currentMiplevels[datasetIndex]);
-
-    double x1 = domainToScreenX(datasets[datasetIndex].getX(where,
-        currentMiplevels[datasetIndex]), datasetIndex);
-    double y1 = rangeToScreenY(datasets[datasetIndex].getY(where,
-        currentMiplevels[datasetIndex]), datasetIndex);
-    double x2, y2;
-    if (where + 1 < datasets[datasetIndex].getNumSamples(currentMiplevels[datasetIndex])) {
-      x2 = domainToScreenX(datasets[datasetIndex].getX(where + 1,
-          currentMiplevels[datasetIndex]), datasetIndex);
-      y2 = rangeToScreenY(datasets[datasetIndex].getY(where + 1,
-          currentMiplevels[datasetIndex]), datasetIndex);
-    } else {
-      x2 = x1;
-      y2 = y1;
+    double sx = domainToScreenX(dataX, datasetIndex);
+    double sy = rangeToScreenY(dataY, datasetIndex);
+    double rx = domainToScreenX(ds.getX(closestPtToRight, currMipLevel), datasetIndex);
+    double ry = rangeToScreenY(ds.getY(closestPtToRight, currMipLevel), datasetIndex);
+    
+    int nearestHoverPt;
+    if (closestPtToRight == 0) {
+      nearestHoverPt = closestPtToRight;
+      np.dist = dist(sx, sy, rx, ry);
     }
-
-    double d1 = dist(x1, y1, cx, cy);
-    double d2 = dist(x2, y2, cx, cy);
-    nearestResult.nearest = -1;
-    nearestResult.series = datasetIndex;
-
-    if (d1 <= d2) {
-      if (d1 < within) {
-        nearestResult.nearest = where - 1;
-        nearestResult.dist = d1;
+    else {
+      int closestPtToLeft = closestPtToRight - 1;
+      double lx = domainToScreenX(ds.getX(closestPtToLeft, currMipLevel), datasetIndex);
+      double ly = rangeToScreenY(ds.getY(closestPtToLeft, currMipLevel), datasetIndex);
+      
+      double lxyDist = dist(sx, sy, lx, ly);
+      double rxyDist = dist(sx, sy, rx, ry);
+      
+      if (df == DistanceFormula.X_ONLY) {
+        double lxDist = Math.abs(sx - lx);
+        double rxDist = Math.abs(sx - rx);
+        nearestHoverPt = (lxDist <= rxDist) ? closestPtToLeft : closestPtToRight;
       }
-    } else if (d2 < within) {
-      nearestResult.nearest = where;
-      nearestResult.dist = d2;
+      else {
+        nearestHoverPt = (lxyDist <= rxyDist) ? closestPtToLeft : closestPtToRight;
+      }
+      
+      np.dist = Math.min(lxyDist, rxyDist);
     }
-    return nearestResult;
+    
+    np.pointIndex = nearestHoverPt;
   }
-
+  
   private void initDatasetLevels() {
     currentMiplevels = new int[datasets.length];
     for (int i = 0; i < currentMiplevels.length; i++) {
@@ -1488,7 +1482,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private void setFocusAndNotifyView(Focus focus) {
     if (focus == null) {
       this.focus = null;
-      view.fireFocusEvent(this, -1, -1);
+      view.fireFocusEvent(this, NO_SELECTION, NO_SELECTION);
     } else {
       setFocusAndNotifyView(focus.getDatasetIndex(), focus.getPointIndex());
     }
@@ -1519,4 +1513,21 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private double windowYtoUser(int y) {
     return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
   }
+  
+  private void resetHoverPoints() {
+    Arrays.fill(this.hoverPoints, NO_SELECTION);
+  }
+  
+  private static boolean pointExists(int pointIndex) {
+    return pointIndex > NO_SELECTION;
+  }
+
+  /**
+   * Represents the point nearest to some specified data point.
+   */
+  private static final class NearestPoint {
+    public int pointIndex;
+    public double dist;
+  }
+  
 }
