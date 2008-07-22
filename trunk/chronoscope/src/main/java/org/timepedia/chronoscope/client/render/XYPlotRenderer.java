@@ -11,6 +11,7 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Responsible for iterating over datasets in a defined drawing order, and then
@@ -25,9 +26,9 @@ public abstract class XYPlotRenderer {
 
   protected XYPlot plot;
 
-  protected HashMap rangeMax = new HashMap();
+  protected Map<String,Double> rangeMax = new HashMap<String,Double>();
 
-  protected HashMap rangeMin = new HashMap();
+  protected Map<String,Double> rangeMin = new HashMap<String,Double>();
 
   public XYPlotRenderer(XYPlot plot) {
 
@@ -72,7 +73,7 @@ public abstract class XYPlotRenderer {
           plot.getMaxDrawableDataPoints());
       do {
         mipLevel++;
-        double end = dataSet.getX(dataSet.getNumSamples(mipLevel) - 1, mipLevel);
+        //double end = dataSet.getX(dataSet.getNumSamples(mipLevel) - 1, mipLevel);
         if (!inRegion && (domainOrigin < dataSet.getX(0, mipLevel)
             /*|| domainOrigin + currentDomain > end + (end - dataSet
         .getX(dataSet.getNumSamples(mipLevel) - 2, mipLevel))*/)) {

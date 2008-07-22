@@ -52,11 +52,11 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     pointElement = new GssElementImpl("point", parentSeriesElement);
   }
 
-  public void beginCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean isDisabled) {
+  public void beginCurve(XYPlot plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
-    GssProperties prop = isDisabled ? disabledLineProperties
+    GssProperties prop = renderState.isDisabled() 
+        ? disabledLineProperties
         : gssLineProperties;
     layer.save();
     layer.setLineWidth(prop.lineThickness);
@@ -70,8 +70,8 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     prevHover = false;
   }
 
-  public void beginPoints(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled) {
+  public void beginPoints(XYPlot plot, Layer layer, RenderState renderState) {
+    // do nothing
   }
 
   public double calcLegendIconWidth(XYPlot plot) {
@@ -83,10 +83,13 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
   }
 
  public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
-      double dataY, int seriesNum, boolean isFocused, boolean isHovered,
-      boolean inSelection, boolean isDisabled) {
+    double dataY, int seriesNum, RenderState renderState) {
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
+    
+    final boolean isDisabled = renderState.isDisabled();
+    final boolean isFocused = renderState.isFocused();
+
     GssProperties barProp = isDisabled ? disabledLineProperties
         : gssLineProperties;
     GssProperties pointProp = isDisabled ? disabledPointProperties
@@ -131,6 +134,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
         }
         layer.restore();
       }
+      
       if (pointProp.visible) {
         if (isFocused) {
           focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
@@ -164,7 +168,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
       }
     }
 
-    prevHover = isHovered;
+    prevHover = renderState.isHovered();
     prevFocus = isFocused;
   }
 
@@ -219,17 +223,16 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
   }
 
   public void drawPoint(XYPlot plot, Layer layer, double x, double y,
-      int seriesNum, boolean focused, boolean hovered, boolean inSelection,
-      boolean disabled) {
+      int seriesNum, RenderState renderState) {
+    // do nothing
   }
 
-  public void endCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean isDisabled, int seriesNum) {
+  public void endCurve(XYPlot plot, Layer layer, int seriesNum, RenderState renderState) {
     layer.restore();
   }
 
-  public void endPoints(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled, int seriesNum) {
+  public void endPoints(XYPlot plot, Layer layer, int seriesNum, RenderState renderState) {
+    // do nothing
   }
 
   public double getInterval() {
