@@ -959,9 +959,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.selectionMode = b;
   }
 
-  public void showOverview() {
-  }
-
   public void update() {
 
     Canvas backingCanvas = view.getCanvas();
@@ -1469,11 +1466,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     XYDataset dataset = datasets[datasetIndex];
     pointIndex = Util.binarySearch(dataset, dataset.getX(pointIndex,
         currentMiplevels[datasetIndex]), 0);
-
-    final double newOrigin = dataset.getX(Math.max(0, pointIndex - 10));
-    double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
-        pointIndex + 10))
-        - newOrigin;
+    
+    final int zoomOffset = 10; 
+    final double newOrigin = dataset.getX(Math.max(0, pointIndex - zoomOffset));
+    final double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
+        pointIndex + zoomOffset)) - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }

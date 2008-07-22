@@ -14,15 +14,14 @@ public abstract class XYRenderer implements Exportable {
    * Called before first data is plotted, typically drawing state is setup, or a
    * path is begun
    */
-  public abstract void beginCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled);
+  public abstract void beginCurve(XYPlot plot, Layer layer, RenderState renderState);
 
   /**
    * Called before points are plotted, typically to setup drawing state (colors,
    * etc)
    */
-  public abstract void beginPoints(XYPlot plot, Layer layer,
-      boolean inSelection, boolean disabled);
+  public abstract void beginPoints(XYPlot plot, Layer layer, RenderState renderState);
+
   
   /**
    * Calculates the pixel width of the legend icon.
@@ -37,8 +36,7 @@ public abstract class XYRenderer implements Exportable {
    * being rendered
    */
   public abstract void drawCurvePart(XYPlot plot, Layer layer, double dataX,
-      double dataY, int seriesNum, boolean isFocused, boolean isHovered,
-      boolean inSelection, boolean isDisabled);
+      double dataY, int seriesNum, RenderState renderState);
 
   /**
    * Render a small icon or sparkline representing this curve at the given x,y
@@ -50,23 +48,22 @@ public abstract class XYRenderer implements Exportable {
   /**
    * Draw an individual point of the given domain and range values
    */
-  public abstract void drawPoint(XYPlot plot, Layer layer, double domainx,
-      double rangey, int seriesNum, boolean focused, boolean hovered,
-      boolean inSelection, boolean disabled);
+  public abstract void drawPoint(XYPlot plot, Layer layer, double domainX,
+      double rangeY, int seriesNum, RenderState renderState);
 
   /**
    * Called after last data is plotted (last call to drawCurvePart), typically
    * when stroke() or fill() is invoked
    */
-  public abstract void endCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled, int seriesNum);
+  public abstract void endCurve(XYPlot plot, Layer layer, int seriesNum, 
+      RenderState renderState);
 
   /**
    * Called after all points are plotted, typically to cleanup state (restore()
    * after a save() )
    */
-  public abstract void endPoints(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled, int seriesNum);
+  public abstract void endPoints(XYPlot plot, Layer layer, int seriesNum, 
+      RenderState renderState);
 
   /**
    * The maximum number of datapoints that should be drawn in the view and

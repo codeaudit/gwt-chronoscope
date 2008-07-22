@@ -67,11 +67,10 @@ public class XYLineRenderer extends XYRenderer
     fillElement = new GssElementImpl("fill", parentSeriesElement);
   }
 
-  public void beginCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean isDisabled) {
+  public void beginCurve(XYPlot plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
-    lineProp = isDisabled ? disabledLineProperties : gssLineProperties;
+    lineProp = renderState.isDisabled() ? disabledLineProperties : gssLineProperties;
     layer.save();
     layer.beginPath();
 
@@ -79,9 +78,8 @@ public class XYLineRenderer extends XYRenderer
     fx = -1;
   }
 
-  public void beginPoints(XYPlot plot, Layer layer, boolean inSelection,
-      boolean isDisabled) {
-    pointProp = isDisabled ? disabledPointProperties : gssPointProperties;
+  public void beginPoints(XYPlot plot, Layer layer, RenderState renderState) {
+    pointProp = renderState.isDisabled() ? disabledPointProperties : gssPointProperties;
     lx = ly = -1;
     layer.save();
   }
@@ -95,8 +93,7 @@ public class XYLineRenderer extends XYRenderer
   }
 
   public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
-      double dataY, int seriesNum, boolean isFocused, boolean isHovered,
-      boolean inSelection, boolean isDisabled) {
+      double dataY, int seriesNum, RenderState renderState) {
     double ux = Math.max(0, plot.domainToScreenX(dataX, seriesNum));
     double uy = plot.rangeToScreenY(dataY, seriesNum);
     // guard webkit bug, coredump if draw two identical lineTo in a row
@@ -170,9 +167,11 @@ public class XYLineRenderer extends XYRenderer
   }
 
   public void drawPoint(XYPlot plot, Layer layer, double dataX, double dataY,
-      int seriesNum, boolean isFocused, boolean hovered, boolean inSelection,
-      boolean disabled) {
-
+      int seriesNum, RenderState renderState) {
+    
+    final boolean hovered = renderState.isHovered();
+    final boolean isFocused = renderState.isFocused();
+    
     GssProperties prop = hovered ? gssHoverPointProperties : pointProp;
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
@@ -212,8 +211,8 @@ public class XYLineRenderer extends XYRenderer
     }
   }
 
-  public void endCurve(XYPlot plot, Layer layer, boolean inSelection,
-      boolean isDisabled, int seriesNum) {
+  public void endCurve(XYPlot plot, Layer layer, int seriesNum, 
+      RenderState renderState) {
 
     layer.setLineWidth(lineProp.lineThickness);
     layer.setTransparency((float) lineProp.transparency);
@@ -224,10 +223,10 @@ public class XYLineRenderer extends XYRenderer
     layer.setStrokeColor(lineProp.color);
     layer.setFillColor(lineProp.bgColor);
     layer.setStrokeColor(lineProp.color);
-    GssProperties fillProp = isDisabled ? disabledFillProperties
+    GssProperties fillProp = renderState.isDisabled() 
+        ? disabledFillProperties
         : gssFillProperties;
     layer.stroke();
-
     layer.lineTo(lx, layer.getHeight());
     layer.lineTo(fx, layer.getHeight());
     layer.setFillColor(fillProp.bgColor);
@@ -236,8 +235,8 @@ public class XYLineRenderer extends XYRenderer
     layer.restore();
   }
 
-  public void endPoints(XYPlot plot, Layer layer, boolean inSelection,
-      boolean disabled, int seriesNum) {
+  public void endPoints(XYPlot plot, Layer layer, int seriesNum, 
+      RenderState renderState) {
     layer.restore();
   }
 
