@@ -14,13 +14,6 @@ public class UtilTest extends TestCase {
     super(name);
   }
   
-  public void testArraycopy() {
-    double[] a1 = new double[] {1.0, 2.0, 3.0};
-    double[] a2 = new double[a1.length];
-    Util.arraycopy(a1, 0, a2, 0, a1.length);
-    assertTrue(java.util.Arrays.equals(a1, a2));
-  }
-  
   public void testBinarySearch() {
     double[] domain = new double[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     XYDataset ds = new JUnitXYDataset(domain);

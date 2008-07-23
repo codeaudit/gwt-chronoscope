@@ -182,11 +182,11 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
       for (int i = 0; i < multiDomain.length; i++) {
         newMultiDomain[i] = new double[multiDomain[i].length * GROWTH_FACTOR];
         newMultiRange[i] = new double[multiRange[i].length * GROWTH_FACTOR];
-        Util.arraycopy(multiDomain[i], 0, newMultiDomain[i], 0, multiLength[i]);
-        Util.arraycopy(multiRange[i], 0, newMultiRange[i], 0, multiLength[i]);
+        System.arraycopy(multiDomain[i], 0, newMultiDomain[i], 0, multiLength[i]);
+        System.arraycopy(multiRange[i], 0, newMultiRange[i], 0, multiLength[i]);
       }
-      Util.arraycopy(domain, 0, newdomain, 0, length);
-      Util.arraycopy(range, 0, newrange, 0, length);
+      System.arraycopy(domain, 0, newdomain, 0, length);
+      System.arraycopy(range, 0, newrange, 0, length);
       domain = newdomain;
       range = newrange;
       multiDomain = newMultiDomain;

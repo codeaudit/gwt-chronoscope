@@ -66,8 +66,8 @@ public class ArrayXYDataset implements XYDataset {
     if (capacity > domain.length) {
       this.domain = new double[capacity];
       this.range = new double[capacity];
-      Util.arraycopy(domain, 0, this.domain, 0, domain.length);
-      Util.arraycopy(range, 0, this.range, 0, range.length);
+      System.arraycopy(domain, 0, this.domain, 0, domain.length);
+      System.arraycopy(range, 0, this.range, 0, range.length);
     } else {
       this.domain = domain;
       this.range = range;
