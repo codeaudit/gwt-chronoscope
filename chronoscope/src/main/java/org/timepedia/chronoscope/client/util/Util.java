@@ -8,16 +8,6 @@ import org.timepedia.chronoscope.client.XYPlot;
  */
 public final class Util {
 
-  /**
-   * Analagous to <tt>java.lang.System.arraycopy()</tt>.
-   */
-  public static void arraycopy(double[] src, int srcOffset, double[] dest,
-      int destOffset, int length) {
-    for (int i = 0; i < length; i++) {
-      dest[destOffset + i] = src[srcOffset + i];
-    }
-  }
-  
   public static int binarySearch(XYDataset mds, double domainOrigin,
       int mipLevel) {
     int low = 0;
