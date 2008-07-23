@@ -22,7 +22,7 @@ public class DatasetLegendPanel extends AbstractPanel {
   static final int DATASET_LEGEND_PAD = 22;
 
   private double lblHeight;
-  private double[] avgLabelWidths;
+  private double[] maxLabelWidths;
   private XYPlot plot;
   
   public void init(Layer layer) {
@@ -34,7 +34,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     // TODO: might make more sense for container to set this panel's width
     this.width = layer.getWidth(); 
     
-    this.avgLabelWidths = calcInitialLabelWidths(plot, layer);
+    this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
     
     Bounds b = new Bounds();
     draw(layer, true, b);
@@ -104,21 +104,16 @@ public class DatasetLegendPanel extends AbstractPanel {
     XYRenderer renderer = plot.getRenderer(seriesNum);
     
     int hoverPoint = plot.getHoverPoints()[seriesNum];
-    boolean isHoverActive = (hoverPoint >= 0);
     String seriesLabel = createDatasetLabel(plot, seriesNum, hoverPoint);
     
-    // Compute the width of the dataset text label, taking into acount historical
+    // Compute the width of the dataset text label, taking into account historical
     // widths of this label.
-    double txtWidth;
-    txtWidth = this.calcWidth(seriesLabel, layer);
-    if (avgLabelWidths[seriesNum] > 0.0) {
-      if (isHoverActive) {
-        avgLabelWidths[seriesNum] = Math.max(avgLabelWidths[seriesNum], txtWidth);
-      }
-      txtWidth = Math.max(txtWidth, avgLabelWidths[seriesNum]);
+    double txtWidth = calcWidth(seriesLabel, layer);
+    if (txtWidth > maxLabelWidths[seriesNum]) {
+      maxLabelWidths[seriesNum] = txtWidth;
     }
     else {
-      avgLabelWidths[seriesNum] = txtWidth;
+      txtWidth = maxLabelWidths[seriesNum];
     }
     
     double iconWidth = renderer.calcLegendIconWidth(plot);
