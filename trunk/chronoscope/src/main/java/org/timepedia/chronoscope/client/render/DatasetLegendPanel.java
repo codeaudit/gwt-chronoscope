@@ -1,13 +1,9 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
@@ -25,8 +21,9 @@ public class DatasetLegendPanel extends AbstractPanel {
   // Dictates the X-padding between each dataset legend item
   static final int DATASET_LEGEND_PAD = 22;
 
-  private XYPlot plot;
   private double lblHeight;
+  private double[] avgLabelWidths;
+  private XYPlot plot;
   
   public void init(Layer layer) {
     ArgChecker.isNotNull(plot, "plot");
@@ -36,6 +33,8 @@ public class DatasetLegendPanel extends AbstractPanel {
     
     // TODO: might make more sense for container to set this panel's width
     this.width = layer.getWidth(); 
+    
+    this.avgLabelWidths = calcInitialLabelWidths(plot, layer);
     
     Bounds b = new Bounds();
     draw(layer, true, b);
@@ -102,17 +101,26 @@ public class DatasetLegendPanel extends AbstractPanel {
    * in the panel given the specified lblX and lblY coordinates.
    */
   private double drawLegendLabel(double lblX, double lblY, Layer layer, int seriesNum, boolean onlyCalcWidth) {
-    String seriesLabel = plot.getSeriesLabel(seriesNum);
+    XYRenderer renderer = plot.getRenderer(seriesNum);
     
     int hoverPoint = plot.getHoverPoints()[seriesNum];
-    if (hoverPoint >= 0) {
-      double yData = plot.getDataY(seriesNum, hoverPoint);
-      seriesLabel += " (" + plot.getRangeAxis(seriesNum).getFormattedLabel(yData) + ")";
+    boolean isHoverActive = (hoverPoint >= 0);
+    String seriesLabel = createDatasetLabel(plot, seriesNum, hoverPoint);
+    
+    // Compute the width of the dataset text label, taking into acount historical
+    // widths of this label.
+    double txtWidth;
+    txtWidth = this.calcWidth(seriesLabel, layer);
+    if (avgLabelWidths[seriesNum] > 0.0) {
+      if (isHoverActive) {
+        avgLabelWidths[seriesNum] = Math.max(avgLabelWidths[seriesNum], txtWidth);
+      }
+      txtWidth = Math.max(txtWidth, avgLabelWidths[seriesNum]);
+    }
+    else {
+      avgLabelWidths[seriesNum] = txtWidth;
     }
     
-    XYRenderer renderer = plot.getRenderer(seriesNum);
-
-    double txtWidth = this.calcWidth(seriesLabel, layer);
     double iconWidth = renderer.calcLegendIconWidth(plot);
     double totalWidth = txtWidth + LEGEND_ICON_PAD + iconWidth;
     
@@ -131,5 +139,36 @@ public class DatasetLegendPanel extends AbstractPanel {
     
     return totalWidth;
   }
-
+  
+  /**
+   * Calculates the width of the dataset label for the median point of 
+   * each dataset in the plot and returns the resulting array of 
+   * label widths.
+   */
+  private double[] calcInitialLabelWidths(XYPlot plot, Layer layer) {
+    double[] estMaxWidths = new double[plot.getNumDatasets()];
+    for (int i = 0; i < plot.getNumDatasets(); i++) {
+      int medianIdx = plot.getDataset(i).getNumSamples() >> 1;
+      String lbl = createDatasetLabel(plot, i, medianIdx);
+      estMaxWidths[i] = this.calcWidth(lbl, layer);
+    }
+    
+    return estMaxWidths;
+  }
+  
+  /**
+   * Generates the dataset label for a given point on a dataset.  The point 
+   * index is needed in order to determine the range value to be displayed
+   * for hovered data points. If pointIdx == -1, then the range value is 
+   * omitted.
+   */
+  private String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
+    String lbl = plot.getSeriesLabel(datasetIdx);
+    final boolean doShowRangeValue = (pointIdx > -1);
+    if (doShowRangeValue) {
+      double yData = plot.getDataY(datasetIdx, pointIdx);
+      lbl += " (" + plot.getRangeAxis(datasetIdx).getFormattedLabel(yData) + ")";
+    }
+    return lbl;
+  }
 }
