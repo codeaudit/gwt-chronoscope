@@ -58,8 +58,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     RegionLoadListener {
   
   // The maximum distance that the mouse pointer can stray from a candidate
-  // dataset point and still be considered as referring to that point.
+  // data point and still be considered as referring to that point.
   private static final int MAX_FOCUS_DIST = 10;
+  
+  // The maximum distance (only considers x-axis) that the mouse pointer can 
+  // stray from a data point and still cause that point to be "hovered".
+  private static final int MAX_HOVER_DIST = 25;
   
   private static int MAX_DRAWABLE_DATAPOINTS = 400;
 
@@ -116,8 +120,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   protected final XYRenderer[] xyRenderers;
 
-  private enum DistanceFormula { XY, X_ONLY };
-  
   private PortableTimerTask animationContinuation;
 
   private PortableTimer animationTimer;
@@ -158,8 +160,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private final NearestPoint nearestSingleton = new NearestPoint();
 
-  //private final NearestPoint nearestHoverSingleton = new NearestPoint();
-  
   private ArrayList<Overlay> overlays;
 
   private OverviewAxis overviewAxis;
@@ -187,6 +187,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private Layer verticalAxisLayer;
 
   private View view;
+
+  private enum DistanceFormula { 
+    XY { double dist(double x1, double y1, double x2, double y2) {
+      return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+      }}, 
+    X_ONLY { double dist(double x1, double y1, double x2, double y2) {
+      return Math.abs(x1 - x2);
+      }};
+    
+    abstract double dist(double x1, double y1, double x2, double y2);
+  };
 
   public DefaultXYPlot(Chart chart, XYDataset[] datasets, boolean interactive) {
     this(chart, datasets, interactive, null);
@@ -920,7 +931,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       double dataX = windowXtoDomain(x, i);
       double dataY = windowYtoRange(y, i);
       findNearestPt(dataX, dataY, i, DistanceFormula.X_ONLY, nearestHoverPt);
-      int nearestPointIdx = nearestHoverPt.pointIndex;
+
+      int nearestPointIdx = (nearestHoverPt.dist < MAX_HOVER_DIST)
+                          ? nearestHoverPt.pointIndex
+                          : NO_SELECTION;
+      
       if (nearestPointIdx != hoverPoints[i]) {
         isDirty = true;
       }
@@ -1211,13 +1226,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     domainEnd = Util.computeDomainEnd(this, datasets);
   }
 
-  /**
-   * Calculates the distance from (x1,y1) to (x2,y2).
-   */
-  private static double dist(double x1, double y1, double x2, double y2) {
-    return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-  }
-
   private void drawOverlays(Layer overviewLayer) {
     overviewLayer.save();
     overviewLayer.clearTextLayer("overlays");
@@ -1347,26 +1355,23 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     int nearestHoverPt;
     if (closestPtToRight == 0) {
       nearestHoverPt = closestPtToRight;
-      np.dist = dist(sx, sy, rx, ry);
+      np.dist = df.dist(sx, sy, rx, ry);
     }
     else {
       int closestPtToLeft = closestPtToRight - 1;
       double lx = domainToScreenX(ds.getX(closestPtToLeft, currMipLevel), datasetIndex);
       double ly = rangeToScreenY(ds.getY(closestPtToLeft, currMipLevel), datasetIndex);
+      double lDist = df.dist(sx, sy, lx, ly);
+      double rDist = df.dist(sx, sy, rx, ry);
       
-      double lxyDist = dist(sx, sy, lx, ly);
-      double rxyDist = dist(sx, sy, rx, ry);
-      
-      if (df == DistanceFormula.X_ONLY) {
-        double lxDist = Math.abs(sx - lx);
-        double rxDist = Math.abs(sx - rx);
-        nearestHoverPt = (lxDist <= rxDist) ? closestPtToLeft : closestPtToRight;
+      if (lDist <= rDist) {
+        nearestHoverPt = closestPtToLeft;
+        np.dist = lDist;
       }
       else {
-        nearestHoverPt = (lxyDist <= rxyDist) ? closestPtToLeft : closestPtToRight;
+        nearestHoverPt = closestPtToRight;
+        np.dist = rDist;
       }
-      
-      np.dist = Math.min(lxyDist, rxyDist);
     }
     
     np.pointIndex = nearestHoverPt;
