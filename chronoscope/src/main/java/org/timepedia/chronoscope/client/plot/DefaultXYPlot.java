@@ -1088,24 +1088,21 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   protected void autoAssignDatasetAxes() {
-    int rangeAxisCount = -1;
+    int rangeAxisCount = 0;
     for (int i = 0; i < datasets.length; i++) {
-      RangeAxis ra = (RangeAxis) axisMap.get(datasets[i].getAxisId());
+      XYDataset ds = datasets[i];
+      RangeAxis ra = (RangeAxis) axisMap.get(ds.getAxisId());
       if (ra == null) {
-        rangeAxisCount++;
-        ra = new RangeAxis(chart, datasets[i].getRangeLabel(),
-            datasets[i].getAxisId(), i, datasets[i].getRangeBottom(),
-            datasets[i].getRangeTop(), rangeAxisCount % 2 == 0 ? rangePanelLeft
-                : rangePanelRight);
+        AxisPanel currRangePanel = ((rangeAxisCount++) % 2 == 0)
+                                 ? rangePanelLeft
+                                 : rangePanelRight;
+        ra = new RangeAxis(chart, ds.getRangeLabel(), ds.getAxisId(), 
+              i, ds.getRangeBottom(), ds.getRangeTop(), currRangePanel);
         axisMap.put(ra.getAxisId(), ra);
-        if (rangeAxisCount % 2 == 0) {
-          rangePanelLeft.add(ra);
-        } else {
-          rangePanelRight.add(ra);
-        }
+        currRangePanel.add(ra);
       } else {
-        ra.setRange(Math.min(ra.getRangeLow(), datasets[i].getRangeBottom()),
-            Math.max(ra.getRangeHigh(), datasets[i].getRangeTop()));
+        ra.setRange(Math.min(ra.getRangeLow(), ds.getRangeBottom()),
+            Math.max(ra.getRangeHigh(), ds.getRangeTop()));
       }
 
       axes[i] = ra;
@@ -1183,7 +1180,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     // tick.
     // Without this hardcoded padding, the highest range value within the
     // plot are encroaches on the southern-most dataset legend row.
-    final double topPanelPad = 19;
+    final double topPanelPad = 23;
 
     // TODO: only in snapshot
     if (interactive) {

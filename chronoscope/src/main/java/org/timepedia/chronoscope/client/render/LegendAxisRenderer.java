@@ -87,14 +87,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     totalHeight += LEGEND_Y_TOP_PAD;
     totalHeight += dsLegendPanel.getHeight();
 
-    // Issue #41: For now, we add a LEGEND_Y_BOTTOM_PAD that's tall enough to
-    // allow for the possibility of an extra row of legend labels. This is to
-    // account for the case where the user hovers over a dataset point, causing
-    // the corresponding range value to be appended to the legend label, which
-    // in some cases could cause the remaining legend labels to run over into a
-    // new row.
-    totalHeight += zoomPanel.getHeight();
-
     return totalHeight;
   }
 

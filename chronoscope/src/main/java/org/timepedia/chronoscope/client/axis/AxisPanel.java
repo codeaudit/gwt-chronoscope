@@ -25,7 +25,7 @@ public class AxisPanel implements GssElement {
 
   public static final int HORIZONTAL_AXIS = 1;
 
-  private final ArrayList axes = new ArrayList();
+  private final ArrayList<ValueAxis> axes = new ArrayList<ValueAxis>();
 
   private boolean layerConfigured = false;
 
@@ -72,7 +72,6 @@ public class AxisPanel implements GssElement {
 
     for (int i = 0; i < axes.size(); i++) {
       if (!layerConfigured) {
-
         layer.setTextLayerBounds(panelName + i, lPBounds);
       }
       ValueAxis axis = (ValueAxis) axes.get(i);
