@@ -55,10 +55,11 @@ public final class ArgChecker {
     return value;
   }
 
-  public static void isNotNull(Object obj, String argName) {
+  public static Object isNotNull(Object obj, String argName) {
     if (obj == null) {
       throw new IllegalArgumentException(quote(argName) + " was null");
     }
+    return obj;
   }
 
   /**

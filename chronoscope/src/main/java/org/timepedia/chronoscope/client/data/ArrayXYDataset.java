@@ -2,22 +2,17 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Util;
 
 /**
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class ArrayXYDataset implements XYDataset {
 
-  double[] domain;
-
-  double[] range;
+  double[] domain, range;
 
   double rangeBottom, rangeTop;
 
-  double[][] multiDomain;
-
-  double[][] multiRange;
+  double[][] multiDomain, multiRange;
 
   int length;
 
@@ -156,14 +151,10 @@ public class ArrayXYDataset implements XYDataset {
     return getX(getNumSamples() - 1);
   }
 
-  protected XYMultiresolution computeMultiresolution(
-      XYMultiresolution.XYStrategy strategy) {
-    return XYMultiresolution
-        .createMultiresolutionWithStrategy(domain, range, length, strategy);
-  }
-
   protected void genMultiresolution(XYMultiresolution.XYStrategy strategy) {
-    XYMultiresolution xy = computeMultiresolution(strategy);
+    XYMultiresolution xy = new XYMultiresolution(domain, range, length);
+    xy.compute(strategy);
+    
     multiDomain = xy.getMultiDomain();
     multiRange = xy.getMultiRange();
     multiLengths = xy.getMultiLength();

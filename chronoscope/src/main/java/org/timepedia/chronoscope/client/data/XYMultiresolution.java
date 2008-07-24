@@ -10,8 +10,12 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public class XYMultiresolution {
 
+  /**
+   * Algorithm for determining the domain and range values at a 
+   * given MIP level.
+   */
   public interface XYStrategy {
-
+    
     double getDomainValue(XYMultiresolution m, int level, int index);
 
     int getNumLevels(XYMultiresolution multiresolution);
@@ -65,43 +69,19 @@ public class XYMultiresolution {
     }
   };
 
-  public static XYMultiresolution createMultiresolutionWithMax(double[] domain,
-      double[] range) {
-    return createMultiresolutionWithStrategy(domain, range, domain.length,
-        MAX_STRATEGY);
-  }
-
-  public static XYMultiresolution createMultiresolutionWithMean(
-      double[] domain, double[] range) {
-    return createMultiresolutionWithStrategy(domain, range, domain.length,
-        MEAN_STRATEGY);
-  }
-
-  public static XYMultiresolution createMultiresolutionWithStrategy(
-      double[] domain, double[] range, int length, XYStrategy strategy) {
-    XYMultiresolution xy = new XYMultiresolution(domain, range, length);
-    xy.compute(strategy);
-    return xy;
-  }
-
-  protected double minInterval;
-
-  protected double[] domain;
-
-  protected double[] range;
+  protected double[] domain, range;
 
   protected int length;
 
-  protected double[][] multiDomain;
-
-  protected double[][] multiRange;
+  protected double[][] multiDomain, multiRange;
 
   protected double rangeBottom = Double.MAX_VALUE, rangeTop = Double.MIN_VALUE;
 
   protected int[] multiLength;
 
-  public XYMultiresolution(double[] domain, double[] range, int length) {
+  private double minInterval;
 
+  public XYMultiresolution(double[] domain, double[] range, int length) {
     this.domain = domain;
     this.range = range;
     this.length = length;
@@ -139,38 +119,38 @@ public class XYMultiresolution {
     return range[index];
   }
 
-  private double[] allocMultiresolution(int numSamples) {
-    return new double[numSamples];
-  }
-
-  private void compute(XYStrategy strategy) {
-
+  void compute(XYStrategy strategy) {
     int levels = strategy.getNumLevels(this);
     multiDomain = new double[levels][];
     multiRange = new double[levels][];
     multiLength = new int[levels];
     minInterval = Double.MAX_VALUE;
+    
     for (int level = 0; level < levels; level++) {
       int numSamples = strategy.getNumSamples(this, level);
-      multiDomain[level] = allocMultiresolution(numSamples);
-      multiRange[level] = allocMultiresolution(numSamples);
+      multiDomain[level] = new double[numSamples];
+      multiRange[level] = new double[numSamples];
       multiLength[level] = multiDomain[level].length;
+      
       for (int index = 0; index < multiLength[level]; index++) {
         multiDomain[level][index] = strategy.getDomainValue(this, level, index);
         multiRange[level][index] = strategy.getRangeValue(this, level, index);
-        if (level == 0 && index >= 1) {
-          minInterval = Math.min(minInterval, multiDomain[level][index]
-              - multiDomain[level][index - 1]);
-        }
+        
         if (level == 0) {
-          rangeBottom = Math.min(rangeBottom, multiRange[level][index]);
-          rangeTop = Math.max(rangeTop, multiRange[level][index]);
+          if (index >= 1) {
+            minInterval = Math.min(minInterval, multiDomain[level][index]
+                - multiDomain[level][index - 1]);
+          }
+          
+          double currRange = multiRange[level][index];
+          rangeBottom = Math.min(rangeBottom, currRange);
+          rangeTop = Math.max(rangeTop, currRange);
         }
       }
     }
   }
 
-  public int getNumSamples() {
+  private int getNumSamples() {
     return length;
   }
   

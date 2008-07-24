@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.util.Util;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -46,11 +44,11 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
     }
   }
 
-  protected ArrayList mutationList = new ArrayList();
+  protected ArrayList<Mutation> mutationList = new ArrayList<Mutation>();
 
   protected double modificationStart, modificationEnd;
 
-  private ArrayList listeners = new ArrayList();
+  private ArrayList<XYDatasetListener> listeners = new ArrayList<XYDatasetListener>();
 
   protected boolean updating;
 
@@ -110,8 +108,8 @@ public abstract class AbstractUpdateableArrayXYDataset extends ArrayXYDataset
   protected abstract void processMutations();
 
   private void fireDatasetChangeListeners() {
-    for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-      XYDatasetListener xyDatasetListener = (XYDatasetListener) iterator.next();
+    for (Iterator<XYDatasetListener> iterator = listeners.iterator(); iterator.hasNext();) {
+      XYDatasetListener xyDatasetListener = iterator.next();
       xyDatasetListener.onDatasetChanged(this, modificationStart, modificationEnd);
     }
   }
