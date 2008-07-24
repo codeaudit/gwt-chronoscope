@@ -54,8 +54,8 @@ public class AppendableArrayXYDataset extends AbstractUpdateableArrayXYDataset
 
   protected void processMutations() {
     MutableXYMultiresolution mxy = getMutableXYMultiresolution();
-    for (Iterator iterator = mutationList.iterator(); iterator.hasNext();) {
-      Mutation mutation = (Mutation) iterator.next();
+    for (Iterator<Mutation> iterator = mutationList.iterator(); iterator.hasNext();) {
+      Mutation mutation = iterator.next();
       if (mutation.type == Mutation.INSERT) {
         if (mutation.x > getX(getNumSamples() - 1)) {
           mxy.setDomainValue(length, mutation.x);

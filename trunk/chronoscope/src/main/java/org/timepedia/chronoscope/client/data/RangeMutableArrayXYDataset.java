@@ -52,8 +52,8 @@ public class RangeMutableArrayXYDataset extends AppendableArrayXYDataset
   protected void processMutations() {
     super.processMutations();
     MutableXYMultiresolution mxy = getMutableXYMultiresolution();
-    for (Iterator iterator = mutationList.iterator(); iterator.hasNext();) {
-      Mutation mutation = (Mutation) iterator.next();
+    for (Iterator<Mutation> iterator = mutationList.iterator(); iterator.hasNext();) {
+      Mutation mutation = iterator.next();
       if (mutation.type == Mutation.SETRANGE) {
         if (mutation.index < getNumSamples()) {
           mxy.setRangeValue(mutation.index, mutation.y);
