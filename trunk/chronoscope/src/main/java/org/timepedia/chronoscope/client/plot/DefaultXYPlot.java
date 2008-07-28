@@ -801,7 +801,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     if (currentMiplevels[datasetIndex] != mipLevel) {
       resetHoverPoints();
       // TODO: maybe adjust to nearest one in next level of detail
-      focus = null;
       currentMiplevels[datasetIndex] = mipLevel;
     }
   }
