@@ -56,7 +56,7 @@ public class ArrayXYDataset implements XYDataset {
   protected ArrayXYDataset(String identifier, double[] domain, double[] range,
       String label, String axisId, int capacity) {
     validateDomainAndRange(domain, range);
-    this.label = label;
+    this.label = label; 
     this.identifier = identifier;
     if (capacity > domain.length) {
       this.domain = new double[capacity];
@@ -95,10 +95,6 @@ public class ArrayXYDataset implements XYDataset {
     return axisId;
   }
 
-  public double[] getDomain() {
-    return domain;
-  }
-
   public String getIdentifier() {
     return identifier;
   }
@@ -109,10 +105,6 @@ public class ArrayXYDataset implements XYDataset {
 
   public int getNumSamples(int mipLevel) {
     return multiLengths[mipLevel];
-  }
-
-  public double[] getRange() {
-    return range;
   }
 
   public double getRangeBottom() {
