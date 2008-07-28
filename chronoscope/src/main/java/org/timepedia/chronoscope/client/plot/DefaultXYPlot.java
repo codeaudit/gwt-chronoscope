@@ -638,26 +638,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void nextFocus() {
-    if (focus == null) {
-      setFocusAndNotifyView(0, 0);
-    } else {
-      int focusSeries = this.focus.getDatasetIndex();
-      int focusPoint = this.focus.getPointIndex();
-      focusPoint++;
-      if (focusPoint >= datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries])) {
-        focusPoint = 0;
-        focusSeries++;
-        if (focusSeries >= datasets.length) {
-          focusSeries = 0;
-        }
-      }
-      int currentMip = currentMiplevels[focusSeries];
-      ensureVisible(datasets[focusSeries].getX(focusPoint, currentMip),
-          datasets[focusSeries].getY(focusPoint, currentMip), null);
-      setFocusAndNotifyView(focusSeries, focusPoint);
-    }
-
-    redraw();
+    shiftFocus(+1);
   }
 
   public void nextZoom() {
@@ -724,22 +705,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void prevFocus() {
-    if (this.focus == null) {
-      setFocusAndNotifyView(0, 0);
-    } else {
-      int focusSeries = this.focus.getDatasetIndex();
-      int focusPoint = this.focus.getPointIndex();
-      focusPoint--;
-      if (focusPoint < 0) {
-        focusSeries--;
-        if (focusSeries < 0) {
-          focusSeries = datasets.length - 1;
-        }
-        focusPoint = datasets[focusSeries].getNumSamples(currentMiplevels[focusSeries]) - 1;
-      }
-      setFocusAndNotifyView(focusSeries, focusPoint);
-    }
-    redraw();
+    shiftFocus(-1);
   }
 
   public void prevZoom() {
@@ -836,7 +802,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       resetHoverPoints();
       // TODO: maybe adjust to nearest one in next level of detail
       focus = null;
-
       currentMiplevels[datasetIndex] = mipLevel;
     }
   }
@@ -1506,6 +1471,51 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         ((HasRegions) dataset).addRegionLoadListener(this);
       }
     }
+  }
+
+  /**
+   * Shifts the focus point <tt>n</tt> data points forward or backwards (e.g.
+   * a value of <tt>+1</tt> moves the focus point forward, and a value of
+   * <tt>-1</tt> moves the focus point backwards).
+   */
+  private void shiftFocus(int n) {
+    if (focus == null) { // nothing has the focus
+      final int defaultDatasetIdx = 0;
+      if (n >= 0) { // request to move focus forward
+        setFocusAndNotifyView(defaultDatasetIdx, 0);
+      }
+      else { // request to move focus backward
+        int finalDataPointIdx = datasets[defaultDatasetIdx].getNumSamples(currentMiplevels[defaultDatasetIdx]) - 1;
+        setFocusAndNotifyView(defaultDatasetIdx, finalDataPointIdx);
+      }
+    } else { // some data point currently has the focus
+      int focusSeries = focus.getDatasetIndex();
+      int focusPoint = focus.getPointIndex();
+      final int currMipLevel = currentMiplevels[focusSeries];
+      focusPoint += n;
+      if (focusPoint >= datasets[focusSeries].getNumSamples(currMipLevel)) {
+        ++focusSeries;
+        if (focusSeries >= datasets.length) {
+          focusSeries = 0;
+        }
+        focusPoint = 0;
+      }
+      else if (focusPoint < 0) {
+        --focusSeries;
+        if (focusSeries < 0) {
+          focusSeries = datasets.length - 1;
+        }
+        focusPoint = datasets[focusSeries].getNumSamples(currMipLevel) - 1;
+      }
+      
+      XYDataset ds = datasets[focusSeries];
+      double dataX = ds.getX(focusPoint, currMipLevel);
+      double dataY = ds.getY(focusPoint, currMipLevel);
+      ensureVisible(dataX, dataY, null);
+      setFocusAndNotifyView(focusSeries, focusPoint);
+    }
+
+    redraw();
   }
 
   private double windowYtoUser(int y) {
