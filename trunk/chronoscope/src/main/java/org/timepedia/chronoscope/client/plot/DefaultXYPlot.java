@@ -270,8 +270,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       final double destCenter = fencedDomainOrigin + fencedDomain / 2;
 
       // center of current domain, we want the zoom to keep the center
-      // point
-      // stable
+      // point stable
       double domainCenter = domainOrigin + currentDomain / 2;
 
       boolean lastFrame = false;
@@ -419,7 +418,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public double getDomainCenter() {
-
     return domainOrigin + currentDomain / 2;
   }
 
@@ -828,10 +826,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.domainOrigin = domainOrigin;
   }
 
-  public void setFocus(Focus focus) {
-    this.focus = focus;
-  }
-
   public boolean setFocusXY(int x, int y) {
     int nearestPt = NO_SELECTION;
     int nearestSer = 0;
@@ -849,7 +843,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         minNearestDist = nearest.dist;
       }
     }
-    
+
+    //GWT.log("TESTING: x=" + x + "; y=" + y + "; nearestPt=" + nearestPt + "; minNearestDist=" + minNearestDist, null);
+
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
       setFocusAndNotifyView(nearestSer, nearestPt);
@@ -1478,42 +1474,51 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    * <tt>-1</tt> moves the focus point backwards).
    */
   private void shiftFocus(int n) {
-    if (focus == null) { // nothing has the focus
-      final int defaultDatasetIdx = 0;
-      if (n >= 0) { // request to move focus forward
-        setFocusAndNotifyView(defaultDatasetIdx, 0);
-      }
-      else { // request to move focus backward
-        int finalDataPointIdx = datasets[defaultDatasetIdx].getNumSamples(currentMiplevels[defaultDatasetIdx]) - 1;
-        setFocusAndNotifyView(defaultDatasetIdx, finalDataPointIdx);
-      }
-    } else { // some data point currently has the focus
-      int focusSeries = focus.getDatasetIndex();
-      int focusPoint = focus.getPointIndex();
-      final int currMipLevel = currentMiplevels[focusSeries];
+    if (n == 0) {
+      return; // shift focus 0 data points left/right -- that was easy.
+    }
+    
+    XYDataset ds;
+    int focusDataset, focusPoint;
+    int mipLevel;
+    
+    if (focus == null) {
+      // If no data point currently has the focus, then set the focus point to
+      // the point on dataset [0] that's closest to the center of the screen.
+      focusDataset = 0;
+      ds = datasets[focusDataset];
+      mipLevel = currentMiplevels[focusDataset];
+      double domainCenter = getDomainCenter();
+      focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
+    } else { 
+      // some data point currently has the focus.
+      focusDataset = focus.getDatasetIndex();
+      focusPoint = focus.getPointIndex();
+      mipLevel = currentMiplevels[focusDataset];
       focusPoint += n;
-      if (focusPoint >= datasets[focusSeries].getNumSamples(currMipLevel)) {
-        ++focusSeries;
-        if (focusSeries >= datasets.length) {
-          focusSeries = 0;
+      
+      if (focusPoint >= datasets[focusDataset].getNumSamples(mipLevel)) {
+        ++focusDataset;
+        if (focusDataset >= datasets.length) {
+          focusDataset = 0;
         }
         focusPoint = 0;
       }
       else if (focusPoint < 0) {
-        --focusSeries;
-        if (focusSeries < 0) {
-          focusSeries = datasets.length - 1;
+        --focusDataset;
+        if (focusDataset < 0) {
+          focusDataset = datasets.length - 1;
         }
-        focusPoint = datasets[focusSeries].getNumSamples(currMipLevel) - 1;
+        focusPoint = datasets[focusDataset].getNumSamples(mipLevel) - 1;
       }
       
-      XYDataset ds = datasets[focusSeries];
-      double dataX = ds.getX(focusPoint, currMipLevel);
-      double dataY = ds.getY(focusPoint, currMipLevel);
-      ensureVisible(dataX, dataY, null);
-      setFocusAndNotifyView(focusSeries, focusPoint);
+      ds = datasets[focusDataset];
     }
 
+    double dataX = ds.getX(focusPoint, mipLevel);
+    double dataY = ds.getY(focusPoint, mipLevel);
+    ensureVisible(dataX, dataY, null);
+    setFocusAndNotifyView(focusDataset, focusPoint);
     redraw();
   }
 
@@ -1535,6 +1540,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private static final class NearestPoint {
     public int pointIndex;
     public double dist;
+    public String toString() {
+      return "pointIndex=" + pointIndex + ";dist=" + dist;
+    }
   }
   
 }
