@@ -39,8 +39,6 @@ public class XYLineRenderer extends XYRenderer
 
   private GssProperties gssHoverPointProperties;
 
-  private final int seriesNum;
-
   private GssProperties lineProp;
 
   private GssProperties pointProp;
@@ -60,8 +58,6 @@ public class XYLineRenderer extends XYRenderer
   private double fx = -1;
 
   public XYLineRenderer(int seriesNum) {
-
-    this.seriesNum = seriesNum;
     parentSeriesElement = new GssElementImpl("series", null, "s" + seriesNum);
     pointElement = new GssElementImpl("point", parentSeriesElement);
     fillElement = new GssElementImpl("fill", parentSeriesElement);
@@ -94,7 +90,7 @@ public class XYLineRenderer extends XYRenderer
 
   public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
       double dataY, int seriesNum, RenderState renderState) {
-    double ux = Math.max(0, plot.domainToScreenX(dataX, seriesNum));
+    double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
     // guard webkit bug, coredump if draw two identical lineTo in a row
     if (!lineProp.visible) {
@@ -110,7 +106,6 @@ public class XYLineRenderer extends XYRenderer
     // previously, used to fix a bug in Safari canvas that would crash if two points in a path were
     // the same, commented out for now
     if (ux - lx >= 0) {
-
       layer.lineTo(ux, uy);
       lx = ux;
       ly = uy;
