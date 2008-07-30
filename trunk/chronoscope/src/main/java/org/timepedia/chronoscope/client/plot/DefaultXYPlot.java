@@ -826,6 +826,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.domainOrigin = domainOrigin;
   }
 
+  public void setFocus(Focus focus) {
+    this.focus = focus;
+  }
+
   public boolean setFocusXY(int x, int y) {
     int nearestPt = NO_SELECTION;
     int nearestSer = 0;
