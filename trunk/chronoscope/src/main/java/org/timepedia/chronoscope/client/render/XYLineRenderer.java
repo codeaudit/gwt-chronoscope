@@ -56,7 +56,10 @@ public class XYLineRenderer extends XYRenderer
   private GssElement pointElement = null;
 
   private double fx = -1;
-
+  
+  // Keeps track of the index of the currently processed datapoint
+  private int pointIndex;
+  
   public XYLineRenderer(int seriesNum) {
     parentSeriesElement = new GssElementImpl("series", null, "s" + seriesNum);
     pointElement = new GssElementImpl("point", parentSeriesElement);
@@ -72,6 +75,7 @@ public class XYLineRenderer extends XYRenderer
 
     lx = ly = -1;
     fx = -1;
+    pointIndex = 0;
   }
 
   public void beginPoints(XYPlot plot, Layer layer, RenderState renderState) {
@@ -90,26 +94,33 @@ public class XYLineRenderer extends XYRenderer
 
   public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
       double dataY, int seriesNum, RenderState renderState) {
-    double ux = plot.domainToScreenX(dataX, seriesNum);
-    double uy = plot.rangeToScreenY(dataY, seriesNum);
-    // guard webkit bug, coredump if draw two identical lineTo in a row
-    if (!lineProp.visible) {
-      return;
-    }
-    if (lx == -1) {
-      layer.moveTo(ux, uy);
-      fx = ux;
-      lx = ux;
-      return;
-    }
-
-    // previously, used to fix a bug in Safari canvas that would crash if two points in a path were
-    // the same, commented out for now
-    if (ux - lx >= 0) {
-      layer.lineTo(ux, uy);
-      lx = ux;
-      ly = uy;
-    }
+      double ux = plot.domainToScreenX(dataX, seriesNum);
+      double uy = plot.rangeToScreenY(dataY, seriesNum);
+      
+      // guard webkit bug, coredump if draw two identical lineTo in a row
+      if (lineProp.visible) {
+        if (pointIndex == 0) {
+          // This is the first point of the dataset, so just store the coordinates.
+          fx = ux;
+          lx = ux;
+          ly = uy;
+        }
+        else {
+          if (pointIndex == 1) {
+            // This is the 2nd point of the dataset, and also the 1st line segment
+            // of the dataset, so need to position the cursor at point 0 (the 
+            // previous point)
+            layer.moveTo(lx, ly);
+          }
+          // Draw a line from the end of the previous line segment (or the 1st point
+          // of the curve if this is the first line segment to be drawn) to (ux, uy).
+          layer.lineTo(ux, uy);
+          lx = ux;
+          ly = uy;
+        }
+      }
+      
+      ++pointIndex;
   }
   
   public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
@@ -170,7 +181,7 @@ public class XYLineRenderer extends XYRenderer
     GssProperties prop = hovered ? gssHoverPointProperties : pointProp;
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
-
+    
     if (prop.visible || isFocused) {
       if (isFocused) {
         focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
@@ -189,7 +200,6 @@ public class XYLineRenderer extends XYRenderer
         pointPathDefined = !(hovered || isFocused);
       }
       double dx = ux - lx;
-      double dy = uy - ly;
       if (lx == -1 || isFocused || hovered || dx > prop.size * 2 + 4) {
         layer.beginPath();
 //                layer.translate(ux, uy);
