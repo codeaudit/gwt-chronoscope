@@ -423,6 +423,11 @@ public interface XYPlot extends Exportable {
   void setDomainOrigin(double domainOrigin);
 
   /**
+   * Set the focus to be dataset element {point} for series {series}
+   */
+  void setFocus(Focus focus);
+
+  /**
    * Attempt to set the datapoint located at the given screen space coordinates
    * as the current focus point, returns true if succesful.
    */
