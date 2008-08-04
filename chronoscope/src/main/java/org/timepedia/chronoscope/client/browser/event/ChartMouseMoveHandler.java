@@ -1,21 +1,24 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
+import com.google.gwt.libideas.event.client.MouseMoveEvent;
+import com.google.gwt.libideas.event.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 
 /**
  * Handles the event where the mouse is moved within the chart area.
- * 
+ *
  * @author Chad Takahashi
  */
-public final class MouseMoveHandler extends AbstractClientEventHandler {
+public final class ChartMouseMoveHandler
+    extends AbstractEventHandler<MouseMoveHandler> implements MouseMoveHandler {
 
-  @Override
-  public boolean handle(Event event, int x, int y, ChartState chartInfo) {
+  public void onMouseMove(MouseMoveEvent event) {
+    ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
+    int x = getLocalX(event);
+    int y = getLocalY(event);
 
     if (chart.isInsidePlot(x, y)) {
       if (chartInfo.selActive && chartInfo.selStart > -1) {
@@ -28,8 +31,8 @@ public final class MouseMoveHandler extends AbstractClientEventHandler {
           chart.setCursor(Cursor.DRAGGING);
           chart.scrollPixels(chartInfo.dragStart - x);
           chartInfo.dragStart = x;
-          DOM.eventCancelBubble(event, true);
-          DOM.eventPreventDefault(event);
+          event.getBrowserEvent().cancelBubble(true);
+          event.getBrowserEvent().preventDefault();
         } else {
           if (chart.setHover(x, y)) {
             chart.setCursor(Cursor.CLICKABLE);
@@ -46,7 +49,7 @@ public final class MouseMoveHandler extends AbstractClientEventHandler {
     // chart.getOverviewAxis().drag(view, startDragX, x, y);
     // }
 
-    return true;
+    chartInfo.setHandled(true);
   }
 
 }

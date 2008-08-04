@@ -5,6 +5,8 @@ package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.libideas.event.client.MouseWheelHandler;
+import com.google.gwt.libideas.event.client.MouseWheelEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 
@@ -13,14 +15,14 @@ import org.timepedia.chronoscope.client.Chart;
  * 
  * @author Chad Takahashi
  */
-public class MouseWheelHandler extends AbstractClientEventHandler {
+public class ChartMouseWheelHandler extends AbstractEventHandler<MouseWheelHandler> implements MouseWheelHandler {
 
-  @Override
-  public boolean handle(Event event, int x, int y, ChartState chartInfo) {
+  public void onMouseWheel(MouseWheelEvent event) {
+    ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
-    
+
     chartInfo.maybeDrag = false;
-    int wheelDir = DOM.eventGetMouseWheelVelocityY(event);
+    int wheelDir = event.getMouseWheelVelocityY();
     boolean isMouseWheelUp = (wheelDir <= 0);
     if (isMouseWheelUp) {
       chart.nextZoom();
@@ -29,7 +31,7 @@ public class MouseWheelHandler extends AbstractClientEventHandler {
       chart.prevZoom();
     }
     
-    return true;
+    chartInfo.setHandled(true);
   }
 
 }
