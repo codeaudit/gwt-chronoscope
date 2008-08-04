@@ -1,0 +1,33 @@
+package org.timepedia.chronoscope.client.browser.event;
+
+import com.google.gwt.libideas.event.client.DoubleClickEvent;
+import com.google.gwt.libideas.event.client.DoubleClickHandler;
+
+import org.timepedia.chronoscope.client.Chart;
+
+/**
+ * Handles the event where  the user double-clicks on the chart.
+ *
+ * @author Chad Takahashi
+ */
+public class ChartDblClickHandler
+    extends AbstractEventHandler<DoubleClickHandler>
+    implements DoubleClickHandler {
+
+  public void onDoubleClick(DoubleClickEvent event) {
+    ChartState chartInfo = getChartState(event);
+    Chart chart = chartInfo.chart;
+
+    chartInfo.maybeDrag = false;
+    chart.setAnimating(false);
+
+    boolean handled = false;
+    if (chart.maxZoomTo(getLocalX(event), getLocalY(event))) {
+      event.getBrowserEvent().cancelBubble(true);
+      event.getBrowserEvent().preventDefault();
+      handled = true;
+    }
+
+    chartInfo.setHandled(handled);
+  }
+}

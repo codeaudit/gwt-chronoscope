@@ -1,6 +1,8 @@
 package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.Event;
+import com.google.gwt.libideas.event.client.MouseDownHandler;
+import com.google.gwt.libideas.event.client.MouseDownEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -10,13 +12,15 @@ import org.timepedia.chronoscope.client.Cursor;
  * 
  * @author Chad Takahashi
  */
-public final class MouseDownHandler extends AbstractClientEventHandler {
+public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownHandler> implements MouseDownHandler {
 
-  @Override
-  public boolean handle(Event event, int x, int y, ChartState chartInfo) {
+  public void onMouseDown(MouseDownEvent event) {
+    ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
+    int x = getLocalX(event);
+    int y = getLocalY(event);
 
-    if (chartInfo.selActive || shiftKeyPressed(event)) {
+    if (chartInfo.selActive || event.isShiftKeyDown()) {
       chartInfo.selStart = x;
       chartInfo.selActive = true;
       chart.setCursor(Cursor.SELECTING);
@@ -26,7 +30,7 @@ public final class MouseDownHandler extends AbstractClientEventHandler {
     }
     chart.setPlotFocus(x, y);
 
-    return true;
+    chartInfo.setHandled(true);
   }
 }
 

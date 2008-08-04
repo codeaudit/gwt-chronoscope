@@ -2,6 +2,9 @@ package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.libideas.event.client.ClickHandler;
+import com.google.gwt.libideas.event.client.ClickEvent;
+import com.google.gwt.libideas.event.client.MouseEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.DOMView;
@@ -11,16 +14,20 @@ import org.timepedia.chronoscope.client.browser.DOMView;
  * 
  * @author Chad Takahashi
  */
-public class MouseClickHandler extends AbstractClientEventHandler {
+public class ChartMouseClickHandler extends AbstractEventHandler<ClickHandler> implements
+    ClickHandler {
 
-  @Override
-  public boolean handle(Event event, int x, int y, ChartState chartInfo) {
+  public void onClick(ClickEvent event) {
+    ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
     chartInfo.maybeDrag = false;
     chart.setAnimating(false);
 
+    int x = getLocalX(event);
+    int y = getLocalY(event);
+
     boolean handled = false;
-    if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
+    if (event.getButton() == MouseEvent.Button.RIGHT) {
       chart.getView().fireContextMenuEvent(x, y);
       handled = true;
     } else if (chart.click(x, y)) {
@@ -29,7 +36,6 @@ public class MouseClickHandler extends AbstractClientEventHandler {
     }
     
     ((DOMView) chart.getView()).focus();
-    return handled;
+    chartInfo.setHandled(true);
   }
-
 }

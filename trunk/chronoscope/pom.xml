@@ -82,7 +82,6 @@
       <artifactId>gwt-user</artifactId>
       <version>${gwtversion}</version>
       <type>jar</type>
-      <!--<scope>provided</scope>-->
     </dependency>
 
   </dependencies>

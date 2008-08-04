@@ -4,6 +4,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.libideas.event.client.KeyUpHandler;
+import com.google.gwt.libideas.event.client.KeyUpEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;
@@ -13,12 +15,13 @@ import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;
  * 
  * @author Chad Takahashi
  */
-public final class KeyUpHandler extends AbstractClientEventHandler {
+public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> implements
+    KeyUpHandler {
 
-  @Override
-  public boolean handle(Event event, int x, int y, ChartState chartInfo) {
+  public void onKeyUp(KeyUpEvent event) {
+    ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
-    int keyCode = DOM.eventGetKeyCode(event);
+    int keyCode = event.getKeyCode();
     boolean handled = true;
 
     if (keyCode == KeyboardListener.KEY_LEFT ||
@@ -56,7 +59,7 @@ public final class KeyUpHandler extends AbstractClientEventHandler {
       handled = false;
     }
     
-    return handled;
+    chartInfo.setHandled(handled);
   }
 
 }
