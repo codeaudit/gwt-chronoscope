@@ -19,7 +19,37 @@ import java.util.ArrayList;
  */
 public class AxisPanel implements GssElement {
 
-  public static final int LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3;
+  public enum Position {
+    LEFT {
+      public boolean isLeftRight() { return true; };
+      public boolean isTopBottom() { return !isLeftRight(); };
+    }, 
+    RIGHT {
+      public boolean isLeftRight() { return true; };
+      public boolean isTopBottom() { return !isLeftRight(); };
+    },
+    TOP {
+      public boolean isLeftRight() { return false; };
+      public boolean isTopBottom() { return !isLeftRight(); };
+    },
+    BOTTOM {
+      public boolean isLeftRight() { return false; };
+      public boolean isTopBottom() { return !isLeftRight(); };
+    };
+    
+    /**
+     * True only if this position is left or right.
+     */
+    public abstract boolean isLeftRight();
+    
+    /**
+     * True only if this position is top or bottom.
+     */
+    public abstract boolean isTopBottom();
+      
+  }
+  
+  //public static final int LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3;
 
   public static final int VERTICAL_AXIS = 0;
 
@@ -31,17 +61,16 @@ public class AxisPanel implements GssElement {
 
   private final String panelName;
 
-  private final int position;
+  private final Position position;
 
   private GssProperties axesProperties;
 
   private int orientation;
 
-  public AxisPanel(String panelName, int position) {
+  public AxisPanel(String panelName, Position position) {
     this.panelName = panelName;
     this.position = position;
-    this.orientation = position == LEFT || position == RIGHT ? VERTICAL_AXIS
-        : HORIZONTAL_AXIS;
+    this.orientation = position.isLeftRight() ? VERTICAL_AXIS : HORIZONTAL_AXIS;
   }
 
   public void add(ValueAxis axis) {
@@ -121,7 +150,7 @@ public class AxisPanel implements GssElement {
     return null;
   }
 
-  public int getPosition() {
+  public Position getPosition() {
     return position;
   }
 
@@ -165,7 +194,7 @@ public class AxisPanel implements GssElement {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
     layer.setStrokeColor("#ffffff");
-    if (position == BOTTOM || position == TOP) {
+    if (position.isTopBottom()) {
       layer.scale(layer.getWidth(), layer.getHeight());
     } else if (panelPosition.area() > 0){
       layer.scale(panelPosition.width, panelPosition.height);
