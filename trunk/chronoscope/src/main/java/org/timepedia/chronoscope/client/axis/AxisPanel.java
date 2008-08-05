@@ -22,19 +22,15 @@ public class AxisPanel implements GssElement {
   public enum Position {
     LEFT {
       public boolean isLeftRight() { return true; };
-      public boolean isTopBottom() { return !isLeftRight(); };
     }, 
     RIGHT {
       public boolean isLeftRight() { return true; };
-      public boolean isTopBottom() { return !isLeftRight(); };
     },
     TOP {
       public boolean isLeftRight() { return false; };
-      public boolean isTopBottom() { return !isLeftRight(); };
     },
     BOTTOM {
       public boolean isLeftRight() { return false; };
-      public boolean isTopBottom() { return !isLeftRight(); };
     };
     
     /**
@@ -45,7 +41,9 @@ public class AxisPanel implements GssElement {
     /**
      * True only if this position is top or bottom.
      */
-    public abstract boolean isTopBottom();
+    public boolean isTopBottom() {
+      return !isLeftRight();
+    }
       
   }
   
