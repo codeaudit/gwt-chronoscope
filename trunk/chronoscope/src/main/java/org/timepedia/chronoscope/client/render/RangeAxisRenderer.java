@@ -135,7 +135,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawAxisLabel(Layer layer, Bounds bounds) {
     if (labelProperties.visible) {
-      boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+      boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.Position.LEFT;
       boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (
           isLeft ?
               axis.getAxisPanel().getAxisCount() - 1 : 0);
@@ -163,7 +163,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         axisProperties.fontWeight, axisProperties.fontSize);
     double labelHeight = layer.stringHeight(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
-    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.Position.LEFT;
     double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
     if ("inside".equals(axisProperties.tickPosition)) {
       dir = isLeft ? 5 + 1 : -labelWidth - 5;
@@ -200,7 +200,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
             + bounds
             .y;
-    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.Position.LEFT;
     double dir = (isLeft ? -5 + bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
       boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (isLeft ?
@@ -231,7 +231,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawVerticalLine(Layer layer, Bounds bounds) {
     layer.setFillColor(tickProperties.color);
-    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.LEFT;
+    boolean isLeft = axis.getAxisPanel().getPosition() == AxisPanel.Position.LEFT;
     double dir = (isLeft ? bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
       boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (isLeft ?

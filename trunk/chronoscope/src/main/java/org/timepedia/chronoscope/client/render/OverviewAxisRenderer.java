@@ -1,5 +1,8 @@
 package org.timepedia.chronoscope.client.render;
 
+import com.google.gwt.core.client.GWT;
+
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -37,6 +40,8 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
         axisBounds.height);
     
     Bounds highlightBounds = calcHighlightBounds(plot, axisBounds);
+    //GWT.log("TESTING: OverviewAxisRenderer: highlightBounds = " + highlightBounds, null);
+    
     if (highlightBounds != null) {
       layer.save();
       layer.setFillColor(axisProperties.bgColor);
@@ -54,9 +59,14 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
       layer.stroke();
       layer.setLineWidth(1);
       layer.restore();
+      
+      //plot.getChart().setCursor(Cursor.SELECTING);
+    }
+    else {
+      //plot.getChart().setCursor(Cursor.DEFAULT);
     }
   }
-
+  
   public int getOverviewHeight() {
     return overviewHeight;
   }

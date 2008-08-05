@@ -285,7 +285,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public double getRotationAngle() {
     return
-        (getAxisPanel().getPosition() == AxisPanel.RIGHT ? 1.0 : -1.0) * Math.PI
+        (getAxisPanel().getPosition() == AxisPanel.Position.RIGHT ? 1.0 : -1.0) * Math.PI
             / 2;
   }
 
@@ -302,7 +302,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         axisLabelWidth + 5 : 0;
 
     if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
-      boolean isLeft = axisPanel.getPosition() == AxisPanel.LEFT;
+      boolean isLeft = axisPanel.getPosition() == AxisPanel.Position.LEFT;
       boolean isInner = axisPanel.getAxisNumber(this)
           == (isLeft ? axisPanel.getAxisCount() - 1 : 0);
       if (isInner) {

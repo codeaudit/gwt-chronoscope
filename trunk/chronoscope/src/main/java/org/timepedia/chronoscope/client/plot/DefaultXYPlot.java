@@ -478,15 +478,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   public OverviewAxis getOverviewAxis() {
     return overviewAxis;
   }
-
-  public Bounds getOverviewBounds() {
-    return overviewAxis.getBounds();
-  }
-
+  
   public Layer getOverviewLayer() {
     return overviewLayer;
   }
-
+  
   public Bounds getPlotBounds() {
     return plotBounds;
   }
@@ -547,7 +543,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
-        AxisPanel.BOTTOM);
+        AxisPanel.Position.BOTTOM);
     domainAxis = new StockMarketDateAxis(this, domainPanel);
 
     if (domainAxisVisible) {
@@ -562,14 +558,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     axisMap.clear();
 
     rangePanelLeft = new AxisPanel("rangeAxisLayerLeft" + plotNumber,
-        AxisPanel.LEFT);
+        AxisPanel.Position.LEFT);
     rangePanelRight = new AxisPanel("rangeAxisLayerRight" + plotNumber,
-        AxisPanel.RIGHT);
+        AxisPanel.Position.RIGHT);
     axes = new RangeAxis[datasets.length];
 
     autoAssignDatasetAxes();
 
-    topPanel = new AxisPanel("topPanel" + plotNumber, AxisPanel.TOP);
+    topPanel = new AxisPanel("topPanel" + plotNumber, AxisPanel.Position.TOP);
     legendAxis = new LegendAxis(this, topPanel, "My graph");
     if (showLegend) {
       topPanel.add(legendAxis);
@@ -848,8 +844,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       }
     }
 
-    //GWT.log("TESTING: x=" + x + "; y=" + y + "; nearestPt=" + nearestPt + "; minNearestDist=" + minNearestDist, null);
-
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
       setFocusAndNotifyView(nearestSer, nearestPt);
@@ -981,13 +975,15 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
             verticalAxisLayer.getHeight());
 
-        drawAxisPanel(verticalAxisLayer, rangePanelLeft, new Bounds(0, 0,
-            rangePanelLeft.getWidth(), rangePanelLeft.getHeight()), false);
+        Bounds leftPanelBounds = new Bounds(0, 0,
+            rangePanelLeft.getWidth(), rangePanelLeft.getHeight());
+        rangePanelLeft.drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
+        
+        
         if (rangePanelRight.getAxisCount() > 0) {
-          Bounds rightBounds = new Bounds(plotBounds.x + plotBounds.width, 0,
+          Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width, 0,
               rangePanelRight.getWidth(), rangePanelRight.getHeight());
-
-          drawAxisPanel(verticalAxisLayer, rangePanelRight, rightBounds, false);
+          rangePanelRight.drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
         }
         drewVertical = true;
         verticalAxisLayer.restore();
@@ -995,16 +991,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         domainLayer.save();
-        drawAxisPanel(domainLayer, domainPanel, new Bounds(plotBounds.x, 0,
-            plotBounds.width, domainBounds.height), false);
+        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0,
+            plotBounds.width, domainBounds.height);
+        domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
         domainLayer.restore();
       }
 
       if (true && topPanel.getAxisCount() > 0) {
-
         topLayer.save();
-        drawAxisPanel(topLayer, topPanel, new Bounds(0, 0, view.getViewWidth(),
-            topBounds.height), false);
+        Bounds topPanelBounds = new Bounds(0, 0, view.getViewWidth(),
+            topBounds.height);
+        topPanel.drawAxisPanel(this, topLayer, topPanelBounds, false);
         topLayer.restore();
       }
     }
@@ -1073,11 +1070,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     }
   }
 
-  protected void drawAxisPanel(Layer backingCanvas, AxisPanel axisPanel,
-      Bounds bounds, boolean gridOnly) {
-    axisPanel.drawAxisPanel(this, backingCanvas, bounds, gridOnly);
-  }
-
   protected void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
         || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
@@ -1134,9 +1126,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   private void computePlotBounds() {
-    plotBounds = initialBounds == null ? new Bounds(0, 0,
-        this.view.getViewWidth(), this.view.getViewHeight()) : new Bounds(
-        initialBounds);
+    if (initialBounds != null) {
+      plotBounds = new Bounds(initialBounds);
+    }
+    else {
+      plotBounds = new Bounds(0, 0, this.view.getViewWidth(), this.view.getViewHeight());
+    }
 
     // TODO: this padding is a workaround. Apparently, the height computed
     // for the main plot bounds does not take into consideration the highest
@@ -1367,31 +1362,28 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       backingCanvas.disposeLayer(plotLayer);
     }
     plotLayer = backingCanvas.createLayer("plotLayer" + plotNumber, plotBounds);
-
+    
     if (interactive) {
-
       if (overviewEnabled) {
         if (overviewLayer != null) {
           backingCanvas.disposeLayer(overviewLayer);
         }
-
         overviewLayer = backingCanvas.createLayer("overviewLayer" + plotNumber,
             plotBounds);
         overviewLayer.setVisibility(false);
-      }
-
-      Bounds layerBounds = new Bounds(0, plotBounds.y, view.getViewWidth(),
-          rangePanelLeft.getHeight());
-      if (verticalAxisLayer != null) {
-        backingCanvas.disposeLayer(verticalAxisLayer);
       }
 
       topBounds = new Bounds(0, 0, view.getViewWidth(), topPanel.getHeight());
       topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
+      if (verticalAxisLayer != null) {
+        backingCanvas.disposeLayer(verticalAxisLayer);
+      }
+      Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y, view.getViewWidth(),
+          rangePanelLeft.getHeight());
       verticalAxisLayer = backingCanvas.createLayer(
-          "verticalAxis" + plotNumber, layerBounds);
+          "verticalAxis" + plotNumber, verticalAxisLayerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
@@ -1399,14 +1391,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
       domainBounds = new Bounds(0, plotBounds.y + plotBounds.height,
           view.getViewWidth(), domainPanel.getHeight());
-
       if (domainLayer != null) {
         backingCanvas.disposeLayer(domainLayer);
       }
-
       domainLayer = backingCanvas.createLayer("domainAxis" + plotNumber,
           domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+      
       highLightLayer = backingCanvas.createLayer("highlight" + plotNumber,
           plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
