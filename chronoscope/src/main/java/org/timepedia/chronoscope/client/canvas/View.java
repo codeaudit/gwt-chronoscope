@@ -6,6 +6,7 @@ import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -206,7 +207,7 @@ public abstract class View implements Exportable {
    * Popup a window containing the given HTML at the coordinates specified
    * (relative to plot insets)
    */
-  public abstract void openInfoWindow(String html, double x, double y);
+  public abstract InfoWindow openInfoWindow(String html, double x, double y);
 
   /**
    * Hack, to add IEEERemainer function for GWT until fixed in JRE emul
