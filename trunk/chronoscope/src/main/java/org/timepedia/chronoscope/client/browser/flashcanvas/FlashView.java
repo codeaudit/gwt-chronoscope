@@ -2,16 +2,19 @@ package org.timepedia.chronoscope.client.browser.flashcanvas;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.libideas.event.shared.HandlerManager;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -196,17 +199,42 @@ public class FlashView extends View
   }
 
   /**
-   * Opens an HTML popup info window at the given screen coordinates (within the
-   * plot bounds)
+   * Opens an HTML popup info window at the given screen coordinates (within
+   * the plot bounds)
    */
-  public void openInfoWindow(String html, double x, double y) {
-    PopupPanel pp = new PopupPanel(true);
+  public InfoWindow openInfoWindow(String html, double x, double y) {
+    final PopupPanel pp = new PopupPanel(true);
     pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
     pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
         DOM.getAbsoluteTop(getElement()) + (int) y);
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
+    return new InfoWindow() {
+      HandlerManager manager = new HandlerManager(this);
+
+      {
+        pp.addPopupListener(new PopupListener() {
+
+          public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+            manager.fireEvent(new InfoWindowEvent());
+          }
+        });
+      }
+
+      public void close() {
+        pp.hide();
+      }
+
+      public void setPosition(double x, double y) {
+        pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
+            DOM.getAbsoluteTop(getElement()) + (int) y);
+      }
+
+      public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
+        manager.addEventHandler(InfoWindowEvent.KEY, handler);
+      }
+    };
   }
 
   /**
