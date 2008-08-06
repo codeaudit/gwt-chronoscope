@@ -4,17 +4,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
-import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.canvas.Canvas;
-import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -192,88 +188,114 @@ public class BrowserView extends View
   }
 
   /**
-   * Opens an HTML popup info window at the given screen coordinates (within the
-   * plot bounds)
+   * Opens an HTML popup info window at the given screen coordinates (within
+   * the plot bounds)
    */
-  public void openInfoWindow(String html, double x, double y) {
-    PopupPanel pp = new DecoratedPopupPanel(true);
-    // pp.setStyleName("chrono-infoWindow");
-    pp.setWidget(new HTML(html));
 
+  public InfoWindow openInfoWindow(String html, double x, double y) {
+    final PopupPanel pp = new PopupPanel(true);
+    pp.setStyleName("chrono-infoWindow");
+    pp.setWidget(new HTML(html));
+    pp.setPopupPosition(ChartPanel.getAbsoluteLeft(getElement()) + (int) x,
+        ChartPanel.getAbsoluteTop(getElement()) + (int) y);
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
-    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x
-        - pp.getElement().getPropertyInt("clientWidth") / 2,
-        DOM.getAbsoluteTop(getElement()) + (int) y);
+    return new InfoWindow() {
+      HandlerManager manager = new HandlerManager(this);
+
+      {
+        pp.addPopupListener(new PopupListener() {
+
+          public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+            manager.fireEvent(new InfoWindowEvent());
+          }
+        });
+      }
+
+      public void close() {
+        pp.hide();
+      }
+
+      public void setPosition(double x, double y) {
+        pp.setPopupPosition(ChartPanel.getAbsoluteLeft(getElement()) + (int) x,
+            ChartPanel.getAbsoluteTop(getElement()) + (int) y);
+      }
+
+      public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
+        manager.addEventHandler(InfoWindowEvent.KEY, handler);
+      }
+    };
   }
 
-  /**
-   * Go back to the previous chart state
-   */
-  public void popHistory() {
+}
+
+/**
+ * Go back to the previous chart state
+ */
+public void popHistory(){
     History.back();
-  }
+}
 
-  /**
-   * Push the current state of the Plot into browser history
-   */
-  public void pushHistory() {
+/**
+ * Push the current state of the Plot into browser history
+ */
+public void pushHistory(){
     Chronoscope.pushHistory();
-  }
+}
 
-  public native double remainder(double numerator, double modulus) /*-{
+public native double remainder(double numerator,double modulus) /*-{
     return numerator % modulus;
   }-*/;
 
-  public void setCursor(Cursor cursor) {
-    switch (cursor) {
+public void setCursor(Cursor cursor){
+    switch(cursor){
 
-      case CLICKABLE:
-        setCursorImpl("pointer");
-        break;
-      case SELECTING:
-        setCursorImpl("text");
-        break;
-      case DRAGGABLE:
-      case DRAGGING:
-        setCursorImpl("move");
-        break;
-      default:
-        setCursorImpl("default");
-    }
-  }
-
-  /**
-   * Return a Browser (CANVAS tag) canvas. This may be extended in the future to
-   * support Flash, Silverlight, SVG, and Applet canvases for the Browser.
-   */
-  protected Canvas createCanvas(int width, int height) {
-    return new BrowserCanvas(this, width, height);
-  }
-
-  protected Element getElement(Layer layer) {
-    if (layer instanceof BrowserCanvas) {
-      return ((BrowserCanvas) layer).getElement();
-    }
-    return null;
-  }
-
-  protected void initContainer(Element element, int width, int height) {
-    this.rootElem = element;
-    this.containerDiv = focusImpl.createFocusable();
-    DOM.setInnerHTML(rootElem, "");
-    DOM.setElementAttribute(containerDiv, "id",
-        DOM.getElementAttribute(rootElem, "id") + "container");
-    DOM.setIntStyleAttribute(containerDiv, "width", width);
-    DOM.setIntStyleAttribute(containerDiv, "height", height);
-    DOM.setStyleAttribute(containerDiv, "position", "relative");
-
-    DOM.appendChild(rootElem, containerDiv);
-    DOM.setStyleAttribute(containerDiv, "height", height + "px");
-    DOM.setStyleAttribute(containerDiv, "width", width + "px");
-  }
-
-  private void setCursorImpl(String cssCursor) {
-    getElement().getStyle().setProperty("cursor", cssCursor);
-  }
+    case CLICKABLE:
+    setCursorImpl("pointer");
+break;
+case SELECTING:
+    setCursorImpl("text");
+break;
+case DRAGGABLE:
+    case DRAGGING:
+    setCursorImpl("move");
+break;
+default:
+    setCursorImpl("default");
 }
+    }
+
+/**
+ * Return a Browser (CANVAS tag) canvas. This may be extended in the future to
+ * support Flash, Silverlight, SVG, and Applet canvases for the Browser.
+ */
+protected Canvas createCanvas(int width,int height){
+    return new BrowserCanvas(this,width,height);
+}
+
+protected Element getElement(Layer layer){
+    if(layer instanceof BrowserCanvas){
+    return((BrowserCanvas)layer).getElement();
+}
+    return null;
+}
+
+protected void initContainer(Element element,int width,int height){
+    this.rootElem=element;
+this.containerDiv=focusImpl.createFocusable();
+DOM.setInnerHTML(rootElem,"");
+DOM.setElementAttribute(containerDiv,"id",
+    DOM.getElementAttribute(rootElem,"id")+"container");
+DOM.setIntStyleAttribute(containerDiv,"width",width);
+DOM.setIntStyleAttribute(containerDiv,"height",height);
+DOM.setStyleAttribute(containerDiv,"position","relative");
+
+DOM.appendChild(rootElem,containerDiv);
+DOM.setStyleAttribute(containerDiv,"height",height+"px");
+DOM.setStyleAttribute(containerDiv,"width",width+"px");
+}
+
+private void setCursorImpl(String cssCursor){
+    getElement().getStyle().setProperty("cursor",cssCursor);
+}
+    }
