@@ -15,6 +15,7 @@ import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -78,47 +79,39 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   // Indicator that nothing is selected (e.g. a data point or a data set).
   private static final int NO_SELECTION = -1;
   
-  protected RangeAxis[] axes;
+  private RangeAxis[] axes;
 
-  protected Background background;
+  private Background background;
 
-  protected double currentDomain;
+  private double currentDomain, lastCurrentDomain;
 
-  protected int currentMiplevels[];
+  private int currentMiplevels[];
 
-  protected XYDataset[] datasets = null;
+  private XYDataset[] datasets = null;
 
-  protected DateAxis domainAxis;
+  private DateAxis domainAxis;
 
-  protected double domainEnd;
+  private double domainStart, domainEnd;
 
-  protected double domainMin, domainMax;
+  private double domainMin, domainMax;
 
-  protected double domainOrigin;
+  private double domainOrigin, lastDomainOrigin;
 
-  protected AxisPanel domainPanel;
+  private AxisPanel domainPanel;
 
-  protected double domainStart;
+  private boolean drewVertical;
 
-  protected boolean drewVertical;
+  private final boolean interactive;
 
-  protected final boolean interactive;
+  private boolean overviewEnabled = true;
 
-  protected boolean overviewEnabled = true;
+  private Layer overviewLayer;
 
-  protected Layer overviewLayer;
+  private Bounds plotBounds;
 
-  protected Bounds plotBounds;
+  private AxisPanel rangePanelLeft;
 
-  protected AxisPanel rangePanelLeft;
-
-  protected boolean selection;
-
-  protected int selEnd;
-
-  protected int selStart;
-
-  protected final XYRenderer[] xyRenderers;
+  private final XYRenderer[] xyRenderers;
 
   private PortableTimerTask animationContinuation;
 
@@ -151,10 +144,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private Bounds innerBounds;
 
   private boolean isAnimating = false;
-
-  private double lastCurrentDomain;
-
-  private double lastDomainOrigin;
 
   private LegendAxis legendAxis;
 
@@ -325,9 +314,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void clearSelection() {
-    selection = false;
-    selStart = NO_SELECTION;
-    selEnd = NO_SELECTION;
+    throw new UnsupportedOperationException();
   }
 
   public boolean click(int x, int y) {
@@ -542,11 +529,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
-    domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
-        AxisPanel.Position.BOTTOM);
-    domainAxis = new StockMarketDateAxis(this, domainPanel);
+    domainPanel = new AxisPanel("domainAxisLayer" + plotNumber, Position.BOTTOM);
 
     if (domainAxisVisible) {
+      domainAxis = new StockMarketDateAxis(this, domainPanel);
       domainPanel.add(domainAxis);
     }
 
@@ -1070,7 +1056,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     }
   }
 
-  protected void drawHighlight(Layer layer) {
+  private void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
         || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
         || (beginHighlight > domainOrigin + currentDomain && endHighlight > domainOrigin
@@ -1139,13 +1125,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     // tick.
     // Without this hardcoded padding, the highest range value within the
     // plot are encroaches on the southern-most dataset legend row.
-    final double topPanelPad = 23;
-
+    final double topPanelPad = 23;    
+    
     // TODO: only in snapshot
     if (interactive) {
       plotBounds.x = rangePanelLeft.getWidth();
       plotBounds.width -= plotBounds.x;
       plotBounds.y += topPanel.getHeight() + topPanelPad;
+      
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         final double topHeight = topPanel.getHeight();
         double topBottomHeight = domainPanel.getHeight() + topHeight;

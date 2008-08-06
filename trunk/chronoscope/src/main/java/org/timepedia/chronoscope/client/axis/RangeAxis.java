@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -286,8 +287,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public double getRotationAngle() {
     return
-        (getAxisPanel().getPosition() == AxisPanel.Position.RIGHT ? 1.0 : -1.0) * Math.PI
-            / 2;
+        (getAxisPanel().getPosition() == Position.RIGHT ? 1.0 : -1.0) * Math.PI / 2;
   }
 
   public double getScale() {
@@ -303,13 +303,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
         axisLabelWidth + 5 : 0;
 
     if (axisPanel.getOrientation() == Orientation.VERTICAL) {
-      boolean isLeft = axisPanel.getPosition() == AxisPanel.Position.LEFT;
+      boolean isLeft = axisPanel.getPosition() == Position.LEFT;
       boolean isInner = axisPanel.getAxisNumber(this)
           == (isLeft ? axisPanel.getAxisCount() - 1 : 0);
       if (isInner) {
-        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition
-            .INSIDE) {
-
+        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition.INSIDE) {
           return computedAxisLabelWidth;
         } else {
           return maxLabelWidth + 5 + computedAxisLabelWidth;
