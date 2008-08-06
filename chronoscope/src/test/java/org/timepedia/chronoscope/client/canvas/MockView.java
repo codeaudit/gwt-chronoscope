@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.browser.ChronoscopeClickListener;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -53,7 +54,18 @@ public class MockView extends View {
     };
   }
 
-  public void openInfoWindow(String html, double x, double y) {
+  public InfoWindow openInfoWindow(String html, double x, double y) {
+    return new InfoWindow() {
+      public void close() {
+        
+      }
+
+      public void setPosition(double x, double y) {
+      }
+
+      public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
+      }
+    };
   }
 
   protected Canvas createCanvas(int width, int height) {

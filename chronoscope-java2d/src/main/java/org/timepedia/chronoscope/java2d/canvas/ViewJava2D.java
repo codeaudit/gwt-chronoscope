@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.java2d.canvas;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
@@ -62,9 +63,19 @@ public class ViewJava2D extends View {
     super.initialize(width, height, doubleBuffered, gssContext, callback);
   }
 
-  public void openInfoWindow(String html, double x, double y) {
+  public InfoWindow openInfoWindow(String html, double x, double y) {
     // do nothing, override specifically for Swing apps
     // a fancy server side implement could generate image maps that open HTML
+    return new InfoWindow() {
+      public void close() {
+      }
+
+      public void setPosition(double x, double y) {
+      }
+
+      public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
+      }
+    };
   }
 
   protected Canvas createCanvas(int width, int height) {
