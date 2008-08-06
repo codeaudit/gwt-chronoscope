@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 
@@ -98,9 +99,9 @@ public abstract class ValueAxis {
   }
 
   /**
-   * Returns {@link AxisPanel#VERTICAL_AXIS} or {@link AxisPanel#HORIZONTAL_AXIS}
+   * Returns the orientation of this axis.
    */
-  public int getOrientation() {
+  public Orientation getOrientation() {
     return axisPanel.getOrientation();
   }
 

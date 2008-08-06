@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -228,7 +229,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double getHeight() {
-    if (axisPanel.getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
+    if (axisPanel.getOrientation() == Orientation.HORIZONTAL) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
       return getChart().getPlotForAxis(this).getInnerPlotBounds().height;
@@ -301,7 +302,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     double computedAxisLabelWidth = renderer.isAxisLabelVisible() ?
         axisLabelWidth + 5 : 0;
 
-    if (axisPanel.getOrientation() == AxisPanel.VERTICAL_AXIS) {
+    if (axisPanel.getOrientation() == Orientation.VERTICAL) {
       boolean isLeft = axisPanel.getPosition() == AxisPanel.Position.LEFT;
       boolean isInner = axisPanel.getAxisNumber(this)
           == (isLeft ? axisPanel.getAxisCount() - 1 : 0);

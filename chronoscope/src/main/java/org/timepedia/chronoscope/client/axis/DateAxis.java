@@ -1,8 +1,10 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.DomainAxisRenderer;
 
 public class DateAxis extends ValueAxis {
@@ -48,7 +50,7 @@ public class DateAxis extends ValueAxis {
   }
 
   public double getHeight() {
-    if (getOrientation() == AxisPanel.HORIZONTAL_AXIS) {
+    if (getOrientation() == Orientation.HORIZONTAL) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
       return plot.getInnerPlotBounds().height;
@@ -80,7 +82,7 @@ public class DateAxis extends ValueAxis {
   }
 
   public double getWidth() {
-    if (getOrientation() == AxisPanel.VERTICAL_AXIS) {
+    if (getOrientation() == Orientation.VERTICAL) {
       return getMaxLabelWidth() + 5 + axisLabelWidth + 10;
     } else {
       return plot.getInnerPlotBounds().width;
@@ -88,17 +90,24 @@ public class DateAxis extends ValueAxis {
   }
 
   public void init() {
-    renderer.init(getChart().getView());
+    boolean isHorizontal = getOrientation() == Orientation.HORIZONTAL;
+    final String axisLabel = "(Time)rwfwefwefwefwef";
+    View view = getChart().getView();
+    renderer.init(view);
 
-    maxLabelWidth = renderer.getLabelWidth(getChart().getView(), "XXX'00");
-    maxLabelHeight = renderer.getLabelHeight(getChart().getView(), "XXXX");
-    axisLabelHeight = renderer.isAxisLabelVisible() ? renderer
-        .getLabelHeight(getChart().getView(), getOrientation() == AxisPanel
-            .HORIZONTAL_AXIS ? "(Time)" : "X") * (
-        getOrientation() == AxisPanel.HORIZONTAL_AXIS ? 1 : "(Time)".length())
-        : 0;
-    axisLabelWidth = renderer.getLabelWidth(getChart().getView(),
-        getOrientation() == AxisPanel.HORIZONTAL_AXIS ? "(Time)" : "X");
+    maxLabelWidth = renderer.getLabelWidth(view, "XXX'00");
+    maxLabelHeight = renderer.getLabelHeight(view, "XXXX");
+    axisLabelWidth = renderer.getLabelWidth(view, isHorizontal ? axisLabel : "X");
+    
+    axisLabelHeight = 0;
+    if (renderer.isAxisLabelVisible()) {
+      if (isHorizontal) {
+        axisLabelHeight = renderer.getLabelHeight(view, axisLabel);
+      }
+      else {
+        axisLabelHeight = renderer.getLabelHeight(view,"X") * axisLabel.length();
+      }
+    }
   }
 
   public boolean isVisible(double tickPos) {

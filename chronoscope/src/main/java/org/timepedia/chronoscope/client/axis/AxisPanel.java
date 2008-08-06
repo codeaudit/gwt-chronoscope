@@ -47,12 +47,10 @@ public class AxisPanel implements GssElement {
       
   }
   
-  //public static final int LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3;
-
-  public static final int VERTICAL_AXIS = 0;
-
-  public static final int HORIZONTAL_AXIS = 1;
-
+  public enum Orientation {
+    VERTICAL, HORIZONTAL
+  }
+  
   private final ArrayList<ValueAxis> axes = new ArrayList<ValueAxis>();
 
   private boolean layerConfigured = false;
@@ -63,12 +61,12 @@ public class AxisPanel implements GssElement {
 
   private GssProperties axesProperties;
 
-  private int orientation;
+  private Orientation orientation;
 
   public AxisPanel(String panelName, Position position) {
     this.panelName = panelName;
     this.position = position;
-    this.orientation = position.isLeftRight() ? VERTICAL_AXIS : HORIZONTAL_AXIS;
+    this.orientation = position.isLeftRight() ? Orientation.VERTICAL : Orientation.HORIZONTAL;
   }
 
   public void add(ValueAxis axis) {
@@ -106,7 +104,7 @@ public class AxisPanel implements GssElement {
       lPBounds.height = axis.getHeight();
 
       axis.drawAxis(plot, layer, lPBounds, gridOnly);
-      if (axis.getOrientation() == HORIZONTAL_AXIS) {
+      if (axis.getOrientation() == Orientation.HORIZONTAL) {
         lPBounds.y += lPBounds.height;
       } else {
         lPBounds.x += lPBounds.width;
@@ -127,7 +125,7 @@ public class AxisPanel implements GssElement {
     double height = 0;
     for (int i = 0; i < axes.size(); i++) {
       ValueAxis a = (ValueAxis) axes.get(i);
-      if (a.getOrientation() == HORIZONTAL_AXIS) {
+      if (a.getOrientation() == Orientation.HORIZONTAL) {
         height += a.getHeight();
       } else {
         height = a.getHeight();
@@ -136,7 +134,7 @@ public class AxisPanel implements GssElement {
     return height;
   }
 
-  public int getOrientation() {
+  public Orientation getOrientation() {
     return orientation;
   }
 
@@ -175,7 +173,7 @@ public class AxisPanel implements GssElement {
     double width = 0;
     for (int i = 0; i < axes.size(); i++) {
       ValueAxis a = (ValueAxis) axes.get(i);
-      if (a.getOrientation() == VERTICAL_AXIS) {
+      if (a.getOrientation() == Orientation.VERTICAL) {
         width += a.getWidth();
       } else {
         width = Math.max(width, a.getWidth());
