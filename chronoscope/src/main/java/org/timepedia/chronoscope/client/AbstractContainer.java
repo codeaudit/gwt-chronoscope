@@ -77,7 +77,12 @@ public abstract class AbstractContainer<S extends Component, T extends Container
   }
 
   public void add(S component) {
+    Container parent = component.getContainer();
+    if(parent != null) {
+      parent.remove(component);
+    }
     components.add(component);
+    component.setContainer(this);
     onComponentAdded(component);
   }
 
@@ -88,6 +93,7 @@ public abstract class AbstractContainer<S extends Component, T extends Container
 
   public void remove(S component) {
     components.remove(component);
+    component.setContainer(null);
     onComponentRemoved(component);
   }
 
