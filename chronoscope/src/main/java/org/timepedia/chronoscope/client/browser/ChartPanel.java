@@ -167,11 +167,24 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
     if (!isAttached() || !viewReady) {
       return;
     }
+    
+    // Only request (x,y) coordinates if they're available/relevant
+    // (e.g. mouse move, mouse click).  Otherwise, DOM.eventGetClientX()
+    // will throw an exception.
+    boolean screenCoordinatesRelevant = 
+      (Event.KEYEVENTS & evt.getTypeInt()) == 0;
 
-    int x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
-    int absTop = DOM.getAbsoluteTop(getElement());
-    int y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
-
+    int x, y;
+    if (screenCoordinatesRelevant) {
+      x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
+      int absTop = DOM.getAbsoluteTop(getElement());
+      y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
+    }
+    else {
+      x = -1;
+      y = -1;
+    }
+    
     if (!chartEventHandler.handleChartEvent(evt, chart, x, y)) {
       super.onBrowserEvent(evt);
     } else {

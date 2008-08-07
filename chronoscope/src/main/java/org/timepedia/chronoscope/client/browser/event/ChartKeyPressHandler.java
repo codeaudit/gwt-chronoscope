@@ -16,11 +16,11 @@ public class ChartKeyPressHandler
     extends AbstractEventHandler<KeyPressedHandler>
     implements KeyPressedHandler {
 
-  private static final int KEY_S = 83 + 32;
+  static final int KEY_S = 83 + 32;
 
-  private static final int KEY_X = 88 + 32;
+  static final int KEY_X = 88 + 32;
 
-  private static final int KEY_Z = 90 + 32;
+  static final int KEY_Z = 90 + 32;
 
   public void onKeyPressed(KeyPressedEvent event) {
     ChartState chartInfo = getChartState(event);
@@ -31,7 +31,7 @@ public class ChartKeyPressHandler
     boolean handled = true;
 
     if (keyCode == KEY_TAB) {
-      handled = handleTabKey(event.getBrowserEvent(), chartInfo, keyCode);
+      handled = handleTabKey(event.getBrowserEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     } else if (keyCode == KEY_Z) {
       chart.nextZoom();
     } else if (keyCode == KEY_X) {
