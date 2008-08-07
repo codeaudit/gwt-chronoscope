@@ -31,13 +31,13 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
    * Handles TAB key and Shift-TAB key presses.
    */
   protected boolean handleTabKey(Event event, ChartState chartInfo,
-      int keyCode) {
+      int keyCode, boolean isShiftKeyDown) {
     if (DOM.eventGetType(event) != chartInfo.tabKeyEventCode) {
       return false;
     }
 
     if (keyCode == KEY_TAB) {
-      if (shiftKeyPressed(event)) {
+      if (isShiftKeyDown) {
         chartInfo.chart.prevFocus();
       } else {
         chartInfo.chart.nextFocus();
@@ -48,11 +48,4 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
     return false;
   }
 
-  /**
-   * Convenience method that returns true only if the shift key was being
-   * pressed at the time the event was fired.
-   */
-  protected boolean shiftKeyPressed(Event e) {
-    return DOM.eventGetShiftKey(e);
-  }
 }
