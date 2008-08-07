@@ -60,11 +60,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   
   // The maximum distance that the mouse pointer can stray from a candidate
   // data point and still be considered as referring to that point.
-  private static final int MAX_FOCUS_DIST = 10;
+  private static final int MAX_FOCUS_DIST = 8;
   
   // The maximum distance (only considers x-axis) that the mouse pointer can 
   // stray from a data point and still cause that point to be "hovered".
-  private static final int MAX_HOVER_DIST = 25;
+  private static final int MAX_HOVER_DIST = 8;
   
   private static int MAX_DRAWABLE_DATAPOINTS = 400;
 
