@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser.event;
 
+import com.google.gwt.libideas.event.client.MouseEvent;
 import com.google.gwt.libideas.event.client.MouseUpEvent;
 import com.google.gwt.libideas.event.client.MouseUpHandler;
 
@@ -37,7 +38,10 @@ public final class ChartMouseUpHandler
     chart.setCursor(Cursor.DRAGGING);
     chartInfo.maybeDrag = false;
     ((DOMView) chart.getView()).focus();
-
+    
+    if (event.getButton() == MouseEvent.Button.RIGHT) {
+      chart.getView().fireContextMenuEvent(x, y);
+    }
     chartInfo.setHandled(true);
   }
 }
