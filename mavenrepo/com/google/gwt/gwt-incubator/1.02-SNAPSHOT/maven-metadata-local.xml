@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>com.google.gwt</groupId>
+  <artifactId>gwt-incubator</artifactId>
+  <version>1.02-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20080807192408</lastUpdated>
+  </versioning>
+</metadata>
