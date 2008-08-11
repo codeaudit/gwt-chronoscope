@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.plot;
+  package org.timepedia.chronoscope.client.plot;
 
 import com.google.gwt.core.client.GWT;
 
@@ -247,6 +247,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       }
       animationTimer = null;
     }
+    
     final double fencedDomain = fenceDomain(fence, destinationDomain);
     final double fencedDomainOrigin = fenceDomainOrigin(fence,
         destinationOrigin, destinationDomain);
@@ -616,7 +617,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       maxZoomToPoint(focus.getPointIndex(), focus.getDatasetIndex());
     }
   }
-
+  
+  public void moveTo(double domainX) {
+    this.domainOrigin = domainX;
+    redraw();
+  }
+  
   public void nextFocus() {
     shiftFocus(+1);
   }
@@ -965,7 +971,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
             rangePanelLeft.getWidth(), rangePanelLeft.getHeight());
         rangePanelLeft.drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
         
-        
         if (rangePanelRight.getAxisCount() > 0) {
           Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width, 0,
               rangePanelRight.getWidth(), rangePanelRight.getHeight());
@@ -980,6 +985,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         Bounds domainPanelBounds = new Bounds(plotBounds.x, 0,
             plotBounds.width, domainBounds.height);
         domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
+
         domainLayer.restore();
       }
 
@@ -1526,5 +1532,4 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       return "pointIndex=" + pointIndex + ";dist=" + dist;
     }
   }
-  
 }
