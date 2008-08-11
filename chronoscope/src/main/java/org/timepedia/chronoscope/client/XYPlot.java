@@ -314,6 +314,11 @@ public interface XYPlot extends Exportable {
   void maxZoomToFocus();
 
   /**
+   * Positions the specified domainX value at the center of the plot's viewport. 
+   */
+  void moveTo(double domainX);
+
+    /**
    * Advance the focused datapoint to the previous point
    */
   void nextFocus();

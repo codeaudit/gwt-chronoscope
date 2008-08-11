@@ -13,7 +13,6 @@ import com.google.gwt.libideas.event.client.MouseOverEvent;
 import com.google.gwt.libideas.event.client.MouseUpEvent;
 import com.google.gwt.libideas.event.client.MouseWheelEvent;
 import com.google.gwt.libideas.event.shared.HandlerManager;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 
 import org.timepedia.chronoscope.client.Chart;
@@ -29,6 +28,7 @@ import org.timepedia.chronoscope.client.browser.event.ChartMouseOverHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartMouseUpHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartMouseWheelHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartState;
+import org.timepedia.chronoscope.client.browser.event.OverviewAxisMouseMoveHandler;
 
 /**
  *
@@ -57,6 +57,8 @@ public class ChartEventHandler {
     handlerLookup
         .addEventHandler(MouseMoveEvent.KEY, new ChartMouseMoveHandler());
     handlerLookup
+        .addEventHandler(MouseMoveEvent.KEY, new OverviewAxisMouseMoveHandler());
+    handlerLookup
         .addEventHandler(MouseWheelEvent.KEY, new ChartMouseWheelHandler());
     handlerLookup.addEventHandler(ClickEvent.KEY, new ChartMouseClickHandler());
     handlerLookup
@@ -68,7 +70,6 @@ public class ChartEventHandler {
   }
 
   public boolean handleChartEvent(Event event, Chart chart, int x, int y) {
-    int eventKey = DOM.eventGetType(event);
     chartInfo.chart = chart;
     chartInfo.setHandled(false);
     chartInfo.setLocalX(x);

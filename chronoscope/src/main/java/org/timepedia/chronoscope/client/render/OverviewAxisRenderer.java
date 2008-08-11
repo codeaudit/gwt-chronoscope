@@ -23,10 +23,19 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
 
   private OverviewAxis axis;
   
-  private Bounds highlightBoundsSingleton;
+  // The singleton avoids excess creation of Bounds objects
+  private Bounds highlightBounds, highlightBoundsSingleton;
   
   public OverviewAxisRenderer() {
     highlightBoundsSingleton = new Bounds();
+  }
+  
+  /**
+   * Returns the bounds of the highlighted area of the overview axis, or
+   * null if nothing is highlighted.
+   */
+  public Bounds getHighlightBounds() {
+    return highlightBounds;
   }
   
   public void drawOverview(XYPlot plot, Layer layer, Bounds axisBounds,
@@ -39,7 +48,7 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
         overviewLayer.getHeight(), axisBounds.x, axisBounds.y, axisBounds.width,
         axisBounds.height);
     
-    Bounds highlightBounds = calcHighlightBounds(plot, axisBounds);
+    highlightBounds = calcHighlightBounds(plot, axisBounds);
     //GWT.log("TESTING: OverviewAxisRenderer: highlightBounds = " + highlightBounds, null);
     
     if (highlightBounds != null) {

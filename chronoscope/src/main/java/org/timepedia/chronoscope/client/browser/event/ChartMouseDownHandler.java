@@ -16,6 +16,7 @@ public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownH
 
   public void onMouseDown(MouseDownEvent event) {
     ChartState chartInfo = getChartState(event);
+    chartInfo.isMouseDown = true;
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);

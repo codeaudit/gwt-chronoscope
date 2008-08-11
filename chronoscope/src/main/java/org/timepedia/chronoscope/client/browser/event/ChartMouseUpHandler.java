@@ -18,6 +18,7 @@ public final class ChartMouseUpHandler
 
   public void onMouseUp(MouseUpEvent event) {
     ChartState chartInfo = getChartState(event);
+    chartInfo.isMouseDown = false;
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);

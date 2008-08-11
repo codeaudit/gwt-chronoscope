@@ -8,8 +8,8 @@ import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.OverviewAxisRenderer;
 
 /**
- * An implementation of ValueAxis which renders a minature zoomed-out overview
- * of the whole chart
+ * An implementation of ValueAxis which renders a miniature zoomed-out overview
+ * of the whole chart.
  */
 public class OverviewAxis extends ValueAxis {
 
@@ -46,6 +46,14 @@ public class OverviewAxis extends ValueAxis {
   public Bounds getBounds() {
     return bounds;
   }
+  
+  /**
+   * Returns the bounds of the highlighted area of the overview axis, or
+   * null if nothing is highlighted.
+   */
+  public Bounds getHighlightBounds() {
+    return renderer.getHighlightBounds();
+  }
 
   public double getHeight() {
     return renderer.getOverviewHeight();
@@ -53,12 +61,12 @@ public class OverviewAxis extends ValueAxis {
 
   // N/A
   public double getRangeHigh() {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 
   // N/A
   public double getRangeLow() {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 
   public double getWidth() {
@@ -66,10 +74,11 @@ public class OverviewAxis extends ValueAxis {
   }
 
   public void init() {
+    // no-op
   }
 
   // N/A
   public double userToData(double screenPosition) {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 }

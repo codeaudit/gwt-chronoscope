@@ -14,6 +14,8 @@ public class ChartState {
 
   public Chart chart;
 
+  public boolean isMouseDown = false;
+  
   // TODO: should these fields be defined in the Chart class?
   public boolean selActive = false;
 
@@ -52,5 +54,16 @@ public class ChartState {
 
   public void setLocalY(int localY) {
     this.localY = localY;
+  }
+  
+  public String toString() {
+    return "x=" + localX 
+           + "; y=" + localY
+           + "; maybeDrag=" + maybeDrag
+           + "; dragStart=" + dragStart
+           + "; isMouseDown=" + isMouseDown
+           + "; selActive=" + selActive
+           + "; selStart=" + selStart
+           ;
   }
 }
