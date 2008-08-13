@@ -175,12 +175,12 @@ public class Chronoscope implements Exportable, HistoryListener {
         chartHeight, null);
   }
 
-//    public static ChartPanel createStackedTimeseriesChart(XYDataset[] datasets, XYDataset[] datasets2) {
+//    public static PlotPanel createStackedTimeseriesChart(XYDataset[] datasets, XYDataset[] datasets2) {
 //        Chart chart = new Chart();
 //        DefaultXYPlot top = new DefaultXYPlot(chart, datasets, true);
 //        DefaultXYPlot bot = new DefaultXYPlot(chart, datasets2, true);
 //        SharedDomainXYPlot shared = new SharedDomainXYPlot(0.5, top, bot, null);
-//        return new ChartPanel(shared);
+//        return new PlotPanel(shared);
 //    }
 
   public static ChartPanel createTimeseriesChart(Element elem,
@@ -507,7 +507,6 @@ public class Chronoscope implements Exportable, HistoryListener {
     }
     ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
-    cp.onAttach();
     return cp;
   }
 
