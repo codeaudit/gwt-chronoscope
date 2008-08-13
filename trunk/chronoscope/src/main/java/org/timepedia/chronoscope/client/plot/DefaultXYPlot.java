@@ -21,8 +21,6 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.HasRegions;
-import org.timepedia.chronoscope.client.data.RegionLoadListener;
 import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -55,8 +53,7 @@ import java.util.HashMap;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
-    RegionLoadListener {
+public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   
   // The maximum distance that the mouse pointer can stray from a candidate
   // data point and still be considered as referring to that point.
@@ -652,11 +649,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     }
   }
 
-  public void onRegionLoaded(HasRegions h, int regionNumber) {
-    GWT.log("redrawing due to region load", null);
-    redraw();
-  }
-
   public void openInfoWindow(final String html, final double domainX,
       final double rangeY, final int datasetIndex) {
 
@@ -800,9 +792,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     if (d instanceof UpdateableXYDataset) {
       UpdateableXYDataset ud = (UpdateableXYDataset) d;
       ud.addXYDatasetListener(this);
-    }
-    if (d instanceof HasRegions) {
-      ((HasRegions) d).addRegionLoadListener(this);
     }
   }
 
@@ -1449,9 +1438,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       XYDataset dataset = datasets[i];
       if (dataset instanceof UpdateableXYDataset) {
         ((UpdateableXYDataset) dataset).addXYDatasetListener(this);
-      }
-      if (dataset instanceof HasRegions) {
-        ((HasRegions) dataset).addRegionLoadListener(this);
       }
     }
   }

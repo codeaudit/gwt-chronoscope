@@ -20,7 +20,6 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.AppendableXYDataset;
 import org.timepedia.chronoscope.client.data.ArrayXYDataset;
-import org.timepedia.chronoscope.client.data.DeferredRegionalArrayXYDataset;
 import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
@@ -279,11 +278,6 @@ public class Chronoscope implements Exportable, HistoryListener {
         ranges[i] = getArray(mrange, 1);
       }
 
-      double domainBegin = hasRegions ? JavascriptHelper
-          .jsPropGetD(json, "domainBegin") : domains[0][0];
-      double domainEnd = hasRegions ? JavascriptHelper
-          .jsPropGetD(json, "domainEnd") : domains[0][domains[0].length - 1];
-
       if (mutable) {
         dataset = new RangeMutableArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
@@ -292,7 +286,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"),
             approximateMinInterval);
-      } else if (!hasRegions) {
+      } else {
         dataset = new ArrayXYDataset(
             JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
             JavascriptHelper.jsPropGetD(json, "rangeTop"),
@@ -300,15 +294,6 @@ public class Chronoscope implements Exportable, HistoryListener {
             JavascriptHelper.jsPropGetString(json, "label"),
             JavascriptHelper.jsPropGetString(json, "axis"),
             approximateMinInterval);
-      } else {
-        dataset = new DeferredRegionalArrayXYDataset(
-            JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
-            JavascriptHelper.jsPropGetD(json, "rangeTop"),
-            JavascriptHelper.jsPropGetD(json, "rangeBottom"),
-            JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"), domains[0][0],
-            domains[0][domains[0].length - 1], getArray(ivals, 1), prefix,
-            domainBegin, domainEnd, approximateMinInterval);
       }
     } else {
       double domainVal[] = getArray(domain, domainscale);
