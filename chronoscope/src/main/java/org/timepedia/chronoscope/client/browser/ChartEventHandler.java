@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.libideas.event.client.BrowserEvent;
 import com.google.gwt.libideas.event.client.ClickEvent;
 import com.google.gwt.libideas.event.client.DoubleClickEvent;
@@ -74,12 +75,14 @@ public class ChartEventHandler {
     chartInfo.setHandled(false);
     chartInfo.setLocalX(x);
     chartInfo.setLocalY(y);
+    
     BrowserEvent browserEvent = getBrowserEvent(event);
     if (browserEvent != null) {
       browserEvent.setUserData(chartInfo);
       handlerLookup.fireEvent(browserEvent);
     } else {
       // shouldn't happen normally
+      throw new RuntimeException("getBrowserEvent returned null");
     }
     return chartInfo.isHandled();
   }

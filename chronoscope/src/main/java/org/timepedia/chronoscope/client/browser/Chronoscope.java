@@ -37,6 +37,7 @@ import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Factory class and JS API interface for Chronoscope Charts <p/> This class
@@ -78,7 +79,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   private static Theme currentTheme;
 
-  private static final HashMap charts = new HashMap();
+  private static final Map<String,Chart> id2chart = new HashMap<String,Chart>();
 
   /**
    * Used to prevent double-triggering of history events
@@ -351,7 +352,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public static Chart getChartById(String id) {
-    return (Chart) charts.get(id);
+    return (Chart) id2chart.get(id);
   }
 
   public static String getFontBookServiceEndpoint() {
@@ -397,7 +398,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static void pushHistory() {
     if (Chronoscope.isHistorySupportEnabled()) {
-      Iterator i = charts.values().iterator();
+      Iterator i = id2chart.values().iterator();
       String newToken = "";
       while (i.hasNext()) {
         Chart v = (Chart) i.next();
@@ -409,7 +410,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public static void putChart(String id, Chart chart) {
-    charts.put(id, chart);
+    id2chart.put(id, chart);
     chart.setChartId(id);
   }
 
@@ -554,7 +555,7 @@ public class Chronoscope implements Exportable, HistoryListener {
         String target = targets[j];
         String viewId = target.substring(0, target.indexOf("("));
         String[] var = target.substring(target.indexOf("(") + 1).split("\\,");
-        Chart chart = (Chart) charts.get(viewId);
+        Chart chart = (Chart) id2chart.get(viewId);
         double dO = chart.getPlot().getDomainOrigin();
         double cD = chart.getPlot().getCurrentDomain();
         boolean changed = false;
