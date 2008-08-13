@@ -142,7 +142,6 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
   }
 
   public void fireContextMenu(Event evt) {
-
     int x = DOM.eventGetClientX(evt);
     int y = DOM.eventGetClientY(evt) + getScrollTop();
 
@@ -185,11 +184,11 @@ public class ChartPanel extends Widget implements ViewReadyCallback,
       y = -1;
     }
     
-    if (!chartEventHandler.handleChartEvent(evt, chart, x, y)) {
-      super.onBrowserEvent(evt);
-    } else {
+    if (chartEventHandler.handleChartEvent(evt, chart, x, y)) {
       DOM.eventCancelBubble(evt, true);
       DOM.eventPreventDefault(evt);
+    } else {
+      super.onBrowserEvent(evt);
     }
   }
 
