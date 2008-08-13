@@ -20,8 +20,9 @@ import com.google.gwt.dom.client.StyleElement;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
-import org.timepedia.chronoscope.client.browser.ChartPanel;
+import org.timepedia.chronoscope.client.browser.PlotPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -30,7 +31,6 @@ import org.timepedia.chronoscope.gviz.gadget.client.GadgetHelper;
 import org.timepedia.chronoscope.gviz.api.client.QueryResponseHandler;
 import org.timepedia.chronoscope.gviz.api.client.QueryResponse;
 import org.timepedia.chronoscope.gviz.api.client.DataTable;
-import org.timepedia.chronoscope.gviz.api.client.GVizGssContext;
 import org.timepedia.chronoscope.gviz.api.client.DataTableParser;
 import org.timepedia.chronoscope.gviz.api.client.Query;
 
