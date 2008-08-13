@@ -11,14 +11,14 @@ import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
 
 /**
- * An interface to be implemented by classes implementing XY plots of XY
- * Datasets.
+ * An interface to be implemented by classes implementing XY plots of
+ * {@link XYDataset} objects.
  * <p>
- * Conceptually, a Plot is a class responsible for maintaining a collection of
- * datasets, axes, and graph state, and mapping data-space values to
- * screen-space values suitable for rendering on a View. More specifically, a
- * plot converts data-space values to user-space values by delegating to an Axis
- * implementation.
+ * Conceptually, an XYPlot is a class responsible for maintaining a collection
+ * of datasets, axes, and graph state, and mapping data-space values to
+ * screen-space values suitable for rendering on a {@link View}. More
+ * specifically, a plot converts data-space values to user-space values by
+ * delegating to an Axis implementation.
  * <p>
  * User-space values are in the interval [0,1] independent of the screen space
  * size of the plot. For example, a ValueAxis with a visible range of 0.0 to
@@ -43,7 +43,7 @@ import org.timepedia.exporter.client.Exportable;
  * <li>Current highlight/selection
  * </ul>
  * <p>
- * As well as some stylistic overrides:
+ * ... as well as some stylistic overrides:
  * <ul>
  * <li>Legend enabled/disabled
  * <li>Domain axis rendering enabled/disabled
@@ -63,13 +63,13 @@ public interface XYPlot extends Exportable {
    * destination values.
    * 
    * @param eventType hint to specify what kind of UI event this animation
-   *          corresponds to (ZOOM, SCROLL, ETC)
+   *          corresponds to (ZOOM, SCROLL, etc.)
    */
   void animateTo(double destinationOrigin, double destinationDomain,
       int eventType);
 
   /**
-   * Animate the domainOrigin and currentDomain values interpolating tot he
+   * Animate the domainOrigin and currentDomain values interpolating to the
    * destination values. This version executes the continuation when the
    * animation finishes.
    * 
@@ -181,20 +181,20 @@ public interface XYPlot extends Exportable {
    * 
    */
   Focus getFocus();
-  
-  /**
-   * Returns an array of data point indices, which element k corresponds to
-   * the data point being hovered on in dataset k.  A value of -1 indicates 
-   * that no point in dataset [k] is currently being hovered.
-   * The length of the array is equal to {@link #getNumDatasets()}.
-   */
-  int[] getHoverPoints();
-  
+
   /**
    * Returns a string representing the current state of the plot, used to
    * reconstruct the state of the plot at a later time.
    */
   String getHistoryToken();
+
+  /**
+   * Returns an array of data point indices, which element k corresponds to the
+   * data point being hovered on in dataset k. A value of -1 indicates that no
+   * point in dataset [k] is currently being hovered. The length of the array is
+   * equal to {@link #getNumDatasets()}.
+   */
+  int[] getHoverPoints();
 
   /**
    * Return the Bounds of the plot area relative to the plot layer
@@ -314,11 +314,11 @@ public interface XYPlot extends Exportable {
   void maxZoomToFocus();
 
   /**
-   * Positions the specified domainX value at the center of the plot's viewport. 
+   * Positions the specified domainX value at the center of the plot's viewport.
    */
   void moveTo(double domainX);
 
-    /**
+  /**
    * Advance the focused datapoint to the previous point
    */
   void nextFocus();
@@ -456,22 +456,22 @@ public interface XYPlot extends Exportable {
 
   /**
    * Set the initial inset bounds (relative to the plot layer) that this plot
-   * should be rendered in
+   * should be rendered in.
    */
   void setInitialBounds(Bounds initialBounds);
 
   /**
-   * Enable or disable display of the legend
+   * Enable or disable display of the legend.
    */
   void setLegendEnabled(boolean enabled);
 
   /**
-   * Enable or display mini-chart overview on x-axis
+   * Enable or display mini-chart overview on x-axis.
    */
   void setOverviewEnabled(boolean overviewEnabled);
 
   /**
-   * Set the renderer for a given dataset index
+   * Set the renderer for a given dataset index.
    */
   void setRenderer(int datasetIndex, XYRenderer renderer);
 
@@ -482,7 +482,7 @@ public interface XYPlot extends Exportable {
   void setSelectionMode(boolean selectionEnabled);
 
   /**
-   * Render the Plot into the encapsulating Chart's View
+   * Render the Plot into the encapsulating Chart's View.
    */
   void update();
 

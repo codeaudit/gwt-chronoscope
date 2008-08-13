@@ -5,8 +5,6 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.data.DeferredRegionalArrayXYDataset;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
@@ -53,38 +51,15 @@ public abstract class XYPlotRenderer {
         continue;
       }
 
-      boolean inRegion = true;
-      if (dataSet instanceof DeferredRegionalArrayXYDataset) {
-        DeferredRegionalArrayXYDataset dDataset = (DeferredRegionalArrayXYDataset) dataSet;
-        double regionStart = dDataset.getRegionBegin();
-        double regionEnd = dDataset.getRegionEnd();
-        inRegion = domainOrigin >= regionStart
-        && domainOrigin + currentDomain <= regionEnd;
-        if (!inRegion && !((DefaultXYPlot) plot).isAnimating()) {
-          int regionNum = dDataset.findRegion(domainOrigin, domainOrigin
-              + currentDomain);
-          if (regionNum != -1) {
-            dDataset.loadRegion(regionNum);
-          }
-        }
-      }
       int maxPoints = Math.min(
           plot.getRenderer(seriesNum).getMaxDrawableDatapoints(plot),
           plot.getMaxDrawableDataPoints());
+
       do {
         mipLevel++;
-        //double end = dataSet.getX(dataSet.getNumSamples(mipLevel) - 1, mipLevel);
-        if (!inRegion && (domainOrigin < dataSet.getX(0, mipLevel)
-            /*|| domainOrigin + currentDomain > end + (end - dataSet
-        .getX(dataSet.getNumSamples(mipLevel) - 2, mipLevel))*/)) {
-          continue;
-        } else {
-          inRegion = true;
-        }
         domainStart = Util.binarySearch(dataSet, domainOrigin, mipLevel);
-        domainEnd = Util.binarySearch(dataSet, domainOrigin + currentDomain,
-            mipLevel);
-      } while (!inRegion || (inRegion && domainEnd - domainStart > maxPoints));
+        domainEnd = Util.binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
+      } while (domainEnd - domainStart > maxPoints);
 
       plot.setCurrentDatasetLevel(seriesNum, mipLevel);
 
