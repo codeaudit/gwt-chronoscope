@@ -51,4 +51,14 @@ public class BoundsTest extends TestCase {
     assertEquals(3.0, copy.width);
     assertEquals(4.0, copy.height);
   }
+  
+  public void testBottomY() {
+    Bounds b = new Bounds(10, 15, 100, 200);
+    assertEquals(b.y + b.height, b.bottomY());
+  }
+
+  public void testRightX() {
+    Bounds b = new Bounds(10, 15, 100, 200);
+    assertEquals(b.x + b.width, b.rightX());
+  }
 }

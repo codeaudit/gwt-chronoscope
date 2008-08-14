@@ -39,10 +39,28 @@ public class Bounds {
     public Bounds() {
     }
 
+    /**
+     * Returns the area of this bounds.  More specifically, 
+     * <tt>{@link #width} * {@link #height}</tt>.
+     */
     public double area() {
         return width * height;
     }
-
+    
+    /**
+     * Returns the x-value of the right-hand edge of this bounds.
+     */
+    public double rightX() {
+      return x + width;
+    }
+    
+    /**
+     * Returns the y-value of the bottom edge of this bounds.
+     */
+    public double bottomY() {
+      return y + height;
+    }
+    
     /**
      * Returns true only if the specified point (px,py) is inside this rectangular
      * bounding box. Note that points on the perimeter are considered "inside"
