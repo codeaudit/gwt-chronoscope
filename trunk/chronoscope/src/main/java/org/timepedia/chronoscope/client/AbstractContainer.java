@@ -77,7 +77,7 @@ public abstract class AbstractContainer<S extends Component, T extends Container
   }
 
   public void add(S component) {
-    Container parent = component.getContainer();
+    Container<S,T> parent = component.getContainer();
     if(parent != null) {
       parent.remove(component);
     }
