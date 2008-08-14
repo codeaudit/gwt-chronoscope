@@ -617,7 +617,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   
   public void moveTo(double domainX) {
     this.domainOrigin = domainX;
-    redraw();
   }
   
   public void nextFocus() {
