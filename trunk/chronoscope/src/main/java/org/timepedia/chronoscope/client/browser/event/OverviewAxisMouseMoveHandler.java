@@ -41,6 +41,7 @@ public class OverviewAxisMouseMoveHandler extends
           double hiliteLeftDomainX = windowToDomainX(hiliteLeftX, (DefaultXYPlot)plot);
           hiliteLeftDomainX = Math.max(hiliteLeftDomainX, plot.getDomainMin());
           plot.moveTo(hiliteLeftDomainX);
+          plot.redraw();
         }
       }
     }
