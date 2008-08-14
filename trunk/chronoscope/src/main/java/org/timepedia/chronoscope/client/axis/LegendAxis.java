@@ -41,11 +41,11 @@ public class LegendAxis extends ValueAxis {
   }
 
   public double getRangeHigh() {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 
   public double getRangeLow() {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 
   public double getWidth() {
@@ -56,7 +56,4 @@ public class LegendAxis extends ValueAxis {
     renderer.init(plot, this);
   }
 
-  public double userToData(double screenPosition) {
-    return 0;
-  }
 }

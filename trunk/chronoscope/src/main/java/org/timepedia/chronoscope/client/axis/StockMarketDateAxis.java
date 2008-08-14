@@ -22,10 +22,6 @@ public class StockMarketDateAxis extends DateAxis {
 //    return result;
 //  }
 
-  public double userToData(double userValue) {
-    return super.userToData(userValue);
-  }
-
 //  public boolean isVisible(double tickPos) {
 //    return timeline.containsDomainValue(tickPos);
 //  }

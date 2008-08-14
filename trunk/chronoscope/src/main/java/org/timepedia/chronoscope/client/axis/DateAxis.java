@@ -114,7 +114,4 @@ public class DateAxis extends ValueAxis {
     return true;
   }
 
-  public double userToData(double userValue) {
-    return getRangeLow() + userValue * getRange();
-  }
 }

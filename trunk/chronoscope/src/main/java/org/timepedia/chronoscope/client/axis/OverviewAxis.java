@@ -59,14 +59,12 @@ public class OverviewAxis extends ValueAxis {
     return renderer.getOverviewHeight();
   }
 
-  // N/A
   public double getRangeHigh() {
-    throw new UnsupportedOperationException();
+    return plot.getDomainMax();
   }
 
-  // N/A
   public double getRangeLow() {
-    throw new UnsupportedOperationException();
+    return plot.getDomainMin();
   }
 
   public double getWidth() {
@@ -77,8 +75,13 @@ public class OverviewAxis extends ValueAxis {
     // no-op
   }
 
-  // N/A
-  public double userToData(double screenPosition) {
-    throw new UnsupportedOperationException();
+  public final double userToData(double userValue) {
+    // Use the userToData() implementation on the domain axis so that the 
+    // user-to-data mapping function is consistent with this axis... but need
+    // to pass in the overview-specific domain interval.
+    double myRangeLow = getRangeLow();
+    double myRangeHigh = getRangeHigh();
+    return plot.getDomainAxis().userToData(myRangeLow, myRangeHigh, userValue);
   }
+
 }

@@ -477,10 +477,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     computeTickPositions();
   }
 
-  public double userToData(double userValue) {
-    return getRangeLow() + userValue * getRange();
-  }
-
   private void computeLabelWidths(View view) {
     renderer.init(view);
 

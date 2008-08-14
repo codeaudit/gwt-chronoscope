@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.libideas.event.client.MouseMoveEvent;
 import com.google.gwt.libideas.event.client.MouseMoveHandler;
 
@@ -38,6 +37,7 @@ public class OverviewAxisMouseMoveHandler extends
           //of the highlight window within the overview axis.
           double halfHiliteWidth = highlightBounds.width / 2.0;
           double hiliteLeftX = x - halfHiliteWidth;
+          
           double hiliteLeftDomainX = windowToDomainX(hiliteLeftX, (DefaultXYPlot)plot);
           hiliteLeftDomainX = Math.max(hiliteLeftDomainX, plot.getDomainMin());
           plot.moveTo(hiliteLeftDomainX);
@@ -48,7 +48,7 @@ public class OverviewAxisMouseMoveHandler extends
   
   private double windowToDomainX(double windowX, DefaultXYPlot plot) {
     double userX = plot.windowXtoUser(windowX);
-    double domainMin = plot.getDomainMin();
-    return domainMin + ((plot.getDomainMax() - domainMin) * userX);
+    return plot.getOverviewAxis().userToData(userX);
   }
+
 }
