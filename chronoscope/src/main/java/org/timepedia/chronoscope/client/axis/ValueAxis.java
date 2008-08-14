@@ -11,12 +11,12 @@ import org.timepedia.chronoscope.client.canvas.Layer;
  * points in screen space, as well as maintaining state related to drawing axis
  * ticks and labels. A given axis may be horizontal or vertical in orientation
  * depending on the {@link AxisPanel} it is placed into, and rendered on the
- * left/right or top/bottom depending on the AxisPanel position as well. <p/> In
- * GSS, an ValueAxis may be referred to using a CSS selector 'axis'. Each axis
+ * left/right or top/bottom depending on the AxisPanel position as well. 
+ * <p> 
+ * In GSS, an ValueAxis may be referred to using a CSS selector 'axis'. Each axis
  * is numbered, can have several CSS classes, depending on subtypes, like
- * "axis.range" or "axis.domain". See {@link org.timepedia.chronoscope.client.render.AxisRenderer}
- * for more details.
- *
+ * "axis.range" or "axis.domain". See {@link AxisRenderer} for more details.
+ * 
  * @see org.timepedia.chronoscope.client.render.AxisRenderer
  */
 public abstract class ValueAxis {
@@ -38,7 +38,7 @@ public abstract class ValueAxis {
   /**
    * Maps a given dataValue in the interval [rangeLow, rangeHigh] to a a user
    * position in the range [0,1]
-   *
+   * 
    * @param dataValue the value to be mapped
    */
   public abstract double dataToUser(double dataValue);
@@ -46,13 +46,13 @@ public abstract class ValueAxis {
   /**
    * Draws the axis into the given layer, within the specified axisBounds, as
    * well as drawing grid-lines on the given DefaultXYPlot.
-   *
-   * @param plot       the plot to draw the gridlines into
-   * @param layer      the layer to render the axis on
+   * 
+   * @param plot the plot to draw the gridlines into
+   * @param layer the layer to render the axis on
    * @param axisBounds the bounds within the layer into which the axis should be
-   *                   drawn
-   * @param gridOnly   if true, only render gridlines into the plots, render
-   *                   nothing else
+   *          drawn
+   * @param gridOnly if true, only render gridlines into the plots, render
+   *          nothing else
    */
   public abstract void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly);
@@ -92,10 +92,11 @@ public abstract class ValueAxis {
   /**
    * Returns the smallest range displayable on this axis, used to prevent
    * zooming too far.
+   * 
    * @return
    */
   public double getMinimumTickSize() {
-      return Double.MIN_VALUE;
+    return Double.MIN_VALUE;
   }
 
   /**
@@ -154,9 +155,25 @@ public abstract class ValueAxis {
 
   /**
    * Maps a given user position in the range [0,1] into the interval [rangeLow,
-   * rangeHigh]
-   *
+   * rangeHigh], where rangeLow = {@link #getRangeLow()} and 
+   * rangeHigh = {@link #getRangeHigh()}.
+   * 
    * @param userValue the user value to be mapped
    */
-  public abstract double userToData(double userValue);
+  public double userToData(double userValue) {
+    return userToData(getRangeLow(), getRangeHigh(), userValue);
+  }
+  
+  /**
+   * Maps a given user position in the range [0,1] into the interval [rangeLow,
+   * rangeHigh].
+   * 
+   * @param rangeLow the minimum data value on the axis
+   * @param rangeHigh the maximum data value on the axis
+   * @param userValue the user value to be mapped
+   */
+  protected double userToData(double rangeLow, double rangeHigh, double userValue) {
+    return rangeLow + (userValue * (rangeHigh - rangeLow));
+  }
+
 }

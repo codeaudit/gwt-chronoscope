@@ -590,7 +590,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     double minNearestDist = MAX_FOCUS_DIST;
 
     for (int i = 0; i < datasets.length; i++) {
-      double domainX = windowXtoDomain(x, i);
+      double domainX = windowXtoDomain(x);
       double rangeY = windowYtoRange(y, i);
       NearestPoint nearest = this.nearestSingleton;
       findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
@@ -813,7 +813,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     double minNearestDist = MAX_FOCUS_DIST;
 
     for (int i = 0; i < datasets.length; i++) {
-      double domainX = windowXtoDomain(x, i);
+      double domainX = windowXtoDomain(x);
       double rangeY = windowYtoRange(y, i);
       NearestPoint nearest = this.nearestSingleton;
       findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
@@ -847,8 +847,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     int tmp = Math.min(selStart, selEnd);
     selEnd = Math.max(selStart, selEnd);
     selStart = tmp;
-    beginHighlight = windowXtoDomain(selStart, 0);
-    endHighlight = windowXtoDomain(selEnd, 0);
+    beginHighlight = windowXtoDomain(selStart);
+    endHighlight = windowXtoDomain(selEnd);
     redraw();
     // drawHighlight(highLightLayer, highLightLayer);
   }
@@ -867,7 +867,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     NearestPoint nearestHoverPt = this.nearestSingleton;
     for (int i = 0; i < datasets.length; i++) {
-      double dataX = windowXtoDomain(x, i);
+      double dataX = windowXtoDomain(x);
       double dataY = windowYtoRange(y, i);
       findNearestPt(dataX, dataY, i, DistanceFormula.X_ONLY, nearestHoverPt);
 
@@ -1082,7 +1082,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     Chronoscope.pushHistory();
   }
 
-  protected double windowXtoDomain(double x, int datasetIndex) {
+  protected double windowXtoDomain(double x) {
     return getDomainAxis().userToData(windowXtoUser(x));
   }
 
