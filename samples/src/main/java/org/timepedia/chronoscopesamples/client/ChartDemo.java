@@ -23,8 +23,6 @@ import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.AppendableXYDataset;
-import org.timepedia.chronoscope.client.data.RangeMutableXYDataset;
 import org.timepedia.chronoscope.client.data.MockXYDataset;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
