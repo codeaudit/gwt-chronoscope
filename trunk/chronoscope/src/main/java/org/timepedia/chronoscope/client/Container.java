@@ -14,4 +14,9 @@ public interface Container<S extends Component, T extends Container>
    * Removes a Coomponent from this container.
    */
   void remove(S c);
+
+  /**
+   * Recompute bounds (if neccessary) for all contained components.
+   */
+  void layout();
 }

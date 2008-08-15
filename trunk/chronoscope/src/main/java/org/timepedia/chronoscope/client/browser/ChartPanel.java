@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.browser;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
@@ -47,5 +48,10 @@ public class ChartPanel extends Composite implements Exportable {
   @Export
   public Chart getChart() {
     return plotPanel.getChart();
+  }
+
+  public void attach() {
+    onAttach();
+    RootPanel.detachOnWindowClose(this);
   }
 }

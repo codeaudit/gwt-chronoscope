@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.canvas.MockView;
+import org.timepedia.chronoscope.client.canvas.mock.MockView;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.gss.GssContext;

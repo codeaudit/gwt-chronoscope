@@ -1,13 +1,12 @@
-package org.timepedia.chronoscope.client.canvas;
+package org.timepedia.chronoscope.client.canvas.mock;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.browser.ChronoscopeClickListener;
+import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -20,8 +19,7 @@ public class MockView extends View {
       public void addMenuBar(String label, ChronoscopeMenu subMenu) {
       }
 
-      public void addMenuItem(String label,
-          ChronoscopeClickListener ccl) {
+      public void addMenuItem(String label, ChronoscopeClickListener ccl) {
       }
 
       public void removeAllMenuItems() {
@@ -57,7 +55,7 @@ public class MockView extends View {
   public InfoWindow openInfoWindow(String html, double x, double y) {
     return new InfoWindow() {
       public void close() {
-        
+
       }
 
       public void setPosition(double x, double y) {
