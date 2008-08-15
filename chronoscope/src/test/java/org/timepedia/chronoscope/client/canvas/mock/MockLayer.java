@@ -1,6 +1,13 @@
-package org.timepedia.chronoscope.client.canvas;
+package org.timepedia.chronoscope.client.canvas.mock;
 
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.canvas.AbstractLayer;
+import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.canvas.CanvasPattern;
+import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.canvas.PaintStyle;
+import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 /**
@@ -16,10 +23,9 @@ public class MockLayer extends AbstractLayer {
 
   private int order;
 
-  private float transparency=1.0f;
+  private float transparency = 1.0f;
 
-  private Color strokeColor
-      ;
+  private Color strokeColor;
 
   private boolean visible;
 
@@ -68,7 +74,7 @@ public class MockLayer extends AbstractLayer {
 
   public PaintStyle createPattern(String imageUri) {
     return new CanvasPattern() {
-      
+
     };
   }
 
@@ -117,11 +123,11 @@ public class MockLayer extends AbstractLayer {
   }
 
   public int getLayerOrder() {
-    return order; 
+    return order;
   }
 
   public int getScrollLeft() {
-    return 0; 
+    return 0;
   }
 
   public String getStrokeColor() {
@@ -129,7 +135,7 @@ public class MockLayer extends AbstractLayer {
   }
 
   public String getTransparency() {
-    return ""+transparency;
+    return "" + transparency;
   }
 
   public double getWidth() {
@@ -153,35 +159,35 @@ public class MockLayer extends AbstractLayer {
   }
 
   public void setCanvasPattern(CanvasPattern canvasPattern) {
-    this.canvasPattern=canvasPattern;
+    this.canvasPattern = canvasPattern;
   }
 
   public void setComposite(int mode) {
-    composite=mode;
+    composite = mode;
   }
 
   public void setFillColor(String color) {
-    fillColor=new Color(color);
+    fillColor = new Color(color);
   }
 
   public void setLayerAlpha(float alpha) {
-    this.alpha=alpha;
+    this.alpha = alpha;
   }
 
   public void setLayerOrder(int zorder) {
-    this.order=zorder;
+    this.order = zorder;
   }
 
   public void setLinearGradient(LinearGradient lingrad) {
-    this.linearGradient=lingrad;
+    this.linearGradient = lingrad;
   }
 
   public void setLineWidth(double width) {
-    this.lineWidth=width;
+    this.lineWidth = width;
   }
 
   public void setRadialGradient(RadialGradient radialGradient) {
-    this.radialGradient=radialGradient;
+    this.radialGradient = radialGradient;
   }
 
   public void setScrollLeft(int i) {
@@ -200,14 +206,14 @@ public class MockLayer extends AbstractLayer {
   }
 
   public void setStrokeColor(String color) {
-    strokeColor=new Color(color);
+    strokeColor = new Color(color);
   }
 
   public void setTextLayerBounds(String textLayer, Bounds textLayerBounds) {
   }
 
   public void setTransparency(float value) {
-    transparency=value;
+    transparency = value;
   }
 
   public void setVisibility(boolean visibility) {

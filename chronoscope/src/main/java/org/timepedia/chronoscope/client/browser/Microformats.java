@@ -3,8 +3,8 @@ package org.timepedia.chronoscope.client.browser;
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.JsArrayNumber;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
@@ -15,6 +15,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Overlay;
@@ -129,7 +130,9 @@ public class Microformats {
   }
 
   static class MicroformatParseResults {
+
     public JsArrayString columns = JsArrayString.createArray().cast();
+
     public JsArray<JsArrayNumber> data = JsArray.createArray().cast();
 
     public void addColumn(String title) {
@@ -138,7 +141,7 @@ public class Microformats {
 
     public void setValue(int row, int col, double val) {
       JsArrayNumber arr = data.get(col);
-      if(arr == null) {
+      if (arr == null) {
         arr = JsArrayNumber.createArray().cast();
         data.set(col, arr);
       }
@@ -149,12 +152,12 @@ public class Microformats {
       return data.length();
     }
   }
-  
+
   static MicroformatParseResults parseMicroformat(String id) {
     com.google.gwt.dom.client.Element e = Document.get().getElementById(id);
 
     MicroformatParseResults results = new MicroformatParseResults();
-    
+
     assertTrue("table".equalsIgnoreCase(e.getNodeName()),
         "Table Element with id " + id + " doesn't exist.");
 
@@ -165,7 +168,6 @@ public class Microformats {
     assertTrue(hrows.getLength() == 1, "Table THEAD must contain 1 TR element");
 
     int numCols = 0;
-
 
     if (hrows.getLength() == 1) {
       TableRowElement tr = hrows.getItem(0);
@@ -242,17 +244,17 @@ public class Microformats {
         for (int k = 0; k < cells.getLength(); k++) {
           TableCellElement cell = cells.getItem(k);
           if (k == 0) {
-            results.setValue(totalAdded, k, 
+            results.setValue(totalAdded, k,
                 DateParser.parse(dateFormat, cell.getInnerText().trim()));
           } else {
-              String cellText = cell.getInnerText().trim();
-              try {
-                double value = numberFormats[k] == null ? Double
-                    .parseDouble(cellText) : numberFormats[k].parse(cellText);
-                results.setValue(totalAdded, k, value);
-              } catch (NumberFormatException e1) {
-                // TODO: (ray) ? silently ignore parse errors
-              }
+            String cellText = cell.getInnerText().trim();
+            try {
+              double value = numberFormats[k] == null ? Double
+                  .parseDouble(cellText) : numberFormats[k].parse(cellText);
+              results.setValue(totalAdded, k, value);
+            } catch (NumberFormatException e1) {
+              // TODO: (ray) ? silently ignore parse errors
+            }
           }
         }
         totalAdded++;
@@ -387,10 +389,13 @@ public class Microformats {
           candidateWidth = 600;
         }
         int candidateHeight = (int) (candidateWidth / 1.618);
-        ChartPanel cp = Chronoscope.createTimeseriesChart(cid, ds,
+        ChartPanel cp = Chronoscope.createTimeseriesChart(div, ds,
             candidateWidth, candidateHeight,
             new MicroformatViewReadyCallback(links, cid, id, ds, elt, latch));
         created[i] = cp;
+        if (!cp.isAttached()) {
+          RootPanel.get(cid).add(cp);
+        }
       }
     }
   }

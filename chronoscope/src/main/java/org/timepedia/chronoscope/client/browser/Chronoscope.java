@@ -9,6 +9,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.dom.client.Document;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
@@ -503,10 +504,16 @@ public class Chronoscope implements Exportable, HistoryListener {
   public ChartPanel createChartPanel(Element elem, XYDataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     if (elem == null) {
-      return new ChartPanel(datasets, chartWidth, chartHeight);
+      ChartPanel cpanel=new ChartPanel(datasets, chartWidth, chartHeight);
+      cpanel.setReadyListener(readyListener);
+      return cpanel; 
+     
     }
     ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
+    if(Document.get().getBody().isOrHasChild(elem)) {
+      cp.attach();
+    }
     return cp;
   }
 

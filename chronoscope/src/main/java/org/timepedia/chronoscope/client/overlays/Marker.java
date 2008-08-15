@@ -34,7 +34,7 @@ public class Marker implements Overlay, GssElement, Exportable {
 
   private ArrayList clickListener;
 
-  private XYPlot plot = null;
+  protected XYPlot plot = null;
 
   private int seriesNum = -1;
 

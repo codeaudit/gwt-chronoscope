@@ -26,6 +26,11 @@ public interface Component<T extends Container> {
   T getContainer();
 
   /**
+   * Return the bounds that this component would prefer to have.
+   */
+  Bounds getPreferredBounds();
+  
+  /**
    * Fires any event handlers related to the incoming event.
    */
   void onEvent(VirtualEvent event);

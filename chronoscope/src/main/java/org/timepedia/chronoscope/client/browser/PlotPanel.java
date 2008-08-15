@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.ViewContainer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -38,27 +39,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants {
 
   private ChartEventHandler chartEventHandler;
-
-  /**
-   * Gets the window's scroll left.
-   *
-   * @return window's scroll left
-   */
-  public static native int getScrollLeft() /*-{
-          // Standard mode || Quirks mode.
-          return $doc.documentElement.scrollLeft || $doc.body.scrollLeft
-        }-*/;
-
-  /**
-   * Get the window's scroll top.
-   *
-   * @return the window's scroll top
-   */
-  public static native int getScrollTop() /*-{
-          // Standard mode || Quirks mode.
-          return $doc.documentElement.scrollTop || $doc.body.scrollTop;
-        }-*/;
-
+  
   private GssContext gssContext;
 
   private View view;
@@ -77,6 +58,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private boolean viewReady;
 
+  private ViewContainer viewContainer;
   /**
    * Instantiates a chart widget using the given DOM element as a container
    */
@@ -91,6 +73,12 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    */
   public PlotPanel(Element container, XYPlot plot, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
+    view = (View) GWT.create(DOMView.class);
+    if (gssContext == null) {
+      gssContext = (BrowserGssContext) GWT
+          .create(BrowserGssContext.class);
+    }
+    viewContainer = new ViewContainer(view);
     this.chartWidth = chartWidth;
     this.chartHeight = chartHeight;
     this.readyListener = readyListener;
@@ -107,13 +95,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    */
   public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
-    this.chartWidth = chartWidth;
-    this.chartHeight = chartHeight;
-    this.readyListener = readyListener;
-    initElement(container);
-    chart = new Chart();
-    plot = new DefaultXYPlot(chart, datasets, true);
-    chart.setPlot(plot);
+    this(container, new DefaultXYPlot(new Chart(), datasets, true),
+        chartWidth, chartHeight, readyListener);
   }
 
   /**
@@ -144,7 +127,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   public void fireContextMenu(Event evt) {
 
     int x = DOM.eventGetClientX(evt);
-    int y = DOM.eventGetClientY(evt) + getScrollTop();
+    int y = DOM.eventGetClientY(evt) + Window.getScrollTop();
 
     view.fireContextMenuEvent(x, y);
     DOM.eventCancelBubble(evt, true);
@@ -248,11 +231,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     DOM.setElementAttribute(cssgss, "class", "chrono");
     appendBody(cssgss);
     super.onAttach();
-    view = (View) GWT.create(DOMView.class);
-    if (gssContext == null) {
-      gssContext = (BrowserGssContext) GWT
-          .create(BrowserGssContext.class);
-    }
+   
     ((BrowserGssContext) gssContext).initialize(cssgss);
 
     ((DOMView) view)
@@ -281,6 +260,16 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     setElement(container);
     DOM.setStyleAttribute(container, "overflow", "hidden");
 //    addStyleName("chrono");
+    sinkEvents();
+
+    id = DOM.getElementAttribute(container, "id");
+    if (id == null || "".equals(id)) {
+      id = Chronoscope.generateId();
+      DOM.setElementAttribute(container, "id", id);
+    }
+  }
+
+  private void sinkEvents() {
     sinkEvents(Event.MOUSEEVENTS);
     sinkEvents(Event.KEYEVENTS);
     sinkEvents(Event.ONCLICK);
@@ -289,11 +278,5 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
     Window.addWindowResizeListener(this);
     disableContextMenu(getElement());
-
-    id = DOM.getElementAttribute(container, "id");
-    if (id == null || "".equals(id)) {
-      id = Chronoscope.generateId();
-      DOM.setElementAttribute(container, "id", id);
-    }
   }
 }
