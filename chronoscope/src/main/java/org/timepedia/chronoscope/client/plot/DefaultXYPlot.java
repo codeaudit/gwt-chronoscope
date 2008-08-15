@@ -21,7 +21,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.UpdateableXYDataset;
+import org.timepedia.chronoscope.client.data.MutableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
@@ -788,9 +788,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void setDataset(int i, XYDataset d) {
     datasets[i] = d;
-    if (d instanceof UpdateableXYDataset) {
-      UpdateableXYDataset ud = (UpdateableXYDataset) d;
-      ud.addXYDatasetListener(this);
+    if (d instanceof MutableXYDataset) {
+      throw new UnsupportedOperationException("MutableXYDatasets not supported at this time");
+      //UpdateableXYDataset ud = (UpdateableXYDataset) d;
+      //ud.addXYDatasetListener(this);
     }
   }
 
@@ -1435,8 +1436,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private void setupDatasetListeners() {
     for (int i = 0; i < datasets.length; i++) {
       XYDataset dataset = datasets[i];
-      if (dataset instanceof UpdateableXYDataset) {
-        ((UpdateableXYDataset) dataset).addXYDatasetListener(this);
+      if (dataset instanceof MutableXYDataset) {
+        throw new UnsupportedOperationException("MutableXYDatasets not supported at this time");
+        //((UpdateableXYDataset) dataset).addXYDatasetListener(this);
       }
     }
   }

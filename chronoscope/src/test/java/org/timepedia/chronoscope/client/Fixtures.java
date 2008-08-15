@@ -1,14 +1,16 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.data.ArrayXYDataset;
-import org.timepedia.chronoscope.client.data.DateParser;
-import org.timepedia.chronoscope.client.DataShape;
+import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
+import org.timepedia.chronoscope.client.data.XYDatasetFactory;
+import org.timepedia.chronoscope.client.data.XYDatasetRequest;
 
 /**
  * Some fixture data for testing
  */
 public class Fixtures {
-
+  
+    private static final XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    
     public static final String[] pre70s = {"1961", "1962", "1963", "1964", "1965"};
 
     public static final String[] post70s = {"1971", "1972", "1973", "1974", "1975"};
@@ -44,15 +46,23 @@ public class Fixtures {
             + "        </tr>\n" + "    </tbody>\n" + "</table>";
 
     public static XYDataset getNegativeDomainAscendingRange() {
-        return new ArrayXYDataset("test",
-                parseDomain(pre70s), rangeValuesAscending, "test", "test");
-
+      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      request.setDomain(parseDomain(pre70s));
+      request.setRange(rangeValuesAscending);
+      request.setIdentifier("test");
+      request.setAxisId("test");
+      request.setLabel("test");
+      return dsFactory.create(request);
     }
 
     public static XYDataset getPositiveDomainDescendingRange() {
-        return new ArrayXYDataset("test",
-                parseDomain(post70s), rangeValuesDescending, "test", "test");
-
+      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      request.setDomain(parseDomain(post70s));
+      request.setRange(rangeValuesDescending);
+      request.setIdentifier("test");
+      request.setAxisId("test");
+      request.setLabel("test");
+      return dsFactory.create(request);
     }
 
     private static double[] parseDomain(String[] dates) {
