@@ -13,8 +13,10 @@ import com.google.gwt.i18n.client.NumberFormat;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.data.ArrayXYDataset;
 import org.timepedia.chronoscope.client.data.DateParser;
+import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
+import org.timepedia.chronoscope.client.data.XYDatasetFactory;
+import org.timepedia.chronoscope.client.data.XYDatasetRequest;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 
@@ -26,7 +28,7 @@ import java.util.Map;
  *
  */
 public class DataTableParser {
-
+  
   static class DataPair {
 
     public double domain[];
@@ -52,6 +54,8 @@ public class DataTableParser {
       }
     }
 
+    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+
     XYDataset[] ds = new XYDataset[numCols];
     numCols = 0;
     for (int i = 1; i < table.getNumberOfColumns(); i++) {
@@ -74,8 +78,15 @@ public class DataTableParser {
 
       DataPair pair = table2datapair(table, startRow, i);
       sortAscendingDate(pair);
-      ds[numCols++] = new ArrayXYDataset("col" + i, pair.domain, pair.range,
-          label, units);
+      
+      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      request.setDomain(pair.domain);
+      request.setRange(pair.range);
+      request.setIdentifier("col" + i);
+      request.setLabel(label);
+      request.setAxisId(units);
+      ds[numCols++] = dsFactory.create(request);
+      
       if (dataset2Column != null) {
         dataset2Column.put(numCols - 1, i);
       }
