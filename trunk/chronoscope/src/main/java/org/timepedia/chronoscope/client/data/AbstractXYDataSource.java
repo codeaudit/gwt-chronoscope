@@ -91,10 +91,18 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       }
     }
 
+    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    
     XYDataset datasets[] = new XYDataset[numseries];
     for (int i = 0; i < datasets.length; i++) {
-      datasets[i] = new ArrayXYDataset(ids[i], domains[i], ranges[i], ids[i],
-          "axis" + i);
+      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      request.setDomain(domains[i]);
+      request.setRange(ranges[i]);
+      request.setIdentifier(ids[i]);
+      request.setLabel(ids[i]);
+      request.setAxisId("axis" + i);
+      
+      datasets[i] = dsFactory.create(request);
     }
     async.onSuccess(datasets);
   }

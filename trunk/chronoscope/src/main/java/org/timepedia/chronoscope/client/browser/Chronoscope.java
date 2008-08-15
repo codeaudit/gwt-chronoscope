@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -9,7 +10,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.dom.client.Document;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
@@ -19,9 +19,11 @@ import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.AppendableXYDataset;
-import org.timepedia.chronoscope.client.data.ArrayXYDataset;
-import org.timepedia.chronoscope.client.data.RangeMutableArrayXYDataset;
+import org.timepedia.chronoscope.client.data.Array2D;
+import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
+import org.timepedia.chronoscope.client.data.JavaArray2D;
+import org.timepedia.chronoscope.client.data.XYDatasetFactory;
+import org.timepedia.chronoscope.client.data.XYDatasetRequest;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -138,11 +140,6 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new Marker(date, seriesNum, label);
   }
 
-  public static AppendableXYDataset createMutableXYDataset(
-      JavaScriptObject json) {
-    return (AppendableXYDataset) createXYDataset(json, true);
-  }
-
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
@@ -240,25 +237,39 @@ public class Chronoscope implements Exportable, HistoryListener {
     return createXYDataset(json, false);
   }
 
-  public static XYDataset createXYDataset(JavaScriptObject json,
-      boolean mutable) {
+  private static XYDataset createXYDataset(JavaScriptObject json,
+      boolean isMutable) {
 
+    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    
     JavaScriptObject domain = JavascriptHelper.jsPropGet(json, "domain");
     JavaScriptObject range = JavascriptHelper.jsPropGet(json, "range");
     String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
-    ArrayXYDataset dataset = null;
+    XYDataset dataset = null;
 
-    int domainscale = (int) JavascriptHelper
+    int domainScale = (int) JavascriptHelper
         .jsPropGetDor(json, "domainscale", 1);
 
     double approximateMinInterval = JavascriptHelper
         .jsPropGetDor(json, "minInterval", -1);
 
-    if (mipped != null && mipped.equals("true")) {
+    final boolean isMipped = (mipped != null && mipped.equals("true"));
+    XYDatasetRequest request;
+    if (isMipped) {
+      request = new XYDatasetRequest.MultiRes();
+    }
+    else {
+      request = new XYDatasetRequest.Basic();
+    }
+    
+    request.setIdentifier(JavascriptHelper.jsPropGetString(json, "id"));
+    request.setLabel(JavascriptHelper.jsPropGetString(json, "label"));
+    request.setAxisId(JavascriptHelper.jsPropGetString(json, "axis"));
+    request.setApproximateMinimumInterval(approximateMinInterval);
 
+    if (isMipped) {
       int dmipLevels = JavascriptHelper.jsArrLength(domain);
       int rmiplevel = JavascriptHelper.jsArrLength(range);
-
       if (dmipLevels != rmiplevel) {
         if (Chronoscope.isErrorReportingEnabled()) {
           Window.alert("Domain and Range dataset levels are not equal");
@@ -267,53 +278,31 @@ public class Chronoscope implements Exportable, HistoryListener {
 
       double domains[][] = new double[dmipLevels][];
       double ranges[][] = new double[dmipLevels][];
-
-      String prefix = JavascriptHelper.jsPropGetString(json, "prefix");
-      JavaScriptObject ivals = JavascriptHelper.jsPropGet(json, "intervals");
-
-      boolean hasRegions = prefix != null && ivals != null;
-
       for (int i = 0; i < dmipLevels; i++) {
         JavaScriptObject mdomain = JavascriptHelper.jsArrGet(domain, i);
         JavaScriptObject mrange = JavascriptHelper.jsArrGet(range, i);
-        domains[i] = getArray(mdomain, domainscale);
+        domains[i] = getArray(mdomain, domainScale);
         ranges[i] = getArray(mrange, 1);
       }
 
-      if (mutable) {
-        dataset = new RangeMutableArrayXYDataset(
-            JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
-            JavascriptHelper.jsPropGetD(json, "rangeTop"),
-            JavascriptHelper.jsPropGetD(json, "rangeBottom"),
-            JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"),
-            approximateMinInterval);
-      } else {
-        dataset = new ArrayXYDataset(
-            JavascriptHelper.jsPropGetString(json, "id"), domains, ranges,
-            JavascriptHelper.jsPropGetD(json, "rangeTop"),
-            JavascriptHelper.jsPropGetD(json, "rangeBottom"),
-            JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"),
-            approximateMinInterval);
-      }
+      XYDatasetRequest.MultiRes mippedRequest = (XYDatasetRequest.MultiRes)request;
+      request.setRangeTop(JavascriptHelper.jsPropGetD(json, "rangeTop"));
+      request.setRangeBottom(JavascriptHelper.jsPropGetD(json, "rangeBottom"));
+      mippedRequest.setMultiDomain(createArray2D(domains));
+      mippedRequest.setMultiRange(createArray2D(ranges));
     } else {
-      double domainVal[] = getArray(domain, domainscale);
-      double rangeVal[] = getArray(range, 1);
-      if (mutable) {
-        dataset = new RangeMutableArrayXYDataset(
-            JavascriptHelper.jsPropGetString(json, "id"), domainVal, rangeVal,
-            JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"),
-            approximateMinInterval);
-      } else {
-        dataset = new ArrayXYDataset(
-            JavascriptHelper.jsPropGetString(json, "id"), domainVal, rangeVal,
-            JavascriptHelper.jsPropGetString(json, "label"),
-            JavascriptHelper.jsPropGetString(json, "axis"),
-                approximateMinInterval);
-      }
+      
+      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic)request;
+      basicRequest.setDomain(getArray(domain, domainScale));
+      basicRequest.setRange(getArray(range, 1));
     }
+    
+    if (isMutable) {
+      dataset = dsFactory.createMutable(request);
+    } else {
+      dataset = dsFactory.create(request);
+    }
+    
     return dataset;
   }
 
@@ -717,5 +706,9 @@ public class Chronoscope implements Exportable, HistoryListener {
       }
     };
     t.schedule(10);
+  }
+  
+  private static Array2D createArray2D(double[][] a) {
+    return new JavaArray2D(a);
   }
 }
