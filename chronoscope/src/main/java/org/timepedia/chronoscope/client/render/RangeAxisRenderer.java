@@ -221,7 +221,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       layer.setFillColor(gridProperties.color);
       layer.setTransparency((float) gridProperties.transparency);
       layer.fillRect(bounds.x + bounds.width, uy,
-          plot.getInnerPlotBounds().width, gridProperties.lineThickness);
+          plot.getInnerBounds().width, gridProperties.lineThickness);
     }
     layer.restore();
     if (!gridOnly) {

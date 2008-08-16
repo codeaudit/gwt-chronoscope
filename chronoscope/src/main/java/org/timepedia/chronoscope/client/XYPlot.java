@@ -199,7 +199,7 @@ public interface XYPlot extends Exportable {
   /**
    * Return the Bounds of the plot area relative to the plot layer
    */
-  Bounds getInnerPlotBounds();
+  Bounds getInnerBounds();
 
   /**
    * A hint value suggesting the maximum number of datapoints this Plot should
@@ -236,7 +236,7 @@ public interface XYPlot extends Exportable {
   /**
    * Return the Bounds of the Plot relative to the View coordinate system
    */
-  Bounds getPlotBounds();
+  Bounds getBounds();
 
   /**
    * Find first plot that contains this axis (useful if using a multiplot)
@@ -245,7 +245,7 @@ public interface XYPlot extends Exportable {
 
   /**
    * Get the layer which represents the main plot area where points will be
-   * renderered
+   * rendered
    */
   Layer getPlotLayer();
 

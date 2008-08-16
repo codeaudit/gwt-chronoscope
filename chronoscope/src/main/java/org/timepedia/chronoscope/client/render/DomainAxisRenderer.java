@@ -898,7 +898,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
         player.setFillColor(gridProperties.color);
         player.setTransparency((float) gridProperties.transparency);
         player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
-            plot.getInnerPlotBounds().height);
+            plot.getInnerBounds().height);
         player.restore();
       }
 

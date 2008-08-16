@@ -174,14 +174,24 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private View view;
 
-  private enum DistanceFormula { 
+  private enum DistanceFormula {
+    /**
+     * The distance from point (x1,x2) to point (y1,y2) on an XY plane.
+     */
     XY { double dist(double x1, double y1, double x2, double y2) {
       return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-      }}, 
+      }},
+    /**
+     * Considers only the distance between x1 and x2, ignoring the y values
+     * of points (x1,y1) and (x2,y2).
+     */  
     X_ONLY { double dist(double x1, double y1, double x2, double y2) {
       return Math.abs(x1 - x2);
       }};
     
+    /**
+     * The distance from points (x1,y1) to (x2,y2).
+     */
     abstract double dist(double x1, double y1, double x2, double y2);
   };
 
@@ -189,7 +199,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     this(chart, datasets, interactive, null);
   }
 
-  public DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive,
+  private DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive,
       Bounds initialBounds) {
     this.chart = chart;
     this.datasets = ds;
@@ -439,7 +449,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         + getCurrentDomain() + ")";
   }
 
-  public Bounds getInnerPlotBounds() {
+  public Bounds getInnerBounds() {
     return innerBounds;
   }
 
@@ -468,7 +478,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return overviewLayer;
   }
   
-  public Bounds getPlotBounds() {
+  public Bounds getBounds() {
     return plotBounds;
   }
 
@@ -1065,7 +1075,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math.min(0 + getInnerPlotBounds().width, domainToScreenX(
+    double ex = Math.min(0 + getInnerBounds().width, domainToScreenX(
         endHighlight, 0));
 
     layer.save();
@@ -1073,7 +1083,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     // layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
     layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
-    layer.fillRect(ux, 0, ex - ux, getInnerPlotBounds().height);
+    layer.fillRect(ux, 0, ex - ux, getInnerBounds().height);
     layer.restore();
     highlightDrawn = true;
   }

@@ -109,7 +109,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
 
     backingCanvas.fillRect(x, /*view.getPlotBounds().y*/0, x2 - x,
         /*view.getPlotBounds().y+*/
-        plot.getInnerPlotBounds().height);
+        plot.getInnerBounds().height);
     backingCanvas.drawText(x2 + 1, /*view.getPlotBounds().y+*/10, label,
         markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
         markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
@@ -150,8 +150,8 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
     double mx = plot.domainToScreenX(domainX, 0);
     double mx2 = plot.domainToScreenX(domainX + domainWidth, 0);
 
-    return MathUtil.isBounded(x, mx, mx2) && y > plot.getInnerPlotBounds().y
-        && y < plot.getInnerPlotBounds().y + plot.getInnerPlotBounds().height;
+    return MathUtil.isBounded(x, mx, mx2) && y > plot.getInnerBounds().y
+        && y < plot.getInnerBounds().y + plot.getInnerBounds().height;
   }
 
   public void openInfoWindow(String html) {

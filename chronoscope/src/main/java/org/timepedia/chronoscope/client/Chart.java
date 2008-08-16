@@ -43,7 +43,7 @@ public class Chart implements Exportable {
    * Plot)
    */
   public double domainToWindowX(XYPlot plot, double domainX, int seriesNum) {
-    return plot.domainToScreenX(domainX, seriesNum) + plot.getPlotBounds().x;
+    return plot.domainToScreenX(domainX, seriesNum) + plot.getBounds().x;
   }
 
   /**
@@ -100,13 +100,6 @@ public class Chart implements Exportable {
     plot.setChart(this);
     view.setChart(this);
     plot.init(view);
-  }
-
-  /**
-   * Is the given screen coordinate inside the Plot area?
-   */
-  public boolean isInsidePlot(int x, int y) {
-    return plot.getPlotBounds().inside(x, y);
   }
 
   /**

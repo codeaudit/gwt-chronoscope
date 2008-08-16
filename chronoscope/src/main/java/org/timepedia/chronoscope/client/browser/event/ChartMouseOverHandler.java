@@ -21,8 +21,9 @@ public class ChartMouseOverHandler
     int x = getLocalX(event);
     int y = getLocalY(event);
     chart.setPlotFocus(x, y);
+    boolean isMouseInPlot = chart.getPlot().getBounds().inside(x, y);
     chart.setCursor(
-        chart.isInsidePlot(x, y) ? Cursor.DRAGGABLE : Cursor.DEFAULT);
+        isMouseInPlot ? Cursor.DRAGGABLE : Cursor.DEFAULT);
     ((DOMView) chart.getView()).focus();
     chartInfo.maybeDrag = false;
     chartInfo.setHandled(true);

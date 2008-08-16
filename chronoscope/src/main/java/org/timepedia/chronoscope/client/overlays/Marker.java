@@ -104,7 +104,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     yp = y1 + (y2 - y1) * (x - x0) / (x1 - x0);
 
     y = yp;
-    if (y - 15 - height <= plot.getInnerPlotBounds().y) {
+    if (y - 15 - height <= plot.getInnerBounds().y) {
       y = y + 5;
     } else {
       y = y - 15 - height;
@@ -162,7 +162,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     double mx = plot.getChart().domainToWindowX(plot, domainX, seriesNum);
 
     double my = plot.getChart().rangeToWindowY(plot, rangeY, seriesNum) + 5;
-    if (my - 15 - height <= plot.getInnerPlotBounds().y) {
+    if (my - 15 - height <= plot.getInnerBounds().y) {
       my = my + 5;
     } else {
       my = my - 15 - height;
