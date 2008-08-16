@@ -19,8 +19,9 @@ public final class ChartMouseMoveHandler
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);
-
-    if (chart.isInsidePlot(x, y)) {
+    
+    boolean isMouseInPlot = chart.getPlot().getBounds().inside(x, y);
+    if (isMouseInPlot) {
       if (chartInfo.selActive && chartInfo.selStart > -1) {
         chart.setCursor(Cursor.SELECTING);
         chart.setAnimating(true);
