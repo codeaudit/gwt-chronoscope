@@ -25,7 +25,6 @@ public class ChartMouseOverHandler
     chart.setCursor(
         isMouseInPlot ? Cursor.DRAGGABLE : Cursor.DEFAULT);
     ((DOMView) chart.getView()).focus();
-    chartInfo.maybeDrag = false;
     chartInfo.setHandled(true);
   }
 

@@ -21,7 +21,6 @@ public class ChartMouseWheelHandler extends AbstractEventHandler<MouseWheelHandl
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
 
-    chartInfo.maybeDrag = false;
     int wheelDir = event.getMouseWheelVelocityY();
     boolean isMouseWheelUp = (wheelDir <= 0);
     if (isMouseWheelUp) {

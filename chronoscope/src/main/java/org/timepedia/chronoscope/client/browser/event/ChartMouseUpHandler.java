@@ -18,31 +18,30 @@ public final class ChartMouseUpHandler
 
   public void onMouseUp(MouseUpEvent event) {
     ChartState chartInfo = getChartState(event);
-    chartInfo.isMouseDown = false;
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);
-
-    if (chartInfo.selActive) {
-      chartInfo.selActive = false;
+    
+    CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
+    if (uiAction.isSelecting()) {
       chart.setAnimating(false);
-      chartInfo.selStart = -1;
-      if (event.isShiftKeyDown()) {
-        chart.zoomToHighlight();
-      }
-    } else if (chartInfo.maybeDrag && x != chartInfo.dragStart) {
+      chart.zoomToHighlight();
+    } 
+    else if (uiAction.isDragging() && x != uiAction.getStartX()) {
       ((DOMView) chart.getView()).pushHistory();
       chart.setAnimating(false);
       chart.redraw();
     }
 
-    chart.setCursor(Cursor.DRAGGING);
-    chartInfo.maybeDrag = false;
+    chartInfo.getCompoundUIAction().cancel();
+    chart.setCursor(Cursor.DEFAULT);
+
     ((DOMView) chart.getView()).focus();
     
     if (event.getButton() == MouseEvent.Button.RIGHT) {
       chart.getView().fireContextMenuEvent(x, y);
     }
+    
     chartInfo.setHandled(true);
   }
 }

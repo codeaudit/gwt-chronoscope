@@ -25,7 +25,7 @@ public class ChartKeyDownHandler extends AbstractEventHandler<KeyDownHandler>
         || keyCode == KEY_TAB) {
       handled = handleTabKey(event.getBrowserEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     }
-    chartInfo.setHandled(true);
+    chartInfo.setHandled(handled);
   }
 
 

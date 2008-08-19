@@ -36,8 +36,6 @@ public class ChartKeyPressHandler
       chart.nextZoom();
     } else if (keyCode == KEY_X) {
       chart.prevZoom();
-    } else if (keyCode == KEY_S) {
-      chartInfo.selActive = !chartInfo.selActive;
     } else if (keyCode == KeyboardListener.KEY_ENTER) {
       chart.maxZoomToFocus();
     } else {

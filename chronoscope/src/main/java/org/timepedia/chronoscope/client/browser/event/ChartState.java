@@ -1,5 +1,5 @@
 /**
- *
+ * 
  */
 package org.timepedia.chronoscope.client.browser.event;
 
@@ -14,23 +14,21 @@ public class ChartState {
 
   public Chart chart;
 
-  public boolean isMouseDown = false;
-  
-  // TODO: should these fields be defined in the Chart class?
-  public boolean selActive = false;
+  private CompoundUIAction compoundUIAction = new CompoundUIAction();
 
-  public boolean maybeDrag = false;
+  private boolean isHandled;
 
-  public int selStart = -1, dragStart = -1;
+  private int localX, localY;
 
-  // Gets reassigned based on browser type
-  public int tabKeyEventCode = Event.ONKEYDOWN;
+  private int tabKeyEventCode = Event.ONKEYDOWN;
 
-  private boolean handled;
-
-  private int localX;
-
-  private int localY;
+  /**
+   * Describes the compound UI action currently taking place (if any).
+   * A compound UI action is either a drag or select/highlight operation.
+   */
+  public CompoundUIAction getCompoundUIAction() {
+    return compoundUIAction;
+  }
 
   public int getLocalX() {
     return localX;
@@ -40,12 +38,19 @@ public class ChartState {
     return localY;
   }
 
+  /**
+   * Determines the browser-specific GWT event code associated with the tab key.
+   */
+  public int getTabKeyEventCode() {
+    return tabKeyEventCode;
+  }
+
   public boolean isHandled() {
-    return handled;
+    return isHandled;
   }
 
   public void setHandled(boolean handled) {
-    this.handled = handled;
+    this.isHandled = handled;
   }
 
   public void setLocalX(int localX) {
@@ -55,15 +60,19 @@ public class ChartState {
   public void setLocalY(int localY) {
     this.localY = localY;
   }
-  
-  public String toString() {
-    return "x=" + localX 
-           + "; y=" + localY
-           + "; maybeDrag=" + maybeDrag
-           + "; dragStart=" + dragStart
-           + "; isMouseDown=" + isMouseDown
-           + "; selActive=" + selActive
-           + "; selStart=" + selStart
-           ;
+
+  /**
+   * Gets reassigned based on browser type.
+   * 
+   * @see #getTabKeyEventCode()
+   */
+  public void setTabKeyEventCode(int tabKeyEventCode) {
+    this.tabKeyEventCode = tabKeyEventCode;
   }
+
+  public String toString() {
+    return "localX=" + localX + "; localY=" + localY + "; tabKeyEventCode="
+        + tabKeyEventCode + "; compoundUIAction=" + compoundUIAction;
+  }
+
 }

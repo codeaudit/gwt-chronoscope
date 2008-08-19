@@ -17,7 +17,6 @@ public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownH
 
   public void onMouseDown(MouseDownEvent event) {
     ChartState chartInfo = getChartState(event);
-    chartInfo.isMouseDown = true;
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);
@@ -29,14 +28,18 @@ public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownH
       handled = false;
     }
     else {
-      if (chartInfo.selActive || event.isShiftKeyDown()) {
-        chartInfo.selStart = x;
-        chartInfo.selActive = true;
+      // Set the UI component that initiated the drag or select
+      CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
+      uiAction.setSource(getComponent(x, y, chart.getPlot()));
+      if (event.isShiftKeyDown()) {
         chart.setCursor(Cursor.SELECTING);
+        uiAction.setSelectAction(true);
       } else {
-        chartInfo.maybeDrag = true;
-        chartInfo.dragStart = x;
+        chart.setCursor(Cursor.DRAGGING);
+        uiAction.setSelectAction(false);
       }
+      
+      uiAction.setStartX(x);
       chart.setPlotFocus(x, y);
       handled = true;
     }
