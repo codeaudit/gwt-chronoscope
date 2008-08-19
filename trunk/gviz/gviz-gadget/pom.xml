@@ -47,6 +47,7 @@
                </directory>
              </resource>
          </webResources>
+          <archiveClasses>true</archiveClasses>
         </configuration>
       </plugin>
       <plugin>

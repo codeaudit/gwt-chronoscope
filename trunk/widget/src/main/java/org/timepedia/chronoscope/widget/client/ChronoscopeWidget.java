@@ -14,6 +14,7 @@ public class ChronoscopeWidget implements EntryPoint {
   public void onModuleLoad() {
     Chronoscope.setMicroformatsEnabled(true);
     Chronoscope.setErrorReporting(false);
+    Chronoscope.setFontBookRendering(true);
     Chronoscope.getInstance();
   }
 }

@@ -198,7 +198,7 @@ public class BrowserView extends View
    * plot bounds)
    */
 
-  public InfoWindow openInfoWindow(String html, double x, double y) {
+  public InfoWindow createInfoWindow(String html, double x, double y) {
     final PopupPanel pp = new PopupPanel(true);
     pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
@@ -229,6 +229,10 @@ public class BrowserView extends View
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
         manager.addEventHandler(InfoWindowEvent.KEY, handler);
+      }
+
+      public void open() {
+        pp.show();
       }
     };
   }

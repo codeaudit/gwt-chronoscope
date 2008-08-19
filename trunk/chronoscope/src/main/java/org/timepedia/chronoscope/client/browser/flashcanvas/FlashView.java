@@ -202,7 +202,7 @@ public class FlashView extends View
    * Opens an HTML popup info window at the given screen coordinates (within
    * the plot bounds)
    */
-  public InfoWindow openInfoWindow(String html, double x, double y) {
+  public InfoWindow createInfoWindow(String html, double x, double y) {
     final PopupPanel pp = new PopupPanel(true);
     pp.setStyleName("chrono-infoWindow");
     pp.setWidget(new HTML(html));
@@ -233,6 +233,10 @@ public class FlashView extends View
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
         manager.addEventHandler(InfoWindowEvent.KEY, handler);
+      }
+
+      public void open() {
+        pp.show();
       }
     };
   }

@@ -52,7 +52,7 @@ public class MockView extends View {
     };
   }
 
-  public InfoWindow openInfoWindow(String html, double x, double y) {
+  public InfoWindow createInfoWindow(String html, double x, double y) {
     return new InfoWindow() {
       public void close() {
 
@@ -63,6 +63,10 @@ public class MockView extends View {
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
       }
+      
+      public void open() {
+      }
+      
     };
   }
 

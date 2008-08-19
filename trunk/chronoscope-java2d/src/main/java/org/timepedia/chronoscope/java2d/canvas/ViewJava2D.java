@@ -63,7 +63,7 @@ public class ViewJava2D extends View {
     super.initialize(width, height, doubleBuffered, gssContext, callback);
   }
 
-  public InfoWindow openInfoWindow(String html, double x, double y) {
+  public InfoWindow createInfoWindow(String html, double x, double y) {
     // do nothing, override specifically for Swing apps
     // a fancy server side implement could generate image maps that open HTML
     return new InfoWindow() {
@@ -74,6 +74,10 @@ public class ViewJava2D extends View {
       }
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
+      }
+
+      public void open() {
+        
       }
     };
   }

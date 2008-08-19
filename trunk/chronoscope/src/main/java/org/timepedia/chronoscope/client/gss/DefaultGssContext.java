@@ -74,7 +74,7 @@ public class DefaultGssContext extends MockGssContext {
         public DefaultPlotGssProperties() {
             this.bgColor = new Color("transparent");
             this.fontFamily = "Helvetica";
-            this.fontSize = "12pt";
+            this.fontSize = "9pt";
         }
     }
 
@@ -83,7 +83,7 @@ public class DefaultGssContext extends MockGssContext {
         public DefaultTickGssProperties() {
             this.bgColor = new Color("transparent");
             this.fontFamily = "Helvetica";
-            this.fontSize = "12pt";
+            this.fontSize = "9pt";
             this.color = new Color("#000000");
         }
     }
@@ -93,6 +93,7 @@ public class DefaultGssContext extends MockGssContext {
 
         public DefaultLabelGssProperties(DefaultGssContext defaultGssContext, GssElement parentGssElement) {
             this.tickAlign = "above";
+            this.fontSize="9pt";
             if ("axis".equals(parentGssElement.getType())) {
                 this.visible = defaultGssContext.isShowAxisLabels();
             }
@@ -112,7 +113,7 @@ public class DefaultGssContext extends MockGssContext {
             this.tickPosition = "inside";
             this.bgColor = new Color("#FFFFFF");
             this.fontFamily = "Helvetica";
-            this.fontSize = "12pt";
+            this.fontSize = "9pt";
             this.color = new Color("#000000");
         }
     }
@@ -149,7 +150,7 @@ public class DefaultGssContext extends MockGssContext {
         private DefaultGridGssProperties(String psuedoElt) {
             this.color = new Color("rgba(200,200,200,255)");
             this.fontFamily = "Helvetica";
-            this.fontSize = "8pt";
+            this.fontSize = "9pt";
             this.transparency = 1.0f;
             this.lineThickness = 0;
         }

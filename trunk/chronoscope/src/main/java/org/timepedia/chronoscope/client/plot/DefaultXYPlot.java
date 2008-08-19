@@ -1,21 +1,20 @@
-  package org.timepedia.chronoscope.client.plot;
-
-import com.google.gwt.core.client.GWT;
+package org.timepedia.chronoscope.client.plot;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Focus;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.AxisPanel;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -48,21 +47,21 @@ import java.util.HashMap;
  * space by delegating to one or more ValueAxis implementations. Drawing for
  * each dataset is delegated to Renderers. A plot also maintains state like the
  * current selection and focus point.
- * 
+ *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
-  
+
   // The maximum distance that the mouse pointer can stray from a candidate
   // data point and still be considered as referring to that point.
   private static final int MAX_FOCUS_DIST = 8;
-  
+
   // The maximum distance (only considers x-axis) that the mouse pointer can 
   // stray from a data point and still cause that point to be "hovered".
   private static final int MAX_HOVER_DIST = 8;
-  
+
   private static int MAX_DRAWABLE_DATAPOINTS = 400;
 
   private static final double ZOOM_FACTOR = 1.50d;
@@ -72,10 +71,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private static int globalPlotNumber = 0;
 
   private static final double MIN_PLOT_HEIGHT = 50;
-  
+
   // Indicator that nothing is selected (e.g. a data point or a data set).
   private static final int NO_SELECTION = -1;
-  
+
   private RangeAxis[] axes;
 
   private Background background;
@@ -114,7 +113,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private PortableTimer animationTimer;
 
-  private final HashMap<String, RangeAxis> axisMap = new HashMap<String, RangeAxis>();
+  private final HashMap<String, RangeAxis> axisMap
+      = new HashMap<String, RangeAxis>();
 
   private double beginHighlight = Double.MIN_VALUE;
 
@@ -135,7 +135,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private Layer highLightLayer;
 
   private int[] hoverPoints;
-  
+
   private Bounds initialBounds;
 
   private Bounds innerBounds;
@@ -193,7 +193,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
      * The distance from points (x1,y1) to (x2,y2).
      */
     abstract double dist(double x1, double y1, double x2, double y2);
-  };
+  }
+
+  ;
 
   public DefaultXYPlot(Chart chart, XYDataset[] datasets, boolean interactive) {
     this(chart, datasets, interactive, null);
@@ -210,10 +212,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     xyRenderers = new XYRenderer[ds.length];
     // computeVisibleDomainStartEnd();
     // initializeDomain();
-    
+
     hoverPoints = new int[ds.length];
     resetHoverPoints();
-    
+
     plotRenderer = new ScalableXYPlotRenderer(this);
     this.initialBounds = initialBounds;
     plotNumber = globalPlotNumber++;
@@ -254,7 +256,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
       animationTimer = null;
     }
-    
+
     final double fencedDomain = fenceDomain(fence, destinationDomain);
     final double fencedDomainOrigin = fenceDomainOrigin(fence,
         destinationOrigin, destinationDomain);
@@ -328,18 +330,19 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public boolean click(int x, int y) {
     if (setFocusXY(x, y)) {
       return true;
-    } 
-    
+    }
+
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
-      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+      if (MathUtil
+          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         if (o.isHit(x, y)) {
           o.click(x, y);
           return true;
         }
       }
     }
-    
+
     return showLegend ? legendAxis.click(x, y) : false;
   }
 
@@ -399,13 +402,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex].getX(pointIndex,
-        currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex]
+        .getX(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    return datasets[datasetIndex].getY(pointIndex,
-        currentMiplevels[datasetIndex]);
+    return datasets[datasetIndex]
+        .getY(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public ValueAxis getDomainAxis() {
@@ -439,7 +442,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public Focus getFocus() {
     return this.focus;
   }
-  
+
   public int[] getHoverPoints() {
     return this.hoverPoints;
   }
@@ -458,8 +461,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public int getNearestVisiblePoint(double domainX, int series) {
-    return Util.binarySearch(datasets[series], domainX,
-        currentMiplevels[series]);
+    return Util
+        .binarySearch(datasets[series], domainX, currentMiplevels[series]);
   }
 
   public int getNumAnimationFrames() {
@@ -473,7 +476,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public OverviewAxis getOverviewAxis() {
     return overviewAxis;
   }
-  
+
   public Layer getOverviewLayer() {
     return overviewLayer;
   }
@@ -519,14 +522,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public String getSeriesLabel(int i) {
-    return datasets[i].getRangeLabel()
-        + getRangeAxis(i).getLabelSuffix(getRangeAxis(i).getRange());
+    return datasets[i].getRangeLabel() + getRangeAxis(i)
+        .getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {
     return topPanel.contains(theAxis) || domainPanel.contains(theAxis)
-        || rangePanelLeft.contains(theAxis)
-        || rangePanelRight.contains(theAxis);
+        || rangePanelLeft.contains(theAxis) || rangePanelRight
+        .contains(theAxis);
   }
 
   public void init(View view) {
@@ -537,7 +540,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     this.view.getCanvas().getRootLayer().setVisibility(true);
 
-    domainPanel = new AxisPanel("domainAxisLayer" + plotNumber, Position.BOTTOM);
+    domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
+        Position.BOTTOM);
 
     if (domainAxisVisible) {
       domainAxis = new StockMarketDateAxis(this, domainPanel);
@@ -624,11 +628,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       maxZoomToPoint(focus.getPointIndex(), focus.getDatasetIndex());
     }
   }
-  
+
   public void moveTo(double domainX) {
     this.domainOrigin = domainX;
   }
-  
+
   public void nextFocus() {
     shiftFocus(+1);
   }
@@ -658,23 +662,23 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
   }
 
-  public void openInfoWindow(final String html, final double domainX,
+  public InfoWindow openInfoWindow(final String html, final double domainX,
       final double rangeY, final int datasetIndex) {
 
-    if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
+    final InfoWindow window = view.createInfoWindow(html,
+        chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
+        chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
 
+    if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
       public void run(PortableTimer timer) {
-        view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
-            domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
-            rangeY, datasetIndex) + 5);
+        window.open();
       }
     })) {
 
     } else {
-      view.openInfoWindow(html, chart.domainToWindowX(DefaultXYPlot.this,
-          domainX, datasetIndex), chart.rangeToWindowY(DefaultXYPlot.this,
-          rangeY, datasetIndex) + 5);
+      window.open();
     }
+    return window;
   }
 
   public void pageLeft(double pageSize) {
@@ -827,7 +831,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       double rangeY = windowYtoRange(y, i);
       NearestPoint nearest = this.nearestSingleton;
       findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
-      
+
       if (nearest.dist < minNearestDist) {
         nearestPt = nearest.pointIndex;
         nearestSer = i;
@@ -838,11 +842,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
       setFocusAndNotifyView(nearestSer, nearestPt);
-    }
-    else {
+    } else {
       setFocusAndNotifyView(null);
     }
-    
+
     redraw();
     return somePointHasFocus;
   }
@@ -864,14 +867,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public boolean setHover(int x, int y) {
-    
+
     // At the end of this method, this flag should be true iff *any* of the
     // datasets are sufficiently close to 1 or more of the dataset curves to
     // be considered "clickable".
     // closenessThreshold is the cutoff for "sufficiently close".
     boolean isCloseToCurve = false;
     final int closenessThreshold = MAX_FOCUS_DIST;
-    
+
     // True iff one or more hoverPoints have changed since the last call to this method
     boolean isDirty = false;
 
@@ -882,24 +885,24 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       findNearestPt(dataX, dataY, i, DistanceFormula.X_ONLY, nearestHoverPt);
 
       int nearestPointIdx = (nearestHoverPt.dist < MAX_HOVER_DIST)
-                          ? nearestHoverPt.pointIndex
-                          : NO_SELECTION;
-      
+          ? nearestHoverPt.pointIndex : NO_SELECTION;
+
       if (nearestPointIdx != hoverPoints[i]) {
         isDirty = true;
       }
-      
-      hoverPoints[i] = pointExists(nearestPointIdx) ? nearestPointIdx : NO_SELECTION;
-      
+
+      hoverPoints[i] = pointExists(nearestPointIdx) ? nearestPointIdx
+          : NO_SELECTION;
+
       if (nearestHoverPt.dist <= closenessThreshold) {
         isCloseToCurve = true;
       }
     }
-    
+
     if (isDirty) {
       redraw();
     }
-    
+
     return isCloseToCurve;
   }
 
@@ -942,8 +945,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);
-      overviewLayer.clearRect(0, 0, overviewLayer.getWidth(),
-          overviewLayer.getHeight());
+      overviewLayer
+          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
 
       overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
           overviewLayer.getHeight());
@@ -966,14 +969,16 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
             verticalAxisLayer.getHeight());
 
-        Bounds leftPanelBounds = new Bounds(0, 0,
-            rangePanelLeft.getWidth(), rangePanelLeft.getHeight());
-        rangePanelLeft.drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
-        
+        Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
+            rangePanelLeft.getHeight());
+        rangePanelLeft
+            .drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
+
         if (rangePanelRight.getAxisCount() > 0) {
-          Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width, 0,
-              rangePanelRight.getWidth(), rangePanelRight.getHeight());
-          rangePanelRight.drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
+          Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width,
+              0, rangePanelRight.getWidth(), rangePanelRight.getHeight());
+          rangePanelRight
+              .drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
         }
         drewVertical = true;
         verticalAxisLayer.restore();
@@ -981,8 +986,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         domainLayer.save();
-        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0,
-            plotBounds.width, domainBounds.height);
+        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+            domainBounds.height);
         domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
 
         domainLayer.restore();
@@ -1046,10 +1051,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       RangeAxis ra = (RangeAxis) axisMap.get(ds.getAxisId());
       if (ra == null) {
         AxisPanel currRangePanel = ((rangeAxisCount++) % 2 == 0)
-                                 ? rangePanelLeft
-                                 : rangePanelRight;
-        ra = new RangeAxis(chart, ds.getRangeLabel(), ds.getAxisId(), 
-              i, ds.getRangeBottom(), ds.getRangeTop(), currRangePanel);
+            ? rangePanelLeft : rangePanelRight;
+        ra = new RangeAxis(chart, ds.getRangeLabel(), ds.getAxisId(), i,
+            ds.getRangeBottom(), ds.getRangeTop(), currRangePanel);
         axisMap.put(ra.getAxisId(), ra);
         currRangePanel.add(ra);
       } else {
@@ -1063,9 +1067,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private void drawHighlight(Layer layer) {
     if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainOrigin && endHighlight < domainOrigin)
-        || (beginHighlight > domainOrigin + currentDomain && endHighlight > domainOrigin
-            + currentDomain)) {
+        || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
+        beginHighlight > domainOrigin + currentDomain
+            && endHighlight > domainOrigin + currentDomain)) {
       if (highlightDrawn) {
         layer.clear();
         highlightDrawn = false;
@@ -1119,9 +1123,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private void computePlotBounds() {
     if (initialBounds != null) {
       plotBounds = new Bounds(initialBounds);
-    }
-    else {
-      plotBounds = new Bounds(0, 0, this.view.getViewWidth(), this.view.getViewHeight());
+    } else {
+      plotBounds = new Bounds(0, 0, this.view.getViewWidth(),
+          this.view.getViewHeight());
     }
 
     // TODO: this padding is a workaround. Apparently, the height computed
@@ -1130,14 +1134,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     // tick.
     // Without this hardcoded padding, the highest range value within the
     // plot are encroaches on the southern-most dataset legend row.
-    final double topPanelPad = 23;    
-    
+    final double topPanelPad = 23;
+
     // TODO: only in snapshot
     if (interactive) {
       plotBounds.x = rangePanelLeft.getWidth();
       plotBounds.width -= plotBounds.x;
       plotBounds.y += topPanel.getHeight() + topPanelPad;
-      
+
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         final double topHeight = topPanel.getHeight();
         double topBottomHeight = domainPanel.getHeight() + topHeight;
@@ -1184,7 +1188,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
-      if (MathUtil.isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+      if (MathUtil
+          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
         if (o instanceof Marker) {
           Marker m = (Marker) o;
           m.setLabel("" + label);
@@ -1228,9 +1233,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     // difference between the minimum and maximum dataset date values
     // then ensure that the destinationDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
-    return fence ? Math.max(Math.min(destinationDomain, getDomainMax()
-        - getDomainMin()), getDomainAxis().getMinimumTickSize())
-        : destinationDomain;
+    return fence ? Math.max(
+        Math.min(destinationDomain, getDomainMax() - getDomainMin()),
+        getDomainAxis().getMinimumTickSize()) : destinationDomain;
   }
 
   private double fenceDomainOrigin(boolean fence, double destinationOrigin,
@@ -1275,56 +1280,58 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   /**
    * Finds the data point on a given dataset whose location is closest to the
-   * specified (dataX, dataY) location.  This method modifies the fields in
-   * the input argument <tt>np</tt>.
-   * 
-   * @param dataX - the domain value in data space
-   * @param dataY - the range value in data space
+   * specified (dataX, dataY) location.  This method modifies the fields in the
+   * input argument <tt>np</tt>.
+   *
+   * @param dataX        - the domain value in data space
+   * @param dataY        - the range value in data space
    * @param datasetIndex - the 0-based index of a dataset
-   * @param df - determines which distance formula to use when determining
-   *     the "closeness" of 2 points.
-   * @param np - result object that represents the point nearest to (dataX, dataY).
-   *   
+   * @param df           - determines which distance formula to use when
+   *                     determining the "closeness" of 2 points.
+   * @param np           - result object that represents the point nearest to
+   *                     (dataX, dataY).
    */
-  private void findNearestPt(double dataX, double dataY, int datasetIndex, 
+  private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
-    
+
     XYDataset ds = datasets[datasetIndex];
     int currMipLevel = currentMiplevels[datasetIndex];
-    
+
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(ds, dataX, currMipLevel);
 
     double sx = domainToScreenX(dataX, datasetIndex);
     double sy = rangeToScreenY(dataY, datasetIndex);
-    double rx = domainToScreenX(ds.getX(closestPtToRight, currMipLevel), datasetIndex);
-    double ry = rangeToScreenY(ds.getY(closestPtToRight, currMipLevel), datasetIndex);
-    
+    double rx = domainToScreenX(ds.getX(closestPtToRight, currMipLevel),
+        datasetIndex);
+    double ry = rangeToScreenY(ds.getY(closestPtToRight, currMipLevel),
+        datasetIndex);
+
     int nearestHoverPt;
     if (closestPtToRight == 0) {
       nearestHoverPt = closestPtToRight;
       np.dist = df.dist(sx, sy, rx, ry);
-    }
-    else {
+    } else {
       int closestPtToLeft = closestPtToRight - 1;
-      double lx = domainToScreenX(ds.getX(closestPtToLeft, currMipLevel), datasetIndex);
-      double ly = rangeToScreenY(ds.getY(closestPtToLeft, currMipLevel), datasetIndex);
+      double lx = domainToScreenX(ds.getX(closestPtToLeft, currMipLevel),
+          datasetIndex);
+      double ly = rangeToScreenY(ds.getY(closestPtToLeft, currMipLevel),
+          datasetIndex);
       double lDist = df.dist(sx, sy, lx, ly);
       double rDist = df.dist(sx, sy, rx, ry);
-      
+
       if (lDist <= rDist) {
         nearestHoverPt = closestPtToLeft;
         np.dist = lDist;
-      }
-      else {
+      } else {
         nearestHoverPt = closestPtToRight;
         np.dist = rDist;
       }
     }
-    
+
     np.pointIndex = nearestHoverPt;
   }
-  
+
   private void initDatasetLevels() {
     currentMiplevels = new int[datasets.length];
     for (int i = 0; i < currentMiplevels.length; i++) {
@@ -1354,14 +1361,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       backingCanvas.disposeLayer(plotLayer);
     }
     plotLayer = backingCanvas.createLayer("plotLayer" + plotNumber, plotBounds);
-    
+
     if (interactive) {
       if (overviewEnabled) {
         if (overviewLayer != null) {
           backingCanvas.disposeLayer(overviewLayer);
         }
-        overviewLayer = backingCanvas.createLayer("overviewLayer" + plotNumber,
-            plotBounds);
+        overviewLayer = backingCanvas
+            .createLayer("overviewLayer" + plotNumber, plotBounds);
         overviewLayer.setVisibility(false);
       }
 
@@ -1372,10 +1379,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       if (verticalAxisLayer != null) {
         backingCanvas.disposeLayer(verticalAxisLayer);
       }
-      Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y, view.getViewWidth(),
-          rangePanelLeft.getHeight());
-      verticalAxisLayer = backingCanvas.createLayer(
-          "verticalAxis" + plotNumber, verticalAxisLayerBounds);
+      Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
+          view.getViewWidth(), rangePanelLeft.getHeight());
+      verticalAxisLayer = backingCanvas
+          .createLayer("verticalAxis" + plotNumber, verticalAxisLayerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
@@ -1386,12 +1393,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       if (domainLayer != null) {
         backingCanvas.disposeLayer(domainLayer);
       }
-      domainLayer = backingCanvas.createLayer("domainAxis" + plotNumber,
-          domainBounds);
+      domainLayer = backingCanvas
+          .createLayer("domainAxis" + plotNumber, domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      
-      highLightLayer = backingCanvas.createLayer("highlight" + plotNumber,
-          plotBounds);
+
+      highLightLayer = backingCanvas
+          .createLayer("highlight" + plotNumber, plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
     }
   }
@@ -1413,13 +1420,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     pushHistory();
 
     XYDataset dataset = datasets[datasetIndex];
-    pointIndex = Util.binarySearch(dataset, dataset.getX(pointIndex,
-        currentMiplevels[datasetIndex]), 0);
-    
-    final int zoomOffset = 10; 
+    pointIndex = Util.binarySearch(dataset,
+        dataset.getX(pointIndex, currentMiplevels[datasetIndex]), 0);
+
+    final int zoomOffset = 10;
     final double newOrigin = dataset.getX(Math.max(0, pointIndex - zoomOffset));
-    final double newdomain = dataset.getX(Math.min(dataset.getNumSamples(),
-        pointIndex + zoomOffset)) - newOrigin;
+    final double newdomain =
+        dataset.getX(Math.min(dataset.getNumSamples(), pointIndex + zoomOffset))
+            - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
@@ -1454,19 +1462,19 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   /**
-   * Shifts the focus point <tt>n</tt> data points forward or backwards (e.g.
-   * a value of <tt>+1</tt> moves the focus point forward, and a value of
+   * Shifts the focus point <tt>n</tt> data points forward or backwards (e.g. a
+   * value of <tt>+1</tt> moves the focus point forward, and a value of
    * <tt>-1</tt> moves the focus point backwards).
    */
   private void shiftFocus(int n) {
     if (n == 0) {
       return; // shift focus 0 data points left/right -- that was easy.
     }
-    
+
     XYDataset ds;
     int focusDataset, focusPoint;
     int mipLevel;
-    
+
     if (focus == null) {
       // If no data point currently has the focus, then set the focus point to
       // the point on dataset [0] that's closest to the center of the screen.
@@ -1475,28 +1483,27 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       mipLevel = currentMiplevels[focusDataset];
       double domainCenter = getDomainCenter();
       focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
-    } else { 
+    } else {
       // some data point currently has the focus.
       focusDataset = focus.getDatasetIndex();
       focusPoint = focus.getPointIndex();
       mipLevel = currentMiplevels[focusDataset];
       focusPoint += n;
-      
+
       if (focusPoint >= datasets[focusDataset].getNumSamples(mipLevel)) {
         ++focusDataset;
         if (focusDataset >= datasets.length) {
           focusDataset = 0;
         }
         focusPoint = 0;
-      }
-      else if (focusPoint < 0) {
+      } else if (focusPoint < 0) {
         --focusDataset;
         if (focusDataset < 0) {
           focusDataset = datasets.length - 1;
         }
         focusPoint = datasets[focusDataset].getNumSamples(mipLevel) - 1;
       }
-      
+
       ds = datasets[focusDataset];
     }
 
@@ -1510,11 +1517,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private double windowYtoUser(int y) {
     return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
   }
-  
+
   private void resetHoverPoints() {
     Arrays.fill(this.hoverPoints, NO_SELECTION);
   }
-  
+
   private static boolean pointExists(int pointIndex) {
     return pointIndex > NO_SELECTION;
   }
@@ -1523,8 +1530,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    * Represents the point nearest to some specified data point.
    */
   private static final class NearestPoint {
+
     public int pointIndex;
+
     public double dist;
+
     public String toString() {
       return "pointIndex=" + pointIndex + ";dist=" + dist;
     }
