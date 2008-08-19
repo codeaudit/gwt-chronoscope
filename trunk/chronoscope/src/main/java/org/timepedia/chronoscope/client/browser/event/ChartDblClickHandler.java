@@ -18,7 +18,6 @@ public class ChartDblClickHandler
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
 
-    chartInfo.maybeDrag = false;
     chart.setAnimating(false);
 
     boolean handled = false;

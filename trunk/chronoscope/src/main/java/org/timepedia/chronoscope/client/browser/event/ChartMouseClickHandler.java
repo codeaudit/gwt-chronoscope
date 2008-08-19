@@ -18,7 +18,6 @@ public class ChartMouseClickHandler extends AbstractEventHandler<ClickHandler>
   public void onClick(ClickEvent event) {
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
-    chartInfo.maybeDrag = false;
     chart.setAnimating(false);
 
     int x = getLocalX(event);
