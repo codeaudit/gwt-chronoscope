@@ -207,7 +207,7 @@ public abstract class View implements Exportable {
    * Popup a window containing the given HTML at the coordinates specified
    * (relative to plot insets)
    */
-  public abstract InfoWindow openInfoWindow(String html, double x, double y);
+  public abstract InfoWindow createInfoWindow(String html, double x, double y);
 
   /**
    * Hack, to add IEEERemainer function for GWT until fixed in JRE emul

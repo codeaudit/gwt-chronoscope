@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.overlays;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -157,10 +158,12 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     return false;
   }
 
-  public void openInfoWindow(String html) {
-    plot.getChart().getView().openInfoWindow(html,
+  public InfoWindow openInfoWindow(String html) {
+    InfoWindow infoWindow = plot.getChart().getView().createInfoWindow(html,
         plot.getDomainOrigin() + plot.getCurrentDomain() / 2,
         (rangeHigh + rangeLow) / 2);
+    infoWindow.open();
+    return infoWindow;
   }
 
   public void removeOverlayClickListener(OverlayClickListener ocl) {

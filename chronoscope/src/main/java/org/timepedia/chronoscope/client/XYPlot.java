@@ -335,7 +335,7 @@ public interface XYPlot extends Exportable {
    * @param datasetIndex the dataset these values come from (used to decide Axis
    *          used)
    */
-  void openInfoWindow(String html, double domainX, double rangeY,
+  InfoWindow openInfoWindow(String html, double domainX, double rangeY,
       int datasetIndex);
 
   /**

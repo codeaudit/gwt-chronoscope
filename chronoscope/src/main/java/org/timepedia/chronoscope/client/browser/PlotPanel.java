@@ -279,4 +279,16 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     Window.addWindowResizeListener(this);
     disableContextMenu(getElement());
   }
+
+  ViewReadyCallback getReadyListener() {
+    return readyListener;
+  }
+
+  public int getChartHeight() {
+    return chartHeight;
+  }
+
+  public int getChartWidth() {
+    return chartWidth;
+  }
 }
