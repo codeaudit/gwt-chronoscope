@@ -7,6 +7,7 @@
   <inherits name='com.google.gwt.libideas.StyleInjector'/>
   <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
   <inherits name="org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPI"/>
+  <inherits name="org.timepedia.chronoscope.gviz.gadget.GadgetSupport"/>
   
   <entry-point class="org.timepedia.chronoscope.gviz.gadget.client.GVizChronoscopeGadget" />
   <!--<set-property name="selectorCapability" value="js"/>-->
