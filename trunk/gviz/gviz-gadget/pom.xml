@@ -30,6 +30,13 @@
       <version>0.86-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.timepedia.chronoscope</groupId>
+      <artifactId>gadget-support</artifactId>
+      <version>0.86-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
     
   </dependencies>
   <build>
@@ -53,7 +60,6 @@
       <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-        <!--<version>1.5.3-SNAPSHOT</version>-->
         <configuration>
           <gwtVersion>${gwtversion}</gwtVersion>
           <logLevel>${gwt.loglevel}</logLevel>
@@ -81,12 +87,10 @@
             <id>compilegwt</id>
             <goals>
               <goal>compile</goal>
-<!--              <goal>mergewebxml</goal> -->
             </goals>
           </execution>
         </executions>
       </plugin>
-
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
