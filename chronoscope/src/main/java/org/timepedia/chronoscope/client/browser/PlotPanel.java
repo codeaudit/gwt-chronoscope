@@ -9,15 +9,13 @@ import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.ViewContainer;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.ViewContainer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.Exportable;
 
 /**
  * ChartPanel is a GWT Widget that intercepts events and translates them to the
@@ -39,7 +37,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     WindowResizeListener, SafariKeyboardConstants {
 
   private ChartEventHandler chartEventHandler;
-  
+
   private GssContext gssContext;
 
   private View view;
@@ -59,6 +57,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   private boolean viewReady;
 
   private ViewContainer viewContainer;
+
   /**
    * Instantiates a chart widget using the given DOM element as a container
    */
@@ -95,8 +94,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    */
   public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
-    this(container, new DefaultXYPlot(new Chart(), datasets, true),
-        chartWidth, chartHeight, readyListener);
+    this(container, new DefaultXYPlot(new Chart(), datasets, true), chartWidth,
+        chartHeight, readyListener);
   }
 
   /**
@@ -134,9 +133,20 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     DOM.eventPreventDefault(evt);
   }
 
-  
   public Chart getChart() {
     return chart;
+  }
+
+  public int getChartHeight() {
+    return chartHeight;
+  }
+
+  public int getChartWidth() {
+    return chartWidth;
+  }
+
+  public View getView() {
+    return view;
   }
 
   /**
@@ -147,24 +157,23 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     if (!isAttached() || !viewReady) {
       return;
     }
-    
+
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click).  Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = 
-      (Event.KEYEVENTS & evt.getTypeInt()) == 0;
+    boolean screenCoordinatesRelevant = (Event.KEYEVENTS & evt.getTypeInt())
+        == 0;
 
     int x, y;
     if (screenCoordinatesRelevant) {
       x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
       int absTop = DOM.getAbsoluteTop(getElement());
       y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
-    }
-    else {
+    } else {
       x = -1;
       y = -1;
     }
-    
+
     if (!chartEventHandler.handleChartEvent(evt, chart, x, y)) {
       super.onBrowserEvent(evt);
     } else {
@@ -231,13 +240,17 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     DOM.setElementAttribute(cssgss, "class", "chrono");
     appendBody(cssgss);
     super.onAttach();
-   
+
     ((BrowserGssContext) gssContext).initialize(cssgss);
 
     ((DOMView) view)
         .initialize(getElement(), chartWidth, chartHeight, true, gssContext,
             this);
     view.onAttach();
+  }
+
+  ViewReadyCallback getReadyListener() {
+    return readyListener;
   }
 
   private native void appendBody(Element cssgss) /*-{
@@ -278,17 +291,5 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
     Window.addWindowResizeListener(this);
     disableContextMenu(getElement());
-  }
-
-  ViewReadyCallback getReadyListener() {
-    return readyListener;
-  }
-
-  public int getChartHeight() {
-    return chartHeight;
-  }
-
-  public int getChartWidth() {
-    return chartWidth;
   }
 }

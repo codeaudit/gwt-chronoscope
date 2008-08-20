@@ -500,9 +500,6 @@ public class Chronoscope implements Exportable, HistoryListener {
     }
     ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
-    if(Document.get().getBody().isOrHasChild(elem)) {
-      cp.attach();
-    }
     return cp;
   }
 
