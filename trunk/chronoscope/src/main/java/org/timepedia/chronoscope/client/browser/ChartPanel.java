@@ -59,6 +59,7 @@ public class ChartPanel extends Composite implements Exportable {
 
   protected PlotPanel createPlotPanel(Element elem, XYDataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
+    if(elem == null) elem=DOM.createDiv();
     return new PlotPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
   }
