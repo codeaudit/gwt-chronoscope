@@ -23,9 +23,10 @@ public final class ChartMouseMoveHandler
     int y = getLocalY(event);
     
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
+    //if (uiAction.isSelecting()) {
     if (uiAction.isSelecting(plot)) {
       chart.setAnimating(true);
-      chart.setHighlight(uiAction.getStartX(), x);
+      plot.setHighlight(uiAction.getStartX(), x);
     } else if (uiAction.isDragging(plot)) {
       boolean dragThresholdReached = Math.abs(uiAction.getStartX() - x) > 10;
       if (dragThresholdReached) {
