@@ -231,14 +231,6 @@ public class Chart implements Exportable {
   }
 
   /**
-   * Sets the currently highlighted region based on starting and ending X screen
-   * coordinates
-   */
-  public void setHighlight(int screenX, int endScreenX) {
-    plot.setHighlight(screenX, endScreenX);
-  }
-
-  /**
    * Attempt to set the datapoint at the screen space coordinates given to a
    * hover state.
    */

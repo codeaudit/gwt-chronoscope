@@ -45,7 +45,7 @@ public class CompoundUIAction {
    * component.
    */
   public boolean isDragging(Object component) {
-    return component == this.source;
+    return component == this.source && !isSelectAction;
   }
 
   /**
@@ -61,7 +61,7 @@ public class CompoundUIAction {
    * specified component.
    */
   public boolean isSelecting(Object component) {
-    return isDragging(component) && isSelectAction;
+    return component == this.source && isSelectAction;
   }
 
   /**
