@@ -10,6 +10,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.TimeUnit;
 
 import java.util.Date;
 
@@ -26,7 +27,6 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     private final HoursTickLabelFormatter subFormatter;
 
     public DaysTickLabelFormatter(TickLabelFormatter superFormatter) {
-
       super("XX XXX");
       this.superFormatter = superFormatter;
       this.subFormatter = new HoursTickLabelFormatter(this);
@@ -44,7 +44,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return MONTH;
+      return TimeUnit.MONTH.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -65,12 +65,12 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      return origin + 31 / numTicks * tickNum * DAY;
+      return origin + 31 / numTicks * tickNum * TimeUnit.DAY.ms();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, DAY, MONTH);
+      return MathUtil.isBounded(dsize, TimeUnit.DAY.ms(), TimeUnit.MONTH.ms());
     }
 
     public int quantizeTicks(double ticks) {
@@ -124,7 +124,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return DAY;
+      return TimeUnit.DAY.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -145,12 +145,12 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      return origin + 24 / numTicks * tickNum * HOUR;
+      return origin + 24 / numTicks * tickNum * TimeUnit.HOUR.ms();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, HOUR, DAY);
+      return MathUtil.isBounded(dsize, TimeUnit.HOUR.ms(), TimeUnit.DAY.ms());
     }
 
     public int quantizeTicks(double ticks) {
@@ -206,7 +206,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return HOUR;
+      return TimeUnit.HOUR.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -227,12 +227,12 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      return origin + 60 / numTicks * tickNum * MINUTE;
+      return origin + 60 / numTicks * tickNum * TimeUnit.MIN.ms();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, MINUTE, HOUR);
+      return MathUtil.isBounded(dsize, TimeUnit.MIN.ms(), TimeUnit.HOUR.ms());
     }
 
     public int quantizeTicks(double ticks) {
@@ -301,7 +301,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return YEAR;
+      return TimeUnit.YEAR.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -329,7 +329,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dSize = domainEnd - domainStart;
-      return dSize >= MONTH && dSize < YEAR;
+      return dSize >= TimeUnit.MONTH.ms() && dSize < TimeUnit.YEAR.ms();
     }
 
     public int quantizeTicks(double ticks) {
@@ -377,7 +377,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return YEAR;
+      return TimeUnit.YEAR.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -414,7 +414,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
-      return (domainEnd - domainStart) >= YEAR;
+      return (domainEnd - domainStart) >= TimeUnit.YEAR.ms();
     }
 
     public int quantizeTicks(double ticks) {
@@ -454,7 +454,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return MINUTE;
+      return TimeUnit.MIN.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -475,12 +475,12 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      return origin + 60 / numTicks * tickNum * SECOND;
+      return origin + 60 / numTicks * tickNum * TimeUnit.SEC.ms();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, SECOND, MINUTE);
+      return MathUtil.isBounded(dsize, TimeUnit.SEC.ms(), TimeUnit.MIN.ms());
     }
 
     public int quantizeTicks(double ticks) {
@@ -530,7 +530,6 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     private final TickLabelFormatter superFormatter;
 
     public TenthsTickLabelFormatter(TickLabelFormatter superFormatter) {
-
       super("XX:XX:XX");
       this.superFormatter = superFormatter;
     }
@@ -549,7 +548,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double getInterval() {
-      return SECOND;
+      return TimeUnit.SEC.ms();
     }
 
     public int getMaxTicks(double start, double end) {
@@ -575,7 +574,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public boolean inInterval(double domainStart, double domainEnd) {
       double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, 100, SECOND);
+      return MathUtil.isBounded(dsize, 100, TimeUnit.SEC.ms());
     }
 
     public int quantizeTicks(double ticks) {
@@ -600,22 +599,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
   }
 
-  public static final double SECOND = 1000;
-
-  public static final double MINUTE = SECOND * 60;
-
-  public static final double HOUR = MINUTE * 60;
-
-  public static final double DAY = HOUR * 24;
-
-  public static final double MONTH = DAY * 31;
-
-  public static final double YEAR = DAY * 365.25;
-
   private static final String[] monthLabels = {"Jan", "Feb", "Mar", "Apr",
       "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-  private static int[] evenDivisors = {1, 2, 3, 4, 4, 6, 6, 6, 6, 6, 6, 12};
 
   private static final TickLabelFormatter rootFormatter
       = new RootTickLabelFormatter();

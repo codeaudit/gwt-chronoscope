@@ -181,8 +181,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     zooms.add(new ZoomInterval("1m", TimeUnit.MONTH.ms()));
     zooms.add(new ZoomInterval("3m", TimeUnit.MONTH.ms() * 3));
     zooms.add(new ZoomInterval("6m", TimeUnit.MONTH.ms() * 6));
-    zooms.add(new ZoomInterval("1y", TimeUnit.YR.ms()));
-    zooms.add(new ZoomInterval("5y", TimeUnit.YR.ms() * 5));
+    zooms.add(new ZoomInterval("1y", TimeUnit.YEAR.ms()));
+    zooms.add(new ZoomInterval("5y", TimeUnit.YEAR.ms() * 5));
     zooms.add(new ZoomInterval("10y", TimeUnit.DECADE.ms()));
     zooms.add(new ZoomInterval("100y", TimeUnit.CENTURY.ms()));
     zooms.add(new ZoomInterval("1000y", TimeUnit.MILLENIUM.ms()));

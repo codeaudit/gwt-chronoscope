@@ -49,6 +49,8 @@
 
 package org.timepedia.chronoscope.client.axis;
 
+import org.timepedia.chronoscope.client.util.TimeUnit;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -168,16 +170,10 @@ public class SegmentedTimeline implements Timeline, Cloneable, Serializable {
     ////////////////////////////////////////////////////////////////////////////
 
     /** Defines a day segment size in ms. */
-    public static final double DAY_SEGMENT_SIZE = 24 * 60 * 60 * 1000;
-
-    /** Defines a one hour segment size in ms. */
-    public static final double HOUR_SEGMENT_SIZE = 60 * 60 * 1000;
+    private static final double DAY_SEGMENT_SIZE = TimeUnit.DAY.ms();
 
     /** Defines a 15-minute segment size in ms. */
-    public static final double FIFTEEN_MINUTE_SEGMENT_SIZE = 15 * 60 * 1000;
-
-    /** Defines a one-minute segment size in ms. */
-    public static final double MINUTE_SEGMENT_SIZE = 60 * 1000;
+    private static final double FIFTEEN_MINUTE_SEGMENT_SIZE = TimeUnit.MIN.ms() * 15.0;
 
     ////////////////////////////////////////////////////////////////////////////
     // other constants
