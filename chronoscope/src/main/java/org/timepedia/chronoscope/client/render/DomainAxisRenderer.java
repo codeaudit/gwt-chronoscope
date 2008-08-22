@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -10,14 +10,25 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.SimpleDate;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
-import java.util.Date;
-
 /**
- * Renders zoomable dates on x-axis
+ * Renders zoomable dates on x-axis.
  */
 public class DomainAxisRenderer implements AxisRenderer, GssElement {
+  
+  // Used by pad(int) to efficiently convert ints in the range [0..59] to a 
+  // zero-padded 2-digit string.
+  private static final String[] twoDigitNums = new String[] {
+    "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+    "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+    "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+    "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+    "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+    };
+
 
   private static class DaysTickLabelFormatter extends AbstractTickLabelFormatter
       implements TickLabelFormatter {
@@ -33,14 +44,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()] + "'" + (
-          d.getYear() + 1900);
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'" + (
+          d.getYear());
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()];
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()];
     }
 
     public double getInterval() {
@@ -93,9 +104,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), d.getDate(), 0, 0, 0)
-          .getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YMD).getTime();
     }
   }
 
@@ -113,14 +122,13 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()] + "'"
-          + (d.getYear() + 1900) + " " + pad(d.getHours()) + ":00";
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
+          + d.getYear() + " " + pad(d.getHours()) + ":00";
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getHours()) + ":00";
+      return pad(SimpleDate.get(domainPoint).getHours()) + ":00";
     }
 
     public double getInterval() {
@@ -173,9 +181,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), d.getDate(), 0, 0, 0)
-          .getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YMD).getTime();
     }
   }
 
@@ -194,14 +200,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()] + "'"
-          + (d.getYear() + 1900) + " " + pad(d.getHours()) + ":" + pad(
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
+          + d.getYear() + " " + pad(d.getHours()) + ":" + pad(
           d.getMinutes());
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
+      SimpleDate d = SimpleDate.get(domainPoint);
       return pad(d.getHours()) + ":" + pad(d.getMinutes());
     }
 
@@ -270,9 +276,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(), 0,
-          0).getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YMDH).getTime();
     }
   }
 
@@ -290,13 +294,13 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return monthLabels[d.getMonth()] + "'" + (d.getYear() + 1900);
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return monthLabels[d.getMonth()] + "'" + d.getYear();
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      String yr = String.valueOf(d.getYear() + 1900);
+      SimpleDate d = SimpleDate.get(domainPoint);
+      String yr = String.valueOf(d.getYear());
       return monthLabels[d.getMonth()] + "'" + yr.substring(yr.length() - 2);
     }
 
@@ -322,9 +326,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      Date d = new Date((long) origin);
-      Date d2 = new Date(d.getYear(), 12 / numTicks * tickNum, 1);
-      return d2.getTime();
+      int originYear = SimpleDate.get(origin).getYear();
+      return SimpleDate.get(originYear, (12 / numTicks * tickNum), 1).getTime();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
@@ -352,8 +355,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), 1).getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YM).getTime();
     }
   }
 
@@ -372,8 +374,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return String.valueOf(d.getYear() + 1900);
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return String.valueOf(d.getYear());
     }
 
     public double getInterval() {
@@ -381,8 +383,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public int getMaxTicks(double start, double end) {
-      Date d1 = new Date((long) start);
-      Date d2 = new Date((long) end);
+      SimpleDate d1 = SimpleDate.get(start);
+      SimpleDate d2 = SimpleDate.get(end);
       return Math.min(20, d2.getYear() - d1.getYear());
     }
 
@@ -400,17 +402,16 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
     public double getTick(double origin, double intervalEnd, int tickNum,
         int numTicks, int maxTicks) {
-      Date d = new Date((long) origin);
-      Date d2 = new Date((long) intervalEnd);
-      int year = d2.getYear() - d.getYear();
-      int left = year % numTicks;
-      int interval = year / numTicks;
+      SimpleDate d1 = SimpleDate.get(origin);
+      SimpleDate d2 = SimpleDate.get(intervalEnd);
+      int yearDiff = d2.getYear() - d1.getYear();
+      int left = yearDiff % numTicks;
+      int interval = yearDiff / numTicks;
       if (left >= interval) {
         interval++;
       }
 
-      Date d3 = new Date(d.getYear() + interval * tickNum, 0, 1);
-      return d3.getTime();
+      return SimpleDate.get((d1.getYear() + (interval * tickNum)), 0, 1).getTime();
     }
 
     public boolean inInterval(double domainStart, double domainEnd) {
@@ -422,7 +423,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      return new Date(new Date((long) dO).getYear(), 0, 1).getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.Y).getTime();
     }
   }
 
@@ -441,14 +442,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()] + "'"
-          + (d.getYear() + 1900) + " " + pad(d.getHours()) + ":"
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
+          + d.getYear() + " " + pad(d.getHours()) + ":"
           + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
+      SimpleDate d = SimpleDate.get(domainPoint);
       return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(
           d.getSeconds());
     }
@@ -518,9 +519,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(),
-          d.getMinutes(), 0).getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YMDHM).getTime();
     }
   }
 
@@ -535,14 +534,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public String formatFullTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
-      return pad(d.getDate()) + " " + monthLabels[d.getMonth()] + "'"
-          + (d.getYear() + 1900) + " " + pad(d.getHours()) + ":"
+      SimpleDate d = SimpleDate.get(domainPoint);
+      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
+          + d.getYear() + " " + pad(d.getHours()) + ":"
           + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
     }
 
     public String formatRelativeTick(double domainPoint) {
-      Date d = new Date((long) domainPoint);
+      SimpleDate d = SimpleDate.get(domainPoint);
       return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":"
           + pad(d.getSeconds()) + "." + pad((int) (d.getTime() / 100 % 10));
     }
@@ -592,10 +591,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
 
     public double quantizeToNearest(double dO) {
-      Date d = new Date((long) dO);
-      return new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(),
-          d.getMinutes(), d.getSeconds())
-          .getTime();
+      return SimpleDate.get(dO, SimpleDate.Mask.YMDHMS).getTime();
     }
   }
 
@@ -616,7 +612,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
   private static final String TIME_LABEL = ""; // (Time)
 
   private static String pad(int num) {
-    return num < 10 ? "0" + num : "" + num;
+    return twoDigitNums[num];
+    //return num < 10 ? "0" + num : "" + num;
   }
 
   private double minTickSize = -1;
