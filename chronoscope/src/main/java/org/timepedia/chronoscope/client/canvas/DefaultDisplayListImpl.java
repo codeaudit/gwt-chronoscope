@@ -122,6 +122,16 @@ public class DefaultDisplayListImpl implements DisplayList {
     });
   }
 
+  public void drawImage(final CanvasImage image, final double dx, final double dy, final double dwidth,
+      final double dheight) {
+    cmdBuffer.add(new Cmd() {
+
+      public void exec() {
+        layer.drawImage(image, dx, dy, dwidth, dheight);
+      }
+    });
+  }
+
   public void drawImage(final Layer layer2, final double x, final double y,
       final double width, final double height) {
     cmdBuffer.add(new Cmd() {
