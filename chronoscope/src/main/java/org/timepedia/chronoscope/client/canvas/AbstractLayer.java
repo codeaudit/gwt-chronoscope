@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
@@ -44,7 +46,9 @@ public abstract class AbstractLayer implements Layer {
   }
 
   public void restore() {
-    saveLevel--;
+    if (!GWT.isScript()) {
+      saveLevel--;
+    }
   }
 
   public int rotatedStringHeight(String str, double rotationAngle,
@@ -65,8 +69,9 @@ public abstract class AbstractLayer implements Layer {
   }
 
   public void save() {
-
-    saveLevel++;
+    if (!GWT.isScript()) {
+      saveLevel++;
+    }
   }
 
   public void setFillColor(PaintStyle p) {

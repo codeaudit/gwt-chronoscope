@@ -4,6 +4,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Image;
 
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -11,6 +12,7 @@ import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 /**
@@ -120,6 +122,14 @@ public class BrowserLayer extends DomTextLayer {
       drawImageSrcDest0(ctx, ((BrowserLayer) layer).getElement(), sx, sy,
           swidth, sheight, dx, dy, dwidth, dheight);
     }
+  }
+
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
+      double dheight) {
+    Image im = ((BrowserCanvasImage)image).getNative();
+    drawImageSrcDest0(ctx, im.getElement(), im.getOriginLeft(),
+        im.getOriginTop(), im.getWidth(), im.getHeight(), dx, dy,
+        dwidth, dheight);
   }
 
   public void fill() {

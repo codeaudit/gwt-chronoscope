@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
+import com.google.gwt.user.client.ui.Image;
+
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.render.LinearGradient;
@@ -85,6 +87,8 @@ public interface Layer {
   void drawImage(Layer layer, double sx, double sy, double swidth,
       double sheight, double dx, double dy, double dwidth, double dheight);
 
+  void drawImage(CanvasImage image, double dx, double dy, double dwidth, 
+      double dheight);
   /**
    * Draws text rotated at an arbitrary angle. May use a server-side fontbook
    * service for better quality
