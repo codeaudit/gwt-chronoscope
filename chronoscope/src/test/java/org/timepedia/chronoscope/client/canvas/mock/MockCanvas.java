@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.canvas.mock;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 
 import java.util.HashMap;
 
@@ -43,5 +44,18 @@ public class MockCanvas extends Canvas {
 
   public Layer getRootLayer() {
     return rootLayer;
+  }
+
+  public CanvasImage createImage(String url) {
+    return new CanvasImage() {
+
+      public double getWidth() {
+        return 10;
+      }
+
+      public double getHeight() {
+        return 10;  
+      }
+    };
   }
 }
