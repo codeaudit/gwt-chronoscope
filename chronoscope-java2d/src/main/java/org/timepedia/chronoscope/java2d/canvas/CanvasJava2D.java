@@ -12,6 +12,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.awt.Image;
@@ -219,6 +220,11 @@ public class CanvasJava2D extends Canvas {
 
   public Layer getRootLayer() {
     return rootLayer;
+  }
+
+  public CanvasImage createImage(String url) {
+    //TODO: implement
+    return null;
   }
 
   public int getScrollLeft() {
