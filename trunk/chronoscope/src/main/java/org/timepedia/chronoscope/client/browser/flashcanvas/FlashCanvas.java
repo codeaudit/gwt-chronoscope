@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Timer;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.browser.BrowserCanvasImage;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
@@ -19,6 +20,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.ArrayList;
@@ -395,6 +397,10 @@ public class FlashCanvas extends Canvas {
 
   public Layer getRootLayer() {
     return rootLayer;
+  }
+
+  public CanvasImage createImage(String url) {
+    return new BrowserCanvasImage(url);
   }
 
   public int getScrollLeft() {
