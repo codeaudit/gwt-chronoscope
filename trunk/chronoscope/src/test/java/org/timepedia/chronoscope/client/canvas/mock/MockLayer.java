@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 /**
@@ -92,6 +93,11 @@ public class MockLayer extends AbstractLayer {
 
   public void drawImage(Layer layer, double sx, double sy, double swidth,
       double sheight, double dx, double dy, double dwidth, double dheight) {
+  }
+
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
+      double dheight) {
+    
   }
 
   public void drawText(double x, double y, String label, String fontFamily,

@@ -163,6 +163,7 @@ public abstract class DomTextLayer extends AbstractLayer {
     }
   }
 
+ 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
     TextLayer layer = getTextLayer(layerName);

@@ -14,6 +14,7 @@ import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.ArrayList;
@@ -154,6 +155,11 @@ public class FlashLayer extends AbstractLayer {
       push(dwidth);
       push(dheight);
     }
+  }
+
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
+      double dheight) {
+    //TODO: not implemented
   }
 
   public void drawRotatedText(double x, double y, double angle, String label,

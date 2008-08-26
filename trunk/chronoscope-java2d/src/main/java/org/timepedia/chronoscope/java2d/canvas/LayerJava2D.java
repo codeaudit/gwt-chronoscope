@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.awt.AlphaComposite;
@@ -187,6 +188,11 @@ public class LayerJava2D extends AbstractLayer {
 //        ctx.drawImage((BufferedImage)((CanvasJava2D)canvas).getImage(),
 //                      new AffineTransformOp(xform, AffineTransformOp.TYPE_BILINEAR),
 //                      dx, dy);
+  }
+
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
+      double dheight) {
+    //TODO: not implemented
   }
 
   public void drawRotatedText(double x, double y, double angle, String label,
