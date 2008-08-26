@@ -88,4 +88,6 @@ public abstract class Canvas {
   public View getView() {
     return view;
   }
+
+  public abstract CanvasImage createImage(String url);
 }
