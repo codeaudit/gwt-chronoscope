@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
@@ -199,13 +200,11 @@ public class BrowserView extends View
    */
 
   public InfoWindow createInfoWindow(String html, double x, double y) {
-    final PopupPanel pp = new PopupPanel(true);
-    pp.setStyleName("chrono-infoWindow");
+    final PopupPanel pp = new DecoratedPopupPanel(true);
     pp.setWidget(new HTML(html));
     pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
         DOM.getAbsoluteTop(getElement()) + (int) y);
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
-    pp.show();
     return new InfoWindow() {
       HandlerManager manager = new HandlerManager(this);
 

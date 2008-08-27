@@ -22,7 +22,6 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.MutableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
-import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -175,20 +174,21 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private View view;
 
   private enum DistanceFormula {
+
     /**
      * The distance from point (x1,x2) to point (y1,y2) on an XY plane.
      */
-    XY { double dist(double x1, double y1, double x2, double y2) {
+    XY {double dist(double x1, double y1, double x2, double y2) {
       return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-      }},
+    }},
     /**
-     * Considers only the distance between x1 and x2, ignoring the y values
-     * of points (x1,y1) and (x2,y2).
-     */  
-    X_ONLY { double dist(double x1, double y1, double x2, double y2) {
+     * Considers only the distance between x1 and x2, ignoring the y values of
+     * points (x1,y1) and (x2,y2).
+     */
+    X_ONLY {double dist(double x1, double y1, double x2, double y2) {
       return Math.abs(x1 - x2);
-      }};
-    
+    }};
+
     /**
      * The distance from points (x1,y1) to (x2,y2).
      */
@@ -480,7 +480,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public Layer getOverviewLayer() {
     return overviewLayer;
   }
-  
+
   public Bounds getBounds() {
     return plotBounds;
   }
@@ -803,7 +803,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void setDataset(int i, XYDataset d) {
     datasets[i] = d;
     if (d instanceof MutableXYDataset) {
-      throw new UnsupportedOperationException("MutableXYDatasets not supported at this time");
+      throw new UnsupportedOperationException(
+          "MutableXYDatasets not supported at this time");
       //UpdateableXYDataset ud = (UpdateableXYDataset) d;
       //ud.addXYDatasetListener(this);
     }
@@ -1079,8 +1080,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     // need plotBounds relative
     double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math.min(0 + getInnerBounds().width, domainToScreenX(
-        endHighlight, 0));
+    double ex = Math
+        .min(0 + getInnerBounds().width, domainToScreenX(endHighlight, 0));
 
     layer.save();
     layer.setFillColor("#14FFFF");
@@ -1184,17 +1185,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     overviewLayer.setTextLayerBounds("overlays", new Bounds(0, 0,
         overviewLayer.getBounds().width, overviewLayer.getBounds().height));
 
-    char label = 'A';
+//    char label = 'A';
 
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
       if (MathUtil
           .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
-        if (o instanceof Marker) {
-          Marker m = (Marker) o;
-          m.setLabel("" + label);
-          label++;
-        }
+//        if (o instanceof Marker) {
+//          Marker m = (Marker) o;
+//          m.setLabel("" + label);
+//          label++;
+//        }
       }
       o.draw(overviewLayer, "overlays");
     }
@@ -1455,7 +1456,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     for (int i = 0; i < datasets.length; i++) {
       XYDataset dataset = datasets[i];
       if (dataset instanceof MutableXYDataset) {
-        throw new UnsupportedOperationException("MutableXYDatasets not supported at this time");
+        throw new UnsupportedOperationException(
+            "MutableXYDatasets not supported at this time");
         //((UpdateableXYDataset) dataset).addXYDatasetListener(this);
       }
     }
