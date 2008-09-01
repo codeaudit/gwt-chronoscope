@@ -9,598 +9,18 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.render.domain.TickFormatter;
+import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.SimpleDate;
-import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  * Renders zoomable dates on x-axis.
  */
 public class DomainAxisRenderer implements AxisRenderer, GssElement {
   
-  // Used by pad(int) to efficiently convert ints in the range [0..59] to a 
-  // zero-padded 2-digit string.
-  private static final String[] twoDigitNums = new String[] {
-    "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-    "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-    "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-    "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-    "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
-    };
-
-
-  private static class DaysTickLabelFormatter extends AbstractTickLabelFormatter
-      implements TickLabelFormatter {
-
-    private final TickLabelFormatter superFormatter;
-
-    private final HoursTickLabelFormatter subFormatter;
-
-    public DaysTickLabelFormatter(TickLabelFormatter superFormatter) {
-      super("XX XXX");
-      this.superFormatter = superFormatter;
-      this.subFormatter = new HoursTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'" + (
-          d.getYear());
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()];
-    }
-
-    public double getInterval() {
-      return TimeUnit.MONTH.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 31;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 4;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return subFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      return origin + 31 / numTicks * tickNum * TimeUnit.DAY.ms();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, TimeUnit.DAY.ms(), TimeUnit.MONTH.ms());
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 28) {
-        return (int) ticks;
-      }
-      if (ticks >= 15) {
-        return 15;
-      }
-      if (ticks >= 7) {
-        return 7;
-      }
-      if (ticks >= 4) {
-        return 4;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YMD).getTime();
-    }
-  }
-
-  private static class HoursTickLabelFormatter
-      extends AbstractTickLabelFormatter implements TickLabelFormatter {
-
-    private final TickLabelFormatter superFormatter;
-
-    private final MinutesTickLabelFormatter subFormatter;
-
-    public HoursTickLabelFormatter(TickLabelFormatter superFormatter) {
-      super("XX:00");
-      this.superFormatter = superFormatter;
-      this.subFormatter = new MinutesTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
-          + d.getYear() + " " + pad(d.getHours()) + ":00";
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      return pad(SimpleDate.get(domainPoint).getHours()) + ":00";
-    }
-
-    public double getInterval() {
-      return TimeUnit.DAY.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 24;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 2;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return subFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      return origin + 24 / numTicks * tickNum * TimeUnit.HOUR.ms();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, TimeUnit.HOUR.ms(), TimeUnit.DAY.ms());
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 24) {
-        return (int) ticks;
-      }
-      if (ticks >= 12) {
-        return 12;
-      }
-      if (ticks >= 6) {
-        return 6;
-      }
-      if (ticks >= 4) {
-        return 4;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YMD).getTime();
-    }
-  }
-
-  private static class MinutesTickLabelFormatter
-      extends AbstractTickLabelFormatter implements TickLabelFormatter {
-
-    private final TickLabelFormatter superFormatter;
-
-    private final SecondsTickLabelFormatter subFormatter;
-
-    public MinutesTickLabelFormatter(TickLabelFormatter superFormatter) {
-
-      super("XX:XX");
-      this.superFormatter = superFormatter;
-      this.subFormatter = new SecondsTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
-          + d.getYear() + " " + pad(d.getHours()) + ":" + pad(
-          d.getMinutes());
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getHours()) + ":" + pad(d.getMinutes());
-    }
-
-    public double getInterval() {
-      return TimeUnit.HOUR.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 60;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 2;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return subFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      return origin + 60 / numTicks * tickNum * TimeUnit.MIN.ms();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, TimeUnit.MIN.ms(), TimeUnit.HOUR.ms());
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 60) {
-        return (int) ticks;
-      }
-      if (ticks >= 30) {
-        return 30;
-      }
-      if (ticks >= 20) {
-        return 20;
-      }
-      if (ticks >= 15) {
-        return 15;
-      }
-      if (ticks >= 12) {
-        return 12;
-      }
-      if (ticks >= 6) {
-        return 6;
-      }
-      if (ticks >= 5) {
-        return 5;
-      }
-      if (ticks >= 4) {
-        return 4;
-      }
-      if (ticks >= 3) {
-        return 3;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YMDH).getTime();
-    }
-  }
-
-  private static class MonthsTickLabelFormatter
-      extends AbstractTickLabelFormatter implements TickLabelFormatter {
-
-    private TickLabelFormatter subFormatter = null;
-
-    private TickLabelFormatter superFormatter = null;
-
-    public MonthsTickLabelFormatter(TickLabelFormatter rootTickLabelFormatter) {
-      super("XXX'XX");
-      superFormatter = rootTickLabelFormatter;
-      subFormatter = new DaysTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return monthLabels[d.getMonth()] + "'" + d.getYear();
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      String yr = String.valueOf(d.getYear());
-      return monthLabels[d.getMonth()] + "'" + yr.substring(yr.length() - 2);
-    }
-
-    public double getInterval() {
-      return TimeUnit.YEAR.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 12;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 3;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return subFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      int originYear = SimpleDate.get(origin).getYear();
-      return SimpleDate.get(originYear, (12 / numTicks * tickNum), 1).getTime();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dSize = domainEnd - domainStart;
-      return dSize >= TimeUnit.MONTH.ms() && dSize < TimeUnit.YEAR.ms();
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 12) {
-        return 12;
-      }
-      if (ticks >= 6) {
-        return 6;
-      }
-      if (ticks >= 4) {
-        return 4;
-      }
-      if (ticks >= 3) {
-        return 3;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YM).getTime();
-    }
-  }
-
-  private static class RootTickLabelFormatter extends AbstractTickLabelFormatter
-      implements TickLabelFormatter {
-
-    private TickLabelFormatter monthsTickLabelFormatter = null;
-
-    private RootTickLabelFormatter() {
-      super("XXXX");
-      this.monthsTickLabelFormatter = new MonthsTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      return formatRelativeTick(domainPoint);
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return String.valueOf(d.getYear());
-    }
-
-    public double getInterval() {
-      return TimeUnit.YEAR.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      SimpleDate d1 = SimpleDate.get(start);
-      SimpleDate d2 = SimpleDate.get(end);
-      return Math.min(20, d2.getYear() - d1.getYear());
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 1;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return monthsTickLabelFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return null;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      SimpleDate d1 = SimpleDate.get(origin);
-      SimpleDate d2 = SimpleDate.get(intervalEnd);
-      int yearDiff = d2.getYear() - d1.getYear();
-      int left = yearDiff % numTicks;
-      int interval = yearDiff / numTicks;
-      if (left >= interval) {
-        interval++;
-      }
-
-      return SimpleDate.get((d1.getYear() + (interval * tickNum)), 0, 1).getTime();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      return (domainEnd - domainStart) >= TimeUnit.YEAR.ms();
-    }
-
-    public int quantizeTicks(double ticks) {
-      return (int) ticks;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.Y).getTime();
-    }
-  }
-
-  private static class SecondsTickLabelFormatter
-      extends AbstractTickLabelFormatter implements TickLabelFormatter {
-
-    private final TickLabelFormatter superFormatter;
-
-    private final TenthsTickLabelFormatter subFormatter;
-
-    public SecondsTickLabelFormatter(TickLabelFormatter superFormatter) {
-
-      super("XX:XX:XX");
-      this.superFormatter = superFormatter;
-      this.subFormatter = new TenthsTickLabelFormatter(this);
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
-          + d.getYear() + " " + pad(d.getHours()) + ":"
-          + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(
-          d.getSeconds());
-    }
-
-    public double getInterval() {
-      return TimeUnit.MIN.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 60;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 2;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return subFormatter;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      return origin + 60 / numTicks * tickNum * TimeUnit.SEC.ms();
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, TimeUnit.SEC.ms(), TimeUnit.MIN.ms());
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 60) {
-        return (int) ticks;
-      }
-      if (ticks >= 30) {
-        return 30;
-      }
-      if (ticks >= 20) {
-        return 20;
-      }
-      if (ticks >= 15) {
-        return 15;
-      }
-      if (ticks >= 12) {
-        return 12;
-      }
-      if (ticks >= 6) {
-        return 6;
-      }
-      if (ticks >= 5) {
-        return 5;
-      }
-      if (ticks >= 4) {
-        return 4;
-      }
-      if (ticks >= 3) {
-        return 3;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YMDHM).getTime();
-    }
-  }
-
-  private static class TenthsTickLabelFormatter
-      extends AbstractTickLabelFormatter implements TickLabelFormatter {
-
-    private final TickLabelFormatter superFormatter;
-
-    public TenthsTickLabelFormatter(TickLabelFormatter superFormatter) {
-      super("XX:XX:XX");
-      this.superFormatter = superFormatter;
-    }
-
-    public String formatFullTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getDayOfMonth()) + " " + monthLabels[d.getMonth()] + "'"
-          + d.getYear() + " " + pad(d.getHours()) + ":"
-          + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
-    }
-
-    public String formatRelativeTick(double domainPoint) {
-      SimpleDate d = SimpleDate.get(domainPoint);
-      return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":"
-          + pad(d.getSeconds()) + "." + pad((int) (d.getTime() / 100 % 10));
-    }
-
-    public double getInterval() {
-      return TimeUnit.SEC.ms();
-    }
-
-    public int getMaxTicks(double start, double end) {
-      return 10;
-    }
-
-    public int getMinTicksBeforeSubInterval() {
-      return 2;
-    }
-
-    public TickLabelFormatter getSubIntervalFormatter() {
-      return null;
-    }
-
-    public TickLabelFormatter getSuperIntervalFormatter() {
-      return superFormatter;
-    }
-
-    public double getTick(double origin, double intervalEnd, int tickNum,
-        int numTicks, int maxTicks) {
-      return origin + 10 / numTicks * tickNum * 100;
-    }
-
-    public boolean inInterval(double domainStart, double domainEnd) {
-      double dsize = domainEnd - domainStart;
-      return MathUtil.isBounded(dsize, 100, TimeUnit.SEC.ms());
-    }
-
-    public int quantizeTicks(double ticks) {
-      if (ticks >= 10) {
-        return (int) ticks;
-      }
-      if (ticks >= 5) {
-        return 5;
-      }
-      if (ticks >= 2) {
-        return 2;
-      }
-
-      return 1;
-    }
-
-    public double quantizeToNearest(double dO) {
-      return SimpleDate.get(dO, SimpleDate.Mask.YMDHMS).getTime();
-    }
-  }
-
-  private static final String[] monthLabels = {"Jan", "Feb", "Mar", "Apr",
-      "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-  private static final TickLabelFormatter rootFormatter
-      = new RootTickLabelFormatter();
-
+  private static TickFormatterFactory tickFormatFactory = TickFormatterFactory.get();
+  
   private static final String CREDITS = "Powered by Timepedia Chronoscope";
 
   private static final String CREDITS_FONT = "Verdana";
@@ -610,11 +30,6 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
   private static final String CREDITS_SIZE = "9pt";
 
   private static final String TIME_LABEL = ""; // (Time)
-
-  private static String pad(int num) {
-    return twoDigitNums[num];
-    //return num < 10 ? "0" + num : "" + num;
-  }
 
   private double minTickSize = -1;
 
@@ -642,30 +57,64 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
   public void drawAxis(XYPlot plot, Layer layer, Bounds bounds,
       boolean gridOnly) {
+    
     View view = plot.getChart().getView();
     init(view);
 
-    double cd = plot.getCurrentDomain();
-    double dO = plot.getDomainOrigin();
-
     if (!gridOnly) {
       clearAxis(layer, bounds);
-      drawHorizontalLine(layer, dO, dO + cd, bounds);
+      drawHorizontalLine(layer, bounds);
     }
 
-    TickLabelFormatter tlf = findInterval(rootFormatter, dO, cd);
-    if (tlf.getSuperIntervalFormatter() == null) {
-      drawInterval(plot, layer, bounds, tlf, dO, dO + cd, true);
-    } else {
-      double int1 = tlf.quantizeToNearest(dO);
-      double int2 = tlf.quantizeToNearest(dO + cd);
-      drawInterval(plot, layer, bounds, tlf, int1, int1 + tlf.getInterval(),
-          true);
-      if ((dO + cd) - int1 > tlf.getInterval()) {
-        drawInterval(plot, layer, bounds, tlf, int2, int2 + tlf.getInterval(),
-            true);
+    // TODO: cache this based on domainWidth(?)  
+    // This stuff shouldn't change in the case where the user is just scrolling 
+    // left/right.
+    final double domainWidth = plot.getCurrentDomain();
+    TickFormatter tlf = tickFormatFactory.findBestFormatter(domainWidth);
+    final double boundsRightX = bounds.rightX();
+    final double labelWidth = tlf.getMaxTickLabelWidth(layer, axisProperties);
+    final double labelWidthDiv2 = labelWidth / 2.0;
+    final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds, domainWidth, tlf);
+    final int idealTickStep = tlf.calcIdealTickStep(domainWidth, maxTicksForScreen);
+    ChronoDate tickDate = tlf.quantizeDate(plot.getDomainOrigin(), idealTickStep);
+
+    boolean stillEnoughSpace = true; // enough space to draw another tick+label?
+    boolean isFirstTick = true;
+    double prevTickScreenPos = 0.0;
+    int actualTickStep = 0;
+    while (stillEnoughSpace) {
+      double tickScreenPos = this.domainToScreenX(tickDate.getTime(), bounds);
+      stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
+      if (stillEnoughSpace) {
+        // Quantized tick date may have gone off the left edge; need to guard
+        // against this case.
+        if (tickScreenPos > bounds.x) {
+          String tickLabel = tlf.formatRelativeTick(tickDate);
+          drawTick(layer, plot, bounds, tickScreenPos, 6);
+          drawLabel(layer, bounds, tickScreenPos, tickLabel, labelWidth);
+        }
       }
+
+      // Draw auxiliary sub-ticks
+      if (!isFirstTick) {
+        int subTickStep = tlf.getSubTickStep(actualTickStep);
+        if (subTickStep > 1) {
+          double auxTickWidth = (tickScreenPos - prevTickScreenPos) / subTickStep;
+          double auxTickPos = prevTickScreenPos + auxTickWidth;
+          for (int i = 0; i < subTickStep - 1; i++) {
+            if (MathUtil.isBounded(auxTickPos, bounds.x, boundsRightX)) {
+              drawTick(layer, plot, bounds, auxTickPos, 3);
+            }
+            auxTickPos += auxTickWidth;
+          }
+        }
+      }
+      
+      actualTickStep = tlf.incrementDate(tickDate, idealTickStep);
+      prevTickScreenPos = tickScreenPos;
+      isFirstTick = false;
     }
+    
     if (labelProperties.visible) {
       drawAxisLabel(layer, bounds);
     }
@@ -685,13 +134,8 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
   public double getMinimumTickSize() {
     if (minTickSize == -1) {
-      TickLabelFormatter formatter = rootFormatter;
-      // walk formatter lis to find the smallest date formatter we support
-      do {
-        formatter = formatter.getSubIntervalFormatter();
-      } while (formatter.getSubIntervalFormatter() != null);
-      minTickSize = formatter.getInterval() / formatter
-          .getMinTicksBeforeSubInterval();
+      TickFormatter leafFormatter = tickFormatFactory.getLeafFormatter();
+      minTickSize = leafFormatter.getTickInterval().ms();
     }
     return minTickSize;
   }
@@ -731,9 +175,7 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
-
     layer.save();
-   
     layer.setFillColor(axisProperties.bgColor);
     layer.fillRect(bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2);
 //    layer.setStrokeColor("rgba(0,0,0,0)");
@@ -757,7 +199,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     layer.restore();
   }
 
-  private double domainToScreenX(XYPlot plot, double dataX, Bounds bounds) {
+  /**
+   * Converts the specified domain width (e.g. '2 years') into a screen pixel width.
+   */
+  private double domainToScreenWidth(double domainWidth, Bounds bounds) {
+    return bounds.width * (axis.dataToUser(domainWidth) - axis.dataToUser(0.0));
+  }
+  
+  private double domainToScreenX(double dataX, Bounds bounds) {
     return bounds.x + axis.dataToUser(dataX) * bounds.width;
   }
 
@@ -782,122 +231,55 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     }
   }
 
-  private void drawHorizontalLine(Layer layer, double origin, double end,
-      Bounds bounds) {
+  private void drawHorizontalLine(Layer layer, Bounds bounds) {
     layer.setStrokeColor(tickProperties.color);
     layer.setLineWidth(tickProperties.lineThickness);
     layer.moveTo(bounds.x, bounds.y);
     layer.lineTo(bounds.x + bounds.width, bounds.y);
     layer.stroke();
   }
-
-  private void drawInterval(XYPlot plot, Layer layer, Bounds bounds,
-      TickLabelFormatter tlf, double intervalStart, double intervalEnd,
-      boolean isRoot) {
-
-    if (tlf == null) {
-      return;
-    }
-
-    double quantizedOrigin = tlf.quantizeToNearest(intervalStart);
-    double startX = domainToScreenX(plot, quantizedOrigin, bounds);
-    int maxTicks = tlf.getMaxTicks(intervalStart, intervalEnd);
-    double nextOrigin = tlf.quantizeToNearest(intervalEnd);
-
-    double endX = domainToScreenX(plot, nextOrigin, bounds);
-    double superLabelWidth = tlf.getSuperIntervalFormatter() == null ? 0
-        : tlf.getSuperIntervalFormatter()
-            .getMaxDimensionDummyTick(layer, axisProperties);
-
-    double labelWidth = tlf.getMaxDimensionDummyTick(layer, axisProperties);
-
-    double emptySpace = endX - startX - superLabelWidth;
-    int numTicks = tlf
-        .quantizeTicks(Math.min(emptySpace / (labelWidth + 20), maxTicks));
-
-    if (numTicks < tlf.getMinTicksBeforeSubInterval()) {
-      return;
-    }
-
-    if (emptySpace / (labelWidth + 20) < 1) {
-      return;
-    }
-
-    int i = isRoot ? 0 : 1;
-    int loop = tlf.getSuperIntervalFormatter() == null ? numTicks + 1
-        : numTicks;
-    for (; i < loop; i++) {
-      double tickPos = tlf
-          .getTick(intervalStart, intervalEnd, i, numTicks, maxTicks);
-      if (!axis.isVisible(tickPos)) {
-        continue;
-      }
-
-      drawTick(plot, layer, tickPos, bounds, tlf);
-      if (i <= numTicks) {
-        drawInterval(plot, layer, bounds, tlf.getSubIntervalFormatter(),
-            tickPos,
-            tlf.getTick(intervalStart, intervalEnd, i + 1, numTicks, maxTicks),
-            false);
-      }
-    }
-  }
-
-  private void drawLabel(XYPlot plot, Layer layer, double tickLoc,
-      Bounds bounds, TickLabelFormatter tlf) {
-
-    double ux = domainToScreenX(plot, tickLoc, bounds);
-    double nextLoc = domainToScreenX(plot, tickLoc + tlf.getInterval(), bounds);
-
-    String label = tlf.formatRelativeTick(tickLoc);
+  
+  private void drawLabel(Layer layer, Bounds bounds, double ux, String tickLabel,  
+      double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
-
-    double labelWidth = tlf.getMaxDimensionDummyTick(layer, axisProperties);
-    double cx = (ux + nextLoc) / 2;
-    if (cx > bounds.x + bounds.width) {
-//            return;
-    }
-    layer.drawText(ux - labelWidth / 2, bounds.y + 5, label,
+    layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
         axisProperties.fontFamily, axisProperties.fontWeight,
         axisProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
-  private void drawTick(XYPlot plot, Layer layer, double tickLocation,
-      Bounds bounds, TickLabelFormatter tlf) {
+  private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux, int tickLength) {
+    layer.save();
+    layer.setFillColor(tickProperties.color);
+    layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
 
-    double ux = domainToScreenX(plot, tickLocation, bounds);
-    if (MathUtil.isBounded(ux, bounds.x, bounds.x + bounds.width)) {
-      layer.save();
-      layer.setFillColor(tickProperties.color);
-
-      layer.fillRect(ux, bounds.y, tickProperties.lineThickness, 5);
-
-      if (gridProperties.visible) {
-        Layer player = plot.getPlotLayer();
-
-        player.save();
-        player.setFillColor(gridProperties.color);
-        player.setTransparency((float) gridProperties.transparency);
-        player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
-            plot.getInnerBounds().height);
-        player.restore();
-      }
-
-      layer.restore();
-      drawLabel(plot, layer, tickLocation, bounds, tlf);
+    if (gridProperties.visible) {
+      Layer player = plot.getPlotLayer();
+      player.save();
+      player.setFillColor(gridProperties.color);
+      player.setTransparency((float) gridProperties.transparency);
+      player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
+          plot.getInnerBounds().height);
+      player.restore();
     }
+    layer.restore();
   }
-
-  private TickLabelFormatter findInterval(TickLabelFormatter tlf, double dO,
-      double cd) {
-    if (tlf == null) {
-      return null;
-    }
-    if (tlf.inInterval(dO, dO + cd)) {
-      return tlf;
-    } else {
-      return findInterval(tlf.getSubIntervalFormatter(), dO, cd);
-    }
+  
+  /**
+   * Calculates the maximum number of ticks that can visually fit on the 
+   * domain axis given the visible screen width and the max width of a tick 
+   * label for the specified {@link TickFormatter}. 
+   */
+  private int calcMaxTicksForScreen(Layer layer, Bounds bounds, double domainWidth, 
+      TickFormatter tlf) {
+    double screenWidth = domainToScreenWidth(domainWidth, bounds);
+    double maxLabelWidth = 20 + tlf.getMaxTickLabelWidth(layer, axisProperties);
+    
+    return (int)(screenWidth / maxLabelWidth);
   }
+  
+  private static void log(Object msg) {
+    System.out.println("TESTING:DomainAxisRenderer> " + msg);
+  }
+  
 }

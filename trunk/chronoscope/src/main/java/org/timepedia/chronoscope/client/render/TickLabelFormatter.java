@@ -65,23 +65,28 @@ interface TickLabelFormatter {
   TickLabelFormatter getSuperIntervalFormatter();
 
   /**
-   * Return the domain position of a tick, given the origin, and end interval,
-   * the maximize number of ticks begining rendered, the number that will be
-   * rendered, and the tick number beging requested. <p/> For example, a day has
+   * Return the domain position of a tick, given the start interval and end interval,
+   * the maximize number of ticks being rendered, the number that will be
+   * rendered, and the tick number being requested. <p/> For example, a day has
    * 24 hours. The given interval between (origin, intervalEnd) may not be able
-   * to squeeze 24 tick labels in the screen space alotted. Therefore, numTicks
+   * to squeeze 24 tick labels in the screen space allotted. Therefore, numTicks
    * will represent how many can actually fit in the given domain interval, say
    * 4 ticks. tickNum will range from 0 to 3 then, representing 00:00, 06:00,
    * 12:00, and 18:00.
    */
-  double getTick(double origin, double intervalEnd, int tickNum, int numTicks,
-      int maxTicks);
+  double getTick(double intervalStart, double intervalEnd, int tickNum, 
+      int numTicks, int maxTicks);
 
   /**
    * Is this domain interval best represented by this tick formatter?
    */
   boolean inInterval(double domainStart, double domainEnd);
 
+  /**
+   * Returns true only if this formatter has no superformatter.
+   */
+  boolean isRootFormatter();
+  
   /**
    * Quantize the number of ticks you propose to render to a value which is more
    * aesthetically pleasing, typically a divisor of the max number of ticks.
