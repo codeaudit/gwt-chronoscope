@@ -6,6 +6,7 @@ package org.timepedia.chronoscope.client.util;
 import junit.framework.TestCase;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -54,5 +55,20 @@ public class SimpleDateTest extends TestCase {
     assertEquals(55, d.getMinutes());
     assertEquals(27, d.getSeconds());
   }
-  
+ 
+  public static void main(String[] args) {
+    for (int i = 1583; i < 2099; i++) {
+      SimpleDate d1 = SimpleDate.get(i, 0, 1);
+      SimpleDate d2 = SimpleDate.get(i+1, 0, 1);
+      long t1 = (long)d1.getTime();
+      long t2 = (long)d2.getTime();
+      //System.out.println("year=" + i + "; d=" + t1 + "; d2=" + t2 + "; diff=" + (t1-t2));
+      long diff = t1 - t2;
+      if (diff != -31536000000L && diff != -31622400000L) {
+        //throw new RuntimeException("i=" + i + "; diff=" + diff + " (" + ((double)diff / (double)(1000 * 60 * 60 * 24)) + ")");
+        System.out.println(" >>>>> i=" + i + "; diff=" + diff + " (" + ((double)diff / (double)(1000 * 60 * 60 * 24)) + ")");
+      }
+      
+    }
+  }
 }

@@ -7,6 +7,7 @@ package org.timepedia.chronoscope.client.util;
  */
 public enum TimeUnit {
   MS (1),
+  TENTH_SEC (100),
   SEC (1000),
   MIN (SEC.ms * 60),
   HOUR (MIN.ms * 60),
