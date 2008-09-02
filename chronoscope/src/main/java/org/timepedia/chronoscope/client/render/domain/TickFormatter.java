@@ -47,6 +47,13 @@ public abstract class TickFormatter {
 
   private double maxLabelWidth = -1;
   
+  private double cachedDomainWidth = Double.NEGATIVE_INFINITY;
+  
+  private int cachedMaxTicksForScreen = -1;
+  
+  private int cachedIdealTickStep;
+  
+  
   /**
    * Constructs a new formatter.
    *  
@@ -65,6 +72,14 @@ public abstract class TickFormatter {
    * tick label width, and domain-context-dependent quantized tick steps).
    */
   public final int calcIdealTickStep(double domainWidth, int maxTicksForScreen) {
+    boolean isAnswerCached = 
+      domainWidth == this.cachedDomainWidth 
+      && maxTicksForScreen == this.cachedMaxTicksForScreen;
+    
+    if (isAnswerCached) {
+      return this.cachedIdealTickStep;
+    }
+    
     int[] tickSteps = this.possibleTickSteps;
     final double tickDomainInterval = this.tickInterval.ms();
     
@@ -86,6 +101,10 @@ public abstract class TickFormatter {
       idealTickStep = tickSteps[tickSteps.length - 1];
     }
     
+    //System.out.println("TESTING: [dw=" + (long)domainWidth + "; maxTix=" + maxTicksForScreen + "] -> " + idealTickStep);
+    cachedDomainWidth = domainWidth;
+    cachedMaxTicksForScreen = maxTicksForScreen;
+    cachedIdealTickStep = idealTickStep;
     return idealTickStep;
   }
   

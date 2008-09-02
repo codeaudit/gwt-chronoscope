@@ -272,9 +272,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
    */
   private int calcMaxTicksForScreen(Layer layer, Bounds bounds, double domainWidth, 
       TickFormatter tlf) {
-    double screenWidth = domainToScreenWidth(domainWidth, bounds);
-    double maxLabelWidth = 20 + tlf.getMaxTickLabelWidth(layer, axisProperties);
     
+    // Needed to round screen width due to tiny variances that were causing the 
+    // result of this method to fluctuate by +/- 1.
+    double screenWidth = Math.round(domainToScreenWidth(domainWidth, bounds));
+    
+    double maxLabelWidth = 15 + tlf.getMaxTickLabelWidth(layer, axisProperties);
+    
+    //log("domainWidth=" + (long)domainWidth + "; screenWidth=" + screenWidth + "; maxLabelWidth=" + maxLabelWidth + "; maxTicks=" + (int)(screenWidth / maxLabelWidth));
     return (int)(screenWidth / maxLabelWidth);
   }
   
