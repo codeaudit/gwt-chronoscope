@@ -2,28 +2,14 @@
     "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <title>Chronoscope Benchmark</title>
+  <title>Chronoscope Sample</title>
 
   <link rel="stylesheet" href="Samples.css" type="text/css">
   <script type="text/javascript" src="unratedata.js"></script>
 
 </head>
 <body>
-<h2>Chronoscope Benchmark</h2>
 
-<p>
-  This benchmark runs 10 trials, each of which forces Chronoscope to do 100 full
-  redraws, each drawing about 1,000 points. Each frame within a trial is
-  slightly zoomed in order to cause different segments of the multiresolution
-  data to be rendered. This benchmark doesn't work in Internet Explorer,
-  for several reasons (IE version uses Flash, not Canvas. IE version is
-  several times slower.)
-</p>
-<script type="text/javascript"
-        src="org.timepedia.chronoscopesamples.ChronoscopeSamples.nocache.js"></script>
-
-<div id="chartdemo">Loading Data...</div>
-<p>Click the Bench button to start, do not move the mouse over the chart while
-  the benchmark is running, nor touch the keyboard.</p>
+<div id="chartdemo"></div>
 </body>
 </html>
