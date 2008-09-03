@@ -17,13 +17,16 @@
   slightly zoomed in order to cause different segments of the multiresolution
   data to be rendered. This benchmark doesn't work in Internet Explorer,
   for several reasons (IE version uses Flash, not Canvas. IE version is
-  several times slower.)
+  several times slower.). 
 </p>
 <script type="text/javascript"
-        src="org.timepedia.chronoscopebench.ChronoscopeBench.nocache.js"></script>
+        src="benchmark.nocache.js"></script>
 
 <div id="chartdemo"></div>
 <p>Click the Bench button to start, do not move the mouse over the chart while
   the benchmark is running, nor touch the keyboard.</p>
+
+<em>Note: This benchmark "phones home" via an invisible GIF when done, to report the version number of the benchmark, the mean, and the standard deviation scores. We use this information to improve Chronoscope's performance.
+</em>
 </body>
 </html>
