@@ -1,33 +1,31 @@
 package org.timepedia.chronoscopesamples.client;
 
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.IncrementalCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.TickLabelNumberFormatter;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.browser.JSONDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.MockXYDataset;
-import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
-import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
+
+import java.util.Arrays;
 
 /**
  * @author Ray Cromwell <ray@timepedia.org>
@@ -39,7 +37,9 @@ public class ChartDemo implements EntryPoint {
 
   private static volatile double GOLDEN__RATIO = 1.618;
 
-  private static native JavaScriptObject getJson(String varName) /*-{
+  private FlexTable benchTable;
+
+  private static native JSONDataset getJson(String varName) /*-{
        return $wnd[varName];   
     }-*/;
 
@@ -49,32 +49,40 @@ public class ChartDemo implements EntryPoint {
 // you must specify the chart dimensions for now, rather than have the chart grow to fill its container
       double GR = 1.618;
       int chartWidth = 450;
-      int chartHeight = 320; //(int) (chartWidth / GOLDEN__RATIO);
-      Window.alert("ChartHeight = "+chartHeight);
+      int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
+//      Window.alert("ChartHeight = "+chartHeight);
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
-      Chronoscope.setErrorReporting(false);
-      Chronoscope.setMicroformatsEnabled(true);
+      Chronoscope.setErrorReporting(true);
+      Chronoscope.setMicroformatsEnabled(false);
       Chronoscope.initialize();
 
       TabPanel vp = new TabPanel();
 //    VerticalPanel vp = new VerticalPanel();
       final XYDataset[] ds = new XYDataset[2];
       ds[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-        ds[1]=new MockXYDataset();
+      ds[1] = new MockXYDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {
-        public void onViewReady(View view) {
-          final Marker m = new Marker((ds[0].getDomainBegin()+ds[0].getDomainEnd())/2,
-              10, "A", 0);
+        public void onViewReady(final View view) {
+          final Marker m = new Marker(
+              (ds[0].getDomainBegin() + ds[0].getDomainEnd()) / 2, 10, "A", 0);
           m.addOverlayClickListener(new OverlayClickListener() {
             public void onOverlayClick(Overlay overlay, int x, int y) {
               m.openInfoWindow("Hello");
             }
           });
           view.getChart().getPlot().addOverlay(m);
-          view.getChart().redraw();
+          view.getChart().getPlot().redraw();
+          Button bench = new Button("Bench");
+          RootPanel.get().add(bench);
+          bench.addClickListener(new ClickListener() {
+
+            public void onClick(Widget sender) {
+              benchMark(view);
+            }
+          });
         }
       });
 
@@ -105,7 +113,7 @@ public class ChartDemo implements EntryPoint {
 //      vp.selectTab(0);
 //      XYDataset ds2[] = new XYDataset[1];
 //      ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-//      final ChartPanel chartPanel3 = Chronoscope
+//      final PlotPanel chartPanel3 = Chronoscope
 //          .createTimeseriesChart(ds2, 400, 300);
 //      chartPanel3.setReadyListener(new ViewReadyCallback() {
 //        public void onViewReady(View view) {
@@ -124,16 +132,16 @@ public class ChartDemo implements EntryPoint {
 ////        XYDataset[] ds2 = new XYDataset[2];
 ////        ds2[0] = Chronoscope.createXYDataset(getJson("unratedata"));
 ////        ds2[1] = Chronoscope.createXYDataset(getJson("dffdata"));
-////        ChartPanel chartPanel2 = Chronoscope.createTimeseriesChart(ds2, chartWidth, chartHeight);
+////        PlotPanel chartPanel2 = Chronoscope.createTimeseriesChart(ds2, chartWidth, chartHeight);
 ////        vp.add(chartPanel2, "Two XYDataSources on separtate axes");
 //
 ////        XYDataset[] ds4 = new XYDataset[1];
 ////        ds4[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-////        final ChartPanel chartPanel4 = Chronoscope.createTimeseriesChart(ds4, chartWidth, chartHeight);
+////        final PlotPanel chartPanel4 = Chronoscope.createTimeseriesChart(ds4, chartWidth, chartHeight);
 ////        Marker marker = new Marker("1975/10/10", 0, "A");
 ////        marker.addOverlayClickListener(new OverlayClickListener() {
 ////            public void onOverlayClick(Overlay overlay, int x, int y) {
-////                ( (Marker) overlay ).openInfoWindow("You clicked on 'A'");
+////                ( (Marker) overlay ).createInfoWindow("You clicked on 'A'");
 ////            }
 //
 ////        });
@@ -144,7 +152,7 @@ public class ChartDemo implements EntryPoint {
 //          Marker marker = new Marker("1977/10/10", 0, "A");
 //          marker.addOverlayClickListener(new OverlayClickListener() {
 //            public void onOverlayClick(Overlay overlay, int x, int y) {
-//              ((Marker) overlay).openInfoWindow("You clicked on 'A'");
+//              ((Marker) overlay).createInfoWindow("You clicked on 'A'");
 //            }
 //          });
 //          view.getChart().getPlot().addOverlay(marker);
@@ -208,5 +216,83 @@ public class ChartDemo implements EntryPoint {
     } catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
+  }
+
+  private void benchMark(final View view) {
+    final double dO = view.getChart().getPlot().getDomainOrigin();
+    final double cD = view.getChart().getPlot().getCurrentDomain();
+    final double dC = dO + cD / 2;
+    final int lim = GWT.isScript() ? 100 : 5;
+    final int numTrials = 10;
+    final double trials[] = new double[numTrials];
+    if (benchTable == null) {
+      benchTable = new FlexTable();
+      RootPanel.get().add(benchTable);
+    }
+    benchTable.clear();
+    benchTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+    benchTable
+        .setWidget(0, 0, new HTML("Trial Results (Trials=" + numTrials + ")"));
+    DeferredCommand.addCommand(new IncrementalCommand() {
+      int trialNum = 0;
+
+      int frameNum = 0;
+
+      double curTime = 0;
+
+      public boolean execute() {
+
+        if (frameNum < lim) {
+          double ncd = cD - cD / 1.5 * ((double) frameNum / lim);
+          double ndo = dC - ncd / 2;
+          view.getChart().getPlot().setDomainOrigin(ndo);
+          view.getChart().getPlot().setCurrentDomain(ncd);
+          double start = Duration.currentTimeMillis();
+          view.getChart().redraw();
+          double end = Duration.currentTimeMillis();
+          curTime += end - start;
+          frameNum++;
+          return true;
+        }
+        frameNum = 0;
+        if (trialNum < numTrials - 1) {
+
+          trials[trialNum] = curTime;
+          frameNum = 0;
+          trialNum++;
+          benchTable.setWidget(trialNum, 0, new HTML("Trial " + trialNum));
+          benchTable.setWidget(trialNum, 1, new HTML(curTime + "ms"));
+          curTime = 0;
+
+          return true;
+        } else {
+          Arrays.sort(trials);
+          double mean = 0;
+          for (int i = 1; i < trials.length - 1; i++) {
+            mean += trials[i];
+          }
+          mean /= trials.length - 2;
+          double stddev = 0;
+          for (int i = 1; i < trials.length - 1; i++) {
+            double x = trials[i] - mean;
+            stddev += x * x;
+          }
+          stddev /= trials.length - 2;
+          stddev = Math.sqrt(stddev);
+          benchTable.setWidget(trialNum + 1, 0, new HTML("Summary"));
+          benchTable.setWidget(trialNum + 1, 1,
+              new HTML("Mean: " + mean + " stddev: " + stddev));
+          benchTable.setWidget(trialNum + 2, 0, new HTML("Estimated FPS"));
+
+          benchTable.setWidget(trialNum + 2, 1,
+              new HTML((double) lim / (mean / 1000) + " frames per second"));
+          Image report = new Image(
+              "http://api.timepedia.org/widget/clear.cache.gif?rev=r320&mean="
+                  + mean + "&stddev=" + stddev);
+          RootPanel.get().add(report);
+          return false;
+        }
+      }
+    });
   }
 }
