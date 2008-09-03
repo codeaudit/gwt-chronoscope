@@ -64,6 +64,7 @@
 
     <modules>
         <module>chronoscope</module>
+        <module>bench</module>
 <!--        <module>samples</module> -->
         <module>gviz</module>
 <!--        <module>widget</module> -->

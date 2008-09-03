@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module relativePaths="true" type="JAVA_MODULE" version="4">
+<module relativePaths="true" MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="BuildJarSettings">
     <containerInfo>
       <containerElement type="module" name="chronoscope">
@@ -41,286 +41,286 @@
     <orderEntry type="module-library" exported="">
       <library name="junit:junit:3.8.1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/junit/junit/3.8.1/junit-3.8.1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/junit/junit/3.8.1/junit-3.8.1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="com.google.gwt:gwt-servlet:1.5.0-rc1">
+      <library name="com.google.gwt:gwt-servlet:1.5.1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-servlet/1.5.0-rc1/gwt-servlet-1.5.0-rc1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/1.5.1/gwt-servlet-1.5.1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-servlet/1.5.0-rc1/gwt-servlet-1.5.0-rc1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/1.5.1/gwt-servlet-1.5.1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-servlet/1.5.0-rc1/gwt-servlet-1.5.0-rc1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/1.5.1/gwt-servlet-1.5.1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="gwtquery:gwtquery:0.3-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gwtquery/gwtquery/0.3-SNAPSHOT/gwtquery-0.3-SNAPSHOT-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="com.google.gwt:gwt-user:1.5.0-rc1">
+      <library name="com.google.gwt:gwt-user:1.5.1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-user/1.5.0-rc1/gwt-user-1.5.0-rc1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-user/1.5.1/gwt-user-1.5.1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-user/1.5.0-rc1/gwt-user-1.5.0-rc1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-user/1.5.1/gwt-user-1.5.1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-user/1.5.0-rc1/gwt-user-1.5.0-rc1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-user/1.5.1/gwt-user-1.5.1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="com.google.gwt:gwt-dev-mac:1.5.0-rc1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev-mac/1.5.0-rc1/gwt-dev-mac-1.5.0-rc1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="com.google.gwt:gwt-incubator:1.0-SNAPSHOT">
+      <library name="com.google.gwt:gwt-incubator:1.02-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-incubator/1.02-SNAPSHOT/gwt-incubator-1.02-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-incubator/1.02-SNAPSHOT/gwt-incubator-1.02-SNAPSHOT-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/com/google/gwt/gwt-incubator/1.0-SNAPSHOT/gwt-incubator-1.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-incubator/1.02-SNAPSHOT/gwt-incubator-1.02-SNAPSHOT-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="org.timepedia.exporter:gwtexporter:2.0-SNAPSHOT">
+      <library name="org.timepedia.exporter:gwtexporter:2.0-alpha">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/timepedia/exporter/gwtexporter/2.0-alpha/gwtexporter-2.0-alpha.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/timepedia/exporter/gwtexporter/2.0-alpha/gwtexporter-2.0-alpha-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/org/timepedia/exporter/gwtexporter/2.0-SNAPSHOT/gwtexporter-2.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/timepedia/exporter/gwtexporter/2.0-alpha/gwtexporter-2.0-alpha-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-css:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-css/1.6-1/batik-css-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-css/1.6-1/batik-css-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-css/1.6-1/batik-css-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-css/1.6-1/batik-css-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-css/1.6-1/batik-css-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-css/1.6-1/batik-css-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-util:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-util/1.6-1/batik-util-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-util/1.6-1/batik-util-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-util/1.6-1/batik-util-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-util/1.6-1/batik-util-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-util/1.6-1/batik-util-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-util/1.6-1/batik-util-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-gui-util:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gui-util/1.6-1/batik-gui-util-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-ext:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-ext/1.6-1/batik-ext-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-ext/1.6-1/batik-ext-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-ext/1.6-1/batik-ext-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-ext/1.6-1/batik-ext-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-ext/1.6-1/batik-ext-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-ext/1.6-1/batik-ext-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="xml-apis:xmlParserAPIs:2.0.2">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xmlParserAPIs/2.0.2/xmlParserAPIs-2.0.2-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-extension:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-extension/1.6-1/batik-extension-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-extension/1.6-1/batik-extension-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-extension/1.6-1/batik-extension-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-extension/1.6-1/batik-extension-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-extension/1.6-1/batik-extension-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-extension/1.6-1/batik-extension-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-bridge:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-bridge/1.6-1/batik-bridge-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-bridge/1.6-1/batik-bridge-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-bridge/1.6-1/batik-bridge-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-bridge/1.6-1/batik-bridge-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-bridge/1.6-1/batik-bridge-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-bridge/1.6-1/batik-bridge-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-gvt:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gvt/1.6-1/batik-gvt-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gvt/1.6-1/batik-gvt-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gvt/1.6-1/batik-gvt-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gvt/1.6-1/batik-gvt-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-gvt/1.6-1/batik-gvt-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-gvt/1.6-1/batik-gvt-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-awt-util:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-awt-util/1.6-1/batik-awt-util-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-script:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-script/1.6-1/batik-script-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-script/1.6-1/batik-script-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-script/1.6-1/batik-script-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-script/1.6-1/batik-script-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-script/1.6-1/batik-script-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-script/1.6-1/batik-script-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-svg-dom:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-svg-dom/1.6-1/batik-svg-dom-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-dom:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-dom/1.6-1/batik-dom-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-dom/1.6-1/batik-dom-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-dom/1.6-1/batik-dom-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-dom/1.6-1/batik-dom-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-dom/1.6-1/batik-dom-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-dom/1.6-1/batik-dom-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-xml:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-xml/1.6-1/batik-xml-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-xml/1.6-1/batik-xml-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-xml/1.6-1/batik-xml-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-xml/1.6-1/batik-xml-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-xml/1.6-1/batik-xml-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-xml/1.6-1/batik-xml-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="xerces:xercesImpl:2.5.0">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.5.0/xercesImpl-2.5.0-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="batik:batik-parser:1.6-1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-parser/1.6-1/batik-parser-1.6-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-parser/1.6-1/batik-parser-1.6-1.jar!/" />
         </CLASSES>
         <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-parser/1.6-1/batik-parser-1.6-1-javadoc.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-parser/1.6-1/batik-parser-1.6-1-javadoc.jar!/" />
         </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../.m2/repository/batik/batik-parser/1.6-1/batik-parser-1.6-1-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/batik/batik-parser/1.6-1/batik-parser-1.6-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
