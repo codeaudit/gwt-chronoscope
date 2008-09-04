@@ -31,7 +31,6 @@ import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.render.BarChartXYRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.exporter.client.Export;
@@ -84,7 +83,8 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   private static Theme currentTheme;
 
-  private static final Map<String,Chart> id2chart = new HashMap<String,Chart>();
+  private static final Map<String, Chart> id2chart
+      = new HashMap<String, Chart>();
 
   /**
    * Used to prevent double-triggering of history events
@@ -243,12 +243,11 @@ public class Chronoscope implements Exportable, HistoryListener {
       boolean isMutable) {
 
     XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
-    
+
     String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
     XYDataset dataset = null;
 
     double domainScale = json.getDomainScale();
-
 
     double approximateMinInterval = json.getMinInterval();
 
@@ -257,11 +256,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     XYDatasetRequest request;
     if (isMipped) {
       request = new XYDatasetRequest.MultiRes();
-    }
-    else {
+    } else {
       request = new XYDatasetRequest.Basic();
     }
-    
+
     request.setIdentifier(json.getId());
     request.setLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
@@ -286,24 +284,25 @@ public class Chronoscope implements Exportable, HistoryListener {
         ranges[i] = getArray(mrange.get(i), 1);
       }
 
-      XYDatasetRequest.MultiRes mippedRequest = (XYDatasetRequest.MultiRes)request;
+      XYDatasetRequest.MultiRes mippedRequest
+          = (XYDatasetRequest.MultiRes) request;
       request.setRangeTop(json.getRangeTop());
       request.setRangeBottom(json.getRangeBottom());
       mippedRequest.setMultiDomain(createArray2D(domains));
       mippedRequest.setMultiRange(createArray2D(ranges));
     } else {
-      
-      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic)request;
+
+      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic) request;
       basicRequest.setDomain(getArray(json.getDomain(), domainScale));
       basicRequest.setRange(getArray(json.getRange(), 1));
     }
-    
+
     if (isMutable) {
       dataset = dsFactory.createMutable(request);
     } else {
       dataset = dsFactory.create(request);
     }
-    
+
     return dataset;
   }
 
@@ -496,13 +495,15 @@ public class Chronoscope implements Exportable, HistoryListener {
   public ChartPanel createChartPanel(Element elem, XYDataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     if (elem == null) {
-      ChartPanel cpanel=new ChartPanel(datasets, chartWidth, chartHeight);
+      ChartPanel cpanel = new ChartPanel(datasets, chartWidth, chartHeight);
       cpanel.setReadyListener(readyListener);
-      return cpanel; 
-     
+      return cpanel;
     }
     ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
+    if (Document.get().getBody().isOrHasChild(elem)) {
+      cp.attach();
+    }
     return cp;
   }
 
@@ -707,7 +708,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     };
     t.schedule(10);
   }
-  
+
   private static Array2D createArray2D(double[][] a) {
     return new JavaArray2D(a);
   }

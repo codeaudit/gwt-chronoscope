@@ -204,10 +204,13 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * Note: Window/Chart/View resizing doesn't work right now.
    */
   public void onWindowResized(int width, int height) {
-
-    Element elem = ((DOMView) view).getElement();
-    view.resize(DOM.getElementPropertyInt(elem, "clientWidth"),
-        DOM.getElementPropertyInt(elem, "clientHeight"));
+    if (view != null) {
+      Element elem = ((DOMView) view).getElement();
+      if (elem != null) {
+        view.resize(DOM.getElementPropertyInt(elem, "clientWidth"),
+            DOM.getElementPropertyInt(elem, "clientHeight"));
+      }
+    }
   }
 
   public void resetDrag(int amt) {
@@ -228,7 +231,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * and therefore super.onAttach() is not called until onViewReady is invoked.
    */
   protected void onAttach() {
-
+    sinkEvents();
+    
     chartEventHandler = GWT.create(ChartEventHandler.class);
 
     Element cssgss = null;
@@ -273,7 +277,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     setElement(container);
     DOM.setStyleAttribute(container, "overflow", "hidden");
 //    addStyleName("chrono");
-    sinkEvents();
 
     id = DOM.getElementAttribute(container, "id");
     if (id == null || "".equals(id)) {
