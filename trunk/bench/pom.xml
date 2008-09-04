@@ -20,7 +20,7 @@
   </dependencies>
   <build>
     <plugins>
-<!--
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -29,13 +29,13 @@
           <webResources>
             <resource>
                <directory>
-		 org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}
+		  ${project.build.directory}/${artifactId}-${version}/benchmark
                </directory>
              </resource>
          </webResources>
         </configuration>
       </plugin>
--->
+
       <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
