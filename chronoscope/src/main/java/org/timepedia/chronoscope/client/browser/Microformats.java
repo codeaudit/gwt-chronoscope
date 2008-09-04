@@ -393,7 +393,6 @@ public class Microformats {
             candidateWidth, candidateHeight,
             new MicroformatViewReadyCallback(links, cid, id, ds, elt, latch));
         created[i] = cp;
-        if(!cp.isAttached()) cp.attach();
       }
     }
   }

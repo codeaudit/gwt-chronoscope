@@ -159,7 +159,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (chart.getPlot().isSelectionModeEnabled() && selStart > -1) {
-          chart.setHighlight(selStart, x);
+          chart.getPlot().setHighlight(selStart, x);
         } else {
           if (maybeDrag && Math.abs(startDragX - x) > 10) {
             chart.scrollPixels(startDragX - x);
