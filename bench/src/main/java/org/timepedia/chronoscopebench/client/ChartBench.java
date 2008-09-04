@@ -110,7 +110,7 @@ public class ChartBench implements EntryPoint {
 
       public boolean execute() {
 
-        if (frameNum < lim) {
+        if (trialNum < numTrials && frameNum < lim) {
           double ncd = cD - cD / 1.5 * ((double) frameNum / lim);
           double ndo = dC - ncd / 2;
           view.getChart().getPlot().setDomainOrigin(ndo);
@@ -123,17 +123,19 @@ public class ChartBench implements EntryPoint {
           return true;
         }
         frameNum = 0;
-        if (trialNum < numTrials - 1) {
+        if (trialNum < numTrials) {
 
           trials[trialNum] = curTime;
           frameNum = 0;
           trialNum++;
           benchTable.setWidget(trialNum, 0, new HTML("Trial " + trialNum));
           benchTable.setWidget(trialNum, 1, new HTML(curTime + "ms"));
-          curTime = 0;
+          if(trialNum < numTrials) curTime = 0;
 
           return true;
         } else {
+          benchTable.setWidget(trialNum, 0, new HTML("Trial " + trialNum));
+          benchTable.setWidget(trialNum, 1, new HTML(curTime + "ms"));
           Arrays.sort(trials);
           double mean = 0;
           for (int i = 1; i < trials.length - 1; i++) {
@@ -155,7 +157,7 @@ public class ChartBench implements EntryPoint {
           benchTable.setWidget(trialNum + 2, 1,
               new HTML((double) lim / (mean / 1000) + " frames per second"));
           Image report = new Image(
-              "http://api.timepedia.org/widget/clear.cache.gif?rev="
+              "http://api.timepedia.org/sense.gif?rev="
                   + About.getRevision() + "&mean=" + mean + "&stddev="
                   + stddev);
           RootPanel.get().add(report);
