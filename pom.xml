@@ -250,7 +250,7 @@
             <properties>
                 <gwtversion>1.5.1</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
-                <gwt.outputstyle>OBF</gwt.outputstyle>
+                <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
                 <!--		<maven.test.skip>true</maven.test.skip> -->
             </properties>
