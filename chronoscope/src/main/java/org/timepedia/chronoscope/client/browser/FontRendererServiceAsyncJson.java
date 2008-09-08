@@ -66,7 +66,11 @@ public class FontRendererServiceAsyncJson implements FontRendererServiceAsync {
         var outerthis=this;
         $wnd[reqCallBack] = function(json) {
             headElement.removeChild(scriptElement);
+          try {
+            // causes errors in IE
             delete $wnd[reqCallBack];
+          }
+          catch(e) {}
             outerthis.@org.timepedia.chronoscope.client.browser.FontRendererServiceAsyncJson::handle(Lcom/google/gwt/core/client/JavaScriptObject;Lcom/google/gwt/user/client/rpc/AsyncCallback;)(json, async);
         }
 
