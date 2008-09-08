@@ -48,11 +48,11 @@ public abstract class GssProperties {
 
   public int top = 0;
 
-  public String fontFamily;
+  public String fontFamily="Verdana";
 
-  public String fontWeight;
+  public String fontWeight="normal";
 
-  public String fontSize;
+  public String fontSize="9pt";
 
   public int height;
   public String tickPosition="outside";

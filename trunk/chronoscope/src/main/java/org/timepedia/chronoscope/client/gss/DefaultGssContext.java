@@ -113,6 +113,7 @@ public class DefaultGssContext extends MockGssContext {
             this.tickPosition = "inside";
             this.bgColor = new Color("#FFFFFF");
             this.fontFamily = "Helvetica";
+            this.fontWeight = "normal";
             this.fontSize = "9pt";
             this.color = new Color("#000000");
         }
