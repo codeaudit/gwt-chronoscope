@@ -8,10 +8,11 @@ import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.BrowserCanvasImage;
+import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.CanvasReadyCallback;
 import org.timepedia.chronoscope.client.canvas.Color;
@@ -20,7 +21,6 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.ArrayList;
@@ -72,8 +72,9 @@ public class FlashCanvas extends Canvas {
   private String canvasId;
 
   private String readyFn = "";
+
   private String clickHandlerFn = "";
-  
+
   private JavaScriptObject ctx = null;
 
   public FlashCanvas(View view, int width, int height) {
@@ -89,7 +90,8 @@ public class FlashCanvas extends Canvas {
     rootLayer.arc(x, y, radius, startAngle, endAngle, clockwise);
   }
 
-  public void attach(final View view, final CanvasReadyCallback canvasReadyCallback) {
+  public void attach(final View view,
+      final CanvasReadyCallback canvasReadyCallback) {
     final FlashView bv = (FlashView) view;
     exportReadyFn(readyFn, view, new CanvasReadyCallback() {
       boolean initalized = false;
@@ -130,9 +132,9 @@ public class FlashCanvas extends Canvas {
     //    addOnClick(glassPane);
 
     FlashResources flashResources = GWT.create(FlashResources.class);
-    
+
     String swfUrl = Chronoscope.getURL(flashResources.flashCanvas().getUrl());
-    
+
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
             + "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
@@ -154,13 +156,24 @@ public class FlashCanvas extends Canvas {
             + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");
     DOM.appendChild(canvasElement, glassPane);
+    com.google.gwt.dom.client.Element oElement = canvasElement
+        .getElementsByTagName("object").getItem(0);
+    fixSWFInIE(oElement.getId(), oElement);
   }
 
+  private native void fixSWFInIE(String id,
+      com.google.gwt.dom.client.Element element) /*-{
+     try {
+       $wnd[id]=element;
+     } catch(e) {}
+  }-*/;
+
   private void onFlashClick(int x, int y) {
-    getView().getChart().click(x,y);  
+    getView().getChart().click(x, y);
   }
-  
-  private native void addFlashClickHandler(String canvasId, String clickHandlerFn) /*-{
+
+  private native void addFlashClickHandler(String canvasId,
+      String clickHandlerFn) /*-{
         var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
         flashCanvas && flashCanvas.createCanvas && flashCanvas.addClickListener(clickHandlerFn);
   }-*/;
@@ -614,7 +627,7 @@ public class FlashCanvas extends Canvas {
     canvasElement = DOM.createDiv();
     readyFn = "canvasReadyFn" + this.canvasId;
     clickHandlerFn = "clickHandlerFn" + this.canvasId;
-    
+
     clearFlashDisplayList();
   }
 
