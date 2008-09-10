@@ -419,6 +419,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     maxDigits = Math.max(1, digits);
   }
 
+  @Export
   public void setRange(double rangeLow, double rangeHigh) {
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
