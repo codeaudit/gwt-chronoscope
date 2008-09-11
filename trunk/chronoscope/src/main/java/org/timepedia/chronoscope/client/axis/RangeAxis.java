@@ -20,8 +20,6 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("chronoscope")
 public class RangeAxis extends ValueAxis implements Exportable {
 
-  private double[] ticks;
-
   class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
 
     String labelFormat = null;
@@ -91,15 +89,15 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
 
   public static double[] computeLinearTickPositions(double rangeLow,
-      double rangeHigh, double axisHeight, double tickLabelHeight) {
+      double rangeHigh, double axisHeight, double tickLabelHeight,
+      boolean forceLastTick) {
     double range = rangeHigh - rangeLow;
     int maxNumLabels = (int) Math
         .floor(axisHeight / (2 * tickLabelHeight));
 
     double roughInterval = range / maxNumLabels;
 
-    int logRange = ((int) Math.floor(Math.log10(roughInterval)))
-        - 1;
+    int logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
     double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits + 5;
@@ -116,11 +114,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
+      if (tickPositions.length == i + 1 && forceLastTick) {
+        axisStart = rangeHigh;
+      }
       tickPositions[i] = axisStart;
       axisStart += smoothInterval;
     }
     return tickPositions;
   }
+
+  private double[] ticks;
+
+  private boolean rangeOverriden;
 
   private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
 
@@ -183,10 +188,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
       return ticks;
     }
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
-        getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight());
-    adjustedRangeLow = ticks[0];
+        getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight(),
+        rangeOverriden);
+    adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
+    adjustedRangeHigh = getUnadjustedRangeHigh();
     for (int i = 0; i < ticks.length; i++) {
-      if (ticks[i] >= getUnadjustedRangeHigh()) {
+      if (ticks[i] >= getUnadjustedRangeHigh() && !rangeOverriden) {
         adjustedRangeHigh = ticks[i];
         break;
       }
@@ -216,11 +223,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return axisNum;
   }
 
-  private String getDummyLabel() {
-    return "0" + (maxDigits == 1 ? ""
-        : "." + "000000000".substring(0, maxDigits - 1));
-  }
-
   public String getFormattedLabel(double label) {
     if (!Double.isNaN(getScale())) {
       label /= getScale();
@@ -241,11 +243,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
 //    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
 //    return super.getLabel() + getLabelSuffix(getRange());
     String axisId = getAxisId();
-    if(axisId == null || "".equals(axisId)) 
+    if (axisId == null || "".equals(axisId)) {
       axisId = super.getLabel() + getLabelSuffix(getRange());
+    }
     return axisId;
   }
-  
+
   public String getLabelSuffix(double range) {
     if (isForceScientificNotation() || (isAllowScientificNotation()
         && isScientificNotationOn())) {
@@ -287,7 +290,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public double getRotationAngle() {
     return
-        (getAxisPanel().getPosition() == Position.RIGHT ? 1.0 : -1.0) * Math.PI / 2;
+        (getAxisPanel().getPosition() == Position.RIGHT ? 1.0 : -1.0) * Math.PI
+            / 2;
   }
 
   public double getScale() {
@@ -304,10 +308,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     if (axisPanel.getOrientation() == Orientation.VERTICAL) {
       boolean isLeft = axisPanel.getPosition() == Position.LEFT;
-      boolean isInner = axisPanel.getAxisNumber(this)
-          == (isLeft ? axisPanel.getAxisCount() - 1 : 0);
+      boolean isInner = axisPanel.getAxisNumber(this) == (isLeft ?
+          axisPanel.getAxisCount() - 1 : 0);
       if (isInner) {
-        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition.INSIDE) {
+        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition
+            .INSIDE) {
           return computedAxisLabelWidth;
         } else {
           return maxLabelWidth + 5 + computedAxisLabelWidth;
@@ -400,6 +405,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     forceScientificNotation = force;
   }
 
+  public void setInitialRange(double initLow, double initHigh) {
+    if (!rangeOverriden) {
+      setRangeInternal(initLow, initHigh);
+    }
+  }
+
   /**
    * @gwt.export
    */
@@ -421,9 +432,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   @Export
   public void setRange(double rangeLow, double rangeHigh) {
-    this.rangeLow = rangeLow;
-    this.rangeHigh = rangeHigh;
-    ticks = null;
+    rangeOverriden = true;
+    setRangeInternal(rangeLow, rangeHigh);
   }
 
   /**
@@ -478,6 +488,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     computeTickPositions();
   }
 
+  protected void layout() {
+    renderer = new RangeAxisRenderer(this);
+    init();
+  }
+
   private void computeLabelWidths(View view) {
     renderer.init(view);
 
@@ -489,11 +504,23 @@ public class RangeAxis extends ValueAxis implements Exportable {
         .getLabelWidth(view, getLabel(), getRotationAngle());
   }
 
+  private String getDummyLabel() {
+    return "0" + (maxDigits == 1 ? ""
+        : "." + "000000000".substring(0, maxDigits - 1));
+  }
+
   private double getUnadjustedRangeHigh() {
     return autoZoom ? visRangeMax : rangeHigh;
   }
 
   private double getUnadjustedRangeLow() {
     return autoZoom ? visRangeMin : rangeLow;
+  }
+
+  private void setRangeInternal(double rangeLow, double rangeHigh) {
+    this.rangeLow = rangeLow;
+    this.rangeHigh = rangeHigh;
+    ticks = null;
+    computeTickPositions();
   }
 }

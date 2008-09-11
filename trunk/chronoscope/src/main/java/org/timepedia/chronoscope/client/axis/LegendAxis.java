@@ -11,7 +11,7 @@ import org.timepedia.chronoscope.client.render.LegendAxisRenderer;
  */
 public class LegendAxis extends ValueAxis {
 
-  private final LegendAxisRenderer renderer;
+  private LegendAxisRenderer renderer;
 
   private DefaultXYPlot plot;
 
@@ -56,4 +56,8 @@ public class LegendAxis extends ValueAxis {
     renderer.init(plot, this);
   }
 
+  protected void layout() {
+    renderer=new LegendAxisRenderer(this);
+    renderer.init(getChart().getPlot(), this);
+  }
 }

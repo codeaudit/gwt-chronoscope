@@ -553,13 +553,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       domainPanel.add(overviewAxis);
     }
 
-    axisMap.clear();
-
-    rangePanelLeft = new AxisPanel("rangeAxisLayerLeft" + plotNumber,
-        AxisPanel.Position.LEFT);
-    rangePanelRight = new AxisPanel("rangeAxisLayerRight" + plotNumber,
-        AxisPanel.Position.RIGHT);
-    axes = new RangeAxis[datasets.length];
+    if (rangePanelLeft != null) {
+      rangePanelLeft.layout();
+    } else {
+      rangePanelLeft = new AxisPanel("rangeAxisLayerLeft" + plotNumber,
+          AxisPanel.Position.LEFT);
+    }
+    if (rangePanelRight != null) {
+      rangePanelRight.layout();
+    } else {
+      rangePanelRight = new AxisPanel("rangeAxisLayerRight" + plotNumber,
+          AxisPanel.Position.RIGHT);
+    }
 
     autoAssignDatasetAxes();
 
@@ -1058,7 +1063,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         axisMap.put(ra.getAxisId(), ra);
         currRangePanel.add(ra);
       } else {
-        ra.setRange(Math.min(ra.getRangeLow(), ds.getRangeBottom()),
+        ra.setInitialRange(Math.min(ra.getRangeLow(), ds.getRangeBottom()),
             Math.max(ra.getRangeHigh(), ds.getRangeTop()));
       }
 
@@ -1410,6 +1415,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    * here that doesn't depend on the axes or layers being initialized.
    */
   private void initViewIndependent() {
+    axes = new RangeAxis[datasets.length];
     computeDomainMinMax();
     computeVisibleDomainStartEnd();
     initializeDomain();
