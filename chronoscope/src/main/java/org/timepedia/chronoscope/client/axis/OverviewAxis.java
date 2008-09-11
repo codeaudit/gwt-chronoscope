@@ -13,7 +13,7 @@ import org.timepedia.chronoscope.client.render.OverviewAxisRenderer;
  */
 public class OverviewAxis extends ValueAxis {
 
-  private final OverviewAxisRenderer renderer;
+  private OverviewAxisRenderer renderer;
 
   private Bounds bounds;
 
@@ -46,10 +46,10 @@ public class OverviewAxis extends ValueAxis {
   public Bounds getBounds() {
     return bounds;
   }
-  
+
   /**
-   * Returns the bounds of the highlighted area of the overview axis, or
-   * null if nothing is highlighted.
+   * Returns the bounds of the highlighted area of the overview axis, or null if
+   * nothing is highlighted.
    */
   public Bounds getHighlightBounds() {
     return renderer.getHighlightBounds();
@@ -84,4 +84,8 @@ public class OverviewAxis extends ValueAxis {
     return plot.getDomainAxis().userToData(myRangeLow, myRangeHigh, userValue);
   }
 
+  protected void layout() {
+    renderer = new OverviewAxisRenderer();
+    renderer.init(getChart().getPlot(), this);
+  }
 }

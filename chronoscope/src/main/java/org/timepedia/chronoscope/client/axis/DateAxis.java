@@ -97,21 +97,26 @@ public class DateAxis extends ValueAxis {
 
     maxLabelWidth = renderer.getLabelWidth(view, "XXX'00");
     maxLabelHeight = renderer.getLabelHeight(view, "XXXX");
-    axisLabelWidth = renderer.getLabelWidth(view, isHorizontal ? axisLabel : "X");
-    
+    axisLabelWidth = renderer
+        .getLabelWidth(view, isHorizontal ? axisLabel : "X");
+
     axisLabelHeight = 0;
     if (renderer.isAxisLabelVisible()) {
       if (isHorizontal) {
         axisLabelHeight = renderer.getLabelHeight(view, axisLabel);
-      }
-      else {
-        axisLabelHeight = renderer.getLabelHeight(view,"X") * axisLabel.length();
+      } else {
+        axisLabelHeight = renderer.getLabelHeight(view, "X") * axisLabel
+            .length();
       }
     }
+  }
+
+  protected void layout() {
+    renderer = new DomainAxisRenderer(this);
+    renderer.init(getChart().getView());
   }
 
   public boolean isVisible(double tickPos) {
     return true;
   }
-
 }

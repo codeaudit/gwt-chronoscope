@@ -19,38 +19,47 @@ import java.util.ArrayList;
  */
 public class AxisPanel implements GssElement {
 
+  public enum Orientation {
+
+    VERTICAL, HORIZONTAL
+  }
+
   public enum Position {
+
     LEFT {
-      public boolean isLeftRight() { return true; };
-    }, 
+      public boolean isLeftRight() {
+        return true;
+      };
+    },
     RIGHT {
-      public boolean isLeftRight() { return true; };
+      public boolean isLeftRight() {
+        return true;
+      };
     },
     TOP {
-      public boolean isLeftRight() { return false; };
+      public boolean isLeftRight() {
+        return false;
+      };
     },
     BOTTOM {
-      public boolean isLeftRight() { return false; };
+      public boolean isLeftRight() {
+        return false;
+      };
     };
-    
+
     /**
      * True only if this position is left or right.
      */
     public abstract boolean isLeftRight();
-    
+
     /**
      * True only if this position is top or bottom.
      */
     public boolean isTopBottom() {
       return !isLeftRight();
     }
-      
   }
-  
-  public enum Orientation {
-    VERTICAL, HORIZONTAL
-  }
-  
+
   private final ArrayList<ValueAxis> axes = new ArrayList<ValueAxis>();
 
   private boolean layerConfigured = false;
@@ -66,7 +75,8 @@ public class AxisPanel implements GssElement {
   public AxisPanel(String panelName, Position position) {
     this.panelName = panelName;
     this.position = position;
-    this.orientation = position.isLeftRight() ? Orientation.VERTICAL : Orientation.HORIZONTAL;
+    this.orientation = position.isLeftRight() ? Orientation.VERTICAL
+        : Orientation.HORIZONTAL;
   }
 
   public void add(ValueAxis axis) {
@@ -182,6 +192,14 @@ public class AxisPanel implements GssElement {
     return width;
   }
 
+  public void layout() {
+    layerConfigured = false;
+    axesProperties = null;
+    for(ValueAxis axis : axes) {
+      axis.layout();
+    }
+  }
+
   public void remove(ValueAxis axis) {
     axes.remove(axis);
   }
@@ -192,7 +210,7 @@ public class AxisPanel implements GssElement {
     layer.setStrokeColor("#ffffff");
     if (position.isTopBottom()) {
       layer.scale(layer.getWidth(), layer.getHeight());
-    } else if (panelPosition.area() > 0){
+    } else if (panelPosition.area() > 0) {
       layer.scale(panelPosition.width, panelPosition.height);
       layer.translate(panelPosition.x, panelPosition.y);
     }
@@ -206,6 +224,5 @@ public class AxisPanel implements GssElement {
 //        layer.stroke();
     layer.clearRect(0, 0, 1, 1);
     layer.restore();
-    
   }
 }

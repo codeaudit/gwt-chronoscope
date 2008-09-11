@@ -176,4 +176,5 @@ public abstract class ValueAxis {
     return rangeLow + (userValue * (rangeHigh - rangeLow));
   }
 
+  protected abstract void layout();
 }
