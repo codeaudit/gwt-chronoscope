@@ -91,7 +91,19 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public static double[] computeLinearTickPositions(double rangeLow,
       double rangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
+    if (rangeHigh == rangeLow) {
+      int logRange = ((int) Math.floor(Math.log10(rangeHigh)));
+      if (logRange < 0) {
+        logRange += 1;
+      }
+      double exponent = Math.pow(10, logRange);
+      double rounded = Math.floor(rangeHigh / exponent);
+      rangeHigh = (rounded + 1) * exponent;
+      rangeLow = (rounded - 1) * exponent;
+    }
+
     double range = rangeHigh - rangeLow;
+
     int maxNumLabels = (int) Math
         .floor(axisHeight / (2 * tickLabelHeight));
 
