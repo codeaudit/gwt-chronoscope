@@ -15,7 +15,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  */
 public class OverviewAxisRenderer implements AxisRenderer, GssElement {
 
-  private static final int MIN_OVERVIEW_HEIGHT = 65;
+  private static final int MIN_OVERVIEW_HEIGHT = 60;
 
   private int overviewHeight;
 

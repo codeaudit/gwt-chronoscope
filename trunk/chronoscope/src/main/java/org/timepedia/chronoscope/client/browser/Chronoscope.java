@@ -349,7 +349,7 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static String getFontBookServiceEndpoint() {
     return fontBookServiceEndpoint == null ?
-        "http://api.timepedia.org/api/widget/" + "fr" : fontBookServiceEndpoint;
+        "http://api.timepedia.org/widget/" + "fr" : fontBookServiceEndpoint;
   }
 
   public static Chronoscope getInstance() {
