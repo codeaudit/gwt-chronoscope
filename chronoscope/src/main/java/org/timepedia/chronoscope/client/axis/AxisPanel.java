@@ -19,6 +19,8 @@ import java.util.ArrayList;
  */
 public class AxisPanel implements GssElement {
 
+  private static final double TOP_PANEL_PAD = 23;
+
   public enum Orientation {
 
     VERTICAL, HORIZONTAL
@@ -141,7 +143,7 @@ public class AxisPanel implements GssElement {
         height = a.getHeight();
       }
     }
-    return height;
+    return height + (getPosition() == Position.TOP ? TOP_PANEL_PAD : 0);
   }
 
   public Orientation getOrientation() {

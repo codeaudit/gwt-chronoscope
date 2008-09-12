@@ -91,7 +91,7 @@ public class DateAxis extends ValueAxis {
 
   public void init() {
     boolean isHorizontal = getOrientation() == Orientation.HORIZONTAL;
-    final String axisLabel = "(Time)rwfwefwefwefwef";
+    final String axisLabel = "(Time)";
     View view = getChart().getView();
     renderer.init(view);
 

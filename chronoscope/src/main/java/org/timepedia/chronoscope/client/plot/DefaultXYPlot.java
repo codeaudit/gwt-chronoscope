@@ -1134,19 +1134,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           this.view.getViewHeight());
     }
 
-    // TODO: this padding is a workaround. Apparently, the height computed
-    // for the main plot bounds does not take into consideration the highest
-    // range character (which "sits on top of" the northern-most range axis
-    // tick.
-    // Without this hardcoded padding, the highest range value within the
-    // plot are encroaches on the southern-most dataset legend row.
-    final double topPanelPad = 23;
-
     // TODO: only in snapshot
     if (interactive) {
       plotBounds.x = rangePanelLeft.getWidth();
       plotBounds.width -= plotBounds.x;
-      plotBounds.y += topPanel.getHeight() + topPanelPad;
+      plotBounds.y += topPanel.getHeight();
 
       if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
         final double topHeight = topPanel.getHeight();
@@ -1379,6 +1371,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
 
       topBounds = new Bounds(0, 0, view.getViewWidth(), topPanel.getHeight());
+      if (topLayer != null) {
+        backingCanvas.disposeLayer(topLayer);
+      }
       topLayer = backingCanvas.createLayer("topLayer" + plotNumber, topBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
@@ -1399,6 +1394,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       if (domainLayer != null) {
         backingCanvas.disposeLayer(domainLayer);
       }
+
       domainLayer = backingCanvas
           .createLayer("domainAxis" + plotNumber, domainBounds);
       domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
