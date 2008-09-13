@@ -275,7 +275,7 @@ public class Microformats {
     }
   }
 
-  public static native JavaScriptObject importMicroformatTable0(String id,
+  public static native JsArray<JSONDataset> importMicroformatTable0(String id,
       Element table) /*-{
 
           var label="";
@@ -386,7 +386,7 @@ public class Microformats {
 
         int candidateWidth = DOM.getElementPropertyInt(elt, "clientWidth");
         if (candidateWidth < 600) {
-          candidateWidth = 600;
+          candidateWidth = 200;
         }
         int candidateHeight = (int) (candidateWidth / 1.618);
         ChartPanel cp = Chronoscope.createTimeseriesChart(div, ds,
