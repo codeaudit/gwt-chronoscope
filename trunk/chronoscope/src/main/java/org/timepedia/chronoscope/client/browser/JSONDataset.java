@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.browser;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
 
 /**
  * Javascript Object Overlay of our JSON format
@@ -11,6 +12,10 @@ public class JSONDataset extends JavaScriptObject {
 
   protected JSONDataset() {
   }
+
+  public native String getDateTimeFormat() /*-{
+    return this.dtformat;
+  }-*/;
 
   public final native double getDomainScale() /*-{
     return this.domainscale || 1;
@@ -48,9 +53,14 @@ public class JSONDataset extends JavaScriptObject {
     return this.domain;
   }-*/;
 
+  public final native JsArrayString getDomainString() /*-{
+    return this.domain;
+  }-*/;
+
   public final native JsArrayNumber getRange() /*-{
     return this.range;
   }-*/;
+
 
   public final native JsArray<JsArrayNumber> getMutliDomain() /*-{
      return this.domain;

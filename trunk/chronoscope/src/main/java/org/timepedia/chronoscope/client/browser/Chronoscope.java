@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
@@ -149,7 +151,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    */
   @Export("createTimeseriesChartByElement")
   public static ChartPanel createTimeseriesChart(Element elem,
-      JavaScriptObject jsonDatasets, int chartWidth, int chartHeight) {
+      JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight) {
     return createTimeseriesChart(elem, createXYDatasets(jsonDatasets),
         chartWidth, chartHeight);
   }
@@ -162,7 +164,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    */
   @Export("createTimeseriesChartById")
   public static ChartPanel createTimeseriesChart(String id,
-      JavaScriptObject jsonDatasets, int chartWidth, int chartHeight,
+      JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
     ChartPanel chart = createTimeseriesChart(DOM.getElementById(id),
         createXYDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
@@ -239,82 +241,14 @@ public class Chronoscope implements Exportable, HistoryListener {
     return createXYDataset(json, false);
   }
 
-  private static XYDataset createXYDataset(JSONDataset json,
-      boolean isMutable) {
-
-    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
-
-    String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
-    XYDataset dataset = null;
-
-    double domainScale = json.getDomainScale();
-
-    double approximateMinInterval = json.getMinInterval();
-
-    final boolean isMipped = json.isMipped();
-
-    XYDatasetRequest request;
-    if (isMipped) {
-      request = new XYDatasetRequest.MultiRes();
-    } else {
-      request = new XYDatasetRequest.Basic();
-    }
-
-    request.setIdentifier(json.getId());
-    request.setLabel(json.getLabel());
-    request.setAxisId(json.getAxisId());
-    request.setApproximateMinimumInterval(approximateMinInterval);
-
-    if (isMipped) {
-      JsArray<JsArrayNumber> mdomain = json.getMutliDomain();
-      JsArray<JsArrayNumber> mrange = json.getMultiRange();
-
-      int dmipLevels = mdomain.length();
-      int rmiplevel = mrange.length();
-      if (dmipLevels != rmiplevel) {
-        if (Chronoscope.isErrorReportingEnabled()) {
-          Window.alert("Domain and Range dataset levels are not equal");
-        }
-      }
-
-      double domains[][] = new double[dmipLevels][];
-      double ranges[][] = new double[dmipLevels][];
-      for (int i = 0; i < dmipLevels; i++) {
-        domains[i] = getArray(mdomain.get(i), domainScale);
-        ranges[i] = getArray(mrange.get(i), 1);
-      }
-
-      XYDatasetRequest.MultiRes mippedRequest
-          = (XYDatasetRequest.MultiRes) request;
-      request.setRangeTop(json.getRangeTop());
-      request.setRangeBottom(json.getRangeBottom());
-      mippedRequest.setMultiDomain(createArray2D(domains));
-      mippedRequest.setMultiRange(createArray2D(ranges));
-    } else {
-
-      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic) request;
-      basicRequest.setDomain(getArray(json.getDomain(), domainScale));
-      basicRequest.setRange(getArray(json.getRange(), 1));
-    }
-
-    if (isMutable) {
-      dataset = dsFactory.createMutable(request);
-    } else {
-      dataset = dsFactory.create(request);
-    }
-
-    return dataset;
-  }
-
   /**
    * Parse a javascript array of JSON objects representing multiresolution
    * XYDatasets <p/> See {@link #createXYDataset} for details of the format
    */
-  public static XYDataset[] createXYDatasets(JavaScriptObject datasets) {
-    if (datasets == null) {
+  public static XYDataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
+    if (jsonDatasets == null) {
       return new XYDataset[0];
     }
-    JsArray<JSONDataset> jsonDatasets = datasets.cast();
 
     int arrLen = jsonDatasets.length();
 
@@ -333,23 +267,13 @@ public class Chronoscope implements Exportable, HistoryListener {
     return "ZZchrono" + globalChartNumber++;
   }
 
-  public static double[] getArray(JsArrayNumber jsArray, double preMul) {
-    int len = jsArray.length();
-
-    double aVal[] = new double[len];
-    for (int i = 0; i < len; i++) {
-      aVal[i] = jsArray.get(i) * preMul;
-    }
-    return aVal;
-  }
-
   public static Chart getChartById(String id) {
     return (Chart) id2chart.get(id);
   }
 
   public static String getFontBookServiceEndpoint() {
-    return fontBookServiceEndpoint == null ?
-        "http://api.timepedia.org/widget/" + "fr" : fontBookServiceEndpoint;
+    return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
+        + "fr" : fontBookServiceEndpoint;
   }
 
   public static Chronoscope getInstance() {
@@ -465,11 +389,115 @@ public class Chronoscope implements Exportable, HistoryListener {
     XYDataSource.setFactory(new BrowserXYDataSourceFactory());
   }
 
+  private static Array2D createArray2D(double[][] a) {
+    return new JavaArray2D(a);
+  }
+
+  private static XYDataset createXYDataset(JSONDataset json,
+      boolean isMutable) {
+
+    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+
+    String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
+    XYDataset dataset = null;
+
+    double domainScale = json.getDomainScale();
+
+    double approximateMinInterval = json.getMinInterval();
+
+    final boolean isMipped = json.isMipped();
+    String dtformat = json.getDateTimeFormat();
+
+    if (isMipped && dtformat != null) {
+      throw new IllegalArgumentException(
+          "dtformat and mipped cannot be used together in dataset with id "
+              + json.getId());
+    }
+
+    XYDatasetRequest request;
+    if (isMipped) {
+      request = new XYDatasetRequest.MultiRes();
+    } else {
+      request = new XYDatasetRequest.Basic();
+    }
+
+    request.setIdentifier(json.getId());
+    request.setLabel(json.getLabel());
+    request.setAxisId(json.getAxisId());
+    request.setApproximateMinimumInterval(approximateMinInterval);
+
+    if (isMipped) {
+      JsArray<JsArrayNumber> mdomain = json.getMutliDomain();
+      JsArray<JsArrayNumber> mrange = json.getMultiRange();
+
+      int dmipLevels = mdomain.length();
+      int rmiplevel = mrange.length();
+      if (dmipLevels != rmiplevel) {
+        if (Chronoscope.isErrorReportingEnabled()) {
+          Window.alert("Domain and Range dataset levels are not equal");
+        }
+      }
+
+      double domains[][] = new double[dmipLevels][];
+      double ranges[][] = new double[dmipLevels][];
+      for (int i = 0; i < dmipLevels; i++) {
+        domains[i] = getArray(mdomain.get(i), domainScale);
+        ranges[i] = getArray(mrange.get(i), 1);
+      }
+
+      XYDatasetRequest.MultiRes mippedRequest
+          = (XYDatasetRequest.MultiRes) request;
+      request.setRangeTop(json.getRangeTop());
+      request.setRangeBottom(json.getRangeBottom());
+      mippedRequest.setMultiDomain(createArray2D(domains));
+      mippedRequest.setMultiRange(createArray2D(ranges));
+    } else {
+
+      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic) request;
+      if (dtformat != null) {
+        basicRequest.setDomain(getArrayWithFormat(json.getDomainString(), dtformat));
+      } else {
+        basicRequest.setDomain(getArray(json.getDomain(), domainScale));
+      }
+      basicRequest.setRange(getArray(json.getRange(), 1));
+    }
+
+    if (isMutable) {
+      dataset = dsFactory.createMutable(request);
+    } else {
+      dataset = dsFactory.create(request);
+    }
+
+    return dataset;
+  }
+
+  private static double[] getArray(JsArrayNumber jsArray, double preMul) {
+    int len = jsArray.length();
+
+    double aVal[] = new double[len];
+    for (int i = 0; i < len; i++) {
+      aVal[i] = jsArray.get(i) * preMul;
+    }
+    return aVal;
+  }
+
+  private static double[] getArrayWithFormat(JsArrayString jsArray,
+      String dtformat) {
+    DateTimeFormat df = DateTimeFormat.getFormat(dtformat);
+      int len = jsArray.length();
+
+    double aVal[] = new double[len];
+    for (int i = 0; i < len; i++) {
+      aVal[i] = (double)df.parse(jsArray.get(i)).getTime();
+    }
+    return aVal;
+  }
+
   /**
    * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
-  public ChartPanel createChartPanel(String id, JavaScriptObject datasets,
+  public ChartPanel createChartPanel(String id, JsArray<JSONDataset> datasets,
       ViewReadyCallback listener) {
     Element elem = DOM.getElementById(id);
     int width = DOM.getElementPropertyInt(elem, "clientWidth");
@@ -676,7 +704,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             }
            return false;
          }
-  
+
          var i;
          for(i=0; i<$doc.styleSheets.length; i++) {
            try {
@@ -688,7 +716,7 @@ public class Chronoscope implements Exportable, HistoryListener {
          }
          return false;
 
-        
+
     }-*/;
 
   private void tryInjectChronoscopeCSS(final Command cmd) {
@@ -707,9 +735,5 @@ public class Chronoscope implements Exportable, HistoryListener {
       }
     };
     t.schedule(10);
-  }
-
-  private static Array2D createArray2D(double[][] a) {
-    return new JavaArray2D(a);
   }
 }
