@@ -13,7 +13,7 @@ public class JSONDataset extends JavaScriptObject {
   protected JSONDataset() {
   }
 
-  public native String getDateTimeFormat() /*-{
+  public final native String getDateTimeFormat() /*-{
     return this.dtformat;
   }-*/;
 
