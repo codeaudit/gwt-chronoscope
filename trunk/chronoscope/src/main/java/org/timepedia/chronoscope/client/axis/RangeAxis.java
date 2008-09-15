@@ -533,6 +533,5 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
     ticks = null;
-    computeTickPositions();
   }
 }
