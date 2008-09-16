@@ -88,21 +88,21 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
       "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
 
-  public static double[] computeLinearTickPositions(double rangeLow,
-      double rangeHigh, double axisHeight, double tickLabelHeight,
+  public static double[] computeLinearTickPositions(double lrangeLow,
+      double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
-    if (rangeHigh == rangeLow) {
-      int logRange = ((int) Math.floor(Math.log10(rangeHigh)));
+    if (lrangeHigh == lrangeLow) {
+      int logRange = ((int) Math.floor(Math.log10(lrangeHigh)));
       if (logRange < 0) {
         logRange += 1;
       }
       double exponent = Math.pow(10, logRange);
-      double rounded = Math.floor(rangeHigh / exponent);
-      rangeHigh = (rounded + 1) * exponent;
-      rangeLow = (rounded - 1) * exponent;
+      double rounded = Math.floor(lrangeHigh / exponent);
+      lrangeHigh = (rounded + 1) * exponent;
+      lrangeLow = (rounded - 1) * exponent;
     }
 
-    double range = rangeHigh - rangeLow;
+    double range = lrangeHigh - lrangeLow;
 
     int maxNumLabels = (int) Math
         .floor(axisHeight / (2 * tickLabelHeight));
@@ -117,17 +117,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double smoothInterval = smoothSigDigits * exponent;
 
-    double axisStart = rangeLow - rangeLow % smoothInterval;
-    int numTicks = (int) (Math.ceil((rangeHigh - axisStart) / smoothInterval));
+    double offset = lrangeLow % smoothInterval;
+    double axisStart = lrangeLow - (offset < 0 ? smoothInterval+offset : offset);
+    int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
-    if (axisStart + smoothInterval * (numTicks - 1) < rangeHigh) {
+    if (axisStart + smoothInterval * (numTicks - 1) < lrangeHigh) {
       numTicks++;
     }
 
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
       if (tickPositions.length == i + 1 && forceLastTick) {
-        axisStart = rangeHigh;
+        axisStart = lrangeHigh;
       }
       tickPositions[i] = axisStart;
       axisStart += smoothInterval;
@@ -521,17 +522,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
         : "." + "000000000".substring(0, maxDigits - 1));
   }
 
-  private double getUnadjustedRangeHigh() {
+  public double getUnadjustedRangeHigh() {
     return autoZoom ? visRangeMax : rangeHigh;
   }
 
-  private double getUnadjustedRangeLow() {
+  public double getUnadjustedRangeLow() {
     return autoZoom ? visRangeMin : rangeLow;
   }
 
   private void setRangeInternal(double rangeLow, double rangeHigh) {
+    ticks = null;
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
-    ticks = null;
   }
 }

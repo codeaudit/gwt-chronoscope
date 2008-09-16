@@ -180,7 +180,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       DOM.setStyleAttribute(textDiv, "textDecoration", "underline");
       DOM.setStyleAttribute(textDiv, "cursor", "pointer");
     }
-    DOM.setInnerHTML(textDiv, label);
+    DOM.setInnerHTML(textDiv, "<nobr>"+label+"</nobr>");
     DOM.appendChild(layerElem, textDiv);
   }
 
