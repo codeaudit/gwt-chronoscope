@@ -33,5 +33,18 @@ public final class MathUtil {
   public static double log2(double value) {
     return Math.log(value) / Math.log(2);
   }
-
+  
+  /**
+   * Performs 'x modulo y' (not to be confused with the remainder operator '%', which
+   * behaves differently when x is negative).
+   */
+  public static int mod(int x, int y) {
+    if (x >= 0) {
+      return x % y;
+    }
+    else {
+      int tmp = -x % y; // make x positive before calc'ing remainder
+      return (tmp == 0) ? tmp : (y - tmp);
+    }
+  }
 }

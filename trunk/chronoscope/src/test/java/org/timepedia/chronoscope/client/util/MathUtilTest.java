@@ -40,4 +40,18 @@ public class MathUtilTest extends TestCase {
     assertEquals(Double.NaN, MathUtil.log2(-1));
     assertEquals(Double.NaN, MathUtil.log2(Double.NaN));
   }
+  
+  public void testMod() {
+    // negative values
+    assertEquals(2, MathUtil.mod(-4, 3));
+    assertEquals(0, MathUtil.mod(-3, 3));
+    assertEquals(1, MathUtil.mod(-2, 3));
+    assertEquals(2, MathUtil.mod(-1, 3));
+    // positive values
+    assertEquals(0, MathUtil.mod(0, 3));
+    assertEquals(1, MathUtil.mod(1, 3));
+    assertEquals(2, MathUtil.mod(2, 3));
+    assertEquals(0, MathUtil.mod(3, 3));
+    assertEquals(1, MathUtil.mod(4, 3));
+  }
 }
