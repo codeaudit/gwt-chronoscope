@@ -34,16 +34,20 @@ public final class MathUtil {
     return Math.log(value) / Math.log(2);
   }
   
+  public static int mod(int x, int y) {
+    return (int)mod((double)x,(double)y);
+  }
+  
   /**
    * Performs 'x modulo y' (not to be confused with the remainder operator '%', which
    * behaves differently when x is negative).
    */
-  public static int mod(int x, int y) {
+  public static double mod(double x, double y) {
     if (x >= 0) {
       return x % y;
     }
     else {
-      int tmp = -x % y; // make x positive before calc'ing remainder
+      double tmp = -x % y; // make x positive before calc'ing remainder
       return (tmp == 0) ? tmp : (y - tmp);
     }
   }

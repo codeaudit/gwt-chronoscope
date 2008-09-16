@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -113,12 +114,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits + 5;
-    smoothSigDigits = smoothSigDigits - (smoothSigDigits % 5);
+    smoothSigDigits = smoothSigDigits - (int) MathUtil
+        .mod(smoothSigDigits, 5.0);
 
     double smoothInterval = smoothSigDigits * exponent;
 
-    double offset = lrangeLow % smoothInterval;
-    double axisStart = lrangeLow - (offset < 0 ? smoothInterval+offset : offset);
+    double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
     if (axisStart + smoothInterval * (numTicks - 1) < lrangeHigh) {
