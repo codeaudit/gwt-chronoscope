@@ -35,7 +35,13 @@ public final class MathUtil {
   }
   
   public static int mod(int x, int y) {
-    return (int)mod((double)x,(double)y);
+    if (x >= 0) {
+      return x % y;
+    }
+    else {
+      int tmp = -x % y; // make x positive before calc'ing remainder
+      return (tmp == 0) ? tmp : (y - tmp);
+    }
   }
   
   /**
