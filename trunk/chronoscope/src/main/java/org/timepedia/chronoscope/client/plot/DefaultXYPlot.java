@@ -1063,8 +1063,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         axisMap.put(ra.getAxisId(), ra);
         currRangePanel.add(ra);
       } else {
-        ra.setInitialRange(Math.min(ra.getRangeLow(), ds.getRangeBottom()),
-            Math.max(ra.getRangeHigh(), ds.getRangeTop()));
+        ra.setInitialRange(Math.min(ra.getUnadjustedRangeLow(), ds.getRangeBottom()),
+            Math.max(ra.getUnadjustedRangeHigh(), ds.getRangeTop()));
       }
 
       axes[i] = ra;
