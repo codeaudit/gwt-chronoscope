@@ -386,7 +386,7 @@ public class Microformats {
 
         int candidateWidth = DOM.getElementPropertyInt(elt, "clientWidth");
         if (candidateWidth < 600) {
-          candidateWidth = 200;
+          candidateWidth = 600;
         }
         int candidateHeight = (int) (candidateWidth / 1.618);
         ChartPanel cp = Chronoscope.createTimeseriesChart(div, ds,
