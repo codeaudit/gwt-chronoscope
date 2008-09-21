@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * Provides functionality for rendering the domain axis ticks in a context-sensitive
@@ -68,7 +69,7 @@ public abstract class TickFormatter {
   }
 
   /**
-   * Attempt to find the optimal tick step (taking into accout screen width, 
+   * Attempt to find the optimal tick step (taking into account screen width, 
    * tick label width, and domain-context-dependent quantized tick steps).
    */
   public final int calcIdealTickStep(double domainWidth, int maxTicksForScreen) {
@@ -101,7 +102,6 @@ public abstract class TickFormatter {
       idealTickStep = tickSteps[tickSteps.length - 1];
     }
     
-    //System.out.println("TESTING: [dw=" + (long)domainWidth + "; maxTix=" + maxTicksForScreen + "] -> " + idealTickStep);
     cachedDomainWidth = domainWidth;
     cachedMaxTicksForScreen = maxTicksForScreen;
     cachedIdealTickStep = idealTickStep;

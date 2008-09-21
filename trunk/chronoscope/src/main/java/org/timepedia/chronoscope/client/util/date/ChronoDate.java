@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.timepedia.chronoscope.client.util.date;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
@@ -15,13 +12,13 @@ import java.util.Date;
 public abstract class ChronoDate {
 
   /**
-   * Factor method that creates a new date object for the specified timeStamp.
+   * Factory method that creates a new date object for the specified timeStamp.
    */
   public static final ChronoDate get(double timeStamp) {
     // NOTE: this can be replaced with a homegrown high-performance
-    // implementation
-    // at some point.
-    return new DefaultChronoDate(timeStamp);
+    // implementation at some point.
+    //return new DefaultChronoDate(timeStamp);
+    return new FastChronoDate(timeStamp);
   }
 
   /**
@@ -44,8 +41,35 @@ public abstract class ChronoDate {
    * 
    * @param timeUnit - The portion of this date whose value is to be returned
    */
-  public abstract int get(TimeUnit timeUnit);
-
+  public final int get(TimeUnit timeUnit) {
+    switch (timeUnit) {
+      case YEAR:
+        return getYear();
+      case MONTH:
+        return getMonth();
+      case DAY:
+        return getDay();
+      case HOUR:
+        return getHour();
+      case MIN:
+        return getMinute();
+      case SEC:
+        return getSecond();
+      default:
+        throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported at this time");
+    }
+  }
+  
+  /**
+   * Returns the number of days in this date's month.
+   */
+  public abstract int getDaysInMonth();
+  
+  /**
+   * Returns the day of the week that this date falls on.
+   */
+  public abstract DayOfWeek getDayOfWeek();
+  
   public abstract int getDay();
 
   public abstract int getHour();
@@ -56,11 +80,12 @@ public abstract class ChronoDate {
 
   public abstract int getSecond();
 
+  /**
+   * Analagous to <tt>java.util.Date.getTime()</tt>.
+   */
   public abstract double getTime();
 
   public abstract int getYear();
-
-  public abstract boolean isFirstOfMonth();
 
   /**
    * Sets the specified time unit to the specified value.
@@ -73,10 +98,10 @@ public abstract class ChronoDate {
   public abstract void setTime(double ms);
 
   /**
-   * Truncates this date down to the specified time unit. For example, if
+   * Truncates this date up to the specified time unit. For example, if
    * <tt>myDate = '1987-Mar-12 14:30:59'</tt>, then
    * <tt>truncate(myDate, TimeUnit.MONTH)</tt> will truncate this date up to
-   * the month resulting in the date <tt>'1987-Mar-12 00:00:00'</tt>.
+   * the month resulting in the date <tt>'1987-Mar-01 00:00:00'</tt>.
    * 
    * @throws UnsupportedOperationException if the specified timeUnit is not
    *           supported by a particular subclass.

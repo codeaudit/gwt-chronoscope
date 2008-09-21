@@ -5,10 +5,6 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 public class DaysTickFormatter extends TickFormatter {
 
-  private static final int[] DAYS_IN_MONTH = 
-      {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-
   public DaysTickFormatter(TickFormatter superFormatter) {
     super("00-Xxx"); // e.g. "22-Aug"
     this.superFormatter = superFormatter;
@@ -45,8 +41,9 @@ public class DaysTickFormatter extends TickFormatter {
     boolean doSkipToNextMonth = false;
     switch (numTimeUnits) {
       case 2:
-        boolean isFebruary = d.getMonth() == 1;
-        int dayThreshold = isFebruary ? 27 : 29;
+        int daysInMonth = d.getDaysInMonth();
+        boolean isEven = (daysInMonth % 2 == 0);
+        int dayThreshold = daysInMonth - (isEven ? 1 : 2);
         doSkipToNextMonth = (dayOfMonth >= dayThreshold);
         break;
       case 7:
@@ -87,9 +84,10 @@ public class DaysTickFormatter extends TickFormatter {
    * first day of the following month.
    */
   private static int gotoFirstOfNextMonth(ChronoDate d) {
-    int actualIncrement = DAYS_IN_MONTH[d.getMonth()] - d.getDay() + 1;
+    int actualIncrement = d.getDaysInMonth() - d.getDay() + 1;
     d.set(TimeUnit.DAY, 1);
     d.add(TimeUnit.MONTH, 1);
+    //System.out.println("TESTING: day=" + d.getDay() + "; actualIncrement=" + actualIncrement);
     return actualIncrement;
   }
   

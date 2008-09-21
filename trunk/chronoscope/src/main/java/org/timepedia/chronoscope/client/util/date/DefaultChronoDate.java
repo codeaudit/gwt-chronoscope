@@ -46,23 +46,26 @@ public final class DefaultChronoDate extends ChronoDate {
   }
 
   @Override
-  public int get(TimeUnit timeUnit) {
-    switch (timeUnit) {
-      case YEAR:
-        return d.getYear() + 1900;
-      case MONTH:
-        return d.getMonth();
-      case DAY:
-        return d.getDate();
-      case HOUR:
-        return d.getHours();
-      case MIN:
-        return d.getMinutes();
-      case SEC:
-        return d.getSeconds();
-      default:
-        throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported at this time");
+  public int getDaysInMonth() {
+    int year = d.getYear() + 1900;
+    int month = d.getMonth();
+    
+    // Special case: Oct 1582 only has 21 days (Oct 5th - 14th were omitted due to 
+    // transition from Julian to Gregorian calendar).
+    if (year == 1582 && month == 9) {
+      return 21;
     }
+    
+    Date tmp = (Date)d.clone();
+    tmp.setMonth(month + 1);
+    tmp.setDate(1);
+    tmp.setDate(0);
+    return tmp.getDate();
+  }
+  
+  @Override
+  public DayOfWeek getDayOfWeek() {
+    throw new UnsupportedOperationException();
   }
   
   @Override
@@ -92,7 +95,7 @@ public final class DefaultChronoDate extends ChronoDate {
 
   @Override
   public double getTime() {
-    return d.getTime();
+    return (double)d.getTime();
   }
 
   @Override

@@ -9,12 +9,26 @@ import java.util.Date;
 /**
  * @author chad takahashi
  */
-public class ChronoDateTest extends TestCase {
+public class DefaultChronoDateTest extends TestCase {
   
-  public ChronoDateTest(String name) {
+  public DefaultChronoDateTest(String name) {
     super(name);
   }
   
+  public void testGetDaysInMonth() {
+    ChronoDate d = createDate(new Date(1582-1900, 0, 1).getTime());
+    assertEquals(31, d.getDaysInMonth());
+
+    d = createDate(new Date(2000-1900, 1, 15).getTime());
+    assertEquals(29, d.getDaysInMonth());
+  
+    d = createDate(new Date(1900-1900, 1, 15).getTime());
+    assertEquals(28, d.getDaysInMonth());
+
+    // Special case: switch from Julian to Gregorian; Oct only has 21 days.
+    d = createDate(new Date(1582-1900, 9, 3).getTime());
+    assertEquals(21, d.getDaysInMonth());
+  }
   
   public void testSetTime() {
     final int expectedYear = 1997;
