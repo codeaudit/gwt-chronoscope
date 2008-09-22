@@ -22,6 +22,10 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
   public void drawDataset(Layer layer, XYDataset dataSet, XYRenderer renderer,
       int seriesNum, XYPlot plot) {
 
+    if (dataSet.getNumSamples(0) < 2) {
+      return;
+    }
+    
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;
     if (focus == null) {

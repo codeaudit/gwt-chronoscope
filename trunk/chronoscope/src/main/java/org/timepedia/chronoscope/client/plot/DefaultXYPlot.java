@@ -8,13 +8,13 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.AxisPanel;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
+import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -28,6 +28,7 @@ import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -97,7 +98,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private boolean drewVertical;
 
   private final boolean interactive;
-
+  
   private boolean overviewEnabled = true;
 
   private Layer overviewLayer;
@@ -194,15 +195,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
      */
     abstract double dist(double x1, double y1, double x2, double y2);
   }
-
-  ;
-
-  public DefaultXYPlot(Chart chart, XYDataset[] datasets, boolean interactive) {
-    this(chart, datasets, interactive, null);
-  }
-
-  private DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive,
-      Bounds initialBounds) {
+  
+  public DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive) {
+    //ArgChecker.isNotNull(chart, "chart");
+    ArgChecker.isNotNull(ds, "ds");
+    ArgChecker.isGT(ds.length, 0, "ds.length");
+    
     this.chart = chart;
     this.datasets = ds;
     this.interactive = interactive;
@@ -217,7 +215,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     resetHoverPoints();
 
     plotRenderer = new ScalableXYPlotRenderer(this);
-    this.initialBounds = initialBounds;
+    this.initialBounds = null;
     plotNumber = globalPlotNumber++;
     setupDatasetListeners();
   }
@@ -234,20 +232,33 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void animateTo(final double destinationOrigin,
       final double destinationDomain, final int eventType) {
+    if (!isAnimatable()) {
+      return;
+    }
+    
     animateTo(destinationOrigin, destinationDomain, eventType, null);
   }
 
   public void animateTo(final double destinationOrigin,
       final double destinationDomain, final int eventType,
       final PortableTimerTask continuation) {
+
+    if (!isAnimatable()) {
+      return;
+    }
+    
     animateTo(destinationOrigin, destinationDomain, eventType, continuation,
         true);
   }
 
-  public void animateTo(final double destinationOrigin,
+  private void animateTo(final double destinationOrigin,
       final double destinationDomain, final int eventType,
       final PortableTimerTask continuation, boolean fence) {
-
+    
+    if (!isAnimatable()) {
+      return;
+    }
+    
     // if there is already an animation running, cancel it
     if (animationTimer != null) {
       animationTimer.cancelTimer();
@@ -283,8 +294,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
       double startTime = 0;
 
-      // zoom factor, ratio of destination domain to current domain
-      final double zf = fencedDomain / currentDomain;
+      // Ratio of destination domain to current domain
+      final double zoomFactor = fencedDomain / currentDomain;
 
       public void run(PortableTimer t) {
         isAnimating = true;
@@ -296,7 +307,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         if (lerpFactor > 1) {
           lerpFactor = 1;
         }
-        setCurrentDomain(startDomain * ((1 - lerpFactor) + zf * lerpFactor));
+        
+        setCurrentDomain(startDomain * ((1 - lerpFactor) + zoomFactor * lerpFactor));
         domainCenter = (destCenter - sCenter) * lerpFactor + sCenter;
         domainOrigin = domainCenter - currentDomain / 2;
         redraw();
@@ -802,6 +814,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void setCurrentDomain(double currentDomain) {
+    if (Double.isNaN(currentDomain)) {
+      throw new RuntimeException("TESTING: setCurrentDomain(NaN) not allowed");
+    }
     this.currentDomain = currentDomain;
   }
 
@@ -1417,6 +1432,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     initializeDomain();
     initDefaultRenderers();
     initDatasetLevels();
+  }
+
+  /**
+   * Returns true only if this plot is in a state such that animations
+   * (e.g. zoom in, pan) are possible.
+   */
+  private boolean isAnimatable() {
+    return this.currentDomain != 0.0;
   }
 
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
