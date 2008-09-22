@@ -35,6 +35,11 @@ public class OverviewAxisMouseMoveHandler extends
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
     DefaultXYPlot plot = (DefaultXYPlot)chartInfo.chart.getPlot();
+    
+    if (!plot.isOverviewEnabled()) {
+      return;
+    }
+    
     OverviewAxis overviewAxis = plot.getOverviewAxis();
     Bounds overviewAxisBounds = overviewAxis.getBounds();
     Bounds hiliteBounds = overviewAxis.getHighlightBounds(); 
