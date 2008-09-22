@@ -26,7 +26,25 @@ public class ArrayXYDatasetTest extends TestCase {
     dsFactory = new DefaultXYDatasetFactory();
   }
   
-  public void test() {
+  public void testSinglePoint() {
+
+    XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+    request.setAxisId("My Axis Id");
+    request.setLabel("My Range Label");
+    request.setDefaultMipMapStrategy(DefaultMipMapStrategy.MEAN);
+    request.setDomain(new double[] {1000});
+    request.setRange(new double[] {10});
+    XYDataset ds = dsFactory.create(request);
+
+    assertEquals(1, ds.getNumSamples());
+    assertEquals(1000.0, ds.getDomainBegin());
+    assertEquals(1000.0, ds.getDomainEnd());
+    assertEquals(10.0, ds.getRangeBottom());
+    assertEquals(10.0, ds.getRangeTop());
+    assertEquals(0.0, ds.getApproximateMinimumInterval());
+  }
+  
+  public void testGeneral() {
     OODoubleArray domain = new OODoubleArray(new double[] {1000, 2000, 3000, 4000});
     OODoubleArray range = new OODoubleArray(new double[] {10, 50, 40, 60});
     

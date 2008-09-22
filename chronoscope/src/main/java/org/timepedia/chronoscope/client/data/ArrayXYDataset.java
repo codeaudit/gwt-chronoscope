@@ -161,18 +161,26 @@ public class ArrayXYDataset implements XYDataset {
     }
   }
 
+  /**
+   * Returns the smallest domain interval at row 0 in the specified Array2D object.
+   * If only 1 column exists at row 0, then 0 is returned as the minimum interval.
+   */
   private static double calcMinInterval(Array2D a) {
     double min = Double.MAX_VALUE;
     final int numColumns = a.numColumns(0);
-    if (numColumns < 2) {
-      throw new RuntimeException("Array2D must have at least 2 columns at MIP level 0: " + numColumns);
-    }
     
-    double prevValue = a.get(0, 0);
-    for (int i = 1; i < numColumns; i++) {
-      double currValue = a.get(0, i);
-      min = Math.min(min, currValue - prevValue);
-      prevValue = currValue;
+    if (numColumns < 2) {
+      // An interval requires at least 2 points, so in this case, just return 0.
+      min = 0.0;
+      //throw new RuntimeException("Array2D must have at least 2 columns at MIP level 0: " + numColumns);
+    }
+    else {
+      double prevValue = a.get(0, 0);
+      for (int i = 1; i < numColumns; i++) {
+        double currValue = a.get(0, i);
+        min = Math.min(min, currValue - prevValue);
+        prevValue = currValue;
+      }
     }
     
     return min;

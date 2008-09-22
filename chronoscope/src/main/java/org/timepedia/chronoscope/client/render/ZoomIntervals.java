@@ -39,8 +39,8 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
    * @param minInterval - the smallest time interval across all datasets.
    */
   public void applyFilter(double timeStart, double timeEnd, double minInterval) {
-    if (timeStart >= timeEnd) {
-      throw new IllegalArgumentException("timeSmart >= timeEnd: " + timeStart
+    if (timeStart > timeEnd) {
+      throw new IllegalArgumentException("timeSmart > timeEnd: " + timeStart
           + ", " + timeEnd);
     }
     this.maxInterval = timeEnd - timeStart;
