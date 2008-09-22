@@ -287,7 +287,12 @@ public interface XYPlot extends Exportable {
    * Initialize or re-initialize the plot using the given view
    */
   void init(View view);
-
+  
+  /**
+   * Returns true if mini-chart overview on x-axis is enabled.
+   */
+  boolean isOverviewEnabled();
+  
   /**
    * Is selection mode (dragging changes selection instead of panning the plot)
    * enabled?
@@ -467,7 +472,7 @@ public interface XYPlot extends Exportable {
   void setLegendEnabled(boolean enabled);
 
   /**
-   * Enable or display mini-chart overview on x-axis.
+   * Enable mini-chart overview on x-axis.
    */
   void setOverviewEnabled(boolean overviewEnabled);
 

@@ -605,7 +605,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public boolean isDomainAxisVisible() {
     return domainAxisVisible;
   }
-
+  
+  public boolean isOverviewEnabled() {
+    return this.overviewEnabled;
+  }
+  
   public boolean isSelectionModeEnabled() {
     return selectionMode;
   }
