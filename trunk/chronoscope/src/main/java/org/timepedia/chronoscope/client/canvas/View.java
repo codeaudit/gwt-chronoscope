@@ -3,20 +3,21 @@ package org.timepedia.chronoscope.client.canvas;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View encapsulate platform specific behaviors, such as graphics rendering,
@@ -29,9 +30,7 @@ import java.util.Vector;
 @ExportPackage("chronoscope")
 public abstract class View implements Exportable {
 
-  protected int viewWidth;
-
-  protected int viewHeight;
+  protected int viewHeight, viewWidth;
 
   protected Canvas frontCanvas, backingCanvas;
 
@@ -43,7 +42,7 @@ public abstract class View implements Exportable {
 
   protected Chart chart;
 
-  private final Vector viewListeners = new Vector();
+  private final List<XYPlotListener> viewListeners = new ArrayList<XYPlotListener>();
 
   private boolean doubleBuffered = false;
 
@@ -88,24 +87,21 @@ public abstract class View implements Exportable {
   }
 
   public void fireContextMenuEvent(int x, int y) {
-
-    for (int i = 0; i < viewListeners.size(); i++) {
-      ((XYPlotListener) viewListeners.get(i)).onContextMenu(x, y);
+    for (XYPlotListener l : viewListeners) {
+      l.onContextMenu(x, y);
     }
   }
 
   public void fireFocusEvent(XYPlot plot, int focusSeries, int focusPoint) {
-    for (int i = 0; i < viewListeners.size(); i++) {
-      ((XYPlotListener) viewListeners.get(i))
-          .onFocusPointChanged(plot, focusSeries, focusPoint);
+    for (XYPlotListener l : viewListeners) {
+      l.onFocusPointChanged(plot, focusSeries, focusPoint);
     }
   }
 
   public void fireScrollEvent(XYPlot plot, double amt, int seriesNum, int type,
       boolean anim) {
-    for (int i = 0; i < viewListeners.size(); i++) {
-      ((XYPlotListener) viewListeners.get(i))
-          .onPlotMoved(plot, amt, seriesNum, type, anim);
+    for (XYPlotListener l : viewListeners) {
+      l.onPlotMoved(plot, amt, seriesNum, type, anim);
     }
   }
 
@@ -116,8 +112,8 @@ public abstract class View implements Exportable {
    */
   public void flipCanvas() {
     if (doubleBuffered) {
-//            frontCanvas.setVisibility(false);
-//            backingCanvas.setVisibility(true);
+      // frontCanvas.setVisibility(false);
+      // backingCanvas.setVisibility(true);
       Canvas tmp = frontCanvas;
       frontCanvas = backingCanvas;
       backingCanvas = tmp;
