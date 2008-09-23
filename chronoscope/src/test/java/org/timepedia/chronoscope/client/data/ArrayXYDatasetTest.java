@@ -3,12 +3,6 @@ package org.timepedia.chronoscope.client.data;
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.data.DefaultMipMapStrategy;
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
-import org.timepedia.chronoscope.client.data.MutableXYDataset;
-import org.timepedia.chronoscope.client.data.Mutation;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.util.junit.OODoubleArray;
 
@@ -16,24 +10,15 @@ import org.timepedia.util.junit.OODoubleArray;
  * @author chad takahashi
  */
 public class ArrayXYDatasetTest extends TestCase {
-  private XYDatasetFactory dsFactory;
-
+  private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+  private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
+  
   public ArrayXYDatasetTest(String name) {
     super(name);
   }
   
-  public void setUp() {
-    dsFactory = new DefaultXYDatasetFactory();
-  }
-  
   public void testSinglePoint() {
-
-    XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
-    request.setAxisId("My Axis Id");
-    request.setLabel("My Range Label");
-    request.setDefaultMipMapStrategy(DefaultMipMapStrategy.MEAN);
-    request.setDomain(new double[] {1000});
-    request.setRange(new double[] {10});
+    XYDatasetRequest request = dsMaker.newRequest(new double[] {1000}, new double[] {10});
     XYDataset ds = dsFactory.create(request);
 
     assertEquals(1, ds.getNumSamples());
@@ -48,13 +33,7 @@ public class ArrayXYDatasetTest extends TestCase {
     OODoubleArray domain = new OODoubleArray(new double[] {1000, 2000, 3000, 4000});
     OODoubleArray range = new OODoubleArray(new double[] {10, 50, 40, 60});
     
-    // Create and configure the request
-    XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
-    request.setAxisId("My Axis Id");
-    request.setLabel("My Range Label");
-    request.setDefaultMipMapStrategy(DefaultMipMapStrategy.MEAN);
-    request.setDomain(domain.getArray());
-    request.setRange(range.getArray());
+    XYDatasetRequest.Basic request = dsMaker.newRequest(domain.getArray(), range.getArray());
     
     // Basic test that verifies that given the same dataset values, an
     // immutable dataset and a mutable dataset (which have different code

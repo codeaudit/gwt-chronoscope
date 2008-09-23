@@ -1482,12 +1482,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void setupDatasetListeners() {
-    for (int i = 0; i < datasets.length; i++) {
-      XYDataset dataset = datasets[i];
+    for (XYDataset dataset : this.datasets) {
       if (dataset instanceof MutableXYDataset) {
-        throw new UnsupportedOperationException(
-            "MutableXYDatasets not supported at this time");
-        //((UpdateableXYDataset) dataset).addXYDatasetListener(this);
+        ((MutableXYDataset) dataset).addXYDatasetListener(this);
       }
     }
   }

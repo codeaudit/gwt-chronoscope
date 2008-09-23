@@ -14,7 +14,7 @@ public class ArrayXYDataset implements XYDataset {
   
   protected double rangeBottom, rangeTop;
 
-  private double approximateMinimumInterval;
+  protected double approximateMinimumInterval;
 
   private String axisId;
 
