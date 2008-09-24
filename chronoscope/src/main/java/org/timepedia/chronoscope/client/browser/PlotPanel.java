@@ -9,7 +9,6 @@ import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.ViewContainer;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -56,8 +55,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private boolean viewReady;
 
-  private ViewContainer viewContainer;
-
   /**
    * Instantiates a chart widget using the given DOM element as a container
    */
@@ -77,7 +74,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
       gssContext = (BrowserGssContext) GWT
           .create(BrowserGssContext.class);
     }
-    viewContainer = new ViewContainer(view);
     this.chartWidth = chartWidth;
     this.chartHeight = chartHeight;
     this.readyListener = readyListener;
@@ -186,17 +182,17 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * Invoked when a BrowserView is finished construction and ready for
    * rendering. Chart initialization is delayed until view creation, because
    * Chart initialization depends on measuring font metrics, CSS styles, and
-   * other view centric operations.
+   * other view-centric operations.
    */
   public void onViewReady(View view) {
-
     viewReady = true;
     chart.init(view, plot);
     Chronoscope.putChart(id, chart);
+   
+    chart.redraw();
+
     if (readyListener != null) {
       readyListener.onViewReady(view);
-    } else {
-      chart.redraw();
     }
   }
 
@@ -251,10 +247,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
         .initialize(getElement(), chartWidth, chartHeight, true, gssContext,
             this);
     view.onAttach();
-  }
-
-  ViewReadyCallback getReadyListener() {
-    return readyListener;
   }
 
   private native void appendBody(Element cssgss) /*-{
