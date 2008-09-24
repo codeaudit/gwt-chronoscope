@@ -38,11 +38,6 @@ public class OverviewAxis extends ValueAxis {
         .drawOverview(plot, layer, bounds = new Bounds(axisBounds), gridOnly);
   }
 
-  public void drawAxis(View view, Layer layer, Bounds axisBounds,
-      String panelName, int position, boolean gridOnly) {
-    bounds = new Bounds(axisBounds);
-  }
-
   public Bounds getBounds() {
     return bounds;
   }

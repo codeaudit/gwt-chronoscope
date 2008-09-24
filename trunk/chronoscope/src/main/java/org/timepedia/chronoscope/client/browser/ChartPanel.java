@@ -63,8 +63,4 @@ public class ChartPanel extends Composite implements Exportable {
     return new PlotPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
   }
-
-  protected ViewReadyCallback getReadyListener() {
-    return plotPanel.getReadyListener();
-  }
 }
