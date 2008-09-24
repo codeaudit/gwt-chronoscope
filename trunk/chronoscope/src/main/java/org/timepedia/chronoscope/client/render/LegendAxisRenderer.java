@@ -68,7 +68,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     double startDate = plot.getDomainOrigin();
     double endDate = startDate + plot.getCurrentDomain();
     dateRangePanel.updateDomainInterval(startDate, endDate);
-    rightJustify(dateRangePanel, axisBounds);
+    topRightJustify(dateRangePanel, axisBounds);
     layoutPanels(axisBounds);
     dsLegendPanel.setLocation(axisBounds.x, axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD);
     
@@ -218,7 +218,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     
     // Doesn't fit? Then compress only the date range panel
     dateRangePanel.resizeToMinimalWidth();
-    rightJustify(dateRangePanel, parentBounds);
+    topRightJustify(dateRangePanel, parentBounds);
     cushion = parentWidth - idealZoomPanelWidth - dateRangePanel.getWidth();
     if (cushion >= minCushion) {
       return;
@@ -227,7 +227,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     // Still doesn't fit? Then compress only the zoom link panel
     zoomPanel.resizeToMinimalWidth();
     dateRangePanel.resizeToIdealWidth();
-    rightJustify(dateRangePanel, parentBounds);
+    topRightJustify(dateRangePanel, parentBounds);
     cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
     if (cushion >= minCushion) {
       return;
@@ -235,7 +235,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     
     // Still doesn't fit? Then compress both panels
     dateRangePanel.resizeToMinimalWidth();
-    rightJustify(dateRangePanel, parentBounds);
+    topRightJustify(dateRangePanel, parentBounds);
     cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
     if (cushion >= minCushion) {
       return;
@@ -245,8 +245,11 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     zoomPanel.show(false);
   }
   
-  private void rightJustify(Panel p, Bounds parentBounds) {
-    p.setLocation(parentBounds.x + parentBounds.width - dateRangePanel.getWidth() - 2, parentBounds.y);
+  /**
+   * Positions the specified panel in the top-right corner of the specified bounds.
+   */
+  private void topRightJustify(Panel p, Bounds parentBounds) {
+    p.setLocation(parentBounds.rightX() - dateRangePanel.getWidth() - 2, parentBounds.y);
   }
   
   /**

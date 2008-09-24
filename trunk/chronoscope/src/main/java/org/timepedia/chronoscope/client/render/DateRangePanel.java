@@ -1,12 +1,9 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
-
-import java.util.Date;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * Draws a date range (e.g. "11/25/1995 - 02/17/2007").
@@ -18,36 +15,38 @@ public class DateRangePanel extends AbstractPanel {
   private static final String DATE_DELIM_LONG = SPC + "-" + SPC;
   private static final String DATE_DELIM_SHORT = SPC + "-" + SPC;
 
-  private static final DateTimeFormat LONG_DATE_FORMAT = DateTimeFormat.getFormat("MM/dd/yyyy");
-  private static final DateTimeFormat SHORT_DATE_FORMAT = DateTimeFormat.getFormat("MM/dd/yy");
-
+  private static final DateFormatHelper DATE_FMT = new DateFormatHelper();
+  
   private String dateRangeActive;
   private String dateRangeShort;
   private String dateRangeLong;
-  private int minPanelWidth;
-  private int idealPanelWidth;
 
   private double startTimeStamp = -1;
-  private Date startDate = new Date();
+  private ChronoDate startDate = ChronoDate.getSystemDate();
   private double endTimeStamp = -1;
-  private Date endDate = new Date();
+  private ChronoDate endDate = ChronoDate.getSystemDate();
 
   // If true, render the thin date range. Otherwise, use the more
   // verbose date range.
   private boolean compactMode = false;
-
+  
+  private int typicalCharWidth;
+  
   public void init(Layer layer) {
-    minPanelWidth = calcWidth("12/12/00" + DATE_DELIM_SHORT + "12/12/00", layer);
-    idealPanelWidth = calcWidth("12/12/0000" + DATE_DELIM_LONG + "12/12/0000", layer);
+    final String typicalDateChars = "0123456789-";
+    height = this.calcHeight("X", layer);
+    typicalCharWidth = calcWidth(typicalDateChars, layer) / typicalDateChars.length();
     
     if (compactMode) {
-      resizeToMinimalWidth();
+      final String typicalShortDateRange = "12/12/00" + DATE_DELIM_SHORT + "12/12/00";
+      this.width = this.calcWidth(typicalShortDateRange, layer);
+      //resizeToMinimalWidth();
     }
     else {
-      resizeToIdealWidth();
+      final String typicalLongDateRange = "12/12/0000" + DATE_DELIM_LONG + "12/12/0000";
+      this.width = this.calcWidth(typicalLongDateRange, layer);
+      //resizeToIdealWidth();
     }
-
-    height = this.calcHeight("X", layer);
   }
 
   public void draw(Layer layer) {
@@ -71,14 +70,14 @@ public class DateRangePanel extends AbstractPanel {
       this.startTimeStamp = startTimeStamp;
       this.endTimeStamp = endTimeStamp;
 
-      startDate.setTime((long) startTimeStamp);
-      endDate.setTime((long) endTimeStamp);
-
-      String longStartDate = LONG_DATE_FORMAT.format(startDate);
-      String longEndDate = LONG_DATE_FORMAT.format(endDate);
+      startDate.setTime(startTimeStamp);
+      endDate.setTime(endTimeStamp);
+      
+      String longStartDate = formatLongDate(startDate);
+      String longEndDate = formatLongDate(endDate);
       dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate;
-      String shortStartDate = SHORT_DATE_FORMAT.format(startDate);
-      String shortEndDate = SHORT_DATE_FORMAT.format(endDate);
+      String shortStartDate = formatShortDate(startDate);
+      String shortEndDate = formatShortDate(endDate);
       dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate;
 
       dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
@@ -87,13 +86,33 @@ public class DateRangePanel extends AbstractPanel {
 
   public void resizeToMinimalWidth() {
     compactMode = true;
-    width = minPanelWidth;
     dateRangeActive = dateRangeShort;
+    width = estimateStringWidth(dateRangeActive);
   }
 
   public void resizeToIdealWidth() {
     compactMode = false;
-    width = idealPanelWidth;
     dateRangeActive = dateRangeLong;
+    width = estimateStringWidth(dateRangeActive);
+  }
+  
+  private String formatLongDate(ChronoDate d) {
+    String s = 
+      DATE_FMT.pad(d.getMonth() + 1) + "/" + 
+      DATE_FMT.pad(d.getDay()) + "/" + 
+      d.getYear();
+    return s;
+  }
+
+  private String formatShortDate(ChronoDate d) {
+    String s = 
+      DATE_FMT.pad(d.getMonth() + 1) + "/" + 
+      DATE_FMT.pad(d.getDay()) + "/" + 
+      DATE_FMT.twoDigitYear(d);
+    return s;
+  }
+  
+  private int estimateStringWidth(String s) {
+    return this.typicalCharWidth * s.length();
   }
 }

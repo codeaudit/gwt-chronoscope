@@ -42,7 +42,7 @@ public abstract class View implements Exportable {
 
   protected Chart chart;
 
-  private final List<XYPlotListener> viewListeners = new ArrayList<XYPlotListener>();
+  private final List<XYPlotListener> plotListeners = new ArrayList<XYPlotListener>();
 
   private boolean doubleBuffered = false;
 
@@ -51,8 +51,8 @@ public abstract class View implements Exportable {
   public View() {
   }
 
-  public void addViewListener(XYPlotListener vl) {
-    viewListeners.add(vl);
+  public void addViewListener(XYPlotListener listener) {
+    plotListeners.add(listener);
   }
 
   public void canvasSetupDone() {
@@ -87,20 +87,20 @@ public abstract class View implements Exportable {
   }
 
   public void fireContextMenuEvent(int x, int y) {
-    for (XYPlotListener l : viewListeners) {
+    for (XYPlotListener l : plotListeners) {
       l.onContextMenu(x, y);
     }
   }
 
   public void fireFocusEvent(XYPlot plot, int focusSeries, int focusPoint) {
-    for (XYPlotListener l : viewListeners) {
+    for (XYPlotListener l : plotListeners) {
       l.onFocusPointChanged(plot, focusSeries, focusPoint);
     }
   }
 
   public void fireScrollEvent(XYPlot plot, double amt, int seriesNum, int type,
       boolean anim) {
-    for (XYPlotListener l : viewListeners) {
+    for (XYPlotListener l : plotListeners) {
       l.onPlotMoved(plot, amt, seriesNum, type, anim);
     }
   }

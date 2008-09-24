@@ -1,6 +1,10 @@
 package org.timepedia.chronoscope.client.util.date;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+
 import org.timepedia.chronoscope.client.util.MathUtil;
+
+import java.util.Date;
 
 
 /**
@@ -11,15 +15,10 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public final class DateFormatHelper {
 
-  private static final String[] HOURS_OF_DAY = new String[] {
-      "12am", " 1am", " 2am", " 3am", " 4am", " 5am", " 6am", " 7am", " 8am",
-      " 9am", "10am", "11am", "Noon", " 1pm", " 2pm", " 3pm", " 4pm", " 5pm",
-      " 6pm", " 7pm", " 8pm", " 9pm", "10pm", "11pm"};
-
-  static final String[] monthLabels = {
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
-      "Nov", "Dec"};
-
+  private static final String[] HOURS_OF_DAY = createHoursOfDayLabels();
+  
+  static final String[] MONTH_LABELS = createMonthLabels();
+  
   // Used by pad(int) to efficiently convert ints in the range [0..59] to a
   // zero-padded 2-digit string.
   static final String[] TWO_DIGIT_NUMS = new String[] {
@@ -33,14 +32,14 @@ public final class DateFormatHelper {
    * Returns an abbreviated month string for the specified date.
    */
   private static String formatMonth(ChronoDate d) {
-    return monthLabels[d.getMonth()];
+    return MONTH_LABELS[d.getMonth()];
   }
 
   /**
    * Returns a 0-padded 2-digit number from the specified integer (e.g. pad(6)
    * returns "06", pad(59) returns "59").
    */
-  private static String pad(int num) {
+  public String pad(int num) {
     return TWO_DIGIT_NUMS[num];
     // return num < 10 ? "0" + num : "" + num;
   }
@@ -112,4 +111,28 @@ public final class DateFormatHelper {
     return yr.substring(yr.length() - 2);
   }
 
+  /**
+   * Uses GWT DateTimeFormat class to obtain abbreviated month labels to ensure
+   * local-specificity.
+   */
+  private static String[] createMonthLabels() {
+    DateTimeFormat fmt = DateTimeFormat.getFormat("MMM"); // "Jan", "Feb", ...
+    String[] monthLabels = new String[12];
+    for (int m = 0; m < monthLabels.length; m++) {
+      monthLabels[m] = fmt.format(new Date(1970-1970, m, 1));
+    }
+    return monthLabels;
+  }
+  
+  /**
+   * Uses GWT DateTimeFormat class to obtain hour-of-day labels (e.g. "9am").
+   */
+  private static String[] createHoursOfDayLabels() {
+    DateTimeFormat fmt = DateTimeFormat.getFormat("ha"); // h=hour, a=AM/PM
+    String[] hourLabels = new String[24];
+    for (int h = 0; h < hourLabels.length; h++) {
+      hourLabels[h] = fmt.format(new Date(1970-1970, 0, 1, h, 0, 0));
+    }
+    return hourLabels;
+  }
 }
