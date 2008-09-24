@@ -16,7 +16,7 @@ class DateFields {
   public int year, month, day, hour, minute, second, ms;
   
   public String toString() {
-    return year + "-" + DateFormatHelper.monthLabels[month] + "-"
+    return year + "-" + DateFormatHelper.MONTH_LABELS[month] + "-"
         + DateFormatHelper.TWO_DIGIT_NUMS[day] + " "
         + DateFormatHelper.TWO_DIGIT_NUMS[hour] + ":"
         + DateFormatHelper.TWO_DIGIT_NUMS[minute] + ":"
