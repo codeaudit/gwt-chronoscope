@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
  * @author Chad Takahashi
@@ -66,7 +67,7 @@ public class OverviewAxisMouseMoveHandler extends
       chart.setAnimating(true);
       // Determine the start and end domain of the highlight selection
       double startDomainX = toDomainX(uiAction.getStartX(), plot);
-      double boundedX = bound(overviewAxisBounds.x, overviewAxisBounds.rightX(), x);
+      double boundedX = MathUtil.bound(x, overviewAxisBounds.x, overviewAxisBounds.rightX());
       double endDomainX = toDomainX(boundedX, plot);
       if (startDomainX > endDomainX) {
         double tmp = startDomainX;
@@ -90,25 +91,12 @@ public class OverviewAxisMouseMoveHandler extends
         // run off the overview axis.
         double minHiliteDomain = plot.getDomainMin();
         double maxHiliteDomain = toDomainX(overviewAxisBounds.rightX() - hiliteBounds.width, plot);
-        hiliteLeftDomainX = bound(minHiliteDomain, maxHiliteDomain, hiliteLeftDomainX);
+        hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 
         plot.moveTo(hiliteLeftDomainX);
         plot.redraw();
       }
     }
-  }
-
-  /**
-   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max].
-   */
-  private static double bound(double min, double max, double value) {
-    if (value > max) {
-      return max;
-    }
-    if (value < min) {
-      return min;
-    }
-    return value;
   }
   
   /**

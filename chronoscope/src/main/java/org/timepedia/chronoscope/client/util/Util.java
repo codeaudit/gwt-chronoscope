@@ -1,54 +1,64 @@
 package org.timepedia.chronoscope.client.util;
 
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYPlot;
 
 /**
  * Conglomeration of common utility functions.
  */
 public final class Util {
 
-  public static int binarySearch(XYDataset mds, double domainOrigin,
+  /**
+   * Searches the datapoints in a dataset for a domain value and returns the corresponding
+   * domain index at a given mip level.  If the dataset doesn't contain the specified 
+   * domain value, then the domain index of the next largest domain value is returned.
+   * The one exception to this rule is when <tt>domainValue</tt> is greater than all
+   * domain values within the dataset, in which case the largest domain value in the
+   * dataset is returned.
+   * <p>
+   * The dataset's domain values are assumed to be in sorted ascending order (this
+   * should be enforced by all {@link XYDataset} implementations).  
+   * 
+   * @param ds - The dataset to search on
+   * @param domainValue - The sought-after domain value
+   * @param mipLevel - The mip level to search on within the dataset
+   */
+  public static int binarySearch(XYDataset ds, double domainValue,
       int mipLevel) {
     int low = 0;
-    int high = mds.getNumSamples(mipLevel) - 1;
+    int high = ds.getNumSamples(mipLevel) - 1;
 
     while (low <= high) {
       int mid = (low + high) >> 1;
-      double midVal = mds.getX(mid, mipLevel);
+      double midVal = ds.getX(mid, mipLevel);
 
-      if (midVal < domainOrigin) {
+      if (midVal < domainValue) {
         low = mid + 1;
-      } else if (midVal > domainOrigin) {
+      } else if (midVal > domainValue) {
         high = mid - 1;
       } else {
         return mid; // key found
       }
     }
-    return Math.max(0, Math.min(mds.getNumSamples(mipLevel) - 1, low));
+    
+    return MathUtil.bound(low, 0, ds.getNumSamples(mipLevel) - 1);
   }
 
-  public static double computeDomainEnd(XYPlot view, XYDataset[] dataSets) {
+  public static double calcVisibleDomainMax(int maxDrawableDataPts, XYDataset[] dataSets) {
     double end = Double.MIN_VALUE;
     for (int i = 0; i < dataSets.length; i++) {
-      end = Math.max(end, findRenderedEnd(view, dataSets[i]));
+      XYDataset ds = dataSets[i];
+      // find the lowest mip level whose # of data points is not greater
+      // than maxDrawablePts
+      int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPts);
+      int numSamples = ds.getNumSamples(lowestMipLevel);
+      end = Math.max(end, ds.getX(numSamples - 1, lowestMipLevel));
     }
     return end;
-  }
-
-  public static double computeDomainStart(XYPlot plot, XYDataset[] dataSets) {
-    double start = Double.MAX_VALUE;
-    for (int i = 0; i < dataSets.length; i++) {
-      start = Math.min(start, findRenderedStart(plot, dataSets[i]));
-    }
-    return start;
   }
 
   /**
    * Determines if a and b are equal, taking into consideration that a or b (or
    * both a and b) could be null.
-   * 
-   * TODO: Move this into a utility class
    */
   public static boolean isEqual(Object a, Object b) {
     if (a == b) {
@@ -106,34 +116,20 @@ public final class Util {
     }
     return false;
   }
-
-  private static double findRenderedEnd(XYPlot plot, XYDataset dataSet) {
-    int mipLevel = -1;
-    int domainStart, domainEnd;
-    double domainOrigin = dataSet.getDomainBegin();
-    double currentDomain = dataSet.getDomainEnd() - domainOrigin;
-
-    do {
-      mipLevel++;
-
-      domainStart = binarySearch(dataSet, domainOrigin, mipLevel);
-      domainEnd = binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
-    } while (domainEnd - domainStart > plot.getMaxDrawableDataPoints());
-    return dataSet.getX(domainEnd, mipLevel);
+  
+  /**
+   * Finds the lowest mip level of the specified dataset whose data point cardinality 
+   * is not greater than <tt>maxDrawablePts</tt>.
+   */
+  private static int findLowestMipLevel(XYDataset ds, int maxDrawablePts) {
+    int mipLevel = 0;
+    while (true) {
+      int numPoints = ds.getNumSamples(mipLevel);
+      if (numPoints <= maxDrawablePts) {
+        return mipLevel;
+      }
+      ++mipLevel;
+    }
   }
 
-  private static double findRenderedStart(XYPlot plot, XYDataset dataSet) {
-    int mipLevel = -1;
-    int domainStart, domainEnd;
-    double domainOrigin = dataSet.getDomainBegin();
-    double currentDomain = dataSet.getDomainEnd() - domainOrigin;
-
-    do {
-      mipLevel++;
-
-      domainStart = binarySearch(dataSet, domainOrigin, mipLevel);
-      domainEnd = binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
-    } while (domainEnd - domainStart > plot.getMaxDrawableDataPoints());
-    return dataSet.getX(domainStart, mipLevel);
-  }
 }

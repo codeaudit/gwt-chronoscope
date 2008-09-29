@@ -147,9 +147,13 @@ public interface XYPlot extends Exportable {
 
   /**
    * The maximum <b>visible</b> domain value over all datasets taking into
-   * account multiresolution representations.
+   * account multiresolution representations.  This value will differ from
+   * {@link #getDomainMax()} if the zoomed out view of the Plot forces the 
+   * renderer to use a coarser representation that may have different values. 
+   * This can happen if dataset values in higher levels use interpolation rather 
+   * than point sampling, for example.
    */
-  double getDomainEnd();
+  double getVisibleDomainMax();
 
   /**
    * Maximum domain value over all datasets in the Plot.
@@ -165,16 +169,6 @@ public interface XYPlot extends Exportable {
    * Returns the current domain origin.
    */
   double getDomainOrigin();
-
-  /**
-   * The minimum <b>visible</b> domain value over all datasets taking into
-   * account multiresolution representations. This value will differ from
-   * getDomainMin() if the zoomed out view of the Plot forces the renderer to
-   * user a coarser representation that may have different values. This can
-   * happen if dataset values in higher levels use interpolation rather than
-   * point sampling, for example.
-   */
-  double getDomainStart();
 
   /**
    * Returns the current focus point and series index within the focused series.

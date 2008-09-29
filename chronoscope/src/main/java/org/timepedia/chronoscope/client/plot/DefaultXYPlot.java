@@ -87,7 +87,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private DateAxis domainAxis;
 
-  private double domainStart, domainEnd;
+  private double visibleDomainMax;
 
   private double domainMin, domainMax;
 
@@ -431,8 +431,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return domainOrigin + currentDomain / 2;
   }
 
-  public double getDomainEnd() {
-    return domainEnd;
+  public double getVisibleDomainMax() {
+    return visibleDomainMax;
   }
 
   public double getDomainMax() {
@@ -445,10 +445,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public double getDomainOrigin() {
     return domainOrigin;
-  }
-
-  public double getDomainStart() {
-    return domainStart;
   }
 
   public Focus getFocus() {
@@ -667,7 +663,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void onDatasetChanged(XYDataset dataset, double domainStart,
       double domainEnd) {
     computeDomainMinMax();
-    computeVisibleDomainStartEnd();
+    computeVisibleDomainMax();
     damageAxes(getRangeAxis(findIndexForDataSet(dataset)));
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
@@ -1190,9 +1186,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     innerBounds.y = 0;
   }
 
-  private void computeVisibleDomainStartEnd() {
-    domainStart = Util.computeDomainStart(this, datasets);
-    domainEnd = Util.computeDomainEnd(this, datasets);
+  private void computeVisibleDomainMax() {
+    visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1432,7 +1427,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private void initViewIndependent() {
     axes = new RangeAxis[datasets.length];
     computeDomainMinMax();
-    computeVisibleDomainStartEnd();
+    computeVisibleDomainMax();
     initializeDomain();
     initDefaultRenderers();
     initDatasetLevels();
