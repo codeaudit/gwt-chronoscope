@@ -252,7 +252,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void animateTo(final double destinationOrigin,
-      final double destinationDomain, final int eventType,
+      final double destDomain, final int eventType,
       final PortableTimerTask continuation, boolean fence) {
     
     if (!isAnimatable()) {
@@ -268,9 +268,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       animationTimer = null;
     }
 
-    final double fencedDomain = fenceDomain(fence, destinationDomain);
+    final double fencedDomain = fenceDomain(fence, destDomain);
     final double fencedDomainOrigin = fenceDomainOrigin(fence,
-        destinationOrigin, destinationDomain);
+        destinationOrigin, destDomain);
 
     animationContinuation = continuation;
 
@@ -289,9 +289,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       final double sCenter = domainCenter;
 
       final double startDomain = currentDomain;
-
+      
       final double startOrigin = domainOrigin;
-
+      
       double startTime = 0;
 
       // Ratio of destination domain to current domain
@@ -319,8 +319,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           lastFrame = true;
           animationTimer.schedule(300);
         } else if (lastFrame) {
-          view.fireScrollEvent(DefaultXYPlot.this, startOrigin - domainOrigin,
-              0, eventType, false);
+          final double domainAmt = startOrigin - domainOrigin;
+          view.fireScrollEvent(DefaultXYPlot.this, domainAmt, eventType, false);
           if (continuation != null) {
             continuation.run(t);
             animationContinuation = null;
@@ -639,7 +639,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void moveTo(double domainX) {
+    final double domainAmtMoved = domainX - this.domainOrigin;
     this.domainOrigin = domainX;
+    this.view.fireScrollEvent(this, domainAmtMoved, XYPlotListener.DRAGGED, false);
+    this.redraw();
   }
 
   public void nextFocus() {
@@ -767,18 +770,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void scrollPixels(int amt) {
 
-    final double damt = (double) amt / plotBounds.width * currentDomain;
+    final double domainAmt = (double) amt / plotBounds.width * currentDomain;
 
-    domainOrigin += damt;
+    domainOrigin += domainAmt;
     if (domainOrigin + currentDomain > getDomainMax()) {
       domainOrigin = getDomainMax() - currentDomain;
     } else if (domainOrigin < getDomainMin()) {
       domainOrigin = getDomainMin();
     }
 
+    view.fireScrollEvent(DefaultXYPlot.this, domainAmt, 
+        XYPlotListener.DRAGGED, false);
     redraw();
-    view.fireScrollEvent(DefaultXYPlot.this, damt, 0, XYPlotListener.DRAGGED,
-        false);
   }
 
   public void setAnimating(boolean animating) {

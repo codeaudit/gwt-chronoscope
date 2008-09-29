@@ -15,20 +15,21 @@ public interface XYPlotListener {
   /**
    * Called when the user clicks a point, or hits TAB/shift-TAB or otherwise
    * moves the focus
-   *
-   * @param plot        the plot for which the focus point changed
-   * @param focusSeries the dataset number which changed
-   * @param focusPoint  the point index within the dataset which changed
+   * 
+   * @param plot the plot for which the focus point changed
+   * @param datasetIndex the index of the dataset that changed
+   * @param focusPoint the point index within the dataset which changed
    */
   public void onFocusPointChanged(XYPlot plot, int focusSeries, int focusPoint);
 
   /**
    * Called when the visible plot region is moved
-   *
-   * @param plot the plot which changed
-   * @param amt  the amount by which it was dragged, paged, zoomed
-   * @param type the type of movement, DRAGGED, PAGED, ZOOMED, CENTERED
+   * 
+   * @param plot the plot that changed
+   * @param domainAmt the amount, in terms of domain axis interval, that the
+   *    plot has moved
+   * @param type the type of movement (DRAGGED, PAGED, ZOOMED, CENTERED)
    */
-  public void onPlotMoved(XYPlot plot, double amt, int seriesNum, int type,
+  public void onPlotMoved(XYPlot plot, double domainAmt, int type,
       boolean animated);
 }
