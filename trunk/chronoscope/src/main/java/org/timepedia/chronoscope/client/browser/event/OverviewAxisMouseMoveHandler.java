@@ -94,7 +94,6 @@ public class OverviewAxisMouseMoveHandler extends
         hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 
         plot.moveTo(hiliteLeftDomainX);
-        plot.redraw();
       }
     }
   }

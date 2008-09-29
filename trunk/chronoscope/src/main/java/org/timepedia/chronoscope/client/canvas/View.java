@@ -10,6 +10,7 @@ import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Export;
@@ -52,6 +53,7 @@ public abstract class View implements Exportable {
   }
 
   public void addViewListener(XYPlotListener listener) {
+    ArgChecker.isNotNull(listener, "listener");
     plotListeners.add(listener);
   }
 
@@ -98,10 +100,11 @@ public abstract class View implements Exportable {
     }
   }
 
-  public void fireScrollEvent(XYPlot plot, double amt, int seriesNum, int type,
-      boolean anim) {
+  public void fireScrollEvent(XYPlot plot, double domainAmt, int type, boolean anim) {
     for (XYPlotListener l : plotListeners) {
-      l.onPlotMoved(plot, amt, seriesNum, type, anim);
+      
+      // FIXME: pass domainAmt to onPlotMoved
+      l.onPlotMoved(plot, domainAmt, type, anim);
     }
   }
 
@@ -234,16 +237,16 @@ public abstract class View implements Exportable {
       addViewListener(new XYPlotListener() {
         public void onContextMenu(int x, int y) {
           ChronoscopeMenu menu = getContextMenu();
-
           menu.show(x, y);
         }
 
         public void onFocusPointChanged(XYPlot plot, int focusSeries,
             int focusPoint) {
+          // do nothing
         }
 
-        public void onPlotMoved(XYPlot plot, double amt, int seriesNum,
-            int type, boolean animated) {
+        public void onPlotMoved(XYPlot plot, double domainAmt, int type, boolean animated) {
+          // do nothing
         }
       });
     } else {

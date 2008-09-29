@@ -136,7 +136,7 @@ public interface XYPlot extends Exportable {
   ValueAxis getDomainAxis();
 
   /**
-   * Returns domain center. that is, domainOrigin + currentDomain/2
+   * Returns domain center (i.e. <tt>domainOrigin + currentDomain/2</tt>).
    */
   double getDomainCenter();
 
@@ -192,7 +192,7 @@ public interface XYPlot extends Exportable {
 
   /**
    * A hint value suggesting the maximum number of datapoints that should be drawn 
-   * in the view and maintain interactive framerates for this renderer
+   * in the view and maintain interactive frame rates for this renderer
    */
   int getMaxDrawableDataPoints();
 
@@ -309,7 +309,8 @@ public interface XYPlot extends Exportable {
 
   /**
    * Repositions the plot's viewport so that the specified domainX value will be
-   * positioned at its left edge upon the next call to {@link #redraw()}.
+   * positioned at the viewport's left edge.  {@link #redraw()} is called at the
+   * end of this method. 
    */
   void moveTo(double domainX);
 
