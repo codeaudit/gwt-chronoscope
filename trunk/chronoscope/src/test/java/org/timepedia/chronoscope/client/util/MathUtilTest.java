@@ -14,6 +14,21 @@ public class MathUtilTest extends TestCase {
     super(name);
   }
   
+  public void testBound_double() {
+    assertEquals(1.0, MathUtil.bound(1.0, -2.0, 2.0));
+    assertEquals(1.0, MathUtil.bound(1.0, 1.0, 2.0));
+    assertEquals(1.0, MathUtil.bound(1.0, -1.0, 1.0));
+    assertEquals(1.0, MathUtil.bound(-5.0, 1.0, 5.0));
+    assertEquals(1.0, MathUtil.bound(9.0, -1.0, 1.0));
+  }
+  
+  public void testBound_int() {
+    assertEquals(1, MathUtil.bound(1, -2, 2));
+    assertEquals(1, MathUtil.bound(1, 1, 2));
+    assertEquals(1, MathUtil.bound(1, -1, 1));
+    assertEquals(1, MathUtil.bound(-5, 1, 5));
+    assertEquals(1, MathUtil.bound(9, -1, 1));
+  }
   public void testIsBounded() {
     assertTrue(MathUtil.isBounded(1, 1, 10));
     assertTrue(MathUtil.isBounded(5, 1, 10));

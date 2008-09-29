@@ -7,6 +7,39 @@ package org.timepedia.chronoscope.client.util;
  */
 public final class MathUtil {
 
+
+  /**
+   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max].
+   * More specifically, if <tt>value</tt> falls in the range [min,max], then
+   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to  <tt>value</tt>
+   * is returned.
+   */
+  public static double bound(double value, double min, double max) {
+    if (value > max) {
+      return max;
+    }
+    if (value < min) {
+      return min;
+    }
+    return value;
+  }
+
+  /**
+   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max].
+   * More specifically, if <tt>value</tt> falls in the range [min,max], then
+   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to  <tt>value</tt>
+   * is returned.
+   */
+  public static int bound(int value, int min, int max) {
+    if (value > max) {
+      return max;
+    }
+    if (value < min) {
+      return min;
+    }
+    return value;
+  }
+
   /**
    * Returns true only if the specified value is in the range [p1, p2]. Note
    * that this method does not check if [p1, p2] is a valid range (e.g. if p1 is
