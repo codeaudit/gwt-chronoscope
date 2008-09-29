@@ -170,8 +170,7 @@ public class ChronoscopeVisualization implements Exportable {
               dontfire = false;
             }
 
-            public void onPlotMoved(XYPlot plot, double amt, int seriesNum,
-                int type, boolean animated) {
+            public void onPlotMoved(XYPlot plot, double domainAmt, int type, boolean animated) {
               GVizEventHelper
                   .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
                       GVizEventHelper.RANGECHANGE_EVENT, rangeProps(
