@@ -36,16 +36,13 @@ public abstract class XYPlotRenderer {
   public void computeVisibleDomainAndRange() {
     initArrays();
 
-    int numDatasets = plot.getNumDatasets();
+    final int numDatasets = plot.getNumDatasets();
     for (int seriesNum = 0; seriesNum < numDatasets; seriesNum++) {
 
       XYDataset dataSet = plot.getDataset(seriesNum);
-      int domainStart = 0;
-      int domainEnd = 0;
-      int mipLevel = -1;
 
-      double domainOrigin = plot.getDomainOrigin();
-      double currentDomain = plot.getCurrentDomain();
+      final double domainOrigin = plot.getDomainOrigin();
+      final double currentDomain = plot.getCurrentDomain();
       if (!(MathUtil.isBounded(domainOrigin, dataSet.getDomainBegin()
           - currentDomain, dataSet.getDomainEnd()))) {
         continue;
@@ -55,13 +52,16 @@ public abstract class XYPlotRenderer {
           plot.getRenderer(seriesNum).getMaxDrawableDatapoints(plot),
           plot.getMaxDrawableDataPoints());
 
+      int domainStart = 0;
+      int domainEnd = 0;
+      int mipLevel = -1;
       do {
         mipLevel++;
         domainStart = Util.binarySearch(dataSet, domainOrigin, mipLevel);
         domainEnd = Util.binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
       } while (domainEnd - domainStart > maxPoints);
 
-      plot.setCurrentDatasetLevel(seriesNum, mipLevel);
+      plot.setCurrentMipLevel(seriesNum, mipLevel);
 
       this.domainStart[seriesNum] = domainStart;
       this.domainEnd[seriesNum] = domainEnd;
@@ -82,8 +82,7 @@ public abstract class XYPlotRenderer {
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(Layer can, XYDataset dataSet,
-      XYRenderer xyRenderer, int seriesNum, XYPlot plot);
+  public abstract void drawDataset(int datasetIndex, Layer can, XYPlot plot);
 
   public void drawDatasets() {
     computeVisibleDomainAndRange();
@@ -92,9 +91,8 @@ public abstract class XYPlotRenderer {
     int renderOrder[] = sortDatasetsIntoRenderOrder();
     Layer plotLayer = plot.getPlotLayer();
     for (int i = 0; i < renderOrder.length; i++) {
-      int index = renderOrder[i];
-      drawDataset(plotLayer, plot.getDataset(index), plot.getRenderer(index),
-          index, plot);
+      int datasetIndex = renderOrder[i];
+      drawDataset(datasetIndex, plotLayer, plot);
     }
   }
 

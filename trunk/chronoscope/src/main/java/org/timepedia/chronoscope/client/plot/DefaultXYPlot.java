@@ -335,10 +335,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     animationTimer.schedule(10);
   }
 
-  public void clearSelection() {
-    throw new UnsupportedOperationException();
-  }
-
   public boolean click(int x, int y) {
     if (setFocusXY(x, y)) {
       return true;
@@ -395,10 +391,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public Chart getChart() {
     return chart;
-  }
-
-  public int getCurrentDatasetLevel(int datasetIndex) {
-    return currentMiplevels[datasetIndex];
   }
 
   public double getCurrentDomain() {
@@ -805,7 +797,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     this.chart = chart;
   }
 
-  public void setCurrentDatasetLevel(int datasetIndex, int mipLevel) {
+  public void setCurrentMipLevel(int datasetIndex, int mipLevel) {
     if (currentMiplevels[datasetIndex] != mipLevel) {
       resetHoverPoints();
       // TODO: maybe adjust to nearest one in next level of detail

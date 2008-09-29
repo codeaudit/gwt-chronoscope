@@ -81,11 +81,6 @@ public interface XYPlot extends Exportable {
       int eventType, PortableTimerTask continuation);
 
   /**
-   * Clears the current selection.
-   */
-  void clearSelection();
-
-  /**
    * Process a click on the Plot window given the screen space coordinates,
    * returns true if the click succeeded (e.g. it 'hit' something)
    */
@@ -109,9 +104,9 @@ public interface XYPlot extends Exportable {
   Chart getChart();
 
   /**
-   * Return the mip level of the given dataset index.
+   * Return the active mip level for the given dataset index.
    */
-  int getCurrentDatasetLevel(int datasetIndex);
+  int getCurrentMipLevel(int datasetIndex);
 
   /**
    * Gets the currently visible domain for the plot.
@@ -196,8 +191,8 @@ public interface XYPlot extends Exportable {
   Bounds getInnerBounds();
 
   /**
-   * A hint value suggesting the maximum number of datapoints this Plot should
-   * try to render before performance may be hindered.
+   * A hint value suggesting the maximum number of datapoints that should be drawn 
+   * in the view and maintain interactive framerates for this renderer
    */
   int getMaxDrawableDataPoints();
 
@@ -408,9 +403,9 @@ public interface XYPlot extends Exportable {
   void setChart(Chart chart);
 
   /**
-   * Set the resolution level for a given dataset
+   * Set the active mip level for a given dataset
    */
-  void setCurrentDatasetLevel(int datasetIndex, int level);
+  void setCurrentMipLevel(int datasetIndex, int level);
 
   /**
    * Sets the currently visible domain

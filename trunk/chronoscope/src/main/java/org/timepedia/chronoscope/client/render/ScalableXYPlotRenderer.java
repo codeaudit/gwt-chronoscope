@@ -19,9 +19,10 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     renderState = new RenderState();
   }
 
-  public void drawDataset(Layer layer, XYDataset dataSet, XYRenderer renderer,
-      int seriesNum, XYPlot plot) {
-
+  public void drawDataset(int seriesNum, Layer layer, XYPlot plot) {
+    XYDataset dataSet = plot.getDataset(seriesNum);
+    XYRenderer renderer = plot.getRenderer(seriesNum);
+    
     if (dataSet.getNumSamples(0) < 2) {
       return;
     }
@@ -42,7 +43,7 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
 
     int domainStart = this.domainStart[seriesNum];
     int domainEnd = this.domainEnd[seriesNum];
-    int mipLevel = plot.getCurrentDatasetLevel(seriesNum);
+    int mipLevel = plot.getCurrentMipLevel(seriesNum);
     int numSamples = dataSet.getNumSamples(mipLevel);
     
     final int inc = 1;
