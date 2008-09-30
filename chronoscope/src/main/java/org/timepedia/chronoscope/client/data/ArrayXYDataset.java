@@ -8,20 +8,13 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * 
  * @author Chad Takahashi
  */
-public class ArrayXYDataset implements XYDataset {
+public class ArrayXYDataset extends AbstractXYDataset {
 
+  /*
+   * Stores the multiresolution domain and range values.
+   */
   protected Array2D multiDomain, multiRange;
   
-  protected double rangeBottom, rangeTop;
-
-  protected double approximateMinimumInterval;
-
-  private String axisId;
-
-  private String identifier;
-
-  private String rangeLabel;
-
   /**
    * Constructs an {@link XYDataset} from the specified request object.
    */
@@ -51,11 +44,8 @@ public class ArrayXYDataset implements XYDataset {
     }
     validate(multiDomain, multiRange);
 
-    // Assign approximateMinimumInterval
     if (Double.isNaN(request.getApproximateMinimumInterval())) {
       approximateMinimumInterval = calcMinInterval(multiDomain);
-      //approximateMinimumInterval = (getDomainEnd() - getDomainBegin())
-      //    / getNumSamples();
     } else {
       approximateMinimumInterval = request.getApproximateMinimumInterval();
     }
@@ -78,52 +68,12 @@ public class ArrayXYDataset implements XYDataset {
     return approximateMinimumInterval;
   }
 
-  public String getAxisId() {
-    return axisId;
-  }
-
-  public double getDomainBegin() {
-    return getX(0);
-  }
-
-  public double getDomainEnd() {
-    return getX(getNumSamples() - 1);
-  }
-
-  public String getIdentifier() {
-    return identifier;
-  }
-
-  public int getNumSamples() {
-    return multiDomain.numColumns(0);
-  }
-
   public int getNumSamples(int mipLevel) {
     return multiDomain.numColumns(mipLevel);
   }
 
-  public double getRangeBottom() {
-    return rangeBottom;
-  }
-
-  public String getRangeLabel() {
-    return rangeLabel;
-  }
-
-  public double getRangeTop() {
-    return rangeTop;
-  }
-
-  public double getX(int index) {
-    return multiDomain.get(0, index);
-  }
-
   public double getX(int index, int mipLevel) {
     return multiDomain.get(mipLevel, index);
-  }
-
-  public double getY(int index) {
-    return multiRange.get(0, index);
   }
 
   public double getY(int index, int mipLevel) {

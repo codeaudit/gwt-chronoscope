@@ -34,33 +34,32 @@ public class MutableXYDataset extends ArrayXYDataset {
   public void mutate(Mutation mutation) {
     ArgChecker.isNotNull(mutation, "mutation");
 
-    double newY;
+    double newX, newY;
 
     if (mutation instanceof Mutation.AppendMutation) {
       AppendMutation m = (Mutation.AppendMutation) mutation;
       newY = m.getY();
-      double newX = m.getX();
+      newX = m.getX();
       double newInterval = newX - getX(getNumSamples() - 1);
       this.approximateMinimumInterval = Math.min(
           this.approximateMinimumInterval, newInterval);
       appendXY(newX, newY);
-      notifyListeners(this, newX, newX);
     } 
     else if (mutation instanceof Mutation.RangeMutation) {
       Mutation.RangeMutation m = (Mutation.RangeMutation) mutation;
       newY = m.getY();
       mipMapStrategy.setRangeValue(m.getPointIndex(), newY, multiRange);
-      double x = this.getX(m.getPointIndex());
-      notifyListeners(this, x, x);
+      newX = this.getX(m.getPointIndex());
     } 
     else {
       // TODO: Can add more mutation handlers later
       throw new UnsupportedOperationException("mutation of type "
           + mutation.getClass().getName() + " currently not supported");
     }
-
+    
     rangeBottom = Math.min(rangeBottom, newY);
     rangeTop = Math.max(rangeTop, newY);
+    notifyListeners(this, newX, newX);
   }
 
   private void appendXY(double x, double y) {
