@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -36,10 +37,11 @@ public abstract class XYPlotRenderer {
   public void computeVisibleDomainAndRange() {
     initArrays();
 
-    final int numDatasets = plot.getNumDatasets();
+    XYDatasets datasets = plot.getDatasets();
+    final int numDatasets = datasets.size();
     for (int seriesNum = 0; seriesNum < numDatasets; seriesNum++) {
 
-      XYDataset dataSet = plot.getDataset(seriesNum);
+      XYDataset dataSet = datasets.get(seriesNum);
 
       final double domainOrigin = plot.getDomainOrigin();
       final double currentDomain = plot.getCurrentDomain();
@@ -105,7 +107,7 @@ public abstract class XYPlotRenderer {
   }
 
   private void initArrays() {
-    int numDatasets = plot.getNumDatasets();
+    int numDatasets = plot.getDatasets().size();
     if (domainStart == null || domainStart.length != numDatasets) {
       domainStart = new int[numDatasets];
       domainEnd = new int[numDatasets];
@@ -137,20 +139,21 @@ public abstract class XYPlotRenderer {
   }
 
   private void setupRangeAxisVisibleRanges() {
-    for (int i = 0; i < plot.getNumDatasets(); i++) {
+    for (int i = 0; i < plot.getDatasets().size(); i++) {
       RangeAxis ra = plot.getRangeAxis(i);
       ra.setVisibleRange(getRangeMin(i), getRangeMax(i));
     }
   }
 
   private int[] sortDatasetsIntoRenderOrder() {
-    int[] order = new int[plot.getNumDatasets()];
+    final int numDatasets = plot.getDatasets().size();
+    int[] order = new int[numDatasets];
     int d = 0;
 
     Focus focus = plot.getFocus();
 
     //  all unfocused barcharts first
-    for (int i = 0; i < plot.getNumDatasets(); i++) {
+    for (int i = 0; i < numDatasets; i++) {
       XYRenderer renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
@@ -159,7 +162,7 @@ public abstract class XYPlotRenderer {
     }
 
     // next render unfocused non-barcharts
-    for (int i = 0; i < plot.getNumDatasets(); i++) {
+    for (int i = 0; i < numDatasets; i++) {
       XYRenderer renderer = plot.getRenderer(i);
 
       if (!(renderer instanceof BarChartXYRenderer)

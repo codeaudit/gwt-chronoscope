@@ -125,6 +125,11 @@ public interface XYPlot extends Exportable {
   XYDataset getDataset(int i);
 
   /**
+   * Returns the datasets associated with this plot.
+   */
+  XYDatasets getDatasets();
+  
+  /**
    * Retrieve X value for a given dataset and point at current visible
    * resolution level.
    */
@@ -187,7 +192,7 @@ public interface XYPlot extends Exportable {
    * Returns an array of data point indices, which element k corresponds to the
    * data point being hovered on in dataset k. A value of -1 indicates that no
    * point in dataset [k] is currently being hovered. The length of the array is
-   * equal to {@link #getNumDatasets()}.
+   * equal to the number of datasets associated with this plot.
    */
   int[] getHoverPoints();
 
@@ -207,11 +212,6 @@ public interface XYPlot extends Exportable {
    * the dataset to the given domain value
    */
   int getNearestVisiblePoint(double domainX, int datasetIndex);
-
-  /**
-   * Return the number of datasets in this plot
-   */
-  int getNumDatasets();
 
   /**
    * Return the current overview axis
@@ -263,8 +263,6 @@ public interface XYPlot extends Exportable {
    * Get the domain value of the end of the current selection
    */
   double getSelectionEnd();
-
-  int getSeriesCount();
 
   String getSeriesLabel(int i);
 

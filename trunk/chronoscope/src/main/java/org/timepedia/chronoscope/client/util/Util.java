@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.util;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.XYDatasets;
 
 /**
  * Conglomeration of common utility functions.
@@ -43,10 +44,10 @@ public final class Util {
     return MathUtil.bound(low, 0, ds.getNumSamples(mipLevel) - 1);
   }
 
-  public static double calcVisibleDomainMax(int maxDrawableDataPts, XYDataset[] dataSets) {
+  public static double calcVisibleDomainMax(int maxDrawableDataPts, XYDatasets dataSets) {
     double end = Double.MIN_VALUE;
-    for (int i = 0; i < dataSets.length; i++) {
-      XYDataset ds = dataSets[i];
+    for (int i = 0; i < dataSets.size(); i++) {
+      XYDataset ds = dataSets.get(i);
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawablePts
       int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPts);

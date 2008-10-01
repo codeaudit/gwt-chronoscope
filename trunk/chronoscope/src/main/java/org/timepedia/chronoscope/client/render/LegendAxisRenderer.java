@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import com.google.gwt.core.client.GWT;
 
+import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
@@ -258,8 +259,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
    */
   private static double calcApproxMinInterval(XYPlot plot) {
     double min = Double.MAX_VALUE;
-    for (int i = 0; i < plot.getNumDatasets(); i++) {
-      min = Math.min(min, plot.getDataset(i).getApproximateMinimumInterval());
+    for (XYDataset ds : plot.getDatasets()) {
+      min = Math.min(min, ds.getApproximateMinimumInterval());
     }
     return min;
   }
