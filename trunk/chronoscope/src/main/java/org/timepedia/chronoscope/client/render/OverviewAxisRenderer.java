@@ -1,8 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
-import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -114,9 +111,9 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
    * should be drawn.
    */
   private Bounds calcHighlightBounds(XYPlot plot, Bounds axisBounds) {
-    double globalDomainMin = plot.getDomainMin();
+    double globalDomainMin = plot.getDatasets().getMinDomain();
     double visibleDomainMin = plot.getDomainOrigin();
-    double globalDomainWidth = plot.getDomainMax() - globalDomainMin;
+    double globalDomainWidth = plot.getDatasets().getMaxDomain() - globalDomainMin;
     double visibleDomainWidth = plot.getCurrentDomain();
     
     Bounds b;

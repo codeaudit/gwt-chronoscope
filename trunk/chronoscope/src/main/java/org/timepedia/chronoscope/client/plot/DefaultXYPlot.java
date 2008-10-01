@@ -83,12 +83,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private int currentMiplevels[];
 
   private XYDatasets datasets;
-
+  
   private DateAxis domainAxis;
 
   private double visibleDomainMax;
-
-  private double domainMin, domainMax;
 
   private double domainOrigin, lastDomainOrigin;
 
@@ -115,7 +113,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private final HashMap<String, RangeAxis> axisMap
       = new HashMap<String, RangeAxis>();
 
-  private double beginHighlight = Double.MIN_VALUE;
+  private double beginHighlight = Double.MIN_VALUE, 
+      endHighlight = Double.MIN_VALUE;
 
   private Chart chart;
 
@@ -124,8 +123,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private Bounds domainBounds;
 
   private Layer domainLayer;
-
-  private double endHighlight = Double.MIN_VALUE;
 
   private Focus focus = null;
 
@@ -216,9 +213,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    * @gwt.export
    */
   @Export
-  public void addOverlay(Overlay over) {
-    overlays.add(over);
-    over.setPlot(this);
+  public void addOverlay(Overlay overlay) {
+    overlays.add(overlay);
+    overlay.setPlot(this);
   }
 
   public void animateTo(final double destDomainOrigin,
@@ -388,14 +385,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return currentMiplevels[datasetIndex];
   }
 
-  public XYDataset getDataset(int datasetIndex) {
-    return datasets.get(datasetIndex);
-  }
-  
-  public XYDatasets getDatasets() {
-    return datasets;
-  }
-
   public double getDataX(int datasetIndex, int pointIndex) {
     return datasets.get(datasetIndex)
         .getX(pointIndex, currentMiplevels[datasetIndex]);
@@ -416,14 +405,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public double getVisibleDomainMax() {
     return visibleDomainMax;
-  }
-
-  public double getDomainMax() {
-    return domainMax;
-  }
-
-  public double getDomainMin() {
-    return domainMin;
   }
 
   public double getDomainOrigin() {
@@ -451,9 +432,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return (int) (isAnimating ? MAX_DRAWABLE_DATAPOINTS : 1000);
   }
 
-  public int getNearestVisiblePoint(double domainX, int series) {
+  public int getNearestVisiblePoint(double domainX, int datasetIndex) {
     return Util
-        .binarySearch(datasets.get(series), domainX, currentMiplevels[series]);
+        .binarySearch(datasets.get(datasetIndex), domainX, 
+            currentMiplevels[datasetIndex]);
   }
 
   public OverviewAxis getOverviewAxis() {
@@ -468,6 +450,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return plotBounds;
   }
 
+  /**
+   * Returns the datasets associated with this plot.
+   */
+  public XYDatasets getDatasets() {
+    return this.datasets;
+  }
+   
   public XYPlot getPlotForAxis(ValueAxis theAxis) {
     return this;
   }
@@ -498,11 +487,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public double getSelectionEnd() {
     return endHighlight;
-  }
-
-  public String getSeriesLabel(int i) {
-    return datasets.get(i).getRangeLabel() + getRangeAxis(i)
-        .getLabelSuffix(getRangeAxis(i).getRange());
   }
 
   public boolean hasAxis(ValueAxis theAxis) {
@@ -580,7 +564,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   
   public void maxZoomOut() {
     pushHistory();
-    animateTo(domainMin, domainMax - domainMin, XYPlotListener.ZOOMED);
+    double minDomain = datasets.getMinDomain();
+    double maxDomain = datasets.getMaxDomain();
+    animateTo(minDomain, maxDomain - minDomain, XYPlotListener.ZOOMED);
   }
 
   public boolean maxZoomTo(int x, int y) {
@@ -634,8 +620,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void onDatasetChanged(XYDataset dataset, double domainStart,
       double domainEnd) {
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
-    computeDomainMinMax();
-    damageAxes(getRangeAxis(findIndexForDataSet(dataset)));
+    int datasetIndex = this.datasets.indexOf(dataset);
+    if (datasetIndex == - 1) {
+      datasetIndex = 0;
+    }
+    damageAxes(getRangeAxis(datasetIndex));
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
           new PortableTimerTask() {
@@ -741,12 +730,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void scrollPixels(int amt) {
 
     final double domainAmt = (double) amt / plotBounds.width * currentDomain;
+    final double minDomain = datasets.getMinDomain();
+    final double maxDomain = datasets.getMaxDomain();
 
     domainOrigin += domainAmt;
-    if (domainOrigin + currentDomain > getDomainMax()) {
-      domainOrigin = getDomainMax() - currentDomain;
-    } else if (domainOrigin < getDomainMin()) {
-      domainOrigin = getDomainMin();
+    if (domainOrigin + currentDomain > maxDomain) {
+      domainOrigin = maxDomain - currentDomain;
+    } else if (domainOrigin < minDomain) {
+      domainOrigin = minDomain;
     }
 
     view.fireScrollEvent(DefaultXYPlot.this, domainAmt, 
@@ -962,17 +953,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     overviewDrawn = false;
   }
 
-  private void computeDomainMinMax() {
-    domainMin = Double.POSITIVE_INFINITY;
-    domainMax = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < datasets.size(); i++) {
-      double min = datasets.get(i).getDomainBegin();
-      domainMin = Math.min(domainMin, min);
-      double max = datasets.get(i).getDomainEnd();
-      domainMax = Math.max(domainMax, max);
-    }
-  }
-
   private void computePlotBounds() {
     plotBounds = new Bounds(0, 0, view.getViewWidth(), view.getViewHeight());
 
@@ -1064,12 +1044,15 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private double fenceDomain(boolean fence, double destinationDomain) {
+    final double minDomain = datasets.getMinDomain();
+    final double maxDomain = datasets.getMaxDomain();
+    
     // first ensure that the destinationDomain is smaller than the
     // difference between the minimum and maximum dataset date values
     // then ensure that the destinationDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
     return fence ? Math.max(
-        Math.min(destinationDomain, getDomainMax() - getDomainMin()),
+        Math.min(destinationDomain, maxDomain - minDomain),
         getDomainAxis().getMinimumTickSize()) : destinationDomain;
   }
 
@@ -1079,38 +1062,31 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       return destinationOrigin;
     }
 
-    double maxDomain = getDomainMax() - getDomainMin();
+    final double minDomain = datasets.getMinDomain();
+    final double maxDomain = datasets.getMaxDomain();
+    final double maxDomainWidth = maxDomain - minDomain;
     double d = destinationOrigin;
     // if destinationDomain was bigger than entire date range of dataset
     // we set the domainOrigin to be the beginning of the dataset range
-    if (destinationDomain >= maxDomain) {
-      d = getDomainMin();
-    } else if (destinationDomain < maxDomain) {
+    if (destinationDomain >= maxDomainWidth) {
+      d = minDomain;
+    } else {
       // else, our domain range is smaller than the max
       // check to see if our origin is smaller than the smallest date
       // range
-      if (destinationOrigin < getDomainMin()) {
+      if (destinationOrigin < minDomain) {
         // and force it to be the min dataset range value
-        d = getDomainMin();
-      } else if (destinationOrigin + destinationDomain > getDomainMax()) {
+        d = minDomain;
+      } else if (destinationOrigin + destinationDomain > maxDomain) {
         // we we check if the right side of the domain window
         // is past the maximum dataset date range value
         // and if it is, we place the domain origin so that the entire
-        // chart
-        // fits perfectly in view
-        d = getDomainMax() - destinationDomain;
+        // chart fits perfectly in view
+        d = maxDomain - destinationDomain;
       }
     }
+    
     return d;
-  }
-
-  private int findIndexForDataSet(XYDataset dataset) {
-    for (int i = 0; i < datasets.size(); i++) {
-      if (datasets.get(i) == dataset) {
-        return i;
-      }
-    }
-    return 0; // TODO: silent fail
   }
 
   /**
@@ -1183,8 +1159,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void initializeDomain() {
-    domainOrigin = domainMin;
-    currentDomain = domainMax - domainOrigin;
+    domainOrigin = datasets.getMinDomain();
+    currentDomain = datasets.getMaxDomain() - domainOrigin;
   }
 
   private void initLayers() {
@@ -1250,7 +1226,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private void initViewIndependent() {
     axes = new RangeAxis[datasets.size()];
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
-    computeDomainMinMax();
     initializeDomain();
     initDefaultRenderers();
     initDatasetLevels();
@@ -1394,8 +1369,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     if (interactive && !overviewDrawn && overviewEnabled) {
       double dO = domainOrigin;
       double cD = currentDomain;
-      domainOrigin = getDomainMin();
-      currentDomain = getDomainMax() - domainOrigin;
+      domainOrigin = datasets.getMinDomain();
+      currentDomain = datasets.getMaxDomain() - domainOrigin;
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);

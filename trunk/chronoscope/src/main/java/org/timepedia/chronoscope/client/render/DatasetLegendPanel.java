@@ -1,7 +1,10 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -141,9 +144,10 @@ public class DatasetLegendPanel extends AbstractPanel {
    * label widths.
    */
   private double[] calcInitialLabelWidths(XYPlot plot, Layer layer) {
-    double[] estMaxWidths = new double[plot.getDatasets().size()];
+    XYDatasets datasets = plot.getDatasets();
+    double[] estMaxWidths = new double[datasets.size()];
     for (int i = 0; i < estMaxWidths.length; i++) {
-      int medianIdx = plot.getDataset(i).getNumSamples() >> 1;
+      int medianIdx = datasets.get(i).getNumSamples() >> 1;
       String lbl = createDatasetLabel(plot, i, medianIdx);
       estMaxWidths[i] = this.calcWidth(lbl, layer);
     }
@@ -158,12 +162,16 @@ public class DatasetLegendPanel extends AbstractPanel {
    * omitted.
    */
   private String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
-    String lbl = plot.getSeriesLabel(datasetIdx);
+    XYDataset ds = plot.getDatasets().get(datasetIdx);
+    RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
+    String lbl = ds.getRangeLabel() + rangeAxis.getLabelSuffix();
+    
     final boolean doShowRangeValue = (pointIdx > -1);
     if (doShowRangeValue) {
       double yData = plot.getDataY(datasetIdx, pointIdx);
-      lbl += " (" + plot.getRangeAxis(datasetIdx).getFormattedLabel(yData) + ")";
+      lbl += " (" + rangeAxis.getFormattedLabel(yData) + ")";
     }
     return lbl;
   }
+  
 }

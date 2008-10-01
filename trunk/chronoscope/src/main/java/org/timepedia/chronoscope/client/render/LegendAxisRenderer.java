@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
@@ -115,7 +113,9 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       
       ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
       final double approxMinInterval = Math.max(0, calcApproxMinInterval(plot));
-      zoomIntervals.applyFilter(plot.getDomainMin(), plot.getDomainMax(), approxMinInterval);
+      final double minDomain = plot.getDatasets().getMinDomain();
+      final double maxDomain = plot.getDatasets().getMaxDomain();
+      zoomIntervals.applyFilter(minDomain, maxDomain, approxMinInterval);
       
       Layer rootLayer = view.getCanvas().getRootLayer();
       
@@ -137,8 +137,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       dateRangePanel.setTextLayerName(textLayerName);
       dateRangePanel.init(rootLayer);
 
-      dateRangePanel.updateDomainInterval(plot.getDomainMin(),
-          plot.getDomainMax());
+      dateRangePanel.updateDomainInterval(minDomain, maxDomain);
 
       this.plot = plot;
       this.bounds = new Bounds();

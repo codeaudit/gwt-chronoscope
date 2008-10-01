@@ -9,19 +9,19 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Container for {@link XYDataset} objects that provides indexed access to the datasets
- * as well as maintaining aggregate information.
+ * Container for {@link XYDataset} objects that provides indexed access to the 
+ * datasets as well as maintaining aggregate information.
  * <p>
  * This container registers itself as a {@link XYDatasetListener} to any added
- * {@link MutableXYDataset} objects in order to guarantee that aggregate information
- * is kept up-to-date whenever constituent elements are modified.
+ * {@link MutableXYDataset} objects in order to guarantee that aggregate 
+ * information is kept up-to-date whenever constituent elements are modified.
  * 
  * @author chad takahashi
  */
 public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> {
   private double minInterval;
-  private double minDomain = Double.MAX_VALUE, maxDomain = Double.MIN_VALUE;
-  private double minRange = Double.MAX_VALUE, maxRange = Double.MIN_VALUE;
+  private double minDomain = Double.POSITIVE_INFINITY, maxDomain = Double.NEGATIVE_INFINITY;
+  private double minRange = Double.POSITIVE_INFINITY, maxRange = Double.NEGATIVE_INFINITY;
   private List<XYDataset> datasets = new ArrayList<XYDataset>();
   
   /**

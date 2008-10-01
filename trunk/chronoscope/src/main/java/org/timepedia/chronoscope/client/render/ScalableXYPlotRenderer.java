@@ -19,9 +19,9 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     renderState = new RenderState();
   }
 
-  public void drawDataset(int seriesNum, Layer layer, XYPlot plot) {
-    XYDataset dataSet = plot.getDataset(seriesNum);
-    XYRenderer renderer = plot.getRenderer(seriesNum);
+  public void drawDataset(int datasetIndex, Layer layer, XYPlot plot) {
+    XYDataset dataSet = plot.getDatasets().get(datasetIndex);
+    XYRenderer renderer = plot.getRenderer(datasetIndex);
     
     if (dataSet.getNumSamples(0) < 2) {
       return;
@@ -37,13 +37,13 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
       focusPoint = focus.getPointIndex();
     }
 
-    renderState.setDisabled((focusSeries != -1) && (focusSeries != seriesNum));
+    renderState.setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
     
     renderer.beginCurve(plot, layer, renderState);
 
-    int domainStart = this.domainStart[seriesNum];
-    int domainEnd = this.domainEnd[seriesNum];
-    int mipLevel = plot.getCurrentMipLevel(seriesNum);
+    int domainStart = this.domainStart[datasetIndex];
+    int domainEnd = this.domainEnd[datasetIndex];
+    int mipLevel = plot.getCurrentMipLevel(datasetIndex);
     int numSamples = dataSet.getNumSamples(mipLevel);
     
     final int inc = 1;
@@ -54,11 +54,11 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
-      renderState.setFocused(focusSeries == seriesNum && focusPoint == i);
-      renderState.setHovered(hoverPoints[seriesNum] == i);
-      renderer.drawCurvePart(plot, layer, x, y, seriesNum, renderState);
+      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+      renderState.setHovered(hoverPoints[datasetIndex] == i);
+      renderer.drawCurvePart(plot, layer, x, y, datasetIndex, renderState);
     }
-    renderer.endCurve(plot, layer, seriesNum, renderState);
+    renderer.endCurve(plot, layer, datasetIndex, renderState);
 
     // Render hover and focus points on the curve
     renderer.beginPoints(plot, layer, renderState);
@@ -66,10 +66,10 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     for (int i = Math.max(0, domainStart - 2); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
-      renderState.setFocused(focusSeries == seriesNum && focusPoint == i);
-      renderState.setHovered(hoverPoints[seriesNum] == i);
-      renderer.drawPoint(plot, layer, x, y, seriesNum, renderState);
+      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+      renderState.setHovered(hoverPoints[datasetIndex] == i);
+      renderer.drawPoint(plot, layer, x, y, datasetIndex, renderState);
     }
-    renderer.endPoints(plot, layer, seriesNum, renderState);
+    renderer.endPoints(plot, layer, datasetIndex, renderState);
   }
 }
