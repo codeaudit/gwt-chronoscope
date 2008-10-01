@@ -154,8 +154,7 @@ public class FlashView extends View
    * Get a history token representing the current state of the plot
    */
   public String getHistoryToken() {
-
-    return getId() + chart.getHistoryToken();
+    return getId() + chart.getPlot().getHistoryToken();
   }
 
   /**

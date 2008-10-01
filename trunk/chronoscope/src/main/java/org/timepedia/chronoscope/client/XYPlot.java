@@ -59,14 +59,14 @@ public interface XYPlot extends Exportable {
   void addOverlay(Overlay overlay);
 
   /**
-   * Animate the domainOrigin and currentDomain values interpolating to he
+   * Animate the domainOrigin and currentDomain values interpolating to the
    * destination values.
    * 
    * @param eventType hint to specify what kind of UI event this animation
    *          corresponds to (ZOOM, SCROLL, etc.)
    */
-  void animateTo(double destinationOrigin, double destinationDomain,
-      int eventType);
+  void animateTo(double destDomainOrigin, double destCurrentDomain, 
+       int eventType);
 
   /**
    * Animate the domainOrigin and currentDomain values interpolating to the
@@ -77,7 +77,7 @@ public interface XYPlot extends Exportable {
    *          corresponds to (ZOOM, SCROLL, ETC)
    * @param continuation executed when animation finishes
    */
-  void animateTo(double destinationOrigin, double destinationDomain,
+  void animateTo(double destDomainOrigin, double destCurrentDomain,
       int eventType, PortableTimerTask continuation);
 
   /**
@@ -99,6 +99,12 @@ public interface XYPlot extends Exportable {
   double domainToScreenX(double domainX, int datasetIndex);
 
   /**
+   * Convert a domain X value to a window X value using the axis of the given
+   * dataset index.
+   */
+    double domainToWindowX(double dataX, int datasetIndex);
+
+  /**
    * Returns the chart to which this Plot is embedded.
    */
   Chart getChart();
@@ -109,7 +115,7 @@ public interface XYPlot extends Exportable {
   int getCurrentMipLevel(int datasetIndex);
 
   /**
-   * Gets the currently visible domain for the plot.
+   * Returns the width of the currently visible domain for the plot.
    */
   double getCurrentDomain();
 
@@ -203,11 +209,6 @@ public interface XYPlot extends Exportable {
   int getNearestVisiblePoint(double domainX, int datasetIndex);
 
   /**
-   * Returns number of frames used during animateTo() calls
-   */
-  int getNumAnimationFrames();
-
-  /**
    * Return the number of datasets in this plot
    */
   int getNumDatasets();
@@ -283,12 +284,6 @@ public interface XYPlot extends Exportable {
   boolean isOverviewEnabled();
   
   /**
-   * Is selection mode (dragging changes selection instead of panning the plot)
-   * enabled?
-   */
-  boolean isSelectionModeEnabled();
-
-  /**
    * Animated zoom out so that the entire domain of the dataset fits precisely
    * in the Plot
    */
@@ -315,7 +310,7 @@ public interface XYPlot extends Exportable {
   void moveTo(double domainX);
 
   /**
-   * Advance the focused datapoint to the previous point
+   * Advance the focused data point to the next data point.
    */
   void nextFocus();
 
@@ -334,21 +329,23 @@ public interface XYPlot extends Exportable {
       int datasetIndex);
 
   /**
-   * Animated pan to the left by the designated percentage (0.0, 1.0) of the
-   * currently visible domain. For example, 0.5 will move the domain origin by
-   * getCurrentDomain() * 0.5
+   * Animated pan to the left the designated percentage of the {@link #getCurrentDomain()}. 
+   * For example, 0.5 will move the domain origin by {@link #getCurrentDomain()} * 0.5.
+   * 
+   * @param pageSize - A value in the range (0.0, 1.0)
    */
   void pageLeft(double pageSize);
 
   /**
-   * Animated pan to the right the designated percentage (0.0, 1.0) of the
-   * currently visible domain. For example, 0.5 will move the domain origin by
-   * getCurrentDomain() * 0.5
+   * Animated pan to the right the designated percentage of the {@link #getCurrentDomain()}. 
+   * For example, 0.5 will move the domain origin by {@link #getCurrentDomain()} * 0.5.
+   * 
+   * @param pageSize - A value in the range (0.0, 1.0)
    */
   void pageRight(double pageSize);
 
   /**
-   * Advance the focused datapoint to the next point
+   * Advance the focused data point to the previous data point.
    */
   void prevFocus();
 
@@ -359,10 +356,14 @@ public interface XYPlot extends Exportable {
 
   /**
    * Convert a range Y value to a screen Y value using the axis of the given
-   * dataset index
+   * dataset index.
    */
   double rangeToScreenY(double rangeY, int datasetIndex);
 
+  /**
+   * Convert a range Y value to a window Y value using the axis of the given
+   * dataset index.
+   */
   double rangeToWindowY(double rangeY, int datasetIndex);
 
   /**
@@ -451,12 +452,6 @@ public interface XYPlot extends Exportable {
   boolean setHover(int x, int y);
 
   /**
-   * Set the initial inset bounds (relative to the plot layer) that this plot
-   * should be rendered in.
-   */
-  void setInitialBounds(Bounds initialBounds);
-
-  /**
    * Enable or disable display of the legend.
    */
   void setLegendEnabled(boolean enabled);
@@ -470,17 +465,6 @@ public interface XYPlot extends Exportable {
    * Set the renderer for a given dataset index.
    */
   void setRenderer(int datasetIndex, XYRenderer renderer);
-
-  /**
-   * Set to true if you want drag operations on the plot to cause the selection
-   * to change instead of the domain origin.
-   */
-  void setSelectionMode(boolean selectionEnabled);
-
-  /**
-   * Render the Plot into the encapsulating Chart's View.
-   */
-  void update();
 
   /**
    * Causes chart to perform an animated zoom such that the current selection

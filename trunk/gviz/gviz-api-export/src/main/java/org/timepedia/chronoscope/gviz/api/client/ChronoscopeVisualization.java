@@ -12,13 +12,13 @@ import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
-import org.timepedia.chronoscope.client.browser.PlotPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -77,7 +77,7 @@ public class ChronoscopeVisualization implements Exportable {
   @Export
   public void pageRight(int amt) {
     dontfire = true;
-    cp.getChart().pageRight(Math.max(0, Math.min(amt, 1)));
+    cp.getChart().pageRight(MathUtil.bound(amt, 0.0, 1.0));
   }
 
   @Export
@@ -89,7 +89,7 @@ public class ChronoscopeVisualization implements Exportable {
   @Export
   public void pageLeft(int amt) {
     dontfire = true;
-    cp.getChart().pageLeft(Math.max(0, Math.min(amt, 1)));
+    cp.getChart().pageLeft(MathUtil.bound(amt, 0.0, 1.0));
   }
 
   @Export

@@ -431,7 +431,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   @Export
   public void setLabel(String label) {
     super.setLabel(label);
-    getChart().damageAxes(this);
+    getChart().getPlot().damageAxes(this);
     computeLabelWidths(getChart().getView());
   }
 

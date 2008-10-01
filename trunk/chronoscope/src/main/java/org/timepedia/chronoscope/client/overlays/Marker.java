@@ -160,9 +160,9 @@ public class Marker implements Overlay, GssElement, Exportable {
   public boolean isHit(int x, int y) {
 
     View view = plot.getChart().getView();
-    double mx = plot.getChart().domainToWindowX(plot, domainX, seriesNum);
+    double mx = plot.domainToWindowX(domainX, seriesNum);
 
-    double my = plot.getChart().rangeToWindowY(plot, rangeY, seriesNum) + 5;
+    double my = plot.rangeToWindowY(rangeY, seriesNum) + 5;
     if (my - 15 - height <= plot.getInnerBounds().y) {
       my = my + 5;
     } else {

@@ -151,7 +151,7 @@ public class BrowserView extends View
    */
   public String getHistoryToken() {
 
-    return getId() + chart.getHistoryToken();
+    return getId() + chart.getPlot().getHistoryToken();
   }
 
   /**
