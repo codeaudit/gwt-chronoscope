@@ -104,6 +104,9 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
     return this.maxRange;
   }
 
+  /**
+   * Iterator over the dataset elements of this container.
+   */
   public Iterator<XYDataset> iterator() {
     return this.datasets.iterator();
   }
@@ -119,6 +122,13 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    */
   public int size() {
     return this.datasets.size();
+  }
+  
+  /**
+   * Returns the contained dataset elements as an array of {@link XYDataset}.
+   */
+  public XYDataset[] toArray() {
+    return this.datasets.toArray(new XYDataset[0]);
   }
   
   private void updateAggregateInfo(XYDataset dataset) {
