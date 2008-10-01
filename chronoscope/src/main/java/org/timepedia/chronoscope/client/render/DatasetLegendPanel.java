@@ -61,7 +61,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     double xCursor = this.x;
     double yCursor = this.y;
     
-    for (int i = 0; i < plot.getSeriesCount(); i++) {
+    for (int i = 0; i < plot.getDatasets().size(); i++) {
       double lblWidth = drawLegendLabel(xCursor, yCursor, layer, i, onlyCalcSize);
       boolean enoughRoomInCurrentRow = (lblWidth >= 0);
 
@@ -141,8 +141,8 @@ public class DatasetLegendPanel extends AbstractPanel {
    * label widths.
    */
   private double[] calcInitialLabelWidths(XYPlot plot, Layer layer) {
-    double[] estMaxWidths = new double[plot.getNumDatasets()];
-    for (int i = 0; i < plot.getNumDatasets(); i++) {
+    double[] estMaxWidths = new double[plot.getDatasets().size()];
+    for (int i = 0; i < estMaxWidths.length; i++) {
       int medianIdx = plot.getDataset(i).getNumSamples() >> 1;
       String lbl = createDatasetLabel(plot, i, medianIdx);
       estMaxWidths[i] = this.calcWidth(lbl, layer);

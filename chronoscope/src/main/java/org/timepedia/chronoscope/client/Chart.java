@@ -61,14 +61,6 @@ public class Chart implements Exportable {
 
   public void init(View view, XYPlot plot) {
     this.view = view;
-    initPlot(plot);
-  }
-
-  /**
-   * Sets the internal plot instance to the given XYPlot, as well as initializes
-   * (or reinitialized) the plo by invoking plot.init(view)
-   */
-  public void initPlot(XYPlot plot) {
     this.plot = plot;
     plot.setChart(this);
     view.setChart(this);
