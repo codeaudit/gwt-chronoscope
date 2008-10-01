@@ -771,7 +771,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void setCurrentDomain(double currentDomain) {
     if (Double.isNaN(currentDomain)) {
-      throw new RuntimeException("TESTING: setCurrentDomain(NaN) not allowed");
+      throw new RuntimeException("currentDomain was NaN");
     }
     this.currentDomain = currentDomain;
   }
