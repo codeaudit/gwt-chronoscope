@@ -6,20 +6,17 @@ import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
 /**
- * The Chart class composes a Plot and a View. A plot is a platform independent
- * model of all the components neccessarily to render a dataset, and a View is a
- * platform specific component (browser canvas, Java2d environment, Flash
- * canvas) that provides the operations neccessarily for interfacing with the
- * graphics system.
+ * The Chart class composes a {@link XYPlot} and a {@link View}. A plot is a 
+ * platform-independent model of all the components necessary to render a 
+ * dataset, and a view is a platform specific component (browser canvas, Java2d
+ * environment, Flash canvas) that provides the operations necessary for 
+ * interfacing with the graphics system.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class Chart implements Exportable {
-
   private XYPlot plot;
-
   private View view;
-
   private String id;
 
   /**
@@ -31,34 +28,10 @@ public class Chart implements Exportable {
   }
 
   /**
-   * Tell plot to discard cache of the axes layer containing this axis and
-   * redraw it on next update
-   */
-  public void damageAxes(ValueAxis axis) {
-    plot.damageAxes(axis);
-  }
-
-  /**
-   * Convert a domain X value to a screen location relative to the Chart (not
-   * Plot)
-   */
-  public double domainToWindowX(XYPlot plot, double domainX, int seriesNum) {
-    return plot.domainToScreenX(domainX, seriesNum) + plot.getBounds().x;
-  }
-
-  /**
    * A stable ID used to serialize chart state
    */
   public String getChartId() {
     return id;
-  }
-
-  /**
-   * Returns a string representing the current state of the plot, used to
-   * reconstruct the state of the plot at a later time.
-   */
-  public String getHistoryToken() {
-    return plot.getHistoryToken();
   }
 
   /**
@@ -174,16 +147,8 @@ public class Chart implements Exportable {
   }
 
   /**
-   * Convert a range Y value to a screen location relative to the Chart (not
-   * Plot)
-   */
-  public double rangeToWindowY(XYPlot plot, double rangeY, int seriesNum) {
-    return plot.rangeToWindowY(rangeY, seriesNum);
-  }
-
-  /**
    * Redraw will redraw the the chart, swapping front/back buffers if
-   * neccessarily in a double-buffered scenario.
+   * necessary in a double-buffered scenario.
    */
   @Export
   public void redraw() {
@@ -218,7 +183,6 @@ public class Chart implements Exportable {
    * Sets a stable ID which is used to serialize chart state
    */
   public void setChartId(String id) {
-
     this.id = id;
   }
 

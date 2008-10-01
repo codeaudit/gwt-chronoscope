@@ -66,8 +66,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private static final double ZOOM_FACTOR = 1.50d;
 
-  private static final int FRAMES = 8;
-
   private static int globalPlotNumber = 0;
 
   private static final double MIN_PLOT_HEIGHT = 50;
@@ -136,8 +134,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private int[] hoverPoints;
 
-  private Bounds initialBounds;
-
   private Bounds innerBounds;
 
   private boolean isAnimating = false;
@@ -159,8 +155,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private XYPlotRenderer plotRenderer;
 
   private AxisPanel rangePanelRight;
-
-  private boolean selectionMode;
 
   private boolean showLegend = true;
 
@@ -208,14 +202,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
     overlays = new ArrayList<Overlay>();
     xyRenderers = new XYRenderer[ds.length];
-    // computeVisibleDomainStartEnd();
-    // initializeDomain();
 
     hoverPoints = new int[ds.length];
     resetHoverPoints();
 
     plotRenderer = new ScalableXYPlotRenderer(this);
-    this.initialBounds = null;
     plotNumber = globalPlotNumber++;
     setupDatasetListeners();
   }
@@ -225,29 +216,21 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    */
   @Export
   public void addOverlay(Overlay over) {
-
     overlays.add(over);
     over.setPlot(this);
   }
 
-  public void animateTo(final double destinationOrigin,
-      final double destinationDomain, final int eventType) {
-    if (!isAnimatable()) {
-      return;
-    }
+  public void animateTo(final double destDomainOrigin,
+      final double destCurrentDomain, final int eventType) {
     
-    animateTo(destinationOrigin, destinationDomain, eventType, null);
+    animateTo(destDomainOrigin, destCurrentDomain, eventType, null);
   }
 
-  public void animateTo(final double destinationOrigin,
-      final double destinationDomain, final int eventType,
+  public void animateTo(final double destDomainOrigin,
+      final double destCurrentDomain, final int eventType,
       final PortableTimerTask continuation) {
 
-    if (!isAnimatable()) {
-      return;
-    }
-    
-    animateTo(destinationOrigin, destinationDomain, eventType, continuation,
+    animateTo(destDomainOrigin, destCurrentDomain, eventType, continuation,
         true);
   }
 
@@ -315,10 +298,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
         if (lerpFactor < 1) {
           t.schedule(10);
-        } else if (!lastFrame) {
-          lastFrame = true;
-          animationTimer.schedule(300);
-        } else if (lastFrame) {
+        } 
+        else if (lastFrame) {
           final double domainAmt = startOrigin - domainOrigin;
           view.fireScrollEvent(DefaultXYPlot.this, domainAmt, eventType, false);
           if (continuation != null) {
@@ -329,6 +310,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           animationTimer = null;
           redraw();
         }
+        else {
+          lastFrame = true;
+          animationTimer.schedule(300);
+        } 
       }
     });
 
@@ -362,11 +347,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
-    return userToScreenX(getDomainAxis().dataToUser(dataX));
+    double userX = getDomainAxis().dataToUser(dataX);
+    return userX * plotBounds.width;
   }
-
+  
   public double domainToWindowX(double dataX, int datasetIndex) {
-    return userToWindowX(getDomainAxis().dataToUser(dataX));
+    return plotBounds.x + domainToScreenX(dataX, datasetIndex);
   }
 
   /**
@@ -465,10 +451,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         .binarySearch(datasets[series], domainX, currentMiplevels[series]);
   }
 
-  public int getNumAnimationFrames() {
-    return FRAMES;
-  }
-
   public int getNumDatasets() {
     return datasets == null ? 0 : datasets.length;
   }
@@ -533,6 +515,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void init(View view) {
+    ArgChecker.isNotNull(view, "view");
     this.view = view;
     this.focus = null;
 
@@ -598,10 +581,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return this.overviewEnabled;
   }
   
-  public boolean isSelectionModeEnabled() {
-    return selectionMode;
-  }
-
   public void maxZoomOut() {
     pushHistory();
     animateTo(domainMin, domainMax - domainMin, XYPlotListener.ZOOMED);
@@ -657,8 +636,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void onDatasetChanged(XYDataset dataset, double domainStart,
       double domainEnd) {
+    visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     computeDomainMinMax();
-    computeVisibleDomainMax();
     damageAxes(getRangeAxis(findIndexForDataSet(dataset)));
     if (domainEnd > domainOrigin + currentDomain) {
       animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
@@ -678,8 +657,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       final double rangeY, final int datasetIndex) {
 
     final InfoWindow window = view.createInfoWindow(html,
-        chart.domainToWindowX(DefaultXYPlot.this, domainX, datasetIndex),
-        chart.rangeToWindowY(DefaultXYPlot.this, rangeY, datasetIndex) + 5);
+        domainToWindowX(domainX, datasetIndex),
+        rangeToWindowY(rangeY, datasetIndex) + 5);
 
     if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
       public void run(PortableTimer timer) {
@@ -694,17 +673,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void pageLeft(double pageSize) {
-    pushHistory();
-
-    final double newOrigin = domainOrigin - currentDomain * pageSize;
-    animateTo(newOrigin, currentDomain, XYPlotListener.PAGED);
+    page(-pageSize);
   }
 
   public void pageRight(double pageSize) {
-    pushHistory();
-
-    final double newOrigin = domainOrigin + currentDomain * pageSize;
-    animateTo(newOrigin, currentDomain, XYPlotListener.PAGED);
+    page(pageSize);
   }
 
   public void prevFocus() {
@@ -712,18 +685,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void prevZoom() {
-
     pushHistory();
     double nDomain = currentDomain * ZOOM_FACTOR;
     animateTo(getDomainCenter() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
   public double rangeToScreenY(double dataY, int datasetIndex) {
-    return userToScreenY(getRangeAxis(datasetIndex).dataToUser(dataY));
+    double userY = getRangeAxis(datasetIndex).dataToUser(dataY);
+    return plotBounds.height - userY * plotBounds.height;
   }
 
-  public double rangeToWindowY(double dataY, int datasetIndex) {
-    return userToWindowY(getRangeAxis(datasetIndex).dataToUser(dataY));
+  public double rangeToWindowY(double rangeY, int datasetIndex) {
+    return plotBounds.y + rangeToScreenY(rangeY, datasetIndex);
   }
 
   /**
@@ -922,10 +895,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return isCloseToCurve;
   }
 
-  public void setInitialBounds(Bounds initialBounds) {
-    this.initialBounds = initialBounds;
-  }
-
   public void setLegendEnabled(boolean b) {
     showLegend = b;
   }
@@ -938,123 +907,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     xyRenderers[datasetIndex] = r;
   }
 
-  public void setSelectionMode(boolean b) {
-    this.selectionMode = b;
-  }
-
-  public void update() {
-
-    Canvas backingCanvas = view.getCanvas();
-    backingCanvas.beginFrame();
-
-    plotLayer.save();
-    plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-    plotLayer.clear();
-    // plotLayer.setFillColor("#FF0000");
-    // plotLayer.fillRect(0, 0, 50, 50);
-
-    if (interactive && !overviewDrawn && overviewEnabled) {
-      double dO = domainOrigin;
-      double cD = currentDomain;
-      domainOrigin = getDomainMin();
-      currentDomain = getDomainMax() - domainOrigin;
-      drawPlot();
-      overviewLayer.save();
-      overviewLayer.setVisibility(false);
-      overviewLayer
-          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
-
-      overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
-          overviewLayer.getHeight());
-      overviewDrawn = true;
-      overviewLayer.restore();
-      domainOrigin = dO;
-      currentDomain = cD;
-    }
-
-    if (interactive) {
-
-      boolean drawVertical = !drewVertical;
-      for (int i = 0; i < axes.length; i++) {
-        drawVertical = drawVertical || axes[i].isAutoZoomVisibleRange();
-      }
-
-      if (drawVertical) {
-        verticalAxisLayer.save();
-        verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
-        verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
-            verticalAxisLayer.getHeight());
-
-        Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
-            rangePanelLeft.getHeight());
-        rangePanelLeft
-            .drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
-
-        if (rangePanelRight.getAxisCount() > 0) {
-          Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width,
-              0, rangePanelRight.getWidth(), rangePanelRight.getHeight());
-          rangePanelRight
-              .drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
-        }
-        drewVertical = true;
-        verticalAxisLayer.restore();
-      }
-
-      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
-        domainLayer.save();
-        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-            domainBounds.height);
-        domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
-
-        domainLayer.restore();
-      }
-
-      if (true && topPanel.getAxisCount() > 0) {
-        topLayer.save();
-        Bounds topPanelBounds = new Bounds(0, 0, view.getViewWidth(),
-            topBounds.height);
-        topPanel.drawAxisPanel(this, topLayer, topPanelBounds, false);
-        topLayer.restore();
-      }
-    }
-    drawPlot();
-    drawOverlays(plotLayer);
-    drawHighlight(highLightLayer);
-    plotLayer.restore();
-    backingCanvas.endFrame();
-  }
-
-  /**
-   * Convert a value in user coordinates [0,1] to plot region screen-space
-   * coordinates [0, plotBounds.width].
-   */
-  public double userToScreenX(double userX) {
-    return userX * plotBounds.width;
-  }
-
-  public double userToScreenY(double userY) {
-    return plotBounds.height - userY * plotBounds.height;
-  }
-
-  /**
-   * COnvert a value in user coordinates [0,1] to window screen-space
-   * coordinates [plotBounds.x, plotBounds.width]
-   */
-  public double userToWindowX(double userX) {
-    return userToScreenX(userX) + plotBounds.x;
-  }
-
-  public double userToWindowY(double userY) {
-    return userToScreenY(userY) + plotBounds.y;
-  }
-
   public double windowXtoUser(double x) {
     return (x - plotBounds.x) / plotBounds.width;
   }
 
   public void zoomToHighlight() {
     final double newOrigin = beginHighlight;
-
     double newdomain = endHighlight - beginHighlight;
     pushHistory();
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
@@ -1112,14 +970,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     Chronoscope.pushHistory();
   }
 
-  protected double windowXtoDomain(double x) {
-    return getDomainAxis().userToData(windowXtoUser(x));
-  }
-
-  protected double windowYtoRange(int y, int datasetIndex) {
-    return getRangeAxis(datasetIndex).userToData(windowYtoUser(y));
-  }
-
   private void clearDrawCaches() {
     drewVertical = false;
     overviewDrawn = false;
@@ -1137,12 +987,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void computePlotBounds() {
-    if (initialBounds != null) {
-      plotBounds = new Bounds(initialBounds);
-    } else {
-      plotBounds = new Bounds(0, 0, this.view.getViewWidth(),
-          this.view.getViewHeight());
-    }
+    plotBounds = new Bounds(0, 0, view.getViewWidth(), view.getViewHeight());
 
     // TODO: only in snapshot
     if (interactive) {
@@ -1179,10 +1024,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     innerBounds.width = plotBounds.width;
     innerBounds.x = 0;
     innerBounds.y = 0;
-  }
-
-  private void computeVisibleDomainMax() {
-    visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
   }
 
   private void drawOverlays(Layer overviewLayer) {
@@ -1421,8 +1262,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    */
   private void initViewIndependent() {
     axes = new RangeAxis[datasets.length];
+    visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     computeDomainMinMax();
-    computeVisibleDomainMax();
     initializeDomain();
     initDefaultRenderers();
     initDatasetLevels();
@@ -1450,6 +1291,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
             - newOrigin;
 
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
+  }
+
+  private void page(double pageSize) {
+    pushHistory();
+    final double newOrigin = domainOrigin + (currentDomain * pageSize);
+    animateTo(newOrigin, currentDomain, XYPlotListener.PAGED);
   }
 
   private void setFocusAndNotifyView(Focus focus) {
@@ -1542,6 +1389,98 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private static boolean pointExists(int pointIndex) {
     return pointIndex > NO_SELECTION;
+  }
+
+  /**
+   * Render the Plot into the encapsulating Chart's View.
+   */
+  private void update() {
+    Canvas backingCanvas = view.getCanvas();
+    backingCanvas.beginFrame();
+
+    plotLayer.save();
+    plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
+    plotLayer.clear();
+    // plotLayer.setFillColor("#FF0000");
+    // plotLayer.fillRect(0, 0, 50, 50);
+
+    if (interactive && !overviewDrawn && overviewEnabled) {
+      double dO = domainOrigin;
+      double cD = currentDomain;
+      domainOrigin = getDomainMin();
+      currentDomain = getDomainMax() - domainOrigin;
+      drawPlot();
+      overviewLayer.save();
+      overviewLayer.setVisibility(false);
+      overviewLayer
+          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+      overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
+          overviewLayer.getHeight());
+      overviewDrawn = true;
+      overviewLayer.restore();
+      domainOrigin = dO;
+      currentDomain = cD;
+    }
+
+    if (interactive) {
+
+      boolean drawVertical = !drewVertical;
+      for (int i = 0; i < axes.length; i++) {
+        drawVertical = drawVertical || axes[i].isAutoZoomVisibleRange();
+      }
+
+      if (drawVertical) {
+        verticalAxisLayer.save();
+        verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
+        verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
+            verticalAxisLayer.getHeight());
+
+        Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
+            rangePanelLeft.getHeight());
+        rangePanelLeft
+            .drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
+
+        if (rangePanelRight.getAxisCount() > 0) {
+          Bounds rightPanelBounds = new Bounds(plotBounds.x + plotBounds.width,
+              0, rangePanelRight.getWidth(), rangePanelRight.getHeight());
+          rangePanelRight
+              .drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
+        }
+        drewVertical = true;
+        verticalAxisLayer.restore();
+      }
+
+      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
+        domainLayer.save();
+        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+            domainBounds.height);
+        domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
+
+        domainLayer.restore();
+      }
+
+      if (true && topPanel.getAxisCount() > 0) {
+        topLayer.save();
+        Bounds topPanelBounds = new Bounds(0, 0, view.getViewWidth(),
+            topBounds.height);
+        topPanel.drawAxisPanel(this, topLayer, topPanelBounds, false);
+        topLayer.restore();
+      }
+    }
+    
+    drawPlot();
+    drawOverlays(plotLayer);
+    drawHighlight(highLightLayer);
+    plotLayer.restore();
+    backingCanvas.endFrame();
+  }
+
+  private double windowXtoDomain(double x) {
+    return getDomainAxis().userToData(windowXtoUser(x));
+  }
+
+  private double windowYtoRange(int y, int datasetIndex) {
+    return getRangeAxis(datasetIndex).userToData(windowYtoUser(y));
   }
 
   /**

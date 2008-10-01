@@ -6,6 +6,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -13,7 +14,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
@@ -42,7 +42,6 @@ import org.timepedia.exporter.client.Exporter;
 import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -314,11 +313,9 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static void pushHistory() {
     if (Chronoscope.isHistorySupportEnabled()) {
-      Iterator i = id2chart.values().iterator();
       String newToken = "";
-      while (i.hasNext()) {
-        Chart v = (Chart) i.next();
-        newToken += v.getHistoryToken();
+      for (Chart chart : id2chart.values()) {
+        newToken += chart.getPlot().getHistoryToken();
       }
       previousHistory = newToken;
       History.newItem(newToken);
@@ -398,7 +395,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
     XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
 
-    String mipped = JavascriptHelper.jsPropGetString(json, "mipped");
     XYDataset dataset = null;
 
     double domainScale = json.getDomainScale();
