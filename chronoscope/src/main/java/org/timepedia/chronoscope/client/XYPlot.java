@@ -38,8 +38,8 @@ import org.timepedia.exporter.client.Exportable;
  * <ul>
  * <li>Domain origin
  * <li>Visible Domain
- * <li>Focus point and series
- * <li>Hover point and series
+ * <li>Focus point and dataset
+ * <li>Hover point and dataset
  * <li>Current highlight/selection
  * </ul>
  * <p>
@@ -102,7 +102,7 @@ public interface XYPlot extends Exportable {
    * Convert a domain X value to a window X value using the axis of the given
    * dataset index.
    */
-    double domainToWindowX(double dataX, int datasetIndex);
+   double domainToWindowX(double dataX, int datasetIndex);
 
   /**
    * Returns the chart to which this Plot is embedded.
@@ -118,11 +118,6 @@ public interface XYPlot extends Exportable {
    * Returns the width of the currently visible domain for the plot.
    */
   double getCurrentDomain();
-
-  /**
-   * Return the ith dataset.
-   */
-  XYDataset getDataset(int i);
 
   /**
    * Returns the datasets associated with this plot.
@@ -154,22 +149,12 @@ public interface XYPlot extends Exportable {
   /**
    * The maximum <b>visible</b> domain value over all datasets taking into
    * account multiresolution representations.  This value will differ from
-   * {@link #getDomainMax()} if the zoomed out view of the Plot forces the 
-   * renderer to use a coarser representation that may have different values. 
+   * {@link XYDatasets#getMaxDomain()} if the zoomed out view of the Plot forces 
+   * the renderer to use a coarser representation that may have different values. 
    * This can happen if dataset values in higher levels use interpolation rather 
    * than point sampling, for example.
    */
   double getVisibleDomainMax();
-
-  /**
-   * Maximum domain value over all datasets in the Plot.
-   */
-  double getDomainMax();
-
-  /**
-   * Minimum domain value over all datasets in the Plot.
-   */
-  double getDomainMin();
 
   /**
    * Returns the current domain origin.
@@ -177,7 +162,7 @@ public interface XYPlot extends Exportable {
   double getDomainOrigin();
 
   /**
-   * Returns the current focus point and series index within the focused series.
+   * Returns the current focus point and dataset index within the focused dataset.
    * 
    */
   Focus getFocus();
@@ -192,7 +177,7 @@ public interface XYPlot extends Exportable {
    * Returns an array of data point indices, which element k corresponds to the
    * data point being hovered on in dataset k. A value of -1 indicates that no
    * point in dataset [k] is currently being hovered. The length of the array is
-   * equal to the number of datasets associated with this plot.
+   * equal to the number of datasets in {@link #getdatasets
    */
   int[] getHoverPoints();
 
@@ -263,8 +248,6 @@ public interface XYPlot extends Exportable {
    * Get the domain value of the end of the current selection
    */
   double getSelectionEnd();
-
-  String getSeriesLabel(int i);
 
   /**
    * Returns true if this plot contains the axis
@@ -365,7 +348,7 @@ public interface XYPlot extends Exportable {
   double rangeToWindowY(double rangeY, int datasetIndex);
 
   /**
-   * Calls update(), and manages optionally swaps double-buffered canvases
+   * Calls update(), and optionally swaps double-buffered canvases
    */
   void redraw();
 
@@ -393,7 +376,7 @@ public interface XYPlot extends Exportable {
 
   /**
    * When an animation is in progress, a lower resolution view of the dataset is
-   * used to speed up framerate
+   * used to speed up frame rate
    */
   void setAnimating(boolean animating);
 
@@ -423,7 +406,7 @@ public interface XYPlot extends Exportable {
   void setDomainOrigin(double domainOrigin);
 
   /**
-   * Set the focus to be dataset element {point} for series {series}
+   * Sets the specified datapoint reference as the focused point in this plot.
    */
   void setFocus(Focus focus);
 

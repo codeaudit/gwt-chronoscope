@@ -89,7 +89,7 @@ public class OverviewAxisMouseMoveHandler extends
        
         // Need to bound the domain-x value so that the highlight box doesn't
         // run off the overview axis.
-        double minHiliteDomain = plot.getDomainMin();
+        double minHiliteDomain = plot.getDatasets().getMinDomain();
         double maxHiliteDomain = toDomainX(overviewAxisBounds.rightX() - hiliteBounds.width, plot);
         hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 

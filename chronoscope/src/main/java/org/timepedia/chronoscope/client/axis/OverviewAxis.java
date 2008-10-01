@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.OverviewAxisRenderer;
 
@@ -55,11 +54,11 @@ public class OverviewAxis extends ValueAxis {
   }
 
   public double getRangeHigh() {
-    return plot.getDomainMax();
+    return plot.getDatasets().getMaxDomain();
   }
 
   public double getRangeLow() {
-    return plot.getDomainMin();
+    return plot.getDatasets().getMinDomain();
   }
 
   public double getWidth() {
