@@ -62,10 +62,6 @@ public class LineSegment {
     return start + (length() / 2.0);
   }
 
-  public void setEnd(double end) {
-    this.end = end;
-  }
-  
   /**
    * Assigns the end points of this line segment.
    */
@@ -74,10 +70,6 @@ public class LineSegment {
     this.end = end;
   }
 
-  public void setStart(double start) {
-    this.start = start;
-  }
-  
   /**
    * Slides this line segment in either a positive or negative direction
    * by the specified amount.  For example, let S = line segment [3, 7]
