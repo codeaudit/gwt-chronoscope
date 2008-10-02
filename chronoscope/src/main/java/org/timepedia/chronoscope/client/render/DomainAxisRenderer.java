@@ -69,14 +69,14 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     // TODO: cache this based on domainWidth(?)  
     // This stuff shouldn't change in the case where the user is just scrolling 
     // left/right.
-    final double domainWidth = plot.getCurrentDomain();
+    final double domainWidth = plot.getDomain().length();
     TickFormatter tlf = tickFormatFactory.findBestFormatter(domainWidth);
     final double boundsRightX = bounds.rightX();
     final double labelWidth = tlf.getMaxTickLabelWidth(layer, axisProperties);
     final double labelWidthDiv2 = labelWidth / 2.0;
     final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds, domainWidth, tlf);
     final int idealTickStep = tlf.calcIdealTickStep(domainWidth, maxTicksForScreen);
-    ChronoDate tickDate = tlf.quantizeDate(plot.getDomainOrigin(), idealTickStep);
+    ChronoDate tickDate = tlf.quantizeDate(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;

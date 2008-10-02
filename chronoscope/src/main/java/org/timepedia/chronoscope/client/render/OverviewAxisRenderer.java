@@ -112,9 +112,9 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
    */
   private Bounds calcHighlightBounds(XYPlot plot, Bounds axisBounds) {
     double globalDomainMin = plot.getDatasets().getMinDomain();
-    double visibleDomainMin = plot.getDomainOrigin();
     double globalDomainWidth = plot.getDatasets().getMaxDomain() - globalDomainMin;
-    double visibleDomainWidth = plot.getCurrentDomain();
+    double visibleDomainMin = plot.getDomain().getStart();
+    double visibleDomainWidth = plot.getDomain().length();
     
     Bounds b;
     

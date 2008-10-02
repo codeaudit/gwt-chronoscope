@@ -74,8 +74,8 @@ public class Marker implements Overlay, GssElement, Exportable {
   }
 
   public void draw(Layer backingCanvas, String layer) {
-    if (domainX <= plot.getDomainOrigin()
-        || domainX >= plot.getDomainOrigin() + plot.getCurrentDomain()) {
+    if (domainX <= plot.getDomain().getStart()
+        || domainX >= plot.getDomain().getEnd()) {
       return;
     }
 

@@ -18,6 +18,7 @@ import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
+import org.timepedia.chronoscope.client.util.LineSegment;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -146,12 +147,10 @@ public class ChronoscopeVisualization implements Exportable {
           for (Marker m : ms) {
             view.getChart().getPlot().addOverlay(m);
           }
-          if (!Double.isNaN(domainOrigin)) {
-            view.getChart().getPlot().setDomainOrigin(domainOrigin);
-          }
-          if (!Double.isNaN(endDomain)) {
-            view.getChart().getPlot().setCurrentDomain(
-                endDomain - view.getChart().getPlot().getDomainOrigin());
+          
+          if (!Double.isNaN(domainOrigin) && !Double.isNaN(endDomain)) {
+            LineSegment plotDomain = view.getChart().getPlot().getDomain();
+            plotDomain.setEndpoints(domainOrigin, endDomain);
           }
 
           view.addViewListener(new XYPlotListener() {
@@ -174,7 +173,7 @@ public class ChronoscopeVisualization implements Exportable {
               GVizEventHelper
                   .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
                       GVizEventHelper.RANGECHANGE_EVENT, rangeProps(
-                      plot.getDomainOrigin(), plot.getCurrentDomain(),
+                      plot.getDomain().getStart(), plot.getDomain().length(),
                       eventTypeToString(type)));
             }
           });

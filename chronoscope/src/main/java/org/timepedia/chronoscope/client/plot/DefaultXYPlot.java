@@ -30,6 +30,7 @@ import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.LineSegment;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -77,9 +78,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private RangeAxis[] axes;
 
   private Background background;
-
-  private double currentDomain, lastCurrentDomain;
-
+  
   private int currentMiplevels[];
 
   private XYDatasets datasets;
@@ -87,8 +86,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private DateAxis domainAxis;
 
   private double visibleDomainMax;
-
-  private double domainOrigin, lastDomainOrigin;
 
   private AxisPanel domainPanel;
 
@@ -104,6 +101,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private AxisPanel rangePanelLeft;
 
+  private LineSegment plotDomain, lastPlotDomain;
+  
   private final XYRenderer[] xyRenderers;
 
   private PortableTimerTask animationContinuation;
@@ -232,9 +231,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         true);
   }
 
-  private void animateTo(final double destinationOrigin,
-      final double destDomain, final int eventType,
-      final PortableTimerTask continuation, boolean fence) {
+  private void animateTo(final double destDomainOrigin, final double destDomainLength, 
+      final int eventType, final PortableTimerTask continuation, 
+      boolean fence) {
     
     if (!isAnimatable()) {
       return;
@@ -248,35 +247,22 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
       animationTimer = null;
     }
-
-    final double fencedDomain = fenceDomain(fence, destDomain);
-    final double fencedDomainOrigin = fenceDomainOrigin(fence,
-        destinationOrigin, destDomain);
-
+    
+    final double fencedDomainLength = fenceDomain(fence, destDomainLength);
+    final double fencedDomainOrigin = fenceDomainOrigin(fence, destDomainOrigin, destDomainLength);
+    final LineSegment destDomain = 
+      new LineSegment(fencedDomainOrigin, fencedDomainOrigin + fencedDomainLength);
     animationContinuation = continuation;
-
+    final LineSegment visibleDomain = this.plotDomain;
+    
     animationTimer = view.createTimer(new PortableTimerTask() {
-
-      // destination center
-      final double destCenter = fencedDomainOrigin + fencedDomain / 2;
-
-      // center of current domain, we want the zoom to keep the center
-      // point stable
-      double domainCenter = domainOrigin + currentDomain / 2;
-
-      boolean lastFrame = false;
-
-      // starting center point
-      final double sCenter = domainCenter;
-
-      final double startDomain = currentDomain;
-      
-      final double startOrigin = domainOrigin;
-      
-      double startTime = 0;
-
+      final double destDomainMid = destDomain.midpoint();
+      final LineSegment srcDomain = visibleDomain.copy();
       // Ratio of destination domain to current domain
-      final double zoomFactor = fencedDomain / currentDomain;
+      final double zoomFactor = fencedDomainLength / srcDomain.length();
+
+      double startTime = 0;
+      boolean lastFrame = false;
 
       public void run(PortableTimer t) {
         isAnimating = true;
@@ -289,16 +275,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           lerpFactor = 1;
         }
         
-        setCurrentDomain(startDomain * ((1 - lerpFactor) + zoomFactor * lerpFactor));
-        domainCenter = (destCenter - sCenter) * lerpFactor + sCenter;
-        domainOrigin = domainCenter - currentDomain / 2;
+        final double domainCenter = (destDomainMid - srcDomain.midpoint()) * lerpFactor + srcDomain.midpoint();
+        final double domainLength = srcDomain.length() * ((1 - lerpFactor) + (zoomFactor * lerpFactor));
+        final double domainStart = domainCenter - domainLength / 2;
+        visibleDomain.setEndpoints(domainStart, domainStart + domainLength);
         redraw();
 
         if (lerpFactor < 1) {
           t.schedule(10);
         } 
         else if (lastFrame) {
-          final double domainAmt = startOrigin - domainOrigin;
+          final double domainAmt = srcDomain.getStart() - visibleDomain.getStart();
           view.fireScrollEvent(DefaultXYPlot.this, domainAmt, eventType, false);
           if (continuation != null) {
             continuation.run(t);
@@ -326,7 +313,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
       if (MathUtil
-          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+          .isBounded(oPos, plotDomain.getStart(), plotDomain.getEnd())) {
         if (o.isHit(x, y)) {
           o.click(x, y);
           return true;
@@ -360,7 +347,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
     view.ensureViewVisible();
-    if (domainX <= domainOrigin || domainX >= domainOrigin + currentDomain) {
+    if (domainX <= plotDomain.getStart() || domainX >= plotDomain.getEnd()) {
       scrollAndCenter(domainX, callback);
       return true;
     }
@@ -375,10 +362,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public Chart getChart() {
     return chart;
-  }
-
-  public double getCurrentDomain() {
-    return currentDomain;
   }
 
   public int getCurrentMipLevel(int datasetIndex) {
@@ -399,16 +382,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return domainAxis;
   }
 
-  public double getDomainCenter() {
-    return domainOrigin + currentDomain / 2;
-  }
-
   public double getVisibleDomainMax() {
     return visibleDomainMax;
   }
-
-  public double getDomainOrigin() {
-    return domainOrigin;
+  
+  public LineSegment getDomain() {
+    return this.plotDomain;
   }
 
   public Focus getFocus() {
@@ -420,8 +399,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public String getHistoryToken() {
-    return getChart().getChartId() + "(O" + getDomainOrigin() + ",D"
-        + getCurrentDomain() + ")";
+    return getChart().getChartId() + "(O" + plotDomain.getStart() + ",D"
+        + plotDomain.length() + ")";
   }
 
   public Bounds getInnerBounds() {
@@ -540,9 +519,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     computePlotBounds();
     clearDrawCaches();
-
-    lastDomainOrigin = domainOrigin;
-    lastCurrentDomain = currentDomain;
+    
+    lastPlotDomain = plotDomain.copy();
 
     initLayers();
     background = new GssBackground(this);
@@ -601,8 +579,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void moveTo(double domainX) {
-    final double domainAmtMoved = domainX - this.domainOrigin;
-    this.domainOrigin = domainX;
+    final double domainAmtMoved = domainX - this.plotDomain.getStart();
+    movePlotDomain(domainX);
     this.view.fireScrollEvent(this, domainAmtMoved, XYPlotListener.DRAGGED, false);
     this.redraw();
   }
@@ -613,8 +591,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void nextZoom() {
     pushHistory();
-    double nDomain = currentDomain / ZOOM_FACTOR;
-    animateTo(getDomainCenter() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
+    double nDomain = plotDomain.length() / ZOOM_FACTOR;
+    animateTo(plotDomain.midpoint() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
   public void onDatasetChanged(XYDataset dataset, double domainStart,
@@ -625,8 +603,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       datasetIndex = 0;
     }
     damageAxes(getRangeAxis(datasetIndex));
-    if (domainEnd > domainOrigin + currentDomain) {
-      animateTo(domainEnd - currentDomain / 2, currentDomain, 0,
+    if (domainEnd > plotDomain.getEnd()) {
+      animateTo(domainEnd - plotDomain.length() / 2, plotDomain.length(), 0,
           new PortableTimerTask() {
             public void run(PortableTimer timer) {
               overviewDrawn = false;
@@ -672,8 +650,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   public void prevZoom() {
     pushHistory();
-    double nDomain = currentDomain * ZOOM_FACTOR;
-    animateTo(getDomainCenter() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
+    double nDomain = plotDomain.length() * ZOOM_FACTOR;
+    animateTo(plotDomain.midpoint() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
   public double rangeToScreenY(double dataY, int datasetIndex) {
@@ -691,8 +669,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   @Export
   public void redraw() {
     update();
-    lastCurrentDomain = currentDomain;
-    lastDomainOrigin = domainOrigin;
+    plotDomain.copyTo(lastPlotDomain);
     view.flipCanvas();
   }
 
@@ -702,16 +679,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   @Export
   public void reloadStyles() {
     overviewDrawn = false;
-    double so = getDomainOrigin();
-    double scd = getCurrentDomain();
+    LineSegment tmpPlotDomain = plotDomain.copy();
     init(view);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
-
     initializeDomain();
     redraw();
-    setDomainOrigin(so);
-    setCurrentDomain(scd);
+    tmpPlotDomain.copyTo(plotDomain);
     overlays = oldOverlays;
     redraw();
   }
@@ -723,23 +697,23 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public void scrollAndCenter(double domainX, PortableTimerTask continuation) {
     pushHistory();
 
-    final double newOrigin = domainX - currentDomain / 2;
-    animateTo(newOrigin, currentDomain, XYPlotListener.CENTERED, continuation);
+    final double newOrigin = domainX - plotDomain.length() / 2;
+    animateTo(newOrigin, plotDomain.length(), XYPlotListener.CENTERED, continuation);
   }
 
   public void scrollPixels(int amt) {
-
-    final double domainAmt = (double) amt / plotBounds.width * currentDomain;
+    final double domainAmt = (double) amt / plotBounds.width * plotDomain.length();
     final double minDomain = datasets.getMinDomain();
     final double maxDomain = datasets.getMaxDomain();
-
-    domainOrigin += domainAmt;
-    if (domainOrigin + currentDomain > maxDomain) {
-      domainOrigin = maxDomain - currentDomain;
-    } else if (domainOrigin < minDomain) {
-      domainOrigin = minDomain;
+    
+    double newDomainOrigin = plotDomain.getStart() + domainAmt;
+    if (newDomainOrigin + plotDomain.length() > maxDomain) {
+      newDomainOrigin = maxDomain - plotDomain.length();
+    } else if (newDomainOrigin < minDomain) {
+      newDomainOrigin = minDomain;
     }
-
+    movePlotDomain(newDomainOrigin);
+    
     view.fireScrollEvent(DefaultXYPlot.this, domainAmt, 
         XYPlotListener.DRAGGED, false);
     redraw();
@@ -769,21 +743,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
   }
 
-  public void setCurrentDomain(double currentDomain) {
-    if (Double.isNaN(currentDomain)) {
-      throw new RuntimeException("currentDomain was NaN");
-    }
-    this.currentDomain = currentDomain;
-  }
-
   public void setDomainAxisVisible(boolean visible) {
     this.domainAxisVisible = visible;
   }
-
-  public void setDomainOrigin(double domainOrigin) {
-    this.domainOrigin = domainOrigin;
-  }
-
+  
   public void setFocus(Focus focus) {
     this.focus = focus;
   }
@@ -918,14 +881,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void drawHighlight(Layer layer) {
+    final double domainStart = plotDomain.getStart();
+    final double domainEnd = plotDomain.getEnd();
+    
     if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainOrigin && endHighlight < domainOrigin) || (
-        beginHighlight > domainOrigin + currentDomain
-            && endHighlight > domainOrigin + currentDomain)) {
+        || (beginHighlight < domainStart && endHighlight < domainStart) || (
+        beginHighlight > domainEnd && endHighlight > domainEnd)) {
+      
       if (highlightDrawn) {
         layer.clear();
         highlightDrawn = false;
       }
+      
       return;
     }
 
@@ -1004,7 +971,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
       if (MathUtil
-          .isBounded(oPos, domainOrigin, domainOrigin + currentDomain)) {
+          .isBounded(oPos, plotDomain.getStart(), plotDomain.getEnd())) {
 //        if (o instanceof Marker) {
 //          Marker m = (Marker) o;
 //          m.setLabel("" + label);
@@ -1018,21 +985,20 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void drawPlot() {
-    double doChange = domainOrigin - lastDomainOrigin;
-    double cdChange = currentDomain - lastCurrentDomain;
+    final double doChange = plotDomain.getStart() - lastPlotDomain.getStart();
+    final double cdChange = plotDomain.length() - lastPlotDomain.length();
 
-    double numPixels = doChange / currentDomain * plotLayer.getWidth();
+    double numPixels = doChange / plotDomain.length() * plotLayer.getWidth();
     // disabled for now, implement smooth local scrolling by rendering
     // a chart with overdraw clipped to the view, and scroll overdraw
     // regions into view
     // as needed
     if (false && cdChange == 0 && numPixels < plotLayer.getWidth() / 2) {
       plotLayer.setScrollLeft((int) (plotLayer.getScrollLeft() - numPixels));
-      domainOrigin += doChange;
+      this.movePlotDomain(plotDomain.getStart() + doChange);
     } else {
       plotLayer.setScrollLeft(0);
-
-      background.paint(this, plotLayer, domainOrigin, currentDomain);
+      background.paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
 
       // reset the visible RangeAxis ticks if it's been zoomed
       for (int i = 0; i < datasets.size(); i++) {
@@ -1043,17 +1009,19 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
   }
 
-  private double fenceDomain(boolean fence, double destinationDomain) {
-    final double minDomain = datasets.getMinDomain();
-    final double maxDomain = datasets.getMaxDomain();
+  private double fenceDomain(boolean fence, double destDomain) {
+    if (!fence) {
+      return destDomain;
+    }
     
-    // first ensure that the destinationDomain is smaller than the
-    // difference between the minimum and maximum dataset date values
-    // then ensure that the destinationDomain is larger than what
+    final double domainLength = datasets.getMaxDomain() - datasets.getMinDomain();
+    final double minTickSize = getDomainAxis().getMinimumTickSize();
+    
+    // First ensure that the destDomain is smaller than the
+    // difference between the minimum and maximum dataset date values.
+    // Then ensure that the destDomain is larger than what
     // the DateAxis thinks is it's smallest tick interval it can handle.
-    return fence ? Math.max(
-        Math.min(destinationDomain, maxDomain - minDomain),
-        getDomainAxis().getMinimumTickSize()) : destinationDomain;
+    return Math.max(Math.min(destDomain, domainLength), minTickSize);
   }
 
   private double fenceDomainOrigin(boolean fence, double destinationOrigin,
@@ -1159,8 +1127,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void initializeDomain() {
-    domainOrigin = datasets.getMinDomain();
-    currentDomain = datasets.getMaxDomain() - domainOrigin;
+    plotDomain = new LineSegment(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
   private void initLayers() {
@@ -1236,7 +1203,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
    * (e.g. zoom in, pan) are possible.
    */
   private boolean isAnimatable() {
-    return this.currentDomain != 0.0;
+    return this.plotDomain.length() != 0.0;
   }
 
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
@@ -1257,8 +1224,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private void page(double pageSize) {
     pushHistory();
-    final double newOrigin = domainOrigin + (currentDomain * pageSize);
-    animateTo(newOrigin, currentDomain, XYPlotListener.PAGED);
+    final double newOrigin = plotDomain.getStart() + (plotDomain.length() * pageSize);
+    animateTo(newOrigin, plotDomain.length(), XYPlotListener.PAGED);
+  }
+
+  /**
+   * Assigns a new domain start value while maintaining the current domain length
+   * (i.e. the domain end value is implicitly modified).
+   */
+  private void movePlotDomain(double newDomainStart) {
+    double len = this.plotDomain.length();
+    this.plotDomain.setEndpoints(newDomainStart, newDomainStart + len);
   }
 
   private void setFocusAndNotifyView(Focus focus) {
@@ -1308,7 +1284,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       focusDataset = 0;
       ds = datasets.get(focusDataset);
       mipLevel = currentMiplevels[focusDataset];
-      double domainCenter = getDomainCenter();
+      double domainCenter = plotDomain.midpoint();
       focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
     } else {
       // some data point currently has the focus.
@@ -1367,10 +1343,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     // plotLayer.fillRect(0, 0, 50, 50);
 
     if (interactive && !overviewDrawn && overviewEnabled) {
-      double dO = domainOrigin;
-      double cD = currentDomain;
-      domainOrigin = datasets.getMinDomain();
-      currentDomain = datasets.getMaxDomain() - domainOrigin;
+      double dO = plotDomain.getStart();
+      double dE = plotDomain.getEnd();
+      plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
+      
       drawPlot();
       overviewLayer.save();
       overviewLayer.setVisibility(false);
@@ -1380,8 +1356,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           overviewLayer.getHeight());
       overviewDrawn = true;
       overviewLayer.restore();
-      domainOrigin = dO;
-      currentDomain = cD;
+
+      plotDomain.setEndpoints(dO, dE);
     }
 
     if (interactive) {

@@ -74,10 +74,9 @@ public class OverviewAxisMouseMoveHandler extends
         startDomainX = endDomainX;
         endDomainX = tmp;
       }
-      // Set the current highlight regeion in the plot
+      // Set the current highlight region in the plot
       plot.setHighlight(startDomainX, endDomainX);
-      plot.setDomainOrigin(startDomainX);
-      plot.setCurrentDomain(endDomainX - startDomainX);
+      plot.getDomain().setEndpoints(startDomainX, endDomainX);
       plot.redraw();
     }
     else if (hiliteBounds != null) {

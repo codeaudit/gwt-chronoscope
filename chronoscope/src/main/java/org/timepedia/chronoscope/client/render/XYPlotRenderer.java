@@ -43,10 +43,10 @@ public abstract class XYPlotRenderer {
 
       XYDataset dataSet = datasets.get(seriesNum);
 
-      final double domainOrigin = plot.getDomainOrigin();
-      final double currentDomain = plot.getCurrentDomain();
-      if (!(MathUtil.isBounded(domainOrigin, dataSet.getDomainBegin()
-          - currentDomain, dataSet.getDomainEnd()))) {
+      final double plotDomainStart = plot.getDomain().getStart();
+      final double plotDomainLength = plot.getDomain().length();
+      if (!(MathUtil.isBounded(plotDomainStart, dataSet.getDomainBegin()
+          - plotDomainLength, dataSet.getDomainEnd()))) {
         continue;
       }
 
@@ -59,8 +59,8 @@ public abstract class XYPlotRenderer {
       int mipLevel = -1;
       do {
         mipLevel++;
-        domainStart = Util.binarySearch(dataSet, domainOrigin, mipLevel);
-        domainEnd = Util.binarySearch(dataSet, domainOrigin + currentDomain, mipLevel);
+        domainStart = Util.binarySearch(dataSet, plotDomainStart, mipLevel);
+        domainEnd = Util.binarySearch(dataSet, plotDomainStart + plotDomainLength, mipLevel);
       } while (domainEnd - domainStart > maxPoints);
 
       plot.setCurrentMipLevel(seriesNum, mipLevel);

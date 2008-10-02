@@ -81,11 +81,11 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   public void draw(Layer backingCanvas, String layer) {
-    if (domainX <= plot.getDomainOrigin() && domainX + domainWidth < plot
-        .getDomainOrigin() ||
-        domainX > plot.getDomainOrigin() + plot.getCurrentDomain()
-            && domainX + domainWidth > plot.getDomainOrigin() + plot
-            .getCurrentDomain()) {
+    final double plotDomainStart = plot.getDomain().getStart();
+    final double plotDomainEnd = plot.getDomain().getEnd();
+    final double myDomainEnd = domainX + domainWidth;
+    if (domainX <= plotDomainStart && myDomainEnd < plotDomainStart ||
+        domainX > plotDomainEnd && myDomainEnd > plotDomainEnd) {
       return;
     }
 
