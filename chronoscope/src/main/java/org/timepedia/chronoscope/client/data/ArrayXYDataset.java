@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * {@link XYDataset} backed by {@link Array2D} objects.
@@ -59,8 +60,8 @@ public class ArrayXYDataset extends AbstractXYDataset {
       // than the max range at mip level 0? If not, then can we just find
       // min/max values at level 0?
       Interval rangeInterval = calcRangeInterval(multiRange, numLevels);
-      rangeBottom = rangeInterval.low;
-      rangeTop = rangeInterval.high;
+      rangeBottom = rangeInterval.getStart();
+      rangeTop = rangeInterval.getEnd();
     }
   }
 
@@ -136,22 +137,4 @@ public class ArrayXYDataset extends AbstractXYDataset {
     return min;
   }
 
-  /**
-   * C-style struct that represents a range of values from <tt>low</tt> to
-   * <tt>high</tt>.
-   */
-  private static final class Interval {
-    public Interval(double low, double high) {
-      this.low = low;
-      this.high = high;
-    }
-
-    public String toString() {
-      return "[" + low + ", " + high + "]";
-    }
-
-    public double low;
-    public double high;
-  }
-  
 }

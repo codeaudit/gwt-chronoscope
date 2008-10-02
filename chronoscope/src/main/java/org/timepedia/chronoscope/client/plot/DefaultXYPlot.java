@@ -30,7 +30,7 @@ import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.LineSegment;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -101,7 +101,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private AxisPanel rangePanelLeft;
 
-  private LineSegment plotDomain, lastPlotDomain;
+  private Interval plotDomain, lastPlotDomain;
   
   private final XYRenderer[] xyRenderers;
 
@@ -250,14 +250,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     
     final double fencedDomainLength = fenceDomain(fence, destDomainLength);
     final double fencedDomainOrigin = fenceDomainOrigin(fence, destDomainOrigin, destDomainLength);
-    final LineSegment destDomain = 
-      new LineSegment(fencedDomainOrigin, fencedDomainOrigin + fencedDomainLength);
+    final Interval destDomain = 
+      new Interval(fencedDomainOrigin, fencedDomainOrigin + fencedDomainLength);
     animationContinuation = continuation;
-    final LineSegment visibleDomain = this.plotDomain;
+    final Interval visibleDomain = this.plotDomain;
     
     animationTimer = view.createTimer(new PortableTimerTask() {
       final double destDomainMid = destDomain.midpoint();
-      final LineSegment srcDomain = visibleDomain.copy();
+      final Interval srcDomain = visibleDomain.copy();
       // Ratio of destination domain to current domain
       final double zoomFactor = fencedDomainLength / srcDomain.length();
 
@@ -312,8 +312,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
-      if (MathUtil
-          .isBounded(oPos, plotDomain.getStart(), plotDomain.getEnd())) {
+      if (plotDomain.contains(oPos)) {
         if (o.isHit(x, y)) {
           o.click(x, y);
           return true;
@@ -347,7 +346,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
     view.ensureViewVisible();
-    if (domainX <= plotDomain.getStart() || domainX >= plotDomain.getEnd()) {
+    if (!plotDomain.containsOpen(domainX)) {
       scrollAndCenter(domainX, callback);
       return true;
     }
@@ -386,7 +385,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return visibleDomainMax;
   }
   
-  public LineSegment getDomain() {
+  public Interval getDomain() {
     return this.plotDomain;
   }
 
@@ -679,7 +678,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   @Export
   public void reloadStyles() {
     overviewDrawn = false;
-    LineSegment tmpPlotDomain = plotDomain.copy();
+    Interval tmpPlotDomain = plotDomain.copy();
     init(view);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
@@ -859,7 +858,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
-  protected void autoAssignDatasetAxes() {
+  private void autoAssignDatasetAxes() {
     int rangeAxisCount = 0;
     for (int i = 0; i < datasets.size(); i++) {
       XYDataset ds = datasets.get(i);
@@ -911,7 +910,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     highlightDrawn = true;
   }
 
-  protected void pushHistory() {
+  private void pushHistory() {
     Chronoscope.pushHistory();
   }
 
@@ -970,8 +969,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
-      if (MathUtil
-          .isBounded(oPos, plotDomain.getStart(), plotDomain.getEnd())) {
+      if (plotDomain.contains(oPos)) {
 //        if (o instanceof Marker) {
 //          Marker m = (Marker) o;
 //          m.setLabel("" + label);
@@ -1127,7 +1125,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void initializeDomain() {
-    plotDomain = new LineSegment(datasets.getMinDomain(), datasets.getMaxDomain());
+    plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
   private void initLayers() {
