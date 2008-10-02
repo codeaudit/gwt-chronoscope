@@ -87,8 +87,8 @@ public class ChartBench implements EntryPoint {
   }
 
   private void benchMark(final View view) {
-    final double dO = view.getChart().getPlot().getDomainOrigin();
-    final double cD = view.getChart().getPlot().getCurrentDomain();
+    final double dO = view.getChart().getPlot().getDomain().getStart();
+    final double cD = view.getChart().getPlot().getDomain().length();
     final double dC = dO + cD / 2;
     final int lim = GWT.isScript() ? 100 : 5;
     final int numTrials = 10;
@@ -113,8 +113,7 @@ public class ChartBench implements EntryPoint {
         if (trialNum < numTrials && frameNum < lim) {
           double ncd = cD - cD / 1.5 * ((double) frameNum / lim);
           double ndo = dC - ncd / 2;
-          view.getChart().getPlot().setDomainOrigin(ndo);
-          view.getChart().getPlot().setCurrentDomain(ncd);
+          view.getChart().getPlot().getDomain().setEndpoints(ndo, ndo + ncd);
           double start = Duration.currentTimeMillis();
           view.getChart().redraw();
           double end = Duration.currentTimeMillis();
