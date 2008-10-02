@@ -134,7 +134,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
   }
 
   public double getDomainX() {
-    return plot.getDomainOrigin();
+    return plot.getDomain().getStart();
   }
 
   public GssElement getParentGssElement() {
@@ -160,8 +160,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
 
   public InfoWindow openInfoWindow(String html) {
     InfoWindow infoWindow = plot.getChart().getView().createInfoWindow(html,
-        plot.getDomainOrigin() + plot.getCurrentDomain() / 2,
-        (rangeHigh + rangeLow) / 2);
+        plot.getDomain().midpoint(), (rangeHigh + rangeLow) / 2);
     infoWindow.open();
     return infoWindow;
   }

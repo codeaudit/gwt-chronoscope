@@ -70,11 +70,11 @@ public class DateAxis extends ValueAxis {
   }
 
   public double getRangeHigh() {
-    return plot.getDomainOrigin() + plot.getCurrentDomain();
+    return plot.getDomain().getEnd();
   }
 
   public double getRangeLow() {
-    return plot.getDomainOrigin();
+    return plot.getDomain().getStart();
   }
 
   public int getTickInterval() {

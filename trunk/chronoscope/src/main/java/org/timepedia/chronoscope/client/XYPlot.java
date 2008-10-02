@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.chronoscope.client.util.LineSegment;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
 
@@ -115,11 +116,6 @@ public interface XYPlot extends Exportable {
   int getCurrentMipLevel(int datasetIndex);
 
   /**
-   * Returns the width of the currently visible domain for the plot.
-   */
-  double getCurrentDomain();
-
-  /**
    * Returns the datasets associated with this plot.
    */
   XYDatasets getDatasets();
@@ -142,11 +138,6 @@ public interface XYPlot extends Exportable {
   ValueAxis getDomainAxis();
 
   /**
-   * Returns domain center (i.e. <tt>domainOrigin + currentDomain/2</tt>).
-   */
-  double getDomainCenter();
-
-  /**
    * The maximum <b>visible</b> domain value over all datasets taking into
    * account multiresolution representations.  This value will differ from
    * {@link XYDatasets#getMaxDomain()} if the zoomed out view of the Plot forces 
@@ -157,10 +148,11 @@ public interface XYPlot extends Exportable {
   double getVisibleDomainMax();
 
   /**
-   * Returns the current domain origin.
+   * Returns a line segment representing the portion of the dataset domain 
+   * that's currently visible within this plot.
    */
-  double getDomainOrigin();
-
+  LineSegment getDomain();
+  
   /**
    * Returns the current focus point and dataset index within the focused dataset.
    * 
@@ -310,16 +302,16 @@ public interface XYPlot extends Exportable {
       int datasetIndex);
 
   /**
-   * Animated pan to the left the designated percentage of the {@link #getCurrentDomain()}. 
-   * For example, 0.5 will move the domain origin by {@link #getCurrentDomain()} * 0.5.
+   * Animated pan to the left the designated percentage of this plot's visible domain. 
+   * For example, 0.5 will move the domain origin by visibleDomain * 0.5.
    * 
    * @param pageSize - A value in the range (0.0, 1.0)
    */
   void pageLeft(double pageSize);
 
   /**
-   * Animated pan to the right the designated percentage of the {@link #getCurrentDomain()}. 
-   * For example, 0.5 will move the domain origin by {@link #getCurrentDomain()} * 0.5.
+   * Animated pan to the right the designated percentage of this plot's visible domain. 
+   * For example, 0.5 will move the domain origin by visibleDomain * 0.5.
    * 
    * @param pageSize - A value in the range (0.0, 1.0)
    */
@@ -391,19 +383,9 @@ public interface XYPlot extends Exportable {
   void setCurrentMipLevel(int datasetIndex, int level);
 
   /**
-   * Sets the currently visible domain
-   */
-  void setCurrentDomain(double currentDomain);
-
-  /**
    * Controls whether the domain axis (x-axis) is drawn or not.
    */
   void setDomainAxisVisible(boolean visible);
-
-  /**
-   * Sets the current domain origin
-   */
-  void setDomainOrigin(double domainOrigin);
 
   /**
    * Sets the specified datapoint reference as the focused point in this plot.

@@ -64,8 +64,8 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     
     // Position and size the panels
     zoomPanel.setLocation(axisBounds.x, axisBounds.y);
-    double startDate = plot.getDomainOrigin();
-    double endDate = startDate + plot.getCurrentDomain();
+    double startDate = plot.getDomain().getStart();
+    double endDate = plot.getDomain().getEnd();
     dateRangePanel.updateDomainInterval(startDate, endDate);
     topRightJustify(dateRangePanel, axisBounds);
     layoutPanels(axisBounds);
@@ -149,7 +149,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
       plot.maxZoomOut();
     } else {
       double cd = intervalInMillis;
-      double dc = plot.getDomainOrigin() + plot.getCurrentDomain() / 2;
+      double dc = plot.getDomain().midpoint();
       plot.animateTo(dc - cd / 2, cd, XYPlotListener.ZOOMED, null);
     }
   }

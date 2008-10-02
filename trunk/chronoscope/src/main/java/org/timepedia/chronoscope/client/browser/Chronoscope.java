@@ -576,8 +576,8 @@ public class Chronoscope implements Exportable, HistoryListener {
         String viewId = target.substring(0, target.indexOf("("));
         String[] var = target.substring(target.indexOf("(") + 1).split("\\,");
         Chart chart = (Chart) id2chart.get(viewId);
-        double dO = chart.getPlot().getDomainOrigin();
-        double cD = chart.getPlot().getCurrentDomain();
+        double dO = chart.getPlot().getDomain().getStart();
+        double cD = chart.getPlot().getDomain().length();
         boolean changed = false;
 
         if (chart != null) {
@@ -595,8 +595,7 @@ public class Chronoscope implements Exportable, HistoryListener {
             if (targets.length == 1) {
               chart.getPlot().animateTo(dO, cD, XYPlotListener.ZOOMED, null);
             } else {
-              chart.getPlot().setDomainOrigin(dO);
-              chart.getPlot().setCurrentDomain(cD);
+              chart.getPlot().getDomain().setEndpoints(dO, dO + cD);
             }
           }
 
