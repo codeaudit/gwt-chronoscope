@@ -7,7 +7,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.XYRenderer;
-import org.timepedia.chronoscope.client.util.LineSegment;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
 
@@ -151,7 +151,7 @@ public interface XYPlot extends Exportable {
    * Returns a line segment representing the portion of the dataset domain 
    * that's currently visible within this plot.
    */
-  LineSegment getDomain();
+  Interval getDomain();
   
   /**
    * Returns the current focus point and dataset index within the focused dataset.

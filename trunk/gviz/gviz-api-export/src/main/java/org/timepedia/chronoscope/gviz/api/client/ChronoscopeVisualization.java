@@ -18,7 +18,7 @@ import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
-import org.timepedia.chronoscope.client.util.LineSegment;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -149,7 +149,7 @@ public class ChronoscopeVisualization implements Exportable {
           }
           
           if (!Double.isNaN(domainOrigin) && !Double.isNaN(endDomain)) {
-            LineSegment plotDomain = view.getChart().getPlot().getDomain();
+            Interval plotDomain = view.getChart().getPlot().getDomain();
             plotDomain.setEndpoints(domainOrigin, endDomain);
           }
 

@@ -1,17 +1,17 @@
 package org.timepedia.chronoscope.client.overlays;
 
-import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,8 +74,7 @@ public class Marker implements Overlay, GssElement, Exportable {
   }
 
   public void draw(Layer backingCanvas, String layer) {
-    if (domainX <= plot.getDomain().getStart()
-        || domainX >= plot.getDomain().getEnd()) {
+    if (!plot.getDomain().containsOpen(domainX)) {
       return;
     }
 
