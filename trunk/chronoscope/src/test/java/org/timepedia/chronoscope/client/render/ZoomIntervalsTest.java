@@ -12,10 +12,6 @@ import java.util.Iterator;
 public class ZoomIntervalsTest extends TestCase {
   private ZoomInterval z1d, z1m, z1y, z5y, zMax;
   
-  public ZoomIntervalsTest(String name) {
-    super(name);
-  }
-  
   public void setUp() {
     z1d = new ZoomInterval("1d", 1);
     z1m = new ZoomInterval("1m", 30);

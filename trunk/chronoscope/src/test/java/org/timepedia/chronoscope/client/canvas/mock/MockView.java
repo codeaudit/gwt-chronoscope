@@ -1,17 +1,26 @@
 package org.timepedia.chronoscope.client.canvas.mock;
 
+import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Document;
+
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.browser.ChronoscopeClickListener;
+import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.Canvas;
+import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 
 /**
  *
  */
-public class MockView extends View {
+public class MockView extends View implements DOMView {
+
+  public MockView() {
+  }
 
   public ChronoscopeMenu createChronoscopeMenu(int x, int y) {
     return new ChronoscopeMenu() {
@@ -72,5 +81,27 @@ public class MockView extends View {
 
   protected Canvas createCanvas(int width, int height) {
     return new MockCanvas(this, width, height);
+  }
+
+  public void exportFunctions() {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  public void focus() {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  public Element getElement() {
+    return (Element)(Object)Document.get().getBody();
+  }
+
+  public void initialize(Element element, int width,
+      int height, boolean interactive, GssContext gssContext,
+      ViewReadyCallback callback) {
+    super.initialize(width, height, false, gssContext, callback);
+  }
+
+  public void pushHistory() {
+    //To change body of implemented methods use File | Settings | File Templates.
   }
 }

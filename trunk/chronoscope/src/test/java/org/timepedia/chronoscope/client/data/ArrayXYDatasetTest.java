@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.util.junit.OODoubleArray;
+import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 
 /**
  * @author chad takahashi
@@ -12,10 +12,6 @@ import org.timepedia.util.junit.OODoubleArray;
 public class ArrayXYDatasetTest extends TestCase {
   private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
-  
-  public ArrayXYDatasetTest(String name) {
-    super(name);
-  }
   
   public void testSinglePoint() {
     XYDatasetRequest request = dsMaker.newRequest(new double[] {1000}, new double[] {10});

@@ -10,9 +10,6 @@ import junit.framework.TestCase;
  */
 public class BoundsTest extends TestCase {
 
-  public BoundsTest(String name) {
-    super(name);
-  }
 
   public void testConstructor() {
     Bounds b = new Bounds();

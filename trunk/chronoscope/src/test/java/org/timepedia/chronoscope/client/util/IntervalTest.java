@@ -7,10 +7,6 @@ import junit.framework.TestCase;
  */
 public class IntervalTest extends TestCase {
   
-  public IntervalTest(String name) {
-    super(name);
-  }
-  
   public void testConstructor() {
     Interval i = new Interval(-2, 2);
     assertEquals(-2.0, i.getStart());

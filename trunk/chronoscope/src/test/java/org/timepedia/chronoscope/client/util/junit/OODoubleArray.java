@@ -1,4 +1,4 @@
-package org.timepedia.util.junit;
+package org.timepedia.chronoscope.client.util.junit;
 
 import org.timepedia.chronoscope.client.util.ArgChecker;
 

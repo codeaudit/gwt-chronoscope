@@ -7,10 +7,6 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public final class JulianEraCalcTest extends EraCalcTest {
 
-  public JulianEraCalcTest(String name) {
-    super(name);
-  }
-
   @Override
   protected EraCalc getEraCalc() {
     return new JulianEraCalc();

@@ -10,10 +10,6 @@ import junit.framework.TestCase;
  */
 public class MathUtilTest extends TestCase {
 
-  public MathUtilTest(String name) {
-    super(name);
-  }
-  
   public void testBound_double() {
     assertEquals(1.0, MathUtil.bound(1.0, -2.0, 2.0));
     assertEquals(1.0, MathUtil.bound(1.0, 1.0, 2.0));

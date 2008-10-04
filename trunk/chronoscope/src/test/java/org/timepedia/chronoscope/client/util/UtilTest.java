@@ -10,10 +10,6 @@ import org.timepedia.chronoscope.client.XYDataset;
  */
 public class UtilTest extends TestCase {
 
-  public UtilTest(String name) {
-    super(name);
-  }
-  
   public void testBinarySearch() {
     double[] domain = new double[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     XYDataset ds = new JUnitXYDataset(domain);
