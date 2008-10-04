@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -24,38 +25,47 @@ import java.util.Date;
  */
 @ExportPackage("chronoscope")
 public class Marker implements Overlay, GssElement, Exportable {
-
-  private final double domainX;
-
-  private double rangeY;
-
-  private String label;
-
-  private int width = -1, height;
-
-  private ArrayList clickListener;
-
+  
+  private static enum MarkerShape { BALLOON, TEARDROP };
+  
+  // Determines how high (stretched-out) the marker is.
+  private static final int MARKER_HEIGHT = 15;
+  
   protected XYPlot plot = null;
 
-  private int seriesNum = -1;
+  private ArrayList<OverlayClickListener> clickListeners;
 
-  private GssProperties markerProperties = null;
+  private int datasetIdx = -1;
 
-  public Marker(double domainX, double rangeY, String label, int seriesNum) {
+  private final double domainX;
+  
+  private boolean isScreenPropsSet = false;
+  
+  private String label;
+
+  private GssProperties markerProps;
+  
+  private MarkerShape markerShape;
+  
+  private double rangeY;
+  
+  private int labelWidth, labelHeight;
+
+  public Marker(double domainX, double rangeY, String label, int datasetIdx) {
     this.domainX = domainX;
     this.rangeY = rangeY;
     this.label = label;
-    this.seriesNum = seriesNum;
+    
+    // Silently fix an invalid dataset index
+    this.datasetIdx = Math.max(0, datasetIdx);
   }
 
   /**
    * @gwt.export
    */
   @Export
-  public Marker(String date, int seriesNum, String label) {
-    this.label = label;
-    this.domainX = Date.parse(date);
-    this.seriesNum = seriesNum;
+  public Marker(String date, int datasetIdx, String label) {
+    this(Date.parse(date), 0, label, datasetIdx);
   }
 
   /**
@@ -63,68 +73,53 @@ public class Marker implements Overlay, GssElement, Exportable {
    */
   @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {
-    if (clickListener == null) {
-      clickListener = new ArrayList();
+    if (clickListeners == null) {
+      clickListeners = new ArrayList<OverlayClickListener>();
     }
-    clickListener.add(ocl);
+    clickListeners.add(ocl);
   }
 
   public void click(int x, int y) {
-    fireOverlayClickListener(x, y);
+    if (clickListeners != null) {
+      for (OverlayClickListener l : clickListeners) {
+        l.onOverlayClick(this, x, y);
+      }
+    }
   }
 
   public void draw(Layer backingCanvas, String layer) {
+    if (plot == null) {
+      throw new IllegalStateException("plot not set");
+    }
+    
     if (!plot.getDomain().containsOpen(domainX)) {
       return;
     }
-
-    int point =
-        plot.getNearestVisiblePoint(domainX, seriesNum == -1 ? 0 : seriesNum)
-            - 1;
-    point = Math.max(point, 0);
-
-    View view = plot.getChart().getView();
-    if (markerProperties == null) {
-      markerProperties = view.getGssProperties(this, "");
-    }
-
-    if (width == -1) {
-      width = backingCanvas.stringWidth(label, "Verdana", "normal", "9pt");
-      height = backingCanvas.stringHeight(label, "Verdana", "normal", "9pt")
-          + 2;
-    }
-    double x, y, yp;
-    x = plot.domainToScreenX(domainX, 0);
-
-    double x0 = plot.domainToScreenX(plot.getDataX(seriesNum, point), seriesNum);
-    double x1 = plot.domainToScreenX(plot.getDataX(seriesNum, point + 1), seriesNum);
-
-    double y1 = plot.rangeToScreenY(plot.getDataY(seriesNum, point), seriesNum);
-    double y2 = plot.rangeToScreenY(plot.getDataY(seriesNum, point + 1), seriesNum);
-    yp = y1 + (y2 - y1) * (x - x0) / (x1 - x0);
-
-    y = yp;
-    if (y - 15 - height <= plot.getInnerBounds().y) {
-      y = y + 5;
+    
+    lazyInitScreenProps(backingCanvas);
+    
+    double x = plot.domainToScreenX(domainX, datasetIdx);
+    double rangeY = interpolateRangeY(domainX, datasetIdx);
+    double yp = plot.rangeToScreenY(rangeY, datasetIdx);
+    double y = yp;
+    
+    double proposedMarkerTop = y - MARKER_HEIGHT - labelHeight; 
+    if (proposedMarkerTop > plot.getInnerBounds().y) {
+      y = proposedMarkerTop;
+      markerShape = MarkerShape.BALLOON;
     } else {
-      y = y - 15 - height;
+      y += MARKER_HEIGHT;
+      markerShape = MarkerShape.TEARDROP;
     }
+    
     backingCanvas.save();
-    x = drawOval(width, height, markerProperties, backingCanvas, x, y, yp, y < yp ? 1 : 0);
+    int arcDirection = (y < yp) ? 1 : 0;
+    x = drawOval(labelWidth, labelHeight, markerProps, backingCanvas, x, y, yp, arcDirection);
 
-    backingCanvas.drawText(x, y, label, markerProperties.fontFamily,
-        markerProperties.fontWeight, markerProperties.fontSize, layer,
+    backingCanvas.drawText(x, y, label, markerProps.fontFamily,
+        markerProps.fontWeight, markerProps.fontSize, layer,
         Cursor.CLICKABLE);
     backingCanvas.restore();
-  }
-
-  public void fireOverlayClickListener(int x, int y) {
-    if (clickListener != null) {
-      for (int i = 0; i < clickListener.size(); i++) {
-        ((OverlayClickListener) clickListener.get(i))
-            .onOverlayClick(this, x, y);
-      }
-    }
   }
 
   public double getDomainX() {
@@ -157,25 +152,25 @@ public class Marker implements Overlay, GssElement, Exportable {
   }
 
   public boolean isHit(int x, int y) {
-
-    View view = plot.getChart().getView();
-    double mx = plot.domainToWindowX(domainX, seriesNum);
-
-    double my = plot.rangeToWindowY(rangeY, seriesNum) + 5;
-    if (my - 15 - height <= plot.getInnerBounds().y) {
-      my = my + 5;
-    } else {
-      my = my - 15 - height;
+    if (plot == null) {
+      throw new IllegalStateException("plot not set");
     }
-    if (width == -1) {
-      width = view.getCanvas().getRootLayer()
-          .stringWidth(label, "Verdana", "normal", "9pt");
-      height = view.getCanvas().getRootLayer()
-          .stringHeight(label, "Verdana", "normal", "9pt") + 2;
+
+    final double mx = plot.domainToWindowX(domainX, datasetIdx);
+    final double xPad = labelWidth / 2 + 3;
+    final boolean isHitX = MathUtil.isBounded(x, mx - xPad, mx + xPad);
+    
+    final double my = plot.rangeToWindowY(rangeY, datasetIdx);
+    boolean isHitY;
+    if (markerShape == MarkerShape.BALLOON) {
+      double topOfBalloon = my - MARKER_HEIGHT - labelHeight;
+      isHitY = MathUtil.isBounded(y, topOfBalloon, my);
+    } else { // assumed to be TEARDROP
+      double bottomOfTeardrop = my + MARKER_HEIGHT + labelHeight;
+      isHitY = MathUtil.isBounded(y, my, bottomOfTeardrop);
     }
-    mx -= width / 2 + 2;
-    my -= height / 2 + 2;
-    return MathUtil.isBounded(x, mx, mx + width + 3) && MathUtil.isBounded(y, my, my + height); 
+    
+    return isHitX && isHitY; 
   }
 
   /**
@@ -183,52 +178,24 @@ public class Marker implements Overlay, GssElement, Exportable {
    */
   @Export
   public InfoWindow openInfoWindow(String html) {
-    return plot.getChart().getPlot().openInfoWindow(html, domainX, rangeY, seriesNum);
+    if (plot == null) {
+      throw new IllegalStateException("plot not set");
+    }
+    return plot.getChart().getPlot().openInfoWindow(html, domainX, rangeY, datasetIdx);
   }
 
-  public void removeOverlayClickListener(OverlayClickListener ocl) {
-    if (clickListener != null) {
-      clickListener.remove(ocl);
+  public void removeOverlayClickListener(OverlayClickListener listener) {
+    if (clickListeners != null) {
+      clickListeners.remove(listener);
     }
   }
 
   public void setPlot(XYPlot plot) {
+    ArgChecker.isNotNull(plot, "plot");
     this.plot = plot;
-
-    if (seriesNum != -1) {
-      int p = plot.getNearestVisiblePoint(domainX, seriesNum) - 1;
-      p = Math.max(p, 0);
-
-      double r1 = plot.getDataY(seriesNum, p);
-      double r2 = plot.getDataY(seriesNum, p + 1);
-      double d2 = plot.getDataX(seriesNum, p + 1);
-      double d1 = plot.getDataX(seriesNum, p);
-
-      rangeY = r1 + (domainX - d1) / (d2 - d1) * (r2 - r1);
-    }
+    rangeY = interpolateRangeY(domainX, datasetIdx);
   }
-
-  private int drawBox(Layer backingCanvas, int x, int y) {
-    backingCanvas.setStrokeColor("rgb(0,0,0)");
-    backingCanvas.setTransparency(1.0f);
-    backingCanvas.beginPath();
-
-    x -= width / 2;
-    backingCanvas.setShadowOffsetX(0);
-    backingCanvas.setShadowOffsetY(0);
-    backingCanvas.setShadowBlur(0);
-    backingCanvas.moveTo(x - 1, y);
-    backingCanvas.lineTo(x + width + 3, y);
-    backingCanvas.lineTo(x + width + 3, y + height);
-    backingCanvas.lineTo(x - 1, y + height);
-    backingCanvas.closePath();
-    backingCanvas.setFillColor("rgb(200,200,200)");
-    backingCanvas.fill();
-    backingCanvas.setLineWidth(1);
-    backingCanvas.stroke();
-    return x;
-  }
-
+  
   public static double drawOval(int width, int height, GssProperties markerProperties, Layer backingCanvas, double x,
       double y, double yp, int dir) {
     backingCanvas.setStrokeColor(markerProperties.color);
@@ -239,14 +206,16 @@ public class Marker implements Overlay, GssElement, Exportable {
     backingCanvas.setShadowOffsetX(0);
     backingCanvas.setShadowOffsetY(0);
     backingCanvas.setShadowBlur(0);
-
+    
+    /*
     double startAngle = Math.PI * 2.0 - Math.PI / 2 + Math.PI / 8;
     double endAngle = Math.PI * 2.0 - Math.PI / 2 - Math.PI / 8;
     if (dir == 0) {
       startAngle = Math.PI * 2.0 - Math.PI / 2 - Math.PI / 4 - Math.PI / 8;
       endAngle = Math.PI * 2.0 - Math.PI / 2 + Math.PI / 4 + Math.PI / 8;
     }
-
+    */
+    
     backingCanvas.arc(x + width / 2, y + height / 2, width + 1, 0, Math.PI, dir);
     backingCanvas.lineTo(x + (width + 1) / 2, yp);
     backingCanvas.closePath();
@@ -260,4 +229,50 @@ public class Marker implements Overlay, GssElement, Exportable {
     backingCanvas.stroke();
     return x;
   }
+
+  private int drawBox(Layer backingCanvas, int x, int y) {
+    backingCanvas.setStrokeColor("rgb(0,0,0)");
+    backingCanvas.setTransparency(1.0f);
+    backingCanvas.beginPath();
+
+    x -= labelWidth / 2;
+    backingCanvas.setShadowOffsetX(0);
+    backingCanvas.setShadowOffsetY(0);
+    backingCanvas.setShadowBlur(0);
+    backingCanvas.moveTo(x - 1, y);
+    backingCanvas.lineTo(x + labelWidth + 3, y);
+    backingCanvas.lineTo(x + labelWidth + 3, y + labelHeight);
+    backingCanvas.lineTo(x - 1, y + labelHeight);
+    backingCanvas.closePath();
+    backingCanvas.setFillColor("rgb(200,200,200)");
+    backingCanvas.fill();
+    backingCanvas.setLineWidth(1);
+    backingCanvas.stroke();
+    return x;
+  }
+
+  private double interpolateRangeY(double domainX, int datasetIdx) {
+    int p = plot.getNearestVisiblePoint(domainX, datasetIdx) - 1;
+    p = Math.max(p, 0);
+    
+    // linearly interpolate rangeY from domainX and its surrounding 2 data points
+    double d0 = plot.getDataX(datasetIdx, p);
+    double d1 = plot.getDataX(datasetIdx, p + 1);
+    double r0 = plot.getDataY(datasetIdx, p);
+    double r1 = plot.getDataY(datasetIdx, p + 1);
+
+    double interplatedRangeY = r0 + (domainX - d0) / (d1 - d0) * (r1 - r0);
+    return interplatedRangeY;
+  }
+
+  private void lazyInitScreenProps(Layer layer) {
+    if (!isScreenPropsSet) {
+      View view = plot.getChart().getView();
+      markerProps = view.getGssProperties(this, "");
+      labelWidth = layer.stringWidth(label, "Verdana", "normal", "9pt");
+      labelHeight = layer.stringHeight(label, "Verdana", "normal", "9pt") + 2;
+      isScreenPropsSet = true;
+    }
+  }
+  
 }
