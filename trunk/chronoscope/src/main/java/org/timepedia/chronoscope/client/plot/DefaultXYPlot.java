@@ -31,7 +31,6 @@ import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
-import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
@@ -959,27 +958,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     innerBounds.y = 0;
   }
 
-  private void drawOverlays(Layer overviewLayer) {
-    overviewLayer.save();
-    overviewLayer.clearTextLayer("overlays");
-    overviewLayer.setTextLayerBounds("overlays", new Bounds(0, 0,
-        overviewLayer.getBounds().width, overviewLayer.getBounds().height));
-
-//    char label = 'A';
+  private void drawOverlays(Layer layer) {
+    layer.save();
+    layer.clearTextLayer("overlays");
+    layer.setTextLayerBounds("overlays", new Bounds(0, 0,
+        layer.getBounds().width, layer.getBounds().height));
 
     for (Overlay o : overlays) {
-      double oPos = o.getDomainX();
-      if (plotDomain.contains(oPos)) {
-//        if (o instanceof Marker) {
-//          Marker m = (Marker) o;
-//          m.setLabel("" + label);
-//          label++;
-//        }
-      }
-      o.draw(overviewLayer, "overlays");
+      o.draw(layer, "overlays");
     }
 
-    overviewLayer.restore();
+    layer.restore();
   }
 
   private void drawPlot() {
@@ -999,8 +988,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       background.paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
 
       // reset the visible RangeAxis ticks if it's been zoomed
-      for (int i = 0; i < datasets.size(); i++) {
-        axes[i].initVisibleRange();
+      for (RangeAxis axis : axes) {
+        axis.initVisibleRange();
       }
 
       plotRenderer.drawDatasets();
@@ -1109,15 +1098,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     np.pointIndex = nearestHoverPt;
   }
 
-  private void initDatasetLevels() {
+  private void initMipLevels() {
     currentMiplevels = new int[datasets.size()];
-    for (int i = 0; i < currentMiplevels.length; i++) {
-      currentMiplevels[i] = 0;
-    }
+    Arrays.fill(currentMiplevels, 0);
   }
 
   private void initDefaultRenderers() {
-    for (int i = 0; i < datasets.size(); i++) {
+    for (int i = 0; i < xyRenderers.length; i++) {
       if (xyRenderers[i] == null) {
         xyRenderers[i] = new XYLineRenderer(i);
       }
@@ -1193,7 +1180,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     initializeDomain();
     initDefaultRenderers();
-    initDatasetLevels();
+    initMipLevels();
   }
 
   /**
