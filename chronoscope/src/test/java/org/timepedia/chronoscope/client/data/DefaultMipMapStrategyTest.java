@@ -6,7 +6,7 @@ import org.timepedia.chronoscope.client.data.Array2D;
 import org.timepedia.chronoscope.client.data.DefaultMipMapStrategy;
 import org.timepedia.chronoscope.client.data.MipMapStrategy;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.util.junit.OODoubleArray;
+import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,10 +60,6 @@ public class DefaultMipMapStrategyTest extends TestCase {
 
   }
   
-  public DefaultMipMapStrategyTest(String name) {
-    super(name);
-  }
-
   public void setUp() {
     mipmap = DefaultMipMapStrategy.MAX;
     

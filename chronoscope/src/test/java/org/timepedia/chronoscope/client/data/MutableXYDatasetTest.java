@@ -9,10 +9,6 @@ public class MutableXYDatasetTest extends TestCase {
   private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
   
-  public MutableXYDatasetTest(String name) {
-    super(name);
-  }
-  
   public void testAppend() {
     XYDatasetRequest request = 
       dsMaker.newRequest(new double[] {100, 200, 250}, new double[] {1, 2, 3});

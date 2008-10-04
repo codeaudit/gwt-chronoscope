@@ -1,21 +1,20 @@
-package org.timepedia.chronoscope.client.util.date;
+package org.timepedia.chronoscope.nongwt;
 
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.FastChronoDate;
 
 import java.util.Date;
 import java.util.TimeZone;
+//import java.util.TimeZone;
 
 /**
  * @author chad takahashi
  */
 public class FastChronoDateTest extends TestCase {
   private TimeZone origTimeZone;
-  
-  public FastChronoDateTest(String name) {
-    super(name);
-  }
   
   public void setUp() {
     origTimeZone = TimeZone.getDefault();

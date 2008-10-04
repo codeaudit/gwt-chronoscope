@@ -11,10 +11,6 @@ import java.util.Date;
  */
 public class DefaultChronoDateTest extends TestCase {
   
-  public DefaultChronoDateTest(String name) {
-    super(name);
-  }
-  
   public void testGetDaysInMonth() {
     ChronoDate d = createDate(new Date(1582-1900, 0, 1).getTime());
     assertEquals(31, d.getDaysInMonth());

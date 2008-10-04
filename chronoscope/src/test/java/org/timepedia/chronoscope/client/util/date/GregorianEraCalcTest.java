@@ -9,10 +9,6 @@ import java.util.Date;
  */
 public class GregorianEraCalcTest extends EraCalcTest {
   
-  public  GregorianEraCalcTest(String name) {
-    super(name);
-  }
-  
   public void testCalcYearTimestamp() {
     GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
     testCalcYearTimestamp(eraCalc, eraCalc.minYear, eraCalc.maxYear);

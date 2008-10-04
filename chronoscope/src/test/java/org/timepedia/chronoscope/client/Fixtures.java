@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+
 import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
 import org.timepedia.chronoscope.client.data.XYDatasetFactory;
 import org.timepedia.chronoscope.client.data.XYDatasetRequest;
@@ -68,7 +70,7 @@ public class Fixtures {
     private static double[] parseDomain(String[] dates) {
         double domain[] = new double[dates.length];
         for (int i = 0; i < dates.length; i++) {
-            domain[i] = MockDateParser.parse("yyyy", dates[i]);
+            domain[i] = DateTimeFormat.getFormat("yyyy").parse(dates[i]).getTime();
         }
         return domain;
     }

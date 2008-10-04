@@ -1,4 +1,4 @@
-package org.timepedia.util.junit;
+package org.timepedia.chronoscope.client.util.junit;
 
 /**
  * Factory for creating test objects for use by {@link ObjectSmokeTest}.

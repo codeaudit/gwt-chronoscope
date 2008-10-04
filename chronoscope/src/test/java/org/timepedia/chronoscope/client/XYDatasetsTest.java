@@ -16,10 +16,6 @@ public class XYDatasetsTest extends TestCase {
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
   private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
   
-  public XYDatasetsTest(String name) {
-    super(name);
-  }
-  
   public void testAggregateCalcs() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     XYDatasets grp = new XYDatasets(mds);

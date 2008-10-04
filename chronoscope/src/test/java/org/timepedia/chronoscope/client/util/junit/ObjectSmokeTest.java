@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.timepedia.util.junit;
+package org.timepedia.chronoscope.client.util.junit;
 
 import junit.framework.TestCase;
 

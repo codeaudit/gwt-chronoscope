@@ -11,10 +11,6 @@ import org.timepedia.chronoscope.client.data.JavaArray2D;
  */
 public class JavaArray2DTest extends TestCase {
 
-  public JavaArray2DTest(String name) {
-    super(name);
-  }
-
   public void testDimensions() {
     double[][] data = new double[][] { {10, 20}, {30}};
     JavaArray2D a = new JavaArray2D(data);

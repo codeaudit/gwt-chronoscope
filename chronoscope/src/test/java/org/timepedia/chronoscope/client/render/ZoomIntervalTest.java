@@ -5,8 +5,8 @@ package org.timepedia.chronoscope.client.render;
 
 import junit.framework.TestCase;
 
-import org.timepedia.util.junit.ObjectSmokeTest;
-import org.timepedia.util.junit.TestObjectFactory;
+import org.timepedia.chronoscope.client.util.junit.ObjectSmokeTest;
+import org.timepedia.chronoscope.client.util.junit.TestObjectFactory;
 
 /**
  * @author Chad Takahashi
@@ -15,8 +15,7 @@ import org.timepedia.util.junit.TestObjectFactory;
 public class ZoomIntervalTest extends TestCase {
   private TestObjectFactory zoomIntervalFactory;
   
-  public ZoomIntervalTest(String name) {
-    super(name);
+  public ZoomIntervalTest() {
 
     this.zoomIntervalFactory = new TestObjectFactory() {
       final String[] names = new String[] {"1d","5d","1m","6m","1y","max"};

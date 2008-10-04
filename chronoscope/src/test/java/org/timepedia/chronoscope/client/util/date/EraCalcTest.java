@@ -10,10 +10,6 @@ import java.util.TimeZone;
  */
 public abstract class EraCalcTest extends TestCase {
   
-  public EraCalcTest(String name) {
-    super(name);
-  }
-  
   protected abstract EraCalc getEraCalc();
   
   protected abstract boolean isLeapYear(int year);

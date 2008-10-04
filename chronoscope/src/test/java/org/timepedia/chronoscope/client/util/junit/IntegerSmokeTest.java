@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.timepedia.util.junit;
+package org.timepedia.chronoscope.client.util.junit;
 
 import junit.framework.TestCase;
 
@@ -15,8 +15,8 @@ public class IntegerSmokeTest extends TestCase {
 	private TestObjectFactory integerFactory;
 	
 	
-	public IntegerSmokeTest(String testName) {
-		super(testName);
+	public IntegerSmokeTest() {
+//		super(testName);
 		
 		// Create a TestObjectFactory instance that generates Integer objects.
 		this.integerFactory = new TestObjectFactory() {

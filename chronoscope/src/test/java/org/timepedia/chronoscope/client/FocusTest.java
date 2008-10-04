@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.util.junit.ObjectSmokeTest;
-import org.timepedia.util.junit.TestObjectFactory;
+import org.timepedia.chronoscope.client.util.junit.ObjectSmokeTest;
+import org.timepedia.chronoscope.client.util.junit.TestObjectFactory;
 
 import junit.framework.TestCase;
 
@@ -11,8 +11,7 @@ import junit.framework.TestCase;
 public class FocusTest extends TestCase {
   private TestObjectFactory focusFactory;
 
-  public FocusTest(String name) {
-    super(name);
+  public FocusTest() {
 
     this.focusFactory = new TestObjectFactory() {
       final int instanceCount = 101;
