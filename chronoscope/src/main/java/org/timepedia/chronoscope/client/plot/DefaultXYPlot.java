@@ -352,12 +352,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return false;
   }
 
-  public boolean ensureVisible(int datasetIndex, int pointIndex,
-      PortableTimerTask callback) {
-    XYDataset ds = datasets.get(datasetIndex);
-    return ensureVisible(ds.getX(pointIndex), ds.getY(pointIndex), callback);
-  }
-
   public Chart getChart() {
     return chart;
   }

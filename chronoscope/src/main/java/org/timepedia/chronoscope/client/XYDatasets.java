@@ -118,6 +118,17 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
   }
   
   /**
+   * Removes the element at the specified position in this container. Shifts any 
+   * subsequent elements to the left (subtracts one from their indices). 
+   * Returns the element that was removed from the container.
+   */
+  public XYDataset remove(int index) {
+    XYDataset removedDataset = this.datasets.remove(index);
+    recalcAggregateInfo();
+    return removedDataset;
+  }
+  
+  /**
    * Returns the number of datasets in this container.
    */
   public int size() {
@@ -129,6 +140,18 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    */
   public XYDataset[] toArray() {
     return this.datasets.toArray(new XYDataset[0]);
+  }
+  
+  private void recalcAggregateInfo() {
+    minDomain = Double.POSITIVE_INFINITY;
+    minRange = Double.POSITIVE_INFINITY;
+    maxDomain = Double.NEGATIVE_INFINITY;
+    maxRange = Double.NEGATIVE_INFINITY;
+    minInterval = 0.0;
+    
+    for (XYDataset ds : datasets) {
+      updateAggregateInfo(ds);
+    }
   }
   
   private void updateAggregateInfo(XYDataset dataset) {

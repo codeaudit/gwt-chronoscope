@@ -34,7 +34,7 @@ public abstract class XYPlotRenderer {
     this.plot = plot;
   }
 
-  public void computeVisibleDomainAndRange() {
+  private void computeVisibleDomainAndRange() {
     initArrays();
 
     XYDatasets datasets = plot.getDatasets();
