@@ -51,9 +51,8 @@ public class Marker implements Overlay, GssElement, Exportable {
   
   private int labelWidth, labelHeight;
 
-  public Marker(double domainX, double rangeY, String label, int datasetIdx) {
+  public Marker(double domainX, String label, int datasetIdx) {
     this.domainX = domainX;
-    this.rangeY = rangeY;
     this.label = label;
     
     // Silently fix an invalid dataset index
@@ -65,7 +64,7 @@ public class Marker implements Overlay, GssElement, Exportable {
    */
   @Export
   public Marker(String date, int datasetIdx, String label) {
-    this(Date.parse(date), 0, label, datasetIdx);
+    this(Date.parse(date), label, datasetIdx);
   }
 
   /**
@@ -99,7 +98,6 @@ public class Marker implements Overlay, GssElement, Exportable {
     lazyInitScreenProps(backingCanvas);
     
     double x = plot.domainToScreenX(domainX, datasetIdx);
-    double rangeY = interpolateRangeY(domainX, datasetIdx);
     double yp = plot.rangeToScreenY(rangeY, datasetIdx);
     double y = yp;
     

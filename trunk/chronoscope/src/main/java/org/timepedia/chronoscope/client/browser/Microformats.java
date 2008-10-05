@@ -15,7 +15,6 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Overlay;
@@ -52,8 +51,6 @@ public class Microformats {
 
     private String chartId;
 
-    private final XYDataset[] ds;
-
     private final Element elt;
 
     private MicroformatCountdownLatch latch;
@@ -64,7 +61,6 @@ public class Microformats {
       this.links = links;
       this.id = id;
       this.chartId = chartId;
-      this.ds = ds;
       this.elt = elt;
       this.latch = latch;
     }
@@ -92,8 +88,7 @@ public class Microformats {
           }
           final Element[] infoWindow = getElementsByClassName(links[j], "span",
               CMF_PREFIX + "-infowindow");
-          final Marker m = new Marker((double) Date.parse(date),
-              (ds[0].getRangeTop() - ds[0].getRangeBottom()) / 2, label, 0);
+          final Marker m = new Marker((double) Date.parse(date), label, 0);
           attachOnClick(links[j], m);
 
           if (infoWindow != null && infoWindow[0] != null) {

@@ -55,6 +55,29 @@ public class XYDatasetsTest extends TestCase {
     assertEquals(40.0, grp.getMaxRange());
   }
   
+  public void testRemove() {
+    XYDataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
+    XYDataset ds1 = newDataset(new double[] {3.0}, new double[] {30.0});
+    XYDataset ds2 = newDataset(new double[] {2.0}, new double[] {20.0});
+    XYDatasets grp = new XYDatasets(ds0);
+    grp.addDataset(ds1);
+    grp.addDataset(ds2);
+    
+    // verify the removed element corresponds to the index
+    assertTrue(ds1 == grp.remove(1));
+    // verify the new size of the container
+    assertEquals(2, grp.size());
+    // verify the order of the remaining elements
+    assertTrue(ds0 == grp.get(0));
+    assertTrue(ds2 == grp.get(1));
+    
+    // make sure aggregate properties were updated
+    assertEquals(1.0, grp.getMinDomain());
+    assertEquals(2.0, grp.getMaxDomain());
+    assertEquals(10.0, grp.getMinRange());
+    assertEquals(20.0, grp.getMaxRange());
+  }
+  
   public void testSize() {
     XYDatasets grp = new XYDatasets(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertEquals(1, grp.size());
