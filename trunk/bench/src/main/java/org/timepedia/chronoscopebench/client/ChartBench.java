@@ -62,7 +62,7 @@ public class ChartBench implements EntryPoint {
       chartPanel.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(final View view) {
           final Marker m = new Marker(
-              (ds[0].getDomainBegin() + ds[0].getDomainEnd()) / 2, 10, "A", 0);
+              (ds[0].getDomainBegin() + ds[0].getDomainEnd()) / 2, "A", 0);
           m.addOverlayClickListener(new OverlayClickListener() {
             public void onOverlayClick(Overlay overlay, int x, int y) {
               m.openInfoWindow("Hello");

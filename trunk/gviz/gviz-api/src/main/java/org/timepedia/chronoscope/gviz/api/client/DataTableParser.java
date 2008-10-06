@@ -115,7 +115,7 @@ public class DataTableParser {
       } else {
         if ("markers".equalsIgnoreCase(table.getColumnLabel(i))) {
           for (int row = startRow; row < table.getNumberOfRows(); row++) {
-            final Marker m = new Marker(table.getValueDate(row, 0), .0,
+            final Marker m = new Marker(table.getValueDate(row, 0),
                 "" + (char) ('A' + markers.size()), curSeries);
             final String info = table.getValueString(row, i);
             final String info2 = info != null ? info.trim() : "";
