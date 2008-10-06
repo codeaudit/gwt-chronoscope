@@ -6,11 +6,9 @@ import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Responsible for iterating over datasets in a defined drawing order, and then
@@ -21,27 +19,37 @@ import java.util.Map;
  */
 public abstract class XYPlotRenderer {
 
-  protected int domainStart[], domainEnd[];
-
-  protected XYPlot plot;
-
-  protected Map<String,Double> rangeMax = new HashMap<String,Double>();
-
-  protected Map<String,Double> rangeMin = new HashMap<String,Double>();
-
+  // For each dataset, stores the start and end data point indices that are
+  // currently visible in the plot.
+  // For example, domainStartIdxs[2] stores the leftmost data point index of the
+  // 3rd dataset in plot.datsets that's currently viewable in the plot.
+  protected int domainStartIdxs[], domainEndIdxs[];
+  
+  // Stores the order in which the datasets should be rendered.  For example, if
+  // element [0] = 4, then this means the 5th dataset should be rendered first.
+  private int[] datasetRenderOrder;
+  
+  // Stores the min and max range values for a given domain interval for each dataset.
+  // For example, minRanges[2] stores the minimum range value (within the current plot
+  // domain interval) for the 3rd dataset in plot.datsets.
+  private double[] minRanges, maxRanges;
+  
+  private XYPlot plot;
+  
+  /**
+   * Constructs a new plot renderer bound to the specified plot.
+   */
   public XYPlotRenderer(XYPlot plot) {
-
+    ArgChecker.isNotNull(plot, "plot");
     this.plot = plot;
   }
 
   private void computeVisibleDomainAndRange() {
-    initArrays();
-
     XYDatasets datasets = plot.getDatasets();
     final int numDatasets = datasets.size();
-    for (int seriesNum = 0; seriesNum < numDatasets; seriesNum++) {
-
-      XYDataset dataSet = datasets.get(seriesNum);
+    
+    for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
+      XYDataset dataSet = datasets.get(datasetIdx);
 
       final double plotDomainStart = plot.getDomain().getStart();
       final double plotDomainLength = plot.getDomain().length();
@@ -50,104 +58,73 @@ public abstract class XYPlotRenderer {
         continue;
       }
 
-      int maxPoints = Math.min(
-          plot.getRenderer(seriesNum).getMaxDrawableDatapoints(plot),
+      final int maxPoints = Math.min(
+          plot.getRenderer(datasetIdx).getMaxDrawableDatapoints(plot),
           plot.getMaxDrawableDataPoints());
 
-      int domainStart = 0;
-      int domainEnd = 0;
+      int domainStartIdx = 0;
+      int domainEndIdx = 0;
       int mipLevel = -1;
       do {
         mipLevel++;
-        domainStart = Util.binarySearch(dataSet, plotDomainStart, mipLevel);
-        domainEnd = Util.binarySearch(dataSet, plotDomainStart + plotDomainLength, mipLevel);
-      } while (domainEnd - domainStart > maxPoints);
+        domainStartIdx = Util.binarySearch(dataSet, plotDomainStart, mipLevel);
+        domainEndIdx = Util.binarySearch(dataSet, plotDomainStart + plotDomainLength, mipLevel);
+      } while (domainEndIdx - domainStartIdx > maxPoints);
 
-      plot.setCurrentMipLevel(seriesNum, mipLevel);
+      plot.setCurrentMipLevel(datasetIdx, mipLevel);
+      this.domainStartIdxs[datasetIdx] = domainStartIdx;
+      this.domainEndIdxs[datasetIdx] = domainEndIdx;
 
-      this.domainStart[seriesNum] = domainStart;
-      this.domainEnd[seriesNum] = domainEnd;
-
-      double rangeMin = getRangeMin(seriesNum);
-      double rangeMax = getRangeMax(seriesNum);
-
-      for (int i = domainStart; i <= domainEnd; i++) {
+      double rangeMin = Double.POSITIVE_INFINITY;
+      double rangeMax = Double.NEGATIVE_INFINITY;
+      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
         double val = dataSet.getY(i, mipLevel);
         rangeMin = Math.min(rangeMin, val);
         rangeMax = Math.max(rangeMax, val);
       }
-      putRangeMin(seriesNum, rangeMin);
-      putRangeMax(seriesNum, rangeMax);
+      minRanges[datasetIdx] = rangeMin;
+      maxRanges[datasetIdx] = rangeMax;
     }
   }
 
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(int datasetIndex, Layer can, XYPlot plot);
+  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot plot);
 
   public void drawDatasets() {
+    final int numDatasets = plot.getDatasets().size();
+    
+    allocateArrayLengths(numDatasets);
     computeVisibleDomainAndRange();
-    setupRangeAxisVisibleRanges();
+    setupRangeAxisVisibleRanges(numDatasets);
+    sortDatasetsIntoRenderOrder(datasetRenderOrder);
 
-    int renderOrder[] = sortDatasetsIntoRenderOrder();
     Layer plotLayer = plot.getPlotLayer();
-    for (int i = 0; i < renderOrder.length; i++) {
-      int datasetIndex = renderOrder[i];
-      drawDataset(datasetIndex, plotLayer, plot);
+    for (int i = 0; i < numDatasets; i++) {
+      drawDataset(datasetRenderOrder[i], plotLayer, plot);
     }
   }
 
-  private double getRangeMax(int seriesNum) {
-    return ((Double) rangeMax.get(plot.getRangeAxis(seriesNum).getAxisId())).doubleValue();
+  private void allocateArrayLengths(int numDatasets) {
+    if (domainStartIdxs == null || domainStartIdxs.length != numDatasets) {
+      datasetRenderOrder = new int[numDatasets];
+      domainStartIdxs = new int[numDatasets];
+      domainEndIdxs = new int[numDatasets];
+      minRanges = new double[numDatasets];
+      maxRanges = new double[numDatasets];
+    }
   }
 
-  private double getRangeMin(int seriesNum) {
-    return ((Double) rangeMin.get(plot.getRangeAxis(seriesNum).getAxisId())).doubleValue();
-  }
-
-  private void initArrays() {
-    int numDatasets = plot.getDatasets().size();
-    if (domainStart == null || domainStart.length != numDatasets) {
-      domainStart = new int[numDatasets];
-      domainEnd = new int[numDatasets];
-    }
-    int numAxes = plot.getRangeAxisCount();
-    if (rangeMin.size() != numAxes) {
-      rangeMin.clear();
-      rangeMax.clear();
-    }
-    Double min = new Double(Double.POSITIVE_INFINITY);
-    Double max = new Double(Double.NEGATIVE_INFINITY);
-
+  private void setupRangeAxisVisibleRanges(int numDatasets) {
     for (int i = 0; i < numDatasets; i++) {
       RangeAxis ra = plot.getRangeAxis(i);
-
-      rangeMin.put(ra.getAxisId(), min);
-      rangeMax.put(ra.getAxisId(), max);
+      ra.setVisibleRange(minRanges[i], maxRanges[i]);
     }
   }
 
-  private void putRangeMax(int seriesNum, double rangeMax) {
-    this.rangeMax.put(plot.getRangeAxis(seriesNum).getAxisId(), new Double(
-        rangeMax));
-  }
-
-  private void putRangeMin(int seriesNum, double rangeMin) {
-    this.rangeMin.put(plot.getRangeAxis(seriesNum).getAxisId(), new Double(
-        rangeMin));
-  }
-
-  private void setupRangeAxisVisibleRanges() {
-    for (int i = 0; i < plot.getDatasets().size(); i++) {
-      RangeAxis ra = plot.getRangeAxis(i);
-      ra.setVisibleRange(getRangeMin(i), getRangeMax(i));
-    }
-  }
-
-  private int[] sortDatasetsIntoRenderOrder() {
-    final int numDatasets = plot.getDatasets().size();
-    int[] order = new int[numDatasets];
+  private void sortDatasetsIntoRenderOrder(int[] renderOrder) {
+    final int numDatasets = renderOrder.length;
     int d = 0;
 
     Focus focus = plot.getFocus();
@@ -157,7 +134,7 @@ public abstract class XYPlotRenderer {
       XYRenderer renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
-        order[d++] = i;
+        renderOrder[d++] = i;
       }
     }
 
@@ -167,15 +144,14 @@ public abstract class XYPlotRenderer {
 
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
-        order[d++] = i;
+        renderOrder[d++] = i;
       }
     }
 
     // finally render the focused series
     if (focus != null) {
       int num = plot.getFocus().getDatasetIndex();
-      order[d++] = num;
+      renderOrder[d++] = num;
     }
-    return order;
   }
 }

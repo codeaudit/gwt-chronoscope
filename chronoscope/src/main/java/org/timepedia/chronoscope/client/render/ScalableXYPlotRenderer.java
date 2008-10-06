@@ -41,8 +41,8 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
     
     renderer.beginCurve(plot, layer, renderState);
 
-    int domainStart = this.domainStart[datasetIndex];
-    int domainEnd = this.domainEnd[datasetIndex];
+    int domainStart = this.domainStartIdxs[datasetIndex];
+    int domainEnd = this.domainEndIdxs[datasetIndex];
     int mipLevel = plot.getCurrentMipLevel(datasetIndex);
     int numSamples = dataSet.getNumSamples(mipLevel);
     
