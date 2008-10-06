@@ -120,7 +120,6 @@
           <style>${gwt.outputstyle}</style>
         </configuration>
         <executions>
-<!--
           <execution>
             <id>testgwt</id>
             <phase>test</phase>
@@ -128,7 +127,6 @@
               <goal>test</goal>
             </goals>
           </execution>
--->
         </executions>
       </plugin>
 
