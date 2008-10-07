@@ -31,12 +31,11 @@ public class MockChartPanel implements ViewReadyCallback {
   private boolean viewReady;
 
   public MockChartPanel(XYDataset[] ds, int width, int height) {
-
     this.ds = ds;
     this.width = width;
     this.height = height;
     this.chart = new Chart();
-    this.plot = new DefaultXYPlot(chart, ds, true);
+    this.plot = new DefaultXYPlot(ds, true);
     chart.setPlot(plot);
   }
 
@@ -55,7 +54,7 @@ public class MockChartPanel implements ViewReadyCallback {
   public void onViewReady(View view) {
 
     viewReady = true;
-    chart.init(view, plot);
+    chart.init(view);
     if (viewReadyCallback != null) {
       viewReadyCallback.onViewReady(view);
     } else {

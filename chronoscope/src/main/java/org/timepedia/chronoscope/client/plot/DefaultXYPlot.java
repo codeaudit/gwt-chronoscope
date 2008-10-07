@@ -185,12 +185,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     abstract double dist(double x1, double y1, double x2, double y2);
   }
   
-  public DefaultXYPlot(Chart chart, XYDataset[] ds, boolean interactive) {
-    //ArgChecker.isNotNull(chart, "chart");
+  public DefaultXYPlot(XYDataset[] ds, boolean interactive) {
     ArgChecker.isNotNull(ds, "ds");
     ArgChecker.isGT(ds.length, 0, "ds.length");
     
-    this.chart = chart;
     this.datasets = new XYDatasets(ds);
     this.interactive = interactive;
 
@@ -466,6 +464,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void init(View view) {
+    ArgChecker.isNotNull(chart, "chart");
     ArgChecker.isNotNull(view, "view");
     this.view = view;
     this.focus = null;

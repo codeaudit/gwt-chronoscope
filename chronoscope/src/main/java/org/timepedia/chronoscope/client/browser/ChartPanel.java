@@ -14,7 +14,7 @@ import org.timepedia.exporter.client.Exportable;
 
 public class ChartPanel extends Composite implements Exportable {
 
-  protected PlotPanel plotPanel;
+  private PlotPanel plotPanel;
 
   public ChartPanel(XYDataset[] datasets, int chartWidth, int chartHeight) {
     this(DOM.createDiv(), datasets, chartWidth, chartHeight, null);

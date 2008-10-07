@@ -56,19 +56,13 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   private boolean viewReady;
 
   /**
-   * Instantiates a chart widget using the given DOM element as a container
-   */
-  public PlotPanel(Element container, XYPlot plot, int chartWidth,
-      int chartHeight) {
-    this(container, plot, chartWidth, chartHeight, null);
-  }
-
-  /**
    * Instantiates a chart widget using the given DOM element as a container,
-   * with a ViewReadyCallback
+   * creating a DefaultXYPlot using the given datasets, with a
+   * ViewReadyCallback.
    */
-  public PlotPanel(Element container, XYPlot plot, int chartWidth,
+  public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
+
     view = (View) GWT.create(DOMView.class);
     if (gssContext == null) {
       gssContext = (BrowserGssContext) GWT
@@ -78,45 +72,10 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     this.chartHeight = chartHeight;
     this.readyListener = readyListener;
     initElement(container);
-    this.plot = plot;
+    this.plot = new DefaultXYPlot(datasets, true);
     chart = new Chart();
     chart.setPlot(plot);
-  }
 
-  /**
-   * Instantiates a chart widget using the given DOM element as a container,
-   * creating a DefaultXYPlot using the given datasets, with a
-   * ViewReadyCallback.
-   */
-  public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
-      int chartHeight, ViewReadyCallback readyListener) {
-    this(container, new DefaultXYPlot(new Chart(), datasets, true), chartWidth,
-        chartHeight, readyListener);
-  }
-
-  /**
-   * Instantiates a chart widget using the given DOM element as a container,
-   * creating a DefaultXYPlot using the given datasets.
-   */
-  public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
-      int chartHeight) {
-    this(container, datasets, chartWidth, chartHeight, null);
-  }
-
-  /**
-   * Create a chart using the given datasets and an automatically generated
-   * container element
-   */
-  public PlotPanel(XYDataset[] datasets, int chartWidth, int chartHeight) {
-    this(DOM.createDiv(), datasets, chartWidth, chartHeight);
-  }
-
-  /**
-   * Create a chart using the given XYPlot, and an automatically generated
-   * container element
-   */
-  public PlotPanel(XYPlot plot, int chartWidth, int chartHeight) {
-    this(DOM.createDiv(), plot, chartWidth, chartHeight);
   }
 
   public void fireContextMenu(Event evt) {
@@ -186,9 +145,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    */
   public void onViewReady(View view) {
     viewReady = true;
-    chart.init(view, plot);
+    chart.init(view);
     Chronoscope.putChart(id, chart);
-   
     chart.redraw();
 
     if (readyListener != null) {
