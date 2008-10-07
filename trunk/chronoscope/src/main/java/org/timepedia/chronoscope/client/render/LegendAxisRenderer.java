@@ -112,7 +112,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
           + axis.getAxisPanel().getAxisNumber(axis);
       
       ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
-      final double approxMinInterval = Math.max(0, calcApproxMinInterval(plot));
+      final double approxMinInterval = Math.max(0, plot.getDatasets().getMinInterval());
       final double minDomain = plot.getDatasets().getMinDomain();
       final double maxDomain = plot.getDatasets().getMaxDomain();
       zoomIntervals.applyFilter(minDomain, maxDomain, approxMinInterval);
@@ -250,18 +250,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
    */
   private void topRightJustify(Panel p, Bounds parentBounds) {
     p.setLocation(parentBounds.rightX() - dateRangePanel.getWidth() - 2, parentBounds.y);
-  }
-  
-  /**
-   * Determines the approximate minimum domain interval across all datasets in the
-   * specified plot.
-   */
-  private static double calcApproxMinInterval(XYPlot plot) {
-    double min = Double.MAX_VALUE;
-    for (XYDataset ds : plot.getDatasets()) {
-      min = Math.min(min, ds.getApproximateMinimumInterval());
-    }
-    return min;
   }
   
   /**

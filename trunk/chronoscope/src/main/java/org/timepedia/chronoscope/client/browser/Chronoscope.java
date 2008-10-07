@@ -399,8 +399,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
     double domainScale = json.getDomainScale();
 
-    double approximateMinInterval = json.getMinInterval();
-
     final boolean isMipped = json.isMipped();
     String dtformat = json.getDateTimeFormat();
 
@@ -417,11 +415,15 @@ public class Chronoscope implements Exportable, HistoryListener {
       request = new XYDatasetRequest.Basic();
     }
 
+    final double minInterval = json.getMinInterval();
+
     request.setIdentifier(json.getId());
     request.setLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
-    request.setApproximateMinimumInterval(approximateMinInterval);
-
+    if (minInterval > 0) {
+      request.setApproximateMinimumInterval(minInterval);
+    }
+    
     if (isMipped) {
       JsArray<JsArrayNumber> mdomain = json.getMutliDomain();
       JsArray<JsArrayNumber> mrange = json.getMultiRange();
