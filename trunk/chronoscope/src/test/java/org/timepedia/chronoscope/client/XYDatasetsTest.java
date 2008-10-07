@@ -18,11 +18,13 @@ public class XYDatasetsTest extends TestCase {
   
   public void testAggregateCalcs() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
-    XYDatasets grp = new XYDatasets(mds);
+    XYDatasets grp = new XYDatasets();
+    grp.add(mds);
     assertEquals(1.0, grp.getMinDomain());
     assertEquals(2.0, grp.getMaxDomain());
     assertEquals(10.0, grp.getMinRange());
     assertEquals(20.0, grp.getMaxRange());
+    assertEquals(1.0, grp.getMinInterval());
   }
   
 
@@ -30,9 +32,10 @@ public class XYDatasetsTest extends TestCase {
     XYDataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
     XYDataset ds1 = newDataset(new double[] {1.0}, new double[] {10.0});
     XYDataset ds2 = newDataset(new double[] {1.0}, new double[] {10.0});
-    XYDatasets grp = new XYDatasets(ds0);
-    grp.addDataset(ds1);
-    grp.addDataset(ds2);
+    XYDatasets grp = new XYDatasets();
+    grp.add(ds0);
+    grp.add(ds1);
+    grp.add(ds2);
     
     assertEquals(0, grp.indexOf(ds0));
     assertEquals(1, grp.indexOf(ds1));
@@ -42,29 +45,34 @@ public class XYDatasetsTest extends TestCase {
   
   public void testMutableDataset() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
-    XYDatasets grp = new XYDatasets(mds);
+    XYDatasets grp = new XYDatasets();
+    grp.add(mds);
     
     mds.mutate(Mutation.append(3.0, 30.0));
     mds.mutate(Mutation.append(4.0, 40.0));
     mds.mutate(Mutation.setY(0, -9.0));
-    mds.mutate(Mutation.append(5.0, 0.1));
+    mds.mutate(Mutation.append(4.1, 0.1));
     
     assertEquals(1.0, grp.getMinDomain());
-    assertEquals(5.0, grp.getMaxDomain());
+    assertEquals(4.1, grp.getMaxDomain());
     assertEquals(-9.0, grp.getMinRange());
     assertEquals(40.0, grp.getMaxRange());
+    assertEquals(0.1, grp.getMinInterval(), 0.000000000000001);
   }
   
   public void testRemove() {
-    XYDataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
-    XYDataset ds1 = newDataset(new double[] {3.0}, new double[] {30.0});
-    XYDataset ds2 = newDataset(new double[] {2.0}, new double[] {20.0});
-    XYDatasets grp = new XYDatasets(ds0);
-    grp.addDataset(ds1);
-    grp.addDataset(ds2);
+    XYDataset ds0 = newMutableDataset(new double[] {2.0, 5.0}, new double[] {10.0, 11.0});
+    XYDataset ds1 = newMutableDataset(new double[] {1.0, 8.0}, new double[] {30.0, 4.0});
+    XYDataset ds2 = newMutableDataset(new double[] {3.0, 7.0}, new double[] {20.0, 5.0});
+    XYDatasets grp = new XYDatasets();
+    grp.add(ds0);
+    grp.add(ds1);
+    grp.add(ds2);
+    
+    MutableXYDataset removedDataset = (MutableXYDataset)grp.remove(1);
     
     // verify the removed element corresponds to the index
-    assertTrue(ds1 == grp.remove(1));
+    assertTrue(ds1 == removedDataset);
     // verify the new size of the container
     assertEquals(2, grp.size());
     // verify the order of the remaining elements
@@ -72,18 +80,26 @@ public class XYDatasetsTest extends TestCase {
     assertTrue(ds2 == grp.get(1));
     
     // make sure aggregate properties were updated
-    assertEquals(1.0, grp.getMinDomain());
-    assertEquals(2.0, grp.getMaxDomain());
-    assertEquals(10.0, grp.getMinRange());
+    assertEquals(2.0, grp.getMinDomain());
+    assertEquals(7.0, grp.getMaxDomain());
+    assertEquals(5.0, grp.getMinRange());
+    assertEquals(20.0, grp.getMaxRange());
+    assertEquals(3.0, grp.getMinInterval());
+    
+    // verify that the container de-registered itself as a listener
+    // to the removed dataset.
+    removedDataset.mutate(Mutation.RangeMutation.setY(0, 999.0));
     assertEquals(20.0, grp.getMaxRange());
   }
   
   public void testSize() {
-    XYDatasets grp = new XYDatasets(newDataset(new double[] {1.0}, new double[] {10.0}));
+    XYDatasets grp = new XYDatasets();
+    assertEquals(0, grp.size());
+    grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertEquals(1, grp.size());
-    grp.addDataset(newDataset(new double[] {1.0}, new double[] {10.0}));
+    grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertEquals(2, grp.size());
-    grp.addDataset(newDataset(new double[] {1.0}, new double[] {10.0}));
+    grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertEquals(3, grp.size());
   }
   

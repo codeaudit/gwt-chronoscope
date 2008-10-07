@@ -18,17 +18,19 @@ import java.util.List;
  * 
  * @author chad takahashi
  */
-public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> {
-  private double minInterval;
+public final class XYDatasets implements Iterable<XYDataset> {
+  private double minInterval = Double.POSITIVE_INFINITY;
   private double minDomain = Double.POSITIVE_INFINITY, maxDomain = Double.NEGATIVE_INFINITY;
   private double minRange = Double.POSITIVE_INFINITY, maxRange = Double.NEGATIVE_INFINITY;
   private List<XYDataset> datasets = new ArrayList<XYDataset>();
+  private List<XYDatasetListener> listeners = new ArrayList<XYDatasetListener>();
+  private DatasetListener myDatasetListener;
   
   /**
-   * Constructs a container having a single dataset.
+   * Constructs an empty dataset container.
    */
-  public XYDatasets(XYDataset dataset) {
-    this(new XYDataset[] {dataset});
+  public XYDatasets() {
+    this.myDatasetListener = new DatasetListener(this);
   }
   
   /**
@@ -36,22 +38,33 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    */
   public XYDatasets(XYDataset[] datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
+    this.myDatasetListener = new DatasetListener(this);
     for (XYDataset dataset : datasets) {
-      addDataset(dataset);
+      add(dataset);
     }
   }
   
   /**
    * Adds the specified dataset to the existing datasets in this container.
    */
-  public void addDataset(XYDataset dataset) {
+  public void add(XYDataset dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
     if (dataset instanceof MutableXYDataset) {
-      ((MutableXYDataset)dataset).addXYDatasetListener(this);
+      ((MutableXYDataset)dataset).addListener(this.myDatasetListener);
     }
     
     updateAggregateInfo(dataset);
+    this.myDatasetListener.onDatasetAdded(dataset);
+  }
+  
+  /**
+   * Registers listeners who wish to be notified of changes to this container
+   * as well as its elements.
+   */
+  public void addListener(XYDatasetListener listener) {
+    ArgChecker.isNotNull(listener, "listener");
+    this.listeners.add(listener);
   }
   
   /**
@@ -80,13 +93,24 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    * Returns the minimum domain value across all contained datasets.
    */
   public double getMinDomain() {
+    verifyDatasetNotEmpty();
     return this.minDomain;
+  }
+  
+  /**
+   * Returns the minimum value of {@link XYDataset#getApproximateMinimumInterval()}
+   * across all datasets in this container.
+   */
+  public double getMinInterval() {
+    verifyDatasetNotEmpty();
+    return this.minInterval;
   }
   
   /**
    * Returns the maximum domain value across all contained datasets.
    */
   public double getMaxDomain() {
+    verifyDatasetNotEmpty();
     return this.maxDomain;
   }
   
@@ -94,6 +118,7 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    * Returns the minimum range value across all contained datasets.
    */
   public double getMinRange() {
+    verifyDatasetNotEmpty();
     return this.minRange;
   }
   
@@ -101,6 +126,7 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
    * Returns the maximum range value across all contained datasets.
    */
   public double getMaxRange() {
+    verifyDatasetNotEmpty();
     return this.maxRange;
   }
 
@@ -111,20 +137,24 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
     return this.datasets.iterator();
   }
 
-  public void onDatasetChanged(XYDataset dataset, double domainStart,
-      double domainEnd) {
-    
-    updateAggregateInfo(dataset);
-  }
-  
   /**
-   * Removes the element at the specified position in this container. Shifts any 
+   * Removes the element at the specified index in this container. Shifts any 
    * subsequent elements to the left (subtracts one from their indices). 
    * Returns the element that was removed from the container.
+   * <p>
+   * Be aware that this container de-registers itself as an {@link XYDatasetListener}
+   * to the dataset being removed.  In other words, mutations applied to a dataset
+   * that once belonged to this container will no longer signal this container, which in 
+   * turn, will no longer forward the mutation event to its listeners.
    */
   public XYDataset remove(int index) {
-    XYDataset removedDataset = this.datasets.remove(index);
+    verifyDatasetNotEmpty();
+    XYDataset removedDataset = datasets.remove(index);
     recalcAggregateInfo();
+    if (removedDataset instanceof MutableXYDataset) {
+      ((MutableXYDataset)removedDataset).removeListener(myDatasetListener);
+    }
+    myDatasetListener.onDatasetRemoved(removedDataset);
     return removedDataset;
   }
   
@@ -147,7 +177,7 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
     minRange = Double.POSITIVE_INFINITY;
     maxDomain = Double.NEGATIVE_INFINITY;
     maxRange = Double.NEGATIVE_INFINITY;
-    minInterval = 0.0;
+    minInterval = Double.POSITIVE_INFINITY;
     
     for (XYDataset ds : datasets) {
       updateAggregateInfo(ds);
@@ -159,8 +189,47 @@ public final class XYDatasets implements XYDatasetListener, Iterable<XYDataset> 
     maxDomain = Math.max(maxDomain, dataset.getDomainEnd());
     minRange = Math.min(minRange, dataset.getRangeBottom());
     maxRange = Math.max(maxRange, dataset.getRangeTop());
-    //minInterval = ??;
+    minInterval = Math.min(minInterval, dataset.getApproximateMinimumInterval());
+  }
+  
+  private void verifyDatasetNotEmpty() {
+    if (this.datasets.isEmpty()) {
+      throw new IllegalStateException("method call not valid for empty container");
+    }
+  }
+
+  
+  private static final class DatasetListener implements XYDatasetListener {
+    private XYDatasets datasets;
     
-    //System.out.println("TESTING: new rangeBottom = " + rangeBottom);
+    public DatasetListener(XYDatasets datasets) {
+      this.datasets = datasets;
+    }
+    
+    public void onDatasetAdded(XYDataset dataset) {
+      // forward event to external listeners
+      for (XYDatasetListener l : this.datasets.listeners) {
+        l.onDatasetAdded(dataset);
+      }
+    }
+
+    public void onDatasetChanged(XYDataset dataset, double domainStart,
+        double domainEnd) {
+      // update aggregate stats as changes to this dataset may have
+      // affected them.
+      this.datasets.updateAggregateInfo(dataset);
+      
+      // forward event to external listeners
+      for (XYDatasetListener l : this.datasets.listeners) {
+        l.onDatasetChanged(dataset, domainStart, domainEnd);
+      }
+    }
+
+    public void onDatasetRemoved(XYDataset dataset) {
+      // forward event to external listeners
+      for (XYDatasetListener l : this.datasets.listeners) {
+        l.onDatasetRemoved(dataset);
+      }
+    }
   }
 }

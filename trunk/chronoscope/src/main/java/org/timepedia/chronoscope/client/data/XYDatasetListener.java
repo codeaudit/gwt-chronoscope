@@ -3,7 +3,8 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.XYDataset;
 
 /**
- * An interface used to track modifications to an XYDataset.
+ * Tracks modifications to an {@link XYDatasets} container and its
+ * constituent {@link XYDataset} elements.
  */
 public interface XYDatasetListener {
 
@@ -13,4 +14,17 @@ public interface XYDatasetListener {
    * place.
    */
   void onDatasetChanged(XYDataset dataset, double domainStart, double domainEnd);
+  
+  /**
+   * Fired when a dataset is removed from this container.
+   * 
+   * @param dataset - The dataset that was just removed.  
+   */
+  void onDatasetRemoved(XYDataset dataset);
+  
+  /**
+   * The dataset that was just added to this container.
+   */
+  void onDatasetAdded(XYDataset dataset);
+  
 }
