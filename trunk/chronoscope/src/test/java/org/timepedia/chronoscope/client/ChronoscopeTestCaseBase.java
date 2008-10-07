@@ -15,18 +15,13 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
  */
 public class ChronoscopeTestCaseBase extends GWTTestCase {
 
-  private boolean injected;
-
   public String getModuleName() {
     return "org.timepedia.chronoscope.ChronoscopeTestSuiteMock";
   }
 
-  private static native Element getHead() /*-{
-      return $doc.getElementsByTagName("head")[0];
-    }-*/;
-
   protected void runChronoscopeTest(XYDataset ds[],
       ViewReadyCallback viewReadyCallback) {
+    Chronoscope.setErrorReporting(false);
     ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
     cp.setReadyListener(viewReadyCallback);
     delayTestFinish(60000);
