@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
@@ -59,10 +60,9 @@ public class Chart implements Exportable {
     return view;
   }
 
-  public void init(View view, XYPlot plot) {
+  public void init(View view) {
+    ArgChecker.isNotNull(this.plot, "this.plot");
     this.view = view;
-    this.plot = plot;
-    plot.setChart(this);
     view.setChart(this);
     plot.init(view);
   }
@@ -195,7 +195,12 @@ public class Chart implements Exportable {
   }
 
   public void setPlot(XYPlot plot) {
+    if (this.plot != null) {
+      this.plot.setChart(null);
+    }
+    
     this.plot = plot;
+    this.plot.setChart(this);
   }
 
   /**

@@ -155,7 +155,7 @@ public abstract class View implements Exportable {
   }
 
   /**
-   * Create a view with the given imensions, GssContext, calling the
+   * Create a view with the given dimensions, GssContext, calling the
    * ViewReadyCallback when all Canvases are created and the view layer is
    * ready.
    */
