@@ -26,9 +26,13 @@ public class MutableXYDataset extends ArrayXYDataset {
         request.getDefaultMipMapStrategy(), "request.mipMapStrategy");
   }
 
-  public void addXYDatasetListener(XYDatasetListener listener) {
+  public void addListener(XYDatasetListener listener) {
     ArgChecker.isNotNull(listener, "listener");
     this.listeners.add(listener);
+  }
+  
+  public void removeListener(XYDatasetListener listener) {
+    listeners.remove(listener);
   }
 
   public void mutate(Mutation mutation) {

@@ -21,7 +21,6 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.MutableXYDataset;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.GssBackground;
@@ -204,7 +203,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     plotRenderer = new ScalableXYPlotRenderer(this);
     plotNumber = globalPlotNumber++;
-    setupDatasetListeners();
+    datasets.addListener(this);
   }
 
   /**
@@ -587,6 +586,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     animateTo(plotDomain.midpoint() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
+  public void onDatasetAdded(XYDataset dataset) {
+    throw new UnsupportedOperationException();
+  }
+
   public void onDatasetChanged(XYDataset dataset, double domainStart,
       double domainEnd) {
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
@@ -607,6 +610,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       overviewDrawn = false;
       redraw();
     }
+  }
+
+  public void onDatasetRemoved(XYDataset dataset) {
+    throw new UnsupportedOperationException();
   }
 
   public InfoWindow openInfoWindow(final String html, final double domainX,
@@ -1235,14 +1242,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     view.fireFocusEvent(this, datasetIndex, pointIndex);
   }
 
-  private void setupDatasetListeners() {
-    for (XYDataset dataset : this.datasets) {
-      if (dataset instanceof MutableXYDataset) {
-        ((MutableXYDataset) dataset).addXYDatasetListener(this);
-      }
-    }
-  }
-
   /**
    * Shifts the focus point <tt>n</tt> data points forward or backwards (e.g. a
    * value of <tt>+1</tt> moves the focus point forward, and a value of
@@ -1413,4 +1412,5 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       return "pointIndex=" + pointIndex + ";dist=" + dist;
     }
   }
+
 }
