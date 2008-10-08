@@ -47,13 +47,6 @@ public class Chart implements Exportable {
   }
 
   /**
-   * Find first plot that contains this axis (useful if using a multiplot)
-   */
-  public XYPlot getPlotForAxis(ValueAxis theAxis) {
-    return plot.getPlotForAxis(theAxis);
-  }
-
-  /**
    * The current view used for rendering.
    */
   public View getView() {

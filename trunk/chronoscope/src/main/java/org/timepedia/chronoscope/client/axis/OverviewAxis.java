@@ -3,7 +3,7 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.OverviewAxisRenderer;
 
 /**
@@ -16,19 +16,22 @@ public class OverviewAxis extends ValueAxis {
 
   private Bounds bounds;
 
-  private DefaultXYPlot plot;
+  private XYPlot plot;
 
-  public OverviewAxis(DefaultXYPlot plot, AxisPanel panel, String title) {
-    super(plot.getChart(), title, "");
+  private View view;
+  
+  public OverviewAxis(XYPlot plot, View view, AxisPanel panel, String title) {
+    super(title, "");
     this.plot = plot;
-    setAxisPanel(panel);
-    renderer = new OverviewAxisRenderer();
-    renderer.init(plot.getChart().getView(), this);
+    this.view = view;
+    this.axisPanel = panel;
+    this.renderer = new OverviewAxisRenderer();
+    this.renderer.init(view, this);
   }
 
   // N/A
   public double dataToUser(double dataValue) {
-    return 0;
+    throw new UnsupportedOperationException();
   }
 
   public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
@@ -80,6 +83,6 @@ public class OverviewAxis extends ValueAxis {
 
   protected void layout() {
     renderer = new OverviewAxisRenderer();
-    renderer.init(getChart().getView(), this);
+    renderer.init(this.view, this);
   }
 }

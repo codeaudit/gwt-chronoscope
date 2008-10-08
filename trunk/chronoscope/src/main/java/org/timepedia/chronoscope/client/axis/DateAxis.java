@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -22,13 +21,15 @@ public class DateAxis extends ValueAxis {
   private int axisLabelWidth;
 
   private XYPlot plot;
-
-  public DateAxis(XYPlot plot, AxisPanel domainPanel) {
-    super(plot.getChart(), "Time", "s");
+  
+  private View view;
+  
+  public DateAxis(XYPlot plot, View view, AxisPanel domainPanel) {
+    super("Time", "s");
     this.plot = plot;
-    setAxisPanel(domainPanel);
-
-    renderer = new DomainAxisRenderer(this);
+    this.view = view;
+    this.axisPanel = domainPanel;
+    this.renderer = new DomainAxisRenderer(this);
   }
 
   public double dataToUser(double dataValue) {
@@ -50,7 +51,7 @@ public class DateAxis extends ValueAxis {
   }
 
   public double getHeight() {
-    if (getOrientation() == Orientation.HORIZONTAL) {
+    if (axisPanel.getPosition().isHorizontal()) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
       return plot.getInnerBounds().height;
@@ -82,17 +83,16 @@ public class DateAxis extends ValueAxis {
   }
 
   public double getWidth() {
-    if (getOrientation() == Orientation.VERTICAL) {
-      return getMaxLabelWidth() + 5 + axisLabelWidth + 10;
-    } else {
+    if (axisPanel.getPosition().isHorizontal()) {
       return plot.getInnerBounds().width;
+    } else {
+      return getMaxLabelWidth() + 5 + axisLabelWidth + 10;
     }
   }
 
   public void init() {
-    boolean isHorizontal = getOrientation() == Orientation.HORIZONTAL;
+    boolean isHorizontal = axisPanel.getPosition().isHorizontal();
     final String axisLabel = "(Time)";
-    View view = getChart().getView();
     renderer.init(view);
 
     maxLabelWidth = renderer.getLabelWidth(view, "XXX'00");
@@ -113,10 +113,11 @@ public class DateAxis extends ValueAxis {
 
   protected void layout() {
     renderer = new DomainAxisRenderer(this);
-    renderer.init(getChart().getView());
+    renderer.init(view);
   }
 
   public boolean isVisible(double tickPos) {
     return true;
   }
+  
 }

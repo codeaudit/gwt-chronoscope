@@ -283,8 +283,4 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     return (int)(screenWidth / maxLabelWidth);
   }
   
-  private static void log(Object msg) {
-    System.out.println("TESTING:DomainAxisRenderer> " + msg);
-  }
-  
 }

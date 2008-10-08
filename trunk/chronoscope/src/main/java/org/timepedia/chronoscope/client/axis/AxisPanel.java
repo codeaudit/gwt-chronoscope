@@ -10,9 +10,9 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 import java.util.ArrayList;
 
 /**
- * An AxisPanel is a container which holds multiple Axis objects <p/> In
+ * An AxisPanel is a container which holds multiple Axis objects.  In
  * addition to holding Axis objects, AxisPanels are positioned
- * (LEFT/RIGHT/TOP/BOTTOM) and have orientation. <p/> They are responsible for
+ * (LEFT/RIGHT/TOP/BOTTOM) and have orientation. They are responsible for
  * partitioning their space and allocating that space to each Axis, as well as
  * using GSS "axes" properties to fill the background of the panel when
  * cleared.
@@ -21,45 +21,34 @@ public class AxisPanel implements GssElement {
 
   private static final double TOP_PANEL_PAD = 23;
 
-  public enum Orientation {
-
-    VERTICAL, HORIZONTAL
-  }
-
   public enum Position {
-
     LEFT {
-      public boolean isLeftRight() {
-        return true;
+      public boolean isHorizontal() {
+        return false;
       };
     },
     RIGHT {
-      public boolean isLeftRight() {
-        return true;
+      public boolean isHorizontal() {
+        return false;
       };
     },
     TOP {
-      public boolean isLeftRight() {
-        return false;
+      public boolean isHorizontal() {
+        return true;
       };
     },
     BOTTOM {
-      public boolean isLeftRight() {
-        return false;
+      public boolean isHorizontal() {
+        return true;
       };
     };
 
     /**
-     * True only if this position is left or right.
+     * True only if this panel is oriented horizontally, otherwise
+     * assumed to be vertically oriented.
      */
-    public abstract boolean isLeftRight();
+    public abstract boolean isHorizontal();
 
-    /**
-     * True only if this position is top or bottom.
-     */
-    public boolean isTopBottom() {
-      return !isLeftRight();
-    }
   }
 
   private final ArrayList<ValueAxis> axes = new ArrayList<ValueAxis>();
@@ -72,13 +61,9 @@ public class AxisPanel implements GssElement {
 
   private GssProperties axesProperties;
 
-  private Orientation orientation;
-
   public AxisPanel(String panelName, Position position) {
     this.panelName = panelName;
     this.position = position;
-    this.orientation = position.isLeftRight() ? Orientation.VERTICAL
-        : Orientation.HORIZONTAL;
   }
 
   public void add(ValueAxis axis) {
@@ -116,7 +101,7 @@ public class AxisPanel implements GssElement {
       lPBounds.height = axis.getHeight();
 
       axis.drawAxis(plot, layer, lPBounds, gridOnly);
-      if (axis.getOrientation() == Orientation.HORIZONTAL) {
+      if (position.isHorizontal()) {
         lPBounds.y += lPBounds.height;
       } else {
         lPBounds.x += lPBounds.width;
@@ -137,17 +122,13 @@ public class AxisPanel implements GssElement {
     double height = 0;
     for (int i = 0; i < axes.size(); i++) {
       ValueAxis a = (ValueAxis) axes.get(i);
-      if (a.getOrientation() == Orientation.HORIZONTAL) {
+      if (position.isHorizontal()) {
         height += a.getHeight();
       } else {
         height = a.getHeight();
       }
     }
     return height + (getPosition() == Position.TOP ? TOP_PANEL_PAD : 0);
-  }
-
-  public Orientation getOrientation() {
-    return orientation;
   }
 
   public String getPanelName() {
@@ -185,10 +166,10 @@ public class AxisPanel implements GssElement {
     double width = 0;
     for (int i = 0; i < axes.size(); i++) {
       ValueAxis a = (ValueAxis) axes.get(i);
-      if (a.getOrientation() == Orientation.VERTICAL) {
-        width += a.getWidth();
-      } else {
+      if (position.isHorizontal()) {
         width = Math.max(width, a.getWidth());
+      } else {
+        width += a.getWidth();
       }
     }
     return width;
@@ -210,7 +191,7 @@ public class AxisPanel implements GssElement {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
     layer.setStrokeColor("#ffffff");
-    if (position.isTopBottom()) {
+    if (position.isHorizontal()) {
       layer.scale(layer.getWidth(), layer.getHeight());
     } else if (panelPosition.area() > 0) {
       layer.scale(panelPosition.width, panelPosition.height);

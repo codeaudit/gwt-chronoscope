@@ -1,10 +1,9 @@
 package org.timepedia.chronoscope.client.axis;
 
-import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.render.AxisRenderer;
 
 /**
  * An ValueAxis is a class responsible for mapping points in data space to
@@ -27,10 +26,14 @@ public abstract class ValueAxis {
 
   private String unitLabel;
 
-  private Chart chart;
-
-  public ValueAxis(Chart chart, String label, String unitLabel) {
-    this.chart = chart;
+  /**
+   * Subclasses must call this constructor.
+   *  
+   * @param label - See {@link #getLabel()}
+   * @param unitLabel - A short label representing the units of this 
+   *      axis ("m/s", "$", etc.).
+   */
+  protected ValueAxis(String label, String unitLabel) {
     this.label = label;
     this.unitLabel = unitLabel;
   }
@@ -69,21 +72,14 @@ public abstract class ValueAxis {
   }
 
   /**
-   * Get the chart associated with this axis
-   */
-  public Chart getChart() {
-    return chart;
-  }
-
-  /**
    * The height in pixels this axis will consume when rendered (including
    * padding, margins, etc)
    */
   public abstract double getHeight();
 
   /**
-   * Gets the long descriptive label used for this axis (Billions of Dollars,
-   * Barrels of Oil)
+   * Gets the long descriptive label used for this axis ("Billions of Dollars",
+   * "Barrels of Oil")
    */
   public String getLabel() {
     return label;
@@ -92,18 +88,9 @@ public abstract class ValueAxis {
   /**
    * Returns the smallest range displayable on this axis, used to prevent
    * zooming too far.
-   * 
-   * @return
    */
   public double getMinimumTickSize() {
     return Double.MIN_VALUE;
-  }
-
-  /**
-   * Returns the orientation of this axis.
-   */
-  public Orientation getOrientation() {
-    return axisPanel.getOrientation();
   }
 
   /**
@@ -134,23 +121,12 @@ public abstract class ValueAxis {
    */
   public abstract void init();
 
-  public void setAxisPanel(AxisPanel axisPanel) {
-    this.axisPanel = axisPanel;
-  }
-
   /**
    * Sets the long descriptive label used for this axis (Billions of Dollars,
    * Barrels of Oil)
    */
   public void setLabel(String label) {
     this.label = label;
-  }
-
-  /**
-   * Set a short label representing the units of this axis (m/s, $, etc)
-   */
-  public void setUnitLabel(String unitLabel) {
-    this.unitLabel = unitLabel;
   }
 
   /**
@@ -177,4 +153,5 @@ public abstract class ValueAxis {
   }
 
   protected abstract void layout();
+  
 }

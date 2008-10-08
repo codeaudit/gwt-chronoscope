@@ -206,11 +206,6 @@ public interface XYPlot extends Exportable {
   Bounds getBounds();
 
   /**
-   * Find first plot that contains this axis (useful if using a multiplot)
-   */
-  XYPlot getPlotForAxis(ValueAxis theAxis);
-
-  /**
    * Get the layer which represents the main plot area where points will be
    * rendered
    */

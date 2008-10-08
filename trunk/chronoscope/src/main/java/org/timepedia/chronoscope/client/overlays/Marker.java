@@ -179,7 +179,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     if (plot == null) {
       throw new IllegalStateException("plot not set");
     }
-    return plot.getChart().getPlot().openInfoWindow(html, domainX, rangeY, datasetIdx);
+    return plot.openInfoWindow(html, domainX, rangeY, datasetIdx);
   }
 
   public void removeOverlayClickListener(OverlayClickListener listener) {
