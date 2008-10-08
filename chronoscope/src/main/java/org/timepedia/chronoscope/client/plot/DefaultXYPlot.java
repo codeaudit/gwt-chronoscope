@@ -40,6 +40,7 @@ import org.timepedia.exporter.client.Exportable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -107,7 +108,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private PortableTimer animationTimer;
 
-  private final HashMap<String, RangeAxis> axisMap
+  private final Map<String, RangeAxis> axisMap
       = new HashMap<String, RangeAxis>();
 
   private double beginHighlight = Double.MIN_VALUE, 
@@ -586,7 +587,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   public void onDatasetAdded(XYDataset dataset) {
-    throw new UnsupportedOperationException();
+    this.initAndRedraw();
   }
 
   public void onDatasetChanged(XYDataset dataset, double domainStart,
@@ -601,18 +602,20 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       animateTo(domainEnd - plotDomain.length() / 2, plotDomain.length(), 0,
           new PortableTimerTask() {
             public void run(PortableTimer timer) {
-              overviewDrawn = false;
-              redraw();
+              initAndRedraw();
             }
           }, false);
     } else {
-      overviewDrawn = false;
-      redraw();
+      initAndRedraw();
     }
   }
 
   public void onDatasetRemoved(XYDataset dataset) {
-    throw new UnsupportedOperationException();
+    if (datasets.isEmpty()) {
+      throw new IllegalStateException(
+          "XYDatasets container is empty -- can't render plot.");
+    }
+    initAndRedraw();
   }
 
   public InfoWindow openInfoWindow(final String html, final double domainX,
@@ -970,7 +973,40 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
     layer.restore();
   }
+  
+  /**
+   * Draws the highlighted region (if any) of the dataset overview axis.
+   */
+  private void drawOverviewHighlight() {
+    domainLayer.save();
+    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+        domainBounds.height);
+    domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
+    domainLayer.restore();
+  }
+  
+  /**
+   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all 
+   * the datasets managed by this plot.
+   */
+  private void drawOverviewOfDatasets() {
+    double dO = plotDomain.getStart();
+    double dE = plotDomain.getEnd();
+    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
+    
+    drawPlot();
+    
+    overviewLayer.save();
+    overviewLayer.setVisibility(false);
+    overviewLayer
+        .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
+        overviewLayer.getHeight());
+    overviewLayer.restore();
 
+    plotDomain.setEndpoints(dO, dE);
+  }
+  
   private void drawPlot() {
     final double doChange = plotDomain.getStart() - lastPlotDomain.getStart();
     final double cdChange = plotDomain.length() - lastPlotDomain.length();
@@ -1221,7 +1257,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     double len = this.plotDomain.length();
     this.plotDomain.setEndpoints(newDomainStart, newDomainStart + len);
   }
-
+  
+  private void initAndRedraw() {
+    init(this.view);
+    redraw();
+  }
+  
   private void setFocusAndNotifyView(Focus focus) {
     if (focus == null) {
       this.focus = null;
@@ -1319,25 +1360,16 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     // plotLayer.setFillColor("#FF0000");
     // plotLayer.fillRect(0, 0, 50, 50);
 
-    if (interactive && !overviewDrawn && overviewEnabled) {
-      double dO = plotDomain.getStart();
-      double dE = plotDomain.getEnd();
-      plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
-      
-      drawPlot();
-      overviewLayer.save();
-      overviewLayer.setVisibility(false);
-      overviewLayer
-          .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
-      overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
-          overviewLayer.getHeight());
-      overviewDrawn = true;
-      overviewLayer.restore();
-
-      plotDomain.setEndpoints(dO, dE);
-    }
-
     if (interactive) {
+        
+      if (!overviewDrawn && overviewEnabled) {
+        drawOverviewOfDatasets();
+        overviewDrawn = true;
+      }
+      
+      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
+        drawOverviewHighlight();
+      }
 
       boolean drawVertical = !drewVertical;
       for (int i = 0; i < axes.length; i++) {
@@ -1365,16 +1397,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         verticalAxisLayer.restore();
       }
 
-      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
-        domainLayer.save();
-        Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-            domainBounds.height);
-        domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
-
-        domainLayer.restore();
-      }
-
-      if (true && topPanel.getAxisCount() > 0) {
+      if (topPanel.getAxisCount() > 0) {
         topLayer.save();
         Bounds topPanelBounds = new Bounds(0, 0, view.getViewWidth(),
             topBounds.height);
@@ -1386,6 +1409,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     drawPlot();
     drawOverlays(plotLayer);
     drawHighlight(highLightLayer);
+    
     plotLayer.restore();
     backingCanvas.endFrame();
   }

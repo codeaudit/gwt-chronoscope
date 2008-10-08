@@ -1,11 +1,11 @@
 package org.timepedia.chronoscope.client.axis;
 
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 import java.util.ArrayList;
 
@@ -90,7 +90,7 @@ public class AxisPanel implements GssElement {
     return axes.contains(theAxis);
   }
 
-  public void drawAxisPanel(DefaultXYPlot plot, Layer layer,
+  public void drawAxisPanel(XYPlot plot, Layer layer,
       Bounds panelPosition, boolean gridOnly) {
 
     if (axes.size() == 0) {

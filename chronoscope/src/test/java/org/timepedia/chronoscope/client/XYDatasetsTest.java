@@ -43,6 +43,15 @@ public class XYDatasetsTest extends TestCase {
     assertEquals(-1, grp.indexOf(newDataset(new double[] {1.0}, new double[] {10.0})));
   }
   
+  public void testIsEmpty() {
+    XYDatasets grp = new XYDatasets();
+    assertTrue(grp.isEmpty());
+    grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
+    assertFalse(grp.isEmpty());
+    grp.remove(0);
+    assertTrue(grp.isEmpty());
+  }
+  
   public void testMutableDataset() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     XYDatasets grp = new XYDatasets();

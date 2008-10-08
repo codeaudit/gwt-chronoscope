@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
@@ -89,11 +90,10 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
     return null;
   }
 
-  public void init(XYPlot plot, OverviewAxis overviewAxis) {
+  public void init(View view, OverviewAxis overviewAxis) {
     if (axisProperties == null) {
       axis = overviewAxis;
-
-      axisProperties = plot.getChart().getView().getGssProperties(this, "");
+      axisProperties = view.getGssProperties(this, "");
       overviewHeight = axisProperties.height;
       if (overviewHeight < MIN_OVERVIEW_HEIGHT) {
         overviewHeight = MIN_OVERVIEW_HEIGHT;
