@@ -23,7 +23,7 @@ public class OverviewAxis extends ValueAxis {
     this.plot = plot;
     setAxisPanel(panel);
     renderer = new OverviewAxisRenderer();
-    renderer.init(plot, this);
+    renderer.init(plot.getChart().getView(), this);
   }
 
   // N/A
@@ -80,6 +80,6 @@ public class OverviewAxis extends ValueAxis {
 
   protected void layout() {
     renderer = new OverviewAxisRenderer();
-    renderer.init(getChart().getPlot(), this);
+    renderer.init(getChart().getView(), this);
   }
 }

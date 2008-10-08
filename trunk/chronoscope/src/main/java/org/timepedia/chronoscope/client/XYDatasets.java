@@ -129,7 +129,14 @@ public final class XYDatasets implements Iterable<XYDataset> {
     verifyDatasetNotEmpty();
     return this.maxRange;
   }
-
+  
+  /**
+   * Returns true if this container has 0 elements.
+   */
+  public boolean isEmpty() {
+    return size() == 0;
+  }
+  
   /**
    * Iterator over the dataset elements of this container.
    */
