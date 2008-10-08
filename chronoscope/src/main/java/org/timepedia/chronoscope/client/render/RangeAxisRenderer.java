@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
@@ -30,8 +31,6 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private GssElementImpl tickGssElem;
 
-  private GssProperties tickLabelProperties;
-
   private boolean boundsSet;
 
   public RangeAxisRenderer(RangeAxis rangeAxis) {
@@ -60,7 +59,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     }
 
     if (!gridOnly) {
-      drawAxisLabel(layer, axisBounds);
+      drawAxisLabel(layer, axisBounds, plot.getChart());
     }
     layer.restore();
   }
@@ -97,8 +96,6 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       tickGssElem = new GssElementImpl("tick", this);
       tickProperties = view
           .getGssProperties(tickGssElem, "");
-      tickLabelProperties = view
-          .getGssProperties(new GssElementImpl("label", tickGssElem), "");
       gridProperties = view
           .getGssProperties(new GssElementImpl("grid", this), "");
       textLayerName = axis.getAxisPanel().getPanelName() + axis.getAxisPanel()
@@ -133,7 +130,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.restore();
   }
 
-  private void drawAxisLabel(Layer layer, Bounds bounds) {
+  private void drawAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
       boolean isLeft = axis.getAxisPanel().getPosition() == Position.LEFT;
       boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (
@@ -151,7 +148,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
       layer.drawRotatedText(x, y, axis.getRotationAngle(), label,
           axisProperties.fontFamily, axisProperties.fontWeight,
-          axisProperties.fontSize, textLayerName, axis.getChart());
+          axisProperties.fontSize, textLayerName, chart);
     }
   }
 

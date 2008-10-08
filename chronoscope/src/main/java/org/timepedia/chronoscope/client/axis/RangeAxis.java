@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Orientation;
 import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -27,7 +26,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     public String format(double value) {
       computeLabelFormat(value);
-      return getChart().getView().numberFormat(labelFormat, value);
+      return chart.getView().numberFormat(labelFormat, value);
     }
 
     private void computeLabelFormat(double label) {
@@ -137,6 +136,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return tickPositions;
   }
 
+  private Chart chart;
   private double[] ticks;
 
   private boolean rangeOverriden;
@@ -185,12 +185,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public RangeAxis(Chart chart, String label, String units, int axisNum,
       double rangeLow, double rangeHigh, AxisPanel panel) {
-    super(chart, label, units);
+    super(label, units);
     this.axisNum = axisNum;
-    setAxisPanel(panel);
+    this.axisPanel = panel;
+    this.chart = chart;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
         = new DefaultTickLabelNumberFormatter();
-    renderer = new RangeAxisRenderer(this);
+    this.renderer = new RangeAxisRenderer(this);
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
     this.adjustedRangeLow = rangeLow;
@@ -246,10 +247,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double getHeight() {
-    if (axisPanel.getOrientation() == Orientation.HORIZONTAL) {
+    if (axisPanel.getPosition().isHorizontal()) {
       return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
     } else {
-      return getChart().getPlotForAxis(this).getInnerBounds().height;
+      return chart.getPlot().getInnerBounds().height;
     }
   }
 
@@ -320,7 +321,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     double computedAxisLabelWidth = renderer.isAxisLabelVisible() ?
         axisLabelWidth + 5 : 0;
 
-    if (axisPanel.getOrientation() == Orientation.VERTICAL) {
+    if (!axisPanel.getPosition().isHorizontal()) {
       boolean isLeft = axisPanel.getPosition() == Position.LEFT;
       boolean isInner = axisPanel.getAxisNumber(this) == (isLeft ?
           axisPanel.getAxisCount() - 1 : 0);
@@ -335,12 +336,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
         return maxLabelWidth + 5 + computedAxisLabelWidth;
       }
     } else {
-      return getChart().getPlotForAxis(this).getInnerBounds().width;
+      return chart.getPlot().getInnerBounds().width;
     }
   }
 
   public void init() {
-    computeLabelWidths(getChart().getView());
+    computeLabelWidths(chart.getView());
   }
 
   public void initVisibleRange() {
@@ -431,8 +432,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   @Export
   public void setLabel(String label) {
     super.setLabel(label);
-    getChart().getPlot().damageAxes(this);
-    computeLabelWidths(getChart().getView());
+    chart.getPlot().damageAxes(this);
+    computeLabelWidths(chart.getView());
   }
 
   /**
@@ -486,7 +487,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER;
     } else {
       setTickLabelNumberFormatter(
-          new UserTickLabelNumberFormatter(getChart().getView(), format));
+          new UserTickLabelNumberFormatter(chart.getView(), format));
     }
   }
 

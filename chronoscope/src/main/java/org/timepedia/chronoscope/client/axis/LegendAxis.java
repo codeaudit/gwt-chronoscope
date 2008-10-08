@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.LegendAxisRenderer;
 
 /**
@@ -13,13 +12,13 @@ public class LegendAxis extends ValueAxis {
 
   private LegendAxisRenderer renderer;
 
-  private DefaultXYPlot plot;
+  private XYPlot plot;
 
-  public LegendAxis(DefaultXYPlot plot, AxisPanel panel, String title) {
-    super(plot.getChart(), title, "");
+  public LegendAxis(XYPlot plot, AxisPanel panel, String title) {
+    super(title, "");
     this.plot = plot;
-    setAxisPanel(panel);
-    renderer = new LegendAxisRenderer(this);
+    this.axisPanel = panel;
+    this.renderer = new LegendAxisRenderer(this);
   }
 
   public boolean click(int x, int y) {
@@ -57,7 +56,7 @@ public class LegendAxis extends ValueAxis {
   }
 
   protected void layout() {
-    renderer=new LegendAxisRenderer(this);
-    renderer.init(getChart().getPlot(), this);
+    renderer = new LegendAxisRenderer(this);
+    renderer.init(plot, this);
   }
 }

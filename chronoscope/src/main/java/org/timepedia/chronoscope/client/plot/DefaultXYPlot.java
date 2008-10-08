@@ -13,7 +13,6 @@ import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.StockMarketDateAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -426,10 +425,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return this.datasets;
   }
    
-  public XYPlot getPlotForAxis(ValueAxis theAxis) {
-    return this;
-  }
-
   public Layer getPlotLayer() {
     return view.getCanvas().createLayer("plotLayer" + plotNumber, plotBounds);
   }
@@ -478,12 +473,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         Position.BOTTOM);
 
     if (domainAxisVisible) {
-      domainAxis = new StockMarketDateAxis(this, domainPanel);
+      domainAxis = new DateAxis(this, view, domainPanel);
       domainPanel.add(domainAxis);
     }
 
     if (overviewEnabled) {
-      overviewAxis = new OverviewAxis(this, domainPanel, "Overview");
+      overviewAxis = new OverviewAxis(this, view, domainPanel, "Overview");
       domainPanel.add(overviewAxis);
     }
 
