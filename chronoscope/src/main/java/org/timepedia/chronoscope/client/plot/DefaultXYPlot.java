@@ -115,8 +115,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
 
   private Chart chart;
 
-  private boolean domainAxisVisible = true;
-
   private Bounds domainBounds;
 
   private Layer domainLayer;
@@ -472,10 +470,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
         Position.BOTTOM);
 
-    if (domainAxisVisible) {
-      domainAxis = new DateAxis(this, view, domainPanel);
-      domainPanel.add(domainAxis);
-    }
+    domainAxis = new DateAxis(this, view, domainPanel);
+    domainPanel.add(domainAxis);
 
     if (overviewEnabled) {
       overviewAxis = new OverviewAxis(this, view, domainPanel, "Overview");
@@ -518,10 +514,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     return isAnimating;
   }
 
-  public boolean isDomainAxisVisible() {
-    return domainAxisVisible;
-  }
-  
   public boolean isOverviewEnabled() {
     return this.overviewEnabled;
   }
@@ -739,10 +731,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
   }
 
-  public void setDomainAxisVisible(boolean visible) {
-    this.domainAxisVisible = visible;
-  }
-  
   public void setFocus(Focus focus) {
     this.focus = focus;
   }
@@ -917,36 +905,46 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   }
 
   private void computePlotBounds() {
-    plotBounds = new Bounds(0, 0, view.getViewWidth(), view.getViewHeight());
+    final double viewWidth = view.getViewWidth();
+    final double viewHeight = view.getViewHeight();
+    plotBounds = new Bounds();
 
     // TODO: only in snapshot
     if (interactive) {
-      plotBounds.x = rangePanelLeft.getWidth();
-      plotBounds.width -= plotBounds.x;
-      plotBounds.y += topPanel.getHeight();
-
-      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
-        final double topHeight = topPanel.getHeight();
-        double topBottomHeight = domainPanel.getHeight() + topHeight;
-        if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
-          if (overviewEnabled) {
-            domainPanel.remove(overviewAxis);
-            overviewEnabled = false;
-          }
-          topBottomHeight = domainPanel.getHeight() + topPanel.getHeight();
-
-          if (plotBounds.height - topBottomHeight < MIN_PLOT_HEIGHT) {
-            topPanel.remove(legendAxis);
-            showLegend = false;
-            plotBounds.y -= topHeight;
-          }
-          topBottomHeight = domainPanel.getHeight() + topPanel.getHeight();
+      double centerPlotHeight = 
+          viewHeight - topPanel.getHeight() - domainPanel.getHeight();
+      
+      // If center plot too squished, remove the overview axis
+      if (centerPlotHeight < MIN_PLOT_HEIGHT) {
+        if (overviewEnabled) {
+          domainPanel.remove(overviewAxis);
+          overviewEnabled = false;
+          centerPlotHeight = 
+              viewHeight - topPanel.getHeight() - domainPanel.getHeight();
         }
-        plotBounds.height -= topBottomHeight;
       }
-      if (rangePanelRight.getAxisCount() > 0) {
-        plotBounds.width -= rangePanelRight.getWidth();
+
+      // If center plot still too squished, remove the legend axis
+      if (centerPlotHeight < MIN_PLOT_HEIGHT) {
+        if (showLegend) {
+          topPanel.remove(legendAxis);
+          showLegend = false;
+          centerPlotHeight = 
+              viewHeight - topPanel.getHeight() - domainPanel.getHeight();
+        }
       }
+      
+      plotBounds.x = rangePanelLeft.getWidth();
+      plotBounds.y = topPanel.getHeight();
+      plotBounds.height = centerPlotHeight;
+      plotBounds.width = 
+          viewWidth - rangePanelLeft.getWidth() - rangePanelRight.getWidth(); 
+    }
+    else {
+      plotBounds.x = 0;
+      plotBounds.y = 0;
+      plotBounds.height = viewHeight;
+      plotBounds.width = viewWidth;
     }
 
     innerBounds = new Bounds(plotBounds);
@@ -1362,7 +1360,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
         overviewDrawn = true;
       }
       
-      if (domainAxisVisible && domainPanel.getAxisCount() > 0) {
+      if (domainPanel.getAxisCount() > 0) {
         drawOverviewHighlight();
       }
 

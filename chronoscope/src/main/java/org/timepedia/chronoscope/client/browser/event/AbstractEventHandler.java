@@ -66,9 +66,9 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
     
     int overviewAxisX = x;
     int overviewAxisY = (int)(y - plotBounds.bottomY());
-    OverviewAxis overviewAxis = plot.getOverviewAxis();
-    if (overviewAxis.getBounds().inside(overviewAxisX, overviewAxisY)) {
-      return overviewAxis;
+    OverviewAxis oa = plot.getOverviewAxis();
+    if (oa != null && oa.getBounds().inside(overviewAxisX, overviewAxisY)) {
+      return oa;
     }
     
     return null;
