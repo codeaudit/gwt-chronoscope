@@ -378,11 +378,6 @@ public interface XYPlot extends Exportable {
   void setCurrentMipLevel(int datasetIndex, int level);
 
   /**
-   * Controls whether the domain axis (x-axis) is drawn or not.
-   */
-  void setDomainAxisVisible(boolean visible);
-
-  /**
    * Sets the specified datapoint reference as the focused point in this plot.
    */
   void setFocus(Focus focus);
