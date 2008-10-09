@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * View encapsulate platform specific behaviors, such as graphics rendering,
+ * View encapsulates platform specific behaviors, such as graphics rendering,
  * timing, and CSS property retrieval. Views support asynchronous creation,
  * therefore, the proper use of a view is to postpone operations until
  * ViewReadyCallback is invoked.
@@ -146,11 +146,11 @@ public abstract class View implements Exportable {
     return gssContext.getProperties(gssElem, pseudoElt);
   }
 
-  public int getViewHeight() {
+  public int getHeight() {
     return viewHeight;
   }
 
-  public int getViewWidth() {
+  public int getWidth() {
     return viewWidth;
   }
 

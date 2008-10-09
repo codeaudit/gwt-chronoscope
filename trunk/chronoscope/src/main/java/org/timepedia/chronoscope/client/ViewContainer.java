@@ -11,7 +11,7 @@ public class ViewContainer extends AbstractContainer<Component, Container> {
 
   public ViewContainer(View view) {
     this.view = view;
-    setBounds(new Bounds(0, 0, view.getViewWidth(), view.getViewHeight()));
+    setBounds(new Bounds(0, 0, view.getWidth(), view.getHeight()));
   }
 
   public void onEvent(VirtualEvent event) {
