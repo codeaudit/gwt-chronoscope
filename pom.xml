@@ -248,7 +248,7 @@
             </activation>
 
             <properties>
-                <gwtversion>1.5.1</gwtversion>
+                <gwtversion>1.5.2</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -305,5 +305,6 @@
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
             </properties>
         </profile>
+
     </profiles>
 </project>
