@@ -243,10 +243,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       animationTimer = null;
     }
     
-    final double fencedDomainLength = fenceDomain(fence, destDomainLength);
-    final double fencedDomainOrigin = fenceDomainOrigin(fence, destDomainOrigin, destDomainLength);
-    final Interval destDomain = 
-      new Interval(fencedDomainOrigin, fencedDomainOrigin + fencedDomainLength);
+    final Interval destDomain;
+    if (fence) {
+      destDomain = fenceDomain(destDomainOrigin, destDomainLength);
+    }
+    else {
+      destDomain = new Interval(destDomainOrigin, destDomainOrigin + destDomainLength);
+    }
+    
     animationContinuation = continuation;
     final Interval visibleDomain = this.plotDomain;
     
@@ -254,7 +258,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       final double destDomainMid = destDomain.midpoint();
       final Interval srcDomain = visibleDomain.copy();
       // Ratio of destination domain to current domain
-      final double zoomFactor = fencedDomainLength / srcDomain.length();
+      final double zoomFactor = destDomain.length() / srcDomain.length();
 
       double startTime = 0;
       boolean lastFrame = false;
@@ -885,7 +889,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     layer.setFillColor("#14FFFF");
     // layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
-    layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
+    layer.clear();
     layer.fillRect(ux, 0, ex - ux, getInnerBounds().height);
     layer.restore();
     highlightDrawn = true;
@@ -983,8 +987,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     
     overviewLayer.save();
     overviewLayer.setVisibility(false);
-    overviewLayer
-        .clearRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    overviewLayer.clear();
     overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
         overviewLayer.getHeight());
     overviewLayer.restore();
@@ -1017,54 +1020,43 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
   }
 
-  private double fenceDomain(boolean fence, double destDomain) {
-    if (!fence) {
-      return destDomain;
-    }
-    
-    final double domainLength = datasets.getMaxDomain() - datasets.getMinDomain();
-    final double minTickSize = domainAxis.getMinimumTickSize();
-    
-    // First ensure that the destDomain is smaller than the
-    // difference between the minimum and maximum dataset date values.
-    // Then ensure that the destDomain is larger than what
-    // the DateAxis thinks is it's smallest tick interval it can handle.
-    return Math.max(Math.min(destDomain, domainLength), minTickSize);
-  }
-
-  private double fenceDomainOrigin(boolean fence, double destinationOrigin,
-      double destinationDomain) {
-    if (!fence) {
-      return destinationOrigin;
-    }
-
+  private Interval fenceDomain(double destDomainOrig, double destDomainLength) {
     final double minDomain = datasets.getMinDomain();
     final double maxDomain = datasets.getMaxDomain();
-    final double maxDomainWidth = maxDomain - minDomain;
-    double d = destinationOrigin;
-    // if destinationDomain was bigger than entire date range of dataset
+    final double maxDomainLength = maxDomain - minDomain;
+    final double minTickSize = domainAxis.getMinimumTickSize();
+    
+    // First ensure that the destination domain length is smaller than the 
+    // difference between the minimum and maximum dataset domain values.  
+    // Then ensure that the destDomain is larger than what the DateAxis thinks
+    //is it's smallest tick interval it can handle.
+    final double fencedDomainLength =
+        Math.max(Math.min(destDomainLength, maxDomainLength), minTickSize);
+   
+    double d = destDomainOrig;
+    // if destDomainLength was bigger than entire date range of dataset
     // we set the domainOrigin to be the beginning of the dataset range
-    if (destinationDomain >= maxDomainWidth) {
+    if (destDomainLength >= maxDomainLength) {
       d = minDomain;
     } else {
-      // else, our domain range is smaller than the max
-      // check to see if our origin is smaller than the smallest date
-      // range
-      if (destinationOrigin < minDomain) {
+      // else, our domain range is smaller than the max check to see if 
+      // our origin is smaller than the smallest date range
+      if (destDomainOrig < minDomain) {
         // and force it to be the min dataset range value
         d = minDomain;
-      } else if (destinationOrigin + destinationDomain > maxDomain) {
+      } else if (destDomainOrig + destDomainLength > maxDomain) {
         // we we check if the right side of the domain window
         // is past the maximum dataset date range value
         // and if it is, we place the domain origin so that the entire
         // chart fits perfectly in view
-        d = maxDomain - destinationDomain;
+        d = maxDomain - destDomainLength;
       }
     }
     
-    return d;
+    final double fencedDomainOrigin = d;
+    return new Interval(fencedDomainOrigin, fencedDomainOrigin + fencedDomainLength);
   }
-
+  
   /**
    * Finds the data point on a given dataset whose location is closest to the
    * specified (dataX, dataY) location.  This method modifies the fields in the
@@ -1165,8 +1157,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
           verticalAxisLayerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
-      verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
-          verticalAxisLayer.getHeight());
+      verticalAxisLayer.clear();
 
       domainBounds = new Bounds(0, plotBounds.bottomY(),
           view.getWidth(), domainPanel.getHeight());
@@ -1343,15 +1334,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       }
 
       boolean drawVertical = !drewVertical;
-      for (int i = 0; i < rangeAxes.length; i++) {
-        drawVertical = drawVertical || rangeAxes[i].isAutoZoomVisibleRange();
+      for (RangeAxis axis : rangeAxes) {
+        drawVertical = drawVertical || axis.isAutoZoomVisibleRange();
       }
 
       if (drawVertical) {
         verticalAxisLayer.save();
         verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
-        verticalAxisLayer.clearRect(0, 0, verticalAxisLayer.getWidth(),
-            verticalAxisLayer.getHeight());
+        verticalAxisLayer.clear();
 
         Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
             rangePanelLeft.getHeight());
