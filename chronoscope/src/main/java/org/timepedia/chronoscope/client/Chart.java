@@ -1,10 +1,9 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.Exportable;
 
 /**
  * The Chart class composes a {@link XYPlot} and a {@link View}. A plot is a 

@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
@@ -80,7 +79,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   /**
    * Returns the total height of the rendered legend axis
    */
-  public double getHeight(XYPlot plot, Layer layer, Bounds axisBounds) {
+  public double getHeight(XYPlot plot, Layer layer) {
     double totalHeight = 0;
     totalHeight += zoomPanel.getHeight();
     totalHeight += LEGEND_Y_TOP_PAD;

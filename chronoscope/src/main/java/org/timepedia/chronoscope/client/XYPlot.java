@@ -217,11 +217,6 @@ public interface XYPlot extends Exportable {
   RangeAxis getRangeAxis(int datasetIndex);
 
   /**
-   * Return number of unique Range axes in the plot
-   */
-  int getRangeAxisCount();
-
-  /**
    * Return the renderer for a given dataset index
    */
   XYRenderer getRenderer(int datasetIndex);
