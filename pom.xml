@@ -71,6 +71,15 @@
 <!--        <module>chronoscope-java2d</module> -->
     </modules>
 
+   <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+            <id>timepedia-deploy</id>
+            <url>svn:https://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
+    </repository>
+  </distributionManagement>
+
+
     <build>
         <plugins>
 
