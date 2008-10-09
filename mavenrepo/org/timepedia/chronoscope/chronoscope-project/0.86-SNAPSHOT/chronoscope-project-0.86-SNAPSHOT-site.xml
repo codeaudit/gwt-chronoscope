@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?><project name="Chronoscope">
+<?xml version="1.0" encoding="UTF-8"?><project name="Chronoscope">
   <skin>
     <groupId>org.timepedia.site.skin</groupId>
     <artifactId>timepedia-skin</artifactId>
