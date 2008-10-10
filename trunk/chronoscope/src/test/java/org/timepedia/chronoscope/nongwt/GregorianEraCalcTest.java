@@ -1,8 +1,9 @@
-package org.timepedia.chronoscope.client.util.date;
+package org.timepedia.chronoscope.nongwt;
 
 import org.timepedia.chronoscope.client.util.MathUtil;
-
-import java.util.Date;
+import org.timepedia.chronoscope.client.util.date.DayOfWeek;
+import org.timepedia.chronoscope.client.util.date.EraCalc;
+import org.timepedia.chronoscope.client.util.date.GregorianEraCalc;
 
 /**
  * @author chad takahashi
@@ -11,18 +12,18 @@ public class GregorianEraCalcTest extends EraCalcTest {
   
   public void testCalcYearTimestamp() {
     GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
-    testCalcYearTimestamp(eraCalc, eraCalc.minYear, eraCalc.maxYear);
+    testCalcYearTimestamp(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
   
   public void testAssignYearField() {
     GregorianEraCalc eraCalc = new GregorianEraCalc();
-    testAssignYearField(eraCalc, eraCalc.minYear, eraCalc.maxYear);
+    testAssignYearField(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
   
   public void testIsLeapYear() {
     GregorianEraCalc eraCalc = new GregorianEraCalc();
     
-    for (int y = eraCalc.minYear; y <= eraCalc.maxYear; y++) {
+    for (int y = eraCalc.getMinYear(); y <= eraCalc.getMaxYear(); y++) {
       boolean expected = isLeapYear(y);
       assertEquals(expected, eraCalc.isLeapYear(y));
     }
@@ -30,7 +31,7 @@ public class GregorianEraCalcTest extends EraCalcTest {
   
   public void testCalcDayOfWeek() {
     GregorianEraCalc eraCalc = new GregorianEraCalc();
-    super.testCalcDayOfWeek(eraCalc, eraCalc.minYear, eraCalc.maxYear);
+    super.testCalcDayOfWeek(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
   
   // Traditional formula for calculating the day-of-week for an arbitary

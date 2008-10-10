@@ -1,6 +1,10 @@
-package org.timepedia.chronoscope.client.util.date;
+package org.timepedia.chronoscope.nongwt;
 
 import junit.framework.TestCase;
+
+import org.timepedia.chronoscope.client.util.date.DateFields;
+import org.timepedia.chronoscope.client.util.date.DayOfWeek;
+import org.timepedia.chronoscope.client.util.date.EraCalc;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -14,6 +18,8 @@ public abstract class EraCalcTest extends TestCase {
   
   protected abstract boolean isLeapYear(int year);
   
+  private TimeZone origTimeZone;
+
   /**
    * Verify that the year timestamp calculated by this EraCalc object exactly matches
    * the corresponding calculation by java.util.Date.
@@ -86,5 +92,16 @@ public abstract class EraCalcTest extends TestCase {
     return new Date(yr - 1900, mo, day, hr, min, sec);
   }
 
-
+  public final void setUp() {
+    origTimeZone = TimeZone.getDefault();
+    TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    //System.out.println("TESTING: temporarily set default tz to " + TimeZone.getDefault().getDisplayName());
+    //System.out.println("TESTING: DST supported: " + TimeZone.getDefault().useDaylightTime());
+  }
+  
+  public final  void tearDown() {
+    TimeZone.setDefault(origTimeZone);
+    //System.out.println("TESTING: resetting default tz to " + TimeZone.getDefault().getDisplayName());
+    //System.out.println("TESTING: DST supported: " + TimeZone.getDefault().useDaylightTime());
+  }
 }

@@ -7,7 +7,7 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  * 
  * @author chad takahashi
  */
-class JulianEraCalc extends EraCalc {
+public class JulianEraCalc extends EraCalc {
 
   // The latest leap year that this date object can represent (1582 marks the end of the 
   // Julian era).

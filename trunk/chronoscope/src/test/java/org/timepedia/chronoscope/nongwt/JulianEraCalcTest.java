@@ -1,6 +1,8 @@
-package org.timepedia.chronoscope.client.util.date;
+package org.timepedia.chronoscope.nongwt;
 
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.date.EraCalc;
+import org.timepedia.chronoscope.client.util.date.JulianEraCalc;
 
 /**
  * @author chad takahashi

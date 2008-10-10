@@ -8,7 +8,6 @@ import org.timepedia.chronoscope.client.util.date.FastChronoDate;
 
 import java.util.Date;
 import java.util.TimeZone;
-//import java.util.TimeZone;
 
 /**
  * @author chad takahashi
