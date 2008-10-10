@@ -40,7 +40,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
     
     Bounds b = new Bounds();
-    draw(layer, true, b);
+    draw(layer, b, plot.getDatasets().size(), true);
     this.height = b.height;
   }
   
@@ -49,7 +49,7 @@ public class DatasetLegendPanel extends AbstractPanel {
   }
   
   public void draw(Layer layer) {
-    draw(layer, false, null);
+    draw(layer, null, plot.getDatasets().size(), false);
   }
   
   public void resizeToIdealWidth() {
@@ -60,11 +60,11 @@ public class DatasetLegendPanel extends AbstractPanel {
     throw new UnsupportedOperationException();
   }
 
-  private void draw(Layer layer, boolean onlyCalcSize, Bounds b) {
+  private void draw(Layer layer, Bounds b, int numDatasets, boolean onlyCalcSize) {
     double xCursor = this.x;
     double yCursor = this.y;
     
-    for (int i = 0; i < plot.getDatasets().size(); i++) {
+    for (int i = 0; i < numDatasets; i++) {
       double lblWidth = drawLegendLabel(xCursor, yCursor, layer, i, onlyCalcSize);
       boolean enoughRoomInCurrentRow = (lblWidth >= 0);
 

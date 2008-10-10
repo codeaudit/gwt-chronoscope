@@ -27,6 +27,7 @@ import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.chronoscope.client.render.ZoomListener;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -52,7 +53,8 @@ import java.util.Map;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
+public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
+    ZoomListener {
 
   private static int globalPlotNumber = 0;
 
@@ -494,7 +496,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     this.rangeAxes = autoAssignDatasetAxes();
 
     topPanel = new AxisPanel("topPanel" + plotNumber, AxisPanel.Position.TOP);
-    legendAxis = new LegendAxis(this, topPanel, "My graph");
+    legendAxis = new LegendAxis(this, topPanel, this, "My graph");
     if (legendEnabled) {
       topPanel.add(legendAxis);
     }
@@ -604,6 +606,15 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
     }
     
     initAndRedraw();
+  }
+
+  public void onZoom(double intervalInMillis) {
+    if (intervalInMillis == Double.MAX_VALUE) {
+      maxZoomOut();
+    } else {
+      double domainStart = getDomain().midpoint() - (intervalInMillis / 2);  
+      animateTo(domainStart, intervalInMillis, XYPlotListener.ZOOMED, null);
+    }
   }
 
   public InfoWindow openInfoWindow(final String html, final double domainX,
