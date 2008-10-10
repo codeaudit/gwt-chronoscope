@@ -1,22 +1,20 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 /**
  * Renderer used to draw Legend.
  */
-public class LegendAxisRenderer implements AxisRenderer, GssElement,
-    ZoomListener {
+public class LegendAxisRenderer implements AxisRenderer, GssElement {
 
   /**
    * Dictates the Y-padding between the top of the legend item bounds
@@ -26,45 +24,39 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
 
   private LegendAxis axis;
 
-  private GssProperties axisProperties;
+  private GssProperties axisProperties, labelProperties;
 
   private Bounds bounds;
 
-  private GssProperties labelProperties;
-
-  private String textLayerName;
+  private DateRangePanel dateRangePanel;
 
   private DatasetLegendPanel dsLegendPanel;
   
+  private String textLayerName;
+
   private ZoomPanel zoomPanel;
-
-  private DateRangePanel dateRangePanel;
-
-  private XYPlot plot;
 
   public LegendAxisRenderer(LegendAxis axis) {
     ArgChecker.isNotNull(axis, "axis");
     this.axis = axis;
   }
 
-  public boolean click(XYPlot plot, int x, int y) {
+  public boolean click(int x, int y) {
     zoomPanel.setLocation(bounds.x, bounds.y);
     return zoomPanel.click(x, y);
   }
 
-  public void drawLegend(XYPlot xyplot, Layer layer, Bounds axisBounds,
-      boolean gridOnly) {
+  public void drawLegend(Interval domainInterval, Layer layer, 
+      Bounds axisBounds, boolean gridOnly) {
     
-    DefaultXYPlot plot = (DefaultXYPlot) xyplot;
     final int labelHeight = (int)this.zoomPanel.height;
-
     copyState(axisBounds, bounds);
     clearAxis(layer, axisBounds);
     
     // Position and size the panels
     zoomPanel.setLocation(axisBounds.x, axisBounds.y);
-    double startDate = plot.getDomain().getStart();
-    double endDate = plot.getDomain().getEnd();
+    double startDate = domainInterval.getStart();
+    double endDate = domainInterval.getEnd();
     dateRangePanel.updateDomainInterval(startDate, endDate);
     topRightJustify(dateRangePanel, axisBounds);
     layoutPanels(axisBounds);
@@ -79,7 +71,7 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
   /**
    * Returns the total height of the rendered legend axis
    */
-  public double getHeight(XYPlot plot, Layer layer) {
+  public double getHeight() {
     double totalHeight = 0;
     totalHeight += zoomPanel.getHeight();
     totalHeight += LEGEND_Y_TOP_PAD;
@@ -100,57 +92,46 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement,
     return null;
   }
 
-  public void init(XYPlot plot, LegendAxis axis) {
-    View view = plot.getChart().getView();
+  public void init(XYPlot plot, View view, ZoomListener zoomListener) {
+    if (axisProperties != null) {
+      return;
+    }
     
-    if (axisProperties == null) {
-      axisProperties = view.getGssProperties(this, "");
-      labelProperties = view.getGssProperties(
-          new GssElementImpl("label", this), "");
-      textLayerName = axis.getAxisPanel().getPanelName()
-          + axis.getAxisPanel().getAxisNumber(axis);
-      
-      ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
-      final double approxMinInterval = Math.max(0, plot.getDatasets().getMinInterval());
-      final double minDomain = plot.getDatasets().getMinDomain();
-      final double maxDomain = plot.getDatasets().getMaxDomain();
-      zoomIntervals.applyFilter(minDomain, maxDomain, approxMinInterval);
-      
-      Layer rootLayer = view.getCanvas().getRootLayer();
-      
-      dsLegendPanel = new DatasetLegendPanel();
-      dsLegendPanel.setPlot((DefaultXYPlot)plot);
-      dsLegendPanel.setGssProperties(labelProperties);
-      dsLegendPanel.setTextLayerName(textLayerName);
-      dsLegendPanel.init(rootLayer);
-      
-      zoomPanel = new ZoomPanel();
-      zoomPanel.setGssProperties(labelProperties);
-      zoomPanel.setTextLayerName(textLayerName);
-      zoomPanel.addListener(this);
-      zoomPanel.setZoomIntervals(zoomIntervals);
-      zoomPanel.init(rootLayer);
-      
-      dateRangePanel = new DateRangePanel();
-      dateRangePanel.setGssProperties(labelProperties);
-      dateRangePanel.setTextLayerName(textLayerName);
-      dateRangePanel.init(rootLayer);
+    axisProperties = view.getGssProperties(this, "");
+    labelProperties = view.getGssProperties(
+        new GssElementImpl("label", this), "");
+    textLayerName = axis.getAxisPanel().getPanelName()
+        + axis.getAxisPanel().getAxisNumber(axis);
+    
+    ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
+    final double approxMinInterval = Math.max(0, plot.getDatasets().getMinInterval());
+    final double minDomain = plot.getDatasets().getMinDomain();
+    final double maxDomain = plot.getDatasets().getMaxDomain();
+    zoomIntervals.applyFilter(minDomain, maxDomain, approxMinInterval);
+    
+    Layer rootLayer = view.getCanvas().getRootLayer();
+    
+    dsLegendPanel = new DatasetLegendPanel();
+    dsLegendPanel.setPlot(plot);
+    dsLegendPanel.setGssProperties(labelProperties);
+    dsLegendPanel.setTextLayerName(textLayerName);
+    dsLegendPanel.init(rootLayer);
+    
+    zoomPanel = new ZoomPanel();
+    zoomPanel.setGssProperties(labelProperties);
+    zoomPanel.setTextLayerName(textLayerName);
+    zoomPanel.addListener(zoomListener);
+    zoomPanel.setZoomIntervals(zoomIntervals);
+    zoomPanel.init(rootLayer);
+    
+    dateRangePanel = new DateRangePanel();
+    dateRangePanel.setGssProperties(labelProperties);
+    dateRangePanel.setTextLayerName(textLayerName);
+    dateRangePanel.init(rootLayer);
 
-      dateRangePanel.updateDomainInterval(minDomain, maxDomain);
+    dateRangePanel.updateDomainInterval(minDomain, maxDomain);
 
-      this.plot = plot;
-      this.bounds = new Bounds();
-    }
-  }
-
-  public void onZoom(double intervalInMillis) {
-    if (intervalInMillis == Double.MAX_VALUE) {
-      plot.maxZoomOut();
-    } else {
-      double cd = intervalInMillis;
-      double dc = plot.getDomain().midpoint();
-      plot.animateTo(dc - cd / 2, cd, XYPlotListener.ZOOMED, null);
-    }
+    this.bounds = new Bounds();
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
