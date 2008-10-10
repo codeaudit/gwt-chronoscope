@@ -1,29 +1,21 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.gss.GssElement;
-import org.timepedia.chronoscope.client.gss.GssProperties;
 
 /**
  * Rendering code used to render OverviewAxis
  */
-public class OverviewAxisRenderer implements AxisRenderer, GssElement {
+public class OverviewAxisRenderer extends AxisRenderer {
 
   private static final int MIN_OVERVIEW_HEIGHT = 60;
 
-  private int overviewHeight;
-
-  private GssProperties axisProperties;
-
-  private OverviewAxis axis;
-  
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
   
+  private int overviewHeight;
+
   public OverviewAxisRenderer() {
     highlightBoundsSingleton = new Bounds();
   }
@@ -40,7 +32,6 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
       boolean gridOnly) {
     
     Layer overviewLayer = plot.getOverviewLayer();
-    clearAxis(layer, axis, axisBounds);
 
     layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
         overviewLayer.getHeight(), axisBounds.x, axisBounds.y, axisBounds.width,
@@ -78,10 +69,6 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
     return overviewHeight;
   }
 
-  public GssElement getParentGssElement() {
-    return axis.getAxisPanel();
-  }
-
   public String getType() {
     return "overview";
   }
@@ -90,20 +77,14 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
     return null;
   }
 
-  public void init(View view, OverviewAxis overviewAxis) {
-    if (axisProperties == null) {
-      axis = overviewAxis;
-      axisProperties = view.getGssProperties(this, "");
-      overviewHeight = axisProperties.height;
-      if (overviewHeight < MIN_OVERVIEW_HEIGHT) {
-        overviewHeight = MIN_OVERVIEW_HEIGHT;
-      }
+  @Override
+  protected void initHook() {
+    overviewHeight = axisProperties.height;
+    if (overviewHeight < MIN_OVERVIEW_HEIGHT) {
+      overviewHeight = MIN_OVERVIEW_HEIGHT;
     }
   }
 
-  private void clearAxis(Layer layer, OverviewAxis axis, Bounds bounds) {
-  }
-  
   /*
    * Calculates the bounds of the highlighted area of the overview axis.
    * 
@@ -141,4 +122,5 @@ public class OverviewAxisRenderer implements AxisRenderer, GssElement {
     
     return b;
   }
+
 }

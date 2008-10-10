@@ -17,7 +17,7 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
 /**
  * Renders zoomable dates on x-axis.
  */
-public class DomainAxisRenderer implements AxisRenderer, GssElement {
+public class DomainAxisRenderer extends AxisRenderer {
   
   private static TickFormatterFactory tickFormatFactory = TickFormatterFactory.get();
   
@@ -31,35 +31,25 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
 
   private static final String TIME_LABEL = ""; // (Time)
 
-  private double minTickSize = -1;
-
-  private GssProperties axisProperties;
-
-  private DateAxis axis;
-
-  private GssProperties labelProperties;
-
-  private GssProperties tickProperties;
-
-  private GssProperties gridProperties;
-
   private boolean boundsSet = false;
 
-  private String textLayerName;
+  private int creditsWidth, creditsHeight;
 
-  private int creditsWidth;
+  private GssElement gridGssElement, tickGssElement;
+  
+  private GssProperties gridProperties, tickProperties;
 
-  private int creditsHeight;
+  private double minTickSize = -1;
 
-  public DomainAxisRenderer(DateAxis domainAxis) {
-    axis = domainAxis;
+  public DomainAxisRenderer() {
+    gridGssElement = new GssElementImpl("grid", this);
+    tickGssElement = new GssElementImpl("tick", this);
   }
-
+  
   public void drawAxis(XYPlot plot, Layer layer, Bounds bounds,
       boolean gridOnly) {
     
-    View view = plot.getChart().getView();
-    init(view);
+    //init();
 
     if (!gridOnly) {
       clearAxis(layer, bounds);
@@ -140,34 +130,22 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     return minTickSize;
   }
 
-  public GssElement getParentGssElement() {
-    return axis.getAxisPanel();
-  }
-
   public String getType() {
     return "axis";
   }
-
+  
   public String getTypeClass() {
     return "domain";
   }
 
-  public void init(View view) {
-    if (axisProperties == null) {
-      axisProperties = view.getGssProperties(this, "");
-      labelProperties = view
-          .getGssProperties(new GssElementImpl("label", this), "");
-      tickProperties = view
-          .getGssProperties(new GssElementImpl("tick", this), "");
-      gridProperties = view
-          .getGssProperties(new GssElementImpl("grid", this), "");
-      creditsWidth = view.getCanvas().getRootLayer()
-          .stringWidth(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
-      creditsHeight = view.getCanvas().getRootLayer()
-          .stringHeight(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
-      textLayerName = axis.getAxisPanel().getPanelName() + axis.getAxisPanel()
-          .getAxisNumber(axis);
-    }
+  @Override
+  protected void initHook() {
+    tickProperties = view.getGssProperties(tickGssElement, "");
+    gridProperties = view.getGssProperties(gridGssElement, "");
+    creditsWidth = view.getCanvas().getRootLayer()
+        .stringWidth(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
+    creditsHeight = view.getCanvas().getRootLayer()
+        .stringHeight(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
   }
 
   public boolean isAxisLabelVisible() {
@@ -203,20 +181,23 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
    * Converts the specified domain width (e.g. '2 years') into a screen pixel width.
    */
   private double domainToScreenWidth(double domainWidth, Bounds bounds) {
-    return bounds.width * (axis.dataToUser(domainWidth) - axis.dataToUser(0.0));
+    return bounds.width * (valueAxis.dataToUser(domainWidth) - valueAxis.dataToUser(0.0));
   }
   
   private double domainToScreenX(double dataX, Bounds bounds) {
-    return bounds.x + axis.dataToUser(dataX) * bounds.width;
+    return bounds.x + valueAxis.dataToUser(dataX) * bounds.width;
   }
 
   private void drawAxisLabel(Layer layer, Bounds bounds) {
+    DateAxis dateAxis = (DateAxis)valueAxis;
+    
     layer.setFillColor(labelProperties.bgColor);
     layer.setStrokeColor(labelProperties.color);
     double center = bounds.x + (bounds.width / 2);
-    double halfLabelWidth = axis.getAxisLabelWidth() / 2;
+    
+    double halfLabelWidth = dateAxis.getAxisLabelWidth() / 2;
     layer.drawText(center - halfLabelWidth,
-        bounds.y + axis.getMaxLabelHeight() + 5, TIME_LABEL,
+        bounds.y + dateAxis.getMaxLabelHeight() + 5, TIME_LABEL,
         labelProperties.fontFamily, labelProperties.fontWeight,
         labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     // only show if enabled and a collision with the axis label is avoided
@@ -282,5 +263,5 @@ public class DomainAxisRenderer implements AxisRenderer, GssElement {
     //log("domainWidth=" + (long)domainWidth + "; screenWidth=" + screenWidth + "; maxLabelWidth=" + maxLabelWidth + "; maxTicks=" + (int)(screenWidth / maxLabelWidth));
     return (int)(screenWidth / maxLabelWidth);
   }
-  
+
 }
