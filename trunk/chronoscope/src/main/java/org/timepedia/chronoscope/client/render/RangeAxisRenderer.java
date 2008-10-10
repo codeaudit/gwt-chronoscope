@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.AxisPanel;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -37,10 +38,10 @@ public class RangeAxisRenderer extends AxisRenderer {
     layer.setFillColor("rgba(255,255,255,255)");
     layer.setStrokeColor("rgb(0,255,0)");
 
-    double axisRange = valueAxis.getRange();
-
+    final double axisRange = valueAxis.getRange();
+    final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
-      drawTick(plot, layer, tickPositions[i], tickPositions[0], axisRange,
+      drawTick(plot, layer, tickPositions[i], tickPosition0, axisRange,
           axisBounds, gridOnly);
     }
 
@@ -107,16 +108,14 @@ public class RangeAxisRenderer extends AxisRenderer {
   private void drawAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
       boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
-      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (
-          isLeft ?
-              valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
+      boolean isInnerMost = isInnerMost(isLeft);
 
 //      double dir = (isLeft ? bounds
 //          .width - (isInnerMost ? 0 : axis.getMaxLabelWidth() - 10) - axis
 //          .getAxisLabelWidth() : (isInnerMost ? 0 : axis.getMaxLabelWidth()));
       double dir = isLeft ? 0 : (isInnerMost ? 0 : rangeAxis.getMaxLabelWidth() + 1);
       double x = bounds.x + dir;
-      double y = bounds.y + bounds.height / 2 - rangeAxis.getAxisLabelHeight() / 2;
+      double y = bounds.y + (bounds.height / 2) - (rangeAxis.getAxisLabelHeight() / 2);
       layer.setStrokeColor(labelProperties.color);
       String label = valueAxis.getLabel();
 
@@ -144,23 +143,21 @@ public class RangeAxisRenderer extends AxisRenderer {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
     double alignAdjust = -labelHeight / 2;
-    boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
-        valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
     if ("above".equals(labelProperties.tickAlign)) {
       alignAdjust = -labelHeight;
       dir = 1;
 
-      if (isInnerMost) {
+      if (isInnerMost(isLeft)) {
         dir = isLeft ? 1 : -bounds.width - labelWidth - 3;
       } else {
         double maxLabelWidth = rangeAxis.getMaxLabelWidth();
         double axisLabelWidth = rangeAxis.getAxisLabelWidth();
-        dir = isLeft ? -maxLabelWidth + 1
-            : -labelWidth-axisLabelWidth-10;
+        dir = isLeft ? (-maxLabelWidth + 1)
+            : (-labelWidth - axisLabelWidth - 10);
       }
     }
-    if (MathUtil.isBounded(y, bounds.y, bounds.y + bounds.height)) {
-      layer.drawText(bounds.x + bounds.width + dir, y + alignAdjust, label,
+    if (MathUtil.isBounded(y, bounds.y, bounds.bottomY())) {
+      layer.drawText(bounds.rightX() + dir, y + alignAdjust, label,
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName, Cursor.DEFAULT);
     }
@@ -171,14 +168,11 @@ public class RangeAxisRenderer extends AxisRenderer {
       double rangeSize, Bounds bounds, boolean gridOnly) {
     double uy =
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
-            + bounds
-            .y;
+            + bounds.y;
     boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
     double dir = (isLeft ? -5 + bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
-      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
-          valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
-      if (isInnerMost) {
+      if (isInnerMost(isLeft)) {
         dir = isLeft ? bounds.width + 1 : -5;
       } else {
         double maxLabelWidth = rangeAxis.getMaxLabelWidth();
@@ -191,10 +185,10 @@ public class RangeAxisRenderer extends AxisRenderer {
     layer.setTransparency(1);
 
     layer.fillRect(bounds.x + dir, uy, 5, tickProperties.lineThickness);
-    if (gridProperties.visible && uy != bounds.y + bounds.height) {
+    if (gridProperties.visible && uy != bounds.bottomY()) {
       layer.setFillColor(gridProperties.color);
       layer.setTransparency((float) gridProperties.transparency);
-      layer.fillRect(bounds.x + bounds.width, uy,
+      layer.fillRect(bounds.rightX(), uy,
           plot.getInnerBounds().width, gridProperties.lineThickness);
     }
     layer.restore();
@@ -208,9 +202,7 @@ public class RangeAxisRenderer extends AxisRenderer {
     boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
     double dir = (isLeft ? bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
-      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
-          valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
-      if (isInnerMost) {
+      if (isInnerMost(isLeft)) {
         dir = isLeft ? bounds.width : -1;
       } else {
         double maxLabelWidth = rangeAxis.getMaxLabelWidth();
@@ -219,7 +211,7 @@ public class RangeAxisRenderer extends AxisRenderer {
       }
     }
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
-        bounds.y + bounds.height);
+        bounds.bottomY());
   }
 
   public TickPosition getTickPosition() {
@@ -235,4 +227,9 @@ public class RangeAxisRenderer extends AxisRenderer {
     INSIDE, OUTSIDE
   }
   
+  private boolean isInnerMost(boolean isLeftPanel) {
+    AxisPanel axisPanel = valueAxis.getAxisPanel();
+    return axisPanel.getAxisNumber(valueAxis) == 
+        (isLeftPanel ? axisPanel.getAxisCount() - 1 : 0);
+  }
 }
