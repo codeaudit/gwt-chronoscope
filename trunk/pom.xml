@@ -75,7 +75,7 @@
     <repository>
       <uniqueVersion>false</uniqueVersion>
             <id>timepedia-deploy</id>
-            <url>svn:https://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
+            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
     </repository>
   </distributionManagement>
 
@@ -244,6 +244,11 @@
         <repository>
             <id>timepedia</id>
             <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
+        </repository>
+
+        <repository>
+            <id>timefire</id>
+            <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
         </repository>
 
     </repositories>
