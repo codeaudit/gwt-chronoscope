@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.timepedia.chronoscope</groupId>
+  <artifactId>chronoscope-gviz-gadget</artifactId>
+  <version>0.86-SNAPSHOT</version>
+  <versioning>
+    <versions>
+      <version>0.86-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20081010012621</lastUpdated>
+  </versioning>
+</metadata>
