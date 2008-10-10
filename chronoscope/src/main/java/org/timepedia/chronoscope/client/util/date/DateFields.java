@@ -11,7 +11,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
  * 
  * @author chad takahashi
  */
-class DateFields {
+public class DateFields {
   
   public int year, month, day, hour, minute, second, ms;
   

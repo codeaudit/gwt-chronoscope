@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * @author chad takahashi
  */
-class GregorianEraCalc extends EraCalc {
+public class GregorianEraCalc extends EraCalc {
   
   /**
    * Array of pre-computed leap year indicator flags from year offsets [0..399].
@@ -101,7 +101,14 @@ class GregorianEraCalc extends EraCalc {
   public int getMaxYear() {
     return this.maxYear;
   }
-  
+    
+  /**
+   * Returns the minimum supported year.
+   */
+  public int getMinYear() {
+    return this.minYear;
+  }
+
   @Override
   public boolean isLeapYear(int year) {
     return LEAP_YEAR_FLAGS[MathUtil.mod(year, 400)];

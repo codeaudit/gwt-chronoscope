@@ -141,7 +141,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
   private XYPlotRenderer plotRenderer;
 
   // Maps a dataset id to the RangeAxis to which it has been bound.
-  // E.g. axes[2] returns the RangeAxis that datasets.get(2) is 
+  // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
   // bound to.  The relationship from dataset to axis is 
   // many-to-one.
   private RangeAxis[] rangeAxes;
@@ -848,8 +848,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener {
       XYDataset ds = datasets.get(i);
       RangeAxis ra = (RangeAxis) id2rangeAxis.get(ds.getAxisId());
       if (ra == null) {
-        AxisPanel currRangePanel = ((rangeAxisCount++) % 2 == 0)
-            ? rangePanelLeft : rangePanelRight;
+        boolean useLeftPanel = (rangeAxisCount++ % 2) == 0;
+        AxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
         ra = new RangeAxis(chart, ds.getRangeLabel(), ds.getAxisId(), i,
             ds.getRangeBottom(), ds.getRangeTop(), currRangePanel);
         id2rangeAxis.put(ra.getAxisId(), ra);
