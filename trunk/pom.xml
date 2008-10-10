@@ -294,6 +294,7 @@
             </activation>
             <properties>
                 <gwtplatform>windows</gwtplatform>
+                <google.webtoolkit.extrajvmargs>-Xmx512m</google.webtoolkit.extrajvmargs>
             </properties>
         </profile>
 
