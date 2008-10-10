@@ -15,31 +15,17 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 /**
  * Renders vertical range axis
  */
-public class RangeAxisRenderer implements AxisRenderer, GssElement {
-
-  private GssProperties axisProperties;
-
-  private RangeAxis axis;
-
-  private GssProperties labelProperties;
-
-  private GssProperties tickProperties;
-
-  private GssProperties gridProperties;
-
-  private String textLayerName;
-
-  private GssElementImpl tickGssElem;
+public class RangeAxisRenderer extends AxisRenderer {
 
   private boolean boundsSet;
 
-  public RangeAxisRenderer(RangeAxis rangeAxis) {
-    this.axis = rangeAxis;
-  }
-
+  private GssProperties gridProperties, tickProperties;
+  
+  private RangeAxis rangeAxis;
+  
   public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
-    double tickPositions[] = axis.computeTickPositions();
+    double tickPositions[] = rangeAxis.computeTickPositions();
 
     layer.save();
     if (!gridOnly) {
@@ -51,7 +37,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setFillColor("rgba(255,255,255,255)");
     layer.setStrokeColor("rgb(0,255,0)");
 
-    double axisRange = axis.getRange();
+    double axisRange = valueAxis.getRange();
 
     for (int i = 0; i < tickPositions.length; i++) {
       drawTick(plot, layer, tickPositions[i], tickPositions[0], axisRange,
@@ -76,42 +62,30 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         axisProperties.fontSize);
   }
 
-  public GssElement getParentGssElement() {
-    return axis.getAxisPanel();
-  }
-
   public String getType() {
     return "axis";
   }
 
   public String getTypeClass() {
-    return "a" + axis.getAxisNumber();
+    return "a" + rangeAxis.getAxisNumber();
   }
 
-  public void init(View view) {
-    if (axisProperties == null) {
-      axisProperties = view.getGssProperties(this, "");
-      labelProperties = view
-          .getGssProperties(new GssElementImpl("label", this), "");
-      tickGssElem = new GssElementImpl("tick", this);
-      tickProperties = view
-          .getGssProperties(tickGssElem, "");
-      gridProperties = view
-          .getGssProperties(new GssElementImpl("grid", this), "");
-      textLayerName = axis.getAxisPanel().getPanelName() + axis.getAxisPanel()
-          .getAxisNumber(axis);
-    }
-//        view.getCanvas().setStrokeColor(axisProperties.color);
+  @Override
+  protected void initHook() {
+    GssElement tickGssElem = new GssElementImpl("tick", this);
+    GssElement gridGssElem = new GssElementImpl("grid", this);
+    tickProperties = view.getGssProperties(tickGssElem, "");
+    gridProperties = view.getGssProperties(gridGssElem, "");
+    rangeAxis = (RangeAxis)this.valueAxis;
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
-
     layer.save();
     if (!boundsSet) {
       layer.setTextLayerBounds(textLayerName, bounds);
       boundsSet = true;
     }
-//    GWT.log("Text layer name is " + textLayerName, null);
+
     layer.clearTextLayer(textLayerName);
 
     layer.setFillColor(axisProperties.bgColor);
@@ -132,21 +106,21 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
-      boolean isLeft = axis.getAxisPanel().getPosition() == Position.LEFT;
-      boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (
+      boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
+      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (
           isLeft ?
-              axis.getAxisPanel().getAxisCount() - 1 : 0);
+              valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
 
 //      double dir = (isLeft ? bounds
 //          .width - (isInnerMost ? 0 : axis.getMaxLabelWidth() - 10) - axis
 //          .getAxisLabelWidth() : (isInnerMost ? 0 : axis.getMaxLabelWidth()));
-      double dir = isLeft ? 0 : (isInnerMost ? 0 : axis.getMaxLabelWidth() + 1);
+      double dir = isLeft ? 0 : (isInnerMost ? 0 : rangeAxis.getMaxLabelWidth() + 1);
       double x = bounds.x + dir;
-      double y = bounds.y + bounds.height / 2 - axis.getAxisLabelHeight() / 2;
+      double y = bounds.y + bounds.height / 2 - rangeAxis.getAxisLabelHeight() / 2;
       layer.setStrokeColor(labelProperties.color);
-      String label = axis.getLabel();
+      String label = valueAxis.getLabel();
 
-      layer.drawRotatedText(x, y, axis.getRotationAngle(), label,
+      layer.drawRotatedText(x, y, rangeAxis.getRotationAngle(), label,
           axisProperties.fontFamily, axisProperties.fontWeight,
           axisProperties.fontSize, textLayerName, chart);
     }
@@ -154,13 +128,13 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
 
-    String label = axis.getFormattedLabel(value);
+    String label = rangeAxis.getFormattedLabel(value);
 
     double labelWidth = layer.stringWidth(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
     double labelHeight = layer.stringHeight(label, axisProperties.fontFamily,
         axisProperties.fontWeight, axisProperties.fontSize);
-    boolean isLeft = axis.getAxisPanel().getPosition() == Position.LEFT;
+    boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
     double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
     if ("inside".equals(axisProperties.tickPosition)) {
       dir = isLeft ? 5 + 1 : -labelWidth - 5;
@@ -170,8 +144,8 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
     double alignAdjust = -labelHeight / 2;
-    boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (isLeft ?
-        axis.getAxisPanel().getAxisCount() - 1 : 0);
+    boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
+        valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
     if ("above".equals(labelProperties.tickAlign)) {
       alignAdjust = -labelHeight;
       dir = 1;
@@ -179,8 +153,10 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
       if (isInnerMost) {
         dir = isLeft ? 1 : -bounds.width - labelWidth - 3;
       } else {
-        dir = isLeft ? -axis.getMaxLabelWidth() + 1
-            : -labelWidth-axis.getAxisLabelWidth()-10;
+        double maxLabelWidth = rangeAxis.getMaxLabelWidth();
+        double axisLabelWidth = rangeAxis.getAxisLabelWidth();
+        dir = isLeft ? -maxLabelWidth + 1
+            : -labelWidth-axisLabelWidth-10;
       }
     }
     if (MathUtil.isBounded(y, bounds.y, bounds.y + bounds.height)) {
@@ -197,16 +173,17 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
             + bounds
             .y;
-    boolean isLeft = axis.getAxisPanel().getPosition() == Position.LEFT;
+    boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
     double dir = (isLeft ? -5 + bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
-      boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (isLeft ?
-          axis.getAxisPanel().getAxisCount() - 1 : 0);
+      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
+          valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
       if (isInnerMost) {
         dir = isLeft ? bounds.width + 1 : -5;
       } else {
-        dir = isLeft ? bounds.width - axis.getMaxLabelWidth() - 1
-            : axis.getMaxLabelWidth() - 5 + 1;
+        double maxLabelWidth = rangeAxis.getMaxLabelWidth();
+        dir = isLeft ? bounds.width - maxLabelWidth - 1
+            : maxLabelWidth - 5 + 1;
       }
     }
     layer.save();
@@ -228,16 +205,17 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
 
   private void drawVerticalLine(Layer layer, Bounds bounds) {
     layer.setFillColor(tickProperties.color);
-    boolean isLeft = axis.getAxisPanel().getPosition() == Position.LEFT;
+    boolean isLeft = valueAxis.getAxisPanel().getPosition() == Position.LEFT;
     double dir = (isLeft ? bounds.width : 0);
     if ("inside".equals(axisProperties.tickPosition)) {
-      boolean isInnerMost = axis.getAxisPanel().getAxisNumber(axis) == (isLeft ?
-          axis.getAxisPanel().getAxisCount() - 1 : 0);
+      boolean isInnerMost = valueAxis.getAxisPanel().getAxisNumber(valueAxis) == (isLeft ?
+          valueAxis.getAxisPanel().getAxisCount() - 1 : 0);
       if (isInnerMost) {
         dir = isLeft ? bounds.width : -1;
       } else {
-        dir = isLeft ? bounds.width - axis.getMaxLabelWidth() - 1
-            : axis.getMaxLabelWidth() + 1;
+        double maxLabelWidth = rangeAxis.getMaxLabelWidth();
+        dir = isLeft ? bounds.width - maxLabelWidth - 1
+            : maxLabelWidth + 1;
       }
     }
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
@@ -254,7 +232,7 @@ public class RangeAxisRenderer implements AxisRenderer, GssElement {
   }
 
   public enum TickPosition {
-
     INSIDE, OUTSIDE
   }
+  
 }

@@ -24,7 +24,7 @@ public class LegendAxis extends ValueAxis {
     this.view = plot.getChart().getView();
     this.zoomListener = zoomListener;
     this.axisPanel = panel;
-    this.renderer = new LegendAxisRenderer(this);
+    this.renderer = newRenderer();
   }
 
   public boolean click(int x, int y) {
@@ -57,11 +57,20 @@ public class LegendAxis extends ValueAxis {
   }
 
   public void init() {
-    renderer.init(plot, view, zoomListener);
+    this.renderer.init();
   }
 
   protected void layout() {
-    renderer = new LegendAxisRenderer(this);
-    renderer.init(plot, view, zoomListener);
+    this.renderer = newRenderer();
+  }
+  
+  private LegendAxisRenderer newRenderer() {
+    LegendAxisRenderer renderer = new LegendAxisRenderer();
+    renderer.setView(this.view);
+    renderer.setPlot(this.plot);
+    renderer.setValueAxis(this);
+    renderer.setZoomListener(zoomListener);
+    renderer.init();
+    return renderer;
   }
 }

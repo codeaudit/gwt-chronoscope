@@ -1,12 +1,8 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.gss.GssElement;
-import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
@@ -14,7 +10,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
 /**
  * Renderer used to draw Legend.
  */
-public class LegendAxisRenderer implements AxisRenderer, GssElement {
+public class LegendAxisRenderer extends AxisRenderer {
 
   /**
    * Dictates the Y-padding between the top of the legend item bounds
@@ -22,24 +18,17 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
    */
   private static final int LEGEND_Y_TOP_PAD = 3;
 
-  private LegendAxis axis;
-
-  private GssProperties axisProperties, labelProperties;
-
   private Bounds bounds;
 
   private DateRangePanel dateRangePanel;
 
   private DatasetLegendPanel dsLegendPanel;
   
-  private String textLayerName;
-
+  private XYPlot plot;
+  
+  private ZoomListener zoomListener;
+  
   private ZoomPanel zoomPanel;
-
-  public LegendAxisRenderer(LegendAxis axis) {
-    ArgChecker.isNotNull(axis, "axis");
-    this.axis = axis;
-  }
 
   public boolean click(int x, int y) {
     zoomPanel.setLocation(bounds.x, bounds.y);
@@ -80,10 +69,6 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     return totalHeight;
   }
 
-  public GssElement getParentGssElement() {
-    return axis.getAxisPanel();
-  }
-
   public String getType() {
     return "axislegend";
   }
@@ -92,16 +77,10 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     return null;
   }
 
-  public void init(XYPlot plot, View view, ZoomListener zoomListener) {
-    if (axisProperties != null) {
-      return;
-    }
-    
-    axisProperties = view.getGssProperties(this, "");
-    labelProperties = view.getGssProperties(
-        new GssElementImpl("label", this), "");
-    textLayerName = axis.getAxisPanel().getPanelName()
-        + axis.getAxisPanel().getAxisNumber(axis);
+  @Override
+  protected void initHook() {
+    ArgChecker.isNotNull(plot, "plot");
+    ArgChecker.isNotNull(zoomListener, "zoomListener");
     
     ZoomIntervals zoomIntervals = createDefaultZoomIntervals();
     final double approxMinInterval = Math.max(0, plot.getDatasets().getMinInterval());
@@ -134,6 +113,14 @@ public class LegendAxisRenderer implements AxisRenderer, GssElement {
     this.bounds = new Bounds();
   }
 
+  public void setPlot(XYPlot plot) {
+    this.plot = plot;
+  }
+  
+  public void setZoomListener(ZoomListener l) {
+    this.zoomListener = l;
+  }
+  
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
     layer.setFillColor(axisProperties.bgColor);

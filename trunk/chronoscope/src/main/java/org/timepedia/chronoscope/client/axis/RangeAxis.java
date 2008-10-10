@@ -191,11 +191,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.chart = chart;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
         = new DefaultTickLabelNumberFormatter();
-    this.renderer = new RangeAxisRenderer(this);
+    
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
     this.adjustedRangeLow = rangeLow;
     this.adjustedRangeHigh = rangeHigh;
+ 
+    this.renderer = newRenderer();
   }
 
   public double[] computeTickPositions() {
@@ -504,12 +506,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   protected void layout() {
-    renderer = new RangeAxisRenderer(this);
+    renderer = newRenderer();
     init();
   }
 
   private void computeLabelWidths(View view) {
-    renderer.init(view);
+    renderer.init();
 
     maxLabelWidth = renderer.getLabelWidth(view, getDummyLabel(), 0) + 10;
     maxLabelHeight = renderer.getLabelHeight(view, getDummyLabel(), 0) + 10;
@@ -536,5 +538,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
     ticks = null;
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
+  }
+  
+  private RangeAxisRenderer newRenderer() {
+    RangeAxisRenderer renderer = new RangeAxisRenderer();
+    renderer.setValueAxis(this);
+    renderer.setView(chart.getView());
+    renderer.init();
+    return renderer;
   }
 }

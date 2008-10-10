@@ -8,20 +8,14 @@ import org.timepedia.chronoscope.client.render.DomainAxisRenderer;
 
 public class DateAxis extends ValueAxis {
 
-  private int maxLabelWidth;
+  private int axisLabelWidth, axisLabelHeight;
 
-  private int maxLabelHeight;
-
-  private final int tickHeight = 10;
-
-  private DomainAxisRenderer renderer = null;
-
-  private int axisLabelHeight;
-
-  private int axisLabelWidth;
+  private int maxLabelWidth, maxLabelHeight;
 
   private XYPlot plot;
   
+  private DomainAxisRenderer renderer = null;
+
   private View view;
   
   public DateAxis(XYPlot plot, View view, AxisPanel domainPanel) {
@@ -29,7 +23,6 @@ public class DateAxis extends ValueAxis {
     this.plot = plot;
     this.view = view;
     this.axisPanel = domainPanel;
-    this.renderer = new DomainAxisRenderer(this);
   }
 
   public double dataToUser(double dataValue) {
@@ -41,18 +34,13 @@ public class DateAxis extends ValueAxis {
     renderer.drawAxis(plot, layer, axisBounds, gridOnly);
   }
 
-  public int getAxisHeight() {
-    return maxLabelHeight + tickHeight;
-  }
-
   public double getAxisLabelWidth() {
-
     return axisLabelWidth;
   }
 
   public double getHeight() {
     if (axisPanel.getPosition().isHorizontal()) {
-      return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
+      return maxLabelHeight + 5 + axisLabelHeight + 2;
     } else {
       return plot.getInnerBounds().height;
     }
@@ -86,14 +74,18 @@ public class DateAxis extends ValueAxis {
     if (axisPanel.getPosition().isHorizontal()) {
       return plot.getInnerBounds().width;
     } else {
-      return getMaxLabelWidth() + 5 + axisLabelWidth + 10;
+      return maxLabelWidth + 5 + axisLabelWidth + 10;
     }
   }
 
   public void init() {
     boolean isHorizontal = axisPanel.getPosition().isHorizontal();
     final String axisLabel = "(Time)";
-    renderer.init(view);
+
+    renderer = new DomainAxisRenderer();
+    renderer.setView(view);
+    renderer.setValueAxis(this);
+    renderer.init();
 
     maxLabelWidth = renderer.getLabelWidth(view, "XXX'00");
     maxLabelHeight = renderer.getLabelHeight(view, "XXXX");
@@ -112,12 +104,10 @@ public class DateAxis extends ValueAxis {
   }
 
   protected void layout() {
-    renderer = new DomainAxisRenderer(this);
-    renderer.init(view);
+    renderer.init();
   }
 
   public boolean isVisible(double tickPos) {
     return true;
   }
-  
 }

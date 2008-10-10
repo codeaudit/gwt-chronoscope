@@ -26,7 +26,9 @@ public class OverviewAxis extends ValueAxis {
     this.view = view;
     this.axisPanel = panel;
     this.renderer = new OverviewAxisRenderer();
-    this.renderer.init(view, this);
+    this.renderer.setView(view);
+    this.renderer.setValueAxis(this);
+    this.renderer.init();
   }
 
   // N/A
@@ -83,6 +85,6 @@ public class OverviewAxis extends ValueAxis {
 
   protected void layout() {
     renderer = new OverviewAxisRenderer();
-    renderer.init(this.view, this);
+    renderer.init();
   }
 }
