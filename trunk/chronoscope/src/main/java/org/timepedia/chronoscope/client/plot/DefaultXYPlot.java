@@ -201,9 +201,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     hoverPoints = new int[ds.length];
     resetHoverPoints();
 
-    plotRenderer = new ScalableXYPlotRenderer(this);
+    plotRenderer = createXYPlotRenderer();
     plotNumber = globalPlotNumber++;
     datasets.addListener(this);
+  }
+
+  protected ScalableXYPlotRenderer createXYPlotRenderer() {
+    return new ScalableXYPlotRenderer(this);
   }
 
   /**
