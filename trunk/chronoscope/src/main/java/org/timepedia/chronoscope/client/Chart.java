@@ -52,11 +52,10 @@ public class Chart implements Exportable {
     return view;
   }
 
-  public void init(View view) {
+  public void init() {
     ArgChecker.isNotNull(this.plot, "this.plot");
-    this.view = view;
+    ArgChecker.isNotNull(this.view, "this.view");
     view.setChart(this);
-    plot.init(view);
   }
 
   /**
@@ -187,14 +186,13 @@ public class Chart implements Exportable {
   }
 
   public void setPlot(XYPlot plot) {
-    if (this.plot != null) {
-      this.plot.setChart(null);
-    }
-    
     this.plot = plot;
-    this.plot.setChart(this);
   }
 
+  public void setView(View view) {
+    this.view = view;
+  }
+  
   /**
    * For multiplots, this will be used to set the focus of keyboard/mouse events
    * actions. For example, if you combine two plots using a future

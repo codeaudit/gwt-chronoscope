@@ -6,21 +6,27 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.render.AxisPanel;
+import org.timepedia.chronoscope.client.render.Panel;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
 
 /**
- * An AxisPanel is a container which holds multiple Axis objects.  In
- * addition to holding Axis objects, AxisPanels are positioned
- * (LEFT/RIGHT/TOP/BOTTOM) and have orientation. They are responsible for
- * partitioning their space and allocating that space to each Axis, as well as
- * using GSS "axes" properties to fill the background of the panel when
- * cleared.
+ * A container that manages 0 or more {@link AxisPanel} objects. 
+ * A {@link CompositeAxisPanel} can be assigned a {@link Position} relative to its 
+ * container.  This panel is responsible for partitioning space for itself
+ * and  allocating that space to each contained axis, as well as using its GSS 
+ * {@link #axesProperties} to fill the background of the panel when cleared.
  */
-public class AxisPanel implements GssElement {
+public final class CompositeAxisPanel implements GssElement {
 
   private static final double TOP_PANEL_PAD = 23;
 
+  /**
+   * Enumerator of the possible positions that this panel can occupy relative
+   * to its containing panel.
+   */
   public enum Position {
     LEFT {
       public boolean isHorizontal() {
@@ -51,52 +57,51 @@ public class AxisPanel implements GssElement {
 
   }
 
-  private final ArrayList<ValueAxis> axes = new ArrayList<ValueAxis>();
+  private GssProperties axesProperties;
+
+  private final ArrayList<AxisPanel> subPanels = new ArrayList<AxisPanel>();
 
   private boolean layerConfigured = false;
 
   private final String panelName;
 
   private final Position position;
-
-  private GssProperties axesProperties;
-
-  public AxisPanel(String panelName, Position position) {
+  
+  private View view;
+  
+  public CompositeAxisPanel(String panelName, Position position, View view) {
     this.panelName = panelName;
     this.position = position;
+    this.view = view;
   }
 
-  public void add(ValueAxis axis) {
-    axes.add(axis);
-    axis.init();
+  public void add(AxisPanel subPanel) {
+    ArgChecker.isNotNull(subPanel, "subPanel");
+
+    subPanels.add(subPanel);
+    subPanel.setView(view);
+    subPanel.init();
   }
 
-  public boolean contains(ValueAxis theAxis) {
-    return axes.contains(theAxis);
-  }
-
-  public void drawAxisPanel(XYPlot plot, Layer layer,
-      Bounds panelPosition, boolean gridOnly) {
-
-    if (axes.size() == 0) {
+  public void draw(XYPlot plot, Layer layer, Bounds panelBounds, boolean gridOnly) {
+    if (subPanels.size() == 0) {
       return;
     }
-    View view = plot.getChart().getView();
 
     if (axesProperties == null) {
       axesProperties = view.getGssProperties(this, "");
     }
 
     if (!gridOnly) {
-      clearPanel(layer, panelPosition);
+      clearPanel(layer, panelBounds);
     }
-    Bounds lPBounds = new Bounds(panelPosition);
-
-    for (int i = 0; i < axes.size(); i++) {
+    
+    Bounds lPBounds = new Bounds(panelBounds);
+    for (int i = 0; i < subPanels.size(); i++) {
       if (!layerConfigured) {
         layer.setTextLayerBounds(panelName + i, lPBounds);
       }
-      ValueAxis axis = (ValueAxis) axes.get(i);
+      AxisPanel axis = subPanels.get(i);
       lPBounds.width = axis.getWidth();
       lPBounds.height = axis.getHeight();
 
@@ -111,17 +116,26 @@ public class AxisPanel implements GssElement {
   }
 
   public int getAxisCount() {
-    return axes.size();
+    return subPanels.size();
   }
 
-  public int getAxisNumber(ValueAxis axis) {
-    return axes.indexOf(axis);
+  /**
+   * Returns the ordinal position of the specified sub-panel.
+   */
+  public int indexOf(Panel subPanel) {
+    for (int i = 0; i < subPanels.size(); i++) {
+      if (subPanel == subPanels.get(i)) {
+        return i;
+      }
+    }
+    throw new RuntimeException("subPanel not in container: " + subPanel);
+    //return subPanels.indexOf(subPanel);
   }
 
   public double getHeight() {
     double height = 0;
-    for (int i = 0; i < axes.size(); i++) {
-      ValueAxis a = (ValueAxis) axes.get(i);
+    for (int i = 0; i < subPanels.size(); i++) {
+      AxisPanel a = subPanels.get(i);
       if (position.isHorizontal()) {
         height += a.getHeight();
       } else {
@@ -164,8 +178,8 @@ public class AxisPanel implements GssElement {
 
   public double getWidth() {
     double width = 0;
-    for (int i = 0; i < axes.size(); i++) {
-      ValueAxis a = (ValueAxis) axes.get(i);
+    for (int i = 0; i < subPanels.size(); i++) {
+      AxisPanel a = subPanels.get(i);
       if (position.isHorizontal()) {
         width = Math.max(width, a.getWidth());
       } else {
@@ -178,24 +192,24 @@ public class AxisPanel implements GssElement {
   public void layout() {
     layerConfigured = false;
     axesProperties = null;
-    for(ValueAxis axis : axes) {
-      axis.layout();
+    for(AxisPanel panel : subPanels) {
+      panel.layout();
     }
   }
 
-  public void remove(ValueAxis axis) {
-    axes.remove(axis);
+  public void remove(AxisPanel childPanel) {
+    subPanels.remove(childPanel);
   }
 
-  private void clearPanel(Layer layer, Bounds panelPosition) {
+  private void clearPanel(Layer layer, Bounds panelBounds) {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
     layer.setStrokeColor("#ffffff");
     if (position.isHorizontal()) {
       layer.scale(layer.getWidth(), layer.getHeight());
-    } else if (panelPosition.area() > 0) {
-      layer.scale(panelPosition.width, panelPosition.height);
-      layer.translate(panelPosition.x, panelPosition.y);
+    } else if (panelBounds.area() > 0) {
+      layer.scale(panelBounds.width, panelBounds.height);
+      layer.translate(panelBounds.x, panelBounds.y);
     }
 
 //        layer.beginPath();

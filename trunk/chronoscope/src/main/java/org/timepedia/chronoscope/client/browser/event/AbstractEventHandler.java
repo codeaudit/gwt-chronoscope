@@ -6,8 +6,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 
 /**
  * @author Chad Takahashi
@@ -66,9 +66,9 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
     
     int overviewAxisX = x;
     int overviewAxisY = (int)(y - plotBounds.bottomY());
-    OverviewAxis oa = plot.getOverviewAxis();
-    if (oa != null && oa.getBounds().inside(overviewAxisX, overviewAxisY)) {
-      return oa;
+    OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
+    if (oaPanel != null && oaPanel.getBounds().inside(overviewAxisX, overviewAxisY)) {
+      return oaPanel.getValueAxis();
     }
     
     return null;

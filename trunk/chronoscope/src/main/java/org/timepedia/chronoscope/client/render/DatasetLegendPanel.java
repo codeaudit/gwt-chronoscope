@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
@@ -27,9 +28,11 @@ public class DatasetLegendPanel extends AbstractPanel {
   private double lblHeight;
   private double[] maxLabelWidths;
   private XYPlot plot;
+  private View view;
   
   public void init(Layer layer) {
     ArgChecker.isNotNull(plot, "plot");
+    ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(gssProperties, "gssProperties");
     
     lblHeight = this.calcHeight("X", layer);
@@ -46,6 +49,10 @@ public class DatasetLegendPanel extends AbstractPanel {
   
   public void setPlot(XYPlot plot) {
     this.plot = plot;
+  }
+  
+  public void setView(View view) {
+    this.view = view;
   }
   
   public void draw(Layer layer) {
@@ -119,7 +126,7 @@ public class DatasetLegendPanel extends AbstractPanel {
       txtWidth = maxLabelWidths[seriesNum];
     }
     
-    double iconWidth = renderer.calcLegendIconWidth(plot);
+    double iconWidth = renderer.calcLegendIconWidth(plot, view);
     double totalWidth = txtWidth + LEGEND_ICON_PAD + iconWidth;
     
     if (lblX + totalWidth >= this.x + this.width) {

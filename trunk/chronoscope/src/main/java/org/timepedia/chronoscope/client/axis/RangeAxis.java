@@ -1,12 +1,8 @@
 package org.timepedia.chronoscope.client.axis;
 
-import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
-import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.render.RangeAxisRenderer;
+import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -20,13 +16,15 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("chronoscope")
 public class RangeAxis extends ValueAxis implements Exportable {
 
+  public static final int MAX_DIGITS = 5;
+
   class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
 
     String labelFormat = null;
 
     public String format(double value) {
       computeLabelFormat(value);
-      return chart.getView().numberFormat(labelFormat, value);
+      return view.numberFormat(labelFormat, value);
     }
 
     private void computeLabelFormat(double label) {
@@ -35,25 +33,25 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
       int intDigits = (int) Math.floor(Math.log10(getRangeHigh()));
       if (isAllowAutoScale() && Double.isNaN(getScale())
-          && intDigits + 1 > maxDigits) {
+          && intDigits + 1 > MAX_DIGITS) {
         scale = Math.pow(1000, intDigits / 3);
       }
       if (isForceScientificNotation() || (isAllowScientificNotation() && (
-          intDigits + 1 > getMaxDigits()
-              || Math.abs(intDigits) > getMaxDigits()))) {
-        labelFormat = "0." + "0#########".substring(getMaxDigits()) + "E0";
+          intDigits + 1 > MAX_DIGITS
+              || Math.abs(intDigits) > MAX_DIGITS))) {
+        labelFormat = "0." + "0#########".substring(MAX_DIGITS) + "E0";
         scientificNotationOn = true;
       } else if (intDigits > 0) {
         String digStr = "#########0";
         labelFormat = digStr
             .substring(Math.max(digStr.length() - intDigits, 0));
-        int leftOver = Math.max(getMaxDigits() - intDigits, 0);
+        int leftOver = Math.max(MAX_DIGITS - intDigits, 0);
         if (leftOver > 0) {
           labelFormat += "." + "0#########".substring(leftOver);
         }
         scientificNotationOn = false;
       } else {
-        labelFormat = "0." + "0#########".substring(getMaxDigits());
+        labelFormat = "0." + "0#########".substring(MAX_DIGITS);
         scientificNotationOn = false;
       }
     }
@@ -88,7 +86,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
       "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
 
-  public static double[] computeLinearTickPositions(double lrangeLow,
+  private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
     if (lrangeHigh == lrangeLow) {
@@ -102,21 +100,21 @@ public class RangeAxis extends ValueAxis implements Exportable {
       lrangeLow = (rounded - 1) * exponent;
     }
 
-    double range = lrangeHigh - lrangeLow;
+    final double range = lrangeHigh - lrangeLow;
 
-    int maxNumLabels = (int) Math
+    final int maxNumLabels = (int) Math
         .floor(axisHeight / (2 * tickLabelHeight));
 
-    double roughInterval = range / maxNumLabels;
+    final double roughInterval = range / maxNumLabels;
 
-    int logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
-    double exponent = Math.pow(10, logRange);
+    final int logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
+    final double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits + 5;
     smoothSigDigits = smoothSigDigits - (int) MathUtil
         .mod(smoothSigDigits, 5.0);
 
-    double smoothInterval = smoothSigDigits * exponent;
+    final double smoothInterval = smoothSigDigits * exponent;
 
     double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
@@ -124,7 +122,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     if (axisStart + smoothInterval * (numTicks - 1) < lrangeHigh) {
       numTicks++;
     }
-
+    
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
       if (tickPositions.length == i + 1 && forceLastTick) {
@@ -136,77 +134,64 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return tickPositions;
   }
 
-  private Chart chart;
-  private double[] ticks;
-
-  private boolean rangeOverriden;
-
-  private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
-
-  private boolean scientificNotationOn;
-
-  private TickLabelNumberFormatter tickLabelNumberFormatter;
-
-  private final int axisNum;
-
-  private double rangeLow;
-
-  private double rangeHigh;
-
-  private RangeAxisRenderer renderer = null;
-
-  private double maxLabelWidth;
-
-  private double maxLabelHeight;
-
-  private double axisLabelHeight;
-
-  private double axisLabelWidth;
-
-  private double visRangeMin;
-
-  private double visRangeMax;
-
-  private boolean autoZoom = false;
+  private boolean allowAutoScale = true;
 
   private boolean allowScientificNotation = false;
 
-  private boolean forceScientificNotation = false;
-
-  private boolean allowAutoScale = true;
-
-  private boolean showExponents = false;
-
-  private int maxDigits = 5;
-
-  private double scale = Double.NaN;
+  private boolean autoZoom = false;
 
   private double adjustedRangeLow, adjustedRangeHigh;
 
-  public RangeAxis(Chart chart, String label, String units, int axisNum,
-      double rangeLow, double rangeHigh, AxisPanel panel) {
+  private final int axisNum;
+
+  private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
+
+  private boolean forceScientificNotation = false;
+  
+  private XYPlot plot;
+  
+  private double rangeLow, rangeHigh;
+
+  private RangeAxisPanel renderer;
+
+  private boolean rangeOverriden;
+
+  private double scale = Double.NaN;
+
+  private boolean scientificNotationOn;
+
+  private boolean showExponents = false;
+
+  private double[] ticks;
+
+  private TickLabelNumberFormatter tickLabelNumberFormatter;
+  
+  private View view;
+  
+  private double visRangeMin, visRangeMax;
+
+  public RangeAxis(XYPlot plot, View view, String label, String units, int axisNum,
+      double rangeLow, double rangeHigh) {
     super(label, units);
     this.axisNum = axisNum;
-    this.axisPanel = panel;
-    this.chart = chart;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
         = new DefaultTickLabelNumberFormatter();
-    
+    this.plot = plot;
+    this.view = view;
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
     this.adjustedRangeLow = rangeLow;
     this.adjustedRangeHigh = rangeHigh;
- 
-    this.renderer = newRenderer();
   }
 
   public double[] computeTickPositions() {
     if (ticks != null) {
       return ticks;
     }
+    
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
-        getUnadjustedRangeHigh(), getHeight(), getMaxLabelHeight(),
-        rangeOverriden);
+        getUnadjustedRangeHigh(), renderer.getHeight(), 
+        renderer.getMaxLabelHeight(), rangeOverriden);
     adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
     adjustedRangeHigh = getUnadjustedRangeHigh();
     for (int i = 0; i < ticks.length; i++) {
@@ -223,19 +208,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return (dataY - getRangeLow()) / getRange();
   }
 
-  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
-      boolean gridOnly) {
-    renderer.drawAxis(plot, layer, axisBounds, gridOnly);
-  }
-
-  public double getAxisLabelHeight() {
-    return axisLabelHeight;
-  }
-
-  public double getAxisLabelWidth() {
-    return axisLabelWidth;
-  }
-
   public int getAxisNumber() {
     return axisNum;
   }
@@ -247,15 +219,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     return tickLabelNumberFormatter.format(label);
   }
-
-  public double getHeight() {
-    if (axisPanel.getPosition().isHorizontal()) {
-      return getMaxLabelHeight() + 5 + axisLabelHeight + 2;
-    } else {
-      return chart.getPlot().getInnerBounds().height;
-    }
-  }
-
+  
   public String getLabel() {
 //    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
 //    return super.getLabel() + getLabelSuffix(getRange());
@@ -285,18 +249,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return "";
   }
 
-  public int getMaxDigits() {
-    return maxDigits;
-  }
-
-  public double getMaxLabelHeight() {
-    return maxLabelHeight;
-  }
-
-  public double getMaxLabelWidth() {
-    return maxLabelWidth;
-  }
-
   public double getRangeHigh() {
     return adjustedRangeHigh;
   }
@@ -305,45 +257,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return adjustedRangeLow;
   }
 
-  public double getRotationAngle() {
-    return
-        (getAxisPanel().getPosition() == Position.RIGHT ? 1.0 : -1.0) * Math.PI
-            / 2;
-  }
-
   public double getScale() {
     return scale;
   }
 
   public TickLabelNumberFormatter getTickLabelFormatter() {
     return tickLabelNumberFormatter;
-  }
-
-  public double getWidth() {
-    double computedAxisLabelWidth = renderer.isAxisLabelVisible() ?
-        axisLabelWidth + 5 : 0;
-
-    if (!axisPanel.getPosition().isHorizontal()) {
-      boolean isLeft = axisPanel.getPosition() == Position.LEFT;
-      boolean isInner = axisPanel.getAxisNumber(this) == (isLeft ?
-          axisPanel.getAxisCount() - 1 : 0);
-      if (isInner) {
-        if (renderer.getTickPosition() == RangeAxisRenderer.TickPosition
-            .INSIDE) {
-          return computedAxisLabelWidth;
-        } else {
-          return maxLabelWidth + 5 + computedAxisLabelWidth;
-        }
-      } else {
-        return maxLabelWidth + 5 + computedAxisLabelWidth;
-      }
-    } else {
-      return chart.getPlot().getInnerBounds().width;
-    }
-  }
-
-  public void init() {
-    computeLabelWidths(chart.getView());
   }
 
   public void initVisibleRange() {
@@ -402,6 +321,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     allowScientificNotation = enable;
   }
 
+  public void setAxisRenderer(RangeAxisPanel r) {
+    this.renderer = r;
+  }
+  
   /**
    * @gwt.export
    */
@@ -434,17 +357,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   @Export
   public void setLabel(String label) {
     super.setLabel(label);
-    chart.getPlot().damageAxes(this);
-    computeLabelWidths(chart.getView());
-  }
-
-  /**
-   * The maximum number of digits allowed in a tick label, if scientific
-   * notation is enabled, it will automatically switch after this limit is
-   * reached. Minimum is 1 digit.
-   */
-  public void setMaxTickLabelDigits(int digits) {
-    maxDigits = Math.max(1, digits);
+    plot.damageAxes(this);
+    renderer.computeLabelWidths(view);
   }
 
   @Export
@@ -489,7 +403,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER;
     } else {
       setTickLabelNumberFormatter(
-          new UserTickLabelNumberFormatter(chart.getView(), format));
+          new UserTickLabelNumberFormatter(view, format));
     }
   }
 
@@ -498,34 +412,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
-
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
     ticks = null;
     computeTickPositions();
   }
-
-  protected void layout() {
-    renderer = newRenderer();
-    init();
-  }
-
-  private void computeLabelWidths(View view) {
-    renderer.init();
-
-    maxLabelWidth = renderer.getLabelWidth(view, getDummyLabel(), 0) + 10;
-    maxLabelHeight = renderer.getLabelHeight(view, getDummyLabel(), 0) + 10;
-    axisLabelHeight = renderer
-        .getLabelHeight(view, getLabel(), getRotationAngle());
-    axisLabelWidth = renderer
-        .getLabelWidth(view, getLabel(), getRotationAngle());
-  }
-
-  private String getDummyLabel() {
-    return "0" + (maxDigits == 1 ? ""
-        : "." + "000000000".substring(0, maxDigits - 1));
-  }
-
+  
   public double getUnadjustedRangeHigh() {
     return autoZoom ? visRangeMax : rangeHigh;
   }
@@ -540,11 +432,4 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.rangeHigh = rangeHigh;
   }
   
-  private RangeAxisRenderer newRenderer() {
-    RangeAxisRenderer renderer = new RangeAxisRenderer();
-    renderer.setValueAxis(this);
-    renderer.setView(chart.getView());
-    renderer.init();
-    return renderer;
-  }
 }

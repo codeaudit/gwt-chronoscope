@@ -39,15 +39,10 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
 
   private GssElement pointElement = null;
 
-  private boolean prevFocus = false;
-
   private boolean prevHover = false;
-
-  private final int seriesNum;
 
   public BarChartXYRenderer(int seriesNum) {
 
-    this.seriesNum = seriesNum;
     parentSeriesElement = new GssElementImpl("series", null, "s" + seriesNum);
     pointElement = new GssElementImpl("point", parentSeriesElement);
   }
@@ -74,8 +69,8 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     // do nothing
   }
 
-  public double calcLegendIconWidth(XYPlot plot) {
-    initGss(plot.getChart().getView());
+  public double calcLegendIconWidth(XYPlot plot, View view) {
+    initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
                                 : disabledPointProperties;
@@ -169,7 +164,6 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     }
 
     prevHover = renderState.isHovered();
-    prevFocus = isFocused;
   }
 
   public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,

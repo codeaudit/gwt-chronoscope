@@ -1,11 +1,11 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -103,7 +103,7 @@ public interface XYPlot extends Exportable {
    * Convert a domain X value to a window X value using the axis of the given
    * dataset index.
    */
-   double domainToWindowX(double dataX, int datasetIndex);
+   double domainToWindowX(double domainX, int datasetIndex);
 
   /**
    * Returns the chart to which this Plot is embedded.
@@ -133,6 +133,12 @@ public interface XYPlot extends Exportable {
   double getDataY(int datasetIndex, int pointIndex);
 
   /**
+   * Returns a line segment representing the portion of the dataset domain 
+   * that's currently visible within this plot.
+   */
+  Interval getDomain();
+  
+  /**
    * Return the current domain axis.
    */
   ValueAxis getDomainAxis();
@@ -147,12 +153,6 @@ public interface XYPlot extends Exportable {
    */
   double getVisibleDomainMax();
 
-  /**
-   * Returns a line segment representing the portion of the dataset domain 
-   * that's currently visible within this plot.
-   */
-  Interval getDomain();
-  
   /**
    * Returns the current focus point and dataset index within the focused dataset.
    * 
@@ -191,9 +191,9 @@ public interface XYPlot extends Exportable {
   int getNearestVisiblePoint(double domainX, int datasetIndex);
 
   /**
-   * Return the current overview axis
+   * Return the current overview axis panel.
    */
-  OverviewAxis getOverviewAxis();
+  OverviewAxisPanel getOverviewAxisPanel();
 
   /**
    * Returns the layer containing the overview
@@ -230,11 +230,6 @@ public interface XYPlot extends Exportable {
    * Get the domain value of the end of the current selection
    */
   double getSelectionEnd();
-
-  /**
-   * Returns true if this plot contains the axis
-   */
-  boolean hasAxis(ValueAxis theAxis);
 
   /**
    * Initialize or re-initialize the plot using the given view
@@ -363,11 +358,6 @@ public interface XYPlot extends Exportable {
   void setAnimating(boolean animating);
 
   /**
-   * Set the chart which is encapsulating this view
-   */
-  void setChart(Chart chart);
-
-  /**
    * Set the active mip level for a given dataset
    */
   void setCurrentMipLevel(int datasetIndex, int level);
@@ -410,7 +400,7 @@ public interface XYPlot extends Exportable {
   void setOverviewEnabled(boolean overviewEnabled);
 
   /**
-   * Set the renderer for a given dataset index.
+   * Set the plot renderer for a given dataset index.
    */
   void setRenderer(int datasetIndex, XYRenderer renderer);
 

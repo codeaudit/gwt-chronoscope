@@ -72,10 +72,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     this.chartHeight = chartHeight;
     this.readyListener = readyListener;
     initElement(container);
-    this.plot = new DefaultXYPlot(datasets, true);
-    chart = new Chart();
-    chart.setPlot(plot);
 
+    this.plot = new DefaultXYPlot(datasets, true);
   }
 
   public void fireContextMenu(Event evt) {
@@ -144,8 +142,15 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * other view-centric operations.
    */
   public void onViewReady(View view) {
+    plot.init(view);
+    
+    // configure chart
+    chart = new Chart();
+    chart.setPlot(plot);
+    chart.setView(view);
+    
     viewReady = true;
-    chart.init(view);
+    chart.init();
     Chronoscope.putChart(id, chart);
     chart.redraw();
 

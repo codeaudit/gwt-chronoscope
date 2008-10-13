@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -28,7 +29,7 @@ public abstract class XYRenderer implements Exportable {
    * 
    * @see #drawLegendIcon(XYPlot, Layer, double, double, int)
    */
-  public abstract double calcLegendIconWidth(XYPlot plot);
+  public abstract double calcLegendIconWidth(XYPlot plot, View view);
 
   /**
    * Called for each visible data point, typically a segment is added to the

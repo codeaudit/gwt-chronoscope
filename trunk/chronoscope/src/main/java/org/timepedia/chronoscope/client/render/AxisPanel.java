@@ -1,0 +1,82 @@
+package org.timepedia.chronoscope.client.render;
+
+import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.axis.CompositeAxisPanel;
+import org.timepedia.chronoscope.client.axis.ValueAxis;
+import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.gss.GssElement;
+import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.ArgChecker;
+
+/**
+ * Base class for all axis panels, which are panels that surround the center plot panel.
+ * 1 or more axis panels can be added to a {@link CompositeAxisPanel}.
+ */
+public abstract class AxisPanel extends AbstractPanel implements GssElement {
+
+  protected boolean isInitialized = false;
+  
+  protected GssProperties labelProperties;
+  
+  protected CompositeAxisPanel parentPanel;
+  
+  protected ValueAxis valueAxis;
+
+  protected View view;
+  
+  public final GssElement getParentGssElement() {
+    return parentPanel;
+  }
+  
+  public final ValueAxis getValueAxis() {
+    return this.valueAxis;
+  }
+  
+  public void setParentPanel(CompositeAxisPanel parentPanel) {
+    this.parentPanel = parentPanel;
+  }
+  
+  public final void setValueAxis(ValueAxis valueAxis) {
+    this.valueAxis = valueAxis;
+  }
+  
+  public final void setView(View view) {
+    this.view = view;
+  }
+  
+  /**
+   * Draws this axis into the given layer, within the specified axisBounds, as
+   * well as drawing grid-lines on the given {@link XYPlot}.
+   * 
+   * @param plot the plot to draw the gridlines into
+   * @param layer the layer to render the axis on
+   * @param axisBounds the bounds within the layer into which the axis should be
+   *          drawn
+   * @param gridOnly if true, only render gridlines into the plots, render
+   *          nothing else
+   */
+  public abstract void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
+      boolean gridOnly);
+
+  public final void init() {
+    ArgChecker.isNotNull(view, "view");
+    
+    gssProperties = view.getGssProperties(this, "");
+    labelProperties = view.getGssProperties(new GssElementImpl("label", this), "");
+    textLayerName = parentPanel.getPanelName() + parentPanel.indexOf(this);    
+    initHook();
+    isInitialized = true;
+  }
+  
+  public void layout() {
+    init();
+  }
+  
+  /**
+   * Subclasses may provide additional initialization steps.
+   */
+  protected abstract void initHook();
+
+}

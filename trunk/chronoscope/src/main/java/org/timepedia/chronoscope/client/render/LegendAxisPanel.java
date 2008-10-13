@@ -8,9 +8,9 @@ import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 /**
- * Renderer used to draw Legend.
+ * Renders the dataset legend axis.
  */
-public class LegendAxisRenderer extends AxisRenderer {
+public class LegendAxisPanel extends AxisPanel {
 
   /**
    * Dictates the Y-padding between the top of the legend item bounds
@@ -35,9 +35,10 @@ public class LegendAxisRenderer extends AxisRenderer {
     return zoomPanel.click(x, y);
   }
 
-  public void drawLegend(Interval domainInterval, Layer layer, 
-      Bounds axisBounds, boolean gridOnly) {
+  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds, 
+      boolean gridOnly) {
     
+    Interval domainInterval = plot.getDomain();
     final int labelHeight = (int)this.zoomPanel.height;
     copyState(axisBounds, bounds);
     clearAxis(layer, axisBounds);
@@ -60,12 +61,12 @@ public class LegendAxisRenderer extends AxisRenderer {
   /**
    * Returns the total height of the rendered legend axis
    */
+  @Override
   public double getHeight() {
     double totalHeight = 0;
     totalHeight += zoomPanel.getHeight();
     totalHeight += LEGEND_Y_TOP_PAD;
     totalHeight += dsLegendPanel.getHeight();
-
     return totalHeight;
   }
 
@@ -77,6 +78,11 @@ public class LegendAxisRenderer extends AxisRenderer {
     return null;
   }
 
+  @Override
+  public double getWidth() {
+    return this.view.getWidth();
+  }
+  
   @Override
   protected void initHook() {
     ArgChecker.isNotNull(plot, "plot");
@@ -92,6 +98,7 @@ public class LegendAxisRenderer extends AxisRenderer {
     
     dsLegendPanel = new DatasetLegendPanel();
     dsLegendPanel.setPlot(plot);
+    dsLegendPanel.setView(view);
     dsLegendPanel.setGssProperties(labelProperties);
     dsLegendPanel.setTextLayerName(textLayerName);
     dsLegendPanel.init(rootLayer);
@@ -123,7 +130,7 @@ public class LegendAxisRenderer extends AxisRenderer {
   
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
-    layer.setFillColor(axisProperties.bgColor);
+    layer.setFillColor(gssProperties.bgColor);
     layer.translate(-1, bounds.y - 1);
     layer.scale(layer.getWidth() + 1, bounds.height + 1);
     layer.beginPath();
@@ -231,14 +238,6 @@ public class LegendAxisRenderer extends AxisRenderer {
     layer.fillRect(b.x, b.y, b.width, b.height);
 
     layer.restore();
-  }
-  
-  /**
-   * For debugging purposes
-   */
-  private static void hiliteBounds(Panel p, Layer layer) {
-    Bounds b = new Bounds(p.getX(), p.getY(), p.getWidth(), p.getHeight());
-    hiliteBounds(b, layer);
   }
   
 }

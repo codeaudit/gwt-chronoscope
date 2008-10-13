@@ -22,16 +22,6 @@ public interface Panel {
   double getWidth();
 
   /**
-   * Returns this panel's screen-X location.
-   */
-  double getX();
-
-  /**
-   * Returns this panel's screen-Y location.
-   */
-  double getY();
-
-  /**
    * Sets this panel's screen location.
    * 
    * @see #getX()
