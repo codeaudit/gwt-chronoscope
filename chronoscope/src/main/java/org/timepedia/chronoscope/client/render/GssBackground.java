@@ -4,8 +4,10 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
  * Responsible for rendering the background of a plot
@@ -14,8 +16,9 @@ public class GssBackground implements Background, GssElement {
 
   private final GssProperties gssPlotProperties;
 
-  public GssBackground(XYPlot plot) {
-    gssPlotProperties = plot.getChart().getView().getGssProperties(this, "");
+  public GssBackground(View view) {
+    ArgChecker.isNotNull(view, "view");
+    gssPlotProperties = view.getGssProperties(this, "");
   }
 
   public GssElement getParentGssElement() {

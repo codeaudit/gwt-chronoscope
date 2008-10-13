@@ -9,8 +9,8 @@ public class StockMarketDateAxis extends DateAxis {
 
   private Timeline timeline;
 
-  public StockMarketDateAxis(Chart chart, AxisPanel domainPanel) {
-    super(chart.getPlot(), chart.getView(), domainPanel);
+  public StockMarketDateAxis(Chart chart, CompositeAxisPanel domainPanel) {
+    super(chart.getPlot());
     timeline = SegmentedTimeline.newFifteenMinuteTimeline();
   }
 

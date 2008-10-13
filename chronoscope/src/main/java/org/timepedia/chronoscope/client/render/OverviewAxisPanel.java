@@ -5,19 +5,23 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 
 /**
- * Rendering code used to render OverviewAxis
+ * Renders the overview axis.
  */
-public class OverviewAxisRenderer extends AxisRenderer {
+public class OverviewAxisPanel extends AxisPanel {
 
   private static final int MIN_OVERVIEW_HEIGHT = 60;
-
+  
+  private Bounds bounds = new Bounds();
+  
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
   
-  private int overviewHeight;
-
-  public OverviewAxisRenderer() {
+  public OverviewAxisPanel() {
     highlightBoundsSingleton = new Bounds();
+  }
+  
+  public Bounds getBounds() {
+    return this.bounds;
   }
   
   /**
@@ -28,8 +32,10 @@ public class OverviewAxisRenderer extends AxisRenderer {
     return highlightBounds;
   }
   
-  public void drawOverview(XYPlot plot, Layer layer, Bounds axisBounds,
+  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
       boolean gridOnly) {
+    
+    axisBounds.copyTo(bounds);
     
     Layer overviewLayer = plot.getOverviewLayer();
 
@@ -42,13 +48,13 @@ public class OverviewAxisRenderer extends AxisRenderer {
     
     if (highlightBounds != null) {
       layer.save();
-      layer.setFillColor(axisProperties.bgColor);
-      layer.setTransparency((float) Math.max(0.5f, axisProperties.transparency));
+      layer.setFillColor(gssProperties.bgColor);
+      layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
       layer.fillRect(highlightBounds.x, highlightBounds.y,
           highlightBounds.width, highlightBounds.height);
-      layer.setStrokeColor(axisProperties.color);
+      layer.setStrokeColor(gssProperties.color);
       layer.setTransparency(1.0f);
-      layer.setLineWidth(axisProperties.lineThickness);
+      layer.setLineWidth(gssProperties.lineThickness);
       layer.beginPath();
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
       layer.moveTo(highlightBounds.x, highlightBounds.y + 1);  
@@ -65,12 +71,14 @@ public class OverviewAxisRenderer extends AxisRenderer {
     }
   }
   
-  public int getOverviewHeight() {
-    return overviewHeight;
-  }
-
   public String getType() {
     return "overview";
+  }
+  
+  @Override 
+  public double getWidth() {
+    XYPlot plot = this.view.getChart().getPlot();
+    return plot.getOverviewLayer().getWidth();
   }
 
   public String getTypeClass() {
@@ -79,9 +87,9 @@ public class OverviewAxisRenderer extends AxisRenderer {
 
   @Override
   protected void initHook() {
-    overviewHeight = axisProperties.height;
-    if (overviewHeight < MIN_OVERVIEW_HEIGHT) {
-      overviewHeight = MIN_OVERVIEW_HEIGHT;
+    height = gssProperties.height;
+    if (height < MIN_OVERVIEW_HEIGHT) {
+      height = MIN_OVERVIEW_HEIGHT;
     }
   }
 

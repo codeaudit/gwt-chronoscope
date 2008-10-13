@@ -84,8 +84,8 @@ public class XYLineRenderer extends XYRenderer
     layer.save();
   }
 
-  public double calcLegendIconWidth(XYPlot plot) {
-    initGss(plot.getChart().getView());
+  public double calcLegendIconWidth(XYPlot plot, View view) {
+    initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
                                 : disabledPointProperties;

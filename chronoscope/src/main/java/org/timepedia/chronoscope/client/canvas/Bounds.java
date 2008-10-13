@@ -40,6 +40,16 @@ public class Bounds {
     }
 
     /**
+     * Copies the state of this bounds to the target bounds.
+     */
+    public void copyTo(Bounds target) {
+      target.x = this.x;
+      target.y = this.y;
+      target.width = this.width;
+      target.height = this.height;
+    }
+    
+    /**
      * Returns the area of this bounds.  More specifically, 
      * <tt>{@link #width} * {@link #height}</tt>.
      */

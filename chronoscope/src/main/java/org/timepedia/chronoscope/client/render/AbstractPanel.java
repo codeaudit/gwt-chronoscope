@@ -30,17 +30,17 @@ public abstract class AbstractPanel implements Panel {
     return width;
   }
 
-  public double getX() {
-    return x;
-  }
-
-  public double getY() {
-    return y;
-  }
-
   public void setLocation(double x, double y) {
     this.x = x;
     this.y = y;
+  }
+  
+  public void resizeToIdealWidth() {
+    throw new UnsupportedOperationException();
+  }
+
+  public void resizeToMinimalWidth() {
+    throw new UnsupportedOperationException();
   }
 
   protected final int calcHeight(String s, Layer layer) {
@@ -52,4 +52,5 @@ public abstract class AbstractPanel implements Panel {
     GssProperties gss = gssProperties;
     return layer.stringWidth(s, gss.fontFamily, gss.fontWeight, gss.fontSize);
   }
+  
 }

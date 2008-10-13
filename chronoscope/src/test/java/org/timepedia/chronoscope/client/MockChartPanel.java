@@ -12,8 +12,6 @@ import org.timepedia.chronoscope.client.gss.GssContext;
  */
 public class MockChartPanel implements ViewReadyCallback {
 
-  private XYDataset[] ds;
-
   private int width;
 
   private int height;
@@ -28,19 +26,17 @@ public class MockChartPanel implements ViewReadyCallback {
 
   private GssContext gssContext;
 
-  private boolean viewReady;
-
   public MockChartPanel(XYDataset[] ds, int width, int height) {
-    this.ds = ds;
     this.width = width;
     this.height = height;
-    this.chart = new Chart();
+    
+    // configure plot
     this.plot = new DefaultXYPlot(ds, true);
-    chart.setPlot(plot);
+    this.plot.init(view);
+    
   }
 
   public void setViewReadyListener(ViewReadyCallback viewReadyCallback) {
-
     this.viewReadyCallback = viewReadyCallback;
   }
 
@@ -52,9 +48,12 @@ public class MockChartPanel implements ViewReadyCallback {
   }
 
   public void onViewReady(View view) {
-
-    viewReady = true;
-    chart.init(view);
+    // configure chart
+    this.chart = new Chart();
+    chart.setPlot(plot);
+    chart.setView(view);
+    chart.init();
+    
     if (viewReadyCallback != null) {
       viewReadyCallback.onViewReady(view);
     } else {

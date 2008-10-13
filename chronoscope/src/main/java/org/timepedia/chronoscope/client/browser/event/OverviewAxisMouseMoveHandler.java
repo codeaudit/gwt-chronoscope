@@ -6,9 +6,10 @@ import com.google.gwt.libideas.event.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.axis.OverviewAxis;
+import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
@@ -41,9 +42,10 @@ public class OverviewAxisMouseMoveHandler extends
       return;
     }
     
-    OverviewAxis overviewAxis = plot.getOverviewAxis();
-    Bounds overviewAxisBounds = overviewAxis.getBounds();
-    Bounds hiliteBounds = overviewAxis.getHighlightBounds(); 
+    OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
+    ValueAxis overviewAxis = oaPanel.getValueAxis();
+    Bounds overviewAxisBounds = oaPanel.getBounds();
+    Bounds hiliteBounds = oaPanel.getHighlightBounds(); 
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
     
     int x = getLocalX(event);
@@ -102,7 +104,7 @@ public class OverviewAxisMouseMoveHandler extends
    */
   private static double toDomainX(double windowX, DefaultXYPlot plot) {
     double userX = plot.windowXtoUser(windowX);
-    return plot.getOverviewAxis().userToData(userX);
+    return plot.getOverviewAxisPanel().getValueAxis().userToData(userX);
   }
 
 }

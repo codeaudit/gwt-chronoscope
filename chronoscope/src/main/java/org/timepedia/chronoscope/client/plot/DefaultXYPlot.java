@@ -8,13 +8,12 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
-import org.timepedia.chronoscope.client.axis.AxisPanel;
+import org.timepedia.chronoscope.client.axis.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.axis.DateAxis;
-import org.timepedia.chronoscope.client.axis.LegendAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
-import org.timepedia.chronoscope.client.axis.AxisPanel.Position;
+import org.timepedia.chronoscope.client.axis.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -22,7 +21,11 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.render.Background;
+import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
+import org.timepedia.chronoscope.client.render.LegendAxisPanel;
+import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
@@ -83,20 +86,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   
   private double beginHighlight = Double.MIN_VALUE, endHighlight = Double.MIN_VALUE;
 
-  private int currentMiplevels[];
+  private CompositeAxisPanel bottomPanel;
+  
+  private Bounds bottomPanelBounds;
 
-  private Chart chart;
+  private Layer bottomPanelLayer;
+
+  private int currentMiplevels[];
 
   private XYDatasets datasets;
   
-  private DateAxis domainAxis;
-
-  private Bounds domainBounds;
-
-  private Layer domainLayer;
-
-  private AxisPanel domainPanel;
-
+  private DomainAxisPanel domainAxisPanel;
+  
   private boolean drewVertical;
 
   private Focus focus = null;
@@ -115,17 +116,17 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private final boolean interactive;
   
   private boolean isAnimating = false;
-
-  private LegendAxis legendAxis;
-
+  
+  private LegendAxisPanel legendAxisPanel;
+  
   private boolean legendEnabled = true;
 
   private final NearestPoint nearestSingleton = new NearestPoint();
 
   private ArrayList<Overlay> overlays;
 
-  private OverviewAxis overviewAxis;
-
+  private OverviewAxisPanel overviewAxisPanel;
+  
   private boolean overviewDrawn = false;
 
   private boolean overviewEnabled = true;
@@ -148,13 +149,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   // many-to-one.
   private RangeAxis[] rangeAxes;
 
-  private AxisPanel rangePanelLeft, rangePanelRight;
+  private CompositeAxisPanel rangePanelLeft, rangePanelRight;
 
   private Bounds topBounds;
 
   private Layer topLayer;
 
-  private AxisPanel topPanel;
+  private CompositeAxisPanel topPanel;
 
   private Layer verticalAxisLayer;
 
@@ -320,8 +321,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         }
       }
     }
-
-    return legendEnabled ? legendAxis.click(x, y) : false;
+    
+    return legendEnabled ? legendAxisPanel.click(x, y) : false;
   }
 
   /**
@@ -332,7 +333,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
-    double userX = domainAxis.dataToUser(dataX);
+    double userX = domainAxisPanel.getValueAxis().dataToUser(dataX);
     return userX * plotBounds.width;
   }
   
@@ -355,7 +356,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public Chart getChart() {
-    return chart;
+    return view.getChart();
   }
 
   public int getCurrentMipLevel(int datasetIndex) {
@@ -373,7 +374,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public ValueAxis getDomainAxis() {
-    return domainAxis;
+    return domainAxisPanel.getValueAxis();
   }
 
   public double getVisibleDomainMax() {
@@ -411,8 +412,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
             currentMiplevels[datasetIndex]);
   }
 
-  public OverviewAxis getOverviewAxis() {
-    return overviewAxis;
+  public OverviewAxisPanel getOverviewAxisPanel() {
+    return overviewAxisPanel;
   }
 
   public Layer getOverviewLayer() {
@@ -454,51 +455,54 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     return endHighlight;
   }
 
-  public boolean hasAxis(ValueAxis theAxis) {
-    return topPanel.contains(theAxis) || domainPanel.contains(theAxis)
-        || rangePanelLeft.contains(theAxis) || rangePanelRight
-        .contains(theAxis);
-  }
-
   public void init(View view) {
-    ArgChecker.isNotNull(chart, "chart");
     ArgChecker.isNotNull(view, "view");
     this.view = view;
     this.focus = null;
 
     initViewIndependent();
-
+    
+    ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
+    ArgChecker.isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
-
-    domainPanel = new AxisPanel("domainAxisLayer" + plotNumber,
-        Position.BOTTOM);
-    domainAxis = new DateAxis(this, view, domainPanel);
-    domainPanel.add(domainAxis);
+    
+    bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
+        Position.BOTTOM, view);
+    domainAxisPanel = new DomainAxisPanel();
+    domainAxisPanel.setPlot(this);
+    domainAxisPanel.setParentPanel(bottomPanel);
+    domainAxisPanel.setValueAxis(new DateAxis(this));    
+    bottomPanel.add(domainAxisPanel);
     if (overviewEnabled) {
-      overviewAxis = new OverviewAxis(this, view, domainPanel, "Overview");
-      domainPanel.add(overviewAxis);
+      overviewAxisPanel = new OverviewAxisPanel();
+      overviewAxisPanel.setParentPanel(bottomPanel);
+      overviewAxisPanel.setValueAxis(new OverviewAxis(this, "Overview"));
+      bottomPanel.add(overviewAxisPanel);
     }
 
     if (rangePanelLeft != null) {
       rangePanelLeft.layout();
     } else {
-      rangePanelLeft = new AxisPanel("rangeAxisLayerLeft" + plotNumber,
-          AxisPanel.Position.LEFT);
+      rangePanelLeft = new CompositeAxisPanel("rangeAxisLayerLeft" + plotNumber,
+          CompositeAxisPanel.Position.LEFT, view);
     }
     
     if (rangePanelRight != null) {
       rangePanelRight.layout();
     } else {
-      rangePanelRight = new AxisPanel("rangeAxisLayerRight" + plotNumber,
-          AxisPanel.Position.RIGHT);
+      rangePanelRight = new CompositeAxisPanel("rangeAxisLayerRight" + plotNumber,
+          CompositeAxisPanel.Position.RIGHT, view);
     }
 
     this.rangeAxes = autoAssignDatasetAxes();
 
-    topPanel = new AxisPanel("topPanel" + plotNumber, AxisPanel.Position.TOP);
-    legendAxis = new LegendAxis(this, topPanel, this, "My graph");
+    topPanel = new CompositeAxisPanel("topPanel" + plotNumber, CompositeAxisPanel.Position.TOP, view);
     if (legendEnabled) {
-      topPanel.add(legendAxis);
+      legendAxisPanel = new LegendAxisPanel();
+      legendAxisPanel.setParentPanel(topPanel);
+      legendAxisPanel.setPlot(this);
+      legendAxisPanel.setZoomListener(this);
+      topPanel.add(legendAxisPanel);
     }
 
     plotBounds = computePlotBounds();
@@ -507,7 +511,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     clearDrawCaches();
     lastPlotDomain = plotDomain.copy();
     initLayers();
-    background = new GssBackground(this);
+    background = new GssBackground(view);
 
     view.canvasSetupDone();
   }
@@ -727,10 +731,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     rangeAxes[dataset].setAutoZoomVisibleRange(autoZoom);
   }
 
-  public void setChart(Chart chart) {
-    this.chart = chart;
-  }
-
   public void setCurrentMipLevel(int datasetIndex, int mipLevel) {
     if (currentMiplevels[datasetIndex] != mipLevel) {
       resetHoverPoints();
@@ -852,23 +852,34 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   private RangeAxis[] autoAssignDatasetAxes() {
+    ArgChecker.isNotNull(view, "view");
+    ArgChecker.isNotNull(datasets, "datasets");
+
     RangeAxis[] rangeAxes = new RangeAxis[datasets.size()];
     
     int rangeAxisCount = 0;
     for (int i = 0; i < datasets.size(); i++) {
       XYDataset ds = datasets.get(i);
       RangeAxis ra = (RangeAxis) id2rangeAxis.get(ds.getAxisId());
+      
       if (ra == null) {
         boolean useLeftPanel = (rangeAxisCount++ % 2) == 0;
-        AxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
-        ra = new RangeAxis(chart, ds.getRangeLabel(), ds.getAxisId(), i,
-            ds.getRangeBottom(), ds.getRangeTop(), currRangePanel);
+        CompositeAxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
+        ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
+            ds.getRangeBottom(), ds.getRangeTop());
+        RangeAxisPanel rar = new RangeAxisPanel();
+        rar.setPlot(this);
+        rar.setParentPanel(currRangePanel);
+        rar.setValueAxis(ra);
+        ra.setAxisRenderer(rar);
+        currRangePanel.add(rar);
         id2rangeAxis.put(ra.getAxisId(), ra);
-        currRangePanel.add(ra);
-      } else {
+      } 
+      else {
         ra.setInitialRange(Math.min(ra.getUnadjustedRangeLow(), ds.getRangeBottom()),
             Math.max(ra.getUnadjustedRangeHigh(), ds.getRangeTop()));
       }
+      
       rangeAxes[i] = ra;
     }
     
@@ -923,25 +934,25 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     // TODO: only in snapshot
     if (interactive) {
       double centerPlotHeight = 
-          viewHeight - topPanel.getHeight() - domainPanel.getHeight();
+          viewHeight - topPanel.getHeight() - bottomPanel.getHeight();
       
       // If center plot too squished, remove the overview axis
       if (centerPlotHeight < MIN_PLOT_HEIGHT) {
         if (overviewEnabled) {
-          domainPanel.remove(overviewAxis);
+          bottomPanel.remove(overviewAxisPanel);
           overviewEnabled = false;
           centerPlotHeight = 
-              viewHeight - topPanel.getHeight() - domainPanel.getHeight();
+              viewHeight - topPanel.getHeight() - bottomPanel.getHeight();
         }
       }
 
       // If center plot still too squished, remove the legend axis
       if (centerPlotHeight < MIN_PLOT_HEIGHT) {
         if (legendEnabled) {
-          topPanel.remove(legendAxis);
+          topPanel.remove(legendAxisPanel);
           legendEnabled = false;
           centerPlotHeight = 
-              viewHeight - topPanel.getHeight() - domainPanel.getHeight();
+              viewHeight - topPanel.getHeight() - bottomPanel.getHeight();
         }
       }
       
@@ -978,11 +989,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    * Draws the highlighted region (if any) of the dataset overview axis.
    */
   private void drawOverviewHighlight() {
-    domainLayer.save();
+    bottomPanelLayer.save();
     Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        domainBounds.height);
-    domainPanel.drawAxisPanel(this, domainLayer, domainPanelBounds, false);
-    domainLayer.restore();
+        bottomPanelBounds.height);
+    bottomPanel.draw(this, bottomPanelLayer, domainPanelBounds, false);
+    bottomPanelLayer.restore();
   }
   
   /**
@@ -1035,7 +1046,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     final double minDomain = datasets.getMinDomain();
     final double maxDomain = datasets.getMaxDomain();
     final double maxDomainLength = maxDomain - minDomain;
-    final double minTickSize = domainAxis.getMinimumTickSize();
+    final double minTickSize = domainAxisPanel.getMinimumTickSize();
     
     // First ensure that the destination domain length is smaller than the 
     // difference between the minimum and maximum dataset domain values.  
@@ -1170,10 +1181,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clear();
 
-      domainBounds = new Bounds(0, plotBounds.bottomY(),
-          view.getWidth(), domainPanel.getHeight());
-      domainLayer = initLayer(domainLayer, "domainAxis", domainBounds);
-      domainLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+      bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
+          view.getWidth(), bottomPanel.getHeight());
+      bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis", bottomPanelBounds);
+      bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
       highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
       highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
@@ -1340,7 +1351,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         overviewDrawn = true;
       }
       
-      if (domainPanel.getAxisCount() > 0) {
+      if (bottomPanel.getAxisCount() > 0) {
         drawOverviewHighlight();
       }
 
@@ -1357,13 +1368,13 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
             rangePanelLeft.getHeight());
         rangePanelLeft
-            .drawAxisPanel(this, verticalAxisLayer, leftPanelBounds, false);
+            .draw(this, verticalAxisLayer, leftPanelBounds, false);
 
         if (rangePanelRight.getAxisCount() > 0) {
           Bounds rightPanelBounds = new Bounds(plotBounds.rightX(), 0, 
               rangePanelRight.getWidth(), rangePanelRight.getHeight());
           rangePanelRight
-              .drawAxisPanel(this, verticalAxisLayer, rightPanelBounds, false);
+              .draw(this, verticalAxisLayer, rightPanelBounds, false);
         }
         drewVertical = true;
         verticalAxisLayer.restore();
@@ -1373,7 +1384,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         topLayer.save();
         Bounds topPanelBounds = new Bounds(0, 0, view.getWidth(),
             topBounds.height);
-        topPanel.drawAxisPanel(this, topLayer, topPanelBounds, false);
+        topPanel.draw(this, topLayer, topPanelBounds, false);
         topLayer.restore();
       }
     }
@@ -1387,7 +1398,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   private double windowXtoDomain(double x) {
-    return domainAxis.userToData(windowXtoUser(x));
+    return domainAxisPanel.getValueAxis().userToData(windowXtoUser(x));
   }
 
   private double windowYtoRange(int y, int datasetIndex) {

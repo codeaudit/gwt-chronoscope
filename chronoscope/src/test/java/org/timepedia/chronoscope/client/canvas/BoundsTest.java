@@ -25,6 +25,16 @@ public class BoundsTest extends TestCase {
     assertEquals(0.0, new Bounds(99, 99, 0, 0).area());
   }
 
+  public void testCopyTo() {
+    Bounds src = new Bounds(1, 2, 3, 4);
+    Bounds tgt = new Bounds();
+    src.copyTo(tgt);
+    assertEquals(src.x, tgt.x);
+    assertEquals(src.y, tgt.y);
+    assertEquals(src.width, tgt.width);
+    assertEquals(src.height, tgt.height);
+  }
+  
   public void testInside() {
     Bounds b = new Bounds(10, 20, 2, 5);
     

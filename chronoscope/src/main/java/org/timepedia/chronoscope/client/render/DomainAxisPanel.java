@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -15,9 +14,9 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
- * Renders zoomable dates on x-axis.
+ * Renders zoomable dates on x-axis (domain axis).
  */
-public class DomainAxisRenderer extends AxisRenderer {
+public class DomainAxisPanel extends AxisPanel {
   
   private static TickFormatterFactory tickFormatFactory = TickFormatterFactory.get();
   
@@ -31,6 +30,8 @@ public class DomainAxisRenderer extends AxisRenderer {
 
   private static final String TIME_LABEL = ""; // (Time)
 
+  private int axisLabelWidth, axisLabelHeight;
+
   private boolean boundsSet = false;
 
   private int creditsWidth, creditsHeight;
@@ -39,16 +40,18 @@ public class DomainAxisRenderer extends AxisRenderer {
   
   private GssProperties gridProperties, tickProperties;
 
+  private int maxLabelWidth, maxLabelHeight;
+
   private double minTickSize = -1;
 
-  public DomainAxisRenderer() {
+  private XYPlot plot;
+  
+  public DomainAxisPanel() {
     gridGssElement = new GssElementImpl("grid", this);
     tickGssElement = new GssElementImpl("tick", this);
   }
   
-  public void drawAxis(XYPlot plot, Layer layer, Bounds bounds,
-      boolean gridOnly) {
-    
+  public void drawAxis(XYPlot plot, Layer layer, Bounds bounds, boolean gridOnly) {
     //init();
 
     if (!gridOnly) {
@@ -62,7 +65,7 @@ public class DomainAxisRenderer extends AxisRenderer {
     final double domainWidth = plot.getDomain().length();
     TickFormatter tlf = tickFormatFactory.findBestFormatter(domainWidth);
     final double boundsRightX = bounds.rightX();
-    final double labelWidth = tlf.getMaxTickLabelWidth(layer, axisProperties);
+    final double labelWidth = tlf.getMaxTickLabelWidth(layer, gssProperties);
     final double labelWidthDiv2 = labelWidth / 2.0;
     final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds, domainWidth, tlf);
     final int idealTickStep = tlf.calcIdealTickStep(domainWidth, maxTicksForScreen);
@@ -110,16 +113,25 @@ public class DomainAxisRenderer extends AxisRenderer {
     }
   }
 
+  @Override
+  public double getHeight() {
+    if (parentPanel.getPosition().isHorizontal()) {
+      return maxLabelHeight + 5 + axisLabelHeight + 2;
+    } else {
+      return plot.getInnerBounds().height;
+    }
+  }
+ 
   public int getLabelHeight(View view, String str) {
     return view.getCanvas().getRootLayer().stringHeight(str,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize);
+        gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize);
   }
 
   public int getLabelWidth(View view, String str) {
     return view.getCanvas().getRootLayer().stringWidth(str,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize);
+        gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize);
   }
 
   public double getMinimumTickSize() {
@@ -137,6 +149,15 @@ public class DomainAxisRenderer extends AxisRenderer {
   public String getTypeClass() {
     return "domain";
   }
+  
+  @Override
+  public double getWidth() {
+    if (parentPanel.getPosition().isHorizontal()) {
+      return plot.getInnerBounds().width;
+    } else {
+      return maxLabelWidth + 5 + axisLabelWidth + 10;
+    }
+  }
 
   @Override
   protected void initHook() {
@@ -146,15 +167,36 @@ public class DomainAxisRenderer extends AxisRenderer {
         .stringWidth(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
     creditsHeight = view.getCanvas().getRootLayer()
         .stringHeight(CREDITS, CREDITS_FONT, CREDITS_WEIGHT, CREDITS_SIZE);
+
+    boolean isHorizontal = parentPanel.getPosition().isHorizontal();
+    final String axisLabel = "(Time)";
+
+    maxLabelWidth = getLabelWidth(view, "XXX'00");
+    maxLabelHeight = getLabelHeight(view, "XXXX");
+    axisLabelWidth = getLabelWidth(view, isHorizontal ? axisLabel : "X");
+
+    axisLabelHeight = 0;
+    if (isAxisLabelVisible()) {
+      if (isHorizontal) {
+        axisLabelHeight = getLabelHeight(view, axisLabel);
+      } else {
+        axisLabelHeight = getLabelHeight(view, "X") * axisLabel.length();
+      }
+    }
+
   }
 
   public boolean isAxisLabelVisible() {
     return labelProperties.visible;
   }
 
+  public void setPlot(XYPlot plot) {
+    this.plot = plot;
+  }
+  
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
-    layer.setFillColor(axisProperties.bgColor);
+    layer.setFillColor(gssProperties.bgColor);
     layer.fillRect(bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2);
 //    layer.setStrokeColor("rgba(0,0,0,0)");
 //    layer.setLineWidth(0.0);
@@ -189,15 +231,13 @@ public class DomainAxisRenderer extends AxisRenderer {
   }
 
   private void drawAxisLabel(Layer layer, Bounds bounds) {
-    DateAxis dateAxis = (DateAxis)valueAxis;
-    
     layer.setFillColor(labelProperties.bgColor);
     layer.setStrokeColor(labelProperties.color);
     double center = bounds.x + (bounds.width / 2);
     
-    double halfLabelWidth = dateAxis.getAxisLabelWidth() / 2;
+    double halfLabelWidth = axisLabelWidth / 2;
     layer.drawText(center - halfLabelWidth,
-        bounds.y + dateAxis.getMaxLabelHeight() + 5, TIME_LABEL,
+        bounds.y + maxLabelHeight + 5, TIME_LABEL,
         labelProperties.fontFamily, labelProperties.fontWeight,
         labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     // only show if enabled and a collision with the axis label is avoided
@@ -225,8 +265,8 @@ public class DomainAxisRenderer extends AxisRenderer {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
     layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
-        axisProperties.fontFamily, axisProperties.fontWeight,
-        axisProperties.fontSize, textLayerName, Cursor.DEFAULT);
+        gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
   private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux, int tickLength) {
@@ -258,7 +298,7 @@ public class DomainAxisRenderer extends AxisRenderer {
     // result of this method to fluctuate by +/- 1.
     double screenWidth = Math.round(domainToScreenWidth(domainWidth, bounds));
     
-    double maxLabelWidth = 15 + tlf.getMaxTickLabelWidth(layer, axisProperties);
+    double maxLabelWidth = 15 + tlf.getMaxTickLabelWidth(layer, gssProperties);
     
     //log("domainWidth=" + (long)domainWidth + "; screenWidth=" + screenWidth + "; maxLabelWidth=" + maxLabelWidth + "; maxTicks=" + (int)(screenWidth / maxLabelWidth));
     return (int)(screenWidth / maxLabelWidth);
