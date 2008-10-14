@@ -44,17 +44,15 @@ public class DomainAxisPanel extends AxisPanel {
 
   private double minTickSize = -1;
 
-  private XYPlot plot;
-  
   public DomainAxisPanel() {
     gridGssElement = new GssElementImpl("grid", this);
     tickGssElement = new GssElementImpl("tick", this);
   }
   
-  public void drawAxis(XYPlot plot, Layer layer, Bounds bounds, boolean gridOnly) {
+  public void draw(Layer layer, Bounds bounds) {
     //init();
 
-    if (!gridOnly) {
+    if (!GRID_ONLY) {
       clearAxis(layer, bounds);
       drawHorizontalLine(layer, bounds);
     }
@@ -190,10 +188,6 @@ public class DomainAxisPanel extends AxisPanel {
     return labelProperties.visible;
   }
 
-  public void setPlot(XYPlot plot) {
-    this.plot = plot;
-  }
-  
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
     layer.setFillColor(gssProperties.bgColor);

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.render.AxisPanel;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 
 /**
  * An ValueAxis is a class responsible for mapping points in data space to

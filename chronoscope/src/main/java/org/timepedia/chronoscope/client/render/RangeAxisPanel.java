@@ -4,12 +4,12 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
@@ -27,8 +27,6 @@ public class RangeAxisPanel extends AxisPanel {
 
   private RangeAxis rangeAxis;
   
-  private XYPlot plot;
-  
   public enum TickPosition {
     INSIDE, OUTSIDE
   }
@@ -41,12 +39,11 @@ public class RangeAxisPanel extends AxisPanel {
     axisLabelHeight = getLabelHeight(view, valueAxis.getLabel(), getRotationAngle());
   }
 
-  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
-      boolean gridOnly) {
+  public void draw(Layer layer, Bounds axisBounds) {
     double tickPositions[] = rangeAxis.computeTickPositions();
 
     layer.save();
-    if (!gridOnly) {
+    if (!GRID_ONLY) {
       clearAxis(layer, axisBounds);
       drawVerticalLine(layer, axisBounds);
     }
@@ -59,10 +56,10 @@ public class RangeAxisPanel extends AxisPanel {
     final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
       drawTick(plot, layer, tickPositions[i], tickPosition0, axisRange,
-          axisBounds, gridOnly);
+          axisBounds, GRID_ONLY);
     }
 
-    if (!gridOnly) {
+    if (!GRID_ONLY) {
       drawAxisLabel(layer, axisBounds, plot.getChart());
     }
     layer.restore();
@@ -126,10 +123,6 @@ public class RangeAxisPanel extends AxisPanel {
     return w;
   }
 
-  public void setPlot(XYPlot plot) {
-    this.plot = plot;
-  }
-  
   @Override
   protected void initHook() {
     GssElement tickGssElem = new GssElementImpl("tick", this);

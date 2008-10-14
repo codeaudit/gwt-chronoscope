@@ -32,8 +32,7 @@ public class OverviewAxisPanel extends AxisPanel {
     return highlightBounds;
   }
   
-  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
-      boolean gridOnly) {
+  public void draw(Layer layer, Bounds axisBounds) {
     
     axisBounds.copyTo(bounds);
     

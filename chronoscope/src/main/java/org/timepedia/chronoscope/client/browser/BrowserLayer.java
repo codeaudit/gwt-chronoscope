@@ -44,8 +44,6 @@ public class BrowserLayer extends DomTextLayer {
 
   private Element layerContainer;
 
-  private int zIndex = 0;
-
   private int zorder;
 
   private int scrollLeft;

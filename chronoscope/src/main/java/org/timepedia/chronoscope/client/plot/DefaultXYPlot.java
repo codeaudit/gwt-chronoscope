@@ -8,12 +8,10 @@ import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
-import org.timepedia.chronoscope.client.axis.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.axis.DateAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
-import org.timepedia.chronoscope.client.axis.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -21,6 +19,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
 import org.timepedia.chronoscope.client.render.Background;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
@@ -31,6 +30,7 @@ import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -88,8 +88,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private CompositeAxisPanel bottomPanel;
   
-  private Bounds bottomPanelBounds;
-
   private Layer bottomPanelLayer;
 
   private int currentMiplevels[];
@@ -150,8 +148,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private RangeAxis[] rangeAxes;
 
   private CompositeAxisPanel rangePanelLeft, rangePanelRight;
-
-  private Bounds topBounds;
 
   private Layer topLayer;
 
@@ -471,13 +467,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     view.getCanvas().getRootLayer().setVisibility(true);
     
     bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
-        Position.BOTTOM, view);
+        Position.BOTTOM, this, view);
     domainAxisPanel = new DomainAxisPanel();
-    domainAxisPanel.setPlot(this);
     domainAxisPanel.setParentPanel(bottomPanel);
     domainAxisPanel.setValueAxis(new DateAxis(this));    
     bottomPanel.add(domainAxisPanel);
-    if (overviewEnabled) {
+    if (this.isOverviewEnabled()) {
       overviewAxisPanel = new OverviewAxisPanel();
       overviewAxisPanel.setParentPanel(bottomPanel);
       overviewAxisPanel.setValueAxis(new OverviewAxis(this, "Overview"));
@@ -488,23 +483,23 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       rangePanelLeft.layout();
     } else {
       rangePanelLeft = new CompositeAxisPanel("rangeAxisLayerLeft" + plotNumber,
-          CompositeAxisPanel.Position.LEFT, view);
+          CompositeAxisPanel.Position.LEFT, this, view);
     }
     
     if (rangePanelRight != null) {
       rangePanelRight.layout();
     } else {
       rangePanelRight = new CompositeAxisPanel("rangeAxisLayerRight" + plotNumber,
-          CompositeAxisPanel.Position.RIGHT, view);
+          CompositeAxisPanel.Position.RIGHT, this, view);
     }
 
     this.rangeAxes = autoAssignDatasetAxes();
 
-    topPanel = new CompositeAxisPanel("topPanel" + plotNumber, CompositeAxisPanel.Position.TOP, view);
+    topPanel = new CompositeAxisPanel("topPanel" + plotNumber, CompositeAxisPanel.Position.TOP, 
+        this, view);
     if (legendEnabled) {
       legendAxisPanel = new LegendAxisPanel();
       legendAxisPanel.setParentPanel(topPanel);
-      legendAxisPanel.setPlot(this);
       legendAxisPanel.setZoomListener(this);
       topPanel.add(legendAxisPanel);
     }
@@ -864,19 +859,18 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     int rangeAxisCount = 0;
     for (int i = 0; i < datasets.size(); i++) {
       XYDataset ds = datasets.get(i);
-      RangeAxis ra = (RangeAxis) id2rangeAxis.get(ds.getAxisId());
+      RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
       
       if (ra == null) {
         boolean useLeftPanel = (rangeAxisCount++ % 2) == 0;
         CompositeAxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
         ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
             ds.getRangeBottom(), ds.getRangeTop());
-        RangeAxisPanel rar = new RangeAxisPanel();
-        rar.setPlot(this);
-        rar.setParentPanel(currRangePanel);
-        rar.setValueAxis(ra);
-        ra.setAxisRenderer(rar);
-        currRangePanel.add(rar);
+        RangeAxisPanel axisPanel = new RangeAxisPanel();
+        axisPanel.setParentPanel(currRangePanel);
+        axisPanel.setValueAxis(ra);
+        ra.setAxisRenderer(axisPanel);
+        currRangePanel.add(axisPanel);
         id2rangeAxis.put(ra.getAxisId(), ra);
       } 
       else {
@@ -995,8 +989,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private void drawOverviewHighlight() {
     bottomPanelLayer.save();
     Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        bottomPanelBounds.height);
-    bottomPanel.draw(this, bottomPanelLayer, domainPanelBounds, false);
+        bottomPanelLayer.getBounds().height);
+    bottomPanel.draw(bottomPanelLayer, domainPanelBounds);
     bottomPanelLayer.restore();
   }
   
@@ -1173,8 +1167,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
         overviewLayer.setVisibility(false);
       }
 
-      topBounds = new Bounds(0, 0, view.getWidth(), topPanel.getHeight());
-      topLayer = initLayer(topLayer, "topLayer", topBounds);
+      Bounds topLayerBounds = new Bounds(0, 0, view.getWidth(), topPanel.getHeight());
+      topLayer = initLayer(topLayer, "topLayer", topLayerBounds);
       topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
       Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
@@ -1185,7 +1179,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
       verticalAxisLayer.clear();
 
-      bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
+      Bounds bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
           view.getWidth(), bottomPanel.getHeight());
       bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis", bottomPanelBounds);
       bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
@@ -1371,14 +1365,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
         Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
             rangePanelLeft.getHeight());
-        rangePanelLeft
-            .draw(this, verticalAxisLayer, leftPanelBounds, false);
+        rangePanelLeft.draw(verticalAxisLayer, leftPanelBounds);
 
         if (rangePanelRight.getAxisCount() > 0) {
           Bounds rightPanelBounds = new Bounds(plotBounds.rightX(), 0, 
               rangePanelRight.getWidth(), rangePanelRight.getHeight());
-          rangePanelRight
-              .draw(this, verticalAxisLayer, rightPanelBounds, false);
+          rangePanelRight.draw(verticalAxisLayer, rightPanelBounds);
         }
         drewVertical = true;
         verticalAxisLayer.restore();
@@ -1386,9 +1378,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
       if (topPanel.getAxisCount() > 0) {
         topLayer.save();
-        Bounds topPanelBounds = new Bounds(0, 0, view.getWidth(),
-            topBounds.height);
-        topPanel.draw(this, topLayer, topPanelBounds, false);
+        Bounds topPanelBounds = new Bounds(0, 0, 
+            topLayer.getBounds().width, topLayer.getBounds().height);
+        topPanel.draw(topLayer, topPanelBounds);
         topLayer.restore();
       }
     }
