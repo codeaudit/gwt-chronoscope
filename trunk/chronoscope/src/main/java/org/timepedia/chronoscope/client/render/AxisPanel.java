@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -16,11 +15,16 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  */
 public abstract class AxisPanel extends AbstractPanel implements GssElement {
 
+  // if true, only render gridlines into the plots, render nothing else.
+  public static final boolean GRID_ONLY = false;
+  
   protected boolean isInitialized = false;
   
   protected GssProperties labelProperties;
   
   protected CompositeAxisPanel parentPanel;
+
+  protected XYPlot plot;
   
   protected ValueAxis valueAxis;
 
@@ -34,8 +38,12 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
     return this.valueAxis;
   }
   
-  public void setParentPanel(CompositeAxisPanel parentPanel) {
+  public final void setParentPanel(CompositeAxisPanel parentPanel) {
     this.parentPanel = parentPanel;
+  }
+  
+  public final void setPlot(XYPlot plot) {
+    this.plot = plot;
   }
   
   public final void setValueAxis(ValueAxis valueAxis) {
@@ -50,18 +58,17 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
    * Draws this axis into the given layer, within the specified axisBounds, as
    * well as drawing grid-lines on the given {@link XYPlot}.
    * 
-   * @param plot the plot to draw the gridlines into
    * @param layer the layer to render the axis on
    * @param axisBounds the bounds within the layer into which the axis should be
    *          drawn
    * @param gridOnly if true, only render gridlines into the plots, render
    *          nothing else
    */
-  public abstract void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds,
-      boolean gridOnly);
+  public abstract void draw(Layer layer, Bounds axisBounds);
 
   public final void init() {
     ArgChecker.isNotNull(view, "view");
+    ArgChecker.isNotNull(plot, "plot");
     
     gssProperties = view.getGssProperties(this, "");
     labelProperties = view.getGssProperties(new GssElementImpl("label", this), "");

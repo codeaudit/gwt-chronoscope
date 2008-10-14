@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.axis;
+package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -6,8 +6,6 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.render.AxisPanel;
-import org.timepedia.chronoscope.client.render.Panel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
@@ -67,11 +65,14 @@ public final class CompositeAxisPanel implements GssElement {
 
   private final Position position;
   
+  private XYPlot plot;
+  
   private View view;
   
-  public CompositeAxisPanel(String panelName, Position position, View view) {
+  public CompositeAxisPanel(String panelName, Position position, XYPlot plot, View view) {
     this.panelName = panelName;
     this.position = position;
+    this.plot = plot;
     this.view = view;
   }
 
@@ -79,11 +80,12 @@ public final class CompositeAxisPanel implements GssElement {
     ArgChecker.isNotNull(subPanel, "subPanel");
 
     subPanels.add(subPanel);
+    subPanel.setPlot(plot);
     subPanel.setView(view);
     subPanel.init();
   }
 
-  public void draw(XYPlot plot, Layer layer, Bounds panelBounds, boolean gridOnly) {
+  public void draw(Layer layer, Bounds panelBounds) {
     if (subPanels.size() == 0) {
       return;
     }
@@ -92,7 +94,7 @@ public final class CompositeAxisPanel implements GssElement {
       axesProperties = view.getGssProperties(this, "");
     }
 
-    if (!gridOnly) {
+    if (!AxisPanel.GRID_ONLY) {
       clearPanel(layer, panelBounds);
     }
     
@@ -105,7 +107,8 @@ public final class CompositeAxisPanel implements GssElement {
       lPBounds.width = axis.getWidth();
       lPBounds.height = axis.getHeight();
 
-      axis.drawAxis(plot, layer, lPBounds, gridOnly);
+      axis.draw(layer, lPBounds);
+      
       if (position.isHorizontal()) {
         lPBounds.y += lPBounds.height;
       } else {

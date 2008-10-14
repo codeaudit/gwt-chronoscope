@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.axis;
 
-import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.XYPlot;
 
 /**
  *
@@ -9,8 +9,8 @@ public class StockMarketDateAxis extends DateAxis {
 
   private Timeline timeline;
 
-  public StockMarketDateAxis(Chart chart, CompositeAxisPanel domainPanel) {
-    super(chart.getPlot());
+  public StockMarketDateAxis(XYPlot plot) {
+    super(plot);
     timeline = SegmentedTimeline.newFifteenMinuteTimeline();
   }
 

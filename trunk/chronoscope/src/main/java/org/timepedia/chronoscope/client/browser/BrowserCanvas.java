@@ -20,6 +20,7 @@ import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An implementation of Canvas that creates a CANVAS tag per Layer, as well as
@@ -29,7 +30,7 @@ public class BrowserCanvas extends Canvas {
 
   private BrowserLayer rootLayer;
 
-  private final HashMap id2Layer = new HashMap();
+  private final Map<String,Layer> id2Layer = new HashMap<String,Layer>();
 
   private final int width;
 
@@ -174,7 +175,7 @@ public class BrowserCanvas extends Canvas {
   }
 
   public Layer getLayer(String layerId) {
-    return (Layer) id2Layer.get(layerId);
+    return id2Layer.get(layerId);
   }
 
   public float getLayerAlpha() {

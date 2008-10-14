@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -24,8 +23,6 @@ public class LegendAxisPanel extends AxisPanel {
 
   private DatasetLegendPanel dsLegendPanel;
   
-  private XYPlot plot;
-  
   private ZoomListener zoomListener;
   
   private ZoomPanel zoomPanel;
@@ -35,9 +32,7 @@ public class LegendAxisPanel extends AxisPanel {
     return zoomPanel.click(x, y);
   }
 
-  public void drawAxis(XYPlot plot, Layer layer, Bounds axisBounds, 
-      boolean gridOnly) {
-    
+  public void draw(Layer layer, Bounds axisBounds) {
     Interval domainInterval = plot.getDomain();
     final int labelHeight = (int)this.zoomPanel.height;
     copyState(axisBounds, bounds);
@@ -120,10 +115,6 @@ public class LegendAxisPanel extends AxisPanel {
     this.bounds = new Bounds();
   }
 
-  public void setPlot(XYPlot plot) {
-    this.plot = plot;
-  }
-  
   public void setZoomListener(ZoomListener l) {
     this.zoomListener = l;
   }
@@ -222,8 +213,8 @@ public class LegendAxisPanel extends AxisPanel {
   /**
    * Positions the specified panel in the top-right corner of the specified bounds.
    */
-  private void topRightJustify(Panel p, Bounds parentBounds) {
-    p.setLocation(parentBounds.rightX() - dateRangePanel.getWidth() - 2, parentBounds.y);
+  private void topRightJustify(Panel panel, Bounds parentBounds) {
+    panel.setLocation(parentBounds.rightX() - panel.getWidth() - 2, parentBounds.y);
   }
   
   /**
