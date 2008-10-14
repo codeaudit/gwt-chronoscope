@@ -11,22 +11,24 @@ import org.timepedia.chronoscope.client.canvas.Layer;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class ScalableXYPlotRenderer extends XYPlotRenderer {
-  private RenderState renderState;
-  
-  public ScalableXYPlotRenderer(XYPlot plot) {
+public class ScalableXYPlotRenderer<T extends XYPlot>
+    extends XYPlotRenderer<T> {
+
+  protected RenderState renderState;
+
+  public ScalableXYPlotRenderer(T plot) {
     super(plot);
     renderState = new RenderState();
   }
 
-  public void drawDataset(int datasetIndex, Layer layer, XYPlot plot) {
+  public void drawDataset(int datasetIndex, Layer layer, T plot) {
     XYDataset dataSet = plot.getDatasets().get(datasetIndex);
     XYRenderer renderer = plot.getRenderer(datasetIndex);
-    
+
     if (dataSet.getNumSamples(0) < 2) {
       return;
     }
-    
+
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;
     if (focus == null) {
@@ -37,18 +39,19 @@ public class ScalableXYPlotRenderer extends XYPlotRenderer {
       focusPoint = focus.getPointIndex();
     }
 
-    renderState.setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
-    
+    renderState
+        .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
+
     renderer.beginCurve(plot, layer, renderState);
 
     int domainStart = this.domainStartIdxs[datasetIndex];
     int domainEnd = this.domainEndIdxs[datasetIndex];
     int mipLevel = plot.getCurrentMipLevel(datasetIndex);
     int numSamples = dataSet.getNumSamples(mipLevel);
-    
+
     final int inc = 1;
     int[] hoverPoints = plot.getHoverPoints();
-    
+
     // Render the data curve
     int end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {

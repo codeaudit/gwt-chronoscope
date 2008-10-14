@@ -73,7 +73,11 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     this.readyListener = readyListener;
     initElement(container);
 
-    this.plot = new DefaultXYPlot(datasets, true);
+    this.plot = createXYPlot(datasets);
+  }
+
+  protected XYPlot createXYPlot(XYDataset[] datasets) {
+    return new DefaultXYPlot(datasets, true);
   }
 
   public void fireContextMenu(Event evt) {
