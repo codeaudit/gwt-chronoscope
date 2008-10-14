@@ -17,7 +17,7 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer {
+public abstract class XYPlotRenderer<T extends XYPlot> {
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -34,12 +34,12 @@ public abstract class XYPlotRenderer {
   // domain interval) for the 3rd dataset in plot.datsets.
   private double[] minRanges, maxRanges;
   
-  private XYPlot plot;
+  private T plot;
   
   /**
    * Constructs a new plot renderer bound to the specified plot.
    */
-  public XYPlotRenderer(XYPlot plot) {
+  public XYPlotRenderer(T plot) {
     ArgChecker.isNotNull(plot, "plot");
     this.plot = plot;
   }
@@ -90,7 +90,7 @@ public abstract class XYPlotRenderer {
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot plot);
+  public abstract void drawDataset(int datasetIndex, Layer layer, T plot);
 
   public void drawDatasets() {
     final int numDatasets = plot.getDatasets().size();
