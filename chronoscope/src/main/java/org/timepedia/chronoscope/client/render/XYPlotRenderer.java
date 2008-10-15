@@ -126,7 +126,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      XYRenderer renderer = plot.getRenderer(i);
+      XYRenderer<T> renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;
@@ -135,7 +135,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      XYRenderer renderer = plot.getRenderer(i);
+      XYRenderer<T> renderer = plot.getRenderer(i);
 
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {

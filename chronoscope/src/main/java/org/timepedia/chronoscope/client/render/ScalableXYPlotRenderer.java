@@ -21,7 +21,7 @@ public class ScalableXYPlotRenderer<T extends XYDataset> extends XYPlotRenderer<
   
   public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
     XYDataset dataSet = plot.getDatasets().get(datasetIndex);
-    XYRenderer renderer = plot.getRenderer(datasetIndex);
+    XYRenderer<T> renderer = plot.getRenderer(datasetIndex);
 
     if (dataSet.getNumSamples(0) < 2) {
       return;
