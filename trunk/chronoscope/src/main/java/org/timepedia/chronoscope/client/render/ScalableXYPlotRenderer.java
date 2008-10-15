@@ -11,17 +11,15 @@ import org.timepedia.chronoscope.client.canvas.Layer;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class ScalableXYPlotRenderer<T extends XYPlot>
-    extends XYPlotRenderer<T> {
+public class ScalableXYPlotRenderer<T extends XYDataset> extends XYPlotRenderer<T> {
 
   protected RenderState renderState;
 
-  public ScalableXYPlotRenderer(T plot) {
-    super(plot);
+  public ScalableXYPlotRenderer() {
     renderState = new RenderState();
   }
-
-  public void drawDataset(int datasetIndex, Layer layer, T plot) {
+  
+  public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
     XYDataset dataSet = plot.getDatasets().get(datasetIndex);
     XYRenderer renderer = plot.getRenderer(datasetIndex);
 

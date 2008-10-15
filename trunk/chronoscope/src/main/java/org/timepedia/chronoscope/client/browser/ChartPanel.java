@@ -7,8 +7,14 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
+import org.timepedia.chronoscope.client.render.XYPlotRenderer;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 
@@ -16,18 +22,39 @@ public class ChartPanel extends Composite implements Exportable {
 
   private PlotPanel plotPanel;
 
-  public ChartPanel(XYDataset[] datasets, int chartWidth, int chartHeight) {
-    this(DOM.createDiv(), datasets, chartWidth, chartHeight, null);
+  public ChartPanel(XYDataset[] datasetArray, int chartWidth, int chartHeight) {
+    this(DOM.createDiv(), datasetArray, chartWidth, chartHeight, null);
   }
 
-  public ChartPanel(Element elem, XYDataset[] datasets, int chartWidth,
+  public ChartPanel(Element elem, XYDataset[] datasetArray, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
-    plotPanel = createPlotPanel(elem, datasets, chartWidth, chartHeight,
+    
+    ArgChecker.isNotNull(datasetArray, "datasetArray");
+    if(elem == null) {
+      elem=DOM.createDiv();
+    }
+    
+    XYPlot plot = createPlot(datasetArray);
+    plotPanel = new PlotPanel(elem, plot, chartWidth, chartHeight,
         readyListener);
 
     initWidget(plotPanel);
   }
 
+  protected XYPlot createPlot(XYDataset[] datasetArray) {
+    
+    XYDatasets<XYDataset> datasets = 
+        new XYDatasets<XYDataset>(datasetArray);
+    
+    XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
+    
+    DefaultXYPlot plot = new DefaultXYPlot();
+    plot.setDatasets(datasets);
+    plot.setPlotRenderer(plotRenderer);
+    
+    return plot;
+  }
+  
   public void attach() {
     onAttach();
     RootPanel.detachOnWindowClose(this);
@@ -57,10 +84,4 @@ public class ChartPanel extends Composite implements Exportable {
     plotPanel.setReadyListener(viewReadyCallback);
   }
 
-  protected PlotPanel createPlotPanel(Element elem, XYDataset[] datasets,
-      int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
-    if(elem == null) elem=DOM.createDiv();
-    return new PlotPanel(elem, datasets, chartWidth, chartHeight,
-        readyListener);
-  }
 }

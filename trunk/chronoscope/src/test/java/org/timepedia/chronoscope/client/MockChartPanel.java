@@ -1,11 +1,10 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.canvas.mock.MockView;
-import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.gss.MockGssContext;
 
 /**
  *
@@ -18,7 +17,7 @@ public class MockChartPanel implements ViewReadyCallback {
 
   private Chart chart;
 
-  private DefaultXYPlot plot;
+  private XYPlot plot;
 
   private ViewReadyCallback viewReadyCallback;
 
@@ -26,12 +25,12 @@ public class MockChartPanel implements ViewReadyCallback {
 
   private GssContext gssContext;
 
-  public MockChartPanel(XYDataset[] ds, int width, int height) {
+  public MockChartPanel(XYPlot plot, int width, int height) {
     this.width = width;
     this.height = height;
     
     // configure plot
-    this.plot = new DefaultXYPlot(ds, true);
+    this.plot = plot;
     this.plot.init(view);
     
   }

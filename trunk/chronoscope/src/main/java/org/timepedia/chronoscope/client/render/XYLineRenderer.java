@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
+import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -14,7 +13,7 @@ import org.timepedia.exporter.client.Exportable;
  * Implementation of XYRenderer which can render scatter plot, lines,
  * points+lines, or filled areas depending on GSS styling used.
  */
-public class XYLineRenderer extends XYRenderer
+public class XYLineRenderer<T extends XYDataset> extends XYRenderer<T>
     implements GssElement, Exportable {
 
   boolean prevHover = false;
@@ -66,7 +65,7 @@ public class XYLineRenderer extends XYRenderer
     fillElement = new GssElementImpl("fill", parentSeriesElement);
   }
 
-  public void beginCurve(XYPlot plot, Layer layer, RenderState renderState) {
+  public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
     lineProp = renderState.isDisabled() ? disabledLineProperties : gssLineProperties;
@@ -78,13 +77,13 @@ public class XYLineRenderer extends XYRenderer
     pointIndex = 0;
   }
 
-  public void beginPoints(XYPlot plot, Layer layer, RenderState renderState) {
+  public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
     pointProp = renderState.isDisabled() ? disabledPointProperties : gssPointProperties;
     lx = ly = -1;
     layer.save();
   }
 
-  public double calcLegendIconWidth(XYPlot plot, View view) {
+  public double calcLegendIconWidth(XYPlot<T> plot, View view) {
     initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
@@ -92,7 +91,7 @@ public class XYLineRenderer extends XYRenderer
     return apointProp.size + 10;
   }
 
-  public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
+  public void drawCurvePart(XYPlot<T> plot, Layer layer, double dataX,
       double dataY, int seriesNum, RenderState renderState) {
       double ux = plot.domainToScreenX(dataX, seriesNum);
       double uy = plot.rangeToScreenY(dataY, seriesNum);
@@ -123,7 +122,7 @@ public class XYLineRenderer extends XYRenderer
       ++pointIndex;
   }
   
-  public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
+  public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
@@ -172,7 +171,7 @@ public class XYLineRenderer extends XYRenderer
     return new Bounds(x, y, apointProp.size + 10, 10);
   }
 
-  public void drawPoint(XYPlot plot, Layer layer, double dataX, double dataY,
+  public void drawPoint(XYPlot<T> plot, Layer layer, double dataX, double dataY,
       int seriesNum, RenderState renderState) {
     
     final boolean hovered = renderState.isHovered();
@@ -216,7 +215,7 @@ public class XYLineRenderer extends XYRenderer
     }
   }
 
-  public void endCurve(XYPlot plot, Layer layer, int seriesNum, 
+  public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
 
     layer.setLineWidth(lineProp.lineThickness);
@@ -240,7 +239,7 @@ public class XYLineRenderer extends XYRenderer
     layer.restore();
   }
 
-  public void endPoints(XYPlot plot, Layer layer, int seriesNum, 
+  public void endPoints(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
     layer.restore();
   }

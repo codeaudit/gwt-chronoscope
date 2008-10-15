@@ -6,7 +6,6 @@ import org.timepedia.chronoscope.client.XYDatasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
@@ -17,7 +16,7 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer<T extends XYPlot> {
+public abstract class XYPlotRenderer<T extends XYDataset> {
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -34,18 +33,10 @@ public abstract class XYPlotRenderer<T extends XYPlot> {
   // domain interval) for the 3rd dataset in plot.datsets.
   private double[] minRanges, maxRanges;
   
-  private T plot;
+  private XYPlot<T> plot;
   
-  /**
-   * Constructs a new plot renderer bound to the specified plot.
-   */
-  public XYPlotRenderer(T plot) {
-    ArgChecker.isNotNull(plot, "plot");
-    this.plot = plot;
-  }
-
   private void computeVisibleDomainAndRange() {
-    XYDatasets datasets = plot.getDatasets();
+    XYDatasets<T> datasets = plot.getDatasets();
     final int numDatasets = datasets.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
@@ -90,7 +81,7 @@ public abstract class XYPlotRenderer<T extends XYPlot> {
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(int datasetIndex, Layer layer, T plot);
+  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot);
 
   public void drawDatasets() {
     final int numDatasets = plot.getDatasets().size();
@@ -106,6 +97,10 @@ public abstract class XYPlotRenderer<T extends XYPlot> {
     }
   }
 
+  public void setPlot(XYPlot<T> plot) {
+    this.plot = plot;
+  }
+  
   private void allocateArrayLengths(int numDatasets) {
     if (domainStartIdxs == null || domainStartIdxs.length != numDatasets) {
       datasetRenderOrder = new int[numDatasets];
