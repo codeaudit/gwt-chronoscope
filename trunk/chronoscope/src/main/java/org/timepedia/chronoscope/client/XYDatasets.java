@@ -168,7 +168,7 @@ public final class XYDatasets<T extends XYDataset> implements Iterable<T> {
     if (removedDataset instanceof MutableXYDataset) {
       ((MutableXYDataset) removedDataset).removeListener(myDatasetListener);
     }
-    myDatasetListener.onDatasetRemoved(removedDataset);
+    myDatasetListener.onDatasetRemoved(removedDataset, index);
     return removedDataset;
   }
 
@@ -242,10 +242,10 @@ public final class XYDatasets<T extends XYDataset> implements Iterable<T> {
       }
     }
 
-    public void onDatasetRemoved(T dataset) {
+    public void onDatasetRemoved(T dataset, int datasetIndex) {
       // forward event to external listeners
       for (XYDatasetListener<T> l : this.datasets.listeners) {
-        l.onDatasetRemoved(dataset);
+        l.onDatasetRemoved(dataset, datasetIndex);
       }
     }
   }

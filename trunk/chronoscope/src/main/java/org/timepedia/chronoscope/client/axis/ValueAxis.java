@@ -20,18 +20,18 @@ public abstract class ValueAxis {
 
   private String label;
 
-  private String unitLabel;
+  private String axisId;
 
   /**
    * Subclasses must call this constructor.
    *  
    * @param label - See {@link #getLabel()}
-   * @param unitLabel - A short label representing the units of this 
+   * @param axisId - A unique identifier representing the units of this 
    *      axis ("m/s", "$", etc.).
    */
-  protected ValueAxis(String label, String unitLabel) {
+  protected ValueAxis(String label, String axisId) {
     this.label = label;
-    this.unitLabel = unitLabel;
+    this.axisId = axisId;
   }
 
   /**
@@ -46,7 +46,7 @@ public abstract class ValueAxis {
    * Gets the short label representing the units of this axis (m/s, $, etc)
    */
   public String getAxisId() {
-    return unitLabel;
+    return axisId;
   }
 
   /**
