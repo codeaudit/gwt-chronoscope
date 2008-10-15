@@ -52,7 +52,7 @@ import org.timepedia.exporter.client.Exportable;
  * <li>Selection mode on/off
  * </ul>
  */
-public interface XYPlot extends Exportable {
+public interface XYPlot<T extends XYDataset> extends Exportable {
 
   /**
    * Add an overlay to this plot.
@@ -118,7 +118,7 @@ public interface XYPlot extends Exportable {
   /**
    * Returns the datasets associated with this plot.
    */
-  XYDatasets getDatasets();
+  XYDatasets<T> getDatasets();
   
   /**
    * Retrieve X value for a given dataset and point at current visible
@@ -219,7 +219,7 @@ public interface XYPlot extends Exportable {
   /**
    * Return the renderer for a given dataset index
    */
-  XYRenderer getRenderer(int datasetIndex);
+  XYRenderer<T> getRenderer(int datasetIndex);
 
   /**
    * Get the domain value of the beginning of the current selection
@@ -402,7 +402,7 @@ public interface XYPlot extends Exportable {
   /**
    * Set the plot renderer for a given dataset index.
    */
-  void setRenderer(int datasetIndex, XYRenderer renderer);
+  void setRenderer(int datasetIndex, XYRenderer<T> renderer);
 
   /**
    * Causes chart to perform an animated zoom such that the current selection

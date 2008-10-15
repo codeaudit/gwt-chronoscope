@@ -9,12 +9,11 @@ import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
  * ChartPanel is a GWT Widget that intercepts events and translates them to the
@@ -60,9 +59,11 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * creating a DefaultXYPlot using the given datasets, with a
    * ViewReadyCallback.
    */
-  public PlotPanel(Element container, XYDataset[] datasets, int chartWidth,
+  public PlotPanel(Element container, XYPlot plot, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
 
+    ArgChecker.isNotNull(plot, "plot");
+    
     view = (View) GWT.create(DOMView.class);
     if (gssContext == null) {
       gssContext = (BrowserGssContext) GWT
@@ -73,11 +74,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     this.readyListener = readyListener;
     initElement(container);
 
-    this.plot = createXYPlot(datasets);
-  }
-
-  protected XYPlot createXYPlot(XYDataset[] datasets) {
-    return new DefaultXYPlot(datasets, true);
+    this.plot = plot;
   }
 
   public void fireContextMenu(Event evt) {

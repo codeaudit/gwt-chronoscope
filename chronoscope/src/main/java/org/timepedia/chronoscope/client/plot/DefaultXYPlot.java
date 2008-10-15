@@ -26,7 +26,6 @@ import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
-import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYRenderer;
@@ -58,8 +57,8 @@ import java.util.Map;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
-    ZoomListener {
+public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable, 
+    XYDatasetListener<T>, ZoomListener {
 
   private static int globalPlotNumber = 0;
 
@@ -70,8 +69,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   // The maximum distance (only considers x-axis) that the mouse pointer can 
   // stray from a data point and still cause that point to be "hovered".
   private static final int MAX_HOVER_DIST = 8;
-
-  private static int MAX_DRAWABLE_DATAPOINTS = 400;
 
   private static final double MIN_PLOT_HEIGHT = 50;
 
@@ -94,7 +91,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private int currentMiplevels[];
 
-  private XYDatasets datasets;
+  private XYDatasets<T> datasets;
   
   private DomainAxisPanel domainAxisPanel;
   
@@ -121,6 +118,8 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   
   private boolean legendEnabled = true;
 
+  private int maxDrawableDatapoints = 400;
+
   private final NearestPoint nearestSingleton = new NearestPoint();
 
   private ArrayList<Overlay> overlays;
@@ -141,7 +140,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private int plotNumber = 0;
 
-  private XYPlotRenderer plotRenderer;
+  private XYPlotRenderer<T> plotRenderer;
 
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
@@ -161,7 +160,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private double visibleDomainMax;
 
-  private final List<XYRenderer> xyRenderers = new ArrayList<XYRenderer>();
+  private final List<XYRenderer<T>> xyRenderers = new ArrayList<XYRenderer<T>>();
 
   private enum DistanceFormula {
 
@@ -185,26 +184,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     abstract double dist(double x1, double y1, double x2, double y2);
   }
   
-  public DefaultXYPlot(XYDataset[] ds, boolean interactive) {
-    ArgChecker.isNotNull(ds, "ds");
-    ArgChecker.isGT(ds.length, 0, "ds.length");
-    
-    this.datasets = new XYDatasets(ds);
-    this.interactive = interactive;
-
-    MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
+  public DefaultXYPlot() {
+    this.interactive = true;
     overlays = new ArrayList<Overlay>();
-
-    hoverPoints = new int[ds.length];
-    resetHoverPoints();
-
-    plotRenderer = createXYPlotRenderer();
     plotNumber = globalPlotNumber++;
-    datasets.addListener(this);
-  }
-
-  protected ScalableXYPlotRenderer createXYPlotRenderer() {
-    return new ScalableXYPlotRenderer(this);
   }
 
   /**
@@ -404,7 +387,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public int getMaxDrawableDataPoints() {
-    return (int) (isAnimating ? MAX_DRAWABLE_DATAPOINTS : 1000);
+    return (int) (isAnimating ? maxDrawableDatapoints : 1000);
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
@@ -428,7 +411,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   /**
    * Returns the datasets associated with this plot.
    */
-  public XYDatasets getDatasets() {
+  public XYDatasets<T> getDatasets() {
     return this.datasets;
   }
    
@@ -444,7 +427,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     return rangeAxes.get(datasetIndex);
   }
 
-  public XYRenderer getRenderer(int datasetIndex) {
+  public XYRenderer<T> getRenderer(int datasetIndex) {
     return xyRenderers.get(datasetIndex);
   }
 
@@ -458,6 +441,9 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   public void init(View view) {
     ArgChecker.isNotNull(view, "view");
+    ArgChecker.isNotNull(datasets, "datasets");
+    ArgChecker.isNotNull(plotRenderer, "plotRenderer");
+    
     this.view = view;
     this.focus = null;
 
@@ -583,7 +569,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.initAndRedraw();
   }
 
-  public void onDatasetChanged(XYDataset dataset, double domainStart,
+  public void onDatasetChanged(T dataset, double domainStart,
       double domainEnd) {
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     int datasetIndex = this.datasets.indexOf(dataset);
@@ -775,7 +761,16 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
       currentMiplevels[datasetIndex] = mipLevel;
     }
   }
-
+  
+  public void setDatasets(XYDatasets<T> datasets) {
+    ArgChecker.isNotNull(datasets, "datasets");
+    ArgChecker.isGT(datasets.size(), 0, "datasets.size");
+    this.datasets = datasets;
+    if (datasets != null) {
+      datasets.addListener(this);
+    }
+  }
+  
   public void setFocus(Focus focus) {
     this.focus = focus;
   }
@@ -873,7 +868,14 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.overviewEnabled = overviewEnabled;
   }
 
-  public void setRenderer(int datasetIndex, XYRenderer r) {
+  public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
+   if (plotRenderer != null) {
+     plotRenderer.setPlot(this);
+   }
+    this.plotRenderer = plotRenderer;
+  }
+  
+  public void setRenderer(int datasetIndex, XYRenderer<T> r) {
     xyRenderers.set(datasetIndex, r);
   }
 
@@ -1182,12 +1184,12 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     
     if (xyRenderers.isEmpty()) {
       for (int i = 0; i < numDatasets; i++) {
-        xyRenderers.add(new XYLineRenderer(i));
+        xyRenderers.add(new XYLineRenderer<T>(i));
       }
     }
   }
 
-  private void initializeDomain(XYDatasets datasets) {
+  private void initializeDomain(XYDatasets<T> datasets) {
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
@@ -1237,7 +1239,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
-  private void initViewIndependent(XYDatasets datasets) {
+  private void initViewIndependent(XYDatasets<T> datasets) {
+    hoverPoints = new int[datasets.size()];
+    resetHoverPoints();
+    maxDrawableDatapoints = 100 / datasets.size();
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     initializeDomain(datasets);
     initDefaultRenderers(datasets.size());
