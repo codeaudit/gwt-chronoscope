@@ -5,7 +5,7 @@ import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.DateAxis;
@@ -91,7 +91,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
 
   private int currentMiplevels[];
 
-  private XYDatasets<T> datasets;
+  private Datasets<T> datasets;
   
   private DomainAxisPanel domainAxisPanel;
   
@@ -411,7 +411,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   /**
    * Returns the datasets associated with this plot.
    */
-  public XYDatasets<T> getDatasets() {
+  public Datasets<T> getDatasets() {
     return this.datasets;
   }
    
@@ -592,7 +592,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   public void onDatasetRemoved(XYDataset dataset, int datasetIndex) {
     if (datasets.isEmpty()) {
       throw new IllegalStateException(
-          "XYDatasets container is empty -- can't render plot.");
+          "Datasets container is empty -- can't render plot.");
     }
     
     // Remove any marker overlays bound to the removed dataset.
@@ -762,7 +762,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     }
   }
   
-  public void setDatasets(XYDatasets<T> datasets) {
+  public void setDatasets(Datasets<T> datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isGT(datasets.size(), 0, "datasets.size");
     this.datasets = datasets;
@@ -1189,7 +1189,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     }
   }
 
-  private void initializeDomain(XYDatasets<T> datasets) {
+  private void initializeDomain(Datasets<T> datasets) {
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
@@ -1239,7 +1239,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
-  private void initViewIndependent(XYDatasets<T> datasets) {
+  private void initViewIndependent(Datasets<T> datasets) {
     hoverPoints = new int[datasets.size()];
     resetHoverPoints();
     maxDrawableDatapoints = 100 / datasets.size();

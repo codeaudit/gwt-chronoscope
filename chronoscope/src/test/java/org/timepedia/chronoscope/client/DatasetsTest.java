@@ -12,13 +12,13 @@ import org.timepedia.chronoscope.client.data.XYDatasetRequest;
 /**
  * @author chad takahashi
  */
-public class XYDatasetsTest extends TestCase {
+public class DatasetsTest extends TestCase {
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
   private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
   
   public void testAggregateCalcs() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     grp.add(mds);
     assertEquals(1.0, grp.getMinDomain());
     assertEquals(2.0, grp.getMaxDomain());
@@ -32,7 +32,7 @@ public class XYDatasetsTest extends TestCase {
     XYDataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
     XYDataset ds1 = newDataset(new double[] {1.0}, new double[] {10.0});
     XYDataset ds2 = newDataset(new double[] {1.0}, new double[] {10.0});
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     grp.add(ds0);
     grp.add(ds1);
     grp.add(ds2);
@@ -44,7 +44,7 @@ public class XYDatasetsTest extends TestCase {
   }
   
   public void testIsEmpty() {
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     assertTrue(grp.isEmpty());
     grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertFalse(grp.isEmpty());
@@ -54,7 +54,7 @@ public class XYDatasetsTest extends TestCase {
   
   public void testMutableDataset() {
     MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     grp.add(mds);
     
     mds.mutate(Mutation.append(3.0, 30.0));
@@ -73,7 +73,7 @@ public class XYDatasetsTest extends TestCase {
     XYDataset ds0 = newMutableDataset(new double[] {2.0, 5.0}, new double[] {10.0, 11.0});
     XYDataset ds1 = newMutableDataset(new double[] {1.0, 8.0}, new double[] {30.0, 4.0});
     XYDataset ds2 = newMutableDataset(new double[] {3.0, 7.0}, new double[] {20.0, 5.0});
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     grp.add(ds0);
     grp.add(ds1);
     grp.add(ds2);
@@ -102,7 +102,7 @@ public class XYDatasetsTest extends TestCase {
   }
   
   public void testSize() {
-    XYDatasets grp = new XYDatasets();
+    Datasets grp = new Datasets();
     assertEquals(0, grp.size());
     grp.add(newDataset(new double[] {1.0}, new double[] {10.0}));
     assertEquals(1, grp.size());

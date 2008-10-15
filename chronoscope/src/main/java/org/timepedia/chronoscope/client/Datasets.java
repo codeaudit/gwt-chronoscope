@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author chad takahashi
  */
-public final class XYDatasets<T extends XYDataset> implements Iterable<T> {
+public final class Datasets<T extends XYDataset> implements Iterable<T> {
 
   private double minInterval = Double.POSITIVE_INFINITY;
 
@@ -37,14 +37,14 @@ public final class XYDatasets<T extends XYDataset> implements Iterable<T> {
   /**
    * Constructs an empty dataset container.
    */
-  public XYDatasets() {
+  public Datasets() {
     this.myDatasetListener = new DatasetListener<T>(this);
   }
 
   /**
-   * Constructs a {@link XYDatasets} from the specified array of datasets.
+   * Constructs a {@link Datasets} from the specified array of datasets.
    */
-  public XYDatasets(T[] datasets) {
+  public Datasets(T[] datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     this.myDatasetListener = new DatasetListener<T>(this);
     for (T dataset : datasets) {
@@ -217,9 +217,9 @@ public final class XYDatasets<T extends XYDataset> implements Iterable<T> {
   private static final class DatasetListener<T extends XYDataset>
       implements XYDatasetListener<T> {
 
-    private XYDatasets<T> datasets;
+    private Datasets<T> datasets;
 
-    public DatasetListener(XYDatasets<T> datasets) {
+    public DatasetListener(Datasets<T> datasets) {
       this.datasets = datasets;
     }
 

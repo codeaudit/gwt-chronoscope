@@ -12,7 +12,7 @@ public class ChronoscopeMock {
   public static MockChartPanel createTimeseriesChart(XYDataset[] ds, int width,
       int height) {
 
-    XYDatasets<XYDataset> datasets = new XYDatasets<XYDataset>(ds);
+    Datasets<XYDataset> datasets = new Datasets<XYDataset>(ds);
     XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
 
     DefaultXYPlot plot = new DefaultXYPlot();
