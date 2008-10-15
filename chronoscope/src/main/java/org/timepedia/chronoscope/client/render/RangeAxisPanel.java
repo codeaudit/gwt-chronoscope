@@ -95,7 +95,7 @@ public class RangeAxisPanel extends AxisPanel {
   }
 
   public String getTypeClass() {
-    return "a" + rangeAxis.getAxisNumber();
+    return "a" + rangeAxis.getAxisIndex();
   }
 
   @Override

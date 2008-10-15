@@ -18,6 +18,7 @@ import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
@@ -43,6 +44,7 @@ import org.timepedia.exporter.client.Exportable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -145,7 +147,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
   // bound to.  The relationship from dataset to axis is 
   // many-to-one.
-  private RangeAxis[] rangeAxes;
+  private List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
 
   private CompositeAxisPanel rangePanelLeft, rangePanelRight;
 
@@ -159,7 +161,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
   private double visibleDomainMax;
 
-  private final XYRenderer[] xyRenderers;
+  private final List<XYRenderer> xyRenderers = new ArrayList<XYRenderer>();
 
   private enum DistanceFormula {
 
@@ -192,7 +194,6 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
 
     MAX_DRAWABLE_DATAPOINTS = 100 / ds.length;
     overlays = new ArrayList<Overlay>();
-    xyRenderers = new XYRenderer[ds.length];
 
     hoverPoints = new int[ds.length];
     resetHoverPoints();
@@ -440,11 +441,11 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    */
   @Export("getAxis")
   public RangeAxis getRangeAxis(int datasetIndex) {
-    return rangeAxes[datasetIndex];
+    return rangeAxes.get(datasetIndex);
   }
 
   public XYRenderer getRenderer(int datasetIndex) {
-    return xyRenderers[datasetIndex];
+    return xyRenderers.get(datasetIndex);
   }
 
   public double getSelectionBegin() {
@@ -460,7 +461,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     this.view = view;
     this.focus = null;
 
-    initViewIndependent();
+    initViewIndependent(datasets);
     
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker.isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
@@ -602,11 +603,48 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     }
   }
 
-  public void onDatasetRemoved(XYDataset dataset) {
+  public void onDatasetRemoved(XYDataset dataset, int datasetIndex) {
     if (datasets.isEmpty()) {
       throw new IllegalStateException(
           "XYDatasets container is empty -- can't render plot.");
     }
+    
+    // Remove any marker overlays bound to the removed dataset.
+    List<Overlay> tmpOverlays = overlays;
+    overlays = new ArrayList<Overlay>();
+    for (int i = 0; i < tmpOverlays.size(); i++) {
+      Overlay o = tmpOverlays.get(i);
+      if (o instanceof Marker) {
+        Marker m = (Marker)o;
+        int markerDatasetIdx = m.getDatasetIndex();
+        boolean doRemoveMarker = false;
+        if (markerDatasetIdx == datasetIndex) {
+          m.setDatasetIndex(-1);
+          doRemoveMarker = true;
+        }
+        else if (markerDatasetIdx > datasetIndex) {
+          // HACKITY-HACK! 
+          // Since Marker objects currently store the
+          // ordinal position of the dataset to which they are bound,
+          // we need to decrement all of the indices that are >= 
+          // the index of the dataset being removed.
+          m.setDatasetIndex(markerDatasetIdx - 1);
+        }
+        
+        if (!doRemoveMarker) {
+          overlays.add(o);
+        }
+      }
+      else {
+        overlays.add(o);
+      }
+    }
+    
+    rangeAxes.remove(datasetIndex);
+    xyRenderers.remove(datasetIndex);
+    this.rangePanelLeft = null;
+    this.rangePanelRight = null;
+    this.id2rangeAxis.clear();
     
     initAndRedraw();
   }
@@ -686,7 +724,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     init(view);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
-    initializeDomain();
+    initializeDomain(datasets);
     redraw();
     tmpPlotDomain.copyTo(plotDomain);
     overlays = oldOverlays;
@@ -727,7 +765,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
-    rangeAxes[dataset].setAutoZoomVisibleRange(autoZoom);
+    rangeAxes.get(dataset).setAutoZoomVisibleRange(autoZoom);
   }
 
   public void setCurrentMipLevel(int datasetIndex, int mipLevel) {
@@ -836,7 +874,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   }
 
   public void setRenderer(int datasetIndex, XYRenderer r) {
-    xyRenderers[datasetIndex] = r;
+    xyRenderers.set(datasetIndex, r);
   }
 
   public double windowXtoUser(double x) {
@@ -850,19 +888,20 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
-  private RangeAxis[] autoAssignDatasetAxes() {
+  private List<RangeAxis> autoAssignDatasetAxes() {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
 
-    RangeAxis[] rangeAxes = new RangeAxis[datasets.size()];
+    List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
     
-    int rangeAxisCount = 0;
     for (int i = 0; i < datasets.size(); i++) {
       XYDataset ds = datasets.get(i);
       RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
       
       if (ra == null) {
-        boolean useLeftPanel = (rangeAxisCount++ % 2) == 0;
+        int numLeftAxes = rangePanelLeft.getAxisCount();
+        int numRightAxes = rangePanelRight.getAxisCount();
+        boolean useLeftPanel = (numLeftAxes <= numRightAxes);
         CompositeAxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
         ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
             ds.getRangeBottom(), ds.getRangeTop());
@@ -878,7 +917,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
             Math.max(ra.getUnadjustedRangeHigh(), ds.getRangeTop()));
       }
       
-      rangeAxes[i] = ra;
+      rangeAxes.add(ra);
     }
     
     return rangeAxes;
@@ -1136,15 +1175,19 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
     Arrays.fill(currentMiplevels, 0);
   }
 
-  private void initDefaultRenderers() {
-    for (int i = 0; i < xyRenderers.length; i++) {
-      if (xyRenderers[i] == null) {
-        xyRenderers[i] = new XYLineRenderer(i);
+  private void initDefaultRenderers(int numDatasets) {
+    if (xyRenderers.size() != numDatasets) {
+      xyRenderers.clear();
+    }
+    
+    if (xyRenderers.isEmpty()) {
+      for (int i = 0; i < numDatasets; i++) {
+        xyRenderers.add(new XYLineRenderer(i));
       }
     }
   }
 
-  private void initializeDomain() {
+  private void initializeDomain(XYDatasets datasets) {
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
@@ -1194,10 +1237,10 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
-  private void initViewIndependent() {
+  private void initViewIndependent(XYDatasets datasets) {
     visibleDomainMax = Util.calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
-    initializeDomain();
-    initDefaultRenderers();
+    initializeDomain(datasets);
+    initDefaultRenderers(datasets.size());
     initMipLevels();
   }
 
@@ -1328,7 +1371,7 @@ public class DefaultXYPlot implements XYPlot, Exportable, XYDatasetListener,
   private static boolean pointExists(int pointIndex) {
     return pointIndex > NO_SELECTION;
   }
-
+  
   /**
    * Render the Plot into the encapsulating Chart's View.
    */

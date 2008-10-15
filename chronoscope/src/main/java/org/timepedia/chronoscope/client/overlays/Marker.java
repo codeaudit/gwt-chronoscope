@@ -119,7 +119,11 @@ public class Marker implements Overlay, GssElement, Exportable {
         Cursor.CLICKABLE);
     backingCanvas.restore();
   }
-
+  
+  public int getDatasetIndex() {
+    return this.datasetIdx;
+  }
+  
   public double getDomainX() {
     return domainX;
   }
@@ -188,10 +192,18 @@ public class Marker implements Overlay, GssElement, Exportable {
     }
   }
 
+  public void setDatasetIndex(int datasetIndex) {
+    this.datasetIdx = datasetIndex;
+  }
+  
   public void setPlot(XYPlot plot) {
     ArgChecker.isNotNull(plot, "plot");
     this.plot = plot;
     rangeY = interpolateRangeY(domainX, datasetIdx);
+  }
+  
+  public String toString() {
+    return this.label;
   }
   
   public static double drawOval(int width, int height, GssProperties markerProperties, Layer backingCanvas, double x,

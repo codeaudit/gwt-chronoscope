@@ -142,7 +142,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private double adjustedRangeLow, adjustedRangeHigh;
 
-  private final int axisNum;
+  private final int axisIndex;
 
   private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
 
@@ -170,10 +170,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
   
   private double visRangeMin, visRangeMax;
 
-  public RangeAxis(XYPlot plot, View view, String label, String units, int axisNum,
+  public RangeAxis(XYPlot plot, View view, String rangeLabel, String axisId, int axisIndex,
       double rangeLow, double rangeHigh) {
-    super(label, units);
-    this.axisNum = axisNum;
+    super(rangeLabel, axisId);
+    this.axisIndex = axisIndex;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
         = new DefaultTickLabelNumberFormatter();
     this.plot = plot;
@@ -208,8 +208,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return (dataY - getRangeLow()) / getRange();
   }
 
-  public int getAxisNumber() {
-    return axisNum;
+  public int getAxisIndex() {
+    return axisIndex;
   }
 
   public String getFormattedLabel(double label) {
