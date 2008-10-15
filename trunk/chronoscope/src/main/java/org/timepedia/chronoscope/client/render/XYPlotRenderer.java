@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -36,7 +36,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
   private XYPlot<T> plot;
   
   private void computeVisibleDomainAndRange() {
-    XYDatasets<T> datasets = plot.getDatasets();
+    Datasets<T> datasets = plot.getDatasets();
     final int numDatasets = datasets.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {

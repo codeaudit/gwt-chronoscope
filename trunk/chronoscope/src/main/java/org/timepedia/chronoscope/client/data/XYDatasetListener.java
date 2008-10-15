@@ -3,7 +3,7 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.XYDataset;
 
 /**
- * Tracks modifications to an {@link XYDatasets} container and its
+ * Tracks modifications to an {@link Datasets} container and its
  * constituent {@link XYDataset} elements.
  */
 public interface XYDatasetListener<T extends XYDataset> {

@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -151,7 +151,7 @@ public class DatasetLegendPanel extends AbstractPanel {
    * label widths.
    */
   private double[] calcInitialLabelWidths(XYPlot plot, Layer layer) {
-    XYDatasets datasets = plot.getDatasets();
+    Datasets datasets = plot.getDatasets();
     double[] estMaxWidths = new double[datasets.size()];
     for (int i = 0; i < estMaxWidths.length; i++) {
       int medianIdx = datasets.get(i).getNumSamples() >> 1;

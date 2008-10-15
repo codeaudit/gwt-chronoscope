@@ -118,7 +118,7 @@ public interface XYPlot<T extends XYDataset> extends Exportable {
   /**
    * Returns the datasets associated with this plot.
    */
-  XYDatasets<T> getDatasets();
+  Datasets<T> getDatasets();
   
   /**
    * Retrieve X value for a given dataset and point at current visible
@@ -146,7 +146,7 @@ public interface XYPlot<T extends XYDataset> extends Exportable {
   /**
    * The maximum <b>visible</b> domain value over all datasets taking into
    * account multiresolution representations.  This value will differ from
-   * {@link XYDatasets#getMaxDomain()} if the zoomed out view of the Plot forces 
+   * {@link Datasets#getMaxDomain()} if the zoomed out view of the Plot forces 
    * the renderer to use a coarser representation that may have different values. 
    * This can happen if dataset values in higher levels use interpolation rather 
    * than point sampling, for example.

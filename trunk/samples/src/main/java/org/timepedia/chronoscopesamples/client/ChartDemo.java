@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
@@ -47,7 +47,7 @@ public class ChartDemo implements EntryPoint {
 
       TabPanel vp = new TabPanel();
       
-      final XYDatasets ds = new XYDatasets();
+      final Datasets ds = new Datasets();
       ds.add(Chronoscope.createXYDataset(getJson("unratedata")));
       ds.add(new MockXYDataset());
       

@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.util;
 
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 
 /**
  * Conglomeration of common utility functions.
@@ -44,7 +44,7 @@ public final class Util {
     return MathUtil.bound(low, 0, ds.getNumSamples(mipLevel) - 1);
   }
 
-  public static double calcVisibleDomainMax(int maxDrawableDataPts, XYDatasets dataSets) {
+  public static double calcVisibleDomainMax(int maxDrawableDataPts, Datasets dataSets) {
     double end = Double.MIN_VALUE;
     for (int i = 0; i < dataSets.size(); i++) {
       XYDataset ds = dataSets.get(i);

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.XYDatasets;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -43,8 +43,8 @@ public class ChartPanel extends Composite implements Exportable {
 
   protected XYPlot createPlot(XYDataset[] datasetArray) {
     
-    XYDatasets<XYDataset> datasets = 
-        new XYDatasets<XYDataset>(datasetArray);
+    Datasets<XYDataset> datasets = 
+        new Datasets<XYDataset>(datasetArray);
     
     XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
     
