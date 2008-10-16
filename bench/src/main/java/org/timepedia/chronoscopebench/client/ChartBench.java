@@ -21,7 +21,7 @@ import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.MockXYDataset;
+import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 
@@ -38,7 +38,9 @@ public class ChartBench implements EntryPoint {
   private static volatile double GOLDEN__RATIO = 1.618;
 
   private FlexTable benchTable;
-
+  
+  private MockDatasetFactory mockDsFactory = new MockDatasetFactory();
+  
   private static native JSONDataset getJson(String varName) /*-{
        return $wnd[varName];   
     }-*/;
@@ -56,7 +58,7 @@ public class ChartBench implements EntryPoint {
 
       final XYDataset[] ds = new XYDataset[2];
       ds[0] = Chronoscope.createXYDataset(getJson("unratedata"));
-      ds[1] = new MockXYDataset();
+      ds[1] = mockDsFactory.getBasicDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {

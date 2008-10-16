@@ -5,14 +5,15 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
-import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.Datasets;
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.MockXYDataset;
+import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 
@@ -49,7 +50,10 @@ public class ChartDemo implements EntryPoint {
       
       final Datasets ds = new Datasets();
       ds.add(Chronoscope.createXYDataset(getJson("unratedata")));
-      ds.add(new MockXYDataset());
+      
+      MockDatasetFactory datasetFactory = new MockDatasetFactory();
+      XYDataset mockDataset = datasetFactory.getBasicDataset(); 
+      ds.add(mockDataset);
       
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds.toArray(), chartWidth, chartHeight);
