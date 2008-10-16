@@ -34,10 +34,10 @@ public class GregorianEraCalc extends EraCalc {
   int minYear = 1950;
   private double minTimeStamp = getJavaTimestamp(1950); 
 
-  int maxYear = 2999;
+  int maxYear = 12999;
   private double maxTimeStamp = getJavaTimestamp(maxYear + 1);
 
-  private int maxLeapCentury = 2800;
+  private int maxLeapCentury = 12800;
   private double maxLeapCenturyTimestamp = getJavaTimestamp(maxLeapCentury);
   
   /**
