@@ -97,11 +97,11 @@ java.lang.Object
               <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.timepedia.chronoscope.server.servlet.FontRenderer</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>com.google.gwt.user.client.rpc.RemoteService, com.google.gwt.user.server.rpc.SerializationPolicyProvider, java.io.Serializable, javax.servlet.Servlet, javax.servlet.ServletConfig, <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.client.canvas">FontRendererService</A></DD>
+<DT><B>All Implemented Interfaces:</B> <DD>com.google.gwt.user.client.rpc.RemoteService, com.google.gwt.user.server.rpc.SerializationPolicyProvider, java.io.Serializable, javax.servlet.Servlet, javax.servlet.ServletConfig, <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.junit.canvas">FontRendererService</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>FontRenderer</B><DT>extends com.google.gwt.user.server.rpc.RemoteServiceServlet<DT>implements <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.client.canvas">FontRendererService</A></DL>
+<DT><PRE>public class <B>FontRenderer</B><DT>extends com.google.gwt.user.server.rpc.RemoteServiceServlet<DT>implements <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.junit.canvas">FontRendererService</A></DL>
 </PRE>
 
 <P>
@@ -130,10 +130,11 @@ Servlet which implements FontRenderService for returning font metrics as well
 &nbsp;<A NAME="nested_classes_inherited_from_class_org.timepedia.chronoscope.client.canvas.FontRendererService"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface org.timepedia.chronoscope.client.canvas.<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.client.canvas">FontRendererService</A></B></TH>
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface
+  org.timepedia.chronoscope.junit.canvas.<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.junit.canvas">FontRendererService</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.FontRenderServiceUtil.html" title="class in org.timepedia.chronoscope.client.canvas">FontRendererService.FontRenderServiceUtil</A></CODE></TD>
+<TD><CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.FontRenderServiceUtil.html" title="class in org.timepedia.chronoscope.junit.canvas">FontRendererService.FontRenderServiceUtil</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -173,7 +174,7 @@ Servlet which implements FontRenderService for returning font metrics as well
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas">RenderedFontMetrics</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas">RenderedFontMetrics</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/server/servlet/FontRenderer.html#getRenderedFontMetrics(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)">getRenderedFontMetrics</A></B>(javax.servlet.http.HttpServletRequest&nbsp;req,
                        java.lang.String&nbsp;fontFamily,
                        java.lang.String&nbsp;fontWeight,
@@ -186,7 +187,7 @@ Servlet which implements FontRenderService for returning font metrics as well
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas">RenderedFontMetrics</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas">RenderedFontMetrics</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/server/servlet/FontRenderer.html#getRenderedFontMetrics(java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)">getRenderedFontMetrics</A></B>(java.lang.String&nbsp;fontFamily,
                        java.lang.String&nbsp;fontWeight,
                        java.lang.String&nbsp;fontSize,
@@ -286,14 +287,14 @@ public void <B>doGet</B>(javax.servlet.http.HttpServletRequest&nbsp;req,
 <A NAME="getRenderedFontMetrics(java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)"><!-- --></A><H3>
 getRenderedFontMetrics</H3>
 <PRE>
-public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas">RenderedFontMetrics</A> <B>getRenderedFontMetrics</B>(java.lang.String&nbsp;fontFamily,
+public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas">RenderedFontMetrics</A> <B>getRenderedFontMetrics</B>(java.lang.String&nbsp;fontFamily,
                                                   java.lang.String&nbsp;fontWeight,
                                                   java.lang.String&nbsp;fontSize,
                                                   java.lang.String&nbsp;color,
                                                   float&nbsp;angle)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html#getRenderedFontMetrics(java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)">getRenderedFontMetrics</A></CODE> in interface <CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.client.canvas">FontRendererService</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html#getRenderedFontMetrics(java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)">getRenderedFontMetrics</A></CODE> in interface <CODE><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/FontRendererService.html" title="interface in org.timepedia.chronoscope.junit.canvas">FontRendererService</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -304,7 +305,7 @@ public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedF
 <A NAME="getRenderedFontMetrics(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String, java.lang.String, java.lang.String, float)"><!-- --></A><H3>
 getRenderedFontMetrics</H3>
 <PRE>
-public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas">RenderedFontMetrics</A> <B>getRenderedFontMetrics</B>(javax.servlet.http.HttpServletRequest&nbsp;req,
+public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/RenderedFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas">RenderedFontMetrics</A> <B>getRenderedFontMetrics</B>(javax.servlet.http.HttpServletRequest&nbsp;req,
                                                   java.lang.String&nbsp;fontFamily,
                                                   java.lang.String&nbsp;fontWeight,
                                                   java.lang.String&nbsp;fontSize,

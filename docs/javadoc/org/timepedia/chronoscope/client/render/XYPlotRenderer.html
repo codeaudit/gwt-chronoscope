@@ -8,7 +8,7 @@
 XYPlotRenderer (Chronoscope Chart 1.0-SNAPSHOT API)
 </TITLE>
 
-<META NAME="keywords" CONTENT="org.timepedia.chronoscope.client.render.XYPlotRenderer class">
+<META NAME="keywords" CONTENT="org.timepedia.chronoscope.junit.render.XYPlotRenderer class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
 
@@ -53,8 +53,8 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYLineRenderer.html" title="class in org.timepedia.chronoscope.client.render"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.client.render"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYLineRenderer.html" title="class in org.timepedia.chronoscope.junit.render"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.junit.render"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?org/timepedia/chronoscope/client/render/XYPlotRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="XYPlotRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -86,15 +86,15 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
-org.timepedia.chronoscope.client.render</FONT>
+  org.timepedia.chronoscope.junit.render</FONT>
 <BR>
 Class XYPlotRenderer</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.timepedia.chronoscope.client.render.XYPlotRenderer</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.timepedia.chronoscope.junit.render.XYPlotRenderer</B>
 </PRE>
 <DL>
-<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/timepedia/chronoscope/client/render/ScalableXYPlotRenderer.html" title="class in org.timepedia.chronoscope.client.render">ScalableXYPlotRenderer</A></DD>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/timepedia/chronoscope/client/render/ScalableXYPlotRenderer.html" title="class in org.timepedia.chronoscope.junit.render">ScalableXYPlotRenderer</A></DD>
 </DL>
 <HR>
 <DL>
@@ -160,9 +160,9 @@ Responsible for iterating over datasets in a defined drawing order, and then
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>abstract &nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/render/XYPlotRenderer.html#drawDataset(org.timepedia.chronoscope.client.canvas.Layer, org.timepedia.chronoscope.client.XYDataset, org.timepedia.chronoscope.client.render.XYRenderer, int, org.timepedia.chronoscope.client.XYPlot)">drawDataset</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A>&nbsp;can,
+<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/render/XYPlotRenderer.html#drawDataset(org.timepedia.chronoscope.junit.canvas.Layer, org.timepedia.chronoscope.client.XYDataset, org.timepedia.chronoscope.junit.render.XYRenderer, int, org.timepedia.chronoscope.client.XYPlot)">drawDataset</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A>&nbsp;can,
             <A HREF="../../../../../org/timepedia/chronoscope/client/XYDataset.html" title="interface in org.timepedia.chronoscope.client">XYDataset</A>&nbsp;dataSet,
-            <A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.client.render">XYRenderer</A>&nbsp;xyRenderer,
+            <A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.junit.render">XYRenderer</A>&nbsp;xyRenderer,
             int&nbsp;seriesNum,
             <A HREF="../../../../../org/timepedia/chronoscope/client/XYPlot.html" title="interface in org.timepedia.chronoscope.client">XYPlot</A>&nbsp;plot)</CODE>
 
@@ -244,12 +244,12 @@ public <B>XYPlotRenderer</B>(<A HREF="../../../../../org/timepedia/chronoscope/c
 </TR>
 </TABLE>
 
-<A NAME="drawDataset(org.timepedia.chronoscope.client.canvas.Layer, org.timepedia.chronoscope.client.XYDataset, org.timepedia.chronoscope.client.render.XYRenderer, int, org.timepedia.chronoscope.client.XYPlot)"><!-- --></A><H3>
+<A NAME="drawDataset(org.timepedia.chronoscope.junit.canvas.Layer, org.timepedia.chronoscope.client.XYDataset, org.timepedia.chronoscope.junit.render.XYRenderer, int, org.timepedia.chronoscope.client.XYPlot)"><!-- --></A><H3>
 drawDataset</H3>
 <PRE>
-public abstract void <B>drawDataset</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A>&nbsp;can,
+public abstract void <B>drawDataset</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A>&nbsp;can,
                                  <A HREF="../../../../../org/timepedia/chronoscope/client/XYDataset.html" title="interface in org.timepedia.chronoscope.client">XYDataset</A>&nbsp;dataSet,
-                                 <A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.client.render">XYRenderer</A>&nbsp;xyRenderer,
+                                 <A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.junit.render">XYRenderer</A>&nbsp;xyRenderer,
                                  int&nbsp;seriesNum,
                                  <A HREF="../../../../../org/timepedia/chronoscope/client/XYPlot.html" title="interface in org.timepedia.chronoscope.client">XYPlot</A>&nbsp;plot)</PRE>
 <DL>
@@ -312,8 +312,8 @@ public int[] <B>sortDatasetsIntoRenderOrder</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYLineRenderer.html" title="class in org.timepedia.chronoscope.client.render"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.client.render"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYLineRenderer.html" title="class in org.timepedia.chronoscope.junit.render"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/render/XYRenderer.html" title="class in org.timepedia.chronoscope.junit.render"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?org/timepedia/chronoscope/client/render/XYPlotRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="XYPlotRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

@@ -71,14 +71,6 @@
 <!--        <module>chronoscope-java2d</module> -->
     </modules>
 
-   <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-            <id>timepedia-deploy</id>
-            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </distributionManagement>
-
 
     <build>
         <plugins>

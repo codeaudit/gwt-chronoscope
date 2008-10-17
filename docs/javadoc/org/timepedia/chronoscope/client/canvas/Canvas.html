@@ -8,7 +8,7 @@
 Canvas (Chronoscope Chart 1.0-SNAPSHOT API)
 </TITLE>
 
-<META NAME="keywords" CONTENT="org.timepedia.chronoscope.client.canvas.Canvas class">
+<META NAME="keywords" CONTENT="org.timepedia.chronoscope.junit.canvas.Canvas class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
 
@@ -53,8 +53,8 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.client.canvas"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.junit.canvas"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?org/timepedia/chronoscope/client/canvas/Canvas.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Canvas.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -86,12 +86,12 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
-org.timepedia.chronoscope.client.canvas</FONT>
+  org.timepedia.chronoscope.junit.canvas</FONT>
 <BR>
 Class Canvas</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.timepedia.chronoscope.client.canvas.Canvas</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.timepedia.chronoscope.junit.canvas.Canvas</B>
 </PRE>
 <DL>
 <DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/timepedia/chronoscope/client/browser/BrowserCanvas.html" title="class in org.timepedia.chronoscope.client.browser">BrowserCanvas</A>, <A HREF="../../../../../org/timepedia/chronoscope/client/browser/flashcanvas/FlashCanvas.html" title="class in org.timepedia.chronoscope.client.browser.flashcanvas">FlashCanvas</A></DD>
@@ -136,7 +136,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#Canvas(org.timepedia.chronoscope.client.canvas.View)">Canvas</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A>&nbsp;view)</CODE>
+<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#Canvas(org.timepedia.chronoscope.junit.canvas.View)">Canvas</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A>&nbsp;view)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -154,8 +154,8 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#attach(org.timepedia.chronoscope.client.canvas.View, org.timepedia.chronoscope.client.canvas.CanvasReadyCallback)">attach</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A>&nbsp;view,
-       <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasReadyCallback.html" title="interface in org.timepedia.chronoscope.client.canvas">CanvasReadyCallback</A>&nbsp;canvasReadyCallback)</CODE>
+<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#attach(org.timepedia.chronoscope.junit.canvas.View, org.timepedia.chronoscope.junit.canvas.CanvasReadyCallback)">attach</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A>&nbsp;view,
+       <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasReadyCallback.html" title="interface in org.timepedia.chronoscope.junit.canvas">CanvasReadyCallback</A>&nbsp;canvasReadyCallback)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attach the layer to the UI tree and invoke callback if and only if it is
@@ -179,9 +179,9 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#createLayer(java.lang.String, org.timepedia.chronoscope.client.canvas.Bounds)">createLayer</A></B>(java.lang.String&nbsp;layerId,
-            <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.client.canvas">Bounds</A>&nbsp;bounds)</CODE>
+<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#createLayer(java.lang.String, org.timepedia.chronoscope.junit.canvas.Bounds)">createLayer</A></B>(java.lang.String&nbsp;layerId,
+            <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.junit.canvas">Bounds</A>&nbsp;bounds)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a layer with the given id and bounds.</TD>
@@ -189,7 +189,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#disposeLayer(org.timepedia.chronoscope.client.canvas.Layer)">disposeLayer</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A>&nbsp;layer)</CODE>
+<TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#disposeLayer(org.timepedia.chronoscope.junit.canvas.Layer)">disposeLayer</A></B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A>&nbsp;layer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -212,7 +212,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html" title="class in org.timepedia.chronoscope.client.canvas">Canvas</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html" title="class in org.timepedia.chronoscope.junit.canvas">Canvas</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#getCanvas()">getCanvas</A></B>()</CODE>
 
 <BR>
@@ -220,7 +220,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A></CODE></FONT></TD>
+<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#getLayer(java.lang.String)">getLayer</A></B>(java.lang.String&nbsp;layerId)</CODE>
 
 <BR>
@@ -228,7 +228,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A></CODE></FONT></TD>
+<CODE>abstract &nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#getRootLayer()">getRootLayer</A></B>()</CODE>
 
 <BR>
@@ -236,7 +236,7 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html#getView()">getView</A></B>()</CODE>
 
 <BR>
@@ -265,10 +265,10 @@ Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
 </TR>
 </TABLE>
 
-<A NAME="Canvas(org.timepedia.chronoscope.client.canvas.View)"><!-- --></A><H3>
+<A NAME="Canvas(org.timepedia.chronoscope.junit.canvas.View)"><!-- --></A><H3>
 Canvas</H3>
 <PRE>
-protected <B>Canvas</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A>&nbsp;view)</PRE>
+protected <B>Canvas</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A>&nbsp;view)</PRE>
 <DL>
 </DL>
 
@@ -282,11 +282,11 @@ protected <B>Canvas</B>(<A HREF="../../../../../org/timepedia/chronoscope/client
 </TR>
 </TABLE>
 
-<A NAME="attach(org.timepedia.chronoscope.client.canvas.View, org.timepedia.chronoscope.client.canvas.CanvasReadyCallback)"><!-- --></A><H3>
+<A NAME="attach(org.timepedia.chronoscope.junit.canvas.View, org.timepedia.chronoscope.junit.canvas.CanvasReadyCallback)"><!-- --></A><H3>
 attach</H3>
 <PRE>
-public void <B>attach</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A>&nbsp;view,
-                   <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasReadyCallback.html" title="interface in org.timepedia.chronoscope.client.canvas">CanvasReadyCallback</A>&nbsp;canvasReadyCallback)</PRE>
+public void <B>attach</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A>&nbsp;view,
+                   <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasReadyCallback.html" title="interface in org.timepedia.chronoscope.junit.canvas">CanvasReadyCallback</A>&nbsp;canvasReadyCallback)</PRE>
 <DL>
 <DD>Attach the layer to the UI tree and invoke callback if and only if it is
  ready for rendering operations. This is vitally important for plugin-based
@@ -326,11 +326,11 @@ public void <B>canvasSetupDone</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="createLayer(java.lang.String, org.timepedia.chronoscope.client.canvas.Bounds)"><!-- --></A><H3>
+<A NAME="createLayer(java.lang.String, org.timepedia.chronoscope.junit.canvas.Bounds)"><!-- --></A><H3>
 createLayer</H3>
 <PRE>
-public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A> <B>createLayer</B>(java.lang.String&nbsp;layerId,
-                                  <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.client.canvas">Bounds</A>&nbsp;bounds)</PRE>
+public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A> <B>createLayer</B>(java.lang.String&nbsp;layerId,
+                                  <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.junit.canvas">Bounds</A>&nbsp;bounds)</PRE>
 <DL>
 <DD>Create a layer with the given id and bounds. Creating a layer that already
  exists will return the previously created layer
@@ -354,10 +354,10 @@ public abstract void <B>disposeLayer</B>(java.lang.String&nbsp;layerId)</PRE>
 </DL>
 <HR>
 
-<A NAME="disposeLayer(org.timepedia.chronoscope.client.canvas.Layer)"><!-- --></A><H3>
+<A NAME="disposeLayer(org.timepedia.chronoscope.junit.canvas.Layer)"><!-- --></A><H3>
 disposeLayer</H3>
 <PRE>
-public void <B>disposeLayer</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A>&nbsp;layer)</PRE>
+public void <B>disposeLayer</B>(<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A>&nbsp;layer)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -381,7 +381,7 @@ public void <B>endFrame</B>()</PRE>
 <A NAME="getCanvas()"><!-- --></A><H3>
 getCanvas</H3>
 <PRE>
-public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html" title="class in org.timepedia.chronoscope.client.canvas">Canvas</A> <B>getCanvas</B>()</PRE>
+public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.html" title="class in org.timepedia.chronoscope.junit.canvas">Canvas</A> <B>getCanvas</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -392,7 +392,7 @@ public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Canvas.ht
 <A NAME="getLayer(java.lang.String)"><!-- --></A><H3>
 getLayer</H3>
 <PRE>
-public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A> <B>getLayer</B>(java.lang.String&nbsp;layerId)</PRE>
+public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A> <B>getLayer</B>(java.lang.String&nbsp;layerId)</PRE>
 <DL>
 <DD>Retrieve a layer (previously created) based on id
 <P>
@@ -405,7 +405,7 @@ public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/
 <A NAME="getRootLayer()"><!-- --></A><H3>
 getRootLayer</H3>
 <PRE>
-public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.client.canvas">Layer</A> <B>getRootLayer</B>()</PRE>
+public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Layer.html" title="interface in org.timepedia.chronoscope.junit.canvas">Layer</A> <B>getRootLayer</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -416,7 +416,7 @@ public abstract <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/
 <A NAME="getView()"><!-- --></A><H3>
 getView</H3>
 <PRE>
-public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.client.canvas">View</A> <B>getView</B>()</PRE>
+public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html" title="class in org.timepedia.chronoscope.junit.canvas">View</A> <B>getView</B>()</PRE>
 <DL>
 <DD>Returns the View which created this Canvas
 <P>
@@ -455,8 +455,8 @@ public <A HREF="../../../../../org/timepedia/chronoscope/client/canvas/View.html
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.client.canvas"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasFontMetrics.html" title="class in org.timepedia.chronoscope.client.canvas"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/Bounds.html" title="class in org.timepedia.chronoscope.junit.canvas"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/timepedia/chronoscope/client/canvas/CanvasFontMetrics.html" title="class in org.timepedia.chronoscope.junit.canvas"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?org/timepedia/chronoscope/client/canvas/Canvas.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Canvas.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

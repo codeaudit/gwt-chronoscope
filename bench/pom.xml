@@ -17,6 +17,7 @@
       <artifactId>chronoscope</artifactId>
       <version>${version}</version>
       <type>jar</type>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
