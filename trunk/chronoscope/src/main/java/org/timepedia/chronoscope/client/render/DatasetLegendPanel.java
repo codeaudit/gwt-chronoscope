@@ -111,7 +111,7 @@ public class DatasetLegendPanel extends AbstractPanel {
    * in the panel given the specified lblX and lblY coordinates.
    */
   private double drawLegendLabel(double lblX, double lblY, Layer layer, int seriesNum, boolean onlyCalcWidth) {
-    XYRenderer renderer = plot.getRenderer(seriesNum);
+    DatasetRenderer renderer = plot.getRenderer(seriesNum);
     
     int hoverPoint = plot.getHoverPoints()[seriesNum];
     String seriesLabel = createDatasetLabel(plot, seriesNum, hoverPoint);
@@ -169,7 +169,8 @@ public class DatasetLegendPanel extends AbstractPanel {
    * omitted.
    */
   private String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
-    XYDataset ds = plot.getDatasets().get(datasetIdx);
+    // FIXME: refactor to get rid of cast
+    XYDataset ds = (XYDataset)plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
     String lbl = ds.getRangeLabel() + rangeAxis.getLabelSuffix();
     

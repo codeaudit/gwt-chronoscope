@@ -22,8 +22,6 @@ public class DatasetsTest extends TestCase {
     grp.add(mds);
     assertEquals(1.0, grp.getMinDomain());
     assertEquals(2.0, grp.getMaxDomain());
-    assertEquals(10.0, grp.getMinRange());
-    assertEquals(20.0, grp.getMaxRange());
     assertEquals(1.0, grp.getMinInterval());
   }
   
@@ -64,8 +62,6 @@ public class DatasetsTest extends TestCase {
     
     assertEquals(1.0, grp.getMinDomain());
     assertEquals(4.1, grp.getMaxDomain());
-    assertEquals(-9.0, grp.getMinRange());
-    assertEquals(40.0, grp.getMaxRange());
     assertEquals(0.1, grp.getMinInterval(), 0.000000000000001);
   }
   
@@ -91,14 +87,12 @@ public class DatasetsTest extends TestCase {
     // make sure aggregate properties were updated
     assertEquals(2.0, grp.getMinDomain());
     assertEquals(7.0, grp.getMaxDomain());
-    assertEquals(5.0, grp.getMinRange());
-    assertEquals(20.0, grp.getMaxRange());
     assertEquals(3.0, grp.getMinInterval());
     
     // verify that the container de-registered itself as a listener
     // to the removed dataset.
-    removedDataset.mutate(Mutation.RangeMutation.setY(0, 999.0));
-    assertEquals(20.0, grp.getMaxRange());
+    //removedDataset.mutate(Mutation.RangeMutation.setY(0, 999.0));
+    //assertEquals(20.0, grp.getMaxRange());
   }
   
   public void testSize() {

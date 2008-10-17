@@ -14,6 +14,7 @@ import org.timepedia.chronoscope.client.browser.JSONDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 
@@ -48,19 +49,25 @@ public class ChartDemo implements EntryPoint {
 
       TabPanel vp = new TabPanel();
       
-      final Datasets ds = new Datasets();
+      final Datasets<Tuple2D,XYDataset<Tuple2D>> ds = new Datasets<Tuple2D,XYDataset<Tuple2D>>();
       ds.add(Chronoscope.createXYDataset(getJson("unratedata")));
       
       MockDatasetFactory datasetFactory = new MockDatasetFactory();
       XYDataset mockDataset = datasetFactory.getBasicDataset(); 
       ds.add(mockDataset);
       
+      XYDataset[] dsArray = new XYDataset[ds.size()];
+      for (int i = 0; i < ds.size(); i++) {
+        dsArray[i] = (XYDataset)ds.get(i);
+      }
+      
       final ChartPanel chartPanel = Chronoscope
-          .createTimeseriesChart(ds.toArray(), chartWidth, chartHeight);
+          .createTimeseriesChart(dsArray, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(final View view) {
+          XYDataset xyds = ds.get(0);
           final Marker m = new Marker(
-              (ds.get(0).getDomainBegin() + ds.get(0).getDomainEnd()) / 2, "A", 0);
+              (xyds.getDomainBegin() + xyds.getDomainEnd()) / 2, "A", 0);
           m.addOverlayClickListener(new OverlayClickListener() {
             public void onOverlayClick(Overlay overlay, int x, int y) {
               m.openInfoWindow("Hello");

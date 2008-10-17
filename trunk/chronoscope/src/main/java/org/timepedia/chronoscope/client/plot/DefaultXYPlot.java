@@ -1,11 +1,12 @@
 package org.timepedia.chronoscope.client.plot;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.DateAxis;
@@ -17,18 +18,19 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.data.DatasetListener;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
+import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
+import org.timepedia.chronoscope.client.render.LineXYRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
-import org.timepedia.chronoscope.client.render.XYLineRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
-import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -57,8 +59,8 @@ import java.util.Map;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable, 
-    XYDatasetListener<T>, ZoomListener {
+public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>> 
+    implements XYPlot<S,T>, Exportable, DatasetListener<S,T>, ZoomListener {
 
   private static int globalPlotNumber = 0;
 
@@ -91,7 +93,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
 
   private int currentMiplevels[];
 
-  private Datasets<T> datasets;
+  private Datasets<S,T> datasets;
   
   private DomainAxisPanel domainAxisPanel;
   
@@ -140,7 +142,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
 
   private int plotNumber = 0;
 
-  private XYPlotRenderer<T> plotRenderer;
+  private XYPlotRenderer<S,T> plotRenderer;
 
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
@@ -160,7 +162,8 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
 
   private double visibleDomainMax;
 
-  private final List<XYRenderer<T>> xyRenderers = new ArrayList<XYRenderer<T>>();
+  //private final List<DatasetRenderer<S,T>> xyRenderers = new ArrayList<DatasetRenderer<S,T>>();
+  private final List<DatasetRenderer<S,T>> xyRenderers = new ArrayList<DatasetRenderer<S,T>>();
 
   private enum DistanceFormula {
 
@@ -348,13 +351,17 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    return datasets.get(datasetIndex)
-        .getX(pointIndex, currentMiplevels[datasetIndex]);
+    // FIXME: refactor to get rid of cast
+    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+
+    return ds.getX(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    return datasets.get(datasetIndex)
-        .getY(pointIndex, currentMiplevels[datasetIndex]);
+    // FIXME: refactor to get rid of cast
+    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+
+    return ds.getY(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public ValueAxis getDomainAxis() {
@@ -391,9 +398,11 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
+    // FIXME: refactor to get rid of cast
+    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+    
     return Util
-        .binarySearch(datasets.get(datasetIndex), domainX, 
-            currentMiplevels[datasetIndex]);
+        .binarySearch(ds, domainX, currentMiplevels[datasetIndex]);
   }
 
   public OverviewAxisPanel getOverviewAxisPanel() {
@@ -411,7 +420,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   /**
    * Returns the datasets associated with this plot.
    */
-  public Datasets<T> getDatasets() {
+  public Datasets<S,T> getDatasets() {
     return this.datasets;
   }
    
@@ -427,8 +436,9 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     return rangeAxes.get(datasetIndex);
   }
 
-  public XYRenderer<T> getRenderer(int datasetIndex) {
-    return xyRenderers.get(datasetIndex);
+  public DatasetRenderer<S,T> getRenderer(int datasetIndex) {
+    // FIXME: refactor to get rid of cast
+    return (DatasetRenderer<S,T>)xyRenderers.get(datasetIndex);
   }
 
   public double getSelectionBegin() {
@@ -565,7 +575,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     animateTo(plotDomain.midpoint() - nDomain / 2, nDomain, XYPlotListener.ZOOMED);
   }
 
-  public void onDatasetAdded(XYDataset dataset) {
+  public void onDatasetAdded(T dataset) {
     this.initAndRedraw();
   }
 
@@ -589,7 +599,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     }
   }
 
-  public void onDatasetRemoved(XYDataset dataset, int datasetIndex) {
+  public void onDatasetRemoved(T dataset, int datasetIndex) {
     if (datasets.isEmpty()) {
       throw new IllegalStateException(
           "Datasets container is empty -- can't render plot.");
@@ -762,7 +772,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     }
   }
   
-  public void setDatasets(Datasets<T> datasets) {
+  public void setDatasets(Datasets<S,T> datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isGT(datasets.size(), 0, "datasets.size");
     this.datasets = datasets;
@@ -868,14 +878,14 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     this.overviewEnabled = overviewEnabled;
   }
 
-  public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
+  public void setPlotRenderer(XYPlotRenderer<S,T> plotRenderer) {
    if (plotRenderer != null) {
      plotRenderer.setPlot(this);
    }
     this.plotRenderer = plotRenderer;
   }
   
-  public void setRenderer(int datasetIndex, XYRenderer<T> r) {
+  public void setRenderer(int datasetIndex, DatasetRenderer<S,T> r) {
     xyRenderers.set(datasetIndex, r);
   }
 
@@ -897,7 +907,10 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
     
     for (int i = 0; i < datasets.size(); i++) {
-      XYDataset ds = datasets.get(i);
+      
+      // FIXME: refactor to get rid of this cast
+      XYDataset ds = (XYDataset)datasets.get(i);
+
       RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
       
       if (ra == null) {
@@ -1134,7 +1147,9 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    XYDataset ds = datasets.get(datasetIndex);
+    // FIXME: refactor to get rid of cast
+    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+    
     int currMipLevel = currentMiplevels[datasetIndex];
 
     // Find index of data point closest to the right of dataX at the current MIP level
@@ -1184,12 +1199,13 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
     
     if (xyRenderers.isEmpty()) {
       for (int i = 0; i < numDatasets; i++) {
-        xyRenderers.add(new XYLineRenderer<T>(i));
+        // FIXME: refactor to remove cast
+        xyRenderers.add((DatasetRenderer)new LineXYRenderer(i));
       }
     }
   }
 
-  private void initializeDomain(Datasets<T> datasets) {
+  private void initializeDomain(Datasets<S,T> datasets) {
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
@@ -1239,7 +1255,7 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
-  private void initViewIndependent(Datasets<T> datasets) {
+  private void initViewIndependent(Datasets<S,T> datasets) {
     hoverPoints = new int[datasets.size()];
     resetHoverPoints();
     maxDrawableDatapoints = 100 / datasets.size();
@@ -1260,7 +1276,9 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
     pushHistory();
 
-    XYDataset dataset = datasets.get(datasetIndex);
+    // FIXME: refactor to get rid of cast
+    XYDataset dataset = (XYDataset)datasets.get(datasetIndex);
+    
     pointIndex = Util.binarySearch(dataset,
         dataset.getX(pointIndex, currentMiplevels[datasetIndex]), 0);
 
@@ -1330,7 +1348,10 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
       // If no data point currently has the focus, then set the focus point to
       // the point on dataset [0] that's closest to the center of the screen.
       focusDataset = 0;
-      ds = datasets.get(focusDataset);
+      
+      // FIXME: need to refactor to get rid of this cast
+      ds = (XYDataset)datasets.get(focusDataset);
+      
       mipLevel = currentMiplevels[focusDataset];
       double domainCenter = plotDomain.midpoint();
       focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
@@ -1355,7 +1376,8 @@ public class DefaultXYPlot<T extends XYDataset> implements XYPlot<T>, Exportable
         focusPoint = datasets.get(focusDataset).getNumSamples(mipLevel) - 1;
       }
 
-      ds = datasets.get(focusDataset);
+      // FIXME: refactor to get rid of cast
+      ds = (XYDataset)datasets.get(focusDataset);
     }
 
     double dataX = ds.getX(focusPoint, mipLevel);

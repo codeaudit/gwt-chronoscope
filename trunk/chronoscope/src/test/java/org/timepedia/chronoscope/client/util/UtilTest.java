@@ -3,6 +3,9 @@ package org.timepedia.chronoscope.client.util;
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+
+import java.util.Comparator;
 
 /**
  * @author Chad Takahashi
@@ -12,7 +15,7 @@ public class UtilTest extends TestCase {
 
   public void testBinarySearch() {
     double[] domain = new double[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    XYDataset ds = new JUnitXYDataset(domain);
+    XYDataset<Tuple2D> ds = new JUnitXYDataset(domain);
     
     // Case 1: Verify that exact key matches are found
     for (int i = 0; i < domain.length; i++) {
@@ -50,7 +53,7 @@ public class UtilTest extends TestCase {
   }
   
   
-  private static final class JUnitXYDataset implements XYDataset {
+  private static final class JUnitXYDataset implements XYDataset<Tuple2D> {
     private double[] domain;
     
     public JUnitXYDataset(double[] domain) {
@@ -110,6 +113,22 @@ public class UtilTest extends TestCase {
     }
 
     public double getY(int index, int level) {
+      throw new UnsupportedOperationException();
+    }
+
+    public Tuple2D getFlyweightTuple(int index) {
+      throw new UnsupportedOperationException();
+    }
+
+    public Tuple2D getFlyweightTuple(int index, int mipLevel) {
+      throw new UnsupportedOperationException();
+    }
+
+    public Tuple2D getMaxValue(Comparator<Tuple2D> c, int mipLevel) {
+      throw new UnsupportedOperationException();
+    }
+
+    public Tuple2D getMinValue(Comparator<Tuple2D> c, int mipLevel) {
       throw new UnsupportedOperationException();
     }
   }

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 
@@ -9,7 +10,7 @@ import org.timepedia.chronoscope.client.util.Interval;
  * 
  * @author Chad Takahashi
  */
-public class ArrayXYDataset extends AbstractXYDataset {
+public class ArrayXYDataset extends AbstractXYDataset<Tuple2D> {
 
   /*
    * Stores the multiresolution domain and range values.

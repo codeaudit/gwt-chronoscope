@@ -1,17 +1,19 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Focus;
+import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
 /**
  * Renders BarCharts on an XYPlot.
  */
-public class BarChartXYRenderer extends XYRenderer implements GssElement {
+public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple2D>> implements GssElement {
 
   private GssProperties disabledLineProperties;
 
@@ -77,9 +79,13 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     return apointProp.size + 10;
   }
 
- public void drawCurvePart(XYPlot plot, Layer layer, double dataX,
-    double dataY, int seriesNum, RenderState renderState) {
-    double ux = plot.domainToScreenX(dataX, seriesNum);
+ public void drawCurvePart(XYPlot plot, Layer layer, Tuple2D point,
+    int seriesNum, RenderState renderState) {
+    
+   final double dataX = point.getFirst();
+   final double dataY = point.getSecond();
+   
+   double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
     
     final boolean isDisabled = renderState.isDisabled();
@@ -216,7 +222,7 @@ public class BarChartXYRenderer extends XYRenderer implements GssElement {
     return new Bounds(x, y, pointProp.size + 10, 10);
   }
 
-  public void drawPoint(XYPlot plot, Layer layer, double x, double y,
+  public void drawPoint(XYPlot plot, Layer layer, Tuple2D point,
       int seriesNum, RenderState renderState) {
     // do nothing
   }
