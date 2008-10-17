@@ -5,15 +5,16 @@ import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
-import org.timepedia.chronoscope.client.render.XYRenderer;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
 
 /**
  * An interface to be implemented by classes implementing XY plots of
- * {@link XYDataset} objects.
+ * {@link Dataset} objects.
  * <p>
  * Conceptually, an XYPlot is a class responsible for maintaining a collection
  * of datasets, axes, and graph state, and mapping data-space values to
@@ -52,7 +53,7 @@ import org.timepedia.exporter.client.Exportable;
  * <li>Selection mode on/off
  * </ul>
  */
-public interface XYPlot<T extends XYDataset> extends Exportable {
+public interface XYPlot<S extends Tuple, T extends Dataset<S>> extends Exportable {
 
   /**
    * Add an overlay to this plot.
@@ -118,7 +119,7 @@ public interface XYPlot<T extends XYDataset> extends Exportable {
   /**
    * Returns the datasets associated with this plot.
    */
-  Datasets<T> getDatasets();
+  Datasets<S,T> getDatasets();
   
   /**
    * Retrieve X value for a given dataset and point at current visible
@@ -219,7 +220,7 @@ public interface XYPlot<T extends XYDataset> extends Exportable {
   /**
    * Return the renderer for a given dataset index
    */
-  XYRenderer<T> getRenderer(int datasetIndex);
+  DatasetRenderer<S,T> getRenderer(int datasetIndex);
 
   /**
    * Get the domain value of the beginning of the current selection
@@ -402,7 +403,7 @@ public interface XYPlot<T extends XYDataset> extends Exportable {
   /**
    * Set the plot renderer for a given dataset index.
    */
-  void setRenderer(int datasetIndex, XYRenderer<T> renderer);
+  void setRenderer(int datasetIndex, DatasetRenderer<S,T> renderer);
 
   /**
    * Causes chart to perform an animated zoom such that the current selection

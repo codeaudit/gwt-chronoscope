@@ -1,22 +1,24 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
 /**
- * Responsible for iterating over datasets in a defined drawing order, and then
- * deciding on how to map the visible portions of the domain onto the associated
- * xyRenderers.
+ * Responsible for iterating over {@link Dataset}s in a defined drawing order, 
+ * and then deciding on how to map the visible portions of the domain onto the 
+ * associated dataset renderers.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer<T extends XYDataset> {
+public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -33,14 +35,15 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
   // domain interval) for the 3rd dataset in plot.datsets.
   private double[] minRanges, maxRanges;
   
-  private XYPlot<T> plot;
+  private XYPlot<S,T> plot;
   
   private void computeVisibleDomainAndRange() {
-    Datasets<T> datasets = plot.getDatasets();
+    Datasets<S,T> datasets = plot.getDatasets();
     final int numDatasets = datasets.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
-      XYDataset dataSet = datasets.get(datasetIdx);
+      // FIXME: refactor to get rid of cast
+      XYDataset dataSet = (XYDataset)datasets.get(datasetIdx);
 
       final double plotDomainStart = plot.getDomain().getStart();
       final double plotDomainLength = plot.getDomain().length();
@@ -81,7 +84,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot);
+  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<S,T> plot);
 
   public void drawDatasets() {
     final int numDatasets = plot.getDatasets().size();
@@ -97,7 +100,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
     }
   }
 
-  public void setPlot(XYPlot<T> plot) {
+  public void setPlot(XYPlot<S,T> plot) {
     this.plot = plot;
   }
   
@@ -126,7 +129,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      XYRenderer<T> renderer = plot.getRenderer(i);
+      DatasetRenderer renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;
@@ -135,8 +138,7 @@ public abstract class XYPlotRenderer<T extends XYDataset> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      XYRenderer<T> renderer = plot.getRenderer(i);
-
+      DatasetRenderer renderer = plot.getRenderer(i);
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;

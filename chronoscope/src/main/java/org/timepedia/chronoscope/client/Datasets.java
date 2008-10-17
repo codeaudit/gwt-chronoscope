@@ -1,7 +1,8 @@
 package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.data.MutableXYDataset;
-import org.timepedia.chronoscope.client.data.XYDatasetListener;
+import org.timepedia.chronoscope.client.data.DatasetListener;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
@@ -9,36 +10,33 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Container for {@link XYDataset} objects that provides indexed access to the
+ * Container for {@link Dataset} objects that provides indexed access to the
  * datasets as well as maintaining aggregate information. <p> This container
- * registers itself as a {@link XYDatasetListener} to any added {@link
+ * registers itself as a {@link DatasetListener} to any added {@link
  * MutableXYDataset} objects in order to guarantee that aggregate information is
  * kept up-to-date whenever constituent elements are modified.
  *
  * @author chad takahashi
  */
-public final class Datasets<T extends XYDataset> implements Iterable<T> {
+public final class Datasets<S extends Tuple, T extends Dataset<S>> implements Iterable<T> {
 
   private double minInterval = Double.POSITIVE_INFINITY;
 
   private double minDomain = Double.POSITIVE_INFINITY, maxDomain
       = Double.NEGATIVE_INFINITY;
 
-  private double minRange = Double.POSITIVE_INFINITY, maxRange
-      = Double.NEGATIVE_INFINITY;
-
   private List<T> datasets = new ArrayList<T>();
 
-  private List<XYDatasetListener<T>> listeners
-      = new ArrayList<XYDatasetListener<T>>();
+  private List<DatasetListener<S,T>> listeners
+      = new ArrayList<DatasetListener<S,T>>();
 
-  private DatasetListener<T> myDatasetListener;
+  private PrivateDatasetListener<S,T> myDatasetListener;
 
   /**
    * Constructs an empty dataset container.
    */
   public Datasets() {
-    this.myDatasetListener = new DatasetListener<T>(this);
+    this.myDatasetListener = new PrivateDatasetListener<S,T>(this);
   }
 
   /**
@@ -46,7 +44,7 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
    */
   public Datasets(T[] datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
-    this.myDatasetListener = new DatasetListener<T>(this);
+    this.myDatasetListener = new PrivateDatasetListener<S,T>(this);
     for (T dataset : datasets) {
       add(dataset);
     }
@@ -70,7 +68,7 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
    * Registers listeners who wish to be notified of changes to this container as
    * well as its elements.
    */
-  public void addListener(XYDatasetListener<T> listener) {
+  public void addListener(DatasetListener<S,T> listener) {
     ArgChecker.isNotNull(listener, "listener");
     this.listeners.add(listener);
   }
@@ -123,22 +121,6 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
   }
 
   /**
-   * Returns the minimum range value across all contained datasets.
-   */
-  public double getMinRange() {
-    verifyDatasetNotEmpty();
-    return this.minRange;
-  }
-
-  /**
-   * Returns the maximum range value across all contained datasets.
-   */
-  public double getMaxRange() {
-    verifyDatasetNotEmpty();
-    return this.maxRange;
-  }
-
-  /**
    * Returns true if this container has 0 elements.
    */
   public boolean isEmpty() {
@@ -156,7 +138,7 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
    * Removes the element at the specified index in this container. Shifts any
    * subsequent elements to the left (subtracts one from their indices). Returns
    * the element that was removed from the container. <p> Be aware that this
-   * container de-registers itself as an {@link XYDatasetListener} to the
+   * container de-registers itself as an {@link DatasetListener} to the
    * dataset being removed.  In other words, mutations applied to a dataset that
    * once belonged to this container will no longer signal this container, which
    * in turn, will no longer forward the mutation event to its listeners.
@@ -183,14 +165,12 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
    * Returns the contained dataset elements as an array of {@link XYDataset}.
    */
   public T[] toArray() {
-    return (T[]) this.datasets.toArray(new XYDataset[0]);
+    return (T[]) this.datasets.toArray(new Dataset[0]);
   }
 
   private void recalcAggregateInfo() {
     minDomain = Double.POSITIVE_INFINITY;
-    minRange = Double.POSITIVE_INFINITY;
     maxDomain = Double.NEGATIVE_INFINITY;
-    maxRange = Double.NEGATIVE_INFINITY;
     minInterval = Double.POSITIVE_INFINITY;
 
     for (T ds : datasets) {
@@ -198,11 +178,15 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
     }
   }
 
-  private void updateAggregateInfo(XYDataset dataset) {
-    minDomain = Math.min(minDomain, dataset.getDomainBegin());
-    maxDomain = Math.max(maxDomain, dataset.getDomainEnd());
-    minRange = Math.min(minRange, dataset.getRangeBottom());
-    maxRange = Math.max(maxRange, dataset.getRangeTop());
+  private void updateAggregateInfo(Dataset<S> dataset) {
+    // FIXME: Need to factor out this typecast.  Something's wrong with
+    // this model.  Maybe this class should by XYDataset and only operate
+    // on XYDataset elements?  Or some generic max() function on the 
+    // Tuple? ...
+    XYDataset xyDataset = (XYDataset)dataset;
+    
+    minDomain = Math.min(minDomain, xyDataset.getDomainBegin());
+    maxDomain = Math.max(maxDomain, xyDataset.getDomainEnd());
     minInterval = Math
         .min(minInterval, dataset.getApproximateMinimumInterval());
   }
@@ -214,18 +198,18 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
     }
   }
 
-  private static final class DatasetListener<T extends XYDataset>
-      implements XYDatasetListener<T> {
+  private static final class PrivateDatasetListener<S extends Tuple, T extends Dataset<S>>
+      implements DatasetListener<S,T> {
 
-    private Datasets<T> datasets;
+    private Datasets<S,T> datasets;
 
-    public DatasetListener(Datasets<T> datasets) {
+    public PrivateDatasetListener(Datasets<S,T> datasets) {
       this.datasets = datasets;
     }
 
     public void onDatasetAdded(T dataset) {
       // forward event to external listeners
-      for (XYDatasetListener<T> l : this.datasets.listeners) {
+      for (DatasetListener<S,T> l : this.datasets.listeners) {
         l.onDatasetAdded(dataset);
       }
     }
@@ -237,14 +221,14 @@ public final class Datasets<T extends XYDataset> implements Iterable<T> {
       this.datasets.updateAggregateInfo(dataset);
 
       // forward event to external listeners
-      for (XYDatasetListener<T> l : this.datasets.listeners) {
+      for (DatasetListener<S,T> l : this.datasets.listeners) {
         l.onDatasetChanged(dataset, domainStart, domainEnd);
       }
     }
 
     public void onDatasetRemoved(T dataset, int datasetIndex) {
       // forward event to external listeners
-      for (XYDatasetListener<T> l : this.datasets.listeners) {
+      for (DatasetListener<S,T> l : this.datasets.listeners) {
         l.onDatasetRemoved(dataset, datasetIndex);
       }
     }

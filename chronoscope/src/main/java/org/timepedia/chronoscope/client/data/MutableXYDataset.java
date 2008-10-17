@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class MutableXYDataset extends ArrayXYDataset {
   private MipMapStrategy mipMapStrategy;
-  private List<XYDatasetListener> listeners = new ArrayList<XYDatasetListener>();
+  private List<DatasetListener> listeners = new ArrayList<DatasetListener>();
 
   public MutableXYDataset(XYDatasetRequest request) {
     super(request);
@@ -26,12 +26,12 @@ public class MutableXYDataset extends ArrayXYDataset {
         request.getDefaultMipMapStrategy(), "request.mipMapStrategy");
   }
 
-  public void addListener(XYDatasetListener listener) {
+  public void addListener(DatasetListener listener) {
     ArgChecker.isNotNull(listener, "listener");
     this.listeners.add(listener);
   }
   
-  public void removeListener(XYDatasetListener listener) {
+  public void removeListener(DatasetListener listener) {
     listeners.remove(listener);
   }
 
@@ -78,7 +78,7 @@ public class MutableXYDataset extends ArrayXYDataset {
   }
 
   private void notifyListeners(XYDataset ds, double domainStart, double domainEnd) {
-    for (XYDatasetListener l : this.listeners) {
+    for (DatasetListener l : this.listeners) {
       l.onDatasetChanged(ds, domainStart, domainEnd);
     }
   }

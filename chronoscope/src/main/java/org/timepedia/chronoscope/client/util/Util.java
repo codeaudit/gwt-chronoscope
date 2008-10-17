@@ -47,7 +47,9 @@ public final class Util {
   public static double calcVisibleDomainMax(int maxDrawableDataPts, Datasets dataSets) {
     double end = Double.MIN_VALUE;
     for (int i = 0; i < dataSets.size(); i++) {
-      XYDataset ds = dataSets.get(i);
+      // FIXME: refactor to remove cast
+      XYDataset ds = (XYDataset)dataSets.get(i);
+      
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawablePts
       int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPts);

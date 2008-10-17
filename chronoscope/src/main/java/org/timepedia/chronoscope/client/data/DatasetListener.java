@@ -1,12 +1,14 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.Datasets;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
 
 /**
  * Tracks modifications to an {@link Datasets} container and its
- * constituent {@link XYDataset} elements.
+ * constituent {@link Dataset} elements.
  */
-public interface XYDatasetListener<T extends XYDataset> {
+public interface DatasetListener<S extends Tuple, T extends Dataset<S>> {
 
   /**
    * When an XYDataset is modified, this method is invoked with an interval

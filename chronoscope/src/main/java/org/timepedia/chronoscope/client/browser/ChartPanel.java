@@ -6,10 +6,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
@@ -22,11 +23,11 @@ public class ChartPanel extends Composite implements Exportable {
 
   private PlotPanel plotPanel;
 
-  public ChartPanel(XYDataset[] datasetArray, int chartWidth, int chartHeight) {
+  public ChartPanel(Dataset[] datasetArray, int chartWidth, int chartHeight) {
     this(DOM.createDiv(), datasetArray, chartWidth, chartHeight, null);
   }
 
-  public ChartPanel(Element elem, XYDataset[] datasetArray, int chartWidth,
+  public ChartPanel(Element elem, Dataset[] datasetArray, int chartWidth,
       int chartHeight, ViewReadyCallback readyListener) {
     
     ArgChecker.isNotNull(datasetArray, "datasetArray");
@@ -41,10 +42,10 @@ public class ChartPanel extends Composite implements Exportable {
     initWidget(plotPanel);
   }
 
-  protected XYPlot createPlot(XYDataset[] datasetArray) {
+  protected XYPlot createPlot(Dataset[] datasetArray) {
     
-    Datasets<XYDataset> datasets = 
-        new Datasets<XYDataset>(datasetArray);
+    Datasets<Tuple2D,Dataset<Tuple2D>> datasets = 
+        new Datasets<Tuple2D,Dataset<Tuple2D>>(datasetArray);
     
     XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
     

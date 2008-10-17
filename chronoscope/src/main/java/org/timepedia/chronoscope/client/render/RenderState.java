@@ -1,10 +1,7 @@
-/**
- * 
- */
 package org.timepedia.chronoscope.client.render;
 
 /**
- * Used by an {@link XYRenderer} to determine how to render a given
+ * Used by a {@link DatasetRenderer} to determine how to render a given
  * dataset curve and its constituent data points.
  * 
  * @author Chad Takahashi

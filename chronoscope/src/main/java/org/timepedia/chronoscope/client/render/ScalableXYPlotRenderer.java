@@ -1,9 +1,12 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
+import org.timepedia.chronoscope.client.data.tuple.Tuple;
 
 /**
  * Implements a XYPlotRenderer that uses multiresolution datasets to minimize
@@ -11,18 +14,23 @@ import org.timepedia.chronoscope.client.canvas.Layer;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class ScalableXYPlotRenderer<T extends XYDataset> extends XYPlotRenderer<T> {
+public class ScalableXYPlotRenderer<S extends Tuple, T extends Dataset<S>> 
+    extends XYPlotRenderer<S,T> {
 
   protected RenderState renderState;
-
+  
+  private BasicTuple2D reusablePoint = new BasicTuple2D(0, 0);
+  
   public ScalableXYPlotRenderer() {
     renderState = new RenderState();
   }
   
-  public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
-    XYDataset dataSet = plot.getDatasets().get(datasetIndex);
-    XYRenderer<T> renderer = plot.getRenderer(datasetIndex);
-
+  public void drawDataset(int datasetIndex, Layer layer, XYPlot<S,T> plot) {
+    // FIXME: refactor to remove casts
+    XYDataset dataSet = (XYDataset)plot.getDatasets().get(datasetIndex);
+    
+    DatasetRenderer<S,T> renderer = plot.getRenderer(datasetIndex);
+    
     if (dataSet.getNumSamples(0) < 2) {
       return;
     }
@@ -55,9 +63,12 @@ public class ScalableXYPlotRenderer<T extends XYDataset> extends XYPlotRenderer<
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
+      reusablePoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
-      renderer.drawCurvePart(plot, layer, x, y, datasetIndex, renderState);
+      
+      // FIXME: refactor to remove cast
+      renderer.drawCurvePart(plot, layer, (S)reusablePoint, datasetIndex, renderState);
     }
     renderer.endCurve(plot, layer, datasetIndex, renderState);
 
@@ -67,9 +78,12 @@ public class ScalableXYPlotRenderer<T extends XYDataset> extends XYPlotRenderer<
     for (int i = Math.max(0, domainStart - 2); i < end; i += inc) {
       double x = dataSet.getX(i, mipLevel);
       double y = dataSet.getY(i, mipLevel);
+      reusablePoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
-      renderer.drawPoint(plot, layer, x, y, datasetIndex, renderState);
+      
+      // FIXME: refactor to remove cast
+      renderer.drawPoint(plot, layer, (S)reusablePoint, datasetIndex, renderState);
     }
     renderer.endPoints(plot, layer, datasetIndex, renderState);
   }

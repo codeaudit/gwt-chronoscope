@@ -33,8 +33,8 @@ import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.render.XYLineRenderer;
-import org.timepedia.chronoscope.client.render.XYRenderer;
+import org.timepedia.chronoscope.client.render.DatasetRenderer;
+import org.timepedia.chronoscope.client.render.LineXYRenderer;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -617,10 +617,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
     exporter5.export();
 
-    Exporter exporter7 = (Exporter) GWT.create(XYRenderer.class);
+    Exporter exporter7 = (Exporter) GWT.create(DatasetRenderer.class);
     exporter7.export();
 
-    Exporter exporter4 = (Exporter) GWT.create(XYLineRenderer.class);
+    Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
     exporter4.export();
 
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
