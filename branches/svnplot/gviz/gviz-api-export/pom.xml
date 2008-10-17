@@ -1,0 +1,139 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-gviz-project</artifactId>
+    <version>0.86-SNAPSHOT</version>
+  </parent>
+
+  <name>Chronoscope GViz API Exported JS Library</name>
+  <artifactId>gviz-api-js</artifactId>
+  <packaging>war</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwtversion}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>gviz-api</artifactId>
+      <version>${version}</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>mortbay-repo</id>
+      <name>mortbay-repo</name>
+      <url>http://repository.codehaus.org</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <finalName>gviz</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+          <!--          <webXml>target/web.xml</webXml> -->
+          <webResources>
+            <resource>
+              <directory>
+                ${project.build.directory}/public/gvizapi
+              </directory>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-dev</artifactId>
+                  <version>${gwtversion}</version>
+                  <classifier>${gwtplatform}-libs</classifier>
+                  <type>zip</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>
+                    ${settings.localRepository}/com/google/gwt/gwt-dev/${gwtversion}
+                  </outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.totsp.gwt</groupId>
+        <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+        <version>2.0-beta24</version>
+        <configuration>
+          <logLevel>${gwt.loglevel}</logLevel>
+          <!-- logLevel>ERROR</logLevel -->
+          <style>${gwt.outputstyle}</style>
+          <output>${project.build.directory}/public</output>
+          <gwtVersion>${gwtversion}</gwtVersion>
+          <runTarget>
+            <!-- not used -->
+            org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport${gwt.modulesuffix}/index.html
+          </runTarget>
+          <compileTargets>
+            <value>
+              org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport${gwt.modulesuffix}
+            </value>
+          </compileTargets>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compilegwt</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+            <filename>target/yyyy_mm_dd.request.log</filename>
+            <retainDays>90</retainDays>
+            <append>true</append>
+            <extended>false</extended>
+            <logTimeZone>GMT</logTimeZone>
+          </requestLog>
+
+          <!--          <webApp>${basedir}/target/timepediaweb.war</webApp> -->
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+</project>
