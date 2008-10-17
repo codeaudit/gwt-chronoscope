@@ -76,9 +76,16 @@ public final class CompositeAxisPanel implements GssElement {
     this.view = view;
   }
 
+  /** 
+   * Adds the specified axis panel as a child of this panel.
+   * This method automatically registers this object as the parent
+   * of <tt>subPanel</tt> by calling the subpanel's 
+   * {@link AxisPanel#setParentPanel(CompositeAxisPanel)} method. 
+   */
   public void add(AxisPanel subPanel) {
     ArgChecker.isNotNull(subPanel, "subPanel");
 
+    subPanel.setParentPanel(this);
     subPanels.add(subPanel);
     subPanel.setPlot(plot);
     subPanel.setView(view);
