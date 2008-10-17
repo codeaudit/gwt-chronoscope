@@ -466,12 +466,10 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
     bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
         Position.BOTTOM, this, view);
     domainAxisPanel = new DomainAxisPanel();
-    domainAxisPanel.setParentPanel(bottomPanel);
     domainAxisPanel.setValueAxis(new DateAxis(this));    
     bottomPanel.add(domainAxisPanel);
     if (this.isOverviewEnabled()) {
       overviewAxisPanel = new OverviewAxisPanel();
-      overviewAxisPanel.setParentPanel(bottomPanel);
       overviewAxisPanel.setValueAxis(new OverviewAxis(this, "Overview"));
       bottomPanel.add(overviewAxisPanel);
     }
@@ -496,7 +494,6 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
         this, view);
     if (legendEnabled) {
       legendAxisPanel = new LegendAxisPanel();
-      legendAxisPanel.setParentPanel(topPanel);
       legendAxisPanel.setZoomListener(this);
       topPanel.add(legendAxisPanel);
     }
@@ -921,7 +918,6 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
         ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
             ds.getRangeBottom(), ds.getRangeTop());
         RangeAxisPanel axisPanel = new RangeAxisPanel();
-        axisPanel.setParentPanel(currRangePanel);
         axisPanel.setValueAxis(ra);
         ra.setAxisRenderer(axisPanel);
         currRangePanel.add(axisPanel);
