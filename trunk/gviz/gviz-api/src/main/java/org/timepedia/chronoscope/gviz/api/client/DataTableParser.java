@@ -11,12 +11,12 @@ import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.TableSectionElement;
 import com.google.gwt.i18n.client.NumberFormat;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.data.DateParser;
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
+import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 
@@ -36,7 +36,7 @@ public class DataTableParser {
     public double range[];
   }
 
-  public static XYDataset[] parseDatasets(DataTable table,
+  public static Dataset[] parseDatasets(DataTable table,
       Map<Integer, Integer> dataset2Column) {
 
     int startRow = -1;
@@ -54,9 +54,9 @@ public class DataTableParser {
       }
     }
 
-    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    DatasetFactory dsFactory = new DefaultDatasetFactory();
 
-    XYDataset[] ds = new XYDataset[numCols];
+    Dataset[] ds = new Dataset[numCols];
     numCols = 0;
     for (int i = 1; i < table.getNumberOfColumns(); i++) {
       if (Double.isNaN(table.getValueNumber(startRow, i))) {
@@ -79,7 +79,7 @@ public class DataTableParser {
       DataPair pair = table2datapair(table, startRow, i);
       sortAscendingDate(pair);
       
-      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      DatasetRequest.Basic request = new DatasetRequest.Basic();
       request.setDomain(pair.domain);
       request.setRange(pair.range);
       request.setIdentifier("col" + i);

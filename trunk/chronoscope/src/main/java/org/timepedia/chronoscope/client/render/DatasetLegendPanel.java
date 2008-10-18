@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
@@ -169,8 +169,7 @@ public class DatasetLegendPanel extends AbstractPanel {
    * omitted.
    */
   private String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
-    // FIXME: refactor to get rid of cast
-    XYDataset ds = (XYDataset)plot.getDatasets().get(datasetIdx);
+    Dataset ds = plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
     String lbl = ds.getRangeLabel() + rangeAxis.getLabelSuffix();
     

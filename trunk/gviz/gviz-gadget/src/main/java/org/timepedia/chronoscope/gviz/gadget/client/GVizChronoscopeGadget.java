@@ -1,6 +1,9 @@
 package org.timepedia.chronoscope.gviz.gadget.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.HeadElement;
+import com.google.gwt.dom.client.StyleElement;
 import com.google.gwt.gadgets.client.Gadget;
 import com.google.gwt.gadgets.client.IntrinsicFeature;
 import com.google.gwt.gadgets.client.NeedsIntrinsics;
@@ -10,28 +13,24 @@ import com.google.gwt.gadgets.client.SetPrefsFeature;
 import com.google.gwt.gadgets.client.SetTitleFeature;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.HeadElement;
-import com.google.gwt.dom.client.StyleElement;
 
-import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.DefaultGssContext;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
+import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.gss.DefaultGssContext;
+import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.Marker;
-import org.timepedia.chronoscope.gviz.api.client.GoogleLoader;
-import org.timepedia.chronoscope.gviz.gadget.client.GadgetHelper;
-import org.timepedia.chronoscope.gviz.api.client.QueryResponseHandler;
-import org.timepedia.chronoscope.gviz.api.client.QueryResponse;
 import org.timepedia.chronoscope.gviz.api.client.DataTable;
 import org.timepedia.chronoscope.gviz.api.client.DataTableParser;
+import org.timepedia.chronoscope.gviz.api.client.GoogleLoader;
 import org.timepedia.chronoscope.gviz.api.client.Query;
+import org.timepedia.chronoscope.gviz.api.client.QueryResponse;
+import org.timepedia.chronoscope.gviz.api.client.QueryResponseHandler;
 
 /**
  *
@@ -105,7 +104,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
                 try {
                   setTitle.setTitle(prefs.chartTitle().getValue());
                   DataTable table = response.getDataTable();
-                  XYDataset ds[] = DataTableParser.parseDatasets(table, null);
+                  Dataset ds[] = DataTableParser.parseDatasets(table, null);
                   final Marker ms[] = DataTableParser.parseMarkers(table, table, null);
 
                   ChartPanel cp = Chronoscope.createTimeseriesChart(ds,

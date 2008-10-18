@@ -17,17 +17,17 @@ import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.Array2D;
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
+import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.data.JavaArray2D;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -170,13 +170,13 @@ public class Chronoscope implements Exportable, HistoryListener {
     return chart;
   }
 
-  public static ChartPanel createTimeseriesChart(XYDataset[] datasets,
+  public static ChartPanel createTimeseriesChart(Dataset[] datasets,
       int chartWidth, int chartHeight) {
     return getInstance().createChartPanel((Element) null, datasets, chartWidth,
         chartHeight, null);
   }
 
-//    public static PlotPanel createStackedTimeseriesChart(XYDataset[] datasets, XYDataset[] datasets2) {
+//    public static PlotPanel createStackedTimeseriesChart(Dataset[] datasets, Dataset[] datasets2) {
 //        Chart chart = new Chart();
 //        DefaultXYPlot top = new DefaultXYPlot(chart, datasets, true);
 //        DefaultXYPlot bot = new DefaultXYPlot(chart, datasets2, true);
@@ -185,19 +185,19 @@ public class Chronoscope implements Exportable, HistoryListener {
 //    }
 
   public static ChartPanel createTimeseriesChart(Element elem,
-      XYDataset[] datasets, int chartWidth, int chartHeight) {
+      Dataset[] datasets, int chartWidth, int chartHeight) {
     return createTimeseriesChart(elem, datasets, chartWidth, chartHeight, null);
   }
 
   public static ChartPanel createTimeseriesChart(Element elem,
-      XYDataset[] datasets, int chartWidth, int chartHeight,
+      Dataset[] datasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
     return getInstance().createChartPanel(elem, datasets, chartWidth,
         chartHeight, readyListener);
   }
 
   public static ChartPanel createTimeseriesChart(String elementId,
-      XYDataset[] datasets, int chartWidth, int chartHeight) {
+      Dataset[] datasets, int chartWidth, int chartHeight) {
     return createTimeseriesChart(elementId, datasets, chartWidth, chartHeight,
         null);
   }
@@ -209,15 +209,15 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @return
    */
   public static ChartPanel createTimeseriesChart(String id,
-      XYDataset[] datasets, int chartWidth, int chartHeight,
+      Dataset[] datasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyCallback) {
     return createTimeseriesChart(DOM.getElementById(id), datasets, chartWidth,
         chartHeight, readyCallback);
   }
 
   /**
-   * Parse a JSON object representing a multiresolution XYDataset into a class
-   * implementing the XYDataset interface <p/> <p/> The JSON format is as
+   * Parse a JSON object representing a multiresolution Dataset into a class
+   * implementing the Dataset interface <p/> <p/> The JSON format is as
    * follows:
    * <pre>
    * dataset = {
@@ -236,22 +236,22 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export
    */
   @Export
-  public static XYDataset createXYDataset(JSONDataset json) {
+  public static Dataset createXYDataset(JSONDataset json) {
     return createXYDataset(json, false);
   }
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * XYDatasets <p/> See {@link #createXYDataset} for details of the format
+   * Datasets <p/> See {@link #createXYDataset} for details of the format
    */
-  public static XYDataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
+  public static Dataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
     if (jsonDatasets == null) {
-      return new XYDataset[0];
+      return new Dataset[0];
     }
 
     int arrLen = jsonDatasets.length();
 
-    XYDataset ds[] = new XYDataset[arrLen];
+    Dataset ds[] = new Dataset[arrLen];
     for (int i = 0; i < arrLen; i++) {
       ds[i] = createXYDataset(jsonDatasets.get(i));
     }
@@ -390,12 +390,12 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new JavaArray2D(a);
   }
 
-  private static XYDataset createXYDataset(JSONDataset json,
+  private static Dataset createXYDataset(JSONDataset json,
       boolean isMutable) {
 
-    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    DatasetFactory dsFactory = new DefaultDatasetFactory();
 
-    XYDataset dataset = null;
+    Dataset dataset = null;
 
     double domainScale = json.getDomainScale();
 
@@ -408,11 +408,11 @@ public class Chronoscope implements Exportable, HistoryListener {
               + json.getId());
     }
 
-    XYDatasetRequest request;
+    DatasetRequest request;
     if (isMipped) {
-      request = new XYDatasetRequest.MultiRes();
+      request = new DatasetRequest.MultiRes();
     } else {
-      request = new XYDatasetRequest.Basic();
+      request = new DatasetRequest.Basic();
     }
 
     final double minInterval = json.getMinInterval();
@@ -443,15 +443,15 @@ public class Chronoscope implements Exportable, HistoryListener {
         ranges[i] = getArray(mrange.get(i), 1);
       }
 
-      XYDatasetRequest.MultiRes mippedRequest
-          = (XYDatasetRequest.MultiRes) request;
+      DatasetRequest.MultiRes mippedRequest
+          = (DatasetRequest.MultiRes) request;
       request.setRangeTop(json.getRangeTop());
       request.setRangeBottom(json.getRangeBottom());
       mippedRequest.setMultiDomain(createArray2D(domains));
       mippedRequest.setMultiRange(createArray2D(ranges));
     } else {
 
-      XYDatasetRequest.Basic basicRequest = (XYDatasetRequest.Basic) request;
+      DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
       if (dtformat != null) {
         basicRequest.setDomain(getArrayWithFormat(json.getDomainString(), dtformat));
       } else {
@@ -508,7 +508,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export createTimeseriesChartByIdSized
    */
   @Export("createTimeseriesChartByIdSized")
-  public ChartPanel createChartPanel(String id, XYDataset[] datasets,
+  public ChartPanel createChartPanel(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     return createChartPanel(DOM.getElementById(id), datasets, chartWidth,
         chartHeight, readyListener);
@@ -518,7 +518,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export createTimeseriesChartWithElement
    */
   @Export("createTimeseriesChartWithElement")
-  public ChartPanel createChartPanel(Element elem, XYDataset[] datasets,
+  public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
     if (elem == null) {
       ChartPanel cpanel = new ChartPanel(datasets, chartWidth, chartHeight);

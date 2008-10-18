@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.data.MutableXYDataset;
 import org.timepedia.chronoscope.client.data.DatasetListener;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.MutableDataset2D;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
@@ -13,12 +13,12 @@ import java.util.List;
  * Container for {@link Dataset} objects that provides indexed access to the
  * datasets as well as maintaining aggregate information. <p> This container
  * registers itself as a {@link DatasetListener} to any added {@link
- * MutableXYDataset} objects in order to guarantee that aggregate information is
+ * MutableDataset2D} objects in order to guarantee that aggregate information is
  * kept up-to-date whenever constituent elements are modified.
  *
  * @author chad takahashi
  */
-public final class Datasets<S extends Tuple, T extends Dataset<S>> implements Iterable<T> {
+public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements Iterable<T> {
 
   private double minInterval = Double.POSITIVE_INFINITY;
 
@@ -56,8 +56,8 @@ public final class Datasets<S extends Tuple, T extends Dataset<S>> implements It
   public void add(T dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
-    if (dataset instanceof MutableXYDataset) {
-      ((MutableXYDataset) dataset).addListener(this.myDatasetListener);
+    if (dataset instanceof MutableDataset2D) {
+      ((MutableDataset2D) dataset).addListener(this.myDatasetListener);
     }
 
     updateAggregateInfo(dataset);
@@ -147,8 +147,8 @@ public final class Datasets<S extends Tuple, T extends Dataset<S>> implements It
     verifyDatasetNotEmpty();
     T removedDataset = datasets.remove(index);
     recalcAggregateInfo();
-    if (removedDataset instanceof MutableXYDataset) {
-      ((MutableXYDataset) removedDataset).removeListener(myDatasetListener);
+    if (removedDataset instanceof MutableDataset2D) {
+      ((MutableDataset2D) removedDataset).removeListener(myDatasetListener);
     }
     myDatasetListener.onDatasetRemoved(removedDataset, index);
     return removedDataset;
@@ -183,10 +183,9 @@ public final class Datasets<S extends Tuple, T extends Dataset<S>> implements It
     // this model.  Maybe this class should by XYDataset and only operate
     // on XYDataset elements?  Or some generic max() function on the 
     // Tuple? ...
-    XYDataset xyDataset = (XYDataset)dataset;
     
-    minDomain = Math.min(minDomain, xyDataset.getDomainBegin());
-    maxDomain = Math.max(maxDomain, xyDataset.getDomainEnd());
+    minDomain = Math.min(minDomain, dataset.getMinValue(0));
+    maxDomain = Math.max(maxDomain, dataset.getMaxValue(0));
     minInterval = Math
         .min(minInterval, dataset.getApproximateMinimumInterval());
   }
@@ -198,7 +197,7 @@ public final class Datasets<S extends Tuple, T extends Dataset<S>> implements It
     }
   }
 
-  private static final class PrivateDatasetListener<S extends Tuple, T extends Dataset<S>>
+  private static final class PrivateDatasetListener<S extends Tuple2D, T extends Dataset<S>>
       implements DatasetListener<S,T> {
 
     private Datasets<S,T> datasets;

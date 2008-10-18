@@ -3,18 +3,18 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
- * Represents a request to construct an instance of {@link XYDataset}.
+ * Represents a request to construct an instance of {@link Dataset}.
  * 
  * @author Chad Takahashi
  */
-public abstract class XYDatasetRequest {
+public abstract class DatasetRequest {
 
   /**
    * Request in which client provides their own domain and range data, and the
    * multiDomain and multiRange data is then computed by the provided
    * {@link #setDefaultMipMapStrategy(MipMapStrategy) MipMapStrategy} object. 
    */
-  public static final class Basic extends XYDatasetRequest {
+  public static final class Basic extends DatasetRequest {
     private double[] domain, range;
 
     public double[] getDomain() {
@@ -49,7 +49,7 @@ public abstract class XYDatasetRequest {
    * XYDatasetRequest in which the domain and range values at each MIP level
    * (i.e. the multiDomain and multiRange) must be manually specified.
    */
-  public static final class MultiRes extends XYDatasetRequest {
+  public static final class MultiRes extends DatasetRequest {
     private Array2D multiDomain;
     private Array2D multiRange;
 

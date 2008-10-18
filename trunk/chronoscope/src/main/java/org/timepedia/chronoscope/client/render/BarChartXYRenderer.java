@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -13,7 +13,8 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 /**
  * Renders BarCharts on an XYPlot.
  */
-public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple2D>> implements GssElement {
+public class BarChartXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends DatasetRenderer<S,T> 
+    implements GssElement {
 
   private GssProperties disabledLineProperties;
 
@@ -49,7 +50,7 @@ public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple
     pointElement = new GssElementImpl("point", parentSeriesElement);
   }
 
-  public void beginCurve(XYPlot plot, Layer layer, RenderState renderState) {
+  public void beginCurve(XYPlot<S,T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
     GssProperties prop = renderState.isDisabled() 
@@ -67,11 +68,11 @@ public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple
     prevHover = false;
   }
 
-  public void beginPoints(XYPlot plot, Layer layer, RenderState renderState) {
+  public void beginPoints(XYPlot<S,T> plot, Layer layer, RenderState renderState) {
     // do nothing
   }
 
-  public double calcLegendIconWidth(XYPlot plot, View view) {
+  public double calcLegendIconWidth(XYPlot<S,T> plot, View view) {
     initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
@@ -79,7 +80,7 @@ public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple
     return apointProp.size + 10;
   }
 
- public void drawCurvePart(XYPlot plot, Layer layer, Tuple2D point,
+ public void drawCurvePart(XYPlot<S,T> plot, Layer layer, S point,
     int seriesNum, RenderState renderState) {
     
    final double dataX = point.getFirst();
@@ -172,7 +173,7 @@ public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple
     prevHover = renderState.isHovered();
   }
 
-  public Bounds drawLegendIcon(XYPlot plot, Layer layer, double x, double y,
+  public Bounds drawLegendIcon(XYPlot<S,T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
@@ -222,16 +223,16 @@ public class BarChartXYRenderer extends DatasetRenderer<Tuple2D, XYDataset<Tuple
     return new Bounds(x, y, pointProp.size + 10, 10);
   }
 
-  public void drawPoint(XYPlot plot, Layer layer, Tuple2D point,
+  public void drawPoint(XYPlot<S,T> plot, Layer layer, S point,
       int seriesNum, RenderState renderState) {
     // do nothing
   }
 
-  public void endCurve(XYPlot plot, Layer layer, int seriesNum, RenderState renderState) {
+  public void endCurve(XYPlot<S,T> plot, Layer layer, int seriesNum, RenderState renderState) {
     layer.restore();
   }
 
-  public void endPoints(XYPlot plot, Layer layer, int seriesNum, RenderState renderState) {
+  public void endPoints(XYPlot<S,T> plot, Layer layer, int seriesNum, RenderState renderState) {
     // do nothing
   }
 

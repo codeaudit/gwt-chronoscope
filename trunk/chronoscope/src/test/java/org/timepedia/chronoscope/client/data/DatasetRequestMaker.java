@@ -8,8 +8,8 @@ package org.timepedia.chronoscope.client.data;
  */
 public final class DatasetRequestMaker {
   
-  public XYDatasetRequest.Basic newRequest(double[] domain, double[] range) {
-    XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+  public DatasetRequest.Basic newRequest(double[] domain, double[] range) {
+    DatasetRequest.Basic request = new DatasetRequest.Basic();
     request.setAxisId("Dummy_Axis_Id");
     request.setLabel("Dummy_Range_Label");
     request.setDefaultMipMapStrategy(DefaultMipMapStrategy.MEAN);

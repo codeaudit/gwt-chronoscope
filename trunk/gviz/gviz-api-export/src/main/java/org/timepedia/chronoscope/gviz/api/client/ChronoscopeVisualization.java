@@ -5,18 +5,20 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import gwtquery.client.Properties;
+
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.DefaultGssContext;
+import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
-import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.gss.DefaultGssContext;
+import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -27,8 +29,6 @@ import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import gwtquery.client.Properties;
 
 /**
  *
@@ -127,7 +127,7 @@ public class ChronoscopeVisualization implements Exportable {
         gssContext = gstyle.getGssContext();
       }
 
-      final XYDataset ds[] = DataTableParser
+      final Dataset ds[] = DataTableParser
           .parseDatasets(table, dataset2Column);
       final Marker ms[] = DataTableParser
           .parseMarkers(ExporterUtil.wrap(this), table, dataset2Column);

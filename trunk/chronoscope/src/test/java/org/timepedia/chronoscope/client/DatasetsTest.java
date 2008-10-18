@@ -3,21 +3,21 @@ package org.timepedia.chronoscope.client;
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.data.DatasetRequestMaker;
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
-import org.timepedia.chronoscope.client.data.MutableXYDataset;
+import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.Mutation;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 
 /**
  * @author chad takahashi
  */
 public class DatasetsTest extends TestCase {
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
-  private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+  private DatasetFactory dsFactory = new DefaultDatasetFactory();
   
   public void testAggregateCalcs() {
-    MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
+    MutableDataset2D mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     Datasets grp = new Datasets();
     grp.add(mds);
     assertEquals(1.0, grp.getMinDomain());
@@ -27,9 +27,9 @@ public class DatasetsTest extends TestCase {
   
 
   public void testIndexOf() {
-    XYDataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
-    XYDataset ds1 = newDataset(new double[] {1.0}, new double[] {10.0});
-    XYDataset ds2 = newDataset(new double[] {1.0}, new double[] {10.0});
+    Dataset ds0 = newDataset(new double[] {1.0}, new double[] {10.0});
+    Dataset ds1 = newDataset(new double[] {1.0}, new double[] {10.0});
+    Dataset ds2 = newDataset(new double[] {1.0}, new double[] {10.0});
     Datasets grp = new Datasets();
     grp.add(ds0);
     grp.add(ds1);
@@ -51,7 +51,7 @@ public class DatasetsTest extends TestCase {
   }
   
   public void testMutableDataset() {
-    MutableXYDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
+    MutableDataset2D mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     Datasets grp = new Datasets();
     grp.add(mds);
     
@@ -66,15 +66,15 @@ public class DatasetsTest extends TestCase {
   }
   
   public void testRemove() {
-    XYDataset ds0 = newMutableDataset(new double[] {2.0, 5.0}, new double[] {10.0, 11.0});
-    XYDataset ds1 = newMutableDataset(new double[] {1.0, 8.0}, new double[] {30.0, 4.0});
-    XYDataset ds2 = newMutableDataset(new double[] {3.0, 7.0}, new double[] {20.0, 5.0});
+    Dataset ds0 = newMutableDataset(new double[] {2.0, 5.0}, new double[] {10.0, 11.0});
+    Dataset ds1 = newMutableDataset(new double[] {1.0, 8.0}, new double[] {30.0, 4.0});
+    Dataset ds2 = newMutableDataset(new double[] {3.0, 7.0}, new double[] {20.0, 5.0});
     Datasets grp = new Datasets();
     grp.add(ds0);
     grp.add(ds1);
     grp.add(ds2);
     
-    MutableXYDataset removedDataset = (MutableXYDataset)grp.remove(1);
+    MutableDataset2D removedDataset = (MutableDataset2D)grp.remove(1);
     
     // verify the removed element corresponds to the index
     assertTrue(ds1 == removedDataset);
@@ -106,13 +106,13 @@ public class DatasetsTest extends TestCase {
     assertEquals(3, grp.size());
   }
   
-  private XYDataset newDataset(double[] domain, double[] range) {
-    XYDatasetRequest.Basic request = dsMaker.newRequest(domain, range);
+  private Dataset newDataset(double[] domain, double[] range) {
+    DatasetRequest.Basic request = dsMaker.newRequest(domain, range);
     return dsFactory.create(request);
   }
 
-  private MutableXYDataset newMutableDataset(double[] domain, double[] range) {
-    XYDatasetRequest.Basic request = dsMaker.newRequest(domain, range);
+  private MutableDataset2D newMutableDataset(double[] domain, double[] range) {
+    DatasetRequest.Basic request = dsMaker.newRequest(domain, range);
     return dsFactory.createMutable(request);
   }
 }

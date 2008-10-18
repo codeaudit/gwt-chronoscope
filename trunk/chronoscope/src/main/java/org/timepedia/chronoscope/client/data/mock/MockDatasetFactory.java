@@ -1,9 +1,9 @@
 package org.timepedia.chronoscope.client.data.mock;
 
-import org.timepedia.chronoscope.client.XYDataset;
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
@@ -13,13 +13,13 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
  * @author chad takahashi
  */
 public class MockDatasetFactory {
-  private XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+  private DatasetFactory dsFactory = new DefaultDatasetFactory();
   
   /**
    * Creates a basic sine wave composed of 1000 points spaced 1 day
    * apart starting at year 1970.
    */
-  public XYDataset getBasicDataset() {
+  public Dataset getBasicDataset() {
     int numSamples = 1000;
     
     ChronoDate d = ChronoDate.getSystemDate();
@@ -39,7 +39,7 @@ public class MockDatasetFactory {
       d.add(TimeUnit.DAY, 1);
     }
     
-    XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+    DatasetRequest.Basic request = new DatasetRequest.Basic();
     request.setIdentifier("mock");
     request.setAxisId("none");
     request.setLabel("Mock");

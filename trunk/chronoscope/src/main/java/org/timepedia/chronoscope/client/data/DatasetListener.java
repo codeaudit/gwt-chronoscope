@@ -2,13 +2,13 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 /**
  * Tracks modifications to an {@link Datasets} container and its
  * constituent {@link Dataset} elements.
  */
-public interface DatasetListener<S extends Tuple, T extends Dataset<S>> {
+public interface DatasetListener<S extends Tuple2D, T extends Dataset<S>> {
 
   /**
    * When an XYDataset is modified, this method is invoked with an interval

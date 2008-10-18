@@ -23,9 +23,6 @@ public interface Panel {
 
   /**
    * Sets this panel's screen location.
-   * 
-   * @see #getX()
-   * @see #getY()
    */
   void setLocation(double x, double y);
 

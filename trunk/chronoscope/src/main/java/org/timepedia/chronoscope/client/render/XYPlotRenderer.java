@@ -3,11 +3,10 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
@@ -18,7 +17,7 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
+public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -42,8 +41,7 @@ public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
     final int numDatasets = datasets.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
-      // FIXME: refactor to get rid of cast
-      XYDataset dataSet = (XYDataset)datasets.get(datasetIdx);
+      Dataset<S> dataSet = datasets.get(datasetIdx);
 
       final double plotDomainStart = plot.getDomain().getStart();
       final double plotDomainLength = plot.getDomain().length();
@@ -72,9 +70,9 @@ public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
       double rangeMin = Double.POSITIVE_INFINITY;
       double rangeMax = Double.NEGATIVE_INFINITY;
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-        double val = dataSet.getY(i, mipLevel);
-        rangeMin = Math.min(rangeMin, val);
-        rangeMax = Math.max(rangeMax, val);
+        double yValue = dataSet.getFlyweightTuple(i, mipLevel).getSecond();
+        rangeMin = Math.min(rangeMin, yValue);
+        rangeMax = Math.max(rangeMax, yValue);
       }
       minRanges[datasetIdx] = rangeMin;
       maxRanges[datasetIdx] = rangeMax;
@@ -129,7 +127,7 @@ public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer renderer = plot.getRenderer(i);
+      DatasetRenderer<S,T> renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;
@@ -138,7 +136,7 @@ public abstract class XYPlotRenderer<S extends Tuple, T extends Dataset<S>> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer renderer = plot.getRenderer(i);
+      DatasetRenderer<S,T> renderer = plot.getRenderer(i);
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;

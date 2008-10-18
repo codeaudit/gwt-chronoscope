@@ -2,10 +2,8 @@ package org.timepedia.chronoscope.client.util;
 
 import junit.framework.TestCase;
 
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-
-import java.util.Comparator;
 
 /**
  * @author Chad Takahashi
@@ -15,7 +13,7 @@ public class UtilTest extends TestCase {
 
   public void testBinarySearch() {
     double[] domain = new double[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    XYDataset<Tuple2D> ds = new JUnitXYDataset(domain);
+    Dataset<Tuple2D> ds = new JUnitDataset(domain);
     
     // Case 1: Verify that exact key matches are found
     for (int i = 0; i < domain.length; i++) {
@@ -53,10 +51,10 @@ public class UtilTest extends TestCase {
   }
   
   
-  private static final class JUnitXYDataset implements XYDataset<Tuple2D> {
+  private static final class JUnitDataset implements Dataset<Tuple2D> {
     private double[] domain;
     
-    public JUnitXYDataset(double[] domain) {
+    public JUnitDataset(double[] domain) {
       this.domain = domain;
     }
     
@@ -88,15 +86,7 @@ public class UtilTest extends TestCase {
       return getNumSamples();
     }
 
-    public double getRangeBottom() {
-      throw new UnsupportedOperationException();
-    }
-
     public String getRangeLabel() {
-      throw new UnsupportedOperationException();
-    }
-
-    public double getRangeTop() {
       throw new UnsupportedOperationException();
     }
 
@@ -108,14 +98,6 @@ public class UtilTest extends TestCase {
       return getX(index);
     }
 
-    public double getY(int index) {
-      throw new UnsupportedOperationException();
-    }
-
-    public double getY(int index, int level) {
-      throw new UnsupportedOperationException();
-    }
-
     public Tuple2D getFlyweightTuple(int index) {
       throw new UnsupportedOperationException();
     }
@@ -124,11 +106,11 @@ public class UtilTest extends TestCase {
       throw new UnsupportedOperationException();
     }
 
-    public Tuple2D getMaxValue(Comparator<Tuple2D> c, int mipLevel) {
+    public double getMaxValue(int coordinate) {
       throw new UnsupportedOperationException();
     }
 
-    public Tuple2D getMinValue(Comparator<Tuple2D> c, int mipLevel) {
+    public double getMinValue(int coordinate) {
       throw new UnsupportedOperationException();
     }
   }

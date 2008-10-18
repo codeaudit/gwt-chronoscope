@@ -5,13 +5,13 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.exporter.client.Exportable;
 
 /**
  * Responsible for visually rendering a {@link Dataset} onto a {@link Layer}.
  */
-public abstract class DatasetRenderer<S extends Tuple, T extends Dataset<S>> 
+public abstract class DatasetRenderer<S extends Tuple2D, T extends Dataset<S>> 
     implements Exportable {
 
   /**

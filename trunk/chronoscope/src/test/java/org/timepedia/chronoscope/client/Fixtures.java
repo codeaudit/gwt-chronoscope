@@ -2,16 +2,16 @@ package org.timepedia.chronoscope.client;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import org.timepedia.chronoscope.client.data.DefaultXYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetFactory;
-import org.timepedia.chronoscope.client.data.XYDatasetRequest;
+import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 
 /**
  * Some fixture data for testing
  */
 public class Fixtures {
   
-    private static final XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    private static final DatasetFactory dsFactory = new DefaultDatasetFactory();
     
     public static final String[] pre70s = {"1961", "1962", "1963", "1964", "1965"};
 
@@ -47,8 +47,8 @@ public class Fixtures {
             + "            <td>1964</td>\n" + "            <td>2200</td>\n"
             + "        </tr>\n" + "    </tbody>\n" + "</table>";
 
-    public static XYDataset getNegativeDomainAscendingRange() {
-      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+    public static Dataset getNegativeDomainAscendingRange() {
+      DatasetRequest.Basic request = new DatasetRequest.Basic();
       request.setDomain(parseDomain(pre70s));
       request.setRange(rangeValuesAscending);
       request.setIdentifier("test");
@@ -57,8 +57,8 @@ public class Fixtures {
       return dsFactory.create(request);
     }
 
-    public static XYDataset getPositiveDomainDescendingRange() {
-      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+    public static Dataset getPositiveDomainDescendingRange() {
+      DatasetRequest.Basic request = new DatasetRequest.Basic();
       request.setDomain(parseDomain(post70s));
       request.setRange(rangeValuesDescending);
       request.setIdentifier("test");
@@ -93,7 +93,7 @@ public class Fixtures {
         return shapes;
     }
 
-  public static XYDataset[] getTestDataset() {
-    return new XYDataset[] { getPositiveDomainDescendingRange() };
+  public static Dataset[] getTestDataset() {
+    return new Dataset[] { getPositiveDomainDescendingRange() };
   }
 }
