@@ -18,34 +18,34 @@ import java.util.List;
  *
  * @author chad takahashi
  */
-public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements Iterable<T> {
+public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
 
   private double minInterval = Double.POSITIVE_INFINITY;
 
   private double minDomain = Double.POSITIVE_INFINITY, maxDomain
       = Double.NEGATIVE_INFINITY;
 
-  private List<T> datasets = new ArrayList<T>();
+  private List<Dataset<T>> datasets = new ArrayList<Dataset<T>>();
 
-  private List<DatasetListener<S,T>> listeners
-      = new ArrayList<DatasetListener<S,T>>();
+  private List<DatasetListener<T>> listeners
+      = new ArrayList<DatasetListener<T>>();
 
-  private PrivateDatasetListener<S,T> myDatasetListener;
+  private PrivateDatasetListener<T> myDatasetListener;
 
   /**
    * Constructs an empty dataset container.
    */
   public Datasets() {
-    this.myDatasetListener = new PrivateDatasetListener<S,T>(this);
+    this.myDatasetListener = new PrivateDatasetListener<T>(this);
   }
 
   /**
    * Constructs a {@link Datasets} from the specified array of datasets.
    */
-  public Datasets(T[] datasets) {
+  public Datasets(Dataset<T>[] datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
-    this.myDatasetListener = new PrivateDatasetListener<S,T>(this);
-    for (T dataset : datasets) {
+    this.myDatasetListener = new PrivateDatasetListener<T>(this);
+    for (Dataset<T> dataset : datasets) {
       add(dataset);
     }
   }
@@ -53,11 +53,11 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
   /**
    * Adds the specified dataset to the existing datasets in this container.
    */
-  public void add(T dataset) {
+  public void add(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
-    if (dataset instanceof MutableDataset2D) {
-      ((MutableDataset2D) dataset).addListener(this.myDatasetListener);
+    if (dataset instanceof MutableDataset) {
+      ((MutableDataset) dataset).addListener(this.myDatasetListener);
     }
 
     updateAggregateInfo(dataset);
@@ -68,7 +68,7 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
    * Registers listeners who wish to be notified of changes to this container as
    * well as its elements.
    */
-  public void addListener(DatasetListener<S,T> listener) {
+  public void addListener(DatasetListener<T> listener) {
     ArgChecker.isNotNull(listener, "listener");
     this.listeners.add(listener);
   }
@@ -77,7 +77,7 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
    * Returns the 0-based index of the specified dataset, or -1 if it is not in
    * this container.
    */
-  public int indexOf(T dataset) {
+  public int indexOf(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     for (int i = 0; i < datasets.size(); i++) {
       if (datasets.get(i) == dataset) {
@@ -91,7 +91,7 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
   /**
    * Returns the dataset at the specified 0-based index within this container.
    */
-  public T get(int index) {
+  public Dataset<T> get(int index) {
     return this.datasets.get(index);
   }
 
@@ -130,7 +130,7 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
   /**
    * Iterator over the dataset elements of this container.
    */
-  public Iterator<T> iterator() {
+  public Iterator<Dataset<T>> iterator() {
     return this.datasets.iterator();
   }
 
@@ -143,12 +143,12 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
    * once belonged to this container will no longer signal this container, which
    * in turn, will no longer forward the mutation event to its listeners.
    */
-  public T remove(int index) {
+  public Dataset<T> remove(int index) {
     verifyDatasetNotEmpty();
-    T removedDataset = datasets.remove(index);
+    Dataset<T> removedDataset = datasets.remove(index);
     recalcAggregateInfo();
-    if (removedDataset instanceof MutableDataset2D) {
-      ((MutableDataset2D) removedDataset).removeListener(myDatasetListener);
+    if (removedDataset instanceof MutableDataset) {
+      ((MutableDataset) removedDataset).removeListener(myDatasetListener);
     }
     myDatasetListener.onDatasetRemoved(removedDataset, index);
     return removedDataset;
@@ -164,8 +164,8 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
   /**
    * Returns the contained dataset elements as an array of {@link XYDataset}.
    */
-  public T[] toArray() {
-    return (T[]) this.datasets.toArray(new Dataset[0]);
+  public Dataset<T>[] toArray() {
+    return (Dataset<T>[]) this.datasets.toArray(new Dataset[0]);
   }
 
   private void recalcAggregateInfo() {
@@ -173,12 +173,12 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
     maxDomain = Double.NEGATIVE_INFINITY;
     minInterval = Double.POSITIVE_INFINITY;
 
-    for (T ds : datasets) {
+    for (Dataset<T> ds : datasets) {
       updateAggregateInfo(ds);
     }
   }
 
-  private void updateAggregateInfo(Dataset<S> dataset) {
+  private void updateAggregateInfo(Dataset<T> dataset) {
     // FIXME: Need to factor out this typecast.  Something's wrong with
     // this model.  Maybe this class should by XYDataset and only operate
     // on XYDataset elements?  Or some generic max() function on the 
@@ -197,37 +197,37 @@ public final class Datasets<S extends Tuple2D, T extends Dataset<S>> implements 
     }
   }
 
-  private static final class PrivateDatasetListener<S extends Tuple2D, T extends Dataset<S>>
-      implements DatasetListener<S,T> {
+  private static final class PrivateDatasetListener<S extends Tuple2D>
+      implements DatasetListener<S> {
 
-    private Datasets<S,T> datasets;
+    private Datasets<S> datasets;
 
-    public PrivateDatasetListener(Datasets<S,T> datasets) {
+    public PrivateDatasetListener(Datasets<S> datasets) {
       this.datasets = datasets;
     }
 
-    public void onDatasetAdded(T dataset) {
+    public void onDatasetAdded(Dataset<S> dataset) {
       // forward event to external listeners
-      for (DatasetListener<S,T> l : this.datasets.listeners) {
+      for (DatasetListener<S> l : this.datasets.listeners) {
         l.onDatasetAdded(dataset);
       }
     }
 
-    public void onDatasetChanged(T dataset, double domainStart,
+    public void onDatasetChanged(Dataset<S> dataset, double domainStart,
         double domainEnd) {
       // update aggregate stats as changes to this dataset may have
       // affected them.
       this.datasets.updateAggregateInfo(dataset);
 
       // forward event to external listeners
-      for (DatasetListener<S,T> l : this.datasets.listeners) {
+      for (DatasetListener<S> l : this.datasets.listeners) {
         l.onDatasetChanged(dataset, domainStart, domainEnd);
       }
     }
 
-    public void onDatasetRemoved(T dataset, int datasetIndex) {
+    public void onDatasetRemoved(Dataset<S> dataset, int datasetIndex) {
       // forward event to external listeners
-      for (DatasetListener<S,T> l : this.datasets.listeners) {
+      for (DatasetListener<S> l : this.datasets.listeners) {
         l.onDatasetRemoved(dataset, datasetIndex);
       }
     }

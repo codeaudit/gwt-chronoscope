@@ -13,8 +13,7 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class ScalableXYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> 
-    extends XYPlotRenderer<S,T> {
+public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T> {
 
   protected RenderState renderState;
   
@@ -24,10 +23,10 @@ public class ScalableXYPlotRenderer<S extends Tuple2D, T extends Dataset<S>>
     renderState = new RenderState();
   }
   
-  public void drawDataset(int datasetIndex, Layer layer, XYPlot<S,T> plot) {
-    Dataset<S> dataSet = plot.getDatasets().get(datasetIndex);
+  public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
+    Dataset<T> dataSet = plot.getDatasets().get(datasetIndex);
     
-    DatasetRenderer<S,T> renderer = plot.getRenderer(datasetIndex);
+    DatasetRenderer<T> renderer = plot.getRenderer(datasetIndex);
     
     if (dataSet.getNumSamples(0) < 2) {
       return;
@@ -67,7 +66,7 @@ public class ScalableXYPlotRenderer<S extends Tuple2D, T extends Dataset<S>>
       renderState.setHovered(hoverPoints[datasetIndex] == i);
       
       // FIXME: refactor to remove cast
-      renderer.drawCurvePart(plot, layer, (S)reusablePoint, datasetIndex, renderState);
+      renderer.drawCurvePart(plot, layer, (T)reusablePoint, datasetIndex, renderState);
     }
     renderer.endCurve(plot, layer, datasetIndex, renderState);
 
@@ -83,7 +82,7 @@ public class ScalableXYPlotRenderer<S extends Tuple2D, T extends Dataset<S>>
       renderState.setHovered(hoverPoints[datasetIndex] == i);
       
       // FIXME: refactor to remove cast
-      renderer.drawPoint(plot, layer, (S)reusablePoint, datasetIndex, renderState);
+      renderer.drawPoint(plot, layer, (T)reusablePoint, datasetIndex, renderState);
     }
     renderer.endPoints(plot, layer, datasetIndex, renderState);
   }

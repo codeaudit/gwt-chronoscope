@@ -44,8 +44,7 @@ public class ChartPanel extends Composite implements Exportable {
 
   protected XYPlot createPlot(Dataset[] datasetArray) {
     
-    Datasets<Tuple2D,Dataset<Tuple2D>> datasets = 
-        new Datasets<Tuple2D,Dataset<Tuple2D>>(datasetArray);
+    Datasets<Tuple2D> datasets = new Datasets<Tuple2D>(datasetArray);
     
     XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
     

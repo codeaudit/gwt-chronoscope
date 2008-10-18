@@ -49,7 +49,7 @@ public class ChartDemo implements EntryPoint {
 
       TabPanel vp = new TabPanel();
       
-      final Datasets<Tuple2D,Dataset<Tuple2D>> ds = new Datasets<Tuple2D,Dataset<Tuple2D>>();
+      final Datasets<Tuple2D> ds = new Datasets<Tuple2D>();
       ds.add(Chronoscope.createXYDataset(getJson("unratedata")));
       
       MockDatasetFactory datasetFactory = new MockDatasetFactory();

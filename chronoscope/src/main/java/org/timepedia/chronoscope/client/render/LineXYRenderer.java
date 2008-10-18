@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -14,7 +13,7 @@ import org.timepedia.exporter.client.Exportable;
  * Renders scatter plot, lines, points+lines, or filled areas depending on 
  * GSS styling used.
  */
-public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends DatasetRenderer<S,T> 
+public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement, Exportable {
 
   boolean prevHover = false;
@@ -66,7 +65,7 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     fillElement = new GssElementImpl("fill", parentSeriesElement);
   }
 
-  public void beginCurve(XYPlot<S,T> plot, Layer layer, RenderState renderState) {
+  public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
     lineProp = renderState.isDisabled() ? disabledLineProperties : gssLineProperties;
@@ -78,13 +77,13 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     pointIndex = 0;
   }
 
-  public void beginPoints(XYPlot<S,T> plot, Layer layer, RenderState renderState) {
+  public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
     pointProp = renderState.isDisabled() ? disabledPointProperties : gssPointProperties;
     lx = ly = -1;
     layer.save();
   }
 
-  public double calcLegendIconWidth(XYPlot<S,T> plot, View view) {
+  public double calcLegendIconWidth(XYPlot<T> plot, View view) {
     initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProperties 
@@ -92,8 +91,8 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     return apointProp.size + 10;
   }
 
-  public void drawCurvePart(XYPlot<S,T> plot, Layer layer,
-      S point, int seriesNum, RenderState renderState) {
+  public void drawCurvePart(XYPlot<T> plot, Layer layer,
+      T point, int seriesNum, RenderState renderState) {
       double ux = plot.domainToScreenX(point.getFirst(), seriesNum);
       double uy = plot.rangeToScreenY(point.getSecond(), seriesNum);
       
@@ -123,7 +122,7 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
       ++pointIndex;
   }
   
-  public Bounds drawLegendIcon(XYPlot<S,T> plot, Layer layer, double x, double y,
+  public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
@@ -172,7 +171,7 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     return new Bounds(x, y, apointProp.size + 10, 10);
   }
 
-  public void drawPoint(XYPlot<S,T> plot, Layer layer, S point,
+  public void drawPoint(XYPlot<T> plot, Layer layer, T point,
       int seriesNum, RenderState renderState) {
     
     final boolean hovered = renderState.isHovered();
@@ -218,7 +217,7 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     }
   }
 
-  public void endCurve(XYPlot<S,T> plot, Layer layer, int seriesNum, 
+  public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
 
     layer.setLineWidth(lineProp.lineThickness);
@@ -242,7 +241,7 @@ public class LineXYRenderer<S extends Tuple2D, T extends Dataset<S>> extends Dat
     layer.restore();
   }
 
-  public void endPoints(XYPlot<S,T> plot, Layer layer, int seriesNum, 
+  public void endPoints(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
     layer.restore();
   }

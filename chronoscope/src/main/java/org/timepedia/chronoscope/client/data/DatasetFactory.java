@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.MutableDataset;
 
 
 /**
@@ -12,6 +13,6 @@ public interface DatasetFactory {
 
   Dataset create(DatasetRequest request);
 
-  MutableDataset2D createMutable(DatasetRequest request);
+  MutableDataset createMutable(DatasetRequest request);
   
 }
