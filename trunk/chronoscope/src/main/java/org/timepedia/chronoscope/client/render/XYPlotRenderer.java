@@ -17,7 +17,7 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
+public abstract class XYPlotRenderer<T extends Tuple2D> {
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -34,14 +34,14 @@ public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
   // domain interval) for the 3rd dataset in plot.datsets.
   private double[] minRanges, maxRanges;
   
-  private XYPlot<S,T> plot;
+  private XYPlot<T> plot;
   
   private void computeVisibleDomainAndRange() {
-    Datasets<S,T> datasets = plot.getDatasets();
+    Datasets<T> datasets = plot.getDatasets();
     final int numDatasets = datasets.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
-      Dataset<S> dataSet = datasets.get(datasetIdx);
+      Dataset<T> dataSet = datasets.get(datasetIdx);
 
       final double plotDomainStart = plot.getDomain().getStart();
       final double plotDomainLength = plot.getDomain().length();
@@ -82,7 +82,7 @@ public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
   /**
    * Override to implement custom scaling logic.
    */
-  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<S,T> plot);
+  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot);
 
   public void drawDatasets() {
     final int numDatasets = plot.getDatasets().size();
@@ -98,7 +98,7 @@ public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
     }
   }
 
-  public void setPlot(XYPlot<S,T> plot) {
+  public void setPlot(XYPlot<T> plot) {
     this.plot = plot;
   }
   
@@ -127,7 +127,7 @@ public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<S,T> renderer = plot.getRenderer(i);
+      DatasetRenderer<T> renderer = plot.getRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;
@@ -136,7 +136,7 @@ public abstract class XYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<S,T> renderer = plot.getRenderer(i);
+      DatasetRenderer<T> renderer = plot.getRenderer(i);
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;

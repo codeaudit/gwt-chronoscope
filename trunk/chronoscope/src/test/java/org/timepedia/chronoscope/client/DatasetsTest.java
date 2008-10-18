@@ -2,12 +2,12 @@ package org.timepedia.chronoscope.client;
 
 import junit.framework.TestCase;
 
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DatasetRequestMaker;
 import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.Mutation;
-import org.timepedia.chronoscope.client.data.DatasetFactory;
-import org.timepedia.chronoscope.client.data.DatasetRequest;
 
 /**
  * @author chad takahashi
@@ -17,7 +17,7 @@ public class DatasetsTest extends TestCase {
   private DatasetFactory dsFactory = new DefaultDatasetFactory();
   
   public void testAggregateCalcs() {
-    MutableDataset2D mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
+    MutableDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     Datasets grp = new Datasets();
     grp.add(mds);
     assertEquals(1.0, grp.getMinDomain());
@@ -51,7 +51,7 @@ public class DatasetsTest extends TestCase {
   }
   
   public void testMutableDataset() {
-    MutableDataset2D mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
+    MutableDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     Datasets grp = new Datasets();
     grp.add(mds);
     
@@ -111,7 +111,7 @@ public class DatasetsTest extends TestCase {
     return dsFactory.create(request);
   }
 
-  private MutableDataset2D newMutableDataset(double[] domain, double[] range) {
+  private MutableDataset newMutableDataset(double[] domain, double[] range) {
     DatasetRequest.Basic request = dsMaker.newRequest(domain, range);
     return dsFactory.createMutable(request);
   }

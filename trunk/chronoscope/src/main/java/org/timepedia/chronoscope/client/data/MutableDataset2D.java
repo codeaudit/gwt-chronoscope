@@ -1,7 +1,9 @@
 package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.MutableDataset;
 import org.timepedia.chronoscope.client.data.Mutation.AppendMutation;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
@@ -16,9 +18,9 @@ import java.util.List;
  * 
  * @author Chad Takahashi
  */
-public class MutableDataset2D extends ArrayDataset2D {
+public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<Tuple2D> {
   private MipMapStrategy mipMapStrategy;
-  private List<DatasetListener> listeners = new ArrayList<DatasetListener>();
+  private List<DatasetListener<Tuple2D>> listeners = new ArrayList<DatasetListener<Tuple2D>>();
 
   public MutableDataset2D(DatasetRequest request) {
     super(request);
@@ -26,12 +28,12 @@ public class MutableDataset2D extends ArrayDataset2D {
         request.getDefaultMipMapStrategy(), "request.mipMapStrategy");
   }
 
-  public void addListener(DatasetListener listener) {
+  public void addListener(DatasetListener<Tuple2D> listener) {
     ArgChecker.isNotNull(listener, "listener");
     this.listeners.add(listener);
   }
   
-  public void removeListener(DatasetListener listener) {
+  public void removeListener(DatasetListener<Tuple2D> listener) {
     listeners.remove(listener);
   }
 
@@ -77,8 +79,8 @@ public class MutableDataset2D extends ArrayDataset2D {
     mipMapStrategy.appendRangeValue(y, multiRange);
   }
 
-  private void notifyListeners(Dataset ds, double domainStart, double domainEnd) {
-    for (DatasetListener l : this.listeners) {
+  private void notifyListeners(Dataset<Tuple2D> ds, double domainStart, double domainEnd) {
+    for (DatasetListener<Tuple2D> l : this.listeners) {
       l.onDatasetChanged(ds, domainStart, domainEnd);
     }
   }

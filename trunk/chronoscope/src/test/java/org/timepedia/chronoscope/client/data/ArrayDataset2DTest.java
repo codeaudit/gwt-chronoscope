@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.data;
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.MutableDataset;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 
@@ -61,7 +62,7 @@ public class ArrayDataset2DTest extends TestCase {
     request.setDomain(domain.removeLast().getArray());
     request.setRange(range.removeLast().getArray());
     
-    MutableDataset2D ds = dsFactory.createMutable(request);
+    MutableDataset ds = dsFactory.createMutable(request);
     ds.mutate(Mutation.append(domain.getLast(), range.getLast()));
     
     return ds;
