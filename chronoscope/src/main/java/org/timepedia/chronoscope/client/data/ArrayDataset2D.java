@@ -1,41 +1,45 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 
 /**
- * {@link XYDataset} backed by {@link Array2D} objects.
+ * {@link Dataset} composed of {@link Tuple2D} data points and backed
+ * by {@link Array2D} objects.
  * 
  * @author Chad Takahashi
  */
-public class ArrayXYDataset extends AbstractXYDataset<Tuple2D> {
+public class ArrayDataset2D extends AbstractDataset<Tuple2D> {
 
   /*
    * Stores the multiresolution domain and range values.
    */
   protected Array2D multiDomain, multiRange;
   
+  private BasicTuple2D reusableTuple = new BasicTuple2D(0, 0);
+  
   /**
-   * Constructs an {@link XYDataset} from the specified request object.
+   * Constructs an {@link Dataset} from the specified request object.
    */
-  public ArrayXYDataset(XYDatasetRequest request) {
+  public ArrayDataset2D(DatasetRequest request) {
     ArgChecker.isNotNull(request, "request");
     request.validate();
     axisId = (String) ArgChecker.isNotNull(request.getAxisId(), "axisId");
     rangeLabel = (String) ArgChecker.isNotNull(request.getLabel(), "label");
     identifier = request.getIdentifier();
 
-    if (request instanceof XYDatasetRequest.MultiRes) {
+    if (request instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
-      XYDatasetRequest.MultiRes multiResReq = (XYDatasetRequest.MultiRes) request;
+      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) request;
       multiDomain = multiResReq.getMultiDomain();
       multiRange = multiResReq.getMultiRange();
-    } else if (request instanceof XYDatasetRequest.Basic) {
+    } else if (request instanceof DatasetRequest.Basic) {
       // Use MipMapStrategy to calculate multiDomain and MultiRange from
       // the domain[] and range[] specified in the basic request.
-      XYDatasetRequest.Basic basicReq = (XYDatasetRequest.Basic) request;
+      DatasetRequest.Basic basicReq = (DatasetRequest.Basic) request;
       MipMapStrategy mms = basicReq.getDefaultMipMapStrategy();
       multiDomain = mms.calcMultiDomain(basicReq.getDomain());
       multiRange = mms.calcMultiRange(basicReq.getRange());
@@ -54,20 +58,52 @@ public class ArrayXYDataset extends AbstractXYDataset<Tuple2D> {
 
     // Assign rangeBottom and rangeTop
     final int numLevels = multiDomain.numRows();
-    rangeTop = request.getRangeTop();
-    rangeBottom = request.getRangeBottom();
-    if (Double.isNaN(rangeTop) || Double.isNaN(rangeBottom)) {
+    maxRange = request.getRangeTop();
+    minRange = request.getRangeBottom();
+    if (Double.isNaN(maxRange) || Double.isNaN(minRange)) {
       // Question: Will the max range at mip level 1 or greater ever be greater
       // than the max range at mip level 0? If not, then can we just find
       // min/max values at level 0?
       Interval rangeInterval = calcRangeInterval(multiRange, numLevels);
-      rangeBottom = rangeInterval.getStart();
-      rangeTop = rangeInterval.getEnd();
+      minRange = rangeInterval.getStart();
+      maxRange = rangeInterval.getEnd();
     }
   }
 
   public double getApproximateMinimumInterval() {
     return approximateMinimumInterval;
+  }
+
+  public Tuple2D getFlyweightTuple(int index) {
+    return getFlyweightTuple(index, 0);
+  }
+
+  public Tuple2D getFlyweightTuple(int index, int mipLevel) {
+    double yValue = multiRange.get(mipLevel, index);
+    reusableTuple.setCoordinates(getX(index, mipLevel), yValue);
+    return reusableTuple;
+  }
+
+  public double getMaxValue(int coordinate) {
+    switch (coordinate) {
+      case 0:
+        return multiDomain.get(0, getNumSamples() - 1);
+      case 1:
+        return this.maxRange;
+      default:
+        throw new IllegalArgumentException("coordinate out of range: " + coordinate);
+    }
+  }
+  
+  public double getMinValue(int coordinate) {
+    switch (coordinate) {
+      case 0:
+        return multiDomain.get(0, 0);
+      case 1:
+        return this.minRange;
+      default:
+        throw new IllegalArgumentException("coordinate out of range: " + coordinate);
+    }
   }
 
   public int getNumSamples(int mipLevel) {
@@ -76,10 +112,6 @@ public class ArrayXYDataset extends AbstractXYDataset<Tuple2D> {
 
   public double getX(int index, int mipLevel) {
     return multiDomain.get(mipLevel, index);
-  }
-
-  public double getY(int index, int mipLevel) {
-    return multiRange.get(mipLevel, index);
   }
 
   /**

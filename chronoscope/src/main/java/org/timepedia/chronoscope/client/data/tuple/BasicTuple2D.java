@@ -19,11 +19,11 @@ public class BasicTuple2D implements Tuple2D {
     return y;
   }
 
-  public Tuple copy() {
+  public Tuple2D copy() {
     return new BasicTuple2D(this.x, this.y);
   }
 
-  public double getCoordinate(int i) {
+  public double get(int i) {
     switch (i) {
       case 0:
         return x;
@@ -34,7 +34,7 @@ public class BasicTuple2D implements Tuple2D {
     }
   }
 
-  public int getDimension() {
+  public int size() {
     return 2;
   }
   

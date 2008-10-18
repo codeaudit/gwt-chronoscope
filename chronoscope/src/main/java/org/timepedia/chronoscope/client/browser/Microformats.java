@@ -17,8 +17,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
@@ -56,7 +56,7 @@ public class Microformats {
     private MicroformatCountdownLatch latch;
 
     public MicroformatViewReadyCallback(Element[] links, String id,
-        String chartId, XYDataset[] ds, Element elt,
+        String chartId, Dataset[] ds, Element elt,
         MicroformatCountdownLatch latch) {
       this.links = links;
       this.id = id;
@@ -367,7 +367,7 @@ public class Microformats {
       final Element elt = elements[i];
       final String id = DOM.getElementAttribute(elt, "id");
       if (Chronoscope.getChartById(id) == null) {
-        final XYDataset[] ds = importMicroformatTable(id, elt);
+        final Dataset[] ds = importMicroformatTable(id, elt);
         Element div = DOM.createDiv();
         final String cid = id + "chrono";
         DOM.setElementAttribute(div, "id", cid);
@@ -473,7 +473,7 @@ public class Microformats {
     return hdrs;
   }
 
-  private static XYDataset[] importMicroformatTable(String id, Element elt) {
+  private static Dataset[] importMicroformatTable(String id, Element elt) {
     return Chronoscope.createXYDatasets(importMicroformatTable0(id, elt));
   }
 }

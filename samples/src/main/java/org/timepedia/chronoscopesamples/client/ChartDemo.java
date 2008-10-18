@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
@@ -49,23 +49,23 @@ public class ChartDemo implements EntryPoint {
 
       TabPanel vp = new TabPanel();
       
-      final Datasets<Tuple2D,XYDataset<Tuple2D>> ds = new Datasets<Tuple2D,XYDataset<Tuple2D>>();
+      final Datasets<Tuple2D,Dataset<Tuple2D>> ds = new Datasets<Tuple2D,Dataset<Tuple2D>>();
       ds.add(Chronoscope.createXYDataset(getJson("unratedata")));
       
       MockDatasetFactory datasetFactory = new MockDatasetFactory();
-      XYDataset mockDataset = datasetFactory.getBasicDataset(); 
+      Dataset mockDataset = datasetFactory.getBasicDataset(); 
       ds.add(mockDataset);
       
-      XYDataset[] dsArray = new XYDataset[ds.size()];
+      Dataset[] dsArray = new Dataset[ds.size()];
       for (int i = 0; i < ds.size(); i++) {
-        dsArray[i] = (XYDataset)ds.get(i);
+        dsArray[i] = ds.get(i);
       }
       
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(dsArray, chartWidth, chartHeight);
       chartPanel.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(final View view) {
-          XYDataset xyds = ds.get(0);
+          Dataset xyds = ds.get(0);
           final Marker m = new Marker(
               (xyds.getDomainBegin() + xyds.getDomainEnd()) / 2, "A", 0);
           m.addOverlayClickListener(new OverlayClickListener() {

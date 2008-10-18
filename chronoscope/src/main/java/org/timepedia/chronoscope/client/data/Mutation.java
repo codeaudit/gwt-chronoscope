@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.Collection;

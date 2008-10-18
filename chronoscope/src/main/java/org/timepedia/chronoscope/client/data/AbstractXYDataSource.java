@@ -4,7 +4,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
 import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
 
@@ -93,11 +93,11 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       }
     }
 
-    XYDatasetFactory dsFactory = new DefaultXYDatasetFactory();
+    DatasetFactory dsFactory = new DefaultDatasetFactory();
     
-    XYDataset datasets[] = new XYDataset[numseries];
+    Dataset datasets[] = new Dataset[numseries];
     for (int i = 0; i < datasets.length; i++) {
-      XYDatasetRequest.Basic request = new XYDatasetRequest.Basic();
+      DatasetRequest.Basic request = new DatasetRequest.Basic();
       request.setDomain(domains[i]);
       request.setRange(ranges[i]);
       request.setIdentifier(ids[i]);

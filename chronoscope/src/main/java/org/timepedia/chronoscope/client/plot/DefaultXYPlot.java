@@ -6,7 +6,6 @@ import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.DateAxis;
@@ -19,7 +18,7 @@ import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
@@ -59,7 +58,7 @@ import java.util.Map;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>> 
+public class DefaultXYPlot<S extends Tuple2D, T extends Dataset<S>> 
     implements XYPlot<S,T>, Exportable, DatasetListener<S,T>, ZoomListener {
 
   private static int globalPlotNumber = 0;
@@ -162,8 +161,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
 
   private double visibleDomainMax;
 
-  //private final List<DatasetRenderer<S,T>> xyRenderers = new ArrayList<DatasetRenderer<S,T>>();
-  private final List<DatasetRenderer<S,T>> xyRenderers = new ArrayList<DatasetRenderer<S,T>>();
+  private final List<DatasetRenderer<S,T>> datasetRenderers = new ArrayList<DatasetRenderer<S,T>>();
 
   private enum DistanceFormula {
 
@@ -351,17 +349,14 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    // FIXME: refactor to get rid of cast
-    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
-
+    Dataset<S> ds = datasets.get(datasetIndex);
     return ds.getX(pointIndex, currentMiplevels[datasetIndex]);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    // FIXME: refactor to get rid of cast
-    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
-
-    return ds.getY(pointIndex, currentMiplevels[datasetIndex]);
+    Dataset<S> ds = datasets.get(datasetIndex);
+    int mipLevel = currentMiplevels[datasetIndex];
+    return ds.getFlyweightTuple(pointIndex, mipLevel).getSecond();
   }
 
   public ValueAxis getDomainAxis() {
@@ -398,8 +393,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
-    // FIXME: refactor to get rid of cast
-    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+    Dataset<S> ds = datasets.get(datasetIndex);
     
     return Util
         .binarySearch(ds, domainX, currentMiplevels[datasetIndex]);
@@ -437,8 +431,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   }
 
   public DatasetRenderer<S,T> getRenderer(int datasetIndex) {
-    // FIXME: refactor to get rid of cast
-    return (DatasetRenderer<S,T>)xyRenderers.get(datasetIndex);
+    return datasetRenderers.get(datasetIndex);
   }
 
   public double getSelectionBegin() {
@@ -634,7 +627,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
     }
     
     rangeAxes.remove(datasetIndex);
-    xyRenderers.remove(datasetIndex);
+    datasetRenderers.remove(datasetIndex);
     this.rangePanelLeft = null;
     this.rangePanelRight = null;
     this.id2rangeAxis.clear();
@@ -883,7 +876,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   }
   
   public void setRenderer(int datasetIndex, DatasetRenderer<S,T> r) {
-    xyRenderers.set(datasetIndex, r);
+    datasetRenderers.set(datasetIndex, r);
   }
 
   public double windowXtoUser(double x) {
@@ -904,9 +897,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
     List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
     
     for (int i = 0; i < datasets.size(); i++) {
-      
-      // FIXME: refactor to get rid of this cast
-      XYDataset ds = (XYDataset)datasets.get(i);
+      Dataset<S> ds = datasets.get(i);
 
       RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
       
@@ -916,7 +907,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
         boolean useLeftPanel = (numLeftAxes <= numRightAxes);
         CompositeAxisPanel currRangePanel = useLeftPanel ? rangePanelLeft : rangePanelRight;
         ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
-            ds.getRangeBottom(), ds.getRangeTop());
+            ds.getMinValue(1), ds.getMaxValue(1));
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(ra);
         ra.setAxisRenderer(axisPanel);
@@ -924,8 +915,8 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
         id2rangeAxis.put(ra.getAxisId(), ra);
       } 
       else {
-        ra.setInitialRange(Math.min(ra.getUnadjustedRangeLow(), ds.getRangeBottom()),
-            Math.max(ra.getUnadjustedRangeHigh(), ds.getRangeTop()));
+        ra.setInitialRange(Math.min(ra.getUnadjustedRangeLow(), ds.getMinValue(1)),
+            Math.max(ra.getUnadjustedRangeHigh(), ds.getMaxValue(1)));
       }
       
       rangeAxes.add(ra);
@@ -1143,8 +1134,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    // FIXME: refactor to get rid of cast
-    XYDataset ds = (XYDataset)datasets.get(datasetIndex);
+    Dataset<S> ds = datasets.get(datasetIndex);
     
     int currMipLevel = currentMiplevels[datasetIndex];
 
@@ -1153,10 +1143,9 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
 
     double sx = domainToScreenX(dataX, datasetIndex);
     double sy = rangeToScreenY(dataY, datasetIndex);
-    double rx = domainToScreenX(ds.getX(closestPtToRight, currMipLevel),
-        datasetIndex);
-    double ry = rangeToScreenY(ds.getY(closestPtToRight, currMipLevel),
-        datasetIndex);
+    Tuple2D tupleRight = ds.getFlyweightTuple(closestPtToRight, currMipLevel);
+    double rx = domainToScreenX(tupleRight.getFirst(), datasetIndex);
+    double ry = rangeToScreenY(tupleRight.getSecond(), datasetIndex);
 
     int nearestHoverPt;
     if (closestPtToRight == 0) {
@@ -1164,10 +1153,9 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
       np.dist = df.dist(sx, sy, rx, ry);
     } else {
       int closestPtToLeft = closestPtToRight - 1;
-      double lx = domainToScreenX(ds.getX(closestPtToLeft, currMipLevel),
-          datasetIndex);
-      double ly = rangeToScreenY(ds.getY(closestPtToLeft, currMipLevel),
-          datasetIndex);
+      Tuple2D tupleLeft = ds.getFlyweightTuple(closestPtToLeft, currMipLevel);
+      double lx = domainToScreenX(tupleLeft.getFirst(), datasetIndex);
+      double ly = rangeToScreenY(tupleLeft.getSecond(), datasetIndex);
       double lDist = df.dist(sx, sy, lx, ly);
       double rDist = df.dist(sx, sy, rx, ry);
 
@@ -1189,14 +1177,13 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   }
 
   private void initDefaultRenderers(int numDatasets) {
-    if (xyRenderers.size() != numDatasets) {
-      xyRenderers.clear();
+    if (datasetRenderers.size() != numDatasets) {
+      datasetRenderers.clear();
     }
     
-    if (xyRenderers.isEmpty()) {
+    if (datasetRenderers.isEmpty()) {
       for (int i = 0; i < numDatasets; i++) {
-        // FIXME: refactor to remove cast
-        xyRenderers.add((DatasetRenderer)new LineXYRenderer(i));
+        datasetRenderers.add(new LineXYRenderer<S,T>(i));
       }
     }
   }
@@ -1272,8 +1259,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
     pushHistory();
 
-    // FIXME: refactor to get rid of cast
-    XYDataset dataset = (XYDataset)datasets.get(datasetIndex);
+    Dataset<S> dataset = datasets.get(datasetIndex);
     
     pointIndex = Util.binarySearch(dataset,
         dataset.getX(pointIndex, currentMiplevels[datasetIndex]), 0);
@@ -1336,7 +1322,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
       return; // shift focus 0 data points left/right -- that was easy.
     }
 
-    XYDataset ds;
+    Dataset<S> ds;
     int focusDataset, focusPoint;
     int mipLevel;
 
@@ -1345,8 +1331,7 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
       // the point on dataset [0] that's closest to the center of the screen.
       focusDataset = 0;
       
-      // FIXME: need to refactor to get rid of this cast
-      ds = (XYDataset)datasets.get(focusDataset);
+      ds = datasets.get(focusDataset);
       
       mipLevel = currentMiplevels[focusDataset];
       double domainCenter = plotDomain.midpoint();
@@ -1372,12 +1357,12 @@ public class DefaultXYPlot<S extends Tuple, T extends Dataset<S>>
         focusPoint = datasets.get(focusDataset).getNumSamples(mipLevel) - 1;
       }
 
-      // FIXME: refactor to get rid of cast
-      ds = (XYDataset)datasets.get(focusDataset);
+      ds = datasets.get(focusDataset);
     }
-
-    double dataX = ds.getX(focusPoint, mipLevel);
-    double dataY = ds.getY(focusPoint, mipLevel);
+    
+    Tuple2D dataPt = ds.getFlyweightTuple(focusPoint, mipLevel);
+    double dataX = dataPt.getFirst();
+    double dataY = dataPt.getSecond();
     ensureVisible(dataX, dataY, null);
     setFocusAndNotifyView(focusDataset, focusPoint);
     redraw();

@@ -1,10 +1,7 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.junit.client.GWTTestCase;
-
-import junit.framework.TestCase;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -19,7 +16,7 @@ public class ChronoscopeTestCaseBase extends GWTTestCase {
     return "org.timepedia.chronoscope.ChronoscopeTestSuiteMock";
   }
 
-  protected void runChronoscopeTest(XYDataset ds[],
+  protected void runChronoscopeTest(Dataset ds[],
       ViewReadyCallback viewReadyCallback) {
     Chronoscope.setErrorReporting(false);
     ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);

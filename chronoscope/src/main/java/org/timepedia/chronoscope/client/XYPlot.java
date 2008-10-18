@@ -5,7 +5,7 @@ import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -53,7 +53,7 @@ import org.timepedia.exporter.client.Exportable;
  * <li>Selection mode on/off
  * </ul>
  */
-public interface XYPlot<S extends Tuple, T extends Dataset<S>> extends Exportable {
+public interface XYPlot<S extends Tuple2D, T extends Dataset<S>> extends Exportable {
 
   /**
    * Add an overlay to this plot.

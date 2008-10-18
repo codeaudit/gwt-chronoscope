@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.util;
 
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 
 /**
@@ -17,13 +17,13 @@ public final class Util {
    * dataset is returned.
    * <p>
    * The dataset's domain values are assumed to be in sorted ascending order (this
-   * should be enforced by all {@link XYDataset} implementations).  
+   * should be enforced by all {@link Dataset} implementations).  
    * 
    * @param ds - The dataset to search on
    * @param domainValue - The sought-after domain value
    * @param mipLevel - The mip level to search on within the dataset
    */
-  public static int binarySearch(XYDataset ds, double domainValue,
+  public static int binarySearch(Dataset ds, double domainValue,
       int mipLevel) {
     int low = 0;
     int high = ds.getNumSamples(mipLevel) - 1;
@@ -47,8 +47,7 @@ public final class Util {
   public static double calcVisibleDomainMax(int maxDrawableDataPts, Datasets dataSets) {
     double end = Double.MIN_VALUE;
     for (int i = 0; i < dataSets.size(); i++) {
-      // FIXME: refactor to remove cast
-      XYDataset ds = (XYDataset)dataSets.get(i);
+      Dataset ds = dataSets.get(i);
       
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawablePts
@@ -124,7 +123,7 @@ public final class Util {
    * Finds the lowest mip level of the specified dataset whose data point cardinality 
    * is not greater than <tt>maxDrawablePts</tt>.
    */
-  private static int findLowestMipLevel(XYDataset ds, int maxDrawablePts) {
+  private static int findLowestMipLevel(Dataset ds, int maxDrawablePts) {
     int mipLevel = 0;
     while (true) {
       int numPoints = ds.getNumSamples(mipLevel);

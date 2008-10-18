@@ -2,11 +2,10 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 /**
  * Implements a XYPlotRenderer that uses multiresolution datasets to minimize
@@ -14,7 +13,7 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class ScalableXYPlotRenderer<S extends Tuple, T extends Dataset<S>> 
+public class ScalableXYPlotRenderer<S extends Tuple2D, T extends Dataset<S>> 
     extends XYPlotRenderer<S,T> {
 
   protected RenderState renderState;
@@ -26,8 +25,7 @@ public class ScalableXYPlotRenderer<S extends Tuple, T extends Dataset<S>>
   }
   
   public void drawDataset(int datasetIndex, Layer layer, XYPlot<S,T> plot) {
-    // FIXME: refactor to remove casts
-    XYDataset dataSet = (XYDataset)plot.getDatasets().get(datasetIndex);
+    Dataset<S> dataSet = plot.getDatasets().get(datasetIndex);
     
     DatasetRenderer<S,T> renderer = plot.getRenderer(datasetIndex);
     
@@ -61,8 +59,9 @@ public class ScalableXYPlotRenderer<S extends Tuple, T extends Dataset<S>>
     // Render the data curve
     int end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {
-      double x = dataSet.getX(i, mipLevel);
-      double y = dataSet.getY(i, mipLevel);
+      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+      double x = dataPt.getFirst();
+      double y = dataPt.getSecond();
       reusablePoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
@@ -76,8 +75,9 @@ public class ScalableXYPlotRenderer<S extends Tuple, T extends Dataset<S>>
     renderer.beginPoints(plot, layer, renderState);
     end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 2); i < end; i += inc) {
-      double x = dataSet.getX(i, mipLevel);
-      double y = dataSet.getY(i, mipLevel);
+      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+      double x = dataPt.getFirst();
+      double y = dataPt.getSecond();
       reusablePoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);

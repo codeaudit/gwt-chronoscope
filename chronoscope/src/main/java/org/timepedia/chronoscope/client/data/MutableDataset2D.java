@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.Mutation.AppendMutation;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link XYDataset} that permits certain types of mutations (e.g. appending new
+ * Dataset that permits certain types of mutations (e.g. appending new
  * data points, modifying Y-value of existing data points).
  * <p>
  * 
@@ -16,11 +16,11 @@ import java.util.List;
  * 
  * @author Chad Takahashi
  */
-public class MutableXYDataset extends ArrayXYDataset {
+public class MutableDataset2D extends ArrayDataset2D {
   private MipMapStrategy mipMapStrategy;
   private List<DatasetListener> listeners = new ArrayList<DatasetListener>();
 
-  public MutableXYDataset(XYDatasetRequest request) {
+  public MutableDataset2D(DatasetRequest request) {
     super(request);
     mipMapStrategy = (MipMapStrategy) ArgChecker.isNotNull(
         request.getDefaultMipMapStrategy(), "request.mipMapStrategy");
@@ -61,8 +61,8 @@ public class MutableXYDataset extends ArrayXYDataset {
           + mutation.getClass().getName() + " currently not supported");
     }
     
-    rangeBottom = Math.min(rangeBottom, newY);
-    rangeTop = Math.max(rangeTop, newY);
+    minRange = Math.min(minRange, newY);
+    maxRange = Math.max(maxRange, newY);
     notifyListeners(this, newX, newX);
   }
 
@@ -77,7 +77,7 @@ public class MutableXYDataset extends ArrayXYDataset {
     mipMapStrategy.appendRangeValue(y, multiRange);
   }
 
-  private void notifyListeners(XYDataset ds, double domainStart, double domainEnd) {
+  private void notifyListeners(Dataset ds, double domainStart, double domainEnd) {
     for (DatasetListener l : this.listeners) {
       l.onDatasetChanged(ds, domainStart, domainEnd);
     }

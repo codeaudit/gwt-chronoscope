@@ -1,16 +1,19 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.data.tuple.Tuple;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.NoExport;
 
 /**
- * Models a multiresolution dataset containing 0 or more {@link Tuple} points.
+ * Models a multiresolution dataset containing 0 or more {@link Tuple2D} points.
  * <p>
- * A dataset allows arbitrary Tuples to be returned from each sample
- * index. The tuples returned are not guaranteed to be mutation free; that is,
- * they should be considered flyweight objects to be used and discarded before
- * the next invocation of {@link #getFlyweightTuple(int)}. Call
- * {@link Tuple#copy()} to obtain a persistent tuple.
+ * A dataset allows arbitrary Tuples to be returned from each sample index. The
+ * tuples returned are not guaranteed to be mutation free; that is, they should
+ * be considered flyweight objects to be used and discarded before the next
+ * invocation of {@link #getFlyweightTuple(int)}. Call {@link Tuple2D#copy()}
+ * to obtain a persistent tuple.
  * <p>
  * A multiresolution dataset is a dataset consisting of multiple levels, with
  * level 0 being the bottom most level containing the original datasets. Levels
@@ -27,8 +30,13 @@ import org.timepedia.exporter.client.Exportable;
  * It is recommended to use a method that makes successive levels half the size
  * of former levels, so that the height of the pyramid is
  * <tt>log_2(num_samples)</tt>.
+ * 
+ * @gwt.exportPackage chronoscope
+ * @gwt.export
  */
-public interface Dataset<T extends Tuple> extends Exportable {
+@ExportPackage("chronoscope")
+@Export
+public interface Dataset<T extends Tuple2D> extends Exportable {
 
   /**
    * Returns <em>approximately</em> the smallest domain interval between two
@@ -44,9 +52,46 @@ public interface Dataset<T extends Tuple> extends Exportable {
   String getAxisId();
 
   /**
+   * Return the minimum domain value in this dataset, which corresponds to the
+   * first value in the tuple at index 0.
+   */
+  double getDomainBegin();
+
+  /**
+   * Return the maxiumum domain value in this dataset, which corresponds to the
+   * first value in the tuple at index <tt>{@link #getNumSamples() - 1}<?tt>.
+   */
+  double getDomainEnd();
+
+  /**
+   * Returns the tuple associated with the specified domain index at mip level
+   * 0.
+   */
+  @NoExport
+  T getFlyweightTuple(int index);
+
+  /**
+   * Returns the tuple associated with the specified domain index and mip level.
+   */
+  @NoExport
+  T getFlyweightTuple(int index, int mipLevel);
+
+  /**
    * Return a unique identifier for this dataset.
    */
   String getIdentifier();
+
+  /**
+   * Returns the maximum value at the specified tuple coordinate across all
+   * tuples in this dataset.
+   */
+  double getMaxValue(int coordinate);
+
+  /**
+   * Returns the minimum value at the specified tuple coordinate across all
+   * tuples in this dataset.
+   */
+  double getMinValue(int coordinate);
 
   /**
    * Returns the number of samples in the dataset (mip level 0).
@@ -64,14 +109,13 @@ public interface Dataset<T extends Tuple> extends Exportable {
   String getRangeLabel();
 
   /**
-   * Returns the tuple associated with the specified domain index at mip level
-   * 0.
+   * Return the domain value for the given index on level 0
    */
-  T getFlyweightTuple(int index);
+  double getX(int index);
 
   /**
-   * Returns the tuple associated with the specified domain index and mip level.
+   * Return the domain value for the given index on the given mip level
    */
-  T getFlyweightTuple(int index, int mipLevel);
+  double getX(int index, int level);
 
 }
