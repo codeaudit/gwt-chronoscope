@@ -6,6 +6,8 @@
   <inherits name='com.google.gwt.i18n.I18N'/>
   <!-- need immutable resource bundle for flash -->
   <inherits name="com.google.gwt.gen2.event.Event"/>
+  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
+  
   <inherits name='com.google.gwt.libideas.StyleInjector'/>
   <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
    
