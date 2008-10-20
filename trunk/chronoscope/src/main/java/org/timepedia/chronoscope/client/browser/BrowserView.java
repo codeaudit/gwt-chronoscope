@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.libideas.event.shared.HandlerManager;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
@@ -12,6 +11,7 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
+import com.google.gwt.gen2.event.shared.HandlerManager;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.Cursor;
@@ -227,7 +227,7 @@ public class BrowserView extends View
       }
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
-        manager.addEventHandler(InfoWindowEvent.KEY, handler);
+        manager.addHandler(InfoWindowEvent.TYPE, handler);
       }
 
       public void open() {

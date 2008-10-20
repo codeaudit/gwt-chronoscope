@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.libideas.event.virtual.shared.VirtualEvent;
 
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -149,9 +148,9 @@ public class BorderContainer implements Container<Component, ViewContainer> {
     return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
-  public void onEvent(VirtualEvent event) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
+//  public void onEvent(VirtualEvent event) {
+//    To change body of implemented methods use File | Settings | File Templates.
+//  }
 
   public void paint(Layer layer) {
     //To change body of implemented methods use File | Settings | File Templates.

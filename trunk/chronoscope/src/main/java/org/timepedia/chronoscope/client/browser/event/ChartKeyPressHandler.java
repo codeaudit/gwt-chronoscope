@@ -1,8 +1,10 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.KeyPressedEvent;
-import com.google.gwt.libideas.event.client.KeyPressedHandler;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.gen2.event.dom.client.KeyPressHandler;
+import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
+import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.Chart;
 
@@ -13,8 +15,8 @@ import org.timepedia.chronoscope.client.Chart;
  * @author Chad Takahashi
  */
 public class ChartKeyPressHandler
-    extends AbstractEventHandler<KeyPressedHandler>
-    implements KeyPressedHandler {
+    extends AbstractEventHandler<KeyPressHandler>
+    implements KeyPressHandler {
 
   static final int KEY_S = 83 + 32;
 
@@ -22,16 +24,15 @@ public class ChartKeyPressHandler
 
   static final int KEY_Z = 90 + 32;
 
-  public void onKeyPressed(KeyPressedEvent event) {
+  public void onKeyPress(KeyPressEvent event) {
     ChartState chartInfo = getChartState(event);
 
     Chart chart = chartInfo.chart;
 
-    int keyCode = event.getKeyCode();
+    int keyCode = event.getCharCode();
     boolean handled = true;
-
     if (keyCode == KEY_TAB) {
-      handled = handleTabKey(event.getBrowserEvent(), chartInfo, keyCode, event.isShiftKeyDown());
+      handled = handleTabKey(event.getNativeEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     } else if (keyCode == KEY_Z) {
       chart.nextZoom();
     } else if (keyCode == KEY_X) {

@@ -1,8 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.libideas.event.virtual.shared.VKeyboardEvent;
-import com.google.gwt.libideas.event.virtual.shared.VMouseEvent;
-import com.google.gwt.libideas.event.virtual.shared.VirtualEvent;
 
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -58,22 +55,22 @@ public abstract class AbstractContainer<S extends Component, T extends Container
     }
   }
 
-  public void onEvent(VirtualEvent event) {
-    if (event instanceof VMouseEvent) {
+//  public void onEvent(VirtualEvent event) {
+//    if (event instanceof VMouseEvent) {
       // if event has coordinates (mouse)
       //   find component that contains coordinates
       //   invoke onEvent on this component 
-    } else if (event instanceof VKeyboardEvent) {
+//    } else if (event instanceof VKeyboardEvent) {
       // if event is keyboard event
       // check which component has focus
       // invoke onEvent on focused component
       //Êwe may need to take some ideas from this:
       //http://java.sun.com/j2se/1.5.0/docs/api/java/awt/doc-files/FocusSpec.html
       // to implement focus management
-    }
+//    }
     // else, check if propagation of event was stopped or default cancelled
     // otherwise, run any event handlers registered on this component
-  }
+//  }
 
   public void paint(Layer layer) {
     for (S component : components) {

@@ -1,7 +1,9 @@
 package org.timepedia.chronoscope.java2d.swing;
 
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.MockXYDataset;
+import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -16,7 +18,7 @@ public class ChronoscopeApplet extends JApplet {
   public void init() {
     super.init();
     SwingChartPanel scp = new SwingChartPanel(
-        new XYDataset[]{new MockXYDataset()});
+        new Dataset[]{new MockDatasetFactory().getBasicDataset()});
 
     Container cp = getContentPane();
     cp.setLayout(new BorderLayout());

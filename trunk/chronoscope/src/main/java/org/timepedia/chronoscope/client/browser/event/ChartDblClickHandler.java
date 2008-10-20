@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.DoubleClickEvent;
-import com.google.gwt.libideas.event.client.DoubleClickHandler;
+import com.google.gwt.gen2.event.dom.client.DoubleClickHandler;
+import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 
@@ -22,8 +22,8 @@ public class ChartDblClickHandler
 
     boolean handled = false;
     if (chart.maxZoomTo(getLocalX(event), getLocalY(event))) {
-      event.getBrowserEvent().cancelBubble(true);
-      event.getBrowserEvent().preventDefault();
+      event.stopPropagation();
+      event.preventDefault();
       handled = true;
     }
 

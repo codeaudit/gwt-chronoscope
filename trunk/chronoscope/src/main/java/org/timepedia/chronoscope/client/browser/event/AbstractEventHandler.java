@@ -1,11 +1,12 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.BrowserEvent;
-import com.google.gwt.libideas.event.shared.EventHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.gen2.event.shared.EventHandler;
+import com.google.gwt.gen2.event.dom.client.DomEvent;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.browser.ChartEventHandler;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 
@@ -19,15 +20,16 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
   // May get reassigned based on browser type
   protected int tabKeyEventCode = Event.ONKEYDOWN;
 
-  public ChartState getChartState(BrowserEvent<T> event) {
-    return (ChartState) event.getUserData();
+  public ChartState getChartState(DomEvent event) {
+    return (ChartState) ChartEventHandler.getChartState();
   }
+  
 
-  public int getLocalX(BrowserEvent<T> event) {
+  public int getLocalX(DomEvent event) {
     return getChartState(event).getLocalX();
   }
 
-  public int getLocalY(BrowserEvent<T> event) {
+  public int getLocalY(DomEvent event) {
     return getChartState(event).getLocalY();
   }
 

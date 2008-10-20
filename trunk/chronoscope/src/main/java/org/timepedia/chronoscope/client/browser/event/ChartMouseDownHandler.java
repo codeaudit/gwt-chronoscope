@@ -1,9 +1,8 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.libideas.event.client.MouseDownHandler;
-import com.google.gwt.libideas.event.client.MouseDownEvent;
-import com.google.gwt.libideas.event.client.MouseEvent;
+import com.google.gwt.gen2.event.dom.client.MouseDownHandler;
+import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
+import com.google.gwt.gen2.event.dom.client.MouseEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -13,7 +12,8 @@ import org.timepedia.chronoscope.client.Cursor;
  * 
  * @author Chad Takahashi
  */
-public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownHandler> implements MouseDownHandler {
+public final class ChartMouseDownHandler extends AbstractEventHandler<MouseDownHandler> implements
+    MouseDownHandler {
 
   public void onMouseDown(MouseDownEvent event) {
     ChartState chartInfo = getChartState(event);

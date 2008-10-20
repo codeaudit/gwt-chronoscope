@@ -1,20 +1,19 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.libideas.event.client.BrowserEvent;
-import com.google.gwt.libideas.event.client.ClickEvent;
-import com.google.gwt.libideas.event.client.DoubleClickEvent;
-import com.google.gwt.libideas.event.client.KeyDownEvent;
-import com.google.gwt.libideas.event.client.KeyPressedEvent;
-import com.google.gwt.libideas.event.client.KeyUpEvent;
-import com.google.gwt.libideas.event.client.MouseDownEvent;
-import com.google.gwt.libideas.event.client.MouseMoveEvent;
-import com.google.gwt.libideas.event.client.MouseOutEvent;
-import com.google.gwt.libideas.event.client.MouseOverEvent;
-import com.google.gwt.libideas.event.client.MouseUpEvent;
-import com.google.gwt.libideas.event.client.MouseWheelEvent;
-import com.google.gwt.libideas.event.shared.HandlerManager;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.gen2.event.dom.client.DomEvent;
+import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
+import com.google.gwt.gen2.event.dom.client.MouseOverEvent;
+import com.google.gwt.gen2.event.dom.client.MouseWheelEvent;
+import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
+import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
+import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
+import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
+import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
+import com.google.gwt.gen2.event.dom.client.ClickEvent;
+import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
+import com.google.gwt.gen2.event.shared.HandlerManager;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
@@ -38,7 +37,11 @@ public class ChartEventHandler {
 
   private HandlerManager handlerLookup;
 
-  private ChartState chartInfo;
+  private static ChartState chartInfo;
+
+  public static ChartState getChartState() {
+    return chartInfo;
+  }
 
   public ChartEventHandler() {
     // Stores information about the chart that's needed by the client event
@@ -49,25 +52,25 @@ public class ChartEventHandler {
     // Register client event handlers
     handlerLookup = new HandlerManager(this);
     handlerLookup
-        .addEventHandler(MouseDownEvent.KEY, new ChartMouseDownHandler());
-    handlerLookup.addEventHandler(MouseUpEvent.KEY, new ChartMouseUpHandler());
+        .addHandler(MouseDownEvent.TYPE, new ChartMouseDownHandler());
+    handlerLookup.addHandler(MouseUpEvent.TYPE, new ChartMouseUpHandler());
     handlerLookup
-        .addEventHandler(MouseOutEvent.KEY, new ChartMouseOutHandler());
+        .addHandler(MouseOutEvent.TYPE, new ChartMouseOutHandler());
     handlerLookup
-        .addEventHandler(MouseOverEvent.KEY, new ChartMouseOverHandler());
+        .addHandler(MouseOverEvent.TYPE, new ChartMouseOverHandler());
     handlerLookup
-        .addEventHandler(MouseMoveEvent.KEY, new ChartMouseMoveHandler());
+        .addHandler(MouseMoveEvent.TYPE, new ChartMouseMoveHandler());
     handlerLookup
-        .addEventHandler(MouseMoveEvent.KEY, new OverviewAxisMouseMoveHandler());
+        .addHandler(MouseMoveEvent.TYPE, new OverviewAxisMouseMoveHandler());
     handlerLookup
-        .addEventHandler(MouseWheelEvent.KEY, new ChartMouseWheelHandler());
-    handlerLookup.addEventHandler(ClickEvent.KEY, new ChartMouseClickHandler());
+        .addHandler(MouseWheelEvent.TYPE, new ChartMouseWheelHandler());
+    handlerLookup.addHandler(ClickEvent.TYPE, new ChartMouseClickHandler());
     handlerLookup
-        .addEventHandler(DoubleClickEvent.KEY, new ChartDblClickHandler());
-    handlerLookup.addEventHandler(KeyDownEvent.KEY, new ChartKeyDownHandler());
-    handlerLookup.addEventHandler(KeyUpEvent.KEY, new ChartKeyUpHandler());
+        .addHandler(DoubleClickEvent.TYPE, new ChartDblClickHandler());
+    handlerLookup.addHandler(KeyDownEvent.TYPE, new ChartKeyDownHandler());
+    handlerLookup.addHandler(KeyUpEvent.TYPE, new ChartKeyUpHandler());
     handlerLookup
-        .addEventHandler(KeyPressedEvent.KEY, new ChartKeyPressHandler());
+        .addHandler(KeyPressEvent.TYPE, new ChartKeyPressHandler());
   }
 
   public boolean handleChartEvent(Event event, Chart chart, int x, int y) {
@@ -76,9 +79,8 @@ public class ChartEventHandler {
     chartInfo.setLocalX(x);
     chartInfo.setLocalY(y);
     
-    BrowserEvent browserEvent = getBrowserEvent(event);
+    DomEvent browserEvent = getBrowserEvent(event);
     if (browserEvent != null) {
-      browserEvent.setUserData(chartInfo);
       handlerLookup.fireEvent(browserEvent);
     } else {
       // shouldn't happen normally
@@ -87,7 +89,7 @@ public class ChartEventHandler {
     return chartInfo.isHandled();
   }
 
-  private BrowserEvent getBrowserEvent(Event event) {
+  private DomEvent getBrowserEvent(Event event) {
     switch (event.getTypeInt()) {
       case Event.ONCLICK:
         return new ClickEvent(event);
@@ -98,7 +100,7 @@ public class ChartEventHandler {
       case Event.ONKEYUP:
         return new KeyUpEvent(event);
       case Event.ONKEYPRESS:
-        return new KeyPressedEvent(event);
+        return new KeyPressEvent(event);
       case Event.ONMOUSEDOWN:
         return new MouseDownEvent(event);
       case Event.ONMOUSEMOVE:

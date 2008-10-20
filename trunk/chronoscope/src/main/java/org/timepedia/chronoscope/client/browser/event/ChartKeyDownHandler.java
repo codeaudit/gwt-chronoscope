@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.KeyDownEvent;
-import com.google.gwt.libideas.event.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.gen2.event.dom.client.KeyDownHandler;
+import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
 
 /**
  * Handles the event where the user depresses a key.
@@ -23,7 +23,7 @@ public class ChartKeyDownHandler extends AbstractEventHandler<KeyDownHandler>
         || keyCode == KeyboardListener.KEY_UP
         || keyCode == KeyboardListener.KEY_DOWN 
         || keyCode == KEY_TAB) {
-      handled = handleTabKey(event.getBrowserEvent(), chartInfo, keyCode, event.isShiftKeyDown());
+      handled = handleTabKey(event.getNativeEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     }
     chartInfo.setHandled(handled);
   }
