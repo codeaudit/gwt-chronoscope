@@ -104,7 +104,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   /**
-   * Returns the minimum value of {@link XYDataset#getApproximateMinimumInterval()}
+   * Returns the minimum value of {@link Dataset#getApproximateMinimumInterval()}
    * across all datasets in this container.
    */
   public double getMinInterval() {
@@ -162,7 +162,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   /**
-   * Returns the contained dataset elements as an array of {@link XYDataset}.
+   * Returns the contained dataset elements as an array of {@link Dataset}.
    */
   public Dataset<T>[] toArray() {
     return (Dataset<T>[]) this.datasets.toArray(new Dataset[0]);
@@ -179,11 +179,6 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   private void updateAggregateInfo(Dataset<T> dataset) {
-    // FIXME: Need to factor out this typecast.  Something's wrong with
-    // this model.  Maybe this class should by XYDataset and only operate
-    // on XYDataset elements?  Or some generic max() function on the 
-    // Tuple? ...
-    
     minDomain = Math.min(minDomain, dataset.getMinValue(0));
     maxDomain = Math.max(maxDomain, dataset.getMaxValue(0));
     minInterval = Math

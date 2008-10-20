@@ -108,7 +108,7 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel = new DateRangePanel();
     dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
-    dateRangePanel.init(rootLayer);
+    dateRangePanel.init(rootLayer, plot.getDatasets().getMinInterval());
 
     dateRangePanel.updateDomainInterval(minDomain, maxDomain);
 
