@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
@@ -15,6 +16,9 @@ public class DateRangePanel extends AbstractPanel {
   private static final String DATE_DELIM_LONG = SPC + "-" + SPC;
   private static final String DATE_DELIM_SHORT = SPC + "-" + SPC;
 
+  private static final double SHOW_DAY_THRESHOLD = TimeUnit.DAY.ms() * 28;
+  private static final double SHOW_MONTH_THRESHOLD = TimeUnit.DAY.ms() * 360;
+  
   private static final DateFormatHelper DATE_FMT = new DateFormatHelper();
   
   private String dateRangeActive;
@@ -30,9 +34,15 @@ public class DateRangePanel extends AbstractPanel {
   // verbose date range.
   private boolean compactMode = false;
   
+  private boolean doShowDayInDate, doShowMonthInDate;
+  
   private int typicalCharWidth;
   
-  public void init(Layer layer) {
+  //public void init(Layer layer) {
+  public void init(Layer layer, double minDomainInterval) {
+    doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
+    doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
+
     final String typicalDateChars = "0123456789-";
     height = this.calcHeight("X", layer);
     typicalCharWidth = calcWidth(typicalDateChars, layer) / typicalDateChars.length();
@@ -97,19 +107,19 @@ public class DateRangePanel extends AbstractPanel {
   }
   
   private String formatLongDate(ChronoDate d) {
-    String s = 
-      DATE_FMT.pad(d.getMonth() + 1) + "/" + 
-      DATE_FMT.pad(d.getDay()) + "/" + 
-      d.getYear();
-    return s;
+    String mo = doShowMonthInDate ? (DATE_FMT.pad(d.getMonth() + 1) + "/") : "";
+    String dy = doShowDayInDate ? (DATE_FMT.pad(d.getDay()) + "/") : "";
+    String yr = d.getYear() + "";
+    
+    return mo + dy + yr;
   }
 
   private String formatShortDate(ChronoDate d) {
-    String s = 
-      DATE_FMT.pad(d.getMonth() + 1) + "/" + 
-      DATE_FMT.pad(d.getDay()) + "/" + 
-      DATE_FMT.twoDigitYear(d);
-    return s;
+    String mo = doShowMonthInDate ? (DATE_FMT.pad(d.getMonth() + 1) + "/") : ""; 
+    String dy = doShowDayInDate ? (DATE_FMT.pad(d.getDay()) + "/") : ""; 
+    String yr = DATE_FMT.twoDigitYear(d);
+
+    return mo + dy + yr;
   }
   
   private int estimateStringWidth(String s) {
