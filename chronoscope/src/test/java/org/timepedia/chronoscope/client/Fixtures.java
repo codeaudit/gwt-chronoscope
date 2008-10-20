@@ -49,8 +49,8 @@ public class Fixtures {
 
     public static Dataset getNegativeDomainAscendingRange() {
       DatasetRequest.Basic request = new DatasetRequest.Basic();
-      request.setDomain(parseDomain(pre70s));
-      request.setRange(rangeValuesAscending);
+      request.setTupleSlice(0, parseDomain(pre70s));
+      request.setTupleSlice(1, rangeValuesAscending);
       request.setIdentifier("test");
       request.setAxisId("test");
       request.setLabel("test");
@@ -59,8 +59,8 @@ public class Fixtures {
 
     public static Dataset getPositiveDomainDescendingRange() {
       DatasetRequest.Basic request = new DatasetRequest.Basic();
-      request.setDomain(parseDomain(post70s));
-      request.setRange(rangeValuesDescending);
+      request.setTupleSlice(0, parseDomain(post70s));
+      request.setTupleSlice(1, rangeValuesDescending);
       request.setIdentifier("test");
       request.setAxisId("test");
       request.setLabel("test");

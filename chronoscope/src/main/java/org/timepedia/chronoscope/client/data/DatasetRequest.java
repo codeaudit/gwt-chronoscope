@@ -1,81 +1,75 @@
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
- * Represents a request to construct an instance of {@link Dataset}.
+ * Represents a request to construct an instance of {@link Dataset} using
+ * {@link DatasetFactory}.
+ * 
+ * @see DatasetFactory
  * 
  * @author Chad Takahashi
  */
 public abstract class DatasetRequest {
-
+  private static int MAX_TUPLE_DIMENSION = 10;
+ 
   /**
-   * Request in which client provides their own domain and range data, and the
-   * multiDomain and multiRange data is then computed by the provided
-   * {@link #setDefaultMipMapStrategy(MipMapStrategy) MipMapStrategy} object. 
+   * Request in which client provides their own n-tuple data, and the
+   * mipmapped data is then computed by the provided
+   * {@link #setDefaultMipMapStrategy(MipMapStrategy) MipMapStrategy} object.
    */
   public static final class Basic extends DatasetRequest {
-    private double[] domain, range;
-
-    public double[] getDomain() {
-      return domain;
+    // tupleData[n] represents the Nth dimension value of each tuple in the dataset
+    private double[][] tupleData = new double[MAX_TUPLE_DIMENSION][];
+    
+    /**
+     * Returns an array containing the Nth element of every tuple in this request,
+     * where N is the specified index. 
+     */
+    public double[] getTupleSlice(int index) {
+      return tupleData[index];
     }
-
-    public double[] getRange() {
-      return range;
+    
+    /**
+     * See {@link #getTupleSlice(int)}.
+     */
+    public void setTupleSlice(int index, double[] slice) {
+      tupleData[index] = slice;
     }
-
-    public void setDomain(double[] domain) {
-      this.domain = domain;
-    }
-
-    public void setRange(double[] range) {
-      this.range = range;
-    }
-
+    
     public void validate() {
       super.validate();
-      ArgChecker.isNotNull(domain, "domain");
-      ArgChecker.isNotNull(range, "range");
+      ArgChecker.isNotNull(tupleData[0], "domain");
+      ArgChecker.isNotNull(tupleData[1], "range");
 
-      if (domain.length != range.length) {
-        throw new IllegalArgumentException(
-            "domain[] and range[] are different lengths" + ": " + domain.length
-                + ", " + range.length);
+      if (tupleData[0].length != tupleData[1].length) {
+        throw new IllegalArgumentException("domain[] and range[] are different lengths");
       }
     }
   }
   /**
-   * XYDatasetRequest in which the domain and range values at each MIP level
-   * (i.e. the multiDomain and multiRange) must be manually specified.
+   * Request in which the n-tuple values at each mipmap level must be 
+   * manually specified.
    */
   public static final class MultiRes extends DatasetRequest {
-    private Array2D multiDomain;
-    private Array2D multiRange;
+    private Array2D[] mipmappedTupleData = new Array2D[MAX_TUPLE_DIMENSION];
 
-    public Array2D getMultiDomain() {
-      return multiDomain;
+    public Array2D getMultiresTupleSlice(int index) {
+      return mipmappedTupleData[index];
     }
-
-    public Array2D getMultiRange() {
-      return multiRange;
+    
+    public void setMultiresTupleSlice(int index, Array2D a) {
+      mipmappedTupleData[index] = a;
     }
-
-    public void setMultiDomain(Array2D multiDomain) {
-      this.multiDomain = multiDomain;
-    }
-
-    public void setMultiRange(Array2D multiRange) {
-      this.multiRange = multiRange;
-    }
-
+    
     public void validate() {
-      ArgChecker.isNotNull(multiDomain, "multiDomain");
-      ArgChecker.isNotNull(multiRange, "multiRange");
+      ArgChecker.isNotNull(mipmappedTupleData[0], "multiDomain");
+      ArgChecker.isNotNull(mipmappedTupleData[1], "multiRange");
 
       // Verify that multiDomain and multiRange have same number
       // of elements at each level
-      if (!multiDomain.isSameSize(multiRange)) {
+      if (!mipmappedTupleData[0].isSameSize(mipmappedTupleData[1])) {
         throw new IllegalArgumentException(
             "multiDomain and multiRange differ in size");
       }
@@ -147,7 +141,7 @@ public abstract class DatasetRequest {
    * Validates the state of this request object.
    */
   public void validate() {
-    ArgChecker.isNotNull(defaultMipMapStrategy, "mipMapStrategy");
+    ArgChecker.isNotNull(defaultMipMapStrategy, "defaultMipMapStrategy");
   }
 
 }

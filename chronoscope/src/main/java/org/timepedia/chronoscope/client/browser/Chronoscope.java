@@ -447,17 +447,17 @@ public class Chronoscope implements Exportable, HistoryListener {
           = (DatasetRequest.MultiRes) request;
       request.setRangeTop(json.getRangeTop());
       request.setRangeBottom(json.getRangeBottom());
-      mippedRequest.setMultiDomain(createArray2D(domains));
-      mippedRequest.setMultiRange(createArray2D(ranges));
+      mippedRequest.setMultiresTupleSlice(0, createArray2D(domains));
+      mippedRequest.setMultiresTupleSlice(1, createArray2D(ranges));
     } else {
 
       DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
       if (dtformat != null) {
-        basicRequest.setDomain(getArrayWithFormat(json.getDomainString(), dtformat));
+        basicRequest.setTupleSlice(0, getArrayWithFormat(json.getDomainString(), dtformat));
       } else {
-        basicRequest.setDomain(getArray(json.getDomain(), domainScale));
+        basicRequest.setTupleSlice(0, getArray(json.getDomain(), domainScale));
       }
-      basicRequest.setRange(getArray(json.getRange(), 1));
+      basicRequest.setTupleSlice(1, getArray(json.getRange(), 1));
     }
 
     if (isMutable) {
