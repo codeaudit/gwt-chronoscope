@@ -2,6 +2,9 @@ package org.timepedia.chronoscope.java2d;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.Datasets;
+import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -23,10 +26,13 @@ public class StaticImageChartPanel implements ViewReadyCallback {
 
   private ViewJava2D view;
 
-  public StaticImageChartPanel(XYDataset[] datasets, int width, int height,
+  public StaticImageChartPanel(Dataset[] datasets, int width, int height,
       GssContext gssContext) {
     chart = new Chart();
-    plot = new DefaultXYPlot(chart, datasets, false);
+    plot = new DefaultXYPlot();
+    Datasets dss=new Datasets(datasets);
+    plot.setDatasets(dss);
+    plot.setPlotRenderer(new ScalableXYPlotRenderer());
     chart.setPlot(plot);
 
     view = new ViewJava2D();
@@ -34,7 +40,7 @@ public class StaticImageChartPanel implements ViewReadyCallback {
     view.onAttach();
   }
 
-  public StaticImageChartPanel(XYDataset[] datasets, int width, int height) {
+  public StaticImageChartPanel(Dataset[] datasets, int width, int height) {
     this(datasets, width, height, new MockGssContext());
   }
 
@@ -47,7 +53,8 @@ public class StaticImageChartPanel implements ViewReadyCallback {
   }
 
   public void onViewReady(View view) {
-    chart.init(view, plot);
+    chart.setView(view);
+    chart.init();
     chart.redraw();
   }
 

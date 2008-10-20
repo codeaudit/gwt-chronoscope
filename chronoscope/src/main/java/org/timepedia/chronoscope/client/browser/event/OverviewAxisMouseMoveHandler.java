@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.BrowserEvent;
-import com.google.gwt.libideas.event.client.MouseMoveEvent;
-import com.google.gwt.libideas.event.client.MouseMoveHandler;
+import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
+import com.google.gwt.gen2.event.dom.client.DomEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -26,7 +26,7 @@ public class OverviewAxisMouseMoveHandler extends
    * Component/Container classes have been integrated into the UI framework.
    */
   @Override
-  public int getLocalY(BrowserEvent<MouseMoveHandler> event) {
+  public int getLocalY(DomEvent event) {
     ChartState chartInfo = getChartState(event);
     DefaultXYPlot plot = (DefaultXYPlot)chartInfo.chart.getPlot();
     Bounds plotBounds = plot.getBounds();

@@ -1,9 +1,9 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.KeyUpEvent;
-import com.google.gwt.libideas.event.client.KeyUpHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.gen2.event.dom.client.KeyUpHandler;
+import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;

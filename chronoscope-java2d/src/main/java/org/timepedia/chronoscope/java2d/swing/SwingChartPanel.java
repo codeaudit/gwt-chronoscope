@@ -2,6 +2,8 @@ package org.timepedia.chronoscope.java2d.swing;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
+import org.timepedia.chronoscope.client.Datasets;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.MockGssContext;
@@ -43,7 +45,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 
   private int startDragX;
 
-  public SwingChartPanel(XYDataset[] xyDatasets) {
+  public SwingChartPanel(Dataset[] xyDatasets) {
     addKeyListener(this);
 
     addMouseWheelListener(this);
@@ -52,7 +54,8 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     label = new JLabel();
 
     chart = new Chart();
-    plot = new DefaultXYPlot(chart, xyDatasets, true);
+    plot = new DefaultXYPlot();
+    plot.setDatasets(new Datasets(xyDatasets));
     chart.setPlot(plot);
 
     add(label);
@@ -90,8 +93,8 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
           chart.prevZoom();
           redraw();
         } else if (kchar == 's') {
-          chart.getPlot()
-              .setSelectionMode(!chart.getPlot().isSelectionModeEnabled());
+//          chart.getPlot()
+//              .setSelectionMode(!chart.getPlot().isSelectionModeEnabled());
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
           chart.pageLeft(0.5);
           redraw();
@@ -158,36 +161,36 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     final int y = e.getY();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        if (chart.getPlot().isSelectionModeEnabled() && selStart > -1) {
-          chart.getPlot().setHighlight(selStart, x);
-        } else {
-          if (maybeDrag && Math.abs(startDragX - x) > 10) {
-            chart.scrollPixels(startDragX - x);
-            startDragX = x;
-          } else {
-            chart.setHover(x, y);
-          }
-        }
+//        if (chart.getPlot().isSelectionModeEnabled() && selStart > -1) {
+//          chart.getPlot().setHighlight(selStart, x);
+//        } else {
+//          if (maybeDrag && Math.abs(startDragX - x) > 10) {
+//            chart.scrollPixels(startDragX - x);
+//            startDragX = x;
+//          } else {
+//            chart.setHover(x, y);
+//          }
+//        }
       }
     });
   }
 
   public void mousePressed(MouseEvent e) {
-    if (chart.getPlot().isSelectionModeEnabled()) {
-      selStart = e.getX();
-    } else {
-      maybeDrag = true;
-      startDragX = e.getX();
-    }
+//    if (chart.getPlot().isSelectionModeEnabled()) {
+//      selStart = e.getX();
+//    } else {
+//      maybeDrag = true;
+//      startDragX = e.getX();
+//    }
   }
 
   public void mouseReleased(MouseEvent e) {
-    if (chart.getPlot().isSelectionModeEnabled()) {
-      chart.getPlot().setSelectionMode(false);
-      selStart = -1;
-    } else if (maybeDrag) {
-    }
-    maybeDrag = false;
+//    if (chart.getPlot().isSelectionModeEnabled()) {
+//      chart.getPlot().setSelectionMode(false);
+//      selStart = -1;
+//    } else if (maybeDrag) {
+//    }
+//    maybeDrag = false;
   }
 
   public void mouseWheelMoved(MouseWheelEvent e) {
@@ -214,7 +217,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 
   public void onViewReady(View view) {
 
-    chart.init(view, plot);
+//    chart.init(view, plot);
     redraw();
   }
 

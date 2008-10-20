@@ -57,7 +57,7 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-incubator</artifactId>
-      <version>1.02-SNAPSHOT</version>
+      <version>1.03-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
@@ -77,6 +77,14 @@
       <url>http://download.java.net/maven/2/</url>
     </repository>
   </repositories>
+
+   <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+            <id>timepedia-deploy</id>
+            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
+    </repository>
+  </distributionManagement>
 
   <build>
     <plugins>

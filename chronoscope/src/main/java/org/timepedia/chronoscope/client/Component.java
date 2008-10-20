@@ -1,8 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.libideas.event.shared.AbstractEvent;
-import com.google.gwt.libideas.event.virtual.shared.VirtualEvent;
-
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 
@@ -33,7 +30,7 @@ public interface Component<T extends Container> {
   /**
    * Fires any event handlers related to the incoming event.
    */
-  void onEvent(VirtualEvent event);
+//  void onEvent(VirtualEvent event);
 
   /**
    * Paint the component. The component's coordinate system origin will be

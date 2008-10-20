@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.libideas.event.client.MouseMoveEvent;
-import com.google.gwt.libideas.event.client.MouseMoveHandler;
+import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -33,8 +33,8 @@ public final class ChartMouseMoveHandler
         chart.setAnimating(true);
         chart.scrollPixels(uiAction.getStartX() - x);
         uiAction.setStartX(x);
-        event.getBrowserEvent().cancelBubble(true);
-        event.getBrowserEvent().preventDefault();
+        event.stopPropagation();
+        event.preventDefault();
       }
     } else if (plot.getBounds().inside(x, y)) {
       if (chart.setHover(x, y)) {

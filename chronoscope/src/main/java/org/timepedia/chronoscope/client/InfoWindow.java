@@ -1,12 +1,11 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.libideas.event.shared.AbstractEvent;
-import com.google.gwt.libideas.event.shared.EventHandler;
+import com.google.gwt.gen2.event.shared.EventHandler;
+import com.google.gwt.gen2.event.shared.AbstractEvent;
 
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExportPackage;
-import org.timepedia.exporter.client.ExportClosure;
 
 /**
  * A handle to a Window opened via the View.openInfoWindow method.
@@ -32,17 +31,19 @@ public interface InfoWindow extends Exportable {
   }
 
   public static class InfoWindowEvent
-      extends AbstractEvent<InfoWindowClosedHandler> {
+      extends AbstractEvent {
 
-    public static Key<InfoWindowClosedHandler> KEY
-        = new Key<InfoWindowClosedHandler>();
+    public static Type<InfoWindowEvent, InfoWindowClosedHandler> TYPE
+        = new Type<InfoWindowEvent, InfoWindowClosedHandler>() {
 
-    protected void fireEvent(InfoWindowClosedHandler infoWindowClosedHandler) {
-      infoWindowClosedHandler.onInfoWindowClosed(this);
-    }
+      protected void fire(InfoWindowClosedHandler infoWindowClosedHandler,
+          InfoWindowEvent event) {
+        infoWindowClosedHandler.onInfoWindowClosed(event);
+      }
+    };
 
-    protected Key getKey() {
-      return KEY;
+    protected Type getType() {
+      return TYPE;
     }
   }
 }
