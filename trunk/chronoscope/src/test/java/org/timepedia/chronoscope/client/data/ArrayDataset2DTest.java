@@ -57,10 +57,10 @@ public class ArrayDataset2DTest extends TestCase {
   }
   
   private Dataset createMutableDataset(DatasetRequest.Basic request) {
-    OODoubleArray domain = new OODoubleArray(request.getDomain());
-    OODoubleArray range = new OODoubleArray(request.getRange());
-    request.setDomain(domain.removeLast().getArray());
-    request.setRange(range.removeLast().getArray());
+    OODoubleArray domain = new OODoubleArray(request.getTupleSlice(0));
+    OODoubleArray range = new OODoubleArray(request.getTupleSlice(1));
+    request.setTupleSlice(0, domain.removeLast().getArray());
+    request.setTupleSlice(1, range.removeLast().getArray());
     
     MutableDataset ds = dsFactory.createMutable(request);
     ds.mutate(Mutation.append(domain.getLast(), range.getLast()));

@@ -98,8 +98,8 @@ public abstract class AbstractXYDataSource extends XYDataSource {
     Dataset datasets[] = new Dataset[numseries];
     for (int i = 0; i < datasets.length; i++) {
       DatasetRequest.Basic request = new DatasetRequest.Basic();
-      request.setDomain(domains[i]);
-      request.setRange(ranges[i]);
+      request.setTupleSlice(0, domains[i]);
+      request.setTupleSlice(1, ranges[i]);
       request.setIdentifier(ids[i]);
       request.setLabel(ids[i]);
       request.setAxisId("axis" + i);

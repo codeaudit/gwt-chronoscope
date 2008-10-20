@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.data.DatasetListener;

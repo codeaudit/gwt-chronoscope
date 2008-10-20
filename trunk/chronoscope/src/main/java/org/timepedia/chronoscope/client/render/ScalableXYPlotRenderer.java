@@ -17,7 +17,7 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
 
   protected RenderState renderState;
   
-  private BasicTuple2D reusablePoint = new BasicTuple2D(0, 0);
+  private BasicTuple2D flyweightPoint = new BasicTuple2D(0, 0);
   
   public ScalableXYPlotRenderer() {
     renderState = new RenderState();
@@ -61,12 +61,12 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       double x = dataPt.getFirst();
       double y = dataPt.getSecond();
-      reusablePoint.setCoordinates(x, y);
+      flyweightPoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
       
       // FIXME: refactor to remove cast
-      renderer.drawCurvePart(plot, layer, (T)reusablePoint, datasetIndex, renderState);
+      renderer.drawCurvePart(plot, layer, (T)flyweightPoint, datasetIndex, renderState);
     }
     renderer.endCurve(plot, layer, datasetIndex, renderState);
 
@@ -77,12 +77,12 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       double x = dataPt.getFirst();
       double y = dataPt.getSecond();
-      reusablePoint.setCoordinates(x, y);
+      flyweightPoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
       
       // FIXME: refactor to remove cast
-      renderer.drawPoint(plot, layer, (T)reusablePoint, datasetIndex, renderState);
+      renderer.drawPoint(plot, layer, (T)flyweightPoint, datasetIndex, renderState);
     }
     renderer.endPoints(plot, layer, datasetIndex, renderState);
   }

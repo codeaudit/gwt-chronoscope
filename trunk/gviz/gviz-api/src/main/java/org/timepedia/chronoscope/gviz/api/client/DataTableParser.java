@@ -80,8 +80,8 @@ public class DataTableParser {
       sortAscendingDate(pair);
       
       DatasetRequest.Basic request = new DatasetRequest.Basic();
-      request.setDomain(pair.domain);
-      request.setRange(pair.range);
+      request.setTupleSlice(0, pair.domain);
+      request.setTupleSlice(1, pair.range);
       request.setIdentifier("col" + i);
       request.setLabel(label);
       request.setAxisId(units);

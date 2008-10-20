@@ -10,7 +10,6 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
  * @author Chad Takahashi
  */
 public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
-  protected double minRange, maxRange;
 
   protected double approximateMinimumInterval;
 
