@@ -15,7 +15,7 @@ public class ChartKeyDownHandler extends AbstractEventHandler<KeyDownHandler>
 
   public void onKeyDown(KeyDownEvent event) {
     ChartState chartInfo = getChartState(event);
-    boolean handled = true;
+    boolean handled = false;
     int keyCode = event.getKeyCode();
     // all checks (except TAB) are to prevent focus stealing by the browser.
     if (keyCode == KeyboardListener.KEY_PAGEUP
