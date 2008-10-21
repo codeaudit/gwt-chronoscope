@@ -4,6 +4,8 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.render.XYPlotRenderer;
+import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.MockGssContext;
@@ -56,6 +58,8 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     chart = new Chart();
     plot = new DefaultXYPlot();
     plot.setDatasets(new Datasets(xyDatasets));
+    XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
+    plot.setPlotRenderer(plotRenderer); 
     chart.setPlot(plot);
 
     add(label);
@@ -68,6 +72,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     view.initialize(getParent().getWidth(), getParent().getHeight(), false,
         new MockGssContext(), this, this);
     view.onAttach();
+    
   }
 
   public boolean imageUpdate(Image img, int infoflags, int x, int y, int w,
@@ -216,7 +221,14 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
   }
 
   public void onViewReady(View view) {
-
+    plot.init(view);
+    
+    // configure chart
+    chart = new Chart();
+    chart.setPlot(plot);
+    chart.setView(view);
+    
+    chart.setView(view);
 //    chart.init(view, plot);
     redraw();
   }
