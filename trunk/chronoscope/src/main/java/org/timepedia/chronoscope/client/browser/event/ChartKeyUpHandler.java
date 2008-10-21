@@ -23,7 +23,7 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
     int keyCode = event.getKeyCode();
-    boolean handled = true;
+    boolean handled = false;
 
     if (isPageUp(keyCode)) {
       chart.pageLeft(FULL_PAGE_SCROLL);

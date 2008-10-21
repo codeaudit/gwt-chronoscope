@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.gen2.event.dom.client.DomEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOverEvent;
