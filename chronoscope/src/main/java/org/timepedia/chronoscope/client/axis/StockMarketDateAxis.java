@@ -1,18 +1,23 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.canvas.View;
 
 /**
  *
  */
-public class StockMarketDateAxis extends DateAxis {
+public class StockMarketDateAxis extends DomainAxis {
 
-  private Timeline timeline;
-
-  public StockMarketDateAxis(XYPlot plot) {
-    super(plot);
-    timeline = SegmentedTimeline.newFifteenMinuteTimeline();
+  public StockMarketDateAxis(XYPlot plot, View view) {
+    super(plot, view);
   }
+
+  //  private Timeline timeline;
+
+//  public StockMarketDateAxis(XYPlot plot) {
+//    super(plot, view);
+//    timeline = SegmentedTimeline.newFifteenMinuteTimeline();
+//  }
 
 //  public double dataToUser(double dataValue) {
 //    double high = timeline.toTimelineValue(getRangeHigh());

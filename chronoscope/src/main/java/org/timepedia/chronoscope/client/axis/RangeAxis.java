@@ -37,8 +37,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         scale = Math.pow(1000, intDigits / 3);
       }
       if (isForceScientificNotation() || (isAllowScientificNotation() && (
-          intDigits + 1 > MAX_DIGITS
-              || Math.abs(intDigits) > MAX_DIGITS))) {
+          intDigits + 1 > MAX_DIGITS || Math.abs(intDigits) > MAX_DIGITS))) {
         labelFormat = "0." + "0#########".substring(MAX_DIGITS) + "E0";
         scientificNotationOn = true;
       } else if (intDigits > 0) {
@@ -86,7 +85,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
       "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
 
-  private static double[] computeLinearTickPositions(double lrangeLow,
+  static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
     if (lrangeHigh == lrangeLow) {
@@ -122,7 +121,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     if (axisStart + smoothInterval * (numTicks - 1) < lrangeHigh) {
       numTicks++;
     }
-    
+
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
       if (tickPositions.length == i + 1 && forceLastTick) {
@@ -147,12 +146,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
 
   private boolean forceScientificNotation = false;
-  
+
   private XYPlot plot;
-  
+
   private double rangeLow, rangeHigh;
 
-  private RangeAxisPanel renderer;
+  protected RangeAxisPanel renderer;
 
   private boolean rangeOverriden;
 
@@ -162,16 +161,16 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean showExponents = false;
 
-  private double[] ticks;
+  protected double[] ticks;
 
   private TickLabelNumberFormatter tickLabelNumberFormatter;
-  
+
   private View view;
-  
+
   private double visRangeMin, visRangeMax;
 
-  public RangeAxis(XYPlot plot, View view, String rangeLabel, String axisId, int axisIndex,
-      double rangeLow, double rangeHigh) {
+  public RangeAxis(XYPlot plot, View view, String rangeLabel, String axisId,
+      int axisIndex, double rangeLow, double rangeHigh) {
     super(rangeLabel, axisId);
     this.axisIndex = axisIndex;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
@@ -185,13 +184,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double[] computeTickPositions() {
+    
     if (ticks != null) {
       return ticks;
     }
-    
+
+    boolean horizontal = renderer.getParentPanel().getPosition().isHorizontal();
+
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
-        getUnadjustedRangeHigh(), renderer.getHeight(), 
-        renderer.getMaxLabelHeight(), rangeOverriden);
+        getUnadjustedRangeHigh(),
+        horizontal ? renderer.getWidth() : renderer.getHeight(),
+        horizontal ? renderer
+            .getMaxLabelWidth() : renderer.getMaxLabelHeight(), rangeOverriden);
     adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
     adjustedRangeHigh = getUnadjustedRangeHigh();
     for (int i = 0; i < ticks.length; i++) {
@@ -219,7 +223,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     return tickLabelNumberFormatter.format(label);
   }
-  
+
   public String getLabel() {
 //    double s = Double.isNaN(getScale()) ? 1.0 : getScale();
 //    return super.getLabel() + getLabelSuffix(getRange());
@@ -324,7 +328,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setAxisRenderer(RangeAxisPanel r) {
     this.renderer = r;
   }
-  
+
   /**
    * @gwt.export
    */
@@ -417,7 +421,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     ticks = null;
     computeTickPositions();
   }
-  
+
   public double getUnadjustedRangeHigh() {
     return autoZoom ? visRangeMax : rangeHigh;
   }
@@ -431,5 +435,4 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.rangeLow = rangeLow;
     this.rangeHigh = rangeHigh;
   }
-  
 }

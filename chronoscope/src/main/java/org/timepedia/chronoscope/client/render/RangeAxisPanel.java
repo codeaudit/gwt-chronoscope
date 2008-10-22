@@ -22,12 +22,17 @@ public class RangeAxisPanel extends AxisPanel {
   private boolean boundsSet;
 
   private GssProperties gridProperties, tickProperties;
-  
+
   private double maxLabelWidth, maxLabelHeight;
 
   private RangeAxis rangeAxis;
-  
+
+  public double getMaxLabelWidth() {
+    return maxLabelWidth;
+  }
+
   public enum TickPosition {
+
     INSIDE, OUTSIDE
   }
 
@@ -35,8 +40,10 @@ public class RangeAxisPanel extends AxisPanel {
     //renderer.init();
     maxLabelWidth = getLabelWidth(view, getDummyLabel(), 0) + 10;
     maxLabelHeight = getLabelHeight(view, getDummyLabel(), 0) + 10;
-    axisLabelWidth = getLabelWidth(view, valueAxis.getLabel(), getRotationAngle());
-    axisLabelHeight = getLabelHeight(view, valueAxis.getLabel(), getRotationAngle());
+    axisLabelWidth = getLabelWidth(view, valueAxis.getLabel(),
+        getRotationAngle());
+    axisLabelHeight = getLabelHeight(view, valueAxis.getLabel(),
+        getRotationAngle());
   }
 
   public void draw(Layer layer, Bounds axisBounds) {
@@ -45,7 +52,11 @@ public class RangeAxisPanel extends AxisPanel {
     layer.save();
     if (!GRID_ONLY) {
       clearAxis(layer, axisBounds);
-      drawVerticalLine(layer, axisBounds);
+      if (getParentPanel().getPosition().isHorizontal()) {
+        drawHorizontalLine(layer, axisBounds);
+      } else {
+        drawVerticalLine(layer, axisBounds);
+      }
     }
 
     layer.setTransparency(1.0f);
@@ -55,16 +66,89 @@ public class RangeAxisPanel extends AxisPanel {
     final double axisRange = valueAxis.getRange();
     final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
-      drawTick(plot, layer, tickPositions[i], tickPosition0, axisRange,
-          axisBounds, GRID_ONLY);
+      if (getParentPanel().getPosition().isHorizontal()) {
+        if (tickPositions[i] < valueAxis.getRangeLow()
+            || tickPositions[i] > valueAxis.getRangeHigh()) {
+          continue;
+        }
+        drawHorizontalTick(plot, layer, tickPositions[i], axisBounds, 6);
+      } else {
+        drawVerticalTick(plot, layer, tickPositions[i], tickPosition0,
+            axisRange, axisBounds, GRID_ONLY);
+      }
     }
 
     if (!GRID_ONLY) {
-      drawAxisLabel(layer, axisBounds, plot.getChart());
+      if (!getParentPanel().getPosition().isHorizontal()) {
+        drawVerticalAxisLabel(layer, axisBounds, plot.getChart());
+      } else {
+        drawHorizontalAxisLabel(layer, axisBounds);
+      }
     }
     layer.restore();
   }
-  
+
+  private void drawHorizontalAxisLabel(Layer layer, Bounds bounds) {
+    layer.setFillColor(labelProperties.bgColor);
+    layer.setStrokeColor(labelProperties.color);
+    double center = bounds.x + (bounds.width / 2);
+
+    double halfLabelWidth = axisLabelWidth / 2;
+    layer.drawText(center - halfLabelWidth, bounds.y + maxLabelHeight + 5,
+        valueAxis.getLabel(), labelProperties.fontFamily,
+        labelProperties.fontWeight, labelProperties.fontSize, textLayerName,
+        Cursor.DEFAULT);
+  }
+
+  private double domainToScreenX(double dataX, Bounds bounds) {
+    return bounds.x + valueAxis.dataToUser(dataX) * bounds.width;
+  }
+
+  private void drawHorizontalTick(XYPlot plot, Layer layer, double range,
+      Bounds bounds, int tickLength) {
+    double ux = domainToScreenX(range, bounds);
+    layer.save();
+    layer.setFillColor(tickProperties.color);
+    layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
+
+    if (gridProperties.visible) {
+      Layer player = plot.getPlotLayer();
+      player.save();
+      player.setFillColor(gridProperties.color);
+      player.setTransparency((float) gridProperties.transparency);
+      player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
+          plot.getInnerBounds().height);
+      player.restore();
+    }
+    layer.restore();
+    drawHorizontalLabel(layer, bounds, ux, range);
+  }
+
+  private void drawHorizontalLabel(Layer layer, Bounds bounds, double ux,
+      double range) {
+
+    String label = rangeAxis.getFormattedLabel(range);
+
+    double labelWidth = layer.stringWidth(label, gssProperties.fontFamily,
+        gssProperties.fontWeight, gssProperties.fontSize);
+
+    layer.save();
+    layer.setStrokeColor(labelProperties.color);
+    layer.setFillColor(labelProperties.bgColor);
+    layer.drawText(ux - labelWidth / 2, bounds.y + 5, label,
+        gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+    layer.restore();
+  }
+
+  private void drawHorizontalLine(Layer layer, Bounds bounds) {
+    layer.setStrokeColor(tickProperties.color);
+    layer.setLineWidth(tickProperties.lineThickness);
+    layer.moveTo(bounds.x, bounds.y);
+    layer.lineTo(bounds.x + bounds.width, bounds.y);
+    layer.stroke();
+  }
+
   @Override
   public double getHeight() {
     if (parentPanel.getPosition().isHorizontal()) {
@@ -85,7 +169,7 @@ public class RangeAxisPanel extends AxisPanel {
         rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
         gssProperties.fontSize);
   }
-  
+
   public double getMaxLabelHeight() {
     return this.maxLabelHeight;
   }
@@ -100,8 +184,8 @@ public class RangeAxisPanel extends AxisPanel {
 
   @Override
   public double getWidth() {
-    final double computedAxisLabelWidth = isAxisLabelVisible() ?
-        axisLabelWidth + 5 : 0;
+    final double computedAxisLabelWidth = isAxisLabelVisible() ? axisLabelWidth
+        + 5 : 0;
 
     double w = 0.0;
     if (!parentPanel.getPosition().isHorizontal()) {
@@ -119,7 +203,7 @@ public class RangeAxisPanel extends AxisPanel {
     } else {
       w = plot.getInnerBounds().width;
     }
-    
+
     return w;
   }
 
@@ -129,7 +213,7 @@ public class RangeAxisPanel extends AxisPanel {
     GssElement gridGssElem = new GssElementImpl("grid", this);
     tickProperties = view.getGssProperties(tickGssElem, "");
     gridProperties = view.getGssProperties(gridGssElem, "");
-    rangeAxis = (RangeAxis)this.valueAxis;
+    rangeAxis = (RangeAxis) this.valueAxis;
     computeLabelWidths(view);
   }
 
@@ -158,7 +242,7 @@ public class RangeAxisPanel extends AxisPanel {
     layer.restore();
   }
 
-  private void drawAxisLabel(Layer layer, Bounds bounds, Chart chart) {
+  private void drawVerticalAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
       boolean isLeft = parentPanel.getPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
@@ -178,7 +262,8 @@ public class RangeAxisPanel extends AxisPanel {
     }
   }
 
-  private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
+  private void drawVerticalLabel(Layer layer, double y, Bounds bounds,
+      double value) {
     String label = rangeAxis.getFormattedLabel(value);
 
     double labelWidth = layer.stringWidth(label, gssProperties.fontFamily,
@@ -214,8 +299,8 @@ public class RangeAxisPanel extends AxisPanel {
     layer.restore();
   }
 
-  private void drawTick(XYPlot plot, Layer layer, double range, double rangeLow,
-      double rangeSize, Bounds bounds, boolean gridOnly) {
+  private void drawVerticalTick(XYPlot plot, Layer layer, double range,
+      double rangeLow, double rangeSize, Bounds bounds, boolean gridOnly) {
     double uy =
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
             + bounds.y;
@@ -225,8 +310,7 @@ public class RangeAxisPanel extends AxisPanel {
       if (isInnerMost(isLeft)) {
         dir = isLeft ? bounds.width + 1 : -5;
       } else {
-        dir = isLeft ? bounds.width - maxLabelWidth - 1
-            : maxLabelWidth - 5 + 1;
+        dir = isLeft ? bounds.width - maxLabelWidth - 1 : maxLabelWidth - 5 + 1;
       }
     }
     layer.save();
@@ -237,12 +321,12 @@ public class RangeAxisPanel extends AxisPanel {
     if (gridProperties.visible && uy != bounds.bottomY()) {
       layer.setFillColor(gridProperties.color);
       layer.setTransparency((float) gridProperties.transparency);
-      layer.fillRect(bounds.rightX(), uy,
-          plot.getInnerBounds().width, gridProperties.lineThickness);
+      layer.fillRect(bounds.rightX(), uy, plot.getInnerBounds().width,
+          gridProperties.lineThickness);
     }
     layer.restore();
     if (!gridOnly) {
-      drawLabel(layer, uy, bounds, range);
+      drawVerticalLabel(layer, uy, bounds, range);
     }
   }
 
@@ -254,8 +338,7 @@ public class RangeAxisPanel extends AxisPanel {
       if (isInnerMost(isLeft)) {
         dir = isLeft ? bounds.width : -1;
       } else {
-        dir = isLeft ? bounds.width - maxLabelWidth - 1
-            : maxLabelWidth + 1;
+        dir = isLeft ? bounds.width - maxLabelWidth - 1 : maxLabelWidth + 1;
       }
     }
     layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
@@ -272,8 +355,8 @@ public class RangeAxisPanel extends AxisPanel {
   }
 
   private boolean isInnerMost(boolean isLeftPanel) {
-    return parentPanel.indexOf(this) == 
-        (isLeftPanel ? parentPanel.getAxisCount() - 1 : 0);
+    return parentPanel.indexOf(this) == (isLeftPanel ?
+        parentPanel.getAxisCount() - 1 : 0);
   }
 
   private String getDummyLabel() {
@@ -286,5 +369,4 @@ public class RangeAxisPanel extends AxisPanel {
     boolean isPanelOnRight = parentPanel.getPosition() == Position.RIGHT;
     return (isPanelOnRight ? 1.0 : -1.0) * Math.PI / 2;
   }
-
 }

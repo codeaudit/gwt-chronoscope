@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Exportable;
@@ -71,7 +72,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
        int eventType);
 
   /**
-   * Animate the domainOrigin and currentDomain values interpolating to the
+   * Animate the domainOrgigin and currentDomain values interpolating to the
    * destination values. This version executes the continuation when the
    * animation finishes.
    * 
@@ -363,6 +364,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    */
   void setCurrentMipLevel(int datasetIndex, int level);
 
+  /**
+   * Overrides the default X-axis renderer (Date formatted labels)
+   * @param renderer
+   */
+  void setDomainAxisRenderer(AxisPanel domainAxis);
+  
   /**
    * Sets the specified datapoint reference as the focused point in this plot.
    */

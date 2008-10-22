@@ -41,7 +41,11 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
   public final void setParentPanel(CompositeAxisPanel parentPanel) {
     this.parentPanel = parentPanel;
   }
-  
+
+  public CompositeAxisPanel getParentPanel() {
+    return parentPanel;
+  }
+
   public final void setPlot(XYPlot plot) {
     this.plot = plot;
   }
@@ -86,4 +90,8 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
    */
   protected abstract void initHook();
 
+  //TODO: this really shouldn't be here
+  public double getMinimumTickSize() {
+    return 0;
+  }
 }

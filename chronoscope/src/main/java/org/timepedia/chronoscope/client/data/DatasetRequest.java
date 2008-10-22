@@ -142,6 +142,9 @@ public abstract class DatasetRequest {
    */
   public void validate() {
     ArgChecker.isNotNull(defaultMipMapStrategy, "defaultMipMapStrategy");
+    //TODO: add checker that can compare two args and report an error in the
+    //relationship between them
+    ArgChecker.isLT(rangeBottom, rangeTop, "rangeBottom>rangeTop");
   }
 
 }

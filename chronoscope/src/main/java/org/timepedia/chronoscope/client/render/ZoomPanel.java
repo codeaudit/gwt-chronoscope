@@ -25,7 +25,7 @@ public class ZoomPanel extends AbstractPanel {
   private List<ZoomListener> listeners;
   private int[] zoomLinkWidths = new int[MAX_ZOOM_LINKS];
   private ZoomIntervals zooms;
-  
+                                                                                      
   private UIString spaceShort, spaceLong, space;
   private UIString zoomPrefixShort, zoomPrefixLong, zoomPrefix;
   
