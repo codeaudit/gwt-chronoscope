@@ -16,7 +16,7 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
 /**
  * Renders zoomable dates on x-axis (domain axis).
  */
-public class DomainAxisPanel extends AxisPanel {
+public class DomainAxisPanel extends RangeAxisPanel {
   
   private static TickFormatterFactory tickFormatFactory = TickFormatterFactory.get();
   

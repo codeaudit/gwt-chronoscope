@@ -83,6 +83,15 @@ public abstract class ValueAxis {
   public abstract double getRangeLow();
 
   /**
+   * Sets the short label representing this axis ($, m/s, etc)
+   * @param axisId
+   */
+  public void setAxisId(String axisId) {
+    //TODO: this needs to update DefaultXYPlot's internal maps
+    this.axisId = axisId;
+  }
+
+  /**
    * Sets the long descriptive label used for this axis (Billions of Dollars,
    * Barrels of Oil)
    */
