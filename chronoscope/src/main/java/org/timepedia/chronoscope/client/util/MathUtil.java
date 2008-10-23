@@ -2,17 +2,16 @@ package org.timepedia.chronoscope.client.util;
 
 /**
  * Conglomeration of common math functions.
- * 
+ *
  * @author chad takahashi &lt;chad@timepedia.org&gt;
  */
 public final class MathUtil {
 
-
   /**
-   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max].
-   * More specifically, if <tt>value</tt> falls in the range [min,max], then
-   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to  <tt>value</tt>
-   * is returned.
+   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max]. More
+   * specifically, if <tt>value</tt> falls in the range [min,max], then
+   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to
+   * <tt>value</tt> is returned.
    */
   public static double bound(double value, double min, double max) {
     if (value > max) {
@@ -25,10 +24,10 @@ public final class MathUtil {
   }
 
   /**
-   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max].
-   * More specifically, if <tt>value</tt> falls in the range [min,max], then
-   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to  <tt>value</tt>
-   * is returned.
+   * Keeps <tt>value</tt> bounded within the inclusive interval [min,max]. More
+   * specifically, if <tt>value</tt> falls in the range [min,max], then
+   * <tt>value</tt> is returned.  Otherwise, the endpoint closest to
+   * <tt>value</tt> is returned.
    */
   public static int bound(int value, int min, int max) {
     if (value > max) {
@@ -61,33 +60,47 @@ public final class MathUtil {
   }
 
   /**
+   * Calculates log base 10 of the specified value.
+   */
+  public static double log10(double value) {
+    return Math.log(value) / Math.log(10);
+  }
+
+  /**
    * Calculates log base 2 of the specified value.
    */
   public static double log2(double value) {
     return Math.log(value) / Math.log(2);
   }
-  
+
   public static int mod(int x, int y) {
     if (x >= 0) {
       return x % y;
-    }
-    else {
+    } else {
       int tmp = -x % y; // make x positive before calc'ing remainder
       return (tmp == 0) ? tmp : (y - tmp);
     }
   }
-  
+
   /**
-   * Performs 'x modulo y' (not to be confused with the remainder operator '%', which
-   * behaves differently when x is negative).
+   * Performs 'x modulo y' (not to be confused with the remainder operator '%',
+   * which behaves differently when x is negative).
    */
   public static double mod(double x, double y) {
     if (x >= 0) {
       return x % y;
-    }
-    else {
+    } else {
       double tmp = -x % y; // make x positive before calc'ing remainder
       return (tmp == 0) ? tmp : (y - tmp);
     }
+  }
+
+  /**
+   * Round down input value to nearest value of 10. e.g. 323 returns 100. 
+   * @param value
+   * @return
+   */
+  public static int roundToNearestPowerOfTen(double value) {
+    return (int) Math.pow(10, Math.floor(log10(value)));
   }
 }

@@ -108,6 +108,11 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    double domainToWindowX(double domainX, int datasetIndex);
 
   /**
+   * Return the Bounds of the Plot relative to the View coordinate system
+   */
+  Bounds getBounds();
+
+  /**
    * Returns the chart to which this Plot is embedded.
    */
   Chart getChart();
@@ -146,14 +151,10 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   ValueAxis getDomainAxis();
 
   /**
-   * The maximum <b>visible</b> domain value over all datasets taking into
-   * account multiresolution representations.  This value will differ from
-   * {@link Datasets#getMaxDomain()} if the zoomed out view of the Plot forces 
-   * the renderer to use a coarser representation that may have different values. 
-   * This can happen if dataset values in higher levels use interpolation rather 
-   * than point sampling, for example.
+   * Return renderer associated with X-axis.
+   * @return
    */
-  double getVisibleDomainMax();
+  AxisPanel getDomainAxisRenderer();
 
   /**
    * Returns the current focus point and dataset index within the focused dataset.
@@ -203,11 +204,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   Layer getOverviewLayer();
 
   /**
-   * Return the Bounds of the Plot relative to the View coordinate system
-   */
-  Bounds getBounds();
-
-  /**
    * Get the layer which represents the main plot area where points will be
    * rendered
    */
@@ -232,6 +228,16 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Get the domain value of the end of the current selection
    */
   double getSelectionEnd();
+
+  /**
+   * The maximum <b>visible</b> domain value over all datasets taking into
+   * account multiresolution representations.  This value will differ from
+   * {@link Datasets#getMaxDomain()} if the zoomed out view of the Plot forces 
+   * the renderer to use a coarser representation that may have different values. 
+   * This can happen if dataset values in higher levels use interpolation rather 
+   * than point sampling, for example.
+   */
+  double getVisibleDomainMax();
 
   /**
    * Initialize or re-initialize the plot using the given view
@@ -417,4 +423,5 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
+  
 }

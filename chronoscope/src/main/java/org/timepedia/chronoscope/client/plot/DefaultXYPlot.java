@@ -62,6 +62,42 @@ import java.util.Map;
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
 
+  private enum DistanceFormula {
+
+    /**
+     * The distance from point (x1,x2) to point (y1,y2) on an XY plane.
+     */
+    XY {double dist(double x1, double y1, double x2, double y2) {
+      return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }},
+    /**
+     * Considers only the distance between x1 and x2, ignoring the y values of
+     * points (x1,y1) and (x2,y2).
+     */
+    X_ONLY {double dist(double x1, double y1, double x2, double y2) {
+      return Math.abs(x1 - x2);
+    }};
+
+    /**
+     * The distance from points (x1,y1) to (x2,y2).
+     */
+    abstract double dist(double x1, double y1, double x2, double y2);
+  }
+
+  /**
+   * Represents the point nearest to some specified data point.
+   */
+  private static final class NearestPoint {
+
+    public int pointIndex;
+
+    public double dist;
+
+    public String toString() {
+      return "pointIndex=" + pointIndex + ";dist=" + dist;
+    }
+  }
+
   private static int globalPlotNumber = 0;
 
   // The maximum distance that the mouse pointer can stray from a candidate
@@ -78,6 +114,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   private static final int NO_SELECTION = -1;
 
   private static final double ZOOM_FACTOR = 1.50d;
+
+  private static boolean pointExists(int pointIndex) {
+    return pointIndex > NO_SELECTION;
+  }
 
   private PortableTimerTask animationContinuation;
 
@@ -170,28 +210,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private AxisPanel overrideDomainAxisRenderer;
 
-  private enum DistanceFormula {
-
-    /**
-     * The distance from point (x1,x2) to point (y1,y2) on an XY plane.
-     */
-    XY {double dist(double x1, double y1, double x2, double y2) {
-      return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    }},
-    /**
-     * Considers only the distance between x1 and x2, ignoring the y values of
-     * points (x1,y1) and (x2,y2).
-     */
-    X_ONLY {double dist(double x1, double y1, double x2, double y2) {
-      return Math.abs(x1 - x2);
-    }};
-
-    /**
-     * The distance from points (x1,y1) to (x2,y2).
-     */
-    abstract double dist(double x1, double y1, double x2, double y2);
-  }
-
   public DefaultXYPlot() {
     this.interactive = true;
     overlays = new ArrayList<Overlay>();
@@ -219,89 +237,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     animateTo(destDomainOrigin, destCurrentDomain, eventType, continuation,
         true);
-  }
-
-  private void animateTo(final double destDomainOrigin,
-      final double destDomainLength, final int eventType,
-      final PortableTimerTask continuation, boolean fence) {
-
-    if (!isAnimatable()) {
-      return;
-    }
-
-    // if there is already an animation running, cancel it
-    if (animationTimer != null) {
-      animationTimer.cancelTimer();
-      if (animationContinuation != null) {
-        animationContinuation.run(animationTimer);
-      }
-      animationTimer = null;
-    }
-
-    final Interval destDomain;
-    if (fence) {
-      destDomain = fenceDomain(destDomainOrigin, destDomainLength);
-    } else {
-      destDomain = new Interval(destDomainOrigin,
-          destDomainOrigin + destDomainLength);
-    }
-
-    animationContinuation = continuation;
-    final Interval visibleDomain = this.plotDomain;
-
-    animationTimer = view.createTimer(new PortableTimerTask() {
-      final double destDomainMid = destDomain.midpoint();
-
-      final Interval srcDomain = visibleDomain.copy();
-
-      // Ratio of destination domain to current domain
-      final double zoomFactor = destDomain.length() / srcDomain.length();
-
-      double startTime = 0;
-
-      boolean lastFrame = false;
-
-      public void run(PortableTimer t) {
-        isAnimating = true;
-        if (startTime == 0) {
-          startTime = t.getTime();
-        }
-        double curTime = t.getTime();
-        double lerpFactor = (curTime - startTime) / 300;
-        if (lerpFactor > 1) {
-          lerpFactor = 1;
-        }
-
-        final double domainCenter =
-            (destDomainMid - srcDomain.midpoint()) * lerpFactor + srcDomain
-                .midpoint();
-        final double domainLength = srcDomain.length() * ((1 - lerpFactor) + (
-            zoomFactor * lerpFactor));
-        final double domainStart = domainCenter - domainLength / 2;
-        visibleDomain.setEndpoints(domainStart, domainStart + domainLength);
-        redraw();
-
-        if (lerpFactor < 1) {
-          t.schedule(10);
-        } else if (lastFrame) {
-          final double domainAmt = srcDomain.getStart() - visibleDomain
-              .getStart();
-          view.fireScrollEvent(DefaultXYPlot.this, domainAmt, eventType, false);
-          if (continuation != null) {
-            continuation.run(t);
-            animationContinuation = null;
-          }
-          isAnimating = false;
-          animationTimer = null;
-          redraw();
-        } else {
-          lastFrame = true;
-          animationTimer.schedule(300);
-        }
-      }
-    });
-
-    animationTimer.schedule(10);
   }
 
   public boolean click(int x, int y) {
@@ -352,12 +287,23 @@ public class DefaultXYPlot<T extends Tuple2D>
     return false;
   }
 
+  public Bounds getBounds() {
+    return plotBounds;
+  }
+
   public Chart getChart() {
     return view.getChart();
   }
 
   public int getCurrentMipLevel(int datasetIndex) {
     return currentMiplevels[datasetIndex];
+  }
+
+  /**
+   * Returns the datasets associated with this plot.
+   */
+  public Datasets<T> getDatasets() {
+    return this.datasets;
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
@@ -371,29 +317,29 @@ public class DefaultXYPlot<T extends Tuple2D>
     return ds.getFlyweightTuple(pointIndex, mipLevel).getSecond();
   }
 
+  public Interval getDomain() {
+    return this.plotDomain;
+  }
+
   public ValueAxis getDomainAxis() {
     return domainAxisPanel.getValueAxis();
   }
 
-  public double getVisibleDomainMax() {
-    return visibleDomainMax;
-  }
-
-  public Interval getDomain() {
-    return this.plotDomain;
+  public AxisPanel getDomainAxisRenderer() {
+    return domainAxisPanel;
   }
 
   public Focus getFocus() {
     return this.focus;
   }
 
-  public int[] getHoverPoints() {
-    return this.hoverPoints;
-  }
-
   public String getHistoryToken() {
     return getChart().getChartId() + "(O" + plotDomain.getStart() + ",D"
         + plotDomain.length() + ")";
+  }
+
+  public int[] getHoverPoints() {
+    return this.hoverPoints;
   }
 
   public Bounds getInnerBounds() {
@@ -419,17 +365,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return overviewLayer;
   }
 
-  public Bounds getBounds() {
-    return plotBounds;
-  }
-
-  /**
-   * Returns the datasets associated with this plot.
-   */
-  public Datasets<T> getDatasets() {
-    return this.datasets;
-  }
-
   public Layer getPlotLayer() {
     return initLayer(null, "plotLayer", plotBounds);
   }
@@ -452,6 +387,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public double getSelectionEnd() {
     return endHighlight;
+  }
+
+  public double getVisibleDomainMax() {
+    return visibleDomainMax;
   }
 
   public void init(View view) {
@@ -789,6 +728,15 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
+  public void setDatasets(Datasets<T> datasets) {
+    ArgChecker.isNotNull(datasets, "datasets");
+    ArgChecker.isGT(datasets.size(), 0, "datasets.size");
+    this.datasets = datasets;
+    if (datasets != null) {
+      datasets.addListener(this);
+    }
+  }
+
   public void setDomainAxisRenderer(AxisPanel domainAxisRenderer) {
     overrideDomainAxisRenderer = domainAxisRenderer;
     bottomPanel.remove(domainAxisPanel);
@@ -797,15 +745,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     domainAxisRenderer.setValueAxis(domainAxis);
     domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
     bottomPanel.insertBefore(overviewAxisPanel, domainAxisPanel);
-  }
-
-  public void setDatasets(Datasets<T> datasets) {
-    ArgChecker.isNotNull(datasets, "datasets");
-    ArgChecker.isGT(datasets.size(), 0, "datasets.size");
-    this.datasets = datasets;
-    if (datasets != null) {
-      datasets.addListener(this);
-    }
   }
 
   public void setFocus(Focus focus) {
@@ -927,6 +866,89 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
+  private void animateTo(final double destDomainOrigin,
+      final double destDomainLength, final int eventType,
+      final PortableTimerTask continuation, boolean fence) {
+
+    if (!isAnimatable()) {
+      return;
+    }
+
+    // if there is already an animation running, cancel it
+    if (animationTimer != null) {
+      animationTimer.cancelTimer();
+      if (animationContinuation != null) {
+        animationContinuation.run(animationTimer);
+      }
+      animationTimer = null;
+    }
+
+    final Interval destDomain;
+    if (fence) {
+      destDomain = fenceDomain(destDomainOrigin, destDomainLength);
+    } else {
+      destDomain = new Interval(destDomainOrigin,
+          destDomainOrigin + destDomainLength);
+    }
+
+    animationContinuation = continuation;
+    final Interval visibleDomain = this.plotDomain;
+
+    animationTimer = view.createTimer(new PortableTimerTask() {
+      final double destDomainMid = destDomain.midpoint();
+
+      final Interval srcDomain = visibleDomain.copy();
+
+      // Ratio of destination domain to current domain
+      final double zoomFactor = destDomain.length() / srcDomain.length();
+
+      double startTime = 0;
+
+      boolean lastFrame = false;
+
+      public void run(PortableTimer t) {
+        isAnimating = true;
+        if (startTime == 0) {
+          startTime = t.getTime();
+        }
+        double curTime = t.getTime();
+        double lerpFactor = (curTime - startTime) / 300;
+        if (lerpFactor > 1) {
+          lerpFactor = 1;
+        }
+
+        final double domainCenter =
+            (destDomainMid - srcDomain.midpoint()) * lerpFactor + srcDomain
+                .midpoint();
+        final double domainLength = srcDomain.length() * ((1 - lerpFactor) + (
+            zoomFactor * lerpFactor));
+        final double domainStart = domainCenter - domainLength / 2;
+        visibleDomain.setEndpoints(domainStart, domainStart + domainLength);
+        redraw();
+
+        if (lerpFactor < 1) {
+          t.schedule(10);
+        } else if (lastFrame) {
+          final double domainAmt = srcDomain.getStart() - visibleDomain
+              .getStart();
+          view.fireScrollEvent(DefaultXYPlot.this, domainAmt, eventType, false);
+          if (continuation != null) {
+            continuation.run(t);
+            animationContinuation = null;
+          }
+          isAnimating = false;
+          animationTimer = null;
+          redraw();
+        } else {
+          lastFrame = true;
+          animationTimer.schedule(300);
+        }
+      }
+    });
+
+    animationTimer.schedule(10);
+  }
+
   private List<RangeAxis> autoAssignDatasetAxes() {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
@@ -961,41 +983,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     return rangeAxes;
-  }
-
-  private void drawHighlight(Layer layer) {
-    final double domainStart = plotDomain.getStart();
-    final double domainEnd = plotDomain.getEnd();
-
-    if (endHighlight - beginHighlight == 0
-        || (beginHighlight < domainStart && endHighlight < domainStart) || (
-        beginHighlight > domainEnd && endHighlight > domainEnd)) {
-
-      if (highlightDrawn) {
-        layer.clear();
-        highlightDrawn = false;
-      }
-
-      return;
-    }
-
-    // need plotBounds relative
-    double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
-    double ex = Math
-        .min(0 + getInnerBounds().width, domainToScreenX(endHighlight, 0));
-
-    layer.save();
-    layer.setFillColor("#14FFFF");
-    // layer.setLayerAlpha(0.2f);
-    layer.setTransparency(0.2f);
-    layer.clear();
-    layer.fillRect(ux, 0, ex - ux, getInnerBounds().height);
-    layer.restore();
-    highlightDrawn = true;
-  }
-
-  private void pushHistory() {
-    Chronoscope.pushHistory();
   }
 
   private void clearDrawCaches() {
@@ -1046,6 +1033,37 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     return b;
+  }
+
+  private void drawHighlight(Layer layer) {
+    final double domainStart = plotDomain.getStart();
+    final double domainEnd = plotDomain.getEnd();
+
+    if (endHighlight - beginHighlight == 0
+        || (beginHighlight < domainStart && endHighlight < domainStart) || (
+        beginHighlight > domainEnd && endHighlight > domainEnd)) {
+
+      if (highlightDrawn) {
+        layer.clear();
+        highlightDrawn = false;
+      }
+
+      return;
+    }
+
+    // need plotBounds relative
+    double ux = Math.max(0, domainToScreenX(beginHighlight, 0));
+    double ex = Math
+        .min(0 + getInnerBounds().width, domainToScreenX(endHighlight, 0));
+
+    layer.save();
+    layer.setFillColor("#14FFFF");
+    // layer.setLayerAlpha(0.2f);
+    layer.setTransparency(0.2f);
+    layer.clear();
+    layer.fillRect(ux, 0, ex - ux, getInnerBounds().height);
+    layer.restore();
+    highlightDrawn = true;
   }
 
   private void drawOverlays(Layer layer) {
@@ -1210,9 +1228,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     np.pointIndex = nearestHoverPt;
   }
 
-  private void initMipLevels() {
-    currentMiplevels = new int[datasets.size()];
-    Arrays.fill(currentMiplevels, 0);
+  private void initAndRedraw() {
+    init(this.view);
+    redraw();
   }
 
   private void initDefaultRenderers(int numDatasets) {
@@ -1274,6 +1292,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
+  private void initMipLevels() {
+    currentMiplevels = new int[datasets.size()];
+    Arrays.fill(currentMiplevels, 0);
+  }
+
   /**
    * Methods which do not depend on any visual state of the chart being
    * initialized first. Can be moved early in Plot initialization. Put stuff
@@ -1315,13 +1338,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(newOrigin, newdomain, XYPlotListener.ZOOMED);
   }
 
-  private void page(double pageSize) {
-    pushHistory();
-    final double newOrigin = plotDomain.getStart() + (plotDomain.length()
-        * pageSize);
-    animateTo(newOrigin, plotDomain.length(), XYPlotListener.PAGED);
-  }
-
   /**
    * Assigns a new domain start value while maintaining the current domain
    * length (i.e. the domain end value is implicitly modified).
@@ -1331,9 +1347,19 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.plotDomain.setEndpoints(newDomainStart, newDomainStart + len);
   }
 
-  private void initAndRedraw() {
-    init(this.view);
-    redraw();
+  private void page(double pageSize) {
+    pushHistory();
+    final double newOrigin = plotDomain.getStart() + (plotDomain.length()
+        * pageSize);
+    animateTo(newOrigin, plotDomain.length(), XYPlotListener.PAGED);
+  }
+
+  private void pushHistory() {
+    Chronoscope.pushHistory();
+  }
+
+  private void resetHoverPoints() {
+    Arrays.fill(this.hoverPoints, NO_SELECTION);
   }
 
   private void setFocusAndNotifyView(Focus focus) {
@@ -1411,18 +1437,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw();
   }
 
-  private double windowYtoUser(int y) {
-    return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
-  }
-
-  private void resetHoverPoints() {
-    Arrays.fill(this.hoverPoints, NO_SELECTION);
-  }
-
-  private static boolean pointExists(int pointIndex) {
-    return pointIndex > NO_SELECTION;
-  }
-
   /**
    * Render the Plot into the encapsulating Chart's View.
    */
@@ -1495,17 +1509,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return getRangeAxis(datasetIndex).userToData(windowYtoUser(y));
   }
 
-  /**
-   * Represents the point nearest to some specified data point.
-   */
-  private static final class NearestPoint {
-
-    public int pointIndex;
-
-    public double dist;
-
-    public String toString() {
-      return "pointIndex=" + pointIndex + ";dist=" + dist;
-    }
+  private double windowYtoUser(int y) {
+    return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
   }
 }

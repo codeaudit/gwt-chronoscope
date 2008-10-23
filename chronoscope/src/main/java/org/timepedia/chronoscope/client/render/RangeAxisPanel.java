@@ -17,6 +17,11 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public class RangeAxisPanel extends AxisPanel {
 
+  public enum TickPosition {
+
+    INSIDE, OUTSIDE
+  }
+
   private double axisLabelWidth, axisLabelHeight;
 
   private boolean boundsSet;
@@ -26,15 +31,6 @@ public class RangeAxisPanel extends AxisPanel {
   private double maxLabelWidth, maxLabelHeight;
 
   private RangeAxis rangeAxis;
-
-  public double getMaxLabelWidth() {
-    return maxLabelWidth;
-  }
-
-  public enum TickPosition {
-
-    INSIDE, OUTSIDE
-  }
 
   public void computeLabelWidths(View view) {
     //renderer.init();
@@ -88,65 +84,8 @@ public class RangeAxisPanel extends AxisPanel {
     layer.restore();
   }
 
-  private void drawHorizontalAxisLabel(Layer layer, Bounds bounds) {
-    layer.setFillColor(labelProperties.bgColor);
-    layer.setStrokeColor(labelProperties.color);
-    double center = bounds.x + (bounds.width / 2);
-
-    double halfLabelWidth = axisLabelWidth / 2;
-    layer.drawText(center - halfLabelWidth, bounds.y + maxLabelHeight + 5,
-        valueAxis.getLabel(), labelProperties.fontFamily,
-        labelProperties.fontWeight, labelProperties.fontSize, textLayerName,
-        Cursor.DEFAULT);
-  }
-
-  private double domainToScreenX(double dataX, Bounds bounds) {
-    return bounds.x + valueAxis.dataToUser(dataX) * bounds.width;
-  }
-
-  private void drawHorizontalTick(XYPlot plot, Layer layer, double range,
-      Bounds bounds, int tickLength) {
-    double ux = domainToScreenX(range, bounds);
-    layer.save();
-    layer.setFillColor(tickProperties.color);
-    layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
-
-    if (gridProperties.visible) {
-      Layer player = plot.getPlotLayer();
-      player.save();
-      player.setFillColor(gridProperties.color);
-      player.setTransparency((float) gridProperties.transparency);
-      player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
-          plot.getInnerBounds().height);
-      player.restore();
-    }
-    layer.restore();
-    drawHorizontalLabel(layer, bounds, ux, range);
-  }
-
-  private void drawHorizontalLabel(Layer layer, Bounds bounds, double ux,
-      double range) {
-
-    String label = rangeAxis.getFormattedLabel(range);
-
-    double labelWidth = layer.stringWidth(label, gssProperties.fontFamily,
-        gssProperties.fontWeight, gssProperties.fontSize);
-
-    layer.save();
-    layer.setStrokeColor(labelProperties.color);
-    layer.setFillColor(labelProperties.bgColor);
-    layer.drawText(ux - labelWidth / 2, bounds.y + 5, label,
-        gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
-    layer.restore();
-  }
-
-  private void drawHorizontalLine(Layer layer, Bounds bounds) {
-    layer.setStrokeColor(tickProperties.color);
-    layer.setLineWidth(tickProperties.lineThickness);
-    layer.moveTo(bounds.x, bounds.y);
-    layer.lineTo(bounds.x + bounds.width, bounds.y);
-    layer.stroke();
+  public String formatLegendLabel(double value) {
+    return rangeAxis.getFormattedLabel(value);
   }
 
   @Override
@@ -158,20 +97,12 @@ public class RangeAxisPanel extends AxisPanel {
     }
   }
 
-  private int getLabelHeight(View view, String str, double rotationAngle) {
-    return view.getCanvas().getRootLayer().rotatedStringHeight(str,
-        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize);
-  }
-
-  private int getLabelWidth(View view, String str, double rotationAngle) {
-    return view.getCanvas().getRootLayer().rotatedStringWidth(str,
-        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize);
-  }
-
   public double getMaxLabelHeight() {
     return this.maxLabelHeight;
+  }
+
+  public double getMaxLabelWidth() {
+    return maxLabelWidth;
   }
 
   public String getType() {
@@ -242,6 +173,67 @@ public class RangeAxisPanel extends AxisPanel {
     layer.restore();
   }
 
+  private double domainToScreenX(double dataX, Bounds bounds) {
+    return bounds.x + valueAxis.dataToUser(dataX) * bounds.width;
+  }
+
+  private void drawHorizontalAxisLabel(Layer layer, Bounds bounds) {
+    layer.setFillColor(labelProperties.bgColor);
+    layer.setStrokeColor(labelProperties.color);
+    double center = bounds.x + (bounds.width / 2);
+
+    double halfLabelWidth = axisLabelWidth / 2;
+    layer.drawText(center - halfLabelWidth, bounds.y + maxLabelHeight + 5,
+        valueAxis.getLabel(), labelProperties.fontFamily,
+        labelProperties.fontWeight, labelProperties.fontSize, textLayerName,
+        Cursor.DEFAULT);
+  }
+
+  private void drawHorizontalLabel(Layer layer, Bounds bounds, double ux,
+      double range) {
+
+    String label = rangeAxis.getFormattedLabel(range);
+
+    double labelWidth = layer.stringWidth(label, gssProperties.fontFamily,
+        gssProperties.fontWeight, gssProperties.fontSize);
+
+    layer.save();
+    layer.setStrokeColor(labelProperties.color);
+    layer.setFillColor(labelProperties.bgColor);
+    layer.drawText(ux - labelWidth / 2, bounds.y + 5, label,
+        gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+    layer.restore();
+  }
+
+  private void drawHorizontalLine(Layer layer, Bounds bounds) {
+    layer.setStrokeColor(tickProperties.color);
+    layer.setLineWidth(tickProperties.lineThickness);
+    layer.moveTo(bounds.x, bounds.y);
+    layer.lineTo(bounds.x + bounds.width, bounds.y);
+    layer.stroke();
+  }
+
+  private void drawHorizontalTick(XYPlot plot, Layer layer, double range,
+      Bounds bounds, int tickLength) {
+    double ux = domainToScreenX(range, bounds);
+    layer.save();
+    layer.setFillColor(tickProperties.color);
+    layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
+
+    if (gridProperties.visible) {
+      Layer player = plot.getPlotLayer();
+      player.save();
+      player.setFillColor(gridProperties.color);
+      player.setTransparency((float) gridProperties.transparency);
+      player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
+          plot.getInnerBounds().height);
+      player.restore();
+    }
+    layer.restore();
+    drawHorizontalLabel(layer, bounds, ux, range);
+  }
+
   private void drawVerticalAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
       boolean isLeft = parentPanel.getPosition() == Position.LEFT;
@@ -299,6 +291,21 @@ public class RangeAxisPanel extends AxisPanel {
     layer.restore();
   }
 
+  private void drawVerticalLine(Layer layer, Bounds bounds) {
+    layer.setFillColor(tickProperties.color);
+    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+    double dir = (isLeft ? bounds.width : 0);
+    if ("inside".equals(gssProperties.tickPosition)) {
+      if (isInnerMost(isLeft)) {
+        dir = isLeft ? bounds.width : -1;
+      } else {
+        dir = isLeft ? bounds.width - maxLabelWidth - 1 : maxLabelWidth + 1;
+      }
+    }
+    layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
+        bounds.bottomY());
+  }
+
   private void drawVerticalTick(XYPlot plot, Layer layer, double range,
       double rangeLow, double rangeSize, Bounds bounds, boolean gridOnly) {
     double uy =
@@ -330,19 +337,27 @@ public class RangeAxisPanel extends AxisPanel {
     }
   }
 
-  private void drawVerticalLine(Layer layer, Bounds bounds) {
-    layer.setFillColor(tickProperties.color);
-    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
-    double dir = (isLeft ? bounds.width : 0);
-    if ("inside".equals(gssProperties.tickPosition)) {
-      if (isInnerMost(isLeft)) {
-        dir = isLeft ? bounds.width : -1;
-      } else {
-        dir = isLeft ? bounds.width - maxLabelWidth - 1 : maxLabelWidth + 1;
-      }
-    }
-    layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
-        bounds.bottomY());
+  private String getDummyLabel() {
+    int maxDig = RangeAxis.MAX_DIGITS;
+    return "0" + ((maxDig == 1) ? ""
+        : "." + "000000000".substring(0, maxDig - 1));
+  }
+
+  private int getLabelHeight(View view, String str, double rotationAngle) {
+    return view.getCanvas().getRootLayer().rotatedStringHeight(str,
+        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize);
+  }
+
+  private int getLabelWidth(View view, String str, double rotationAngle) {
+    return view.getCanvas().getRootLayer().rotatedStringWidth(str,
+        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
+        gssProperties.fontSize);
+  }
+
+  private double getRotationAngle() {
+    boolean isPanelOnRight = parentPanel.getPosition() == Position.RIGHT;
+    return (isPanelOnRight ? 1.0 : -1.0) * Math.PI / 2;
   }
 
   private TickPosition getTickPosition() {
@@ -357,16 +372,5 @@ public class RangeAxisPanel extends AxisPanel {
   private boolean isInnerMost(boolean isLeftPanel) {
     return parentPanel.indexOf(this) == (isLeftPanel ?
         parentPanel.getAxisCount() - 1 : 0);
-  }
-
-  private String getDummyLabel() {
-    int maxDig = RangeAxis.MAX_DIGITS;
-    return "0" + ((maxDig == 1) ? ""
-        : "." + "000000000".substring(0, maxDig - 1));
-  }
-
-  private double getRotationAngle() {
-    boolean isPanelOnRight = parentPanel.getPosition() == Position.RIGHT;
-    return (isPanelOnRight ? 1.0 : -1.0) * Math.PI / 2;
   }
 }
