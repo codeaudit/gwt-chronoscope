@@ -6,8 +6,11 @@ import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
+import org.timepedia.chronoscope.java2d.JDKDateFormatter;
 
 import java.util.TimerTask;
 
@@ -17,7 +20,16 @@ import java.util.TimerTask;
  */
 public class ViewJava2D extends View {
 
-   abstract static class MockTimerTask extends TimerTask
+  public ViewJava2D() {
+    DateFormatterFactory
+        .setDateFormatterFactory(new DateFormatterFactory() {
+          public DateFormatter getDateFormatter(String format) {
+            return new JDKDateFormatter(format);
+          }
+        });
+  }
+
+  abstract static class MockTimerTask extends TimerTask
       implements PortableTimer {
 
     public MockTimerTask() {
@@ -77,7 +89,7 @@ public class ViewJava2D extends View {
       }
 
       public void open() {
-        
+
       }
     };
   }

@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.canvas;
 
+import com.google.gwt.core.client.GWT;
+
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
@@ -11,8 +13,11 @@ import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+import org.timepedia.chronoscope.client.util.date.GWTDateFormatter;
+import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -43,13 +48,22 @@ public abstract class View implements Exportable {
 
   protected Chart chart;
 
-  private final List<XYPlotListener> plotListeners = new ArrayList<XYPlotListener>();
+  private final List<XYPlotListener> plotListeners
+      = new ArrayList<XYPlotListener>();
 
   private boolean doubleBuffered = false;
 
   private ChronoscopeMenu contextMenu = null;
 
   public View() {
+    if (GWT.isClient()) {
+      DateFormatterFactory
+          .setDateFormatterFactory(new DateFormatterFactory() {
+            public DateFormatter getDateFormatter(String format) {
+              return new GWTDateFormatter(format);
+            }
+          });
+    }
   }
 
   public void addViewListener(XYPlotListener listener) {
@@ -100,9 +114,10 @@ public abstract class View implements Exportable {
     }
   }
 
-  public void fireScrollEvent(XYPlot plot, double domainAmt, int type, boolean anim) {
+  public void fireScrollEvent(XYPlot plot, double domainAmt, int type,
+      boolean anim) {
     for (XYPlotListener l : plotListeners) {
-      
+
       // FIXME: pass domainAmt to onPlotMoved
       l.onPlotMoved(plot, domainAmt, type, anim);
     }
@@ -176,7 +191,7 @@ public abstract class View implements Exportable {
     }
   }
 
-  public  String numberFormat(String labelFormat, double value) {
+  public String numberFormat(String labelFormat, double value) {
     return String.valueOf(value);
   }
 
@@ -245,7 +260,8 @@ public abstract class View implements Exportable {
           // do nothing
         }
 
-        public void onPlotMoved(XYPlot plot, double domainAmt, int type, boolean animated) {
+        public void onPlotMoved(XYPlot plot, double domainAmt, int type,
+            boolean animated) {
           // do nothing
         }
       });
@@ -256,7 +272,6 @@ public abstract class View implements Exportable {
 
   /**
    * Hint to set the mouse cursor to a particular mode.
-   * @param cursor
    */
   public void setCursor(Cursor cursor) {
     // default impl, ignore

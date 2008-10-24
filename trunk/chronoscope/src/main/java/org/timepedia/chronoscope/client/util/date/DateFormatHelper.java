@@ -1,12 +1,8 @@
 package org.timepedia.chronoscope.client.util.date;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.DateFormatter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -17,55 +13,6 @@ import java.util.Date;
  * @author chad takahashi
  */
 public final class DateFormatHelper {
-
-  /**
-   * Interface used to switch between GWT and JDK date formatter implementations
-   */
-  public interface DateFormatter {
-
-    String format(double timestamp);
-
-    double parse(String date);
-  }
-
-  static class GWTDateFormatter implements DateFormatter {
-
-    private DateTimeFormat fmt;
-
-    public GWTDateFormatter(String format) {
-      fmt = DateTimeFormat.getFormat(format);
-    }
-
-    public String format(double timestamp) {
-      return fmt.format(new Date((long) timestamp));
-    }
-
-    public double parse(String date) {
-      return fmt.parse(date).getTime();
-    }
-  }
-
-  static class JDKDateFormatter implements DateFormatter {
-
-    private SimpleDateFormat fmt;
-
-    public JDKDateFormatter(String format) {
-      fmt = new SimpleDateFormat(format);
-    }
-
-    public String format(double timestamp) {
-      return fmt.format(new Date((long) timestamp));
-    }
-
-    public double parse(String date) {
-      try {
-        return fmt.parse(date).getTime();
-      } catch (ParseException e) {
-        e.printStackTrace();
-        return 0;
-      }
-    }
-  }
 
   static final String[] MONTH_LABELS = createMonthLabels();
 
@@ -81,11 +28,7 @@ public final class DateFormatHelper {
   private static final String[] HOURS_OF_DAY = createHoursOfDayLabels();
 
   public static DateFormatter getDateFormatter(String format) {
-    if (GWT.isClient()) {
-      return new GWTDateFormatter(format);
-    } else {
-      return new JDKDateFormatter(format);
-    }
+    return DateFormatterFactory.getInstance().getDateFormatter(format);
   }
 
   /**
