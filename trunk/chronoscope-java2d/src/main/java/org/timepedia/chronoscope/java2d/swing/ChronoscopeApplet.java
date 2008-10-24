@@ -1,8 +1,6 @@
 package org.timepedia.chronoscope.java2d.swing;
 
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.data.MockXYDataset;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 
 import java.awt.BorderLayout;
