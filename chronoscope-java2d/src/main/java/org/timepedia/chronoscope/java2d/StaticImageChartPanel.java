@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.java2d;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;

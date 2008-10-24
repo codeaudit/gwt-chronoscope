@@ -1,10 +1,8 @@
 package org.timepedia.chronoscope.java2d;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.data.MockXYDataset;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 
 import java.awt.Image;

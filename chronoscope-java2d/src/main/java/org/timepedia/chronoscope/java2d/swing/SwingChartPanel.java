@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.java2d.swing;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.XYDataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
@@ -227,8 +226,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     chart = new Chart();
     chart.setPlot(plot);
     chart.setView(view);
-    
-    chart.setView(view);
+    view.setChart(chart);
 //    chart.init(view, plot);
     redraw();
   }
