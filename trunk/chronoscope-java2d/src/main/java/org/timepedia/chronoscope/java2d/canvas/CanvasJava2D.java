@@ -149,7 +149,7 @@ public class CanvasJava2D extends Canvas {
     });
     int ord = 0;
     backingLayer.save();
-    backingLayer.setFillColor("rgba(0,0,0,0)");
+    backingLayer.setFillColor("rgba(255,255,255,255)");
     backingLayer.setComposite(Layer.COPY);
     backingLayer
         .fillRect(0, 0, backingLayer.getWidth(), backingLayer.getHeight());

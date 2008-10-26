@@ -8,10 +8,12 @@ import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.MockGssContext;
+import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.java2d.canvas.CanvasJava2D;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -49,9 +51,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
   public SwingChartPanel(Dataset[] xyDatasets) {
     addKeyListener(this);
 
-    addMouseWheelListener(this);
-    addMouseMotionListener(this);
-    addMouseListener(this);
+
     label = new JLabel();
 
     chart = new Chart();
@@ -62,6 +62,9 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     chart.setPlot(plot);
 
     add(label);
+    label.addMouseWheelListener(this);
+    label.addMouseMotionListener(this);
+    label.addMouseListener(this);
   }
 
   public void addNotify() {
@@ -69,7 +72,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 
     view = new InteractiveViewJava2D();
     view.initialize(getParent().getWidth(), getParent().getHeight(), false,
-        new MockGssContext(), this, this);
+        new DefaultGssContext(), this, this);
     view.onAttach();
     
   }
@@ -142,7 +145,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
           if (clickCount >= 2) {
             chart.maxZoomTo(mouseX, mouseY);
           } else {
-            chart.setFocus(mouseX, mouseY);
+            chart.click(mouseX, mouseY);
           }
         }
       }
@@ -168,12 +171,12 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 //        if (chart.getPlot().isSelectionModeEnabled() && selStart > -1) {
 //          chart.getPlot().setHighlight(selStart, x);
 //        } else {
-//          if (maybeDrag && Math.abs(startDragX - x) > 10) {
-//            chart.scrollPixels(startDragX - x);
-//            startDragX = x;
-//          } else {
-//            chart.setHover(x, y);
-//          }
+          if (maybeDrag && Math.abs(startDragX - x) > 10) {
+            chart.scrollPixels(startDragX - x);
+            startDragX = x;
+          } else {
+            chart.setHover(x, y);
+          }
 //        }
       }
     });
@@ -183,8 +186,8 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 //    if (chart.getPlot().isSelectionModeEnabled()) {
 //      selStart = e.getX();
 //    } else {
-//      maybeDrag = true;
-//      startDragX = e.getX();
+      maybeDrag = true;
+      startDragX = e.getX();
 //    }
   }
 
@@ -194,7 +197,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
 //      selStart = -1;
 //    } else if (maybeDrag) {
 //    }
-//    maybeDrag = false;
+    maybeDrag = false;
   }
 
   public void mouseWheelMoved(MouseWheelEvent e) {
