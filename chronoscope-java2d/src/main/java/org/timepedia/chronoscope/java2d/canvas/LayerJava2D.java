@@ -5,10 +5,10 @@ import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
-import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.awt.AlphaComposite;
@@ -23,6 +23,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.font.TextLayout;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -35,6 +36,8 @@ import java.util.regex.Pattern;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class LayerJava2D extends AbstractLayer {
+
+  private static final boolean DEBUG = false;
 
   static class State {
 
@@ -230,8 +233,22 @@ public class LayerJava2D extends AbstractLayer {
         Integer.parseInt(fontSize.substring(0, fontSize.length() - 2)));
     ctx.setPaint(strokeColor);
     ctx.setFont(font);
+
     ctx.drawString(label, (int) x,
         (int) y + ctx.getFontMetrics().getMaxAscent());
+    if (DEBUG && label != null && !"".equals(label.trim())) {
+      ctx.setPaint(Color.RED);
+
+      TextLayout tl = new TextLayout(label, font, ctx.getFontRenderContext());
+      Rectangle2D b = tl.getBounds();
+      int h = (int)(tl.getAscent() + tl.getDescent() + tl.getLeading());
+      ctx.drawRect((int)x, (int)y, (int)b.getWidth(), h);
+    }
+//    System.out.println("Drawing text " + label + " at " + x + ", "
+//        + (y + ctx.getFontMetrics().getMaxAscent()) + " y=" + y + ", maxAscent="
+//        + ctx.getFontMetrics().getMaxAscent() + " leading is " + ctx
+//        .getFontMetrics().getLeading());
+
   }
 
   public void fill() {
@@ -468,8 +485,16 @@ public class LayerJava2D extends AbstractLayer {
       String size) {
     ctx.setFont(new Font(font, Font.PLAIN,
         Integer.parseInt(size.substring(0, size.length() - 2))));
-    return (int) ctx.getFontMetrics().getStringBounds(string, ctx)
-        .getHeight();
+    FontMetrics fm = ctx.getFontMetrics();
+    Font f = ctx.getFont();
+    TextLayout tl = new TextLayout(string, f, ctx.getFontRenderContext());
+    Rectangle2D b = tl.getBounds();
+    int h = (int) (tl.getAscent() + tl.getDescent()+tl.getLeading());
+       // b.getHeight();//(int) fm.getMaxAscent() + fm.getMaxDescent() + 2;
+//    System.out.println("height of " + string + " is " + h + "  vs " + fm
+//        .getStringBounds(string, ctx));
+    return h;
+//        .getHeight();
   }
 
   public int stringWidth(String string, String font, String bold, String size) {
