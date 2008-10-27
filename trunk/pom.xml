@@ -68,7 +68,7 @@
 <!--        <module>samples</module> -->
         <module>gviz</module>
         <module>widget</module> 
-<!--        <module>chronoscope-java2d</module> -->
+        <module>chronoscope-java2d</module>
     </modules>
 
    <distributionManagement>
