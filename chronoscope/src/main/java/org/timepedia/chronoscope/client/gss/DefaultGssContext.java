@@ -104,6 +104,7 @@ public class DefaultGssContext extends MockGssContext {
 
         private DefaultFillGssProperties() {
             this.bgColor = new Color("rgba(0,0,0,0)");
+            this.transparency = 0.0;
         }
     }
 

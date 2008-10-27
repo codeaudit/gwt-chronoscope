@@ -321,7 +321,6 @@ public class LayerJava2D extends AbstractLayer {
   }
 
   public void restore() {
-    super.restore();
     State s = ctxStack.pop();
     ctx = s.ctx;
     strokeColor = s.strokeColor;
@@ -330,7 +329,6 @@ public class LayerJava2D extends AbstractLayer {
   }
 
   public void save() {
-    super.save();
     Graphics2D newCtx = (Graphics2D) ctx.create();
     State s = new State(ctx, strokeColor, fillColor, currentStroke);
     ctxStack.push(s);

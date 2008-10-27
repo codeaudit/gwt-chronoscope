@@ -200,14 +200,10 @@ public class BrowserLayer extends DomTextLayer {
   }
 
   public void restore() {
-    super.restore();
-
     restore0(ctx);
   }
 
   public void save() {
-    super.save();
-
     save0(ctx);
   }
 

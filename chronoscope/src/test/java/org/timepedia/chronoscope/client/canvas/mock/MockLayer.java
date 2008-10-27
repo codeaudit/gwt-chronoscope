@@ -161,6 +161,12 @@ public class MockLayer extends AbstractLayer {
   public void rect(double x, double y, double width, double height) {
   }
 
+  public void restore() {
+  }
+
+  public void save() {
+  }
+
   public void scale(double sx, double sy) {
   }
 

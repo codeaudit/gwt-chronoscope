@@ -258,7 +258,6 @@ public class FlashLayer extends AbstractLayer {
   }
 
   public void restore() {
-    super.restore();
     cmd("Z");
     fc.popSelection();
   }
@@ -276,7 +275,6 @@ public class FlashLayer extends AbstractLayer {
   }
 
   public void save() {
-    super.save();
     fc.pushSelection(layerId);
     cmd("X");
   }

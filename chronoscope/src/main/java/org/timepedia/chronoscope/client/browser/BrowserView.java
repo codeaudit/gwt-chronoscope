@@ -36,7 +36,7 @@ import java.util.Date;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class BrowserView extends View
+public class BrowserView extends GwtView
     implements Exportable, CssGssViewSupport, DOMView {
 
   abstract static class BrowserTimer extends Timer implements PortableTimer {

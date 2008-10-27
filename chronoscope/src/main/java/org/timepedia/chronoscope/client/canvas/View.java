@@ -55,17 +55,6 @@ public abstract class View implements Exportable {
 
   private ChronoscopeMenu contextMenu = null;
 
-  public View() {
-    if (GWT.isClient()) {
-      DateFormatterFactory
-          .setDateFormatterFactory(new DateFormatterFactory() {
-            public DateFormatter getDateFormatter(String format) {
-              return new GWTDateFormatter(format);
-            }
-          });
-    }
-  }
-
   public void addViewListener(XYPlotListener listener) {
     ArgChecker.isNotNull(listener, "listener");
     plotListeners.add(listener);
