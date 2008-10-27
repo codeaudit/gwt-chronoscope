@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.canvas;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
@@ -9,8 +7,6 @@ import org.timepedia.chronoscope.client.render.LinearGradient;
  * @author Ray Cromwell <ray@timepedia.org>
  */
 public abstract class AbstractLayer implements Layer {
-
-  public int saveLevel = 0;
 
   private Canvas canvas;
 
@@ -45,12 +41,6 @@ public abstract class AbstractLayer implements Layer {
     return canvas;
   }
 
-  public void restore() {
-    if (!GWT.isScript()) {
-      saveLevel--;
-    }
-  }
-
   public int rotatedStringHeight(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
     rotationAngle = Math.abs(rotationAngle);
@@ -66,12 +56,6 @@ public abstract class AbstractLayer implements Layer {
     return (int) (Math.cos(rotationAngle) * stringWidth(str, fontFamily,
         fontWeight, fontSize) + Math.sin(rotationAngle) * stringHeight(str,
         fontFamily, fontWeight, fontSize));
-  }
-
-  public void save() {
-    if (!GWT.isScript()) {
-      saveLevel++;
-    }
   }
 
   public void setFillColor(PaintStyle p) {

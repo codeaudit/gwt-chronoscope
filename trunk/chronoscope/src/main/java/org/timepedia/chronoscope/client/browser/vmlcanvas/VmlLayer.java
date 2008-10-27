@@ -195,6 +195,14 @@ public class VmlLayer extends DomTextLayer {
     canvasWidget.rect(x, y, width, height);
   }
 
+  public void restore() {
+    canvasWidget.restoreContext();
+  }
+
+  public void save() {
+    canvasWidget.restoreContext();
+  }
+
   public void scale(double sx, double sy) {
     canvasWidget.scale(sx, sy);
   }

@@ -20,6 +20,7 @@ import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.CssGssViewSupport;
 import org.timepedia.chronoscope.client.browser.DOMView;
+import org.timepedia.chronoscope.client.browser.GwtView;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -40,7 +41,7 @@ import java.util.Date;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class FlashView extends View
+public class FlashView extends GwtView
     implements Exportable, CssGssViewSupport, DOMView {
 
   abstract static class BrowserTimer extends Timer implements PortableTimer {
