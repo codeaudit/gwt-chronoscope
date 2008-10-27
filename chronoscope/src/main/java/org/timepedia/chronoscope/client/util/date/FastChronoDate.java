@@ -64,7 +64,6 @@ public class FastChronoDate extends ChronoDate {
     }
     
     addRecursive(timeUnit, numUnits);
-    checkDateFields();
     this.isTimestampDirty = true;
   }
   

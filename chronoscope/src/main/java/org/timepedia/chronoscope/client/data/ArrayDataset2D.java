@@ -25,7 +25,7 @@ public class ArrayDataset2D extends AbstractArrayDataset<Tuple2D> {
   }
 
   @Override
-  protected void loadTupleData(DatasetRequest tupleData, Array2D[] target) {
+  protected void loadTupleData(DatasetRequest tupleData) {
     dimensions = new Array2D[2];
     
     if (tupleData instanceof DatasetRequest.MultiRes) {

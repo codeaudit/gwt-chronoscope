@@ -15,12 +15,14 @@ public abstract class ChronoDate {
    * Factory method that creates a new date object for the specified timeStamp.
    */
   public static final ChronoDate get(double timeStamp) {
-    // NOTE: this can be replaced with a homegrown high-performance
-    // implementation at some point.
     //return new DefaultChronoDate(timeStamp);
     return new FastChronoDate(timeStamp);
   }
 
+  public static final ChronoDate get(int year, int month, int day) {
+    return new FastChronoDate(year, month, day);
+  }
+  
   /**
    * Returns a date representing the current time/date.
    */

@@ -39,6 +39,25 @@ public class MathUtilTest extends TestCase {
     assertFalse(MathUtil.isBounded(11.0, 1.0, 10.0));
   }
   
+  public void testFindSmallestInterval() {
+    assertEquals(0.0, MathUtil.findSmallestInterval(new double[] {10, 20, 20, 30}));
+    assertEquals(2.0, MathUtil.findSmallestInterval(new double[] {10, 12}));
+    assertEquals(2.0, MathUtil.findSmallestInterval(new double[] {10, 1000, 1002, 1004}));
+    
+    try {
+      MathUtil.findSmallestInterval(new double[] { 4, 3, 2, 1});
+      fail("Expected IllegalArgumentException since array is not sorted");
+    }
+    catch (IllegalArgumentException e) {}
+
+    try {
+      MathUtil.findSmallestInterval(new double[] { 42 });
+      fail("Expected IllegalArgumentException since array has only 1 element");
+    }
+    catch (IllegalArgumentException e) {}
+
+  }
+  
   public void testLog2() {
     
     // Typical cases

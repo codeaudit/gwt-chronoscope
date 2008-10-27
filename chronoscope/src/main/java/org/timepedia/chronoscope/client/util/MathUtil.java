@@ -40,6 +40,31 @@ public final class MathUtil {
   }
 
   /**
+   * Finds the smallest interval between any 2 consecutive elements in
+   * the specified array (which is assumed to be in sorted order)
+   * 
+   * @throws IllegalArgumentException if the array is not in sorted order.
+   */
+  public static double findSmallestInterval(double[] a) {
+    if (a.length < 2) {
+      throw new IllegalArgumentException("a.length was < 2: " + a.length);
+    }
+    
+    double smallestInterval = Double.POSITIVE_INFINITY;
+    for (int i = 1; i < a.length; i++) {
+      double curr = a[i];
+      double prev = a[i - 1];
+      if (curr < prev) {
+        throw new IllegalArgumentException("array not in sorted order: a[" + i + "]=" + a[i] + 
+            ", a[" + (i - 1) + "]=" + a[(i - 1)]);
+      }
+      smallestInterval = Math.min(smallestInterval, (curr - prev));
+    }
+   
+    return smallestInterval;
+  }
+  
+  /**
    * Returns true only if the specified value is in the range [p1, p2]. Note
    * that this method does not check if [p1, p2] is a valid range (e.g. if p1 is
    * greater than p2). Return value is undefined if any of the inputs are

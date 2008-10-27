@@ -25,7 +25,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
    * Concrete subclass provides implementation for loading the specified 
    * tuple data into the target list of Array2D objects.
    */
-  protected abstract void loadTupleData(DatasetRequest tupleData, Array2D[] target);
+  protected abstract void loadTupleData(DatasetRequest tupleData);
   
   /**
    * Constructs an {@link Dataset} from the specified request object.
@@ -37,7 +37,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     rangeLabel = (String) ArgChecker.isNotNull(request.getLabel(), "label");
     identifier = request.getIdentifier();
     
-    loadTupleData(request, dimensions);
+    loadTupleData(request);
     validate(dimensions);
 
     if (Double.isNaN(request.getApproximateMinimumInterval())) {
