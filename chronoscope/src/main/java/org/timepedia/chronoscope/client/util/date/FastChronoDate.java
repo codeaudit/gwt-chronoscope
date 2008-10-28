@@ -88,6 +88,9 @@ public class FastChronoDate extends ChronoDate {
           addRecursive(TimeUnit.YEAR, numYears);
         }
         break;
+      case WEEK:
+        // Just multiply by 7 and let fall through to the DAY case
+        numUnits *= 7;
       case DAY:
         dateFields.day += numUnits;
         boolean isLeapYear = this.eraCalc.isLeapYear(dateFields.year);
@@ -289,8 +292,29 @@ public class FastChronoDate extends ChronoDate {
   
   @Override
   public ChronoDate truncate(TimeUnit truncatePoint) {
-    this.dateFields.clearStartingAfter(truncatePoint);
-    this.isTimestampDirty = true;
+    if (truncatePoint == TimeUnit.WEEK) {
+      // WEEK truncation requires special handling...
+      final DayOfWeek firstDayOfWeek = DAYS_OF_WEEK[0];
+      final DayOfWeek dow = getDayOfWeek();
+      if (dow != firstDayOfWeek) {
+        int targetDay = this.dateFields.day - dow.ordinal();
+        //System.out.println("TESTING: dow=" + dow + "; dow.ordinal=" + dow.ordinal() + "; targetDay=" + targetDay);
+        if (targetDay < 1) {
+          decrementMonth(dateFields);
+          int daysInMonth =
+            this.eraCalc.getDaysInMonth(dateFields.month, eraCalc.isLeapYear(dateFields.year));
+          targetDay = daysInMonth + targetDay;
+          //System.out.println("TESTING: daysInMonth=" + daysInMonth + "; new targetDay=" + targetDay);
+        }
+        dateFields.day = targetDay;
+      }
+      dateFields.clearStartingAfter(TimeUnit.DAY);
+    }
+    else {
+      dateFields.clearStartingAfter(truncatePoint);
+    }
+    
+    isTimestampDirty = true;
     return this;
   }
 
@@ -357,6 +381,14 @@ public class FastChronoDate extends ChronoDate {
       offsets[i + 1] = offsets[i] + offsetInterval;
     }
     return offsets;
+  }
+ 
+  private static void decrementMonth(DateFields df) {
+    --df.month;
+    if (df.month < 0) {
+      df.month = 11;
+      --df.year;
+    }
   }
   
   private static final void log(Object msg) {

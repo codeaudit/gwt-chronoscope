@@ -206,6 +206,17 @@ public class FastChronoDateTest extends TestCase {
     assertEquals(1583, 0, 4, d);
   }
   
+  public void testAddWeeks() {
+    ChronoDate d = createTestDate(2008, 1, 27); // leapyear
+    d.add(TimeUnit.WEEK, 2);
+    assertEquals(2008, 2, 12, d);
+
+    d = createTestDate(2008, 1, 27); // leapyear
+    d.add(TimeUnit.WEEK, 4);
+    assertEquals(2008, 2, 26, d);
+
+  }
+  
   public void testTruncate() {
     ChronoDate d = createTestDate(1492, 4, 21, 23, 56, 31, 555);
     d.truncate(TimeUnit.YEAR);
@@ -231,6 +242,45 @@ public class FastChronoDateTest extends TestCase {
     d.truncate(TimeUnit.SEC);
     assertEquals(1492, 4, 21, 23, 56, 31, d);
   }
+  
+  /**
+   * Week truncation requires special logic.  Test this functionality separately.
+   */
+  public void testTruncateWeek() {
+    // Monday, Oct 13
+    ChronoDate d = createTestDate(2008, 9, 13, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(2008, 9, 12, d);
+
+    // Saturday, Oct 18
+    d = createTestDate(2008, 9, 18, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(2008, 9, 12, d);
+
+    // Friday, Oct 3
+    d = createTestDate(2008, 9, 3, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(2008, 8, 28, d); // expect Sun, Sept 28 '08
+
+    // Wed, Jan 2, 2008
+    d = createTestDate(2008, 0, 2, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(2007, 11, 30, d); // expect Sun, Dec 30, '07
+
+    // Sun, Jan 2, 1200
+    d = createTestDate(1200, 0, 2, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(1200, 0, 2, d); // expect Sun, Jan 2, 1200
+
+    // Sat, Jan 1, 1200
+    d = createTestDate(1200, 0, 1, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(1199, 11, 26, d); // expect Sun, Dec 26, 1199
+
+    //d = createTestDate(1582, 2, 20, 23, 59, 59, 123);
+    //d.truncate(TimeUnit.WEEK);
+    //assertEquals(1199, 11, 26, d); // expect ???
+}
   
   public void testGetDaysInMonth() {
     ChronoDate d = createTestDate(1582, 0, 1);
