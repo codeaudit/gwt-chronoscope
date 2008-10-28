@@ -16,12 +16,8 @@ public class DateFields {
   public int year, month, day, hour, minute, second, ms;
   
   public String toString() {
-    return year + "-" + DateFormatHelper.MONTH_LABELS[month] + "-"
-        + DateFormatHelper.TWO_DIGIT_NUMS[day] + " "
-        + DateFormatHelper.TWO_DIGIT_NUMS[hour] + ":"
-        + DateFormatHelper.TWO_DIGIT_NUMS[minute] + ":"
-        + DateFormatHelper.TWO_DIGIT_NUMS[second] + "." + ms;
-
+    return year + "-" + pad(month + 1) + "-" + pad(day) + " "
+        + pad(hour) + ":" + pad(minute) + ":" + pad(second) + "." + ms;
   }
   
   /**
@@ -74,5 +70,9 @@ public class DateFields {
   public DateFields setDay(int day) {
     this.day = day;
     return this;
+  }
+  
+  private static String pad(int v) {
+    return (v < 10) ? ("0" + v) : ("" + v);
   }
 }
