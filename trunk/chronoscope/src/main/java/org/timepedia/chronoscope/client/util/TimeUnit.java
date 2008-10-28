@@ -12,10 +12,9 @@ public enum TimeUnit {
   MIN (SEC.ms * 60),
   HOUR (MIN.ms * 60),
   DAY (HOUR.ms * 24),
-  MONTH (DAY.ms * 31.0),
-  YEAR (DAY.ms * 365.2425),
-  //MONTH (DAY.ms * 365.2425 / 12.0), // avg # days in year is 365.2425, 
-  //YR (MONTH.ms * 12),
+  WEEK (DAY.ms * 7),
+  MONTH (DAY.ms * (365.2425 / 12.0)),
+  YEAR (DAY.ms * 365.2425), // avg # days in year according to Gregorian calendar
   DECADE (YEAR.ms * 10),
   CENTURY (DECADE.ms * 10),
   MILLENIUM (CENTURY.ms * 10);
