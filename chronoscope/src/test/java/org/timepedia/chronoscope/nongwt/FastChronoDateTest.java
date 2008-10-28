@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 import org.timepedia.chronoscope.client.util.date.FastChronoDate;
 
 import java.util.Date;
@@ -215,6 +216,15 @@ public class FastChronoDateTest extends TestCase {
     d.add(TimeUnit.WEEK, 4);
     assertEquals(2008, 2, 26, d);
 
+    // This test hits the Julian, JulianGregorianCrossover, and Gregorian EraCalc
+    // subclasses.  Verifies that the day-of-week value is the same for each week
+    // that we increment.
+    d = createTestDate(1581, 0, 15);
+    DayOfWeek dow = d.getDayOfWeek();
+    for (int i = 0; i < (52 * 3); i++) {
+      d.add(TimeUnit.WEEK, 1);
+      assertEquals(dow, d.getDayOfWeek());
+    }
   }
   
   public void testTruncate() {
