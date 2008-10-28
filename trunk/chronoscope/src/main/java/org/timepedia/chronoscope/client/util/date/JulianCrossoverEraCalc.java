@@ -9,9 +9,14 @@ package org.timepedia.chronoscope.client.util.date;
  */
 class JulianCrossoverEraCalc extends EraCalc {
   
+  private static final DayOfWeek[] DAYS_OF_WEEK = DayOfWeek.values();
+  
   // Oct. is special month having only 21 days (the 5th through 14th are omitted)
   private static final int[] DAYS_IN_MONTH_1582 = 
       {31, 28, 31, 30, 31, 30, 31, 31, 30, 21 /* Oct. is missing 10 days */, 30, 31};
+
+  private static final int[] MONTH_OFFSETS_IN_DAYS = 
+      EraCalc.calcMonthOffsetsInDays(DAYS_IN_MONTH_1582);
 
   private static final double TS_1582_JAN_01 = EraCalc.getJavaTimestamp(1582);
   
@@ -36,7 +41,13 @@ class JulianCrossoverEraCalc extends EraCalc {
 
   @Override
   public DayOfWeek calcDayOfWeek(int year, int month, int day) {
-    throw new UnsupportedOperationException();
+    if (year != 1582) {
+      throw new IllegalArgumentException("This EraCalc only deals with the year 1582: " + year);
+    }
+    
+    // 1582-Jan-01 was a Monday:
+    final int yearOffsetInDays = MONTH_OFFSETS_IN_DAYS[month] + day - 1;
+    return DAYS_OF_WEEK[(yearOffsetInDays + 1) % 7];
   }
 
   @Override
