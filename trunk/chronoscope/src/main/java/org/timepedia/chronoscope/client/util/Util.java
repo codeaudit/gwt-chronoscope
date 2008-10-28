@@ -57,6 +57,35 @@ public final class Util {
     }
     return end;
   }
+  
+  /**
+   * Returns a copy of the specified array.
+   */
+  public static double[] copyArray(double[] a) {
+    if (a == null) {
+      return null;
+    }
+    double[] copy = new double[a.length];
+    System.arraycopy(a, 0, copy, 0, a.length);
+    return copy;
+  }
+
+  /**
+   * Returns a copy of the specified 2-dimensional array.
+   */
+  public static double[][] copyArray(double[][] a) {
+    double[][] copy = new double[a.length][];
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != null) {
+        copy[i] = new double[a[i].length];
+        System.arraycopy(a[i], 0, copy[i], 0, a[i].length);
+      }
+      else {
+        copy[i] = null;
+      }
+    }
+    return copy;
+  }
 
   /**
    * Determines if a and b are equal, taking into consideration that a or b (or

@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.util.date;
 
-import com.google.gwt.widgetideas.datepicker.client.DateBox;
-
 import org.timepedia.chronoscope.client.util.DateFormatter;
 
 /**

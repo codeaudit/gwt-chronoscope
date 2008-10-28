@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
+import java.util.Arrays;
+
 /**
  * @author Chad Takahashi
  *
@@ -36,6 +38,23 @@ public class UtilTest extends TestCase {
     // return lastIndex.
     final int lastIndex = domain.length - 1;
     assertEquals(lastIndex, Util.binarySearch(ds, domain[lastIndex] + 1.0, 0));
+  }
+  
+  public void testCopyArray() {
+    double[] a = {1, 3, 2};
+    assertTrue(Arrays.equals(a, Util.copyArray(a)));
+    
+    double[][] a2d = new double[][] {
+        {1, 2},
+        {3}
+        };
+    double[][] a2dCopy = Util.copyArray(a2d);
+    for (int i = 0; i < a2d.length; i++) {
+      double[] row = a2d[i];
+      for (int j = 0; j < row.length; j++) {
+        assertEquals(row[j], a2dCopy[i][j]);
+      }
+    }
   }
   
   public void testIsEqual() {
