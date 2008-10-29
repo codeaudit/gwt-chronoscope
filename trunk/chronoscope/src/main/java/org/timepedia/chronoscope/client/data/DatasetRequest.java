@@ -26,6 +26,10 @@ public abstract class DatasetRequest {
     // tupleData[n] represents the Nth dimension value of each tuple in the dataset
     List<double[]> tupleData = new ArrayList<double[]>();
     
+    public int getTupleLength() {
+      return tupleData.size();
+    }
+    
     /**
      * Returns an array containing the Nth element of every tuple in this request,
      * where N is the specified index. 
@@ -92,7 +96,11 @@ public abstract class DatasetRequest {
       ArgChecker.isNotNull(slice, "slice");
       mipmappedTupleData.add(slice);
     }
-    
+
+    public int getTupleLength() {
+      return mipmappedTupleData.size();
+    }
+
     public void validate() {
       for (int i = 0; i < mipmappedTupleData.size(); i++) {
         ArgChecker.isNotNull(mipmappedTupleData.get(i), "mipmappedTupleData.get(" + i + ")");
@@ -144,7 +152,12 @@ public abstract class DatasetRequest {
   public double getRangeTop() {
     return rangeTop;
   }
-
+  
+  /**
+   * Returns the number of elements that each tuple is capable of storing.
+   */
+  public abstract int getTupleLength();
+  
   public void setApproximateMinimumInterval(double approximateMinimumInterval) {
     this.approximateMinimumInterval = approximateMinimumInterval;
   }
