@@ -3,9 +3,6 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.util.Array2D;
-
-import java.util.List;
 
 /**
  * {@link Dataset} composed of {@link Tuple2D} data points.
@@ -25,32 +22,6 @@ public class ArrayDataset2D extends AbstractArrayDataset<Tuple2D> {
     double range = dimensions[1].get(mipLevel, index);
     flyweightTuple.setCoordinates(domain, range);
     return flyweightTuple;
-  }
-
-  @Override
-  protected void loadTupleData(DatasetRequest tupleData) {
-    dimensions = new Array2D[2];
-    
-    if (tupleData instanceof DatasetRequest.MultiRes) {
-      // multiDomain and multiRange explicitly specified in request object.
-      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) tupleData;
-      dimensions[0] = multiResReq.getMultiresTupleSlice(0);
-      dimensions[1] = multiResReq.getMultiresTupleSlice(1);
-    } else if (tupleData instanceof DatasetRequest.Basic) {
-      // Use MipMapStrategy to calculate multiDomain and MultiRange from
-      // the domain[] and range[] specified in the basic request.
-      DatasetRequest.Basic basicReq = (DatasetRequest.Basic) tupleData;
-      MipMapStrategy mms = basicReq.getDefaultMipMapStrategy();
-      double[] domain = basicReq.getTupleSlice(0);
-      double[] range = basicReq.getTupleSlice(1);
-      List<Array2D> mipmappedData = mms.mipmap(domain, range);
-      dimensions[0] = mipmappedData.get(0);
-      dimensions[1] = mipmappedData.get(1);
-    }
-    else {
-      throw new RuntimeException("Unsupported request type: " 
-          + tupleData.getClass().getName());
-    }
   }
 
 }

@@ -6,28 +6,24 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.Interval;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Provides most of the implementation necessary for an N-tuple dataset backed
- * by {@link Array2D} objects.  Subclasses only need to provide implementation
- * for {@link #loadTupleData(DatasetRequest, Array2D[])}.
- * 
+ * by {@link Array2D} objects.
+ *  
  * @author Chad Takahashi
  */
 public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDataset<T> {
 
   /**
-   * Stores the multiresolution (mipmapped) values for each element ..
+   * Stores the multiresolution (mipmapped) values for each element.
    */
   protected Array2D[] dimensions;
 
   protected double minRange, maxRange;
 
-  /**
-   * Concrete subclass provides implementation for loading the specified 
-   * tuple data into the target list of Array2D objects.
-   */
-  protected abstract void loadTupleData(DatasetRequest tupleData);
-  
   /**
    * Constructs an {@link Dataset} from the specified request object.
    */
@@ -65,7 +61,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return approximateMinimumInterval;
   }
 
-  public T getFlyweightTuple(int index) {
+  public final T getFlyweightTuple(int index) {
     return getFlyweightTuple(index, 0);
   }
 
@@ -120,6 +116,41 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return new Interval(lo, hi);
   }
 
+  private void loadTupleData(DatasetRequest tupleData) {
+    dimensions = new Array2D[tupleData.getTupleLength()];
+    
+    if (tupleData instanceof DatasetRequest.MultiRes) {
+      // multiDomain and multiRange explicitly specified in request object.
+      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) tupleData;
+      for (int i = 0; i < dimensions.length; i++) {
+        dimensions[i] = multiResReq.getMultiresTupleSlice(i);
+      }
+    } 
+    else if (tupleData instanceof DatasetRequest.Basic) {
+      // Use MipMapStrategy to calculate multiDomain and MultiRange from
+      // the domain[] and range[] specified in the basic request.
+      DatasetRequest.Basic basicReq = (DatasetRequest.Basic) tupleData;
+      MipMapStrategy mms = basicReq.getDefaultMipMapStrategy();
+      
+      double[] domain = basicReq.getTupleSlice(0);
+      
+      List<double[]> tupleRange = new ArrayList<double[]>();
+      for (int i = 1; i < dimensions.length; i++) {
+        tupleRange.add(basicReq.getTupleSlice(i));
+      }
+      
+      List<Array2D> mipmappedData = mms.mipmap(domain, tupleRange);
+      dimensions[0] = mipmappedData.get(0);
+      for (int i = 1; i < dimensions.length; i++) {
+        dimensions[i] = mipmappedData.get(i);
+      }
+    }
+    else {
+      throw new RuntimeException("Unsupported request type: " 
+          + tupleData.getClass().getName());
+    }
+  }
+  
   /**
    * Validates mipmapped domain and range objects
    */
