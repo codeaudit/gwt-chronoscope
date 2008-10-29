@@ -1,8 +1,8 @@
-package org.timepedia.chronoscope.client.data;
+package org.timepedia.chronoscope.client.util;
 
 import junit.framework.TestCase;
 
-import org.timepedia.chronoscope.client.data.JavaArray2D;
+import org.timepedia.chronoscope.client.util.JavaArray2D;
 
 /**
  * 

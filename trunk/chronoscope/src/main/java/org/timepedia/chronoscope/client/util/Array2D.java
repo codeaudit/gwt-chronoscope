@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.data;
+package org.timepedia.chronoscope.client.util;
 
 
 /**

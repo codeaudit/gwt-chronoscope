@@ -3,6 +3,8 @@ package org.timepedia.chronoscope.client.data;
 import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Array2D;
+import org.timepedia.chronoscope.client.util.JavaArray2D;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**

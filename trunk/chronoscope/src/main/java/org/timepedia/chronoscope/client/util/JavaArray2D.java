@@ -1,7 +1,5 @@
-package org.timepedia.chronoscope.client.data;
+package org.timepedia.chronoscope.client.util;
 
-import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
  * Implementation of {@link Array2D} backed by a Java 2-dimensional array,
