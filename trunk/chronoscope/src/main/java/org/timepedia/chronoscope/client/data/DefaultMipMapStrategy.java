@@ -40,7 +40,7 @@ public abstract class DefaultMipMapStrategy implements MipMapStrategy {
     int numSamples = range.length;
     int numLevels = calcNumLevels(numSamples);
     double[][] multiRange = new double[numLevels][];
-    double[] prevRange = null;
+    double[] prevRange = range;
 
     for (int level = 0; level < numLevels; level++) {
       double[] currRange = new double[numSamples];
