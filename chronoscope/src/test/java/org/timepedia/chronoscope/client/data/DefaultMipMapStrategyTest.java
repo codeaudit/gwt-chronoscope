@@ -2,9 +2,9 @@ package org.timepedia.chronoscope.client.data;
 
 import junit.framework.TestCase;
 
-import org.timepedia.chronoscope.client.data.Array2D;
 import org.timepedia.chronoscope.client.data.DefaultMipMapStrategy;
 import org.timepedia.chronoscope.client.data.MipMapStrategy;
+import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 

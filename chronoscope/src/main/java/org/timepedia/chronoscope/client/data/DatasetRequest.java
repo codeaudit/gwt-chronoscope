@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Array2D;
 
 /**
  * Represents a request to construct an instance of {@link Dataset} using

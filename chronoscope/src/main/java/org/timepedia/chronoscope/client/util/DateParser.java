@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.data;
+package org.timepedia.chronoscope.client.util;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 

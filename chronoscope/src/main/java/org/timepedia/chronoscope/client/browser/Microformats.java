@@ -22,9 +22,9 @@ import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.DateParser;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
+import org.timepedia.chronoscope.client.util.DateParser;
 
 import java.util.Date;
 
@@ -323,7 +323,7 @@ public class Microformats {
             {
              var colList = rowList.item(i).getElementsByTagName("td");
              var date = colList.item(0).innerHTML;
-             var t = @org.timepedia.chronoscope.client.data.DateParser::parse(Ljava/lang/String;Ljava/lang/String;)(dateformat, date);
+             var t = @org.timepedia.chronoscope.client.util.DateParser::parse(Ljava/lang/String;Ljava/lang/String;)(dateformat, date);
              domain.push(t);
               for(j = 1; j<colList.length; j++) {
                   range[j-1].push(parseFloat(colList.item(j).innerHTML));

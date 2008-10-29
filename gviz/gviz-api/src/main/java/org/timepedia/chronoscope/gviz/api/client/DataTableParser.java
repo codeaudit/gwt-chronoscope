@@ -13,12 +13,12 @@ import com.google.gwt.i18n.client.NumberFormat;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.data.DateParser;
 import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
+import org.timepedia.chronoscope.client.util.DateParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;

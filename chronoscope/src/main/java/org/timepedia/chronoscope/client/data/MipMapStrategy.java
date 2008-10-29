@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.chronoscope.client.util.Array2D;
+
 /**
  * Strategy for converting an ordered set of data points into multiple coarser
  * resolutions (i.e. "mipmapping") for the primary purpose of speeding up visual

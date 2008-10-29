@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.util.Array2D;
 
 /**
  * {@link Dataset} composed of {@link Tuple2D} data points.

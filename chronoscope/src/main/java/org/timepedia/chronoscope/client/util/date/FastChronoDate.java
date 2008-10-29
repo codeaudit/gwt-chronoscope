@@ -319,7 +319,7 @@ public class FastChronoDate extends ChronoDate {
   }
 
   public String toString() {
-    return this.dateFields.toString();
+    return getDayOfWeek() + " " + dateFields.toString();
   }
   
   private void checkDateFields() {
