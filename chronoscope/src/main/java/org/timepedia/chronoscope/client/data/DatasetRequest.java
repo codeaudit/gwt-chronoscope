@@ -4,6 +4,9 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a request to construct an instance of {@link Dataset} using
  * {@link DatasetFactory}.
@@ -13,7 +16,6 @@ import org.timepedia.chronoscope.client.util.Array2D;
  * @author Chad Takahashi
  */
 public abstract class DatasetRequest {
-  private static int MAX_TUPLE_DIMENSION = 10;
  
   /**
    * Request in which client provides their own n-tuple data, and the
@@ -22,30 +24,47 @@ public abstract class DatasetRequest {
    */
   public static final class Basic extends DatasetRequest {
     // tupleData[n] represents the Nth dimension value of each tuple in the dataset
-    private double[][] tupleData = new double[MAX_TUPLE_DIMENSION][];
+    List<double[]> tupleData = new ArrayList<double[]>();
     
     /**
      * Returns an array containing the Nth element of every tuple in this request,
      * where N is the specified index. 
      */
-    public double[] getTupleSlice(int index) {
-      return tupleData[index];
+    public double[] getTupleSlice(int tupleIndex) {
+      return tupleData.get(tupleIndex);
     }
     
     /**
+     * The first tuple slice (dimension) added is assumed to be the domain,
+     * whose values must be in sorted ascending order.  Subsequent slices are
+     * assumed to be components of an n-tuple range.
+     *  
      * See {@link #getTupleSlice(int)}.
      */
-    public void setTupleSlice(int index, double[] slice) {
-      tupleData[index] = slice;
+    public void addTupleSlice(double[] slice) {
+      ArgChecker.isNotNull(slice, "slice");
+      tupleData.add(slice);
     }
     
     public void validate() {
       super.validate();
-      ArgChecker.isNotNull(tupleData[0], "domain");
-      ArgChecker.isNotNull(tupleData[1], "range");
-
-      if (tupleData[0].length != tupleData[1].length) {
-        throw new IllegalArgumentException("domain[] and range[] are different lengths");
+      
+      // Make sure all list elements are non-null
+      for (int i = 0; i < tupleData.size(); i++) {
+        ArgChecker.isNotNull(tupleData.get(i), "tupleData.get(" + i + ")");
+      }
+      
+      // Make sure all double[] elements are the same length
+      int prevLength = tupleData.get(0).length;
+      for (int i = 1; i < tupleData.size(); i++) {
+        double[] tupleSlice = tupleData.get(i);
+        int currLength = tupleSlice.length;
+        if (currLength != prevLength) {
+          throw new IllegalArgumentException("tupleData[" + i + "] has " + 
+              currLength + " elements, but tupleData[" + (i - 1) + "] has " +
+              prevLength);
+        }
+        prevLength = currLength;
       }
     }
   }
@@ -54,32 +73,39 @@ public abstract class DatasetRequest {
    * manually specified.
    */
   public static final class MultiRes extends DatasetRequest {
-    private Array2D[] mipmappedTupleData = new Array2D[MAX_TUPLE_DIMENSION];
+    private List<Array2D> mipmappedTupleData = new ArrayList<Array2D>();
 
-    public Array2D getMultiresTupleSlice(int index) {
-      return mipmappedTupleData[index];
+    public Array2D getMultiresTupleSlice(int tupleIndex) {
+      return mipmappedTupleData.get(tupleIndex);
     }
     
-    public void setMultiresTupleSlice(int index, Array2D a) {
-      mipmappedTupleData[index] = a;
+    public void addMultiresTupleSlice(Array2D slice) {
+      ArgChecker.isNotNull(slice, "slice");
+      mipmappedTupleData.add(slice);
     }
     
     public void validate() {
-      ArgChecker.isNotNull(mipmappedTupleData[0], "multiDomain");
-      ArgChecker.isNotNull(mipmappedTupleData[1], "multiRange");
+      for (int i = 0; i < mipmappedTupleData.size(); i++) {
+        ArgChecker.isNotNull(mipmappedTupleData.get(i), "mipmappedTupleData.get(" + i + ")");
+      }
 
       // Verify that multiDomain and multiRange have same number
       // of elements at each level
-      if (!mipmappedTupleData[0].isSameSize(mipmappedTupleData[1])) {
-        throw new IllegalArgumentException(
-            "multiDomain and multiRange differ in size");
+      Array2D prevSlice = mipmappedTupleData.get(0);
+      for (int i = 1; i < mipmappedTupleData.size(); i++) {
+        Array2D mipmappedTupleSlice = mipmappedTupleData.get(i);
+        if (!mipmappedTupleSlice.isSameSize(prevSlice)) {
+          throw new IllegalArgumentException(
+              "i=" + i + ": domain and range mipmaps differ in size");
+        }
+        prevSlice = mipmappedTupleSlice;
       }
     }
   }
 
   private double approximateMinimumInterval = Double.NaN;
   private String axisId, identifier, label;
-  private MipMapStrategy defaultMipMapStrategy = DefaultMipMapStrategy.MEAN;
+  private MipMapStrategy defaultMipMapStrategy = BinaryMipMapStrategy.MEAN;
   private double rangeBottom = Double.NaN, rangeTop = Double.NaN;
 
   public double getApproximateMinimumInterval() {

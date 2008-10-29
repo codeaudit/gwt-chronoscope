@@ -2,38 +2,54 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.util.Array2D;
 
+import java.util.List;
+
 /**
  * Strategy for converting an ordered set of data points into multiple coarser
- * resolutions (i.e. "mipmapping") for the primary purpose of speeding up visual
- * rendering.
+ * resolutions (i.e. "mip-mapping") for the primary purpose of speeding up
+ * visual rendering.
  * 
  * @author Chad Takahashi
  */
 public interface MipMapStrategy {
 
   /**
-   * Calculates the multiDomain (domain values at all supported levels of
-   * resolution) for the specified domain list.
+   * Calculates the specified domain and range at decreasing levels of
+   * resolution.
+   * 
+   * @param domain - the domain to be mipmapped
+   * @param range - the range to be mipmapped
+   * 
+   * @return A list of {@link Array2D} objects in which item 0 represents the
+   *         mipmapped domain and item 1 represents the mipmapped range.
    */
-  Array2D calcMultiDomain(double[] domain);
+  List<Array2D> mipmap(double[] domain, double[] range);
 
   /**
-   * Calculates the multiRange (range values at all supported levels of
-   * resolution) for the specified range list.
+   * Calculates the specified domain and n-tuple range at decreasing levels of
+   * resolution.
+   * 
+   * @param domain - the domain to be mipmapped.
+   * @param range - the n-tuple range to be mipmapped; range.get(i) returns an
+   *    array representing the i-th dimension of the range tuple values.
+   * 
+   * @return A list of {@link Array2D} objects in which item 0 represents the
+   *         mipmapped domain and items [1..endOfList] each represent a single
+   *         dimension of the tuples in the mipmapped range.
    */
-  Array2D calcMultiRange(double[] range);
+  List<Array2D> mipmap(double[] domain, List<double[]> range);
 
   /**
    * Allows insertion of a new domain value to the end of an existing
-   * multiDomain (optional operation).
+   * mipmappedDomain (optional operation).
    */
-  void appendDomainValue(double x, Array2D multiDomain);
+  void appendDomainValue(double x, Array2D mipmappedDomain);
 
   /**
-   * Allows insertion of a new range value to the end of an existing multiRange
-   * (optional operation).
+   * Allows insertion of a new range value to the end of an existing mipmapped
+   * range (optional operation).
    */
-  void appendRangeValue(double y, Array2D multiRange);
+  void appendRangeValue(double y, Array2D mipmappedRange);
 
   /**
    * Updates the Y-value of an existing datapoint within a dataset (optional
@@ -42,6 +58,6 @@ public interface MipMapStrategy {
    * @param pointIndex - the 0-based index of the datapoint.
    * @param y - the range value to be updated.
    */
-  void setRangeValue(int pointIndex, double y, Array2D multiRange);
+  void setRangeValue(int pointIndex, double y, Array2D mipmappedRange);
 
 }

@@ -43,8 +43,8 @@ public class MockDatasetFactory {
     request.setIdentifier("mock");
     request.setAxisId("none");
     request.setLabel("Mock");
-    request.setTupleSlice(0, domainValues);
-    request.setTupleSlice(1, rangeValues);
+    request.addTupleSlice(domainValues);
+    request.addTupleSlice(rangeValues);
     
     return dsFactory.create(request);
   }

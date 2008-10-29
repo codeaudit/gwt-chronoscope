@@ -12,9 +12,9 @@ public final class DatasetRequestMaker {
     DatasetRequest.Basic request = new DatasetRequest.Basic();
     request.setAxisId("Dummy_Axis_Id");
     request.setLabel("Dummy_Range_Label");
-    request.setDefaultMipMapStrategy(DefaultMipMapStrategy.MEAN);
-    request.setTupleSlice(0, domain);
-    request.setTupleSlice(1, range);
+    request.setDefaultMipMapStrategy(BinaryMipMapStrategy.MEAN);
+    request.addTupleSlice(domain);
+    request.addTupleSlice(range);
     
     return request;
   }
