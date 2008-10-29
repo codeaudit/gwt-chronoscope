@@ -447,17 +447,17 @@ public class Chronoscope implements Exportable, HistoryListener {
           = (DatasetRequest.MultiRes) request;
       request.setRangeTop(json.getRangeTop());
       request.setRangeBottom(json.getRangeBottom());
-      mippedRequest.setMultiresTupleSlice(0, createArray2D(domains));
-      mippedRequest.setMultiresTupleSlice(1, createArray2D(ranges));
+      mippedRequest.addMultiresTupleSlice(createArray2D(domains));
+      mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
     } else {
 
       DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
       if (dtformat != null) {
-        basicRequest.setTupleSlice(0, getArrayWithFormat(json.getDomainString(), dtformat));
+        basicRequest.addTupleSlice(getArrayWithFormat(json.getDomainString(), dtformat));
       } else {
-        basicRequest.setTupleSlice(0, getArray(json.getDomain(), domainScale));
+        basicRequest.addTupleSlice(getArray(json.getDomain(), domainScale));
       }
-      basicRequest.setTupleSlice(1, getArray(json.getRange(), 1));
+      basicRequest.addTupleSlice(getArray(json.getRange(), 1));
     }
 
     if (isMutable) {
@@ -559,7 +559,7 @@ public class Chronoscope implements Exportable, HistoryListener {
       if (isErrorReportingEnabled()) {
         Window.alert(e.getMessage());
       }
-      throw new RuntimeException(e.getMessage());
+      throw new RuntimeException(e);
     }
   }
 

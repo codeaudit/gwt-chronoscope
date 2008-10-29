@@ -7,13 +7,42 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.JavaArray2D;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * Mipmap strategy that uses a simple binary partitioning algorithm; essentially,
+ * each pair of datapoints at level n are aggregated into a single datapoint
+ * at level n+1. 
  * 
  * @author Chad Takahashi
  */
-public abstract class DefaultMipMapStrategy implements MipMapStrategy {
+public abstract class BinaryMipMapStrategy implements MipMapStrategy {
 
-  public Array2D calcMultiDomain(double[] domain) {
+  public List<Array2D> mipmap(double[] domain, List<double[]> range) {
+    ArgChecker.isNotNull(domain, "domain");
+    ArgChecker.isNotNull(range, "range");
+
+    List<Array2D> mipmap = new ArrayList<Array2D>();
+    mipmap.add(mipmapDomain(domain));
+
+    for (int i = 0; i < range.size(); i++) {
+      mipmap.add(mipmapRange(range.get(i)));
+    }
+    
+    return mipmap;
+  }
+
+  public List<Array2D> mipmap(double[] domain, double[] range) {
+    ArgChecker.isNotNull(domain, "domain");
+    ArgChecker.isNotNull(range, "range");
+    
+    List<double[]> rangeTuple1d = new ArrayList<double[]>(1);
+    rangeTuple1d.add(range);
+    return mipmap(domain, rangeTuple1d);
+  }
+
+  private Array2D mipmapDomain(double[] domain) {
     ArgChecker.isGT(domain.length, 0, "domain.length");
     int numSamples = domain.length;
     int numLevels = calcNumLevels(numSamples);
@@ -35,8 +64,10 @@ public abstract class DefaultMipMapStrategy implements MipMapStrategy {
     return new JavaArray2D(multiDomain);
   }
 
-  public Array2D calcMultiRange(double[] range) {
+  private Array2D mipmapRange(double[] range) {
+    ArgChecker.isNotNull(range, "range");
     ArgChecker.isGT(range.length, 0, "range.length");
+    
     int numSamples = range.length;
     int numLevels = calcNumLevels(numSamples);
     double[][] multiRange = new double[numLevels][];
@@ -66,13 +97,13 @@ public abstract class DefaultMipMapStrategy implements MipMapStrategy {
 
   protected abstract double calcRangeValue(double prev1, double prev2);
 
-  public static final MipMapStrategy MEAN = new DefaultMipMapStrategy() {
+  public static final MipMapStrategy MEAN = new BinaryMipMapStrategy() {
     protected double calcRangeValue(double prev1, double prev2) {
       return (prev1 + prev2) / 2.0;
     }
   };
 
-  public static final MipMapStrategy MAX = new DefaultMipMapStrategy() {
+  public static final MipMapStrategy MAX = new BinaryMipMapStrategy() {
     protected double calcRangeValue(double prev1, double prev2) {
       return Math.max(prev1, prev2);
     }

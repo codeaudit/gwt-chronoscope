@@ -42,7 +42,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     validate(dimensions);
 
     if (Double.isNaN(request.getApproximateMinimumInterval())) {
-      approximateMinimumInterval = calcMinInterval(dimensions[0]);
+      approximateMinimumInterval = calcMinDomainInterval(dimensions[0]);
     } else {
       approximateMinimumInterval = request.getApproximateMinimumInterval();
     }
@@ -104,14 +104,14 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   /**
    * Calculates the bottom and top of the range values in the specified dataset.
    */
-  private Interval calcRangeInterval(Array2D multiRange, int numLevels) {
-    // Calculate min and max range values across all resolutions
+  private Interval calcRangeInterval(Array2D rangeMipmap, int numLevels) {
+    // Calculate min and max range values across all mip levels
     double lo = Double.POSITIVE_INFINITY;
     double hi = Double.NEGATIVE_INFINITY;
 
     for (int i = 0; i < numLevels; i++) {
-      for (int j = 0; j < multiRange.numColumns(i); j++) {
-        double value = multiRange.get(i, j);
+      for (int j = 0; j < rangeMipmap.numColumns(i); j++) {
+        double value = rangeMipmap.get(i, j);
         lo = Math.min(lo, value);
         hi = Math.max(hi, value);
       }
@@ -121,7 +121,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   }
 
   /**
-   * Validates multiDomain and multiRange objects.
+   * Validates mipmapped domain and range objects
    */
   private static void validate(Array2D[] mipmappedTupleData) {
     ArgChecker.isNotNull(mipmappedTupleData, "mipmappedTupleData");
@@ -139,7 +139,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
    * Returns the smallest domain interval at row 0 in the specified Array2D object.
    * If only 1 column exists at row 0, then 0 is returned as the minimum interval.
    */
-  private static double calcMinInterval(Array2D a) {
+  private static double calcMinDomainInterval(Array2D a) {
     double min = Double.MAX_VALUE;
     final int numColumns = a.numColumns(0);
     
