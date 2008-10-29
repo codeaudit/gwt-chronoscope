@@ -46,6 +46,15 @@ public abstract class DatasetRequest {
       tupleData.add(slice);
     }
     
+    /**
+     * Replaces the tuple slice at the specified index with the new slice.
+     * 
+     * @return the tuple slice previously at the specified index.
+     */
+    public double[] setTupleSlice(int index, double[] slice) {
+      return tupleData.set(index, slice);
+    }
+    
     public void validate() {
       super.validate();
       
