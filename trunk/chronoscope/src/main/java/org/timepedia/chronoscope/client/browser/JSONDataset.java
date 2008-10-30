@@ -62,7 +62,7 @@ public class JSONDataset extends JavaScriptObject {
   }-*/;
 
 
-  public final native JsArray<JsArrayNumber> getMutliDomain() /*-{
+  public final native JsArray<JsArrayNumber> getMultiDomain() /*-{
      return this.domain;
    }-*/;
 

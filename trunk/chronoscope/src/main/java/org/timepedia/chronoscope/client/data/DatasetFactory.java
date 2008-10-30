@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.MutableDataset;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 
 /**
@@ -9,10 +10,10 @@ import org.timepedia.chronoscope.client.MutableDataset;
  * 
  * @author Chad Takahashi
  */
-public interface DatasetFactory {
+public interface DatasetFactory<T extends Tuple2D> {
 
-  Dataset create(DatasetRequest request);
+  Dataset<T> create(DatasetRequest request);
 
-  MutableDataset createMutable(DatasetRequest request);
+  MutableDataset<T> createMutable(DatasetRequest request);
   
 }
