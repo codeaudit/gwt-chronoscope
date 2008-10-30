@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.browser.Chronoscope;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +32,7 @@ public class HistoryManager {
   public static String previousHistory;
 
   public static void pushHistory() {
-    if (Chronoscope.isHistorySupportEnabled()) {
+    if (ChronoscopeOptions.isHistorySupportEnabled()) {
       String newToken = "";
       for (Chart chart : id2chart.values()) {
         newToken += chart.getPlot().getHistoryToken();

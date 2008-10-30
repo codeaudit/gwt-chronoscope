@@ -18,7 +18,7 @@ public class ChronoscopeTestCaseBase extends GWTTestCase {
 
   protected void runChronoscopeTest(Dataset ds[],
       ViewReadyCallback viewReadyCallback) {
-    Chronoscope.setErrorReporting(false);
+    ChronoscopeOptions.setErrorReporting(false);
     ChartPanel cp = Chronoscope.createTimeseriesChart(ds, 600, 400);
     cp.setReadyListener(viewReadyCallback);
     delayTestFinish(60000);

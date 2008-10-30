@@ -14,6 +14,7 @@ import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 
 /**
  * An implementation of the Layer interface using the Safari/WHATWG Javascript
@@ -234,7 +235,7 @@ public class BrowserLayer extends DomTextLayer {
       fillColor = color;
       setFillColor0(ctx, color);
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Error is " + t + " for color " + color);
       }
     }
@@ -255,7 +256,7 @@ public class BrowserLayer extends DomTextLayer {
     try {
       setGradient0(ctx, ((BrowserLinearGradient) lingrad).getNative());
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("setLinearGradient: " + t);
       }
     }
@@ -301,7 +302,7 @@ public class BrowserLayer extends DomTextLayer {
       strokeColor = color;
       setStrokeColor0(ctx, color);
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Error is " + t + " for strokecolor " + color);
       }
     }

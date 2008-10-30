@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -95,7 +96,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
     }, "visualization", "1", new Command() {
 
       public void execute() {
-        Chronoscope.setErrorReporting(false);
+        ChronoscopeOptions.setErrorReporting(false);
         Chronoscope.setFontBookRendering(true);
         Query q=GadgetHelper.create().createQueryFromPrefs();
         
