@@ -15,15 +15,14 @@ import com.google.gwt.gen2.event.shared.HandlerManager;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.CssGssViewSupport;
 import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.browser.GwtView;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -74,17 +73,11 @@ public class FlashView extends GwtView
     return 800;
   }
 
-  public String previousHistory;
-
   protected Element rootElem, containerDiv;
 
   private Element element;
 
   private String id;
-
-  public void clearPreviousHIstory() {
-    previousHistory = "";
-  }
 
   /**
    * Create a menu and return it
@@ -151,20 +144,6 @@ public class FlashView extends GwtView
     return ((BrowserGssContext) gssContext).getElement();
   }
 
-  /**
-   * Get a history token representing the current state of the plot
-   */
-  public String getHistoryToken() {
-    return getId() + chart.getPlot().getHistoryToken();
-  }
-
-  /**
-   * Return the representing this view
-   */
-  public String getId() {
-    return id;
-  }
-
   public void initialize(final Element element, final int width,
       final int height, final boolean interactive, GssContext gssContext,
       final ViewReadyCallback callback) {
@@ -178,15 +157,6 @@ public class FlashView extends GwtView
       ViewReadyCallback callback) {
     initialize(element, getClientWidthRecursive(element),
         getClientHeightRecursive(element), interactive, ctx, callback);
-  }
-
-  /**
-   * Is the current history token from the HistoryListener the same as the state
-   * we just left?
-   */
-  public boolean isPreviousHistory(String history) {
-
-    return history.equals(previousHistory);
   }
 
   public String numberFormat(String labelFormat, double value) {
@@ -239,20 +209,6 @@ public class FlashView extends GwtView
         pp.show();
       }
     };
-  }
-
-  /**
-   * Go back to the previous chart state
-   */
-  public void popHistory() {
-    History.back();
-  }
-
-  /**
-   * Push the current state of the Plot into browser history
-   */
-  public void pushHistory() {
-    Chronoscope.pushHistory();
   }
 
   public native double remainder(double numerator, double modulus) /*-{

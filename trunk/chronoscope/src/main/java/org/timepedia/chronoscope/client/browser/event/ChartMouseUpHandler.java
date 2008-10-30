@@ -8,6 +8,7 @@ import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.browser.DOMView;
 
 /**
@@ -31,7 +32,7 @@ public final class ChartMouseUpHandler
       chart.zoomToHighlight();
     }
     else if (uiAction.isDragging(plot) && x != uiAction.getStartX()) {
-      ((DOMView) chart.getView()).pushHistory();
+      HistoryManager.pushHistory();
       chart.setAnimating(false);
       chart.redraw();
     }

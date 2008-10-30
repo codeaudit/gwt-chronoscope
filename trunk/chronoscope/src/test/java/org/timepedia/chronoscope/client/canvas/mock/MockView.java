@@ -101,8 +101,4 @@ public class MockView extends GwtView implements DOMView {
       ViewReadyCallback callback) {
     super.initialize(width, height, false, gssContext, callback);
   }
-
-  public void pushHistory() {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 }

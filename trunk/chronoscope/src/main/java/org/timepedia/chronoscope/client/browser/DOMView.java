@@ -19,6 +19,4 @@ public interface DOMView {
   public void initialize(final Element element, final int width,
       final int height, final boolean interactive, GssContext gssContext,
       final ViewReadyCallback callback);
-
-  public void pushHistory();
 }

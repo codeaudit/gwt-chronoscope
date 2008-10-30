@@ -20,6 +20,7 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -66,7 +67,7 @@ public class Microformats {
     }
 
     public void onViewReady(View view) {
-      Chart chart = Chronoscope.getChartById(id);
+      Chart chart = HistoryManager.getChartById(id);
 
       for (int j = 0; j < links
           .length; j++) {
@@ -366,7 +367,7 @@ public class Microformats {
     for (int i = 0; i < elements.length; i++) {
       final Element elt = elements[i];
       final String id = DOM.getElementAttribute(elt, "id");
-      if (Chronoscope.getChartById(id) == null) {
+      if (HistoryManager.getChartById(id) == null) {
         final Dataset[] ds = importMicroformatTable(id, elt);
         Element div = DOM.createDiv();
         final String cid = id + "chrono";
