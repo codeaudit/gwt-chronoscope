@@ -13,11 +13,10 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
-import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.HistoryManager;
+import org.timepedia.chronoscope.client.XYDataSource;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -26,7 +25,6 @@ import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
-import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
@@ -50,10 +48,12 @@ import org.timepedia.exporter.client.ExporterUtil;
 public class Chronoscope implements Exportable, HistoryListener {
 
   public interface URLResolver {
+
     public String resolveURL(String url);
   }
 
   static class NopURLResolver implements URLResolver {
+
     public String resolveURL(String url) {
       return url;
     }
@@ -79,22 +79,16 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   private static boolean microformatsEnabled = false;
 
-  private static boolean showCreditsEnabled = true;
-
   private static boolean fontBookRenderingEnabled = false;
 
-  private static boolean errorReportingEnabled = true;
-
   private static String fontBookServiceEndpoint;
-
-  private static boolean historySupport = false;
 
   private static Chronoscope instance;
 
   private static int globalChartNumber = 0;
 
   private static JsArrayParser jsArrayParser = new JsArrayParser();
-  
+
   /**
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
@@ -117,17 +111,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   public static RangeBarMarker createHorizontalBarMarker(double rangeLow,
       double rangeHigh, String label) {
     return new RangeBarMarker(rangeLow, rangeHigh, label);
-  }
-
-  /**
-   * A factory function to create a push-pin marker given a Date, then the
-   * dataset index to attach this marker to, and a label
-   *
-   * @gwt.export
-   */
-  @Export
-  public static Marker createMarker(String date, int seriesNum, String label) {
-    return new Marker(date, seriesNum, label);
   }
 
   /**
@@ -195,9 +178,8 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @param readyCallback
    * @return
    */
-  public static ChartPanel createTimeseriesChart(String id,
-      Dataset[] datasets, int chartWidth, int chartHeight,
-      ViewReadyCallback readyCallback) {
+  public static ChartPanel createTimeseriesChart(String id, Dataset[] datasets,
+      int chartWidth, int chartHeight, ViewReadyCallback readyCallback) {
     return createTimeseriesChart(DOM.getElementById(id), datasets, chartWidth,
         chartHeight, readyCallback);
   }
@@ -247,7 +229,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     if (minInterval > 0) {
       request.setApproximateMinimumInterval(minInterval);
     }
-    
+
     final double domainScale = json.getDomainScale();
 
     if (isMipped) {
@@ -257,7 +239,7 @@ public class Chronoscope implements Exportable, HistoryListener {
       int dmipLevels = mdomain.length();
       int rmiplevel = mrange.length();
       if (dmipLevels != rmiplevel) {
-        if (Chronoscope.isErrorReportingEnabled()) {
+        if (ChronoscopeOptions.isErrorReportingEnabled()) {
           Window.alert("Domain and Range dataset levels are not equal");
         }
       }
@@ -269,18 +251,17 @@ public class Chronoscope implements Exportable, HistoryListener {
         ranges[i] = jsArrayParser.parse(mrange.get(i));
       }
 
-      DatasetRequest.MultiRes mippedRequest
-          = (DatasetRequest.MultiRes) request;
+      DatasetRequest.MultiRes mippedRequest = (DatasetRequest.MultiRes) request;
       request.setRangeTop(json.getRangeTop());
       request.setRangeBottom(json.getRangeBottom());
       mippedRequest.addMultiresTupleSlice(createArray2D(domains));
       mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
-    } 
-    else {
+    } else {
       DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
       double[] domainArray = null;
       if (dtformat != null) {
-        domainArray = jsArrayParser.parseFromDate(json.getDomainString(), dtformat);
+        domainArray = jsArrayParser
+            .parseFromDate(json.getDomainString(), dtformat);
       } else {
         domainArray = jsArrayParser.parse(json.getDomain(), domainScale);
       }
@@ -293,9 +274,8 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets.
-   * <p>
-   * See {@link #createXYDataset(JSONDataset)} for details of the format.
+   * Datasets. <p> See {@link #createXYDataset(JSONDataset)} for details of the
+   * format.
    */
   public static Dataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
     if (jsonDatasets == null) {
@@ -311,7 +291,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public static void enableHistorySupport(boolean enabled) {
-    historySupport = enabled;
+    ChronoscopeOptions.historySupport = enabled;
   }
 
   public static String generateId() {
@@ -339,32 +319,12 @@ public class Chronoscope implements Exportable, HistoryListener {
     getInstance();
   }
 
-  public static boolean isErrorReportingEnabled() {
-    return errorReportingEnabled;
-  }
-
   public static boolean isFontBookRenderingEnabled() {
     return fontBookRenderingEnabled;
   }
 
-  public static boolean isHistorySupportEnabled() {
-    return historySupport;
-  }
-
   public static boolean isMicroformatsEnabled() {
     return microformatsEnabled;
-  }
-
-  public static boolean isShowCreditsEnabled() {
-    return showCreditsEnabled;
-  }
-
-  /**
-   * @gwt.export
-   */
-  @Export
-  public static void setErrorReporting(boolean enabled) {
-    errorReportingEnabled = enabled;
   }
 
   /**
@@ -387,14 +347,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static void setMicroformatsEnabled(boolean microformatsEnabled) {
     Chronoscope.microformatsEnabled = microformatsEnabled;
-  }
-
-  /**
-   * @gwt.export
-   */
-  @Export
-  public static void setShowCredits(boolean enabled) {
-    showCreditsEnabled = enabled;
   }
 
   public static void setUrlResolver(URLResolver urlr) {
@@ -451,16 +403,16 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
-    
+
     if (elem == null) {
       ChartPanel cpanel = new ChartPanel(datasets, chartWidth, chartHeight);
       cpanel.setReadyListener(readyListener);
       return cpanel;
     }
-    
+
     ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
         readyListener);
-    
+
     if (Document.get().getBody().isOrHasChild(elem)) {
       cp.attach();
     }
@@ -484,13 +436,13 @@ public class Chronoscope implements Exportable, HistoryListener {
         Microformats.initializeMicroformats(Chronoscope.this);
       }
 
-      if (isHistorySupportEnabled()) {
+      if (ChronoscopeOptions.isHistorySupportEnabled()) {
         initHistory();
       }
 //            }
 //        });
     } catch (Exception e) {
-      if (isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert(e.getMessage());
       }
       throw new RuntimeException(e);
@@ -529,14 +481,14 @@ public class Chronoscope implements Exportable, HistoryListener {
       JavaScriptObject foo = ExporterUtil.wrap(this);
       chronoscopeLoaded(foo);
     } catch (Exception e) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Chronoscope Failed to Initialize because " + e);
       }
     }
   }
 
   private void checkForChronoscopeCSS() {
-    if (!isCssIncluded("Chronoscope.css") && errorReportingEnabled) {
+    if (!isCssIncluded("Chronoscope.css") && ChronoscopeOptions.errorReportingEnabled) {
       throw new RuntimeException(
           "@import or inclusion of Chronoscope.css missing. To use Chronoscope, your host page, or CSS stylesheet must include Chronoscope.css");
     }

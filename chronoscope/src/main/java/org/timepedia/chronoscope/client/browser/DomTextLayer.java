@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.impl.ClippedImageImpl;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -113,7 +114,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       fontRendererServiceAsync.getRenderedFontMetrics(fontFamily, fontWeight,
           ifs + "pt", getStrokeColor(), (float) angle, new AsyncCallback() {
         public void onFailure(Throwable caught) {
-          if (Chronoscope.isErrorReportingEnabled()) {
+          if (ChronoscopeOptions.isErrorReportingEnabled()) {
             Window.alert("Failed to load fontbook " + caught);
           }
           Chronoscope.setFontBookRendering(false);
@@ -122,7 +123,7 @@ public abstract class DomTextLayer extends AbstractLayer {
         public void onSuccess(Object result) {
           rmt1.rfm = (RenderedFontMetrics) result;
           if (result == null) {
-            if (Chronoscope.isErrorReportingEnabled()) {
+            if (ChronoscopeOptions.isErrorReportingEnabled()) {
               Window.alert("No rendered fontmetrics returned!");
               Chronoscope.setFontBookRendering(false);
             }
@@ -137,7 +138,7 @@ public abstract class DomTextLayer extends AbstractLayer {
 
           img.addLoadListener(new LoadListener() {
             public void onError(Widget sender) {
-              if (Chronoscope.isErrorReportingEnabled()) {
+              if (ChronoscopeOptions.isErrorReportingEnabled()) {
                 Window.alert("Couldn't load image " + rmt1.rfm
                     .url);
                 Chronoscope.setFontBookRendering(false);

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
@@ -43,7 +44,7 @@ public class ChartDemo implements EntryPoint {
       int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
-      Chronoscope.setErrorReporting(true);
+      ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(true);
       Chronoscope.initialize();
 

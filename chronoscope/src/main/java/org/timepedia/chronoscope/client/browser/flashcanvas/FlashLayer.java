@@ -6,7 +6,7 @@ import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -300,7 +300,7 @@ public class FlashLayer extends AbstractLayer {
       fillColor = color;
       cmd("F", color);
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Error is " + t + " for color " + color);
       }
     }
@@ -336,7 +336,7 @@ public class FlashLayer extends AbstractLayer {
         push(stop.color);
       }
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("setLinearGradient: " + t);
       }
     }
@@ -382,7 +382,7 @@ public class FlashLayer extends AbstractLayer {
       strokeColor = color;
       cmd("S", color);
     } catch (Throwable t) {
-      if (Chronoscope.isErrorReportingEnabled()) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Error is " + t + " for strokecolor " + color);
       }
     }

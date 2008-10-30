@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -17,9 +17,10 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
  * Renders zoomable dates on x-axis (domain axis).
  */
 public class DomainAxisPanel extends RangeAxisPanel {
-  
-  private static TickFormatterFactory tickFormatFactory = TickFormatterFactory.get();
-  
+
+  private static TickFormatterFactory tickFormatFactory = TickFormatterFactory
+      .get();
+
   private static final String CREDITS = "Powered by Timepedia Chronoscope";
 
   private static final String CREDITS_FONT = "Verdana";
@@ -37,7 +38,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
   private int creditsWidth, creditsHeight;
 
   private GssElement gridGssElement, tickGssElement;
-  
+
   private GssProperties gridProperties, tickProperties;
 
   private int maxLabelWidth, maxLabelHeight;
@@ -48,7 +49,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
     gridGssElement = new GssElementImpl("grid", this);
     tickGssElement = new GssElementImpl("tick", this);
   }
-  
+
   public void draw(Layer layer, Bounds bounds) {
     //init();
 
@@ -65,9 +66,12 @@ public class DomainAxisPanel extends RangeAxisPanel {
     final double boundsRightX = bounds.rightX();
     final double labelWidth = tlf.getMaxTickLabelWidth(layer, gssProperties);
     final double labelWidthDiv2 = labelWidth / 2.0;
-    final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds, domainWidth, tlf);
-    final int idealTickStep = tlf.calcIdealTickStep(domainWidth, maxTicksForScreen);
-    ChronoDate tickDate = tlf.quantizeDate(plot.getDomain().getStart(), idealTickStep);
+    final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds,
+        domainWidth, tlf);
+    final int idealTickStep = tlf
+        .calcIdealTickStep(domainWidth, maxTicksForScreen);
+    ChronoDate tickDate = tlf
+        .quantizeDate(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;
@@ -90,7 +94,8 @@ public class DomainAxisPanel extends RangeAxisPanel {
       if (!isFirstTick) {
         int subTickStep = tlf.getSubTickStep(actualTickStep);
         if (subTickStep > 1) {
-          double auxTickWidth = (tickScreenPos - prevTickScreenPos) / subTickStep;
+          double auxTickWidth = (tickScreenPos - prevTickScreenPos)
+              / subTickStep;
           double auxTickPos = prevTickScreenPos + auxTickWidth;
           for (int i = 0; i < subTickStep - 1; i++) {
             if (MathUtil.isBounded(auxTickPos, bounds.x, boundsRightX)) {
@@ -100,12 +105,12 @@ public class DomainAxisPanel extends RangeAxisPanel {
           }
         }
       }
-      
+
       actualTickStep = tlf.incrementDate(tickDate, idealTickStep);
       prevTickScreenPos = tickScreenPos;
       isFirstTick = false;
     }
-    
+
     if (labelProperties.visible) {
       drawAxisLabel(layer, bounds);
     }
@@ -119,7 +124,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
       return plot.getInnerBounds().height;
     }
   }
- 
+
   public int getLabelHeight(View view, String str) {
     return view.getCanvas().getRootLayer().stringHeight(str,
         gssProperties.fontFamily, gssProperties.fontWeight,
@@ -143,11 +148,11 @@ public class DomainAxisPanel extends RangeAxisPanel {
   public String getType() {
     return "axis";
   }
-  
+
   public String getTypeClass() {
     return "domain";
   }
-  
+
   @Override
   public double getWidth() {
     if (parentPanel.getPosition().isHorizontal()) {
@@ -191,7 +196,8 @@ public class DomainAxisPanel extends RangeAxisPanel {
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
     layer.setFillColor(gssProperties.bgColor);
-    layer.fillRect(bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2);
+    layer.fillRect(bounds.x - 1, bounds.y - 1, bounds.width + 2,
+        bounds.height + 2);
 //    layer.setStrokeColor("rgba(0,0,0,0)");
 //    layer.setLineWidth(0.0);
 //    layer.setShadowColor("rgba(0,0,0,0)");
@@ -203,7 +209,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
 //    layer.beginPath();
 //    layer.rect(0, 0, 1, 1);
 //    layer.closePath();
-  //  layer.stroke();
+    //  layer.stroke();
 //    layer.fill();
     if (!boundsSet) {
       layer.setTextLayerBounds(textLayerName, bounds);
@@ -214,12 +220,14 @@ public class DomainAxisPanel extends RangeAxisPanel {
   }
 
   /**
-   * Converts the specified domain width (e.g. '2 years') into a screen pixel width.
+   * Converts the specified domain width (e.g. '2 years') into a screen pixel
+   * width.
    */
   private double domainToScreenWidth(double domainWidth, Bounds bounds) {
-    return bounds.width * (valueAxis.dataToUser(domainWidth) - valueAxis.dataToUser(0.0));
+    return bounds.width * (valueAxis.dataToUser(domainWidth) - valueAxis
+        .dataToUser(0.0));
   }
-  
+
   private double domainToScreenX(double dataX, Bounds bounds) {
     return bounds.x + valueAxis.dataToUser(dataX) * bounds.width;
   }
@@ -228,14 +236,13 @@ public class DomainAxisPanel extends RangeAxisPanel {
     layer.setFillColor(labelProperties.bgColor);
     layer.setStrokeColor(labelProperties.color);
     double center = bounds.x + (bounds.width / 2);
-    
+
     double halfLabelWidth = axisLabelWidth / 2;
-    layer.drawText(center - halfLabelWidth,
-        bounds.y + maxLabelHeight + 5, TIME_LABEL,
-        labelProperties.fontFamily, labelProperties.fontWeight,
+    layer.drawText(center - halfLabelWidth, bounds.y + maxLabelHeight + 5,
+        TIME_LABEL, labelProperties.fontFamily, labelProperties.fontWeight,
         labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
     // only show if enabled and a collision with the axis label is avoided
-    if (Chronoscope.isShowCreditsEnabled()
+    if (ChronoscopeOptions.isShowCreditsEnabled()
         && center + halfLabelWidth < bounds.x + bounds.width - creditsWidth) {
       layer.save();
       layer.setTransparency(0.2f);
@@ -253,9 +260,9 @@ public class DomainAxisPanel extends RangeAxisPanel {
     layer.lineTo(bounds.x + bounds.width, bounds.y);
     layer.stroke();
   }
-  
-  private void drawLabel(Layer layer, Bounds bounds, double ux, String tickLabel,  
-      double tickLabelWidth) {
+
+  private void drawLabel(Layer layer, Bounds bounds, double ux,
+      String tickLabel, double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
     layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
@@ -263,7 +270,8 @@ public class DomainAxisPanel extends RangeAxisPanel {
         gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
-  private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux, int tickLength) {
+  private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux,
+      int tickLength) {
     layer.save();
     layer.setFillColor(tickProperties.color);
     layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
@@ -279,23 +287,23 @@ public class DomainAxisPanel extends RangeAxisPanel {
     }
     layer.restore();
   }
-  
+
   /**
-   * Calculates the maximum number of ticks that can visually fit on the 
-   * domain axis given the visible screen width and the max width of a tick 
-   * label for the specified {@link TickFormatter}. 
+   * Calculates the maximum number of ticks that can visually fit on the domain
+   * axis given the visible screen width and the max width of a tick label for
+   * the specified {@link TickFormatter}.
    */
-  private int calcMaxTicksForScreen(Layer layer, Bounds bounds, double domainWidth, 
-      TickFormatter tlf) {
-    
+  private int calcMaxTicksForScreen(Layer layer, Bounds bounds,
+      double domainWidth, TickFormatter tlf) {
+
     // Needed to round screen width due to tiny variances that were causing the 
     // result of this method to fluctuate by +/- 1.
     double screenWidth = Math.round(domainToScreenWidth(domainWidth, bounds));
-    
+
     double maxLabelWidth = 15 + tlf.getMaxTickLabelWidth(layer, gssProperties);
-    
+
     //log("domainWidth=" + (long)domainWidth + "; screenWidth=" + screenWidth + "; maxLabelWidth=" + maxLabelWidth + "; maxTicks=" + (int)(screenWidth / maxLabelWidth));
-    return (int)(screenWidth / maxLabelWidth);
+    return (int) (screenWidth / maxLabelWidth);
   }
 
 }
