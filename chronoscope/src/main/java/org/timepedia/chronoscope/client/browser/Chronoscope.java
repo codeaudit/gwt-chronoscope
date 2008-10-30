@@ -17,6 +17,7 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.XYPlotListener;
+import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -37,9 +38,6 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
 import org.timepedia.exporter.client.ExporterUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Factory class and JS API interface for Chronoscope Charts <p/> This class
@@ -78,14 +76,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   static URLResolver urlResolver = new NopURLResolver();
 
   private static Theme currentTheme;
-
-  private static final Map<String, Chart> id2chart
-      = new HashMap<String, Chart>();
-
-  /**
-   * Used to prevent double-triggering of history events
-   */
-  private static String previousHistory;
 
   private static boolean microformatsEnabled = false;
 
@@ -328,10 +318,6 @@ public class Chronoscope implements Exportable, HistoryListener {
     return "ZZchrono" + globalChartNumber++;
   }
 
-  public static Chart getChartById(String id) {
-    return (Chart) id2chart.get(id);
-  }
-
   public static String getFontBookServiceEndpoint() {
     return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
         + "fr" : fontBookServiceEndpoint;
@@ -371,22 +357,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static boolean isShowCreditsEnabled() {
     return showCreditsEnabled;
-  }
-
-  public static void pushHistory() {
-    if (Chronoscope.isHistorySupportEnabled()) {
-      String newToken = "";
-      for (Chart chart : id2chart.values()) {
-        newToken += chart.getPlot().getHistoryToken();
-      }
-      previousHistory = newToken;
-      History.newItem(newToken);
-    }
-  }
-
-  public static void putChart(String id, Chart chart) {
-    id2chart.put(id, chart);
-    chart.setChartId(id);
   }
 
   /**
@@ -528,47 +498,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   public void onHistoryChanged(String historyToken) {
-
-    if (true || historyToken != null && historyToken.equals(previousHistory)) {
-      return;
-    }
-
-    previousHistory = historyToken;
-
-    if (historyToken != null && historyToken.indexOf(")") != -1) {
-      String targets[] = historyToken.split("\\)");
-      for (int j = 0; j < targets.length; j++) {
-        String target = targets[j];
-        String viewId = target.substring(0, target.indexOf("("));
-        String[] var = target.substring(target.indexOf("(") + 1).split("\\,");
-        Chart chart = (Chart) id2chart.get(viewId);
-        double dO = chart.getPlot().getDomain().getStart();
-        double cD = chart.getPlot().getDomain().length();
-        boolean changed = false;
-
-        if (chart != null) {
-          for (int i = 0; i < var.length; i++) {
-
-            if (var[i].startsWith("O")) {
-              dO = Double.parseDouble(var[i].substring(1));
-              changed = true;
-            } else if (var[i].startsWith("D")) {
-              cD = Double.parseDouble(var[i].substring(1));
-              changed = true;
-            }
-          }
-          if (changed) {
-            if (targets.length == 1) {
-              chart.getPlot().animateTo(dO, cD, XYPlotListener.ZOOMED, null);
-            } else {
-              chart.getPlot().getDomain().setEndpoints(dO, dO + cD);
-            }
-          }
-
-          chart.redraw();
-        }
-      }
-    }
+    HistoryManager.restoreHistory(historyToken);
   }
 
   protected void exportFunctions() {
