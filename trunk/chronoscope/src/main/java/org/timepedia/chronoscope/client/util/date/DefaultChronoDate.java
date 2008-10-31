@@ -138,6 +138,11 @@ public final class DefaultChronoDate extends ChronoDate {
   }
 
   @Override
+  public DateFieldSetter set() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public void set(TimeUnit timeUnit, int value) {
     switch (timeUnit) {
       case YEAR:

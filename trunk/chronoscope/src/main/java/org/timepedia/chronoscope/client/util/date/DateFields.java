@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.timepedia.chronoscope.client.util.date;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
@@ -34,6 +31,19 @@ public class DateFields {
     return this;
   }
   
+  /**
+   * Copies the state of this object to the target object.
+   */
+  public void copyTo(DateFields target) {
+    target.year = year;
+    target.month = month;
+    target.day = day;
+    target.hour = hour;
+    target.minute = minute;
+    target.second = second;
+    target.ms = ms;
+  }
+    
   /**
    * Resets all date fields after <tt>timeUnit</tt> to 0.
    */

@@ -53,9 +53,11 @@ public final class JsArrayParser {
     double aVal[] = new double[len];
     for (int i = 0; i < len; i++) {
       Date javaDate = df.parse(jsArray.get(i));
-      chronoDate.set(TimeUnit.YEAR, javaDate.getYear() + 1900);
-      chronoDate.set(TimeUnit.MONTH, javaDate.getMonth());
-      chronoDate.set(TimeUnit.DAY, javaDate.getDate());
+      chronoDate.set()
+          .year(javaDate.getYear() + 1900)
+          .month(javaDate.getMonth())
+          .day(javaDate.getDate())
+          .done();
       aVal[i] = chronoDate.getTime();
     }
     return aVal;
