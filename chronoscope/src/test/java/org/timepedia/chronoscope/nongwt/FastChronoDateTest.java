@@ -352,10 +352,7 @@ public class FastChronoDateTest extends TestCase {
   
   private static ChronoDate createTestDate(int year, int month, int day, int hr, int min, int sec, int ms) {
     ChronoDate d = new FastChronoDate(year, month, day);
-    d.set(TimeUnit.HOUR, hr);
-    d.set(TimeUnit.MIN, min);
-    d.set(TimeUnit.SEC, sec);
-    d.set(TimeUnit.MS, ms);
+    d.set().hour(hr).min(min).sec(sec).ms(ms).done();
     return d;
   }
   
@@ -365,14 +362,10 @@ public class FastChronoDateTest extends TestCase {
 
   private void testSetTimeUnitFields(int yr, int mo, int day, int hr, int min, int sec) {
     ChronoDate d = createTestDate(yr);
-    d.set(TimeUnit.YEAR, yr);
-    d.set(TimeUnit.MONTH, mo);
-    d.set(TimeUnit.DAY, day);
-    d.set(TimeUnit.HOUR, hr);
-    d.set(TimeUnit.MIN, min);
-    d.set(TimeUnit.SEC, sec);
+    d.set().month(mo).day(day).hour(hr).min(min).sec(sec).done();
     
     long expectedTimestamp = createJavaDate(yr, mo, day, hr, min, sec).getTime();
     assertEquals(expectedTimestamp, (long)d.getTime());
   }
+ 
 }

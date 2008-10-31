@@ -22,10 +22,7 @@ public class MockDatasetFactory {
   public Dataset getBasicDataset() {
     int numSamples = 1000;
     
-    ChronoDate d = ChronoDate.getSystemDate();
-    d.set(TimeUnit.YEAR, 1970);
-    d.set(TimeUnit.MONTH, 0);
-    d.set(TimeUnit.DAY, 1);
+    ChronoDate d = ChronoDate.get(1970, 0, 1);
 
     double[] domainValues = new double[numSamples];
     double[] rangeValues = new double[numSamples];

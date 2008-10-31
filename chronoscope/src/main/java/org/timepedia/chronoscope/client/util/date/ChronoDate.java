@@ -90,9 +90,25 @@ public abstract class ChronoDate {
   public abstract int getYear();
 
   /**
-   * Sets the specified time unit to the specified value.
+   * Sets the constituent components of this date via method chaining.  
+   * For example, to set the date to 'January 19th, 1956':
+   * <blockquote><pre>
+   * myDate.set().year(1956).month(0).day(19).done();
+   * </pre></blockquote>
+   * 
+   * Don't forget to call {@link DateFieldSetter#done()}!  
+   * Otherwise the date modifications will not take effect.
    */
-  public abstract void set(TimeUnit timeUnit, int value);
+  public abstract DateFieldSetter set();
+
+  /**
+   * Sets the specified date field to the specified value.
+   * <p>
+   * NOTE: If you need to set more than 1 date field, use
+   * {@link #set()} instead.  This method defers date field validation 
+   * until the {@link DateFieldSetter#done()} method is called.
+   */
+  public abstract void set(TimeUnit dateField, int value);
 
   /**
    * Analagous to <tt>java.util.Date.setTime()</tt>.
@@ -109,4 +125,5 @@ public abstract class ChronoDate {
    *           supported by a particular subclass.
    */
   public abstract ChronoDate truncate(TimeUnit timeUnit);
+  
 }

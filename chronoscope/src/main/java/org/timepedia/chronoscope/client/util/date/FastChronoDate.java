@@ -26,14 +26,17 @@ public class FastChronoDate extends ChronoDate {
   private static final double[] MINUTE_OFFSETS_IN_MS = calcOffsetArrayInMs(60, MS_IN_MINUTE);
   private static final double[] SECOND_OFFSETS_IN_MS = calcOffsetArrayInMs(60, MS_IN_SECOND);
   
+  // Stores the constituent time unit values.
+  private DateFields dateFields = new DateFields();
+  
+  // Provides "method chaining style" setting of constituent date components
+  private DateFieldSetter dateFieldSetter = new DateFieldSetter(this);
+  
   // Requests for era-specific calculations are delegated to this object.
   private EraCalc eraCalc;
   
   // 'java.util.Calendar.timeInMillis()' representation of this date.
   private double timeInMs;
-  
-  // Stores the constituent time unit values.
-  private DateFields dateFields = new DateFields();
   
   // True only if this.timeInMs is not sync'd with externally-assigned this.dateFields.
   private boolean isTimestampDirty = true;
@@ -52,7 +55,7 @@ public class FastChronoDate extends ChronoDate {
   public FastChronoDate(int year, int month, int day) {
     this.dateFields.clear().setYear(year).setMonth(month).setDay(day);
     this.eraCalc = EraCalc.getByYear(year);
-    checkDateFields();
+    checkDateFields(this.dateFields);
     this.isTimestampDirty = true;
   }
   
@@ -199,35 +202,31 @@ public class FastChronoDate extends ChronoDate {
   }
 
   @Override
+  public DateFieldSetter set() {
+    dateFields.copyTo(dateFieldSetter.dateFields);
+    return this.dateFieldSetter;
+  }
+  
+  @Override
   public void set(TimeUnit timeUnit, int value) {
-    switch (timeUnit) {
-      case YEAR:
-        dateFields.year = value;
-        this.eraCalc = EraCalc.getByYear(value);
-        break;
-      case MONTH:
-        dateFields.month = value;
-        break;
-      case DAY:
-        dateFields.day = value;
-        break;
-      case HOUR:
-        dateFields.hour = value;
-        break;
-      case MIN:
-        dateFields.minute = value;
-        break;
-      case SEC:
-        dateFields.second = value;
-        break;
-      case MS:
-        dateFields.ms = value;
-        break;
-      default:
-        throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported");
-    }
-
-    checkDateFields();
+    set().timeUnit(timeUnit, value).done();
+  }
+  
+  /**
+   * To be called exclusively by {@link DateFieldSetter#done()}.
+   */
+  void commitDateFieldChanges() {
+    // Make sure we're using the proper EraCalc for the given
+    // (possibly modified) year.
+    this.eraCalc = EraCalc.getByYear(this.dateFields.year);
+    
+    // Verify that a valid date is implied by the modified temporary date fields 
+    checkDateFields(dateFieldSetter.dateFields);
+    
+    // No exception thrown?  Ok, it's a good date, so transfer the temporary
+    // fields back to this.dateFields.
+    dateFieldSetter.dateFields.copyTo(this.dateFields);
+    
     this.isTimestampDirty = true;
   }
   
@@ -322,7 +321,7 @@ public class FastChronoDate extends ChronoDate {
     return getDayOfWeek() + " " + dateFields.toString();
   }
   
-  private void checkDateFields() {
+  private void checkDateFields(DateFields dateFields) {
     // FIXME:
     //checkTimeUnitRange(TimeUnit.YEAR, this.year, this.minYear, this.maxYear);
     
