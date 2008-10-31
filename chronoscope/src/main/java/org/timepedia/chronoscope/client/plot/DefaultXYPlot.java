@@ -1452,6 +1452,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     plotLayer.clear();
     // plotLayer.setFillColor("#FF0000");
     // plotLayer.fillRect(0, 0, 50, 50);
+    // if on a low performance device, don't rerender axes or legend
+    // when animating
+    boolean notOptimizedForLowPerformance = !isAnimating()
+        || !ChronoscopeOptions.isLowPerformance();
 
     if (interactive) {
 
@@ -1461,7 +1465,10 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
 
       if (bottomPanel.getAxisCount() > 0) {
-        drawOverviewHighlight();
+
+        if (notOptimizedForLowPerformance) {
+          drawOverviewHighlight();
+        }
       }
 
       boolean drawVertical = !drewVertical;
@@ -1469,7 +1476,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         drawVertical = drawVertical || axis.isAutoZoomVisibleRange();
       }
 
-      if (drawVertical) {
+      if (drawVertical && notOptimizedForLowPerformance) {
         verticalAxisLayer.save();
         verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
         verticalAxisLayer.clear();
@@ -1487,7 +1494,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         verticalAxisLayer.restore();
       }
 
-      if (topPanel.getAxisCount() > 0) {
+      if (topPanel.getAxisCount() > 0 && notOptimizedForLowPerformance) {
         topLayer.save();
         Bounds topPanelBounds = new Bounds(0, 0, topLayer.getBounds().width,
             topLayer.getBounds().height);
@@ -1497,8 +1504,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     drawPlot();
-    drawOverlays(plotLayer);
-    drawHighlight(highLightLayer);
+    if (notOptimizedForLowPerformance) {
+      drawOverlays(plotLayer);
+      drawHighlight(highLightLayer);
+    }
 
     plotLayer.restore();
     backingCanvas.endFrame();
