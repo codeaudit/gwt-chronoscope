@@ -93,7 +93,7 @@ public class VmlCanvas extends Canvas {
       id2Layer.put(layer.getLayerId(), (VmlLayer)layer);
       DOM.appendChild(canvasElement, ((VmlLayer) layer).getLayerElement());
       ((VmlLayer)layer).onAttach();
-      layer.setFillColor("transparent");
+      layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     }
     return layer;
@@ -266,7 +266,7 @@ public class VmlCanvas extends Canvas {
     rootLayer.setComposite(mode);
   }
 
-  public void setFillColor(String color) {
+  public void setFillColor(Color color) {
     rootLayer.setFillColor(color);
   }
 
@@ -318,7 +318,7 @@ public class VmlCanvas extends Canvas {
     rootLayer.setShadowOffsetY(y);
   }
 
-  public void setStrokeColor(String color) {
+  public void setStrokeColor(Color color) {
     rootLayer.setStrokeColor(color);
   }
 

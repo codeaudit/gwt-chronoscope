@@ -297,7 +297,7 @@ public class FlashCanvas extends Canvas {
       id2Layer.put(layer.getLayerId(), layer);
       //    DOM.appendChild(canvasElement, ( (FlashLayer) layer ).getLayerElement());
 
-      layer.setFillColor("transparent");
+      layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     }
     return layer;
@@ -509,7 +509,7 @@ public class FlashCanvas extends Canvas {
     rootLayer.setComposite(mode);
   }
 
-  public void setFillColor(String color) {
+  public void setFillColor(Color color) {
     rootLayer.setFillColor(color);
   }
 
@@ -561,7 +561,7 @@ public class FlashCanvas extends Canvas {
     rootLayer.setShadowOffsetY(y);
   }
 
-  public void setStrokeColor(String color) {
+  public void setStrokeColor(Color color) {
     rootLayer.setStrokeColor(color);
   }
 

@@ -227,6 +227,14 @@ public class LayerJava2D extends AbstractLayer {
     restore();
   }
 
+  public void setFillColor(org.timepedia.chronoscope.client.canvas.Color color) {
+    setFillColor(color.getCSSColor());
+  }
+
+  public void setStrokeColor(org.timepedia.chronoscope.client.canvas.Color color) {
+    setStrokeColor(color.getCSSColor());
+  }
+
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layer, Cursor cursor) {
     Font font = new Font(fontFamily, Font.PLAIN,

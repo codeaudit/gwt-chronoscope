@@ -183,8 +183,6 @@ public interface Layer {
 
   void setComposite(int mode);
 
-  void setFillColor(String color);
-
   void setFillColor(PaintStyle p);
 
   /**
@@ -221,8 +219,6 @@ public interface Layer {
   void setShadowOffsetX(double x);
 
   void setShadowOffsetY(double y);
-
-  void setStrokeColor(String color);
 
   void setStrokeColor(PaintStyle p);
 

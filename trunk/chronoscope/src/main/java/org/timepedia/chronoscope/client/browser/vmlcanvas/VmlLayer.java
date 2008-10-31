@@ -214,9 +214,9 @@ public class VmlLayer extends DomTextLayer {
     canvasWidget.setGlobalCompositeOperation(compositeModes[mode]);
   }
 
-  public void setFillColor(String color) {
-    fillColor = new org.timepedia.chronoscope.client.canvas.Color(color);
-    canvasWidget.setFillStyle(new Color(color));
+  public void setFillColor(org.timepedia.chronoscope.client.canvas.Color color) {
+    fillColor = new org.timepedia.chronoscope.client.canvas.Color(color.getCSSColor());
+    canvasWidget.setFillStyle(new Color(color.getCSSColor()));
   }
 
   public void setLayerAlpha(float alpha) {
@@ -257,9 +257,9 @@ public class VmlLayer extends DomTextLayer {
   public void setShadowOffsetY(double y) {
   }
 
-  public void setStrokeColor(String color) {
-    this.strokeColor = color;
-    canvasWidget.setStrokeStyle(new Color(color));
+  public void setStrokeColor(org.timepedia.chronoscope.client.canvas.Color color) {
+    this.strokeColor = color.getCSSColor();
+    canvasWidget.setStrokeStyle(new Color(this.strokeColor));
   }
 
   public void setTransparency(float value) {

@@ -89,7 +89,7 @@ public class BrowserCanvas extends Canvas {
       layer = new BrowserLayer(this, layerId, b);
       id2Layer.put(layer.getLayerId(), layer);
       DOM.appendChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
-      layer.setFillColor("transparent");
+      layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     }
     return layer;
@@ -266,7 +266,7 @@ public class BrowserCanvas extends Canvas {
     rootLayer.setComposite(mode);
   }
 
-  public void setFillColor(String color) {
+  public void setFillColor(Color color) {
     rootLayer.setFillColor(color);
   }
 
@@ -318,7 +318,7 @@ public class BrowserCanvas extends Canvas {
     rootLayer.setShadowOffsetY(y);
   }
 
-  public void setStrokeColor(String color) {
+  public void setStrokeColor(Color color) {
     rootLayer.setStrokeColor(color);
   }
 

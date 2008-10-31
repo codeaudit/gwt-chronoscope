@@ -58,9 +58,12 @@ public abstract class AbstractLayer implements Layer {
         fontFamily, fontWeight, fontSize));
   }
 
+  public abstract void setFillColor(Color color);
+  public abstract void setStrokeColor(Color color);
+
   public void setFillColor(PaintStyle p) {
     if (p instanceof Color) {
-      setFillColor(p.toString());
+      setFillColor((Color)p);
     } else if (p instanceof LinearGradient) {
       setLinearGradient((LinearGradient) p);
     } else if (p instanceof RadialGradient) {
@@ -77,7 +80,7 @@ public abstract class AbstractLayer implements Layer {
   public void setStrokeColor(PaintStyle p) {
 
     if (p instanceof Color) {
-      setStrokeColor(p.toString());
+      setStrokeColor((Color)p);
     }
   }
 }
