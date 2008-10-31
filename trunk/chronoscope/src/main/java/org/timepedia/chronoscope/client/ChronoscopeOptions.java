@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.exporter.client.Export;
 import org.timepedia.chronoscope.client.overlays.Marker;
+import org.timepedia.exporter.client.Export;
 
 /**
  * Global options for Chronoscope.
@@ -31,12 +31,30 @@ public class ChronoscopeOptions {
     return new Marker(date, seriesNum, label);
   }
 
+  /**
+   * Max number of datapoints to draw when chart is being moved.
+   */
+  public static int getMaxDynamicDatapoints() {
+    return maxDynamicDatapoints;
+  }
+
+  /**
+   * Maximum number of datapoints to draw when chart is not moving.
+   */
+  public static int getMaxStaticDatapoints() {
+    return maxStaticDatapoints;
+  }
+
   public static boolean isErrorReportingEnabled() {
     return errorReportingEnabled;
   }
 
   public static boolean isHistorySupportEnabled() {
     return historySupport;
+  }
+
+  public static boolean isLowPerformance() {
+    return lowPerformance;
   }
 
   public static boolean isShowCreditsEnabled() {
@@ -51,12 +69,16 @@ public class ChronoscopeOptions {
     errorReportingEnabled = enabled;
   }
 
-  /**
-   * @gwt.export
-   */
-  @Export
-  public static void setShowCredits(boolean enabled) {
-    showCreditsEnabled = enabled;
+  public static void setErrorReportingEnabled(boolean errorReportingEnabled) {
+    ChronoscopeOptions.errorReportingEnabled = errorReportingEnabled;
+  }
+
+  public static void setHistorySupport(boolean historySupport) {
+    ChronoscopeOptions.historySupport = historySupport;
+  }
+
+  public static void setLowPerformance(boolean lowPerformance) {
+    ChronoscopeOptions.lowPerformance = lowPerformance;
   }
 
   public static void setMaxDynamicDatapoints(int maxDynamicDatapoints) {
@@ -68,22 +90,14 @@ public class ChronoscopeOptions {
   }
 
   /**
-   * Max number of datapoints to draw when chart is being moved.
-   * @return
+   * @gwt.export
    */
-  public static int getMaxDynamicDatapoints() {
-    return maxDynamicDatapoints;
+  @Export
+  public static void setShowCredits(boolean enabled) {
+    showCreditsEnabled = enabled;
   }
 
-  /**
-   * Maximum number of datapoints to draw when chart is not moving.
-   * @return
-   */
-  public static int getMaxStaticDatapoints() {
-    return maxStaticDatapoints;
-  }
-
-  public static boolean isLowPerformance() {
-    return lowPerformance;
+  public static void setShowCreditsEnabled(boolean showCreditsEnabled) {
+    ChronoscopeOptions.showCreditsEnabled = showCreditsEnabled;
   }
 }
