@@ -1,14 +1,15 @@
 package org.timepedia.chronoscope.client.plot;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
+import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.XYPlotListener;
-import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
@@ -347,7 +348,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getMaxDrawableDataPoints() {
-    return (int) (isAnimating ? maxDrawableDatapoints : 1000);
+    return (int) (isAnimating ? maxDrawableDatapoints
+        : ChronoscopeOptions.getMaxStaticDatapoints());
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
@@ -1305,7 +1307,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void initViewIndependent(Datasets<T> datasets) {
     hoverPoints = new int[datasets.size()];
     resetHoverPoints();
-    maxDrawableDatapoints = 100 / datasets.size();
+    maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
+        / datasets.size();
     visibleDomainMax = Util
         .calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     initializeDomain(datasets);

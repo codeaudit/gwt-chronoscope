@@ -14,6 +14,10 @@ public class ChronoscopeOptions {
 
   public static boolean historySupport = false;
 
+  private static int maxDynamicDatapoints = 100;
+
+  private static int maxStaticDatapoints = 1000;
+
   /**
    * A factory function to create a push-pin marker given a Date, then the
    * dataset index to attach this marker to, and a label
@@ -51,5 +55,29 @@ public class ChronoscopeOptions {
   @Export
   public static void setShowCredits(boolean enabled) {
     showCreditsEnabled = enabled;
+  }
+
+  public static void setMaxDynamicDatapoints(int maxDynamicDatapoints) {
+    ChronoscopeOptions.maxDynamicDatapoints = maxDynamicDatapoints;
+  }
+
+  public static void setMaxStaticDatapoints(int maxStaticDatapoints) {
+    ChronoscopeOptions.maxStaticDatapoints = maxStaticDatapoints;
+  }
+
+  /**
+   * Max number of datapoints to draw when chart is being moved.
+   * @return
+   */
+  public static int getMaxDynamicDatapoints() {
+    return maxDynamicDatapoints;
+  }
+
+  /**
+   * Maximum number of datapoints to draw when chart is not moving.
+   * @return
+   */
+  public static int getMaxStaticDatapoints() {
+    return maxStaticDatapoints;
   }
 }
