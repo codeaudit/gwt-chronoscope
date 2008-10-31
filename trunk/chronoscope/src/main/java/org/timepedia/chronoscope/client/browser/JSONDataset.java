@@ -73,4 +73,8 @@ public class JSONDataset extends JavaScriptObject {
   public final native double getMinInterval() /*-{
     return this.minInterval || -1;
   }-*/;
+  
+  public final native String getPartitionStrategy() /*-{
+    return this.partitionStrategy || "binary";
+  }-*/;
 }
