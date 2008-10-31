@@ -18,6 +18,8 @@ public class ChronoscopeOptions {
 
   private static int maxStaticDatapoints = 1000;
 
+  private static boolean lowPerformance = false;
+
   /**
    * A factory function to create a push-pin marker given a Date, then the
    * dataset index to attach this marker to, and a label
@@ -79,5 +81,9 @@ public class ChronoscopeOptions {
    */
   public static int getMaxStaticDatapoints() {
     return maxStaticDatapoints;
+  }
+
+  public static boolean isLowPerformance() {
+    return lowPerformance;
   }
 }
