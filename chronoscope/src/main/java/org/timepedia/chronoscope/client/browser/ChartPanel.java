@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -20,28 +19,39 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 
 public class ChartPanel extends Composite implements Exportable {
-
+  private Element domElement;
   private PlotPanel plotPanel;
-
-  public ChartPanel(Dataset[] datasetArray, int chartWidth, int chartHeight) {
-    this(DOM.createDiv(), datasetArray, chartWidth, chartHeight, null);
-  }
-
-  public ChartPanel(Element elem, Dataset[] datasetArray, int chartWidth,
-      int chartHeight, ViewReadyCallback readyListener) {
+  private Dataset[] datasets;
+  private ViewReadyCallback viewReadyCallback;
+  private int width = 400, height = 250;
+  
+  public void init() {
+    ArgChecker.isNotNull(this.datasets, "this.datasets");
+    ArgChecker.isNotNull(this.domElement, "this.domElement");
     
-    ArgChecker.isNotNull(datasetArray, "datasetArray");
-    if(elem == null) {
-      elem=DOM.createDiv();
-    }
-    
-    XYPlot plot = createPlot(datasetArray);
-    plotPanel = new PlotPanel(elem, plot, chartWidth, chartHeight,
-        readyListener);
+    XYPlot plot = createPlot(datasets);
+    plotPanel = new PlotPanel(domElement, plot, width, height, viewReadyCallback);
 
     initWidget(plotPanel);
   }
-
+  
+  public void setDimensions(int width, int height) {
+    this.width = width;
+    this.height = height;
+  }
+  
+  public void setDatasets(Dataset[] datasets) {
+    this.datasets = datasets;
+  }
+  
+  public void setDomElement(Element element) {
+    this.domElement = element;
+  }
+  
+  public void setViewReadyCallback(ViewReadyCallback callback) {
+    this.viewReadyCallback = callback;
+  }
+  
   protected XYPlot createPlot(Dataset[] datasetArray) {
     
     Datasets<Tuple2D> datasets = new Datasets<Tuple2D>(datasetArray);

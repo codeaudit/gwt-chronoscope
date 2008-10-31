@@ -21,8 +21,11 @@ import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.data.BinaryMipMapStrategy;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.MipMapStrategy;
+import org.timepedia.chronoscope.client.data.MipMapStrategyFactory;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
@@ -48,12 +51,10 @@ import org.timepedia.exporter.client.ExporterUtil;
 public class Chronoscope implements Exportable, HistoryListener {
 
   public interface URLResolver {
-
     public String resolveURL(String url);
   }
 
   static class NopURLResolver implements URLResolver {
-
     public String resolveURL(String url) {
       return url;
     }
@@ -88,7 +89,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   private static int globalChartNumber = 0;
 
   private static JsArrayParser jsArrayParser = new JsArrayParser();
-
+  
   /**
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
@@ -185,9 +186,10 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   /**
-   * Parse a JSON object representing a multiresolution Dataset into a class
-   * implementing the Dataset interface <p/> <p/> The JSON format is as
-   * follows:
+   * Parse a JSON object representing a multiresolution dataset into a class
+   * implementing the {@link Dataset} interface.
+   * <p>
+   * The JSON format is as follows:
    * <pre>
    * dataset = {
    *    id: "unique id for this dataset",
@@ -258,6 +260,8 @@ public class Chronoscope implements Exportable, HistoryListener {
       mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
     } else {
       DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
+      request.setDefaultMipMapStrategy(
+          MipMapStrategyFactory.newInstance().get(json.getPartitionStrategy()));
       double[] domainArray = null;
       if (dtformat != null) {
         domainArray = jsArrayParser
@@ -403,20 +407,27 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
-
-    if (elem == null) {
-      ChartPanel cpanel = new ChartPanel(datasets, chartWidth, chartHeight);
-      cpanel.setReadyListener(readyListener);
-      return cpanel;
+    
+    boolean wasDomElementProvided = (elem != null);
+    
+    if (!wasDomElementProvided) {
+      elem = DOM.createDiv();
+    }
+    
+    ChartPanel cpanel = newChartPanel();
+    cpanel.setDatasets(datasets);
+    cpanel.setDomElement(elem);
+    cpanel.setViewReadyCallback(readyListener);
+    cpanel.setDimensions(chartWidth, chartHeight);
+    cpanel.init();
+    
+    if (wasDomElementProvided) {
+      if (Document.get().getBody().isOrHasChild(elem)) {
+        cpanel.attach();
+      }
     }
 
-    ChartPanel cp = new ChartPanel(elem, datasets, chartWidth, chartHeight,
-        readyListener);
-
-    if (Document.get().getBody().isOrHasChild(elem)) {
-      cp.attach();
-    }
-    return cp;
+    return cpanel;
   }
 
   public void init() {
@@ -453,6 +464,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     HistoryManager.restoreHistory(historyToken);
   }
 
+  protected  ChartPanel newChartPanel() {
+    return new ChartPanel();
+  }
+  
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
     exporter.export();
