@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -223,7 +224,7 @@ public final class CompositeAxisPanel implements GssElement {
   private void clearPanel(Layer layer, Bounds panelBounds) {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
-    layer.setStrokeColor("#ffffff");
+    layer.setStrokeColor(Color.WHITE);
     if (position.isHorizontal()) {
       layer.scale(layer.getWidth(), layer.getHeight());
     } else if (panelBounds.area() > 0) {

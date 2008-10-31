@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -249,7 +250,7 @@ public class LegendAxisPanel extends AxisPanel {
 
     layer.setLayerOrder(1);
     //layer.setTransparency(.35f);
-    layer.setFillColor("#50D0FF");
+    layer.setFillColor(new Color("#50D0FF"));
     layer.fillRect(b.x, b.y, b.width, b.height);
 
     layer.restore();

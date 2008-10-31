@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -38,7 +39,7 @@ public class GssBackground implements Background, GssElement {
     layer.save();
     Bounds b = layer.getBounds();
     if (gssPlotProperties.bgColor instanceof CanvasPattern) {
-      layer.setFillColor("rgba(0,0,0,0)");
+      layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(b.x, b.y, b.width, b.height);
       layer.setComposite(Layer.COPY);
       layer.setFillColor(gssPlotProperties.bgColor);

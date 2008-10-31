@@ -6,6 +6,7 @@ import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -241,7 +242,7 @@ public class Marker implements Overlay, GssElement, Exportable {
   }
 
   private int drawBox(Layer backingCanvas, int x, int y) {
-    backingCanvas.setStrokeColor("rgb(0,0,0)");
+    backingCanvas.setStrokeColor(Color.BLACK);
     backingCanvas.setTransparency(1.0f);
     backingCanvas.beginPath();
 
@@ -254,7 +255,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     backingCanvas.lineTo(x + labelWidth + 3, y + labelHeight);
     backingCanvas.lineTo(x - 1, y + labelHeight);
     backingCanvas.closePath();
-    backingCanvas.setFillColor("rgb(200,200,200)");
+    backingCanvas.setFillColor(new Color(200,200,200));
     backingCanvas.fill();
     backingCanvas.setLineWidth(1);
     backingCanvas.stroke();

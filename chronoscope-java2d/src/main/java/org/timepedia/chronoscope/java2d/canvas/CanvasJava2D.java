@@ -37,7 +37,7 @@ public class CanvasJava2D extends Canvas {
     super(view);
     rootLayer = createLayer("rootLayer", new Bounds(0, 0, w, h));
     backingLayer = new LayerJava2D(this, "backing", new Bounds(0, 0, w, h));
-    rootLayer.setFillColor("rgba(0,0,0,0)");
+    rootLayer.setFillColor(Color.TRANSPARENT);
     rootLayer.clearRect(0, 0, w, h);
   }
 
@@ -79,7 +79,7 @@ public class CanvasJava2D extends Canvas {
     if (layer == null) {
       layer = new LayerJava2D(this, layerId, b);
       id2Layer.put(layer.getLayerId(), layer);
-      layer.setFillColor("rgba(0,0,0,0)");
+      layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     }
     return layer;
@@ -291,7 +291,7 @@ public class CanvasJava2D extends Canvas {
     rootLayer.setComposite(mode);
   }
 
-  public void setFillColor(String color) {
+  public void setFillColor(Color color) {
     rootLayer.setFillColor(color);
   }
 
@@ -343,7 +343,7 @@ public class CanvasJava2D extends Canvas {
     rootLayer.setShadowOffsetY(y);
   }
 
-  public void setStrokeColor(String color) {
+  public void setStrokeColor(Color color) {
     rootLayer.setStrokeColor(color);
   }
 

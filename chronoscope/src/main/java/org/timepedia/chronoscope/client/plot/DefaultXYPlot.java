@@ -18,6 +18,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -1059,7 +1060,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         .min(0 + getInnerBounds().width, domainToScreenX(endHighlight, 0));
 
     layer.save();
-    layer.setFillColor("#14FFFF");
+    layer.setFillColor(new Color("#14FFFF"));
     // layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
     layer.clear();
@@ -1280,7 +1281,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       verticalAxisLayer = initLayer(verticalAxisLayer, "verticalAxis",
           verticalAxisLayerBounds);
       verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
+      verticalAxisLayer.setFillColor(Color.TRANSPARENT);
       verticalAxisLayer.clear();
 
       Bounds bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
@@ -1478,7 +1479,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
       if (drawVertical && notOptimizedForLowPerformance) {
         verticalAxisLayer.save();
-        verticalAxisLayer.setFillColor("rgba(0,0,0,0)");
+        verticalAxisLayer.setFillColor(Color.TRANSPARENT);
         verticalAxisLayer.clear();
 
         Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),

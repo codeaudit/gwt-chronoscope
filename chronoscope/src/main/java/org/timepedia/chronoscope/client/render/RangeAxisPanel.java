@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
@@ -56,8 +57,8 @@ public class RangeAxisPanel extends AxisPanel {
     }
 
     layer.setTransparency(1.0f);
-    layer.setFillColor("rgba(255,255,255,255)");
-    layer.setStrokeColor("rgb(0,255,0)");
+    layer.setFillColor(Color.WHITE);
+    layer.setStrokeColor(Color.GREEN);
 
     final double axisRange = valueAxis.getRange();
     final double tickPosition0 = tickPositions[0];

@@ -15,6 +15,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.CanvasImage;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import java.util.ArrayList;
@@ -291,7 +292,8 @@ public class FlashLayer extends AbstractLayer {
     cmd("CO", compositeModes[mode]);
   }
 
-  public void setFillColor(String color) {
+  public void setFillColor(Color c) {
+    String color = c.getCSSColor();
     if ("transparent".equals(color)) {
       color = "rgba(0,0,0,0)";
     }
@@ -373,7 +375,8 @@ public class FlashLayer extends AbstractLayer {
     cmd("WY", y);
   }
 
-  public void setStrokeColor(String color) {
+  public void setStrokeColor(Color c) {
+    String color = c.getCSSColor();
     if ("transparent".equals(color)) {
       color = "rgba(0,0,0,0)";
     }

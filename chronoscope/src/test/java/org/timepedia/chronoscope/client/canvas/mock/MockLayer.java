@@ -246,4 +246,12 @@ public class MockLayer extends AbstractLayer {
 
   public void translate(double x, double y) {
   }
+
+  public void setFillColor(Color color) {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  public void setStrokeColor(Color color) {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
 }

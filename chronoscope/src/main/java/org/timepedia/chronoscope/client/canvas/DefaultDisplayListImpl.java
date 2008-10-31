@@ -325,13 +325,7 @@ public class DefaultDisplayListImpl implements DisplayList {
     });
   }
 
-  public void setFillColor(final String color) {
-    cmdBuffer.add(new Cmd() {
-      public void exec() {
-        layer.setFillColor(color);
-      }
-    });
-  }
+
 
   public void setLayerAlpha(final float alpha) {
     cmdBuffer.add(new Cmd() {
@@ -429,14 +423,7 @@ public class DefaultDisplayListImpl implements DisplayList {
     });
   }
 
-  public void setStrokeColor(final String color) {
-    cmdBuffer.add(new Cmd() {
-      public void exec() {
-        layer.setStrokeColor(color);
-      }
-    });
-  }
-
+  
   public void setTextLayerBounds(final String textLayer,
       final Bounds textLayerBounds) {
     cmdBuffer.add(new Cmd() {

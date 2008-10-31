@@ -9,6 +9,25 @@ public class Color implements PaintStyle {
 
   private boolean rgbaSet = false;
 
+  public static final Color TRANSPARENT = new Color(0,0,0,0);
+  public static final Color WHITE = new Color(255,255,255);
+  public static final Color BLACK = new Color(0,0,0);
+  public static final Color GREEN = new Color(0,255,0);
+
+  public Color(int r, int g, int b) {
+    this(r,g,b,255);
+  }
+
+  public Color(int r, int g, int b, int a) {
+    setRgba(r, g, b, a);
+    this.rgbaSet = true;
+    this.color = "rgba("+r+","+g+","+b+","+a+")";
+  }
+
+  private void setRgba(int r, int g, int b, int a) {
+    this.rgba = a << 24 | r << 16 | g << 8 | b;
+  }
+
   public boolean isRgbaSet() {
     return rgbaSet;
   }
@@ -30,6 +49,10 @@ public class Color implements PaintStyle {
   }
 
   public String toString() {
+    return color;
+  }
+
+  public String getCSSColor() {
     return color;
   }
 }
