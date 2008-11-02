@@ -226,7 +226,31 @@ public class FastChronoDateTest extends TestCase {
       assertEquals(dow, d.getDayOfWeek());
     }
   }
+
+  public void testAdd_DECADE() {
+    int year = 1892;
+    ChronoDate d = ChronoDate.get(year, 1, 1);
+    
+    while (year < 4999) {
+      d.add(TimeUnit.DECADE, 1);
+      assertEquals(year + 10, d.getYear());
+      year += 10;
+    }
+    
+  }
   
+  public void testAdd_CENTURY() {
+    int year = -5124;
+    ChronoDate d = ChronoDate.get(year, 1, 1);
+    
+    while (year < 4999) {
+      d.add(TimeUnit.CENTURY, 1);
+      assertEquals(year + 100, d.getYear());
+      year += 100;
+    }
+    
+  }
+
   public void testTruncate() {
     ChronoDate d = createTestDate(1492, 4, 21, 23, 56, 31, 555);
     d.truncate(TimeUnit.YEAR);
@@ -287,9 +311,10 @@ public class FastChronoDateTest extends TestCase {
     d.truncate(TimeUnit.WEEK);
     assertEquals(1199, 11, 26, d); // expect Sun, Dec 26, 1199
 
-    //d = createTestDate(1582, 2, 20, 23, 59, 59, 123);
-    //d.truncate(TimeUnit.WEEK);
-    //assertEquals(1199, 11, 26, d); // expect ???
+    // Tue, Mar 20, 1582
+    d = createTestDate(1582, 2, 20, 23, 59, 59, 123);
+    d.truncate(TimeUnit.WEEK);
+    assertEquals(1582, 2, 18, d);
 }
   
   public void testGetDaysInMonth() {

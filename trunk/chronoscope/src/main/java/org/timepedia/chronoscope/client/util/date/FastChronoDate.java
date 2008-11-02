@@ -75,13 +75,14 @@ public class FastChronoDate extends ChronoDate {
    */
   private void addRecursive(TimeUnit timeUnit, int numUnits) {
     switch (timeUnit) {
+      case CENTURY:
+        addYears(numUnits* 100);
+        break;
+      case DECADE:
+        addYears(numUnits* 10);
+        break;
       case YEAR:
-        dateFields.year += numUnits;
-        EraCalc newEraCalc = EraCalc.getByYear(dateFields.year);
-        if (newEraCalc != this.eraCalc) {
-          //log("TESTING: switching to new EraCalc " + newEraCalc);
-          this.eraCalc = newEraCalc;
-        }
+        addYears(numUnits);
         break;
       case MONTH:
         dateFields.month += numUnits;
@@ -151,7 +152,16 @@ public class FastChronoDate extends ChronoDate {
         throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported");
     }
   }
-
+  
+  private void addYears(int numYears) {
+    dateFields.year += numYears;
+    EraCalc newEraCalc = EraCalc.getByYear(dateFields.year);
+    if (newEraCalc != this.eraCalc) {
+      //log("TESTING: switching to new EraCalc " + newEraCalc);
+      this.eraCalc = newEraCalc;
+    }
+  }
+  
   @Override
   public int getDaysInMonth() {
     boolean isLeapYear = eraCalc.isLeapYear(dateFields.year);
