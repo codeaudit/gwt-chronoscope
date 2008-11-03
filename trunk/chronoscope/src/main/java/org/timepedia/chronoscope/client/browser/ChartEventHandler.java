@@ -90,7 +90,7 @@ public class ChartEventHandler {
     return chartInfo.isHandled();
   }
 
-  private DomEvent getBrowserEvent(Event event) {
+  protected DomEvent getBrowserEvent(Event event) {
     switch (event.getTypeInt()) {
       case Event.ONCLICK:
         return new ClickEvent(event);
@@ -125,3 +125,4 @@ public class ChartEventHandler {
     return Event.ONKEYDOWN;
   }
 }
+                
