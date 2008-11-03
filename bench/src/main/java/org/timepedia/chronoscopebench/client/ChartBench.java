@@ -58,7 +58,7 @@ public class ChartBench implements EntryPoint {
       Chronoscope.initialize();
 
       final Dataset[] ds = new Dataset[2];
-      ds[0] = Chronoscope.createXYDataset(getJson("unratedata"));
+      ds[0] = Chronoscope.getInstance().createXYDataset(getJson("unratedata"));
       ds[1] = mockDsFactory.getBasicDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);
