@@ -13,18 +13,16 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.BinaryMipMapStrategy;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
-import org.timepedia.chronoscope.client.data.MipMapStrategy;
 import org.timepedia.chronoscope.client.data.MipMapStrategyFactory;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
@@ -120,7 +118,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export createTimeseriesChartByElement
    */
   @Export("createTimeseriesChartByElement")
-  public static ChartPanel createTimeseriesChart(Element elem,
+  public ChartPanel createTimeseriesChart(Element elem,
       JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight) {
     return createTimeseriesChart(elem, createXYDatasets(jsonDatasets),
         chartWidth, chartHeight);
@@ -133,7 +131,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
-  public static ChartPanel createTimeseriesChart(String id,
+  public ChartPanel createTimeseriesChart(String id,
       JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
     ChartPanel chart = createTimeseriesChart(DOM.getElementById(id),
@@ -207,7 +205,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export
    */
   @Export
-  public static Dataset createXYDataset(JSONDataset json) {
+  public Dataset createXYDataset(JSONDataset json) {
     final boolean isMipped = json.isMipped();
     final String dtformat = json.getDateTimeFormat();
 
@@ -281,7 +279,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * Datasets. <p> See {@link #createXYDataset(JSONDataset)} for details of the
    * format.
    */
-  public static Dataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
+  public Dataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
     if (jsonDatasets == null) {
       return new Dataset[0];
     }

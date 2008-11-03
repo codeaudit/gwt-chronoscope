@@ -110,7 +110,7 @@ public abstract class AbstractXYDataSource extends XYDataSource {
   }
 
   protected void parseJSON(String text, DataSourceCallback async) {
-    async.onSuccess(Chronoscope.createXYDatasets(getJson(text)));
+    async.onSuccess(Chronoscope.getInstance().createXYDatasets(getJson(text)));
   }
 
   protected void parseXML(String text, DataSourceCallback async) {
