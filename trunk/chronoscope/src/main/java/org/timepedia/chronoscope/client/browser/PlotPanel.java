@@ -192,10 +192,10 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * and therefore super.onAttach() is not called until onViewReady is invoked.
    */
   protected void onAttach() {
-    sinkEvents();
-    
-    chartEventHandler = GWT.create(ChartEventHandler.class);
 
+    chartEventHandler = GWT.create(ChartEventHandler.class);
+    sinkEvents();
+     
     Element cssgss = null;
     cssgss = DOM.createDiv();
     DOM.setStyleAttribute(cssgss, "width", "0px");
@@ -243,12 +243,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   private void sinkEvents() {
-    sinkEvents(Event.MOUSEEVENTS);
-    sinkEvents(Event.KEYEVENTS);
-    sinkEvents(Event.ONCLICK);
-    sinkEvents(Event.ONDBLCLICK);
-    sinkEvents(Event.ONMOUSEWHEEL);
-
+    chartEventHandler.sinkEvents(this);
     Window.addWindowResizeListener(this);
     disableContextMenu(getElement());
   }

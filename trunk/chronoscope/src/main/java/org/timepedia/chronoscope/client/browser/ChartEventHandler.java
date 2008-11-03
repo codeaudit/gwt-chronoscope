@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.gen2.event.dom.client.DomEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOverEvent;
@@ -15,6 +16,7 @@ import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
 import com.google.gwt.gen2.event.dom.client.ClickEvent;
 import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
 import com.google.gwt.gen2.event.shared.HandlerManager;
+import com.google.gwt.gen2.event.shared.AbstractEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
@@ -36,7 +38,7 @@ import org.timepedia.chronoscope.client.browser.event.OverviewAxisMouseMoveHandl
  */
 public class ChartEventHandler {
 
-  private HandlerManager handlerLookup;
+  protected HandlerManager handlerLookup;
 
   private static ChartState chartInfo;
 
@@ -80,7 +82,7 @@ public class ChartEventHandler {
     chartInfo.setLocalX(x);
     chartInfo.setLocalY(y);
     
-    DomEvent browserEvent = getBrowserEvent(event);
+    AbstractEvent browserEvent = getBrowserEvent(event);
     if (browserEvent != null) {
       handlerLookup.fireEvent(browserEvent);
     } else {
@@ -90,7 +92,7 @@ public class ChartEventHandler {
     return chartInfo.isHandled();
   }
 
-  protected DomEvent getBrowserEvent(Event event) {
+  protected AbstractEvent getBrowserEvent(Event event) {
     switch (event.getTypeInt()) {
       case Event.ONCLICK:
         return new ClickEvent(event);
@@ -123,6 +125,14 @@ public class ChartEventHandler {
    */
   public int getTabKeyEventType() {
     return Event.ONKEYDOWN;
+  }
+
+  public void sinkEvents(UIObject uiObject) {
+    uiObject.sinkEvents(Event.MOUSEEVENTS);
+    uiObject.sinkEvents(Event.KEYEVENTS);
+    uiObject.sinkEvents(Event.ONCLICK);
+    uiObject.sinkEvents(Event.ONDBLCLICK);
+    uiObject.sinkEvents(Event.ONMOUSEWHEEL);
   }
 }
                 
