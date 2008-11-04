@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 
@@ -11,7 +10,7 @@ import org.timepedia.chronoscope.client.data.DatasetRequest;
  */
 public class Fixtures {
   
-    private static final DatasetFactory dsFactory = new DefaultDatasetFactory();
+    private static final DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
     
     public static final String[] pre70s = {"1961", "1962", "1963", "1964", "1965"};
 

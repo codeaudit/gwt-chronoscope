@@ -109,6 +109,12 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getRangeLabel();
 
   /**
+   * Returns the fixed number of components that each tuple within this dataset
+   * can hold (e.g. a 2-tuple, 5-tuple, etc.).
+   */
+  int getTupleLength();
+  
+  /**
    * Return the domain value for the given index on level 0
    */
   double getX(int index);

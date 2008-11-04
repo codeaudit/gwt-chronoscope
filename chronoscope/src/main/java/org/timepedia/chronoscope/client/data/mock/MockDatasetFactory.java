@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.data.mock;
 
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.util.TimeUnit;
@@ -13,7 +13,7 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
  * @author chad takahashi
  */
 public class MockDatasetFactory {
-  private DatasetFactory dsFactory = new DefaultDatasetFactory();
+  private DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
   
   /**
    * Creates a basic sine wave composed of 1000 points spaced 1 day

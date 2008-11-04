@@ -12,8 +12,8 @@ import com.google.gwt.dom.client.TableSectionElement;
 import com.google.gwt.i18n.client.NumberFormat;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -54,7 +54,7 @@ public class DataTableParser {
       }
     }
 
-    DatasetFactory dsFactory = new DefaultDatasetFactory();
+    DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
 
     Dataset[] ds = new Dataset[numCols];
     numCols = 0;
