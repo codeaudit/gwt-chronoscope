@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDataset<T> {
 
   /**
-   * Stores the multiresolution (mipmapped) values for each element.
+   * Stores the mipmapped values for each element.
    */
   protected Array2D[] dimensions;
 
@@ -91,6 +91,10 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
 
   public int getNumSamples(int mipLevel) {
     return dimensions[0].numColumns(mipLevel);
+  }
+  
+  public int getTupleLength() {
+    return dimensions.length;
   }
 
   public double getX(int index, int mipLevel) {

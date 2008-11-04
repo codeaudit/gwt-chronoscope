@@ -109,6 +109,10 @@ public class UtilTest extends TestCase {
       throw new UnsupportedOperationException();
     }
 
+    public int getTupleLength() {
+      return 2;
+    }
+
     public double getX(int index) {
       return domain[index];
     }

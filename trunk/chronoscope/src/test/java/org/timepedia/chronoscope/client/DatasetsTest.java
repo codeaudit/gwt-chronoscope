@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DatasetRequestMaker;
-import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
+import org.timepedia.chronoscope.client.data.ChronoscopeDatasetFactory;
 import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.Mutation;
 
@@ -14,7 +14,7 @@ import org.timepedia.chronoscope.client.data.Mutation;
  */
 public class DatasetsTest extends TestCase {
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
-  private DatasetFactory dsFactory = new DefaultDatasetFactory();
+  private DatasetFactory dsFactory = new ChronoscopeDatasetFactory();
   
   public void testAggregateCalcs() {
     MutableDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});

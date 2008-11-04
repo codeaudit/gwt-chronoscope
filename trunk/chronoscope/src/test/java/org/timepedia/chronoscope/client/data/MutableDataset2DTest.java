@@ -8,7 +8,7 @@ import org.timepedia.chronoscope.client.MutableDataset;
  * @author chad takahashi
  */
 public class MutableDataset2DTest extends TestCase {
-  private DatasetFactory dsFactory = new DefaultDatasetFactory();
+  private DatasetFactory dsFactory = new ChronoscopeDatasetFactory();
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
   
   public void testAppend() {

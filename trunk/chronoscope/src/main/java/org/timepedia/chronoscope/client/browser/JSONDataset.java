@@ -61,7 +61,10 @@ public class JSONDataset extends JavaScriptObject {
     return this.range;
   }-*/;
 
-
+  public final native JsArray<JsArrayNumber> getTupleRange() /*-{
+    return this.tupleRange;
+  }-*/;
+  
   public final native JsArray<JsArrayNumber> getMultiDomain() /*-{
      return this.domain;
    }-*/;

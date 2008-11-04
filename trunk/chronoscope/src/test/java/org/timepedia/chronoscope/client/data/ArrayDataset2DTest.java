@@ -11,7 +11,7 @@ import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
  * @author chad takahashi
  */
 public class ArrayDataset2DTest extends TestCase {
-  private DatasetFactory dsFactory = new DefaultDatasetFactory();
+  private DatasetFactory dsFactory = new ChronoscopeDatasetFactory();
   private DatasetRequestMaker dsMaker = new DatasetRequestMaker();
   
   public void testTupleAccessors() {

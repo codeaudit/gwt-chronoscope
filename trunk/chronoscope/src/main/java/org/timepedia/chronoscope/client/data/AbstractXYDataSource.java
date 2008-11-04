@@ -1,10 +1,10 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
-import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.ComponentFactory;
+import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JSONDataset;
 
@@ -93,7 +93,7 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       }
     }
 
-    DatasetFactory dsFactory = new DefaultDatasetFactory();
+    DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
     
     Dataset datasets[] = new Dataset[numseries];
     for (int i = 0; i < datasets.length; i++) {

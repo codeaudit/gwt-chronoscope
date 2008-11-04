@@ -15,6 +15,7 @@ import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
@@ -22,14 +23,13 @@ import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
-import org.timepedia.chronoscope.client.data.DefaultDatasetFactory;
-import org.timepedia.chronoscope.client.data.MipMapStrategyFactory;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.JavaArray2D;
 import org.timepedia.exporter.client.Export;
@@ -39,9 +39,10 @@ import org.timepedia.exporter.client.Exporter;
 import org.timepedia.exporter.client.ExporterUtil;
 
 /**
- * Factory class and JS API interface for Chronoscope Charts <p/> This class
- * exports methods that can be used by both Java and JS to create and configure
- * charts, as well as being a global sink for History events
+ * Factory class and JS API interface for Chronoscope Charts.
+ * <p>
+ * This class exports methods that can be used by both Java and JS to create 
+ * and configure charts, as well as being a global sink for History events.
  *
  * @gwt.exportPackage chronoscope
  */
@@ -112,6 +113,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     return new RangeBarMarker(rangeLow, rangeHigh, label);
   }
 
+  protected Chronoscope() {
+    // no-op
+  }
+  
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
@@ -206,72 +211,25 @@ public class Chronoscope implements Exportable, HistoryListener {
    */
   @Export
   public Dataset createXYDataset(JSONDataset json) {
-    final boolean isMipped = json.isMipped();
-    final String dtformat = json.getDateTimeFormat();
-
-    if (isMipped && dtformat != null) {
-      throw new IllegalArgumentException(
-          "dtformat and mipped cannot be used together in dataset with id "
-              + json.getId());
-    }
-
+    validateJSON(json);
+    
     DatasetRequest request;
-    if (isMipped) {
-      request = new DatasetRequest.MultiRes();
+    if (json.isMipped()) {
+      request = buildPreMipmappedDatasetRequest(json);
     } else {
-      request = new DatasetRequest.Basic();
+      request = buildDatasetRequest(json);
     }
 
-    final double minInterval = json.getMinInterval();
     request.setIdentifier(json.getId());
     request.setLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
+
+    final double minInterval = json.getMinInterval();
     if (minInterval > 0) {
       request.setApproximateMinimumInterval(minInterval);
     }
-
-    final double domainScale = json.getDomainScale();
-
-    if (isMipped) {
-      JsArray<JsArrayNumber> mdomain = json.getMultiDomain();
-      JsArray<JsArrayNumber> mrange = json.getMultiRange();
-
-      int dmipLevels = mdomain.length();
-      int rmiplevel = mrange.length();
-      if (dmipLevels != rmiplevel) {
-        if (ChronoscopeOptions.isErrorReportingEnabled()) {
-          Window.alert("Domain and Range dataset levels are not equal");
-        }
-      }
-
-      double domains[][] = new double[dmipLevels][];
-      double ranges[][] = new double[dmipLevels][];
-      for (int i = 0; i < dmipLevels; i++) {
-        domains[i] = jsArrayParser.parse(mdomain.get(i), domainScale);
-        ranges[i] = jsArrayParser.parse(mrange.get(i));
-      }
-
-      DatasetRequest.MultiRes mippedRequest = (DatasetRequest.MultiRes) request;
-      request.setRangeTop(json.getRangeTop());
-      request.setRangeBottom(json.getRangeBottom());
-      mippedRequest.addMultiresTupleSlice(createArray2D(domains));
-      mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
-    } else {
-      DatasetRequest.Basic basicRequest = (DatasetRequest.Basic) request;
-      request.setDefaultMipMapStrategy(
-          MipMapStrategyFactory.newInstance().get(json.getPartitionStrategy()));
-      double[] domainArray = null;
-      if (dtformat != null) {
-        domainArray = jsArrayParser
-            .parseFromDate(json.getDomainString(), dtformat);
-      } else {
-        domainArray = jsArrayParser.parse(json.getDomain(), domainScale);
-      }
-      basicRequest.addTupleSlice(domainArray);
-      basicRequest.addTupleSlice(jsArrayParser.parse(json.getRange()));
-    }
-
-    return new DefaultDatasetFactory().create(request);
+    
+    return ComponentFactory.get().getDatasetFactory().create(request); 
   }
 
   /**
@@ -428,7 +386,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     return cpanel;
   }
 
-  public void init() {
+  protected void init() {
 
     try {
       if (currentTheme == null) {
@@ -500,6 +458,66 @@ public class Chronoscope implements Exportable, HistoryListener {
     }
   }
 
+  private DatasetRequest buildDatasetRequest(JSONDataset json) {
+    DatasetRequest.Basic request = new DatasetRequest.Basic();
+    final String dtformat = json.getDateTimeFormat();
+    
+    request.setDefaultMipMapStrategy(
+        ComponentFactory.get().getMipMapStrategy(json.getPartitionStrategy()));
+    
+    double[] domainArray = null;
+    if (dtformat != null) {
+      domainArray = jsArrayParser
+          .parseFromDate(json.getDomainString(), dtformat);
+    } else {
+      domainArray = jsArrayParser.parse(json.getDomain(), json.getDomainScale());
+    }
+    request.addTupleSlice(domainArray);
+    
+    JsArray<JsArrayNumber> tupleRange = json.getTupleRange();
+    if (tupleRange != null) {
+      for (int i = 0; i < tupleRange.length(); i++) {
+        request.addTupleSlice(jsArrayParser.parse(tupleRange.get(i)));
+      }
+    }
+    else {
+      request.addTupleSlice(jsArrayParser.parse(json.getRange()));
+    }
+    
+    return request;
+  }
+  
+  private DatasetRequest buildPreMipmappedDatasetRequest(JSONDataset json) {
+    DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
+
+    JsArray<JsArrayNumber> mdomain = json.getMultiDomain();
+    JsArray<JsArrayNumber> mrange = json.getMultiRange();
+
+    int dmipLevels = mdomain.length();
+    int rmiplevel = mrange.length();
+    if (dmipLevels != rmiplevel) {
+      if (ChronoscopeOptions.isErrorReportingEnabled()) {
+        Window.alert("Domain and Range dataset levels are not equal");
+      }
+    }
+
+    double domains[][] = new double[dmipLevels][];
+    double ranges[][] = new double[dmipLevels][];
+    double domainScale = json.getDomainScale();
+    for (int i = 0; i < dmipLevels; i++) {
+      domains[i] = jsArrayParser.parse(mdomain.get(i), domainScale);
+      ranges[i] = jsArrayParser.parse(mrange.get(i));
+    }
+
+    DatasetRequest.MultiRes mippedRequest = (DatasetRequest.MultiRes) request;
+    request.setRangeTop(json.getRangeTop());
+    request.setRangeBottom(json.getRangeBottom());
+    mippedRequest.addMultiresTupleSlice(createArray2D(domains));
+    mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
+    
+    return request;
+  }
+  
   private void checkForChronoscopeCSS() {
     if (!isCssIncluded("Chronoscope.css") && ChronoscopeOptions.errorReportingEnabled) {
       throw new RuntimeException(
@@ -591,5 +609,14 @@ public class Chronoscope implements Exportable, HistoryListener {
       }
     };
     t.schedule(10);
+  }
+  
+  private void validateJSON(JSONDataset jsonDataset) { 
+    ArgChecker.isNotNull(jsonDataset, "jsonDataset");
+    if (jsonDataset.isMipped() && jsonDataset.getDateTimeFormat() != null) {
+      throw new IllegalArgumentException(
+          "dtformat and mipped cannot be used together in dataset with id "
+              + jsonDataset.getId());
+    }
   }
 }
