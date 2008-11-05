@@ -49,6 +49,9 @@ public class DateFields {
    */
   public void clearStartingAfter(TimeUnit timeUnit) {
     switch (timeUnit) {
+      case MILLENIUM:
+        // e.g. 1979 -> 1000; 972 -> 0; -200 -> -1000
+        this.year = (this.year / 1000) * 1000;
       case CENTURY:
         // e.g. 1979 -> 1900; 1492 -> 1400; 1900 -> 1900
         this.year = (this.year / 100) * 100;

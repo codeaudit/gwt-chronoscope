@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.Interval;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,8 +113,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     for (int i = 0; i < numLevels; i++) {
       for (int j = 0; j < rangeMipmap.numColumns(i); j++) {
         double value = rangeMipmap.get(i, j);
-        lo = Math.min(lo, value);
-        hi = Math.max(hi, value);
+        lo = MathUtil.min(lo, value);
+        hi = MathUtil.max(hi, value);
       }
     }
 

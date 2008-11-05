@@ -137,7 +137,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
           expectedValue = data[j];
         }
         else {
-          expectedValue = Math.max(prevLevel[j * 2], prevLevel[j * 2 + 1]);
+          expectedValue = MathUtil.max(prevLevel[j * 2], prevLevel[j * 2 + 1]);
         }
         
         log("\tlevel=" + i + "; j=" + j + "; rangeValue=" + multiRange.get(i, j));

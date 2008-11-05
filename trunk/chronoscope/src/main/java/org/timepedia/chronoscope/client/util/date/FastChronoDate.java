@@ -75,6 +75,9 @@ public class FastChronoDate extends ChronoDate {
    */
   private void addRecursive(TimeUnit timeUnit, int numUnits) {
     switch (timeUnit) {
+      case MILLENIUM:
+        addYears(numUnits* 1000);
+        break;
       case CENTURY:
         addYears(numUnits* 100);
         break;
