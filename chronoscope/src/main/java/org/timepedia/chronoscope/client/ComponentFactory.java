@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.MipMapStrategy;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -37,7 +35,7 @@ public abstract class ComponentFactory {
   public abstract DatasetFactory getDatasetFactory();
   
   public final MipMapStrategy getMipMapStrategy(String name) {
-    GWT.log("TESTING: ComponentFactory: available mipmap strategies: " + name2mipmapStrategy.keySet(), null);
+    //GWT.log("TESTING: ComponentFactory: available mipmap strategies: " + name2mipmapStrategy.keySet(), null);
     MipMapStrategy mms = name2mipmapStrategy.get(name);
     if (mms == null) {
       throw new IllegalArgumentException("Can't find MipMapStrategy associated with " +
