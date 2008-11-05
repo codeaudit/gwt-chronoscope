@@ -27,6 +27,10 @@ import java.util.Date;
 @ExportPackage("chronoscope")
 public class Marker implements Overlay, GssElement, Exportable {
 
+  private InfoWindow currentWindow;
+
+  private InfoWindow wasOpenWindow;
+
   private static enum MarkerShape {
 
     BALLOON, TEARDROP
@@ -97,8 +101,20 @@ public class Marker implements Overlay, GssElement, Exportable {
       throw new IllegalStateException("plot not set");
     }
 
+    // if no longer visible, close window
     if (!plot.getDomain().containsOpen(domainX)) {
+      if (currentWindow != null) {
+        wasOpenWindow = currentWindow;
+        currentWindow.close();
+      }
       return;
+    }
+
+    // if window was hidden, and marker is now visible, show it
+    if (currentWindow == null && wasOpenWindow != null) {
+      currentWindow = wasOpenWindow;
+      wasOpenWindow = null;
+      currentWindow.open();
     }
 
     lazyInitScreenProps(backingCanvas);
@@ -118,12 +134,17 @@ public class Marker implements Overlay, GssElement, Exportable {
 
     backingCanvas.save();
     int arcDirection = (y < yp) ? 1 : 0;
+    if (currentWindow != null) {
+      currentWindow.setPosition(plot.domainToWindowX(domainX, datasetIdx),
+          plot.rangeToWindowY(rangeY, datasetIdx) + 5);
+    }
     x = drawOval(labelWidth, labelHeight, markerProps, backingCanvas, x, y, yp,
         arcDirection);
 
     backingCanvas.drawText(x, y, label, markerProps.fontFamily,
         markerProps.fontWeight, markerProps.fontSize, layer, Cursor.CLICKABLE);
     backingCanvas.restore();
+
   }
 
   public int getDatasetIndex() {
@@ -189,7 +210,18 @@ public class Marker implements Overlay, GssElement, Exportable {
     if (plot == null) {
       throw new IllegalStateException("plot not set");
     }
-    return plot.openInfoWindow(html, domainX, rangeY, datasetIdx);
+    if (currentWindow != null) {
+      currentWindow.close();
+    }
+    wasOpenWindow = null;
+    currentWindow = plot.openInfoWindow(html, domainX, rangeY, datasetIdx);
+    currentWindow
+        .addInfoWindowClosedHandler(new InfoWindow.InfoWindowClosedHandler() {
+          public void onInfoWindowClosed(InfoWindow.InfoWindowEvent event) {
+            currentWindow = null;
+          }
+        });
+    return currentWindow;
   }
 
   public void removeOverlayClickListener(OverlayClickListener listener) {
