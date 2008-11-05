@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -179,8 +180,8 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   private void updateAggregateInfo(Dataset<T> dataset) {
-    minDomain = Math.min(minDomain, dataset.getMinValue(0));
-    maxDomain = Math.max(maxDomain, dataset.getMaxValue(0));
+    minDomain = MathUtil.min(minDomain, dataset.getMinValue(0));
+    maxDomain = MathUtil.max(maxDomain, dataset.getMaxValue(0));
     minInterval = Math
         .min(minInterval, dataset.getApproximateMinimumInterval());
   }

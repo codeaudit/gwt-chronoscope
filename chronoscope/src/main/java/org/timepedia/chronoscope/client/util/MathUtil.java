@@ -108,6 +108,20 @@ public final class MathUtil {
   }
 
   /**
+   * Returns the larger of a and b.
+   */
+  public static double max(double a, double b) {
+    return (a > b) ? a : b;
+  }
+  
+  /**
+   * Returns the smaller of a and b.
+   */
+  public static double min(double a, double b) {
+    return (a < b) ? a : b;
+  }
+  
+  /**
    * Performs 'x modulo y' (not to be confused with the remainder operator '%',
    * which behaves differently when x is negative).
    */

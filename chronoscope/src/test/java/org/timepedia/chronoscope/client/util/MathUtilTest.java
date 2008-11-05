@@ -71,6 +71,22 @@ public class MathUtilTest extends TestCase {
     assertEquals(Double.NaN, MathUtil.log2(Double.NaN));
   }
   
+  public void testMax() {
+    assertEquals(2.0, MathUtil.max(2, 1));
+    assertEquals(2.0, MathUtil.max(1, 2));
+    assertEquals(2.0, MathUtil.max(2, 2));
+    assertEquals(2.0, MathUtil.max(2, -2));
+    assertEquals(-2.0, MathUtil.max(-2, -3));
+  }
+  
+  public void testMin() {
+    assertEquals(1.0, MathUtil.min(2, 1));
+    assertEquals(1.0, MathUtil.min(1, 2));
+    assertEquals(1.0, MathUtil.min(1, 1));
+    assertEquals(-2.0, MathUtil.min(2, -2));
+    assertEquals(-3.0, MathUtil.min(-2, -3));
+  }
+  
   public void testMod() {
     // negative values
     assertEquals(2, MathUtil.mod(-4, 3));
