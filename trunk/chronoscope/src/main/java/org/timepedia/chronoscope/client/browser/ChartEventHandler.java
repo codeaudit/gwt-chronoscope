@@ -1,22 +1,20 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.gen2.event.dom.client.DomEvent;
+import com.google.gwt.gen2.event.dom.client.ClickEvent;
+import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
+import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
+import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
+import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
+import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
 import com.google.gwt.gen2.event.dom.client.MouseOverEvent;
-import com.google.gwt.gen2.event.dom.client.MouseWheelEvent;
 import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
-import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
-import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
-import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
-import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
-import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
-import com.google.gwt.gen2.event.dom.client.ClickEvent;
-import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
-import com.google.gwt.gen2.event.shared.HandlerManager;
+import com.google.gwt.gen2.event.dom.client.MouseWheelEvent;
 import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.gen2.event.shared.HandlerManager;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.UIObject;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
@@ -76,12 +74,15 @@ public class ChartEventHandler {
         .addHandler(KeyPressEvent.TYPE, new ChartKeyPressHandler());
   }
 
-  public boolean handleChartEvent(Event event, Chart chart, int x, int y) {
+  public boolean handleChartEvent(Event event, Chart chart, int clientX,
+      int clientY, int originX, int originY) {
     chartInfo.chart = chart;
     chartInfo.setHandled(false);
-    chartInfo.setLocalX(x);
-    chartInfo.setLocalY(y);
-    
+    chartInfo.setClientX(clientX);
+    chartInfo.setClientY(clientY);
+    chartInfo.setOriginX(originX);
+    chartInfo.setOriginY(originY);
+
     AbstractEvent browserEvent = getBrowserEvent(event);
     if (browserEvent != null) {
       handlerLookup.fireEvent(browserEvent);
