@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.timepedia.chronoscope.client.browser.event;
 
@@ -18,28 +18,49 @@ public class ChartState {
 
   private boolean isHandled;
 
-  private int localX, localY;
+  private int clientX, clientY;
 
   private int tabKeyEventCode = Event.ONKEYDOWN;
 
+  private int originX;
+
+  private int originY;
+
+  public int getClientX() {
+    return clientX;
+  }
+
+  public int getClientY() {
+    return clientY;
+  }
+
   /**
-   * Describes the compound UI action currently taking place (if any).
-   * A compound UI action is either a drag or select/highlight operation.
+   * Describes the compound UI action currently taking place (if any). A
+   * compound UI action is either a drag or select/highlight operation.
    */
   public CompoundUIAction getCompoundUIAction() {
     return compoundUIAction;
   }
 
   public int getLocalX() {
-    return localX;
+    return getClientX() - getOriginX();
   }
 
   public int getLocalY() {
-    return localY;
+    return getClientY() - getOriginY();
+  }
+
+  public int getOriginX() {
+    return originX;
+  }
+
+  public int getOriginY() {
+    return originY;
   }
 
   /**
-   * Determines the browser-specific GWT event code associated with the tab key.
+   * Determines the browser-specific GWT event code associated with the tab
+   * key.
    */
   public int getTabKeyEventCode() {
     return tabKeyEventCode;
@@ -49,21 +70,29 @@ public class ChartState {
     return isHandled;
   }
 
+  public void setClientX(int localX) {
+    this.clientX = localX;
+  }
+
+  public void setClientY(int localY) {
+    this.clientY = localY;
+  }
+
   public void setHandled(boolean handled) {
     this.isHandled = handled;
   }
 
-  public void setLocalX(int localX) {
-    this.localX = localX;
+  public void setOriginX(int originX) {
+    this.originX = originX;
   }
 
-  public void setLocalY(int localY) {
-    this.localY = localY;
+  public void setOriginY(int originY) {
+    this.originY = originY;
   }
 
   /**
    * Gets reassigned based on browser type.
-   * 
+   *
    * @see #getTabKeyEventCode()
    */
   public void setTabKeyEventCode(int tabKeyEventCode) {
@@ -71,8 +100,7 @@ public class ChartState {
   }
 
   public String toString() {
-    return "localX=" + localX + "; localY=" + localY + "; tabKeyEventCode="
+    return "clientX=" + clientX + "; clientY=" + clientY + "; tabKeyEventCode="
         + tabKeyEventCode + "; compoundUIAction=" + compoundUIAction;
   }
-
 }

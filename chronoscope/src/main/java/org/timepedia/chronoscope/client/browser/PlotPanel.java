@@ -120,16 +120,19 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
         == 0;
 
     int x, y;
+    int originX = DOM.getAbsoluteLeft(getElement());
+    int absTop = DOM.getAbsoluteTop(getElement());
+    int originY = absTop + Window.getScrollTop();
+
     if (screenCoordinatesRelevant) {
-      x = DOM.eventGetClientX(evt) - DOM.getAbsoluteLeft(getElement());
-      int absTop = DOM.getAbsoluteTop(getElement());
-      y = DOM.eventGetClientY(evt) - absTop + Window.getScrollTop();
+      x = DOM.eventGetClientX(evt);
+      y = DOM.eventGetClientY(evt);
     } else {
       x = -1;
       y = -1;
     }
 
-    if (!chartEventHandler.handleChartEvent(evt, chart, x, y)) {
+    if (!chartEventHandler.handleChartEvent(evt, chart, x, y, originX, originY)) {
       super.onBrowserEvent(evt);
     } else {
       DOM.eventCancelBubble(evt, true);
