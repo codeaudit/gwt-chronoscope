@@ -36,23 +36,23 @@ public final class FlyweightTuple implements Tuple5D {
   }
 
   public double getFirst() {
-    return tupleDimensions[0].get(mipLevel, dataPointIndex);
+    return get(0);
   }
 
   public double getSecond() {
-    return tupleDimensions[1].get(mipLevel, dataPointIndex);
+    return get(1);
   }
 
   public double getThird() {
-    return tupleDimensions[2].get(mipLevel, dataPointIndex);
+    return get(2);
   }
 
   public double getFourth() {
-    return tupleDimensions[3].get(mipLevel, dataPointIndex);
+    return get(3);
   }
 
   public double getFifth() {
-    return tupleDimensions[4].get(mipLevel, dataPointIndex);
+    return get(4);
   }
 
   public int size() {
