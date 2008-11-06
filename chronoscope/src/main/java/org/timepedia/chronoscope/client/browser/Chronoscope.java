@@ -125,7 +125,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export("createTimeseriesChartByElement")
   public ChartPanel createTimeseriesChart(Element elem,
       JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight) {
-    return createTimeseriesChart(elem, createXYDatasets(jsonDatasets),
+    return createTimeseriesChart(elem, createDatasets(jsonDatasets),
         chartWidth, chartHeight);
   }
 
@@ -140,7 +140,7 @@ public class Chronoscope implements Exportable, HistoryListener {
       JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
     ChartPanel chart = createTimeseriesChart(DOM.getElementById(id),
-        createXYDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
+        createDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
     return chart;
   }
 
@@ -210,7 +210,7 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export
    */
   @Export
-  public Dataset createXYDataset(JSONDataset json) {
+  public Dataset createDataset(JSONDataset json) {
     validateJSON(json);
     
     DatasetRequest request;
@@ -234,10 +234,10 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets. <p> See {@link #createXYDataset(JSONDataset)} for details of the
+   * Datasets. <p> See {@link #createDataset(JSONDataset)} for details of the
    * format.
    */
-  public Dataset[] createXYDatasets(JsArray<JSONDataset> jsonDatasets) {
+  public Dataset[] createDatasets(JsArray<JSONDataset> jsonDatasets) {
     if (jsonDatasets == null) {
       return new Dataset[0];
     }
@@ -245,7 +245,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     int numDatasets = jsonDatasets.length();
     Dataset ds[] = new Dataset[numDatasets];
     for (int i = 0; i < numDatasets; i++) {
-      ds[i] = createXYDataset(jsonDatasets.get(i));
+      ds[i] = createDataset(jsonDatasets.get(i));
     }
     return ds;
   }
@@ -343,7 +343,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     Element elem = DOM.getElementById(id);
     int width = DOM.getElementPropertyInt(elem, "clientWidth");
     int height = DOM.getElementPropertyInt(elem, "clientHeight");
-    return createChartPanel(elem, createXYDatasets(datasets), width, height,
+    return createChartPanel(elem, createDatasets(datasets), width, height,
         listener);
   }
 
