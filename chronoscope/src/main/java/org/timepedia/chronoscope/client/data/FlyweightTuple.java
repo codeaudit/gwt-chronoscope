@@ -12,9 +12,11 @@ public final class FlyweightTuple implements Tuple5D {
   private Array2D[] tupleDimensions;
   private int mipLevel = -1;
   private int dataPointIndex = -1;
-
+  private final int tupleLength;
+  
   public FlyweightTuple(Array2D[] tupleDimensions) {
     this.tupleDimensions = tupleDimensions;
+    this.tupleLength = tupleDimensions.length;
   }
   
   public void setDataPointIndex(int index) {
@@ -34,27 +36,27 @@ public final class FlyweightTuple implements Tuple5D {
   }
 
   public double getFirst() {
-    return get(0);
+    return tupleDimensions[0].get(mipLevel, dataPointIndex);
   }
 
   public double getSecond() {
-    return get(1);
+    return tupleDimensions[1].get(mipLevel, dataPointIndex);
   }
 
   public double getThird() {
-    return get(2);
+    return tupleDimensions[2].get(mipLevel, dataPointIndex);
   }
 
   public double getFourth() {
-    return get(3);
+    return tupleDimensions[3].get(mipLevel, dataPointIndex);
   }
 
   public double getFifth() {
-    return get(4);
+    return tupleDimensions[4].get(mipLevel, dataPointIndex);
   }
 
   public int size() {
-    return 5;
+    return tupleLength;
   }
 
   public String toString() {
