@@ -23,6 +23,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
    */
   protected Array2D[] dimensions;
 
+  protected FlyweightTuple flyweightTuple;
+
   protected double minRange, maxRange;
 
   /**
@@ -56,6 +58,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
       minRange = rangeInterval.getStart();
       maxRange = rangeInterval.getEnd();
     }
+    
+    this.flyweightTuple = new FlyweightTuple(this.dimensions);
   }
 
   public double getApproximateMinimumInterval() {
