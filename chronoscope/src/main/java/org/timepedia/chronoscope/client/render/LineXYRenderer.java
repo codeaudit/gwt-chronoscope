@@ -16,11 +16,9 @@ import org.timepedia.exporter.client.Exportable;
 public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement, Exportable {
 
-  boolean prevHover = false;
+  boolean prevFocus = false, prevHover = false;
 
-  boolean prevFocus = false;
-
-  boolean gssInited = false;
+  boolean isGssInitialized = false;
 
   private double lx = -1, ly = -1;
 
@@ -41,8 +39,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   private GssProperties lineProp;
 
   private GssProperties pointProp;
-
-  private boolean pointPathDefined = false;
 
   private final GssElementImpl fillElement;
 
@@ -174,12 +170,12 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void drawPoint(XYPlot<T> plot, Layer layer, T point,
       int seriesNum, RenderState renderState) {
     
-    final boolean hovered = renderState.isHovered();
+    final boolean isHovered = renderState.isHovered();
     final boolean isFocused = renderState.isFocused();
     final double dataX = point.getFirst();
     final double dataY = point.getSecond();
     
-    GssProperties prop = hovered ? gssHoverPointProperties : pointProp;
+    GssProperties prop = isHovered ? gssHoverPointProperties : pointProp;
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
     
@@ -188,31 +184,27 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
         focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
       }
 
-      if (true || !pointPathDefined || hovered || isFocused) {
-        if (prop.size < 1) {
-          prop.size = 1;
-        }
-        layer.setFillColor(prop.bgColor);
-        layer.setShadowBlur(0);
-        layer.setLineWidth(prop.lineThickness);
-        layer.setStrokeColor(prop.color);
-        layer.setShadowBlur(prop.shadowBlur);
-        layer.setLineWidth(prop.lineThickness);
-        pointPathDefined = !(hovered || isFocused);
+      if (prop.size < 1) {
+        prop.size = 1;
       }
+      
+      layer.setFillColor(prop.bgColor);
+      layer.setShadowBlur(0);
+      layer.setLineWidth(prop.lineThickness);
+      layer.setStrokeColor(prop.color);
+      layer.setShadowBlur(prop.shadowBlur);
+      layer.setLineWidth(prop.lineThickness);
+      
       double dx = ux - lx;
-      if (lx == -1 || isFocused || hovered || dx > prop.size * 2 + 4) {
+      if (lx == -1 || isFocused || isHovered || dx > (prop.size * 2 + 4)) {
         layer.beginPath();
-//                layer.translate(ux, uy);
+//      layer.translate(ux, uy);
         layer.arc(ux, uy, prop.size, 0, 2 * Math.PI, 1);
         layer.fill();
         layer.stroke();
-//                layer.translate(-ux, -uy);
+//      layer.translate(-ux, -uy);
         lx = ux;
         ly = uy;
-      }
-      if (hovered || isFocused) {
-        pointPathDefined = false;
       }
     }
   }
@@ -259,7 +251,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   }
 
   private void initGss(View view) {
-    if (gssInited) {
+    if (isGssInitialized) {
       return;
     }
 
@@ -274,7 +266,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     focusPainter = new CircleFocusPainter(focusGssProperties);
 
-    gssInited = true;
+    isGssInitialized = true;
   }
 
 }
