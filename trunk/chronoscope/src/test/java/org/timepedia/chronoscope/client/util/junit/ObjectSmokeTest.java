@@ -48,6 +48,16 @@ public final class ObjectSmokeTest {
 			Object foo = testObjectFactory.getInstance(i);
 			Object bar = testObjectFactory.getInstance(i);
 			TestCase.assertEquals("foo.equals(bar) returned false", foo, bar);
+			
+			// CASE 4: foo.equals(bar) should always return false whenever foo 
+			// and bar have different state
+			if (i > 0) {
+			  foo = testObjectFactory.getInstance(i - 1);
+        bar = testObjectFactory.getInstance(i);
+        if (foo.equals(bar)) {
+          TestCase.fail("foo.equals(bar) was true, but foo and bar have different state");
+        }
+			}
 		}
 	}
 	
