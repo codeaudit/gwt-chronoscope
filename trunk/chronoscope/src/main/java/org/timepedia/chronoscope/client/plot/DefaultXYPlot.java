@@ -155,8 +155,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private Bounds innerBounds;
 
-  private final boolean interactive;
-
   private boolean isAnimating = false;
 
   private LegendAxisPanel legendAxisPanel;
@@ -213,7 +211,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   private AxisPanel overrideDomainAxisRenderer;
 
   public DefaultXYPlot() {
-    this.interactive = true;
     overlays = new ArrayList<Overlay>();
     plotNumber = globalPlotNumber++;
   }
@@ -662,7 +659,44 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   @Export
   public void redraw() {
-    update();
+    Canvas backingCanvas = view.getCanvas();
+    backingCanvas.beginFrame();
+
+    plotLayer.save();
+    plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
+    plotLayer.clear();
+    // plotLayer.setFillColor("#FF0000");
+    // plotLayer.fillRect(0, 0, 50, 50);
+    
+    // if on a low performance device, don't re-render axes or legend
+    // when animating
+    final boolean canDrawFast = 
+        !(isAnimating() && ChronoscopeOptions.isLowPerformance());
+
+    if (overviewEnabled) {
+      drawOverviewOfDatasets();
+    }
+
+    boolean drawVertical = !drewVertical;
+    for (RangeAxis axis : rangeAxes) {
+      drawVertical = drawVertical || axis.isAutoZoomVisibleRange();
+    }
+    if (drawVertical && canDrawFast) {
+      drawRangeAxes();
+    }
+
+    drawPlot();
+    
+    if (canDrawFast) {
+      drawOverviewHighlight();
+      drawTopPanel();
+      drawOverlays(plotLayer);
+      drawPlotHighlight(highLightLayer);
+    }
+
+    plotLayer.restore();
+    backingCanvas.endFrame();
+    
     plotDomain.copyTo(lastPlotDomain);
     view.flipCanvas();
   }
@@ -783,9 +817,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     return somePointHasFocus;
   }
 
-  public void setHighlight(double begin, double end) {
-    beginHighlight = begin;
-    endHighlight = end;
+  public void setHighlight(double startDomainX, double endDomainX) {
+    beginHighlight = startDomainX;
+    endHighlight = endDomainX;
   }
 
   public void setHighlight(int selStart, int selEnd) {
@@ -998,47 +1032,127 @@ public class DefaultXYPlot<T extends Tuple2D>
     final double viewHeight = view.getHeight();
     Bounds b = new Bounds();
 
-    // TODO: only in snapshot
-    if (interactive) {
-      double centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-          .getHeight();
+    double centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
+        .getHeight();
 
-      // If center plot too squished, remove the overview axis
-      if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-        if (overviewEnabled) {
-          bottomPanel.remove(overviewAxisPanel);
-          overviewEnabled = false;
-          centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-              .getHeight();
-        }
+    // If center plot too squished, remove the overview axis
+    if (centerPlotHeight < MIN_PLOT_HEIGHT) {
+      if (overviewEnabled) {
+        bottomPanel.remove(overviewAxisPanel);
+        overviewEnabled = false;
+        centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
+            .getHeight();
       }
-
-      // If center plot still too squished, remove the legend axis
-      if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-        if (legendEnabled) {
-          topPanel.remove(legendAxisPanel);
-          legendEnabled = false;
-          centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-              .getHeight();
-        }
-      }
-
-      b.x = rangePanelLeft.getWidth();
-      b.y = topPanel.getHeight();
-      b.height = centerPlotHeight;
-      b.width = viewWidth - rangePanelLeft.getWidth() - rangePanelRight
-          .getWidth();
-    } else {
-      b.x = 0;
-      b.y = 0;
-      b.height = viewHeight;
-      b.width = viewWidth;
     }
+
+    // If center plot still too squished, remove the legend axis
+    if (centerPlotHeight < MIN_PLOT_HEIGHT) {
+      if (legendEnabled) {
+        topPanel.remove(legendAxisPanel);
+        legendEnabled = false;
+        centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
+            .getHeight();
+      }
+    }
+
+    b.x = rangePanelLeft.getWidth();
+    b.y = topPanel.getHeight();
+    b.height = centerPlotHeight;
+    b.width = 
+        viewWidth - rangePanelLeft.getWidth() - rangePanelRight.getWidth();
 
     return b;
   }
 
-  private void drawHighlight(Layer layer) {
+  /**
+   * Draws the overlays (e.g. markers) onto the center plot. 
+   */
+  private void drawOverlays(Layer layer) {
+    layer.save();
+    layer.clearTextLayer("overlays");
+    layer.setTextLayerBounds("overlays",
+        new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
+
+    for (Overlay o : overlays) {
+      o.draw(layer, "overlays");
+    }
+
+    layer.restore();
+  }
+
+  /**
+   * Draws the highlighted region (if any) of the dataset overview axis.
+   */
+  private void drawOverviewHighlight() {
+    if (bottomPanel.getAxisCount() == 0) {
+      return;
+    }
+    
+    bottomPanelLayer.save();
+    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+        bottomPanelLayer.getBounds().height);
+    bottomPanel.draw(bottomPanelLayer, domainPanelBounds);
+    bottomPanelLayer.restore();
+  }
+
+  /**
+   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all the
+   * datasets managed by this plot.
+   */
+  private void drawOverviewOfDatasets() {
+    if (overviewDrawn) {
+      return;
+    }
+    
+    // save original endpoints so they can be restored later
+    double dO = plotDomain.getStart();
+    double dE = plotDomain.getEnd();
+    
+    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
+    drawPlot();
+    overviewLayer.save();
+    overviewLayer.setVisibility(false);
+    overviewLayer.clear();
+    overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
+        overviewLayer.getHeight());
+    overviewLayer.restore();
+
+    // restore original endpoints
+    plotDomain.setEndpoints(dO, dE);
+    
+    overviewDrawn = true;
+  }
+
+  private void drawPlot() {
+    final double doChange = plotDomain.getStart() - lastPlotDomain.getStart();
+    final double cdChange = plotDomain.length() - lastPlotDomain.length();
+
+    double numPixels = doChange / plotDomain.length() * plotLayer.getWidth();
+    // disabled for now, implement smooth local scrolling by rendering
+    // a chart with overdraw clipped to the view, and scroll overdraw
+    // regions into view
+    // as needed
+    if (false && cdChange == 0 && numPixels < plotLayer.getWidth() / 2) {
+      plotLayer.setScrollLeft((int) (plotLayer.getScrollLeft() - numPixels));
+      this.movePlotDomain(plotDomain.getStart() + doChange);
+    } else {
+      plotLayer.setScrollLeft(0);
+      background
+          .paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
+
+      // reset the visible RangeAxis ticks if it's been zoomed
+      for (RangeAxis axis : rangeAxes) {
+        axis.initVisibleRange();
+      }
+
+      plotRenderer.drawDatasets();
+    }
+  }
+  
+  /**
+   * Draws the highlighted region onto the center plot.
+   */
+  private void drawPlotHighlight(Layer layer) {
     final double domainStart = plotDomain.getStart();
     final double domainEnd = plotDomain.getEnd();
 
@@ -1069,77 +1183,37 @@ public class DefaultXYPlot<T extends Tuple2D>
     highlightDrawn = true;
   }
 
-  private void drawOverlays(Layer layer) {
-    layer.save();
-    layer.clearTextLayer("overlays");
-    layer.setTextLayerBounds("overlays",
-        new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
+  private void drawRangeAxes() {
+    verticalAxisLayer.save();
+    verticalAxisLayer.setFillColor(Color.TRANSPARENT);
+    verticalAxisLayer.clear();
 
-    for (Overlay o : overlays) {
-      o.draw(layer, "overlays");
+    Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
+        rangePanelLeft.getHeight());
+    rangePanelLeft.draw(verticalAxisLayer, leftPanelBounds);
+
+    if (rangePanelRight.getAxisCount() > 0) {
+      Bounds rightPanelBounds = new Bounds(plotBounds.rightX(), 0,
+          rangePanelRight.getWidth(), rangePanelRight.getHeight());
+      rangePanelRight.draw(verticalAxisLayer, rightPanelBounds);
     }
+    verticalAxisLayer.restore();
 
-    layer.restore();
+    drewVertical = true;
   }
-
-  /**
-   * Draws the highlighted region (if any) of the dataset overview axis.
-   */
-  private void drawOverviewHighlight() {
-    bottomPanelLayer.save();
-    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        bottomPanelLayer.getBounds().height);
-    bottomPanel.draw(bottomPanelLayer, domainPanelBounds);
-    bottomPanelLayer.restore();
-  }
-
-  /**
-   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all the
-   * datasets managed by this plot.
-   */
-  private void drawOverviewOfDatasets() {
-    double dO = plotDomain.getStart();
-    double dE = plotDomain.getEnd();
-    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
-
-    drawPlot();
-
-    overviewLayer.save();
-    overviewLayer.setVisibility(false);
-    overviewLayer.clear();
-    overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight());
-    overviewLayer.restore();
-
-    plotDomain.setEndpoints(dO, dE);
-  }
-
-  private void drawPlot() {
-    final double doChange = plotDomain.getStart() - lastPlotDomain.getStart();
-    final double cdChange = plotDomain.length() - lastPlotDomain.length();
-
-    double numPixels = doChange / plotDomain.length() * plotLayer.getWidth();
-    // disabled for now, implement smooth local scrolling by rendering
-    // a chart with overdraw clipped to the view, and scroll overdraw
-    // regions into view
-    // as needed
-    if (false && cdChange == 0 && numPixels < plotLayer.getWidth() / 2) {
-      plotLayer.setScrollLeft((int) (plotLayer.getScrollLeft() - numPixels));
-      this.movePlotDomain(plotDomain.getStart() + doChange);
-    } else {
-      plotLayer.setScrollLeft(0);
-      background
-          .paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
-
-      // reset the visible RangeAxis ticks if it's been zoomed
-      for (RangeAxis axis : rangeAxes) {
-        axis.initVisibleRange();
-      }
-
-      plotRenderer.drawDatasets();
+  
+  private void drawTopPanel() {
+    if (topPanel.getAxisCount() == 0) {
+      return;
     }
+    
+    topLayer.save();
+    Bounds topPanelBounds = new Bounds(0, 0, topLayer.getBounds().width,
+        topLayer.getBounds().height);
+    topPanel.draw(topLayer, topPanelBounds);
+    topLayer.restore();
   }
-
+  
   private Interval fenceDomain(double destDomainOrig, double destDomainLength) {
     final double minDomain = datasets.getMinDomain();
     final double maxDomain = datasets.getMaxDomain();
@@ -1265,34 +1339,32 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     plotLayer = initLayer(plotLayer, "plotLayer", plotBounds);
 
-    if (interactive) {
-      if (overviewEnabled) {
-        overviewLayer = initLayer(overviewLayer, "overviewLayer", plotBounds);
-        overviewLayer.setVisibility(false);
-      }
-
-      Bounds topLayerBounds = new Bounds(0, 0, view.getWidth(),
-          topPanel.getHeight());
-      topLayer = initLayer(topLayer, "topLayer", topLayerBounds);
-      topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-
-      Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
-          view.getWidth(), rangePanelLeft.getHeight());
-      verticalAxisLayer = initLayer(verticalAxisLayer, "verticalAxis",
-          verticalAxisLayerBounds);
-      verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-      verticalAxisLayer.setFillColor(Color.TRANSPARENT);
-      verticalAxisLayer.clear();
-
-      Bounds bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
-          view.getWidth(), bottomPanel.getHeight());
-      bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis",
-          bottomPanelBounds);
-      bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-
-      highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
-      highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
+    if (overviewEnabled) {
+      overviewLayer = initLayer(overviewLayer, "overviewLayer", plotBounds);
+      overviewLayer.setVisibility(false);
     }
+
+    Bounds topLayerBounds = new Bounds(0, 0, view.getWidth(),
+        topPanel.getHeight());
+    topLayer = initLayer(topLayer, "topLayer", topLayerBounds);
+    topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+
+    Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
+        view.getWidth(), rangePanelLeft.getHeight());
+    verticalAxisLayer = initLayer(verticalAxisLayer, "verticalAxis",
+        verticalAxisLayerBounds);
+    verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    verticalAxisLayer.setFillColor(Color.TRANSPARENT);
+    verticalAxisLayer.clear();
+
+    Bounds bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
+        view.getWidth(), bottomPanel.getHeight());
+    bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis",
+        bottomPanelBounds);
+    bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+
+    highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
+    highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
   }
 
   private void initMipLevels() {
@@ -1439,79 +1511,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     ensureVisible(dataX, dataY, null);
     setFocusAndNotifyView(focusDataset, focusPoint);
     redraw();
-  }
-
-  /**
-   * Render the Plot into the encapsulating Chart's View.
-   */
-  private void update() {
-    Canvas backingCanvas = view.getCanvas();
-    backingCanvas.beginFrame();
-
-    plotLayer.save();
-    plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-    plotLayer.clear();
-    // plotLayer.setFillColor("#FF0000");
-    // plotLayer.fillRect(0, 0, 50, 50);
-    // if on a low performance device, don't rerender axes or legend
-    // when animating
-    boolean notOptimizedForLowPerformance = !isAnimating()
-        || !ChronoscopeOptions.isLowPerformance();
-
-    if (interactive) {
-
-      if (!overviewDrawn && overviewEnabled) {
-        drawOverviewOfDatasets();
-        overviewDrawn = true;
-      }
-
-      if (bottomPanel.getAxisCount() > 0) {
-
-        if (notOptimizedForLowPerformance) {
-          drawOverviewHighlight();
-        }
-      }
-
-      boolean drawVertical = !drewVertical;
-      for (RangeAxis axis : rangeAxes) {
-        drawVertical = drawVertical || axis.isAutoZoomVisibleRange();
-      }
-
-      if (drawVertical && notOptimizedForLowPerformance) {
-        verticalAxisLayer.save();
-        verticalAxisLayer.setFillColor(Color.TRANSPARENT);
-        verticalAxisLayer.clear();
-
-        Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
-            rangePanelLeft.getHeight());
-        rangePanelLeft.draw(verticalAxisLayer, leftPanelBounds);
-
-        if (rangePanelRight.getAxisCount() > 0) {
-          Bounds rightPanelBounds = new Bounds(plotBounds.rightX(), 0,
-              rangePanelRight.getWidth(), rangePanelRight.getHeight());
-          rangePanelRight.draw(verticalAxisLayer, rightPanelBounds);
-        }
-        drewVertical = true;
-        verticalAxisLayer.restore();
-      }
-
-      if (topPanel.getAxisCount() > 0 && notOptimizedForLowPerformance) {
-        topLayer.save();
-        Bounds topPanelBounds = new Bounds(0, 0, topLayer.getBounds().width,
-            topLayer.getBounds().height);
-        topPanel.draw(topLayer, topPanelBounds);
-        topLayer.restore();
-      }
-    }
-
-    drawPlot();
-    if (notOptimizedForLowPerformance) {
-      drawOverlays(plotLayer);
-      drawHighlight(highLightLayer);
-    }
-
-    plotLayer.restore();
-    backingCanvas.endFrame();
   }
 
   private double windowXtoDomain(double x) {

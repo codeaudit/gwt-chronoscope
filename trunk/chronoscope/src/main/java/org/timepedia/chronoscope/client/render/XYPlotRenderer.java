@@ -22,7 +22,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
   // For example, domainStartIdxs[2] stores the leftmost data point index of the
-  // 3rd dataset in plot.datsets that's currently viewable in the plot.
+  // 3rd dataset in plot.datasets that's currently viewable in the plot.
   protected int domainStartIdxs[], domainEndIdxs[];
   
   // Stores the order in which the datasets should be rendered.  For example, if
@@ -31,7 +31,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
   
   // Stores the min and max range values for a given domain interval for each dataset.
   // For example, minRanges[2] stores the minimum range value (within the current plot
-  // domain interval) for the 3rd dataset in plot.datsets.
+  // domain interval) for the 3rd dataset in plot.datasets.
   private double[] minRanges, maxRanges;
   
   private XYPlot<T> plot;
