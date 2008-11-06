@@ -2,11 +2,32 @@ package org.timepedia.chronoscope.client.util;
 
 import junit.framework.TestCase;
 
+import org.timepedia.chronoscope.client.util.junit.ObjectSmokeTest;
+import org.timepedia.chronoscope.client.util.junit.TestObjectFactory;
+
 /**
  * @author chad takahashi
  */
 public class IntervalTest extends TestCase {
+  private TestObjectFactory intervalFactory;
   
+  public IntervalTest() {
+    // Create a TestObjectFactory instance that generates Integer objects.
+    this.intervalFactory = new TestObjectFactory() {
+      public Object getInstance(int index) {
+        return new Interval(index + 0.5, index + 10.5);
+      }
+      public int instanceCount() {
+        return 999;
+      }
+    };
+  }
+  
+  public void testObjectEssentials() {
+    ObjectSmokeTest smokeTest = new ObjectSmokeTest(this.intervalFactory);
+    smokeTest.testAll();
+  }
+
   public void testConstructor() {
     Interval i = new Interval(-2, 2);
     assertEquals(-2.0, i.getStart());

@@ -49,7 +49,16 @@ public class Interval {
     target.start = this.start;
     target.end = this.end;
   }
-
+  
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Interval)) {
+      return false;
+    }
+    
+    Interval i = (Interval)obj;
+    return this.start == i.start && this.end == i.end;
+  }
+  
   /**
    * The value of the ending point of this interval.
    */
@@ -64,6 +73,13 @@ public class Interval {
     return start;
   }
 
+  public int hashCode() {
+    int hashCode = 1;
+    hashCode = (31 * hashCode + (int)this.start) | 0;
+    hashCode = (31 * hashCode + (int)this.end) | 0;
+    return hashCode;
+  }
+  
   /**
    * The length of this interval (i.e. <tt>end - start</tt>).
    */
