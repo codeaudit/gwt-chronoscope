@@ -475,6 +475,6 @@ public class Microformats {
   }
 
   private static Dataset[] importMicroformatTable(String id, Element elt) {
-    return Chronoscope.getInstance().createXYDatasets(importMicroformatTable0(id, elt));
+    return Chronoscope.getInstance().createDatasets(importMicroformatTable0(id, elt));
   }
 }
