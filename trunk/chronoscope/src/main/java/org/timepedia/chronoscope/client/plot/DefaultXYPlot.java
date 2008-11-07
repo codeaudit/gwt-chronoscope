@@ -459,7 +459,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     innerBounds = new Bounds(0, 0, plotBounds.width, plotBounds.height);
 
     clearDrawCaches();
-    lastPlotDomain = plotDomain.copy();
+    lastPlotDomain = new Interval(0, 0);
     initLayers();
     background = new GssBackground(view);
 
@@ -663,7 +663,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void redraw() {
     Canvas backingCanvas = view.getCanvas();
     backingCanvas.beginFrame();
-
+    
+    final boolean plotStateChanged = !plotDomain.equals(lastPlotDomain);
+    
     plotLayer.save();
     plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
     plotLayer.clear();
@@ -690,7 +692,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     drawPlot();
     
     if (canDrawFast) {
-      drawOverviewHighlight();
+      if (plotStateChanged) {
+        drawOverviewHighlight();
+      }
       drawTopPanel();
       drawOverlays(plotLayer);
       drawPlotHighlight(highLightLayer);
