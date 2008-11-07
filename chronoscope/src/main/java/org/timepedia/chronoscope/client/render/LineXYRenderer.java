@@ -15,56 +15,29 @@ import org.timepedia.exporter.client.Exportable;
  */
 public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement, Exportable {
-
+  
   boolean prevFocus = false, prevHover = false;
 
   boolean isGssInitialized = false;
-
+  
   private double lx = -1, ly = -1;
 
+  private GssProperties activeGssLineProps, activeGssPointProps;
+
+  private GssProperties gssDisabledFillProps, gssDisabledLineProps, gssDisabledPointProps,
+      gssFillProps, gssFocusProps, gssHoverProps, gssLineProps, gssPointProps;
+
   private FocusPainter focusPainter;
-
-  private GssProperties gssLineProperties;
-
-  private GssProperties focusGssProperties;
-
-  private GssProperties gssPointProperties;
-
-  private GssProperties disabledLineProperties;
-
-  private GssProperties disabledPointProperties;
-
-  private GssProperties gssHoverPointProperties;
-
-  private GssProperties lineProp;
-
-  private GssProperties pointProp;
-
-  private final GssElementImpl fillElement;
-
-  private GssProperties gssFillProperties;
-
-  private GssProperties disabledFillProperties;
-
-  private GssElement parentSeriesElement = null;
-
-  private GssElement pointElement = null;
 
   private double fx = -1;
   
   // Keeps track of the index of the currently processed datapoint
   private int pointIndex;
   
-  public LineXYRenderer(int seriesNum) {
-    parentSeriesElement = new GssElementImpl("series", null, "s" + seriesNum);
-    pointElement = new GssElementImpl("point", parentSeriesElement);
-    fillElement = new GssElementImpl("fill", parentSeriesElement);
-  }
-
   public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
-    lineProp = renderState.isDisabled() ? disabledLineProperties : gssLineProperties;
+    activeGssLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
     layer.save();
     layer.beginPath();
 
@@ -74,7 +47,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   }
 
   public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
-    pointProp = renderState.isDisabled() ? disabledPointProperties : gssPointProperties;
+    activeGssPointProps = renderState.isDisabled() ? gssDisabledPointProps : gssPointProps;
     lx = ly = -1;
     layer.save();
   }
@@ -82,8 +55,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public double calcLegendIconWidth(XYPlot<T> plot, View view) {
     initGss(view);
     GssProperties apointProp = 
-      (plot.getFocus() != null) ? gssPointProperties 
-                                : disabledPointProperties;
+      (plot.getFocus() != null) ? gssPointProps 
+                                : gssDisabledPointProps;
     return apointProp.size + 10;
   }
 
@@ -93,7 +66,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       double uy = plot.rangeToScreenY(point.getSecond(), seriesNum);
       
       // guard webkit bug, coredump if draw two identical lineTo in a row
-      if (lineProp.visible) {
+      if (activeGssLineProps.visible) {
         if (pointIndex == 0) {
           // This is the first point of the dataset, so just store the coordinates.
           fx = ux;
@@ -125,11 +98,11 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     GssProperties alineProp, apointProp;
     if (plot.getFocus() != null) {
-      alineProp = disabledLineProperties;
-      apointProp = disabledPointProperties;
+      alineProp = gssDisabledLineProps;
+      apointProp = gssDisabledPointProps;
     } else {
-      alineProp = gssLineProperties;
-      apointProp = gssPointProperties;
+      alineProp = gssLineProps;
+      apointProp = gssPointProps;
     }
 
     layer.beginPath();
@@ -175,7 +148,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     final double dataX = point.getFirst();
     final double dataY = point.getSecond();
     
-    GssProperties prop = isHovered ? gssHoverPointProperties : pointProp;
+    GssProperties prop = isHovered ? gssHoverProps : activeGssPointProps;
     double ux = plot.domainToScreenX(dataX, seriesNum);
     double uy = plot.rangeToScreenY(dataY, seriesNum);
     
@@ -212,18 +185,18 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
 
-    layer.setLineWidth(lineProp.lineThickness);
-    layer.setTransparency((float) lineProp.transparency);
-    layer.setShadowBlur(lineProp.shadowBlur);
-    layer.setShadowColor(lineProp.shadowColor);
-    layer.setShadowOffsetX(lineProp.shadowOffsetX);
-    layer.setShadowOffsetY(lineProp.shadowOffsetY);
-    layer.setStrokeColor(lineProp.color);
-    layer.setFillColor(lineProp.bgColor);
-    layer.setStrokeColor(lineProp.color);
+    layer.setLineWidth(activeGssLineProps.lineThickness);
+    layer.setTransparency((float) activeGssLineProps.transparency);
+    layer.setShadowBlur(activeGssLineProps.shadowBlur);
+    layer.setShadowColor(activeGssLineProps.shadowColor);
+    layer.setShadowOffsetX(activeGssLineProps.shadowOffsetX);
+    layer.setShadowOffsetY(activeGssLineProps.shadowOffsetY);
+    layer.setStrokeColor(activeGssLineProps.color);
+    layer.setFillColor(activeGssLineProps.bgColor);
+    layer.setStrokeColor(activeGssLineProps.color);
     GssProperties fillProp = renderState.isDisabled() 
-        ? disabledFillProperties
-        : gssFillProperties;
+        ? gssDisabledFillProps
+        : gssFillProps;
     layer.stroke();
     layer.lineTo(lx, layer.getHeight());
     layer.lineTo(fx, layer.getHeight());
@@ -236,10 +209,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void endPoints(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
     layer.restore();
-  }
-
-  public GssElement getParentGssElement() {
-    return parentSeriesElement;
   }
 
   public String getType() {
@@ -255,16 +224,19 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       return;
     }
 
-    gssLineProperties = view.getGssProperties(this, "");
-    focusGssProperties = view.getGssProperties(pointElement, "focus");
-    gssPointProperties = view.getGssProperties(pointElement, "");
-    gssHoverPointProperties = view.getGssProperties(pointElement, "hover");
-    disabledLineProperties = view.getGssProperties(this, "disabled");
-    disabledPointProperties = view.getGssProperties(pointElement, "disabled");
-    gssFillProperties = view.getGssProperties(fillElement, "");
-    disabledFillProperties = view.getGssProperties(fillElement, "disabled");
+    GssElement pointElement = new GssElementImpl("point", parentGssElement);
+    GssElement fillElement = new GssElementImpl("fill", parentGssElement);
 
-    focusPainter = new CircleFocusPainter(focusGssProperties);
+    gssLineProps = view.getGssProperties(this, "");
+    gssFocusProps = view.getGssProperties(pointElement, "focus");
+    gssPointProps = view.getGssProperties(pointElement, "");
+    gssHoverProps = view.getGssProperties(pointElement, "hover");
+    gssDisabledLineProps = view.getGssProperties(this, "disabled");
+    gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
+    gssFillProps = view.getGssProperties(fillElement, "");
+    gssDisabledFillProps = view.getGssProperties(fillElement, "disabled");
+
+    focusPainter = new CircleFocusPainter(gssFocusProps);
 
     isGssInitialized = true;
   }

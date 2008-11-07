@@ -6,6 +6,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -13,7 +14,9 @@ import org.timepedia.exporter.client.Exportable;
  */
 public abstract class DatasetRenderer<T extends Tuple2D> 
     implements Exportable {
-
+  
+  protected GssElement parentGssElement;
+  
   /**
    * Called before first data is plotted, typically drawing state is setup, or a
    * path is begun.
@@ -76,4 +79,13 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   public int getMaxDrawableDatapoints(XYPlot<T> plot) {
     return plot.getMaxDrawableDataPoints();
   }
+  
+  public final GssElement getParentGssElement() {
+    return this.parentGssElement;
+  }
+  
+  public final void setParentGssElement(GssElement parentGssElement) {
+    this.parentGssElement = parentGssElement;
+  }
+
 }
