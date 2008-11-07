@@ -414,9 +414,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setOverviewEnabled(boolean overviewEnabled);
 
   /**
-   * Set the plot renderer for a given dataset index.
+   * Associates a {@link DatasetRenderer} with a {@link Dataset}.
+   * 
+   * @param datasetIndex the index of the dataset to be rendered
+   * @param renderer the renderer responsible for drawing the dataset
    */
-  void setRenderer(int datasetIndex, DatasetRenderer<T> renderer);
+  void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer);
 
   /**
    * Causes chart to perform an animated zoom such that the current selection

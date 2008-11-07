@@ -15,21 +15,12 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement {
 
-  private GssProperties disabledLineProperties;
-
-  private GssProperties disabledPointProperties;
-
-  private GssProperties focusGssProperties;
+  private GssProperties gssDisabledLineProps, gssDisabledPointProps, gssFocusProps,
+      gssHoverProps, gssLineProps, gssPointProps;
 
   private FocusPainter focusPainter;
 
-  private GssProperties gssHoverPointProperties;
-
-  private boolean gssInited = false;
-
-  private GssProperties gssLineProperties;
-
-  private GssProperties gssPointProperties;
+  private boolean isGssInitialized = false;
 
   private double interval = -1;
 
@@ -37,24 +28,14 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   private double offset = -1;
 
-  private GssElement parentSeriesElement = null;
-
-  private GssElement pointElement = null;
-
   private boolean prevHover = false;
-
-  public BarChartXYRenderer(int seriesNum) {
-
-    parentSeriesElement = new GssElementImpl("series", null, "s" + seriesNum);
-    pointElement = new GssElementImpl("point", parentSeriesElement);
-  }
 
   public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
     GssProperties prop = renderState.isDisabled() 
-        ? disabledLineProperties
-        : gssLineProperties;
+        ? gssDisabledLineProps
+        : gssLineProps;
     layer.save();
     layer.setLineWidth(prop.lineThickness);
     layer.setTransparency((float) prop.transparency);
@@ -74,8 +55,8 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public double calcLegendIconWidth(XYPlot<T> plot, View view) {
     initGss(view);
     GssProperties apointProp = 
-      (plot.getFocus() != null) ? gssPointProperties 
-                                : disabledPointProperties;
+      (plot.getFocus() != null) ? gssPointProps 
+                                : gssDisabledPointProps;
     return apointProp.size + 10;
   }
 
@@ -91,10 +72,10 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     final boolean isDisabled = renderState.isDisabled();
     final boolean isFocused = renderState.isFocused();
 
-    GssProperties barProp = isDisabled ? disabledLineProperties
-        : gssLineProperties;
-    GssProperties pointProp = isDisabled ? disabledPointProperties
-        : gssPointProperties;
+    GssProperties barProp = isDisabled ? gssDisabledLineProps
+        : gssLineProps;
+    GssProperties pointProp = isDisabled ? gssDisabledPointProps
+        : gssPointProps;
     // guard webkit bug, coredump if draw two identical lineTo in a row
     if (ux - lx >= 1) {
       double bw = barProp.size;
@@ -142,7 +123,7 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
         }
 
         if (prevHover) {
-          pointProp = gssHoverPointProperties;
+          pointProp = gssHoverProps;
         }
 
         layer.save();
@@ -180,11 +161,11 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     GssProperties lineProp, pointProp;
     Focus focus = plot.getFocus();
     if (focus != null && focus.getDatasetIndex() != seriesNum) {
-      lineProp = disabledLineProperties;
-      pointProp = disabledPointProperties;
+      lineProp = gssDisabledLineProps;
+      pointProp = gssDisabledPointProps;
     } else {
-      lineProp = gssLineProperties;
-      pointProp = gssPointProperties;
+      lineProp = gssLineProps;
+      pointProp = gssPointProps;
     }
 
     layer.beginPath();
@@ -243,10 +224,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     return offset;
   }
 
-  public GssElement getParentGssElement() {
-    return parentSeriesElement;
-  }
-
   public String getType() {
     return "bar";
   }
@@ -264,18 +241,20 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   }
 
   private void initGss(View view) {
-    if (gssInited) {
+    if (isGssInitialized) {
       return;
     }
 
-    gssLineProperties = view.getGssProperties(this, "");
-    focusGssProperties = view.getGssProperties(pointElement, "focus");
-    gssPointProperties = view.getGssProperties(pointElement, "");
-    gssHoverPointProperties = view.getGssProperties(pointElement, "hover");
-    disabledLineProperties = view.getGssProperties(this, "disabled");
-    disabledPointProperties = view.getGssProperties(pointElement, "disabled");
-    focusPainter = new CircleFocusPainter(focusGssProperties);
+    GssElement pointElement = new GssElementImpl("point", parentGssElement);
 
-    gssInited = true;
+    gssLineProps = view.getGssProperties(this, "");
+    gssFocusProps = view.getGssProperties(pointElement, "focus");
+    gssPointProps = view.getGssProperties(pointElement, "");
+    gssHoverProps = view.getGssProperties(pointElement, "hover");
+    gssDisabledLineProps = view.getGssProperties(this, "disabled");
+    gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
+    focusPainter = new CircleFocusPainter(gssFocusProps);
+
+    isGssInitialized = true;
   }
 }

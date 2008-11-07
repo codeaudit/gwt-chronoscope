@@ -21,6 +21,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
@@ -29,6 +30,7 @@ import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
+import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -888,7 +890,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.plotRenderer = plotRenderer;
   }
 
-  public void setRenderer(int datasetIndex, DatasetRenderer<T> r) {
+  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> r) {
+    r.setParentGssElement(createGssElementForDataset(datasetIndex));
     datasetRenderers.set(datasetIndex, r);
   }
 
@@ -1062,6 +1065,10 @@ public class DefaultXYPlot<T extends Tuple2D>
         viewWidth - rangePanelLeft.getWidth() - rangePanelRight.getWidth();
 
     return b;
+  }
+  
+  private GssElement createGssElementForDataset(int datasetIndex) {
+    return new GssElementImpl("series", null, "s" + datasetIndex);
   }
 
   /**
@@ -1317,7 +1324,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     if (datasetRenderers.isEmpty()) {
       for (int i = 0; i < numDatasets; i++) {
-        datasetRenderers.add(new LineXYRenderer<T>(i));
+        LineXYRenderer<T> r = new LineXYRenderer<T>();
+        r.setParentGssElement(createGssElementForDataset(i));
+        datasetRenderers.add(r);
       }
     }
   }
