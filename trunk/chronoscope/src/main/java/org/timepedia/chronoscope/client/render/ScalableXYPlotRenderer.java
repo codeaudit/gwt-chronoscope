@@ -4,7 +4,6 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.data.tuple.BasicTuple2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 /**
@@ -17,16 +16,13 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
 
   protected RenderState renderState;
   
-  private BasicTuple2D flyweightPoint = new BasicTuple2D(0, 0);
-  
   public ScalableXYPlotRenderer() {
     renderState = new RenderState();
   }
   
   public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
     Dataset<T> dataSet = plot.getDatasets().get(datasetIndex);
-    
-    DatasetRenderer<T> renderer = plot.getRenderer(datasetIndex);
+    DatasetRenderer<T> renderer = plot.getDatasetRenderer(datasetIndex);
     
     if (dataSet.getNumSamples(0) < 2) {
       return;
@@ -59,14 +55,10 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
     int end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 1); i < end; i += inc) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
-      double x = dataPt.getFirst();
-      double y = dataPt.getSecond();
-      flyweightPoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
-      
       // FIXME: refactor to remove cast
-      renderer.drawCurvePart(plot, layer, (T)flyweightPoint, datasetIndex, renderState);
+      renderer.drawCurvePart(plot, layer, (T)dataPt, datasetIndex, renderState);
     }
     renderer.endCurve(plot, layer, datasetIndex, renderState);
 
@@ -75,14 +67,10 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
     end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 2); i < end; i += inc) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
-      double x = dataPt.getFirst();
-      double y = dataPt.getSecond();
-      flyweightPoint.setCoordinates(x, y);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       renderState.setHovered(hoverPoints[datasetIndex] == i);
-      
       // FIXME: refactor to remove cast
-      renderer.drawPoint(plot, layer, (T)flyweightPoint, datasetIndex, renderState);
+      renderer.drawPoint(plot, layer, (T)dataPt, datasetIndex, renderState);
     }
     renderer.endPoints(plot, layer, datasetIndex, renderState);
   }

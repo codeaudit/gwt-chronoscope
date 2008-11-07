@@ -217,7 +217,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Return the renderer for a given dataset index
    */
-  DatasetRenderer<T> getRenderer(int datasetIndex);
+  DatasetRenderer<T> getDatasetRenderer(int datasetIndex);
 
   /**
    * Get the domain value of the beginning of the current selection
