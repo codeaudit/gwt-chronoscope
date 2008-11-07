@@ -51,7 +51,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
       }
 
       final int maxPoints = Math.min(
-          plot.getRenderer(datasetIdx).getMaxDrawableDatapoints(plot),
+          plot.getDatasetRenderer(datasetIdx).getMaxDrawableDatapoints(plot),
           plot.getMaxDrawableDataPoints());
 
       int domainStartIdx = 0;
@@ -127,7 +127,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<T> renderer = plot.getRenderer(i);
+      DatasetRenderer<T> renderer = plot.getDatasetRenderer(i);
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;
@@ -136,7 +136,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<T> renderer = plot.getRenderer(i);
+      DatasetRenderer<T> renderer = plot.getDatasetRenderer(i);
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
         renderOrder[d++] = i;

@@ -16,9 +16,9 @@ import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -26,7 +26,6 @@ import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
-import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
@@ -37,6 +36,7 @@ import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -134,8 +134,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private CompositeAxisPanel bottomPanel;
 
-  private Layer bottomPanelLayer;
-
   private int currentMiplevels[];
 
   private Datasets<T> datasets;
@@ -148,7 +146,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private boolean highlightDrawn;
 
-  private Layer highLightLayer;
+  private Layer bottomPanelLayer, highLightLayer, overviewLayer, plotLayer, 
+      topPanelLayer, verticalAxisLayer;
 
   private int[] hoverPoints;
 
@@ -175,13 +174,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private boolean overviewEnabled = true;
 
-  private Layer overviewLayer;
-
   private Bounds plotBounds;
 
   private Interval plotDomain, lastPlotDomain;
-
-  private Layer plotLayer;
 
   private int plotNumber = 0;
 
@@ -195,17 +190,13 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private CompositeAxisPanel rangePanelLeft, rangePanelRight;
 
-  private Layer topLayer;
-
   private CompositeAxisPanel topPanel;
-
-  private Layer verticalAxisLayer;
 
   private View view;
 
   private double visibleDomainMax;
 
-  private final List<DatasetRenderer<T>> datasetRenderers
+  private List<DatasetRenderer<T>> datasetRenderers
       = new ArrayList<DatasetRenderer<T>>();
 
   private DomainAxis domainAxis;
@@ -379,7 +370,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return rangeAxes.get(datasetIndex);
   }
 
-  public DatasetRenderer<T> getRenderer(int datasetIndex) {
+  public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
     return datasetRenderers.get(datasetIndex);
   }
 
@@ -399,7 +390,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isNotNull(plotRenderer, "plotRenderer");
-
+    
     this.view = view;
     this.focus = null;
 
@@ -897,8 +888,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> r) {
     r.setParentGssElement(createGssElementForDataset(datasetIndex));
     datasetRenderers.set(datasetIndex, r);
+    
   }
-
+  
+  public void setDatasetRenderers(List<DatasetRenderer<T>> renderers) {
+    this.datasetRenderers = renderers;
+  }
+  
   public double windowXtoUser(double x) {
     return (x - plotBounds.x) / plotBounds.width;
   }
@@ -1218,11 +1214,11 @@ public class DefaultXYPlot<T extends Tuple2D>
       return;
     }
     
-    topLayer.save();
-    Bounds topPanelBounds = new Bounds(0, 0, topLayer.getBounds().width,
-        topLayer.getBounds().height);
-    topPanel.draw(topLayer, topPanelBounds);
-    topLayer.restore();
+    topPanelLayer.save();
+    Bounds topPanelBounds = new Bounds(0, 0, topPanelLayer.getBounds().width,
+        topPanelLayer.getBounds().height);
+    topPanel.draw(topPanelLayer, topPanelBounds);
+    topPanelLayer.restore();
   }
   
   private Interval fenceDomain(double destDomainOrig, double destDomainLength) {
@@ -1321,20 +1317,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw();
   }
 
-  private void initDefaultRenderers(int numDatasets) {
-    if (datasetRenderers.size() != numDatasets) {
-      datasetRenderers.clear();
-    }
-
-    if (datasetRenderers.isEmpty()) {
-      for (int i = 0; i < numDatasets; i++) {
-        LineXYRenderer<T> r = new LineXYRenderer<T>();
-        r.setParentGssElement(createGssElementForDataset(i));
-        datasetRenderers.add(r);
-      }
-    }
-  }
-
   private void initializeDomain(Datasets<T> datasets) {
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
@@ -1351,6 +1333,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.getCanvas().getRootLayer().setLayerOrder(Layer.Z_LAYER_BACKGROUND);
 
     plotLayer = initLayer(plotLayer, "plotLayer", plotBounds);
+    
+    highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
+    highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
 
     if (overviewEnabled) {
       overviewLayer = initLayer(overviewLayer, "overviewLayer", plotBounds);
@@ -1359,8 +1344,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     Bounds topLayerBounds = new Bounds(0, 0, view.getWidth(),
         topPanel.getHeight());
-    topLayer = initLayer(topLayer, "topLayer", topLayerBounds);
-    topLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    topPanelLayer = initLayer(topPanelLayer, "topLayer", topLayerBounds);
+    topPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
 
     Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
         view.getWidth(), rangePanelLeft.getHeight());
@@ -1375,9 +1360,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis",
         bottomPanelBounds);
     bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-
-    highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
-    highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
   }
 
   private void initMipLevels() {
@@ -1391,6 +1373,17 @@ public class DefaultXYPlot<T extends Tuple2D>
    * here that doesn't depend on the axes or layers being initialized.
    */
   private void initViewIndependent(Datasets<T> datasets) {
+    if (datasetRenderers.size() != datasets.size()) {
+      datasetRenderers = new ArrayList<DatasetRenderer<T>>();
+      for (int i = 0; i < datasets.size(); i++) {
+        datasetRenderers.add(new LineXYRenderer<T>());
+      }
+    }
+    
+    for (int i = 0; i < datasets.size(); i++) {
+      datasetRenderers.get(i).setParentGssElement(createGssElementForDataset(i));
+    }
+    
     hoverPoints = new int[datasets.size()];
     resetHoverPoints();
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
@@ -1398,7 +1391,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     visibleDomainMax = Util
         .calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     initializeDomain(datasets);
-    initDefaultRenderers(datasets.size());
     initMipLevels();
   }
 

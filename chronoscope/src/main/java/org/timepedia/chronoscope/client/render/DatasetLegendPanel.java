@@ -111,7 +111,7 @@ public class DatasetLegendPanel extends AbstractPanel {
    * in the panel given the specified lblX and lblY coordinates.
    */
   private double drawLegendLabel(double lblX, double lblY, Layer layer, int seriesNum, boolean onlyCalcWidth) {
-    DatasetRenderer renderer = plot.getRenderer(seriesNum);
+    DatasetRenderer renderer = plot.getDatasetRenderer(seriesNum);
     
     int hoverPoint = plot.getHoverPoints()[seriesNum];
     String seriesLabel = createDatasetLabel(plot, seriesNum, hoverPoint);
