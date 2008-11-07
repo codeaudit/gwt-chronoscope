@@ -122,7 +122,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
     int absTop = DOM.getAbsoluteTop(getElement());
-    int originY = absTop + Window.getScrollTop();
+    int originY = absTop - Window.getScrollTop();
 
     if (screenCoordinatesRelevant) {
       x = DOM.eventGetClientX(evt);
