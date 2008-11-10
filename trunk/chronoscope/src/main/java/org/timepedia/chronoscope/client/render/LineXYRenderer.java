@@ -16,20 +16,11 @@ import org.timepedia.exporter.client.Exportable;
 public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement, Exportable {
   
-  boolean prevFocus = false, prevHover = false;
+  protected GssProperties activeGssLineProps, activeGssPointProps;
 
-  boolean isGssInitialized = false;
+  protected double lx = -1, ly = -1;
   
-  private double lx = -1, ly = -1;
-
-  private GssProperties activeGssLineProps, activeGssPointProps;
-
-  private GssProperties gssDisabledFillProps, gssDisabledLineProps, gssDisabledPointProps,
-      gssFillProps, gssFocusProps, gssHoverProps, gssLineProps, gssPointProps;
-
-  private FocusPainter focusPainter;
-
-  private double fx = -1;
+  protected double fx = -1;
   
   // Keeps track of the index of the currently processed datapoint
   private int pointIndex;
@@ -91,6 +82,20 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       ++pointIndex;
   }
   
+  public void drawHoverPoint(XYPlot<T> plot, Layer layer, T point, int datasetIndex) {
+    GssProperties layerProps = this.gssHoverProps;
+    
+    if (layerProps.size < 1) {
+      layerProps.size = 1;
+    }
+    
+    final double dataX = point.getFirst();
+    final double dataY = point.getSecond();
+    final double ux = plot.domainToScreenX(dataX, datasetIndex);
+    final double uy = plot.rangeToScreenY(dataY, datasetIndex);
+    drawPoint(ux, uy, layer, layerProps);
+  }
+  
   public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
@@ -107,21 +112,21 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     layer.beginPath();
     layer.moveTo(x, y);
-    layer.setTransparency((float) alineProp.transparency);
     layer.setLineWidth(alineProp.lineThickness);
     layer.setShadowBlur(alineProp.shadowBlur);
     layer.setShadowColor(alineProp.shadowColor);
     layer.setShadowOffsetX(alineProp.shadowOffsetX);
     layer.setShadowOffsetY(alineProp.shadowOffsetY);
     layer.setStrokeColor(alineProp.color);
+    layer.setTransparency((float) alineProp.transparency);
     layer.lineTo(x + 5 + apointProp.size + 5, y);
     layer.stroke();
 
     if (apointProp.visible) {
       layer.translate(x, y - apointProp.size / 2 + 1);
       layer.beginPath();
-      layer.setTransparency((float) apointProp.transparency);
       layer.setFillColor(apointProp.bgColor);
+      layer.setTransparency((float) apointProp.transparency);
       layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
       layer.setShadowBlur(0);
       layer.fill();
@@ -131,9 +136,9 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
         apointProp.size = 1;
       }
       layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
-      layer.setStrokeColor(apointProp.color);
-      layer.setShadowBlur(apointProp.shadowBlur);
       layer.setLineWidth(apointProp.lineThickness);
+      layer.setShadowBlur(apointProp.shadowBlur);
+      layer.setStrokeColor(apointProp.color);
       layer.stroke();
     }
     layer.restore();
@@ -143,65 +148,69 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void drawPoint(XYPlot<T> plot, Layer layer, T point,
       int seriesNum, RenderState renderState) {
     
-    final boolean isHovered = renderState.isHovered();
     final boolean isFocused = renderState.isFocused();
     final double dataX = point.getFirst();
     final double dataY = point.getSecond();
     
-    GssProperties prop = isHovered ? gssHoverProps : activeGssPointProps;
-    double ux = plot.domainToScreenX(dataX, seriesNum);
-    double uy = plot.rangeToScreenY(dataY, seriesNum);
-    
+    GssProperties prop = activeGssPointProps;
     if (prop.visible || isFocused) {
-      if (isFocused) {
-        focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
-      }
 
       if (prop.size < 1) {
         prop.size = 1;
       }
       
-      layer.setFillColor(prop.bgColor);
-      layer.setShadowBlur(0);
-      layer.setLineWidth(prop.lineThickness);
-      layer.setStrokeColor(prop.color);
-      layer.setShadowBlur(prop.shadowBlur);
-      layer.setLineWidth(prop.lineThickness);
-      
+      double ux = plot.domainToScreenX(dataX, seriesNum);
+      double uy = plot.rangeToScreenY(dataY, seriesNum);
       double dx = ux - lx;
-      if (lx == -1 || isFocused || isHovered || dx > (prop.size * 2 + 4)) {
-        layer.beginPath();
-//      layer.translate(ux, uy);
-        layer.arc(ux, uy, prop.size, 0, 2 * Math.PI, 1);
-        layer.fill();
-        layer.stroke();
-//      layer.translate(-ux, -uy);
+
+      if (lx == -1 || isFocused || dx > (prop.size * 2 + 4)) {
+        drawPoint(ux, uy, layer, prop);
         lx = ux;
         ly = uy;
       }
     }
   }
 
+  /**
+   * Draws a point at the specified screen coordinates
+   */
+  private void drawPoint(double ux, double uy, Layer layer, GssProperties gssProps) {
+    layer.setFillColor(gssProps.bgColor);
+    layer.setLineWidth(gssProps.lineThickness);
+    layer.setShadowBlur(gssProps.shadowBlur);
+    layer.setStrokeColor(gssProps.color);
+    
+    layer.beginPath();
+//  layer.translate(ux, uy);
+    layer.arc(ux, uy, gssProps.size, 0, 2 * Math.PI, 1);
+    layer.fill();
+    layer.stroke();
+//  layer.translate(-ux, -uy);
+  }
+  
   public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, 
       RenderState renderState) {
 
+    GssProperties fillProp = renderState.isDisabled() 
+      ? gssDisabledFillProps
+          : gssFillProps;
+
+    layer.setFillColor(activeGssLineProps.bgColor);
     layer.setLineWidth(activeGssLineProps.lineThickness);
-    layer.setTransparency((float) activeGssLineProps.transparency);
     layer.setShadowBlur(activeGssLineProps.shadowBlur);
     layer.setShadowColor(activeGssLineProps.shadowColor);
     layer.setShadowOffsetX(activeGssLineProps.shadowOffsetX);
     layer.setShadowOffsetY(activeGssLineProps.shadowOffsetY);
     layer.setStrokeColor(activeGssLineProps.color);
-    layer.setFillColor(activeGssLineProps.bgColor);
-    layer.setStrokeColor(activeGssLineProps.color);
-    GssProperties fillProp = renderState.isDisabled() 
-        ? gssDisabledFillProps
-        : gssFillProps;
+    layer.setTransparency((float) activeGssLineProps.transparency);
+    
     layer.stroke();
     layer.lineTo(lx, layer.getHeight());
     layer.lineTo(fx, layer.getHeight());
+    
     layer.setFillColor(fillProp.bgColor);
     layer.setTransparency((float) fillProp.transparency);
+    
     layer.fill();
     layer.restore();
   }
@@ -217,28 +226,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   public String getTypeClass() {
     return null;
-  }
-
-  private void initGss(View view) {
-    if (isGssInitialized) {
-      return;
-    }
-
-    GssElement pointElement = new GssElementImpl("point", parentGssElement);
-    GssElement fillElement = new GssElementImpl("fill", parentGssElement);
-
-    gssLineProps = view.getGssProperties(this, "");
-    gssFocusProps = view.getGssProperties(pointElement, "focus");
-    gssPointProps = view.getGssProperties(pointElement, "");
-    gssHoverProps = view.getGssProperties(pointElement, "hover");
-    gssDisabledLineProps = view.getGssProperties(this, "disabled");
-    gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
-    gssFillProps = view.getGssProperties(fillElement, "");
-    gssDisabledFillProps = view.getGssProperties(fillElement, "disabled");
-
-    focusPainter = new CircleFocusPainter(gssFocusProps);
-
-    isGssInitialized = true;
   }
 
 }

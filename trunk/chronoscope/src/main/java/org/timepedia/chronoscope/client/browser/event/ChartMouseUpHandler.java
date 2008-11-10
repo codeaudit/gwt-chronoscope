@@ -10,6 +10,7 @@ import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.browser.DOMView;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
  * Handles the event where the user releases the mouse button.
@@ -34,7 +35,7 @@ public final class ChartMouseUpHandler
     else if (uiAction.isDragging(plot) && x != uiAction.getStartX()) {
       HistoryManager.pushHistory();
       chart.setAnimating(false);
-      chart.redraw();
+      ((DefaultXYPlot)chart.getPlot()).redraw(true);
     }
 
     chartInfo.getCompoundUIAction().cancel();

@@ -5,6 +5,7 @@ import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
  * Handles the event where the mouse if moved outside the chart area.
@@ -19,7 +20,7 @@ public class ChartMouseOutHandler extends AbstractEventHandler<MouseOutHandler>
     Chart chart = chartInfo.chart;
     chart.setAnimating(false);
     chart.setCursor(Cursor.DEFAULT);
-    chart.redraw();
+    ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
   }
 }

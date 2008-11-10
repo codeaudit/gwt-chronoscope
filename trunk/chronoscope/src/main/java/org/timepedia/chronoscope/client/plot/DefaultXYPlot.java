@@ -104,6 +104,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private static int globalPlotNumber = 0;
 
+  private static final String LAYER_HOVER = "hoverLayer";
+  private static final String LAYER_PLOT = "plotLayer";
+  
   // The maximum distance that the mouse pointer can stray from a candidate
   // data point and still be considered as referring to that point.
   private static final int MAX_FOCUS_DIST = 8;
@@ -147,7 +150,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private boolean highlightDrawn;
 
   private Layer bottomPanelLayer, highLightLayer, overviewLayer, plotLayer, 
-      topPanelLayer, verticalAxisLayer;
+      topPanelLayer, verticalAxisLayer, hoverLayer;
 
   private int[] hoverPoints;
 
@@ -354,14 +357,18 @@ public class DefaultXYPlot<T extends Tuple2D>
     return overviewAxisPanel;
   }
 
+  public Layer getHoverLayer() {
+    return initLayer(null, LAYER_HOVER, plotBounds);
+  }
+  
   public Layer getOverviewLayer() {
     return overviewLayer;
   }
 
   public Layer getPlotLayer() {
-    return initLayer(null, "plotLayer", plotBounds);
+    return initLayer(null, LAYER_PLOT, plotBounds);
   }
-
+  
   /**
    * @gwt.export getAxis
    */
@@ -652,24 +659,31 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   @Export
   public void redraw() {
+    redraw(false);
+  }
+  
+  /**
+   * If <tt>forceCenterPlotRedraw==false</tt>, the center plot (specifically the
+   * datasets and overlays) is only redrawn when the state of <tt>this.plotDomain</tt>
+   * changes. Otherwise if <tt>forceDatasetRedraw==true</tt>, the center plot is 
+   * redrawn unconditionally.
+   */
+  public void redraw(boolean forceCenterPlotRedraw) {
     Canvas backingCanvas = view.getCanvas();
     backingCanvas.beginFrame();
-    
-    final boolean plotStateChanged = !plotDomain.equals(lastPlotDomain);
-    
-    plotLayer.save();
-    plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-    plotLayer.clear();
-    // plotLayer.setFillColor("#FF0000");
-    // plotLayer.fillRect(0, 0, 50, 50);
     
     // if on a low performance device, don't re-render axes or legend
     // when animating
     final boolean canDrawFast = 
         !(isAnimating() && ChronoscopeOptions.isLowPerformance());
 
-    if (overviewEnabled) {
-      drawOverviewOfDatasets();
+    final boolean plotDomainChanged = !plotDomain.equals(lastPlotDomain);
+    
+    // Draw the hover points, but not when the plot is currently animating.
+    if (isAnimating) {
+      getHoverLayer().clear();
+    } else {
+      plotRenderer.drawHoverPoints();      
     }
 
     boolean drawVertical = !drewVertical;
@@ -679,25 +693,34 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (drawVertical && canDrawFast) {
       drawRangeAxes();
     }
-
-    drawPlot();
     
-    if (canDrawFast) {
-      if (plotStateChanged) {
-        drawOverviewHighlight();
+    if (plotDomainChanged || forceCenterPlotRedraw) {
+      if (overviewEnabled) {
+        drawOverviewOfDatasets();
       }
+      
+      plotLayer.save();
+      plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
+      plotLayer.clear();
+      drawPlot();
+      
+      if (canDrawFast) {
+        drawOverviewHighlight();
+        drawOverlays(plotLayer);
+      }
+      plotLayer.restore();
+    }
+ 
+    if (canDrawFast) {
       drawTopPanel();
-      drawOverlays(plotLayer);
       drawPlotHighlight(highLightLayer);
     }
 
-    plotLayer.restore();
     backingCanvas.endFrame();
-    
     plotDomain.copyTo(lastPlotDomain);
     view.flipCanvas();
   }
-
+  
   /**
    * @gwt.export
    */
@@ -820,14 +843,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setHighlight(int selStart, int selEnd) {
-
     int tmp = Math.min(selStart, selEnd);
     selEnd = Math.max(selStart, selEnd);
     selStart = tmp;
     beginHighlight = windowXtoDomain(selStart);
     endHighlight = windowXtoDomain(selEnd);
     redraw();
-    // drawHighlight(highLightLayer, highLightLayer);
   }
 
   public boolean setHover(int x, int y) {
@@ -978,7 +999,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           }
           isAnimating = false;
           animationTimer = null;
-          redraw();
+          redraw(true);
         } else {
           lastFrame = true;
           animationTimer.schedule(300);
@@ -1332,10 +1353,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void initLayers() {
     view.getCanvas().getRootLayer().setLayerOrder(Layer.Z_LAYER_BACKGROUND);
 
-    plotLayer = initLayer(plotLayer, "plotLayer", plotBounds);
+    plotLayer = initLayer(plotLayer, LAYER_PLOT, plotBounds);
     
     highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
     highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
+
+    hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
+    hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
 
     if (overviewEnabled) {
       overviewLayer = initLayer(overviewLayer, "overviewLayer", plotBounds);
