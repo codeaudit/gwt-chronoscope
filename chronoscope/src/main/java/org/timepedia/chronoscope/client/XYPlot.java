@@ -199,13 +199,17 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   OverviewAxisPanel getOverviewAxisPanel();
 
   /**
-   * Returns the layer containing the overview
+   * Returns the layer onto which the hover points are rendered.
+   */
+  Layer getHoverLayer();
+  
+  /**
+   * Returns the layer onto which the overview axis is rendered.
    */
   Layer getOverviewLayer();
 
   /**
-   * Get the layer which represents the main plot area where points will be
-   * rendered
+   * Returns the layer onto which the main plot area is rendered.
    */
   Layer getPlotLayer();
 
@@ -333,7 +337,8 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   double rangeToWindowY(double rangeY, int datasetIndex);
 
   /**
-   * Calls update(), and optionally swaps double-buffered canvases
+   * Redraws any part of the plot that has changed since the last invocation of
+   * this method.
    */
   void redraw();
 

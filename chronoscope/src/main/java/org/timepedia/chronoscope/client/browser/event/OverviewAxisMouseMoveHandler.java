@@ -1,11 +1,12 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
-import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
 import com.google.gwt.gen2.event.dom.client.DomEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
@@ -28,7 +29,7 @@ public class OverviewAxisMouseMoveHandler extends
   @Override
   public int getLocalY(DomEvent event) {
     ChartState chartInfo = getChartState(event);
-    DefaultXYPlot plot = (DefaultXYPlot)chartInfo.chart.getPlot();
+    XYPlot plot = chartInfo.chart.getPlot();
     Bounds plotBounds = plot.getBounds();
     return super.getLocalY(event) - (int)plotBounds.bottomY();
   }
@@ -65,6 +66,8 @@ public class OverviewAxisMouseMoveHandler extends
     // else, mouse is outside of overview axis, so don't mess with cursor.
     
     if (uiAction.isSelecting(overviewAxis)) {
+      chart.setAnimating(true);
+
       chart.setCursor(Cursor.SELECTING);
       chart.setAnimating(true);
       // Determine the start and end domain of the highlight selection
@@ -81,21 +84,21 @@ public class OverviewAxisMouseMoveHandler extends
       plot.getDomain().setEndpoints(startDomainX, endDomainX);
       plot.redraw();
     }
-    else if (hiliteBounds != null) {
-      if (isDragging) {
-        // hiliteLeftDomainX represents the domain-x value of the left edge
-        // of the highlight window within the overview axis.
-        double hiliteLeftX = x - (hiliteBounds.width / 2.0);
-        double hiliteLeftDomainX = toDomainX(hiliteLeftX, plot);
-       
-        // Need to bound the domain-x value so that the highlight box doesn't
-        // run off the overview axis.
-        double minHiliteDomain = plot.getDatasets().getMinDomain();
-        double maxHiliteDomain = toDomainX(overviewAxisBounds.rightX() - hiliteBounds.width, plot);
-        hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
+    else if (hiliteBounds != null && isDragging) {
+      chart.setAnimating(true);
+      
+      // hiliteLeftDomainX represents the domain-x value of the left edge
+      // of the highlight window within the overview axis.
+      double hiliteLeftX = x - (hiliteBounds.width / 2.0);
+      double hiliteLeftDomainX = toDomainX(hiliteLeftX, plot);
+     
+      // Need to bound the domain-x value so that the highlight box doesn't
+      // run off the overview axis.
+      double minHiliteDomain = plot.getDatasets().getMinDomain();
+      double maxHiliteDomain = toDomainX(overviewAxisBounds.rightX() - hiliteBounds.width, plot);
+      hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 
-        plot.moveTo(hiliteLeftDomainX);
-      }
+      plot.moveTo(hiliteLeftDomainX);
     }
   }
   

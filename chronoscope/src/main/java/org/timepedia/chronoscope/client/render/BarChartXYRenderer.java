@@ -15,12 +15,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
     implements GssElement {
 
-  private GssProperties gssDisabledLineProps, gssDisabledPointProps, gssFocusProps,
-      gssHoverProps, gssLineProps, gssPointProps;
-
   private FocusPainter focusPainter;
-
-  private boolean isGssInitialized = false;
 
   private double interval = -1;
 
@@ -153,6 +148,13 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     prevHover = renderState.isHovered();
   }
 
+ @Override
+ public void drawHoverPoint(XYPlot<T> plot, Layer layer, T point,
+     int datasetIndex) {
+   
+   // Do nothing for now...
+ }
+
   public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
@@ -240,21 +242,4 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     this.offset = offset;
   }
 
-  private void initGss(View view) {
-    if (isGssInitialized) {
-      return;
-    }
-
-    GssElement pointElement = new GssElementImpl("point", parentGssElement);
-
-    gssLineProps = view.getGssProperties(this, "");
-    gssFocusProps = view.getGssProperties(pointElement, "focus");
-    gssPointProps = view.getGssProperties(pointElement, "");
-    gssHoverProps = view.getGssProperties(pointElement, "hover");
-    gssDisabledLineProps = view.getGssProperties(this, "disabled");
-    gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
-    focusPainter = new CircleFocusPainter(gssFocusProps);
-
-    isGssInitialized = true;
-  }
 }

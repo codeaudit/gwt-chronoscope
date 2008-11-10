@@ -23,7 +23,6 @@ public final class ChartMouseMoveHandler
     int y = getLocalY(event);
     
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
-    //if (uiAction.isSelecting()) {
     if (uiAction.isSelecting(plot)) {
       chart.setAnimating(true);
       plot.setHighlight(uiAction.getStartX(), x);

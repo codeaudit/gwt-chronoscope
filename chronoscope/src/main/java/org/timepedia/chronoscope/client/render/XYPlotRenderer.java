@@ -98,6 +98,28 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
     }
   }
 
+  public void drawHoverPoints() {
+    Layer layer = plot.getHoverLayer();
+    int[] hoverPoints = plot.getHoverPoints();
+    Datasets<T> datasets = plot.getDatasets();
+    
+    layer.save();
+    layer.clear();
+    
+    for (int i = 0; i < hoverPoints.length; i++) {
+      final int hoverPoint = hoverPoints[i];
+      if (hoverPoint != -1) {
+        final int mipLevel = plot.getCurrentMipLevel(i);
+        Dataset<T> dataset = datasets.get(i);
+        T dataPt = dataset.getFlyweightTuple(hoverPoint, mipLevel);
+        DatasetRenderer<T> r = plot.getDatasetRenderer(i);
+        r.drawHoverPoint(plot, layer, dataPt, i);
+      }
+    }
+    
+    layer.restore();
+  }
+  
   public void setPlot(XYPlot<T> plot) {
     this.plot = plot;
   }

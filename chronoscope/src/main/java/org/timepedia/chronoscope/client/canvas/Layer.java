@@ -47,6 +47,8 @@ public interface Layer {
 
   int Z_LAYER_HIGHLIGHT = 3;
 
+  int Z_LAYER_HOVER = 4;
+
   void arc(double x, double y, double radius, double startAngle,
       double endAngle, int clockwise);
 
