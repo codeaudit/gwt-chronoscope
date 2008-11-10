@@ -7,7 +7,6 @@ package org.timepedia.chronoscope.client.render;
  * @author Chad Takahashi
  */
 public class RenderState {
-  private boolean isHovered;
   private boolean isFocused;
   private boolean isDisabled;
   
@@ -27,17 +26,7 @@ public class RenderState {
     this.isFocused = b;
   }
   
-  public boolean isHovered() {
-    return isHovered;
-  }
-  
-  public void setHovered(boolean b) {
-    this.isHovered = b;
-  }
-  
   public String toString() {
-    return "disabled=" + isDisabled +
-           ";focused=" + isFocused +
-           ";hovered=" + isHovered;
+    return "disabled=" + isDisabled + ";focused=" + isFocused;
   }
 }
