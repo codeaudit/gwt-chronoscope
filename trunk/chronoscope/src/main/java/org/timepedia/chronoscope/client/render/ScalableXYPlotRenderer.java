@@ -48,26 +48,22 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
     int mipLevel = plot.getCurrentMipLevel(datasetIndex);
     int numSamples = dataSet.getNumSamples(mipLevel);
 
-    int[] hoverPoints = plot.getHoverPoints();
-
     // Render the data curve
     int end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 1); i < end; i++) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
-      renderState.setHovered(hoverPoints[datasetIndex] == i);
       // FIXME: refactor to remove cast
       renderer.drawCurvePart(plot, layer, (T)dataPt, datasetIndex, renderState);
     }
     renderer.endCurve(plot, layer, datasetIndex, renderState);
     
-    // Render hover and focus points on the curve
+    // Render the focus points on the curve
     renderer.beginPoints(plot, layer, renderState);
     end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 2); i < end; i++) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
-      renderState.setHovered(hoverPoints[datasetIndex] == i);
       // FIXME: refactor to remove cast
       renderer.drawPoint(plot, layer, (T)dataPt, datasetIndex, renderState);
     }

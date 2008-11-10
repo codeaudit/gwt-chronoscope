@@ -23,8 +23,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   private double offset = -1;
 
-  private boolean prevHover = false;
-
   public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
@@ -40,7 +38,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.setShadowOffsetY(prop.shadowOffsetY);
 
     lx = -1;
-    prevHover = false;
   }
 
   public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
@@ -117,10 +114,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
           focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
         }
 
-        if (prevHover) {
-          pointProp = gssHoverProps;
-        }
-
         layer.save();
         layer.translate(ux - ow, uy);
 
@@ -144,8 +137,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
         lx = ux;
       }
     }
-
-    prevHover = renderState.isHovered();
   }
 
  @Override
