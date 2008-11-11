@@ -56,19 +56,22 @@ public class JavaArray2DTest extends TestCase {
 
     try {
       a.get(-1, -1);
-    } catch (ArrayIndexOutOfBoundsException e) {
+      fail();
+    } catch (AssertionError e) {
       // expected
     }
 
     try {
       a.get(0, data[0].length);
-    } catch (ArrayIndexOutOfBoundsException e) {
+      fail();
+    } catch (AssertionError e) {
       // expected
     }
 
     try {
       a.get(data.length, 0);
-    } catch (ArrayIndexOutOfBoundsException e) {
+      fail();
+    } catch (AssertionError e) {
       // expected
     }
 
@@ -100,11 +103,12 @@ public class JavaArray2DTest extends TestCase {
 
     JavaArray2D a2d = new JavaArray2D(data);
     a2d.set(4, 4, 999); // force capacity growth
+
     try {
       // This should fail, since '5' is greater than the largest index specified
       a2d.get(4, 5);
-      fail("Expected ArrayIndexOutOfBoundsException");
-    } catch (ArrayIndexOutOfBoundsException e) {}
+      fail("Expected AssertionError");
+    } catch (AssertionError e) {}
   }
 
   public void testSet_forceGrow() {
