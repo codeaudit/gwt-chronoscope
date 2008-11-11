@@ -96,8 +96,8 @@ public class ChartBench implements EntryPoint {
     final Datasets datasets = plot.getDatasets();
     
     // Reset plot domain to 'max zoom'
-    //plot.getDomain().setEndpoints(datasets.getMinDomain(),
-    //    datasets.getMaxDomain());
+    plot.getDomain().setEndpoints(datasets.getMinDomain(),
+        datasets.getMaxDomain());
     
     final double dO = plot.getDomain().getStart();
     final double cD = plot.getDomain().length();
