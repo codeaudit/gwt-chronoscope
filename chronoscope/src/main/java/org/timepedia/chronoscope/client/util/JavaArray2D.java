@@ -54,6 +54,18 @@ public final class JavaArray2D implements Array2D {
    * Returns the value at the specified row and column
    */
   public double get(int row, int column) {
+    assert MathUtil.isBounded(row, 0, rowCount - 1) 
+      : "row out of bounds: " + row;
+    assert MathUtil.isBounded(column, 0, numColumns(row) - 1)
+      : "column out of bounds: " + column;
+    
+    // gwt-chronoscope Issue #87 
+    // (http://code.google.com/p/gwt-chronoscope/issues/detail?id=87)
+    // Profiling revealed this method as exremely hot.  So switched to
+    // using assertion, which can be compiled out in hosted and web mode.
+    // The ChartBench.java test app, when running in web mode, indicated
+    // a significant performance increase (21 FPS to 27 FPS).
+    /*
     if (!MathUtil.isBounded(row, 0, rowCount - 1)) {
       throw new ArrayIndexOutOfBoundsException(row);
     }
@@ -61,7 +73,8 @@ public final class JavaArray2D implements Array2D {
     if (!MathUtil.isBounded(column, 0, numColumns(row) - 1)) {
       throw new ArrayIndexOutOfBoundsException(column);
     }
-
+    */
+    
     return a[row][column];
   }
 
