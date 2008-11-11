@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
@@ -31,11 +30,11 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
         : gssLineProps;
     layer.save();
     layer.setLineWidth(prop.lineThickness);
-    layer.setTransparency((float) prop.transparency);
     layer.setShadowBlur(prop.shadowBlur);
     layer.setShadowColor(prop.shadowColor);
     layer.setShadowOffsetX(prop.shadowOffsetX);
     layer.setShadowOffsetY(prop.shadowOffsetY);
+    layer.setTransparency((float) prop.transparency);
 
     lx = -1;
   }
@@ -146,7 +145,7 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
    // Do nothing for now...
  }
 
-  public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
+  public void drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
@@ -193,7 +192,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       layer.stroke();
     }
     layer.restore();
-    return new Bounds(x, y, pointProp.size + 10, 10);
   }
 
   public void drawPoint(XYPlot<T> plot, Layer layer, T point,

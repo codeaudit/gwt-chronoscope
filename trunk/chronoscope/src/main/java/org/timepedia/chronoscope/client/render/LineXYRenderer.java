@@ -60,8 +60,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       if (activeGssLineProps.visible) {
         if (pointIndex == 0) {
           // This is the first point of the dataset, so just store the coordinates.
-          fx = ux;
-          lx = ux;
+          fx = lx = ux;
           ly = uy;
         }
         else {
@@ -71,9 +70,11 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
             // previous point)
             layer.moveTo(lx, ly);
           }
+          
           // Draw a line from the end of the previous line segment (or the 1st point
           // of the curve if this is the first line segment to be drawn) to (ux, uy).
           layer.lineTo(ux, uy);
+          
           lx = ux;
           ly = uy;
         }
@@ -96,7 +97,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     drawPoint(ux, uy, layer, layerProps);
   }
   
-  public Bounds drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
+  public void drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
       int seriesNum) {
     layer.save();
     initGss(layer.getCanvas().getView());
@@ -141,8 +142,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       layer.setStrokeColor(apointProp.color);
       layer.stroke();
     }
+    
     layer.restore();
-    return new Bounds(x, y, apointProp.size + 10, 10);
   }
 
   public void drawPoint(XYPlot<T> plot, Layer layer, T point,
