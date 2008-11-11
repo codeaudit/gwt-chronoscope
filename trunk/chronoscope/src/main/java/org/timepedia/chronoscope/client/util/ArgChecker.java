@@ -39,7 +39,7 @@ public final class ArgChecker {
     return value;
   }
 
-  public static double isLT(double value, double max, String argName) {
+  public static double isLTE(double value, double max, String argName) {
     if (value > max) {
       throw new IllegalArgumentException(quote(argName) + " was >= " + max
           + ": " + value);
@@ -47,7 +47,7 @@ public final class ArgChecker {
     return value;
   }
 
-  public static double isLT(int value, int max, String argName) {
+  public static double isLTE(int value, int max, String argName) {
     if (value > max) {
       throw new IllegalArgumentException(quote(argName) + " was >= " + max
           + ": " + value);
