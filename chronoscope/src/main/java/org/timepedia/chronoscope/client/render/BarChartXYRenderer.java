@@ -5,7 +5,7 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
-public class BarChartXYRenderer extends LineXYRenderer<Tuple2D> {
+public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
   private double currInterval, prevInterval;
   private double barGapFactor = 0.75;
@@ -26,7 +26,7 @@ public class BarChartXYRenderer extends LineXYRenderer<Tuple2D> {
   }
 
   @Override
-  public void drawCurvePart(Layer layer, Tuple2D point, int methodCallCount, 
+  public void drawCurvePart(Layer layer, T point, int methodCallCount, 
       RenderState renderState) {
     
     final double dataX = point.getFirst();
