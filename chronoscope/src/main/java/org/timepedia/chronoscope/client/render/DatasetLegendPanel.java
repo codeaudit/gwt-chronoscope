@@ -134,7 +134,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     }
     
     if (!onlyCalcWidth) {
-      renderer.drawLegendIcon(layer, lblX, lblY + lblHeight / 2, seriesNum);
+      renderer.drawLegendIcon(layer, lblX, lblY + lblHeight / 2);
   
       layer.setStrokeColor(gssProperties.color);
       layer.drawText(lblX + iconWidth + LEGEND_ICON_PAD, lblY, seriesLabel, gssProperties.fontFamily,

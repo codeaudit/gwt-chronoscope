@@ -62,8 +62,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * Render a small icon or sparkline representing this curve at the given x,y
    * screen coordinates, and return the the Bounds of the icon.
    */
-  public abstract void drawLegendIcon(Layer layer, double x, double y, 
-      int datasetIndex);
+  public abstract void drawLegendIcon(Layer layer, double x, double y);
 
   /**
    * Draw an individual point of the given tuple.
