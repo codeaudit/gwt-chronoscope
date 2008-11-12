@@ -3,12 +3,12 @@ package org.timepedia.chronoscope.java2d;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
-import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.java2d.canvas.CanvasJava2D;
 import org.timepedia.chronoscope.java2d.canvas.ViewJava2D;
 
@@ -31,7 +31,7 @@ public class StaticImageChartPanel implements ViewReadyCallback {
     plot = new DefaultXYPlot();
     Datasets dss=new Datasets(datasets);
     plot.setDatasets(dss);
-    plot.setPlotRenderer(new ScalableXYPlotRenderer());
+    plot.setPlotRenderer(new XYPlotRenderer());
     chart.setPlot(plot);
 
     view = new ViewJava2D();

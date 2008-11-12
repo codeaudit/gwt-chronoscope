@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 
 /**
@@ -14,7 +13,7 @@ public class ChronoscopeMock {
       int height) {
 
     Datasets<Tuple2D> datasets = new Datasets<Tuple2D>(ds);
-    XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
+    XYPlotRenderer plotRenderer = new XYPlotRenderer();
 
     DefaultXYPlot plot = new DefaultXYPlot();
     plot.setDatasets(datasets);

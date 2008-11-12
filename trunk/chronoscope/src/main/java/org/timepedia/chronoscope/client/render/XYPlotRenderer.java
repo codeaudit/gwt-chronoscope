@@ -17,7 +17,8 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public abstract class XYPlotRenderer<T extends Tuple2D> {
+public class XYPlotRenderer<T extends Tuple2D> {
+  protected RenderState renderState = new RenderState();
 
   // For each dataset, stores the start and end data point indices that are
   // currently visible in the plot.
@@ -79,10 +80,56 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
     }
   }
 
-  /**
-   * Override to implement custom scaling logic.
-   */
-  public abstract void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot);
+  public void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
+    Dataset<T> dataSet = plot.getDatasets().get(datasetIndex);
+    DatasetRenderer<T> renderer = plot.getDatasetRenderer(datasetIndex);
+    
+    if (dataSet.getNumSamples(0) < 2) {
+      return;
+    }
+
+    Focus focus = plot.getFocus();
+    int focusSeries, focusPoint;
+    if (focus == null) {
+      focusSeries = -1;
+      focusPoint = -1;
+    } else {
+      focusSeries = focus.getDatasetIndex();
+      focusPoint = focus.getPointIndex();
+    }
+
+    renderState
+        .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
+
+    renderer.beginCurve(layer, renderState);
+
+    int domainStart = this.domainStartIdxs[datasetIndex];
+    int domainEnd = this.domainEndIdxs[datasetIndex];
+    int mipLevel = plot.getCurrentMipLevel(datasetIndex);
+    int numSamples = dataSet.getNumSamples(mipLevel);
+
+    // Render the data curve
+    int end = Math.min(domainEnd + 1, numSamples);
+    int methodCallCount = 0;
+    for (int i = Math.max(0, domainStart - 1); i < end; i++) {
+      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+      // FIXME: refactor to remove cast
+      renderer.drawCurvePart(layer, (T)dataPt, methodCallCount++, renderState);
+    }
+    renderer.endCurve(layer, renderState);
+    
+    // Render the focus points on the curve
+    renderer.beginPoints(layer, renderState);
+    end = Math.min(domainEnd + 1, numSamples);
+    for (int i = Math.max(0, domainStart - 2); i < end; i++) {
+      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+      // FIXME: refactor to remove cast
+      renderer.drawPoint(layer, (T)dataPt, renderState);
+    }
+    renderer.endPoints(layer, renderState);
+  }
 
   public void drawDatasets() {
     final int numDatasets = plot.getDatasets().size();

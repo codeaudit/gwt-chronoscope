@@ -1,19 +1,16 @@
 package org.timepedia.chronoscope.java2d.swing;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.render.XYPlotRenderer;
-import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.gss.MockGssContext;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.java2d.canvas.CanvasJava2D;
 
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -57,7 +54,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
     chart = new Chart();
     plot = new DefaultXYPlot();
     plot.setDatasets(new Datasets(xyDatasets));
-    XYPlotRenderer plotRenderer = new ScalableXYPlotRenderer();
+    XYPlotRenderer plotRenderer = new XYPlotRenderer();
     plot.setPlotRenderer(plotRenderer); 
     chart.setPlot(plot);
 

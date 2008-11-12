@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.render.ScalableXYPlotRenderer;
+import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
@@ -54,7 +54,7 @@ public class ChartPanel extends Composite implements Exportable {
   protected XYPlot createPlot(Dataset[] datasetArray) {
     DefaultXYPlot plot = new DefaultXYPlot();
     plot.setDatasets(new Datasets<Tuple2D>(datasetArray));
-    plot.setPlotRenderer(new ScalableXYPlotRenderer());
+    plot.setPlotRenderer(new XYPlotRenderer());
     
     return plot;
   }
