@@ -408,6 +408,10 @@ public class DefaultXYPlot<T extends Tuple2D>
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
 
+    for (DatasetRenderer<T> r : this.datasetRenderers) {
+      r.initGss(view);
+    }
+    
     bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
         Position.BOTTOM, this, view);
 
@@ -460,7 +464,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     lastPlotDomain = new Interval(0, 0);
     initLayers();
     background = new GssBackground(view);
-
+    
     view.canvasSetupDone();
   }
 
@@ -907,14 +911,25 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> r) {
+    //initialize the renderer
     r.setParentGssElement(createGssElementForDataset(datasetIndex));
     r.setPlot(this);
     r.setDatasetIndex(datasetIndex);
+    boolean isViewReady = this.view != null;
+    if (isViewReady) {
+      r.initGss(this.view);
+    }
+    
     datasetRenderers.set(datasetIndex, r);
   }
   
   public void setDatasetRenderers(List<DatasetRenderer<T>> renderers) {
     this.datasetRenderers = renderers;
+
+    boolean isViewReady = this.view != null;
+    if (isViewReady) {
+      this.init(this.view);
+    }
   }
   
   public double windowXtoUser(double x) {

@@ -22,8 +22,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   
   @Override
   public void beginCurve(Layer layer, RenderState renderState) {
-    initGss(plot.getChart().getView());
-
     activeGssLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
     layer.save();
     layer.beginPath();
@@ -41,7 +39,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   
   @Override
   public double calcLegendIconWidth(View view) {
-    initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProps 
                                 : gssDisabledPointProps;
@@ -99,7 +96,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   @Override
   public void drawLegendIcon(Layer layer, double x, double y, int datasetIndex) {
     layer.save();
-    initGss(layer.getCanvas().getView());
 
     GssProperties alineProp, apointProp;
     if (plot.getFocus() != null) {

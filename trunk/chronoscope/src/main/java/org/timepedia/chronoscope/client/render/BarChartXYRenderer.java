@@ -13,8 +13,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   
   @Override
   public void beginCurve(Layer layer, RenderState renderState) {
-    initGss(plot.getChart().getView());
-
     layer.save();
     
     lx = -1;
