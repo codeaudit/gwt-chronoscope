@@ -14,8 +14,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
-import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.ComponentFactory;
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
@@ -39,10 +39,9 @@ import org.timepedia.exporter.client.Exporter;
 import org.timepedia.exporter.client.ExporterUtil;
 
 /**
- * Factory class and JS API interface for Chronoscope Charts.
- * <p>
- * This class exports methods that can be used by both Java and JS to create 
- * and configure charts, as well as being a global sink for History events.
+ * Factory class and JS API interface for Chronoscope Charts. <p> This class
+ * exports methods that can be used by both Java and JS to create and configure
+ * charts, as well as being a global sink for History events.
  *
  * @gwt.exportPackage chronoscope
  */
@@ -50,10 +49,12 @@ import org.timepedia.exporter.client.ExporterUtil;
 public class Chronoscope implements Exportable, HistoryListener {
 
   public interface URLResolver {
+
     public String resolveURL(String url);
   }
 
   static class NopURLResolver implements URLResolver {
+
     public String resolveURL(String url) {
       return url;
     }
@@ -88,7 +89,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   private static int globalChartNumber = 0;
 
   private static JsArrayParser jsArrayParser = new JsArrayParser();
-  
+
   /**
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
@@ -116,7 +117,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   protected Chronoscope() {
     // no-op
   }
-  
+
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
@@ -125,8 +126,8 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export("createTimeseriesChartByElement")
   public ChartPanel createTimeseriesChart(Element elem,
       JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight) {
-    return createTimeseriesChart(elem, createDatasets(jsonDatasets),
-        chartWidth, chartHeight);
+    return createTimeseriesChart(elem, createDatasets(jsonDatasets), chartWidth,
+        chartHeight);
   }
 
   /**
@@ -146,8 +147,9 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   public static ChartPanel createTimeseriesChart(Dataset[] datasets,
       int chartWidth, int chartHeight) {
-    return getInstance().createChartPanel((Element) null, datasets, chartWidth,
-        chartHeight, null);
+    return getInstance()
+        .createChartPanel((Element) null, datasets, chartWidth, chartHeight,
+            null);
   }
 
 //    public static PlotPanel createStackedTimeseriesChart(Dataset[] datasets, Dataset[] datasets2) {
@@ -166,8 +168,9 @@ public class Chronoscope implements Exportable, HistoryListener {
   public static ChartPanel createTimeseriesChart(Element elem,
       Dataset[] datasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
-    return getInstance().createChartPanel(elem, datasets, chartWidth,
-        chartHeight, readyListener);
+    return getInstance()
+        .createChartPanel(elem, datasets, chartWidth, chartHeight,
+            readyListener);
   }
 
   public static ChartPanel createTimeseriesChart(String elementId,
@@ -190,9 +193,8 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   /**
    * Parse a JSON object representing a multiresolution dataset into a class
-   * implementing the {@link Dataset} interface.
-   * <p>
-   * The JSON format is as follows:
+   * implementing the {@link Dataset} interface. <p> The JSON format is as
+   * follows:
    * <pre>
    * dataset = {
    *    id: "unique id for this dataset",
@@ -212,7 +214,7 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export
   public Dataset createDataset(JSONDataset json) {
     validateJSON(json);
-    
+
     DatasetRequest request;
     if (json.isMipped()) {
       request = buildPreMipmappedDatasetRequest(json);
@@ -228,8 +230,8 @@ public class Chronoscope implements Exportable, HistoryListener {
     if (minInterval > 0) {
       request.setApproximateMinimumInterval(minInterval);
     }
-    
-    return ComponentFactory.get().getDatasetFactory().create(request); 
+
+    return ComponentFactory.get().getDatasetFactory().create(request);
   }
 
   /**
@@ -363,20 +365,20 @@ public class Chronoscope implements Exportable, HistoryListener {
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
-    
+
     boolean wasDomElementProvided = (elem != null);
-    
+
     if (!wasDomElementProvided) {
       elem = DOM.createDiv();
     }
-    
+
     ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);
     cpanel.setViewReadyCallback(readyListener);
     cpanel.setDimensions(chartWidth, chartHeight);
     cpanel.init();
-    
+
     if (wasDomElementProvided) {
       if (Document.get().getBody().isOrHasChild(elem)) {
         cpanel.attach();
@@ -420,13 +422,16 @@ public class Chronoscope implements Exportable, HistoryListener {
     HistoryManager.restoreHistory(historyToken);
   }
 
-  protected  ChartPanel newChartPanel() {
+  protected ChartPanel newChartPanel() {
     return new ChartPanel();
   }
-  
+
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
     exporter.export();
+
+    Exporter exporterOptions = (Exporter) GWT.create(ChronoscopeOptions.class);
+    exporterOptions.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
     exporter2.export();
@@ -461,32 +466,32 @@ public class Chronoscope implements Exportable, HistoryListener {
   private DatasetRequest buildDatasetRequest(JSONDataset json) {
     DatasetRequest.Basic request = new DatasetRequest.Basic();
     final String dtformat = json.getDateTimeFormat();
-    
+
     request.setDefaultMipMapStrategy(
         ComponentFactory.get().getMipMapStrategy(json.getPartitionStrategy()));
-    
+
     double[] domainArray = null;
     if (dtformat != null) {
       domainArray = jsArrayParser
           .parseFromDate(json.getDomainString(), dtformat);
     } else {
-      domainArray = jsArrayParser.parse(json.getDomain(), json.getDomainScale());
+      domainArray = jsArrayParser
+          .parse(json.getDomain(), json.getDomainScale());
     }
     request.addTupleSlice(domainArray);
-    
+
     JsArray<JsArrayNumber> tupleRange = json.getTupleRange();
     if (tupleRange != null) {
       for (int i = 0; i < tupleRange.length(); i++) {
         request.addTupleSlice(jsArrayParser.parse(tupleRange.get(i)));
       }
-    }
-    else {
+    } else {
       request.addTupleSlice(jsArrayParser.parse(json.getRange()));
     }
-    
+
     return request;
   }
-  
+
   private DatasetRequest buildPreMipmappedDatasetRequest(JSONDataset json) {
     DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
 
@@ -514,12 +519,13 @@ public class Chronoscope implements Exportable, HistoryListener {
     request.setRangeBottom(json.getRangeBottom());
     mippedRequest.addMultiresTupleSlice(createArray2D(domains));
     mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
-    
+
     return request;
   }
-  
+
   private void checkForChronoscopeCSS() {
-    if (!isCssIncluded("Chronoscope.css") && ChronoscopeOptions.errorReportingEnabled) {
+    if (!isCssIncluded("Chronoscope.css")
+        && ChronoscopeOptions.errorReportingEnabled) {
       throw new RuntimeException(
           "@import or inclusion of Chronoscope.css missing. To use Chronoscope, your host page, or CSS stylesheet must include Chronoscope.css");
     }
@@ -610,8 +616,8 @@ public class Chronoscope implements Exportable, HistoryListener {
     };
     t.schedule(10);
   }
-  
-  private void validateJSON(JSONDataset jsonDataset) { 
+
+  private void validateJSON(JSONDataset jsonDataset) {
     ArgChecker.isNotNull(jsonDataset, "jsonDataset");
     if (jsonDataset.isMipped() && jsonDataset.getDateTimeFormat() != null) {
       throw new IllegalArgumentException(

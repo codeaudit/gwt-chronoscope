@@ -2,11 +2,14 @@ package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
 
 /**
  * Global options for Chronoscope.
  */
-public class ChronoscopeOptions {
+@ExportPackage("chronoscope")
+public class ChronoscopeOptions implements Exportable {
 
   public static boolean showCreditsEnabled = true;
 
@@ -73,10 +76,12 @@ public class ChronoscopeOptions {
     ChronoscopeOptions.errorReportingEnabled = errorReportingEnabled;
   }
 
+  @Export
   public static void setHistorySupport(boolean historySupport) {
     ChronoscopeOptions.historySupport = historySupport;
   }
 
+  @Export
   public static void setLowPerformance(boolean lowPerformance) {
     ChronoscopeOptions.lowPerformance = lowPerformance;
   }
