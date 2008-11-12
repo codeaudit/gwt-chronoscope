@@ -37,7 +37,6 @@ public class ChartDemo implements EntryPoint {
     }-*/;
 
   public void onModuleLoad() {
-
     try {
       // You must specify the chart dimensions for now, rather than have the chart 
       // grow to fill its container
@@ -74,7 +73,7 @@ public class ChartDemo implements EntryPoint {
           });
           
           XYPlot plot = view.getChart().getPlot();
-          //plot.setDatasetRenderer(0, new BarChartXYRenderer());
+          plot.setDatasetRenderer(1, new BarChartXYRenderer());
           plot.addOverlay(m);
           plot.redraw();
         }

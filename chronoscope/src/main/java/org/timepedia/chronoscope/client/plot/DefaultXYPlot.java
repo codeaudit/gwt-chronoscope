@@ -908,8 +908,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> r) {
     r.setParentGssElement(createGssElementForDataset(datasetIndex));
+    r.setPlot(this);
+    r.setDatasetIndex(datasetIndex);
     datasetRenderers.set(datasetIndex, r);
-    
   }
   
   public void setDatasetRenderers(List<DatasetRenderer<T>> renderers) {
@@ -1405,7 +1406,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     
     for (int i = 0; i < datasets.size(); i++) {
-      datasetRenderers.get(i).setParentGssElement(createGssElementForDataset(i));
+      DatasetRenderer<T> r = datasetRenderers.get(i);
+      r.setParentGssElement(createGssElementForDataset(i));
+      r.setPlot(this);
+      r.setDatasetIndex(i);
     }
     
     hoverPoints = new int[datasets.size()];

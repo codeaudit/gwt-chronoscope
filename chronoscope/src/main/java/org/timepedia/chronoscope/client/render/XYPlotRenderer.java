@@ -51,7 +51,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
       }
 
       final int maxPoints = Math.min(
-          plot.getDatasetRenderer(datasetIdx).getMaxDrawableDatapoints(plot),
+          plot.getDatasetRenderer(datasetIdx).getMaxDrawableDatapoints(),
           plot.getMaxDrawableDataPoints());
 
       int domainStartIdx = 0;
@@ -113,7 +113,7 @@ public abstract class XYPlotRenderer<T extends Tuple2D> {
         Dataset<T> dataset = datasets.get(i);
         T dataPt = dataset.getFlyweightTuple(hoverPoint, mipLevel);
         DatasetRenderer<T> r = plot.getDatasetRenderer(i);
-        r.drawHoverPoint(plot, layer, dataPt, i);
+        r.drawHoverPoint(layer, dataPt, i);
       }
     }
     

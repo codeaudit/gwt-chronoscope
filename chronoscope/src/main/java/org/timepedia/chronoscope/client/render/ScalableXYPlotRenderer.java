@@ -41,7 +41,7 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
     renderState
         .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
 
-    renderer.beginCurve(plot, layer, renderState);
+    renderer.beginCurve(layer, renderState);
 
     int domainStart = this.domainStartIdxs[datasetIndex];
     int domainEnd = this.domainEndIdxs[datasetIndex];
@@ -50,23 +50,24 @@ public class ScalableXYPlotRenderer<T extends Tuple2D> extends XYPlotRenderer<T>
 
     // Render the data curve
     int end = Math.min(domainEnd + 1, numSamples);
+    int methodCallCount = 0;
     for (int i = Math.max(0, domainStart - 1); i < end; i++) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
-      renderer.drawCurvePart(plot, layer, (T)dataPt, datasetIndex, renderState);
+      renderer.drawCurvePart(layer, (T)dataPt, methodCallCount++, renderState);
     }
-    renderer.endCurve(plot, layer, datasetIndex, renderState);
+    renderer.endCurve(layer, renderState);
     
     // Render the focus points on the curve
-    renderer.beginPoints(plot, layer, renderState);
+    renderer.beginPoints(layer, renderState);
     end = Math.min(domainEnd + 1, numSamples);
     for (int i = Math.max(0, domainStart - 2); i < end; i++) {
       Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
-      renderer.drawPoint(plot, layer, (T)dataPt, datasetIndex, renderState);
+      renderer.drawPoint(layer, (T)dataPt, renderState);
     }
-    renderer.endPoints(plot, layer, datasetIndex, renderState);
+    renderer.endPoints(layer, renderState);
   }
 }
