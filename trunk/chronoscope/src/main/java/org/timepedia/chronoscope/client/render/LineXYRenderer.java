@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
@@ -22,10 +20,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   
   protected double fx = -1;
   
-  // Keeps track of the index of the currently processed datapoint
-  private int pointIndex;
-  
-  public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
+  @Override
+  public void beginCurve(Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
     activeGssLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
@@ -34,16 +30,17 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     lx = ly = -1;
     fx = -1;
-    pointIndex = 0;
   }
 
-  public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
+  @Override
+  public void beginPoints(Layer layer, RenderState renderState) {
     activeGssPointProps = renderState.isDisabled() ? gssDisabledPointProps : gssPointProps;
     lx = ly = -1;
     layer.save();
   }
-
-  public double calcLegendIconWidth(XYPlot<T> plot, View view) {
+  
+  @Override
+  public double calcLegendIconWidth(View view) {
     initGss(view);
     GssProperties apointProp = 
       (plot.getFocus() != null) ? gssPointProps 
@@ -51,39 +48,41 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     return apointProp.size + 10;
   }
 
-  public void drawCurvePart(XYPlot<T> plot, Layer layer,
-      T point, int seriesNum, RenderState renderState) {
-      double ux = plot.domainToScreenX(point.getFirst(), seriesNum);
-      double uy = plot.rangeToScreenY(point.getSecond(), seriesNum);
+  @Override
+  public void drawCurvePart(Layer layer, T point, int methodCallCount, 
+      RenderState renderState) {
+    
+      double ux = plot.domainToScreenX(point.getFirst(), datasetIndex);
+      double uy = plot.rangeToScreenY(point.getSecond(), datasetIndex);
       
       // guard webkit bug, coredump if draw two identical lineTo in a row
       if (activeGssLineProps.visible) {
-        if (pointIndex == 0) {
-          // This is the first point of the dataset, so just store the coordinates.
+        if (methodCallCount == 0) {
+          // This is the first point to be rendered, so just store the coordinates.
           fx = lx = ux;
           ly = uy;
         }
         else {
-          if (pointIndex == 1) {
-            // This is the 2nd point of the dataset, and also the 1st line segment
-            // of the dataset, so need to position the cursor at point 0 (the 
+          if (methodCallCount == 1) {
+            // This is the 2nd point to be rendered, and also the 1st line segment
+            // to be rendered, so need to position the cursor at point 0 (the 
             // previous point)
             layer.moveTo(lx, ly);
           }
           
           // Draw a line from the end of the previous line segment (or the 1st point
-          // of the curve if this is the first line segment to be drawn) to (ux, uy).
+          // of the visible curve if this is the first line segment to be drawn) 
+          // to (ux, uy).
           layer.lineTo(ux, uy);
           
           lx = ux;
           ly = uy;
         }
       }
-      
-      ++pointIndex;
   }
   
-  public void drawHoverPoint(XYPlot<T> plot, Layer layer, T point, int datasetIndex) {
+  @Override
+  public void drawHoverPoint(Layer layer, T point, int datasetIndex) {
     GssProperties layerProps = this.gssHoverProps;
     
     if (layerProps.size < 1) {
@@ -97,8 +96,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     drawPoint(ux, uy, layer, layerProps);
   }
   
-  public void drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
-      int seriesNum) {
+  @Override
+  public void drawLegendIcon(Layer layer, double x, double y, int datasetIndex) {
     layer.save();
     initGss(layer.getCanvas().getView());
 
@@ -146,55 +145,35 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.restore();
   }
 
-  public void drawPoint(XYPlot<T> plot, Layer layer, T point,
-      int seriesNum, RenderState renderState) {
-    
+  @Override
+  public void drawPoint(Layer layer, T point, RenderState renderState) {
     final boolean isFocused = renderState.isFocused();
     final double dataX = point.getFirst();
     final double dataY = point.getSecond();
     
-    GssProperties prop = activeGssPointProps;
-    if (prop.visible || isFocused) {
+    GssProperties gssProps = activeGssPointProps;
+    if (gssProps.visible || isFocused) {
 
-      if (prop.size < 1) {
-        prop.size = 1;
+      if (gssProps.size < 1) {
+        gssProps.size = 1;
       }
       
-      double ux = plot.domainToScreenX(dataX, seriesNum);
-      double uy = plot.rangeToScreenY(dataY, seriesNum);
+      double ux = plot.domainToScreenX(dataX, datasetIndex);
+      double uy = plot.rangeToScreenY(dataY, datasetIndex);
       double dx = ux - lx;
 
-      if (lx == -1 || isFocused || dx > (prop.size * 2 + 4)) {
-        drawPoint(ux, uy, layer, prop);
+      if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {
+        drawPoint(ux, uy, layer, gssProps);
         lx = ux;
         ly = uy;
       }
     }
   }
 
-  /**
-   * Draws a point at the specified screen coordinates
-   */
-  private void drawPoint(double ux, double uy, Layer layer, GssProperties gssProps) {
-    layer.setFillColor(gssProps.bgColor);
-    layer.setLineWidth(gssProps.lineThickness);
-    layer.setShadowBlur(gssProps.shadowBlur);
-    layer.setStrokeColor(gssProps.color);
-    
-    layer.beginPath();
-//  layer.translate(ux, uy);
-    layer.arc(ux, uy, gssProps.size, 0, 2 * Math.PI, 1);
-    layer.fill();
-    layer.stroke();
-//  layer.translate(-ux, -uy);
-  }
-  
-  public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, 
-      RenderState renderState) {
-
+  @Override
+  public void endCurve(Layer layer, RenderState renderState) {
     GssProperties fillProp = renderState.isDisabled() 
-      ? gssDisabledFillProps
-          : gssFillProps;
+        ? gssDisabledFillProps : gssFillProps;
 
     layer.setFillColor(activeGssLineProps.bgColor);
     layer.setLineWidth(activeGssLineProps.lineThickness);
@@ -216,8 +195,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.restore();
   }
 
-  public void endPoints(XYPlot<T> plot, Layer layer, int seriesNum, 
-      RenderState renderState) {
+  @Override
+  public void endPoints(Layer layer, RenderState renderState) {
     layer.restore();
   }
 
@@ -229,4 +208,21 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     return null;
   }
 
+  /**
+   * Draws a point at the specified screen coordinates
+   */
+  private void drawPoint(double ux, double uy, Layer layer, GssProperties gssProps) {
+    layer.setFillColor(gssProps.bgColor);
+    layer.setLineWidth(gssProps.lineThickness);
+    layer.setShadowBlur(gssProps.shadowBlur);
+    layer.setStrokeColor(gssProps.color);
+    
+    layer.beginPath();
+//  layer.translate(ux, uy);
+    layer.arc(ux, uy, gssProps.size, 0, 2 * Math.PI, 1);
+    layer.fill();
+    layer.stroke();
+//  layer.translate(-ux, -uy);
+  }
+  
 }

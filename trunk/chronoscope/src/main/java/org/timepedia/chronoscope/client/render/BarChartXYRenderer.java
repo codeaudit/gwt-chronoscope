@@ -1,234 +1,104 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
-/**
- * Renders BarCharts on an XYPlot.
- */
-public class BarChartXYRenderer<T extends Tuple2D> extends DatasetRenderer<T> 
-    implements GssElement {
+public class BarChartXYRenderer extends LineXYRenderer<Tuple2D> {
 
-  private FocusPainter focusPainter;
-
-  private double interval = -1;
-
-  private double lx = -1;
-
-  private double offset = -1;
-
-  public void beginCurve(XYPlot<T> plot, Layer layer, RenderState renderState) {
+  private double currInterval, prevInterval;
+  private double barGapFactor = 0.75;
+  private GssProperties gssBarProps;
+  
+  @Override
+  public void beginCurve(Layer layer, RenderState renderState) {
     initGss(plot.getChart().getView());
 
-    GssProperties prop = renderState.isDisabled() 
-        ? gssDisabledLineProps
-        : gssLineProps;
     layer.save();
-    layer.setLineWidth(prop.lineThickness);
-    layer.setShadowBlur(prop.shadowBlur);
-    layer.setShadowColor(prop.shadowColor);
-    layer.setShadowOffsetX(prop.shadowOffsetX);
-    layer.setShadowOffsetY(prop.shadowOffsetY);
-    layer.setTransparency((float) prop.transparency);
-
+    
     lx = -1;
-  }
+    currInterval = prevInterval = -1;
 
-  public void beginPoints(XYPlot<T> plot, Layer layer, RenderState renderState) {
-    // do nothing
-  }
-
-  public double calcLegendIconWidth(XYPlot<T> plot, View view) {
-    initGss(view);
-    GssProperties apointProp = 
-      (plot.getFocus() != null) ? gssPointProps 
-                                : gssDisabledPointProps;
-    return apointProp.size + 10;
-  }
-
- public void drawCurvePart(XYPlot<T> plot, Layer layer, T point,
-    int seriesNum, RenderState renderState) {
-    
-   final double dataX = point.getFirst();
-   final double dataY = point.getSecond();
-   
-   double ux = plot.domainToScreenX(dataX, seriesNum);
-    double uy = plot.rangeToScreenY(dataY, seriesNum);
-    
     final boolean isDisabled = renderState.isDisabled();
-    final boolean isFocused = renderState.isFocused();
+    gssBarProps = isDisabled ? gssDisabledLineProps : gssLineProps;
+    assignGssPropsToLayer(gssBarProps, layer);
+  }
 
-    GssProperties barProp = isDisabled ? gssDisabledLineProps
-        : gssLineProps;
-    GssProperties pointProp = isDisabled ? gssDisabledPointProps
-        : gssPointProps;
-    // guard webkit bug, coredump if draw two identical lineTo in a row
-    if (ux - lx >= 1) {
-      double bw = barProp.size;
-      double ow = bw / 2;
-      if (barProp.visible) {
-        layer.setShadowBlur(barProp.shadowBlur);
-        layer.setShadowColor(barProp.shadowColor);
-        layer.setShadowOffsetX(barProp.shadowOffsetX);
-        layer.setShadowOffsetY(barProp.shadowOffsetY);
-        layer.setFillColor(barProp.bgColor);
-        double padding = 0;
-        if (interval != -1) {
+  @Override
+  public void drawCurvePart(Layer layer, Tuple2D point, int methodCallCount, 
+      RenderState renderState) {
+    
+    final double dataX = point.getFirst();
+    final double dataY = point.getSecond();
+    final double ux = plot.domainToScreenX(dataX, datasetIndex);
+    final double uy = plot.rangeToScreenY(dataY, datasetIndex);
+      
+    if (methodCallCount == 0) {
+      // nothing to do
+    }
+    else {
+      double x, y, width, height;
 
-          bw = plot.domainToScreenX(dataX + interval, seriesNum) - ux;
-          ow = plot.domainToScreenX(dataX + offset, seriesNum) - ux;
-        }
-        ow -= padding;
-        bw -= padding * 2;
+      currInterval = ux - lx;
+      height = plot.getInnerBounds().bottomY() - ly;
+      y = ly;
 
-        double barHeight = plot.getInnerBounds().height + plot
-            .getInnerBounds().y;
-        layer.save();
-        layer.translate(ux - ow, uy);
-
-        layer.scale(bw, barHeight);
-        layer.beginPath();
-
-        // don't draw bars too close together
-        if (true || ux - lx >= bw) {
-
-          layer.moveTo(0, 1);
-          layer.lineTo(0, 0);
-          layer.lineTo(1, 0);
-          layer.lineTo(1, 1);
-          layer.closePath();
-          layer.fill();
-          lx = ux;
-        }
-        layer.restore();
+      if (methodCallCount == 1) {
+        // Calculate the screen-x and width of first bar
+        width = (currInterval / 2.0) * barGapFactor;
+        x = lx;
+      }
+      else {
+        width = MathUtil.min(prevInterval, currInterval) * barGapFactor;
+        x = lx - (width / 2.0);
       }
       
-      if (pointProp.visible) {
-        if (isFocused) {
-          focusPainter.drawFocus(plot, layer, dataX, dataY, seriesNum);
-        }
+      drawVerticalBar(layer, x, y ,width, height);
 
-        layer.save();
-        layer.translate(ux - ow, uy);
-
-        layer.beginPath();
-
-        layer.setFillColor(pointProp.bgColor);
-        layer.arc(0, 0, pointProp.size, 0, 2 * Math.PI, 1);
-        layer.setShadowBlur(0);
-        layer.fill();
-        layer.beginPath();
-        layer.setLineWidth(pointProp.lineThickness);
-        if (pointProp.size < 1) {
-          pointProp.size = 1;
-        }
-        layer.arc(0, 0, pointProp.size, 0, 2 * Math.PI, 1);
-        layer.setStrokeColor(pointProp.color);
-        layer.setShadowBlur(pointProp.shadowBlur);
-        layer.setLineWidth(pointProp.lineThickness);
-        layer.stroke();
-        layer.restore();
-        lx = ux;
-      }
+      prevInterval = currInterval;
     }
+    
+    lx = ux;
+    ly = uy;
   }
 
- @Override
- public void drawHoverPoint(XYPlot<T> plot, Layer layer, T point,
-     int datasetIndex) {
-   
-   // Do nothing for now...
- }
+  @Override
+  public int getMaxDrawableDatapoints() {
+    return 70;
+  }
 
-  public void drawLegendIcon(XYPlot<T> plot, Layer layer, double x, double y,
-      int seriesNum) {
-    layer.save();
-    initGss(layer.getCanvas().getView());
+  @Override
+  public void endCurve(Layer layer, RenderState renderState) {
+    // Render the final bar (i.e. te furthest one to the right)
+    double width = (currInterval / 2.0) * barGapFactor;
+    double height = plot.getInnerBounds().bottomY() - ly;
+    double x = lx - width;
+    double y = ly;
+
+    drawVerticalBar(layer, x, y, width, height);
     
-    GssProperties lineProp, pointProp;
-    Focus focus = plot.getFocus();
-    if (focus != null && focus.getDatasetIndex() != seriesNum) {
-      lineProp = gssDisabledLineProps;
-      pointProp = gssDisabledPointProps;
-    } else {
-      lineProp = gssLineProps;
-      pointProp = gssPointProps;
-    }
+    layer.restore();
+  }
 
+  private void drawVerticalBar(Layer layer, double x, double y, double w, double h) {
     layer.beginPath();
     layer.moveTo(x, y);
-    layer.setTransparency((float) lineProp.transparency);
-    layer.setLineWidth(lineProp.lineThickness);
-    layer.setShadowBlur(lineProp.shadowBlur);
-    layer.setShadowColor(lineProp.shadowColor);
-    layer.setShadowOffsetX(lineProp.shadowOffsetX);
-    layer.setShadowOffsetY(lineProp.shadowOffsetY);
-    layer.setStrokeColor(lineProp.color);
-    layer.lineTo(x + 5 + pointProp.size + 5, y);
-    layer.stroke();
-
-    if (pointProp.visible) {
-      layer.translate(x, y - pointProp.size / 2 + 1);
-      layer.beginPath();
-      layer.setTransparency((float) pointProp.transparency);
-      layer.setFillColor(pointProp.bgColor);
-      layer.arc(6, 0, pointProp.size, 0, 2 * Math.PI, 1);
-      layer.setShadowBlur(0);
-      layer.fill();
-      layer.beginPath();
-      layer.setLineWidth(pointProp.lineThickness);
-      if (pointProp.size < 1) {
-        pointProp.size = 1;
-      }
-      layer.arc(6, 0, pointProp.size, 0, 2 * Math.PI, 1);
-      layer.setStrokeColor(pointProp.color);
-      layer.setShadowBlur(pointProp.shadowBlur);
-      layer.setLineWidth(pointProp.lineThickness);
-      layer.stroke();
-    }
-    layer.restore();
+    layer.lineTo(x + w, y);
+    layer.lineTo(x + w, y + h);
+    layer.lineTo(x, y + h);
+    layer.closePath();
+    layer.fill();
   }
-
-  public void drawPoint(XYPlot<T> plot, Layer layer, T point,
-      int seriesNum, RenderState renderState) {
-    // do nothing
-  }
-
-  public void endCurve(XYPlot<T> plot, Layer layer, int seriesNum, RenderState renderState) {
-    layer.restore();
-  }
-
-  public void endPoints(XYPlot<T> plot, Layer layer, int seriesNum, RenderState renderState) {
-    // do nothing
-  }
-
-  public double getInterval() {
-    return interval;
-  }
-
-  public double getOffset() {
-    return offset;
-  }
-
-  public String getType() {
-    return "bar";
-  }
-
-  public String getTypeClass() {
-    return null;
-  }
-
-  public void setInterval(double interval) {
-    this.interval = interval;
-  }
-
-  public void setOffset(double offset) {
-    this.offset = offset;
-  }
-
+  
+  private void assignGssPropsToLayer(GssProperties gss, Layer layer) {
+    layer.setFillColor(gss.color);
+    //layer.setLineWidth(gss.lineThickness);
+    layer.setShadowBlur(gss.shadowBlur);
+    layer.setShadowColor(gss.shadowColor);
+    layer.setShadowOffsetX(gss.shadowOffsetX);
+    layer.setShadowOffsetY(gss.shadowOffsetY);
+    //layer.setStrokeColor(gss.color);
+    //layer.setTransparency((float) gssBarProps.transparency);
+ }
 }
