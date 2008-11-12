@@ -94,7 +94,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   }
   
   @Override
-  public void drawLegendIcon(Layer layer, double x, double y, int datasetIndex) {
+  public void drawLegendIcon(Layer layer, double x, double y) {
     layer.save();
 
     GssProperties alineProp, apointProp;
