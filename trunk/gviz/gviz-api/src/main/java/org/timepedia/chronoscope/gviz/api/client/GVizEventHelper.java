@@ -19,8 +19,11 @@ public class GVizEventHelper {
               eventData);
       }-*/;
 
-  public static native JavaScriptObject selection(int col,
-      int row) /*-{
+  public static native JavaScriptObject selection(int col, int row) /*-{
       return [{col: col, row: row }];
+  }-*/;
+
+  public static native JavaScriptObject point(int col, int row) /*-{
+      return { col: col, row: row };
   }-*/;
 }

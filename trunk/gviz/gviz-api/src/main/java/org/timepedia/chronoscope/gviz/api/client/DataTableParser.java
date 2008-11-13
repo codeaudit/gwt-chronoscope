@@ -302,20 +302,21 @@ public class DataTableParser {
     }
   }
 
+  public static class Pair implements Comparable<Pair> {
+
+       public double x, y;
+
+       public Pair(double x, double y) {
+         this.x = x;
+         this.y = y;
+       }
+
+       public int compareTo(Pair o) {
+         return (int) (this.x - o.x);
+       }
+     }
+
   private static void sortAscendingDate(DataPair pair) {
-    class Pair implements Comparable<Double> {
-
-      public double x, y;
-
-      public Pair(double x, double y) {
-        this.x = x;
-        this.y = y;
-      }
-
-      public int compareTo(Double o) {
-        return (int) (this.x - o.doubleValue());
-      }
-    }
 
     Pair[] p = new Pair[pair.domain.length];
     for (int i = 0; i < p.length; i++) {
