@@ -13,7 +13,7 @@ import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 public class ChronoscopeTestCaseBase extends GWTTestCase {
 
   public String getModuleName() {
-    return "org.timepedia.chronoscope.ChronoscopeTestSuiteMock";
+    return "org.timepedia.chronoscope.ChronoscopeTestSuite";
   }
 
   protected void runChronoscopeTest(Dataset ds[],

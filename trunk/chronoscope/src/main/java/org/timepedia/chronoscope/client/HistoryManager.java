@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client;
 
+import org.timepedia.chronoscope.client.event.PlotMovedEvent;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +13,8 @@ import java.util.Map;
  */
 public class HistoryManager {
 
-  public static final Map<String, Chart> id2chart
-      = new HashMap<String, Chart>();
+  public static final Map<String, Chart> id2chart = new HashMap<String, Chart>()
+      ;
 
   public static void setHistoryManagerImpl(
       HistoryManagerImpl historyManagerImpl) {
@@ -74,7 +76,8 @@ public class HistoryManager {
           }
           if (changed) {
             if (targets.length == 1) {
-              chart.getPlot().animateTo(dO, cD, XYPlotListener.ZOOMED, null);
+              chart.getPlot()
+                  .animateTo(dO, cD, PlotMovedEvent.MoveType.ZOOMED, null);
             } else {
               chart.getPlot().getDomain().setEndpoints(dO, dO + cD);
             }

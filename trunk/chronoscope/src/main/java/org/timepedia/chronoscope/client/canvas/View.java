@@ -1,29 +1,18 @@
 package org.timepedia.chronoscope.client.canvas;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
-import org.timepedia.chronoscope.client.util.date.GWTDateFormatter;
-import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * View encapsulates platform specific behaviors, such as graphics rendering,
@@ -48,17 +37,9 @@ public abstract class View implements Exportable {
 
   protected Chart chart;
 
-  private final List<XYPlotListener> plotListeners
-      = new ArrayList<XYPlotListener>();
-
   private boolean doubleBuffered = false;
 
   private ChronoscopeMenu contextMenu = null;
-
-  public void addViewListener(XYPlotListener listener) {
-    ArgChecker.isNotNull(listener, "listener");
-    plotListeners.add(listener);
-  }
 
   public void canvasSetupDone() {
     getCanvas().canvasSetupDone();
@@ -89,27 +70,6 @@ public abstract class View implements Exportable {
    * Make sure the canvas is currently visible in the UI.
    */
   public void ensureViewVisible() {
-  }
-
-  public void fireContextMenuEvent(int x, int y) {
-    for (XYPlotListener l : plotListeners) {
-      l.onContextMenu(x, y);
-    }
-  }
-
-  public void fireFocusEvent(XYPlot plot, int focusSeries, int focusPoint) {
-    for (XYPlotListener l : plotListeners) {
-      l.onFocusPointChanged(plot, focusSeries, focusPoint);
-    }
-  }
-
-  public void fireScrollEvent(XYPlot plot, double domainAmt, int type,
-      boolean anim) {
-    for (XYPlotListener l : plotListeners) {
-
-      // FIXME: pass domainAmt to onPlotMoved
-      l.onPlotMoved(plot, domainAmt, type, anim);
-    }
   }
 
   /**
@@ -238,22 +198,7 @@ public abstract class View implements Exportable {
   public void setContextMenu(ChronoscopeMenu cm) {
     if (contextMenu == null) {
       contextMenu = cm;
-      addViewListener(new XYPlotListener() {
-        public void onContextMenu(int x, int y) {
-          ChronoscopeMenu menu = getContextMenu();
-          menu.show(x, y);
-        }
-
-        public void onFocusPointChanged(XYPlot plot, int focusSeries,
-            int focusPoint) {
-          // do nothing
-        }
-
-        public void onPlotMoved(XYPlot plot, double domainAmt, int type,
-            boolean animated) {
-          // do nothing
-        }
-      });
+      //TODO: move this into plot
     } else {
       contextMenu = cm;
     }

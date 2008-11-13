@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.HistoryManager;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -83,7 +84,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     int x = DOM.eventGetClientX(evt);
     int y = DOM.eventGetClientY(evt) + Window.getScrollTop();
 
-    view.fireContextMenuEvent(x, y);
+    ((DefaultXYPlot)getChart().getPlot()).fireContextMenuEvent(x, y);
     DOM.eventCancelBubble(evt, true);
     DOM.eventPreventDefault(evt);
   }
