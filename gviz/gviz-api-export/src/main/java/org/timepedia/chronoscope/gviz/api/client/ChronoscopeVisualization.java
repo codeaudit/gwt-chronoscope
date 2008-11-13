@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.gviz.api.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -8,6 +9,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
+import org.timepedia.chronoscope.client.InfoWindowEvent;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -73,27 +79,32 @@ public class ChronoscopeVisualization implements Exportable {
     dontfire = true;
     cp.getChart().prevZoom();
   }
+  //not supported until gwt expoter allows overloaded exports
+
+//  @Export
+//  public void pageRight() {
+//    dontfire = true;
+//    cp.getChart().pageRight(1.0);
+//  }
+
+  //
 
   @Export
-  public void pageRight() {
-    dontfire = true;
-    cp.getChart().pageRight(1.0);
-  }
-
-  @Export
-  public void pageRight(int amt) {
+  public void pageRight(double amt) {
     dontfire = true;
     cp.getChart().pageRight(MathUtil.bound(amt, 0.0, 1.0));
   }
 
-  @Export
-  public void pageLeft() {
-    dontfire = true;
-    cp.getChart().pageRight(1.0);
-  }
+  //not supported until gwt expoter allows overloaded exports
+
+//  @Export
+//  public void pageLeft() {
+//    dontfire = true;
+//    cp.getChart().pageRight(1.0);
+//  }
 
   @Export
-  public void pageLeft(int amt) {
+  public void pageLeft(double amt) {
     dontfire = true;
     cp.getChart().pageLeft(MathUtil.bound(amt, 0.0, 1.0));
   }
@@ -177,9 +188,14 @@ public class ChronoscopeVisualization implements Exportable {
                       wrapJSArray(event.getHoverPoints()));
             }
 
-            private native JavaScriptObject wrapJSArray(int[] hoverPoints) /*-{
-              return hoverPoints;
-            }-*/;
+            private JavaScriptObject wrapJSArray(int[] hoverPoints) {
+              JsArray arr = JsArray.createArray().cast();
+              for (int i = 0; i < hoverPoints.length; i++) {
+                arr.set(i, GVizEventHelper.point(dataset2Column.get(i),
+                    hoverPoints[i]));
+              }
+              return arr;
+            }
           });
           plot.addPlotMovedHandler(new PlotMovedHandler() {
             public void onMoved(PlotMovedEvent event) {
@@ -213,7 +229,7 @@ public class ChronoscopeVisualization implements Exportable {
 
   private native JavaScriptObject rangeProps(double domainOrigin,
       double currentDomain, String eventType) /*-{
-    return { start: new $wnd.Date(domainOrigin), end: new $wnd.Date(currentDomain-domainorigin), event: eventType };
+    return { start: new $wnd.Date(domainOrigin), end: new $wnd.Date(currentDomain-domainOrigin), event: eventType };
   }-*/;
 
   private String eventTypeToString(PlotMovedEvent.MoveType type) {
@@ -242,6 +258,39 @@ public class ChronoscopeVisualization implements Exportable {
             focus.getPointIndex());
   }
 
+  private InfoWindow currentInfoWindow = null;
+
+  @Export
+  InfoWindow openInfoWindow(JavaScriptObject selection, String html) {
+    if (currentInfoWindow != null) {
+      currentInfoWindow.close();
+    }
+    Properties sel = selection.cast();
+    int datasetIndex = -1;
+    int pointIndex = sel.getInt("row");
+
+    for (Map.Entry<Integer, Integer> e : dataset2Column.entrySet()) {
+      if (e.getValue() == sel.getInt("col")) {
+        datasetIndex = e.getKey();
+      }
+    }
+    if (datasetIndex != -1) {
+      XYPlot plot = cp.getChart().getPlot();
+      double x = plot.getDatasets().get(datasetIndex).getX(pointIndex);
+      Tuple2D tuple = plot.getDatasets().get(datasetIndex)
+          .getFlyweightTuple(pointIndex);
+      double y = tuple.getSecond();
+      currentInfoWindow = plot.openInfoWindow(html, x, y, datasetIndex);
+      currentInfoWindow
+          .addInfoWindowClosedHandler(new InfoWindowClosedHandler() {
+            public void onInfoWindowClosed(InfoWindowEvent event) {
+              currentInfoWindow = null;
+            }
+          });
+    }
+    return currentInfoWindow;
+  }
+
   @Export
   void setSelection(JavaScriptObject selection) {
     Properties sel = JavascriptHelper.jsArrGet(selection, 0).cast();
@@ -255,7 +304,7 @@ public class ChronoscopeVisualization implements Exportable {
         cp.getChart().getPlot().setFocus(focus);
       }
     }
-    cp.getChart().redraw();
+    ((DefaultXYPlot)cp.getChart().getPlot()).redraw(true);
   }
 
   private native double getDate(Properties opts, String field) /*-{

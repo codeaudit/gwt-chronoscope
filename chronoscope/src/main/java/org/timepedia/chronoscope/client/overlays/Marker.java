@@ -4,6 +4,8 @@ import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
+import org.timepedia.chronoscope.client.InfoWindowEvent;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -216,8 +218,8 @@ public class Marker implements Overlay, GssElement, Exportable {
     wasOpenWindow = null;
     currentWindow = plot.openInfoWindow(html, domainX, rangeY, datasetIdx);
     currentWindow
-        .addInfoWindowClosedHandler(new InfoWindow.InfoWindowClosedHandler() {
-          public void onInfoWindowClosed(InfoWindow.InfoWindowEvent event) {
+        .addInfoWindowClosedHandler(new InfoWindowClosedHandler() {
+          public void onInfoWindowClosed(InfoWindowEvent event) {
             currentWindow = null;
           }
         });

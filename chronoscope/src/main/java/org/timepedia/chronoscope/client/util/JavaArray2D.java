@@ -69,7 +69,7 @@ public final class JavaArray2D implements Array2D {
     if (!MathUtil.isBounded(row, 0, rowCount - 1)) {
       throw new ArrayIndexOutOfBoundsException(row);
     }
-    
+
     if (!MathUtil.isBounded(column, 0, numColumns(row) - 1)) {
       throw new ArrayIndexOutOfBoundsException(column);
     }

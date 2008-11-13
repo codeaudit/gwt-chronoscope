@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.java2d.canvas;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;

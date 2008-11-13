@@ -77,6 +77,9 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     initElement(container);
 
     this.plot = plot;
+    chart = new Chart();
+    chart.setPlot(plot);
+
   }
 
   public void fireContextMenu(Event evt) {
@@ -151,8 +154,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     plot.init(view);
     
     // configure chart
-    chart = new Chart();
-    chart.setPlot(plot);
     chart.setView(view);
     
     viewReady = true;
