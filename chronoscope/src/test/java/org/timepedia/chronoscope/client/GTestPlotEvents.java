@@ -58,14 +58,14 @@ public class GTestPlotEvents extends ChronoscopeTestCaseBase {
         assertTrue("Hover event not triggered by setHover", hoverTrigger);
 
         //MockView/Canvas currently inadequate to test this
-        plot.animateTo(plot.getDomain().getStart() * 1.1,
-            plot.getDomain().length(), PlotMovedEvent.MoveType.DRAGGED,
-            new PortableTimerTask() {
-              public void run(PortableTimer timer) {
-                assertTrue("Move event not triggered by animateTo",
-                    moveTrigger);
-              }
-            });
+//        plot.animateTo(plot.getDomain().getStart() * 1.1,
+//            plot.getDomain().length(), PlotMovedEvent.MoveType.DRAGGED,
+//            new PortableTimerTask() {
+//              public void run(PortableTimer timer) {
+//                assertTrue("Move event not triggered by animateTo",
+//                    moveTrigger);
+//              }
+//            });
 
         finishTest();
       }
