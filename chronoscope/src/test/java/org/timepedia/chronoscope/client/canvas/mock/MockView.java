@@ -1,7 +1,9 @@
 package org.timepedia.chronoscope.client.canvas.mock;
 
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.InfoWindow;
@@ -14,6 +16,8 @@ import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+
+import java.util.Date;
 
 /**
  *
@@ -43,23 +47,54 @@ public class MockView extends GwtView implements DOMView {
     };
   }
 
-  public PortableTimer createTimer(final PortableTimerTask run) {
-    return new PortableTimer() {
+  /**
+   * Creates a PortableTimer based on GWT's Timer class.
+   */
+  private PortableTimer createGWTTimer(final PortableTimerTask run) {
+    return new BrowserTimer() {
       public void cancelTimer() {
+        cancel();
       }
-
-      public void schedule(int delayMillis) {
-        run.run(this);
-      }
-
-      public void scheduleRepeating(int periodMillis) {
-        run.run(this);
+      @Override
+       public void schedule(int i) {
+        super.schedule(50);   
       }
 
       public double getTime() {
-        return System.currentTimeMillis();
+        return new Date().getTime();
+      }
+
+      public void run() {
+        run.run(this);
       }
     };
+  }
+
+  abstract static class BrowserTimer extends Timer implements PortableTimer {
+
+  }
+
+  public PortableTimer createTimer(final PortableTimerTask run) {
+    if (GWT.isClient()) {
+      return new PortableTimer() {
+        public void cancelTimer() {
+        }
+
+        public void schedule(int delayMillis) {
+          run.run(this);
+        }
+
+        public void scheduleRepeating(int periodMillis) {
+          run.run(this);
+        }
+
+        public double getTime() {
+          return System.currentTimeMillis();
+        }
+      };
+    } else {
+      return createGWTTimer(run);
+    }
   }
 
   public InfoWindow createInfoWindow(String html, double x, double y) {
@@ -73,10 +108,10 @@ public class MockView extends GwtView implements DOMView {
 
       public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
       }
-      
+
       public void open() {
       }
-      
+
     };
   }
 
@@ -93,12 +128,11 @@ public class MockView extends GwtView implements DOMView {
   }
 
   public Element getElement() {
-    return (Element)(Object)Document.get().getBody();
+    return (Element) (Object) Document.get().getBody();
   }
 
-  public void initialize(Element element, int width,
-      int height, boolean interactive, GssContext gssContext,
-      ViewReadyCallback callback) {
+  public void initialize(Element element, int width, int height,
+      boolean interactive, GssContext gssContext, ViewReadyCallback callback) {
     super.initialize(width, height, false, gssContext, callback);
   }
 }
