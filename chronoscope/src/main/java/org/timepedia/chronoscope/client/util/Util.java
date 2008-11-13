@@ -9,22 +9,20 @@ import org.timepedia.chronoscope.client.Datasets;
 public final class Util {
 
   /**
-   * Searches the datapoints in a dataset for a domain value and returns the corresponding
-   * domain index at a given mip level.  If the dataset doesn't contain the specified 
-   * domain value, then the domain index of the next largest domain value is returned.
-   * The one exception to this rule is when <tt>domainValue</tt> is greater than all
-   * domain values within the dataset, in which case the largest domain value in the
-   * dataset is returned.
-   * <p>
-   * The dataset's domain values are assumed to be in sorted ascending order (this
-   * should be enforced by all {@link Dataset} implementations).  
-   * 
-   * @param ds - The dataset to search on
+   * Searches the datapoints in a dataset for a domain value and returns the
+   * corresponding domain index at a given mip level.  If the dataset doesn't
+   * contain the specified domain value, then the domain index of the next
+   * largest domain value is returned. The one exception to this rule is when
+   * <tt>domainValue</tt> is greater than all domain values within the dataset,
+   * in which case the largest domain value in the dataset is returned. <p> The
+   * dataset's domain values are assumed to be in sorted ascending order (this
+   * should be enforced by all {@link Dataset} implementations).
+   *
+   * @param ds          - The dataset to search on
    * @param domainValue - The sought-after domain value
-   * @param mipLevel - The mip level to search on within the dataset
+   * @param mipLevel    - The mip level to search on within the dataset
    */
-  public static int binarySearch(Dataset ds, double domainValue,
-      int mipLevel) {
+  public static int binarySearch(Dataset ds, double domainValue, int mipLevel) {
     int low = 0;
     int high = ds.getNumSamples(mipLevel) - 1;
 
@@ -40,15 +38,16 @@ public final class Util {
         return mid; // key found
       }
     }
-    
+
     return MathUtil.bound(low, 0, ds.getNumSamples(mipLevel) - 1);
   }
 
-  public static double calcVisibleDomainMax(int maxDrawableDataPts, Datasets dataSets) {
+  public static double calcVisibleDomainMax(int maxDrawableDataPts,
+      Datasets dataSets) {
     double end = Double.MIN_VALUE;
     for (int i = 0; i < dataSets.size(); i++) {
       Dataset ds = dataSets.get(i);
-      
+
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawablePts
       int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPts);
@@ -57,7 +56,7 @@ public final class Util {
     }
     return end;
   }
-  
+
   /**
    * Returns a copy of the specified array.
    */
@@ -71,6 +70,18 @@ public final class Util {
   }
 
   /**
+   * Returns a copy of the specified array.
+   */
+  public static int[] copyArray(int[] a) {
+    if (a == null) {
+      return null;
+    }
+    int[] copy = new int[a.length];
+    System.arraycopy(a, 0, copy, 0, a.length);
+    return copy;
+  }
+
+  /**
    * Returns a copy of the specified 2-dimensional array.
    */
   public static double[][] copyArray(double[][] a) {
@@ -79,8 +90,7 @@ public final class Util {
       if (a[i] != null) {
         copy[i] = new double[a[i].length];
         System.arraycopy(a[i], 0, copy[i], 0, a[i].length);
-      }
-      else {
+      } else {
         copy[i] = null;
       }
     }
@@ -147,10 +157,10 @@ public final class Util {
     }
     return false;
   }
-  
+
   /**
-   * Finds the lowest mip level of the specified dataset whose data point cardinality 
-   * is not greater than <tt>maxDrawablePts</tt>.
+   * Finds the lowest mip level of the specified dataset whose data point
+   * cardinality is not greater than <tt>maxDrawablePts</tt>.
    */
   private static int findLowestMipLevel(Dataset ds, int maxDrawablePts) {
     int mipLevel = 0;
@@ -162,5 +172,4 @@ public final class Util {
       ++mipLevel;
     }
   }
-
 }

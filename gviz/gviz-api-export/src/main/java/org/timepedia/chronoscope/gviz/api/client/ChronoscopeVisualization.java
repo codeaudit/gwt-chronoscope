@@ -5,18 +5,21 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import gwtquery.client.Properties;
-
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.XYPlotListener;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.event.PlotFocusEvent;
+import org.timepedia.chronoscope.client.event.PlotFocusHandler;
+import org.timepedia.chronoscope.client.event.PlotHoverEvent;
+import org.timepedia.chronoscope.client.event.PlotHoverHandler;
+import org.timepedia.chronoscope.client.event.PlotMovedEvent;
+import org.timepedia.chronoscope.client.event.PlotMovedHandler;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -29,6 +32,8 @@ import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import gwtquery.client.Properties;
 
 /**
  *
@@ -127,15 +132,15 @@ public class ChronoscopeVisualization implements Exportable {
         gssContext = gstyle.getGssContext();
       }
 
-      final Dataset ds[] = DataTableParser
-          .parseDatasets(table, dataset2Column);
+      final Dataset ds[] = DataTableParser.parseDatasets(table, dataset2Column);
       final Marker ms[] = DataTableParser
           .parseMarkers(ExporterUtil.wrap(this), table, dataset2Column);
 
-      cp = Chronoscope.createTimeseriesChart(ds,
-          element.getPropertyInt("clientWidth"),
-          element.getPropertyInt("clientHeight"));
-      ((DefaultGssContext)gssContext).setShowAxisLabels(!"false".equals(opts.get("axisLabels")));
+      cp = Chronoscope
+          .createTimeseriesChart(ds, element.getPropertyInt("clientWidth"),
+              element.getPropertyInt("clientHeight"));
+      ((DefaultGssContext) gssContext)
+          .setShowAxisLabels(!"false".equals(opts.get("axisLabels")));
       cp.setGssContext(gssContext);
       cp.getChart().getPlot()
           .setOverviewEnabled(!"false".equals(opts.get("overview")));
@@ -147,20 +152,15 @@ public class ChronoscopeVisualization implements Exportable {
           for (Marker m : ms) {
             view.getChart().getPlot().addOverlay(m);
           }
-          
+
           if (!Double.isNaN(domainOrigin) && !Double.isNaN(endDomain)) {
             Interval plotDomain = view.getChart().getPlot().getDomain();
             plotDomain.setEndpoints(domainOrigin, endDomain);
           }
 
-          view.addViewListener(new XYPlotListener() {
-
-            public void onContextMenu(int x, int y) {
-              //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            public void onFocusPointChanged(XYPlot plot, int focusSeries,
-                int focusPoint) {
+          XYPlot plot = view.getChart().getPlot();
+          plot.addPlotFocusHandler(new PlotFocusHandler() {
+            public void onFocus(PlotFocusEvent event) {
               if (!dontfire) {
                 GVizEventHelper
                     .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
@@ -168,15 +168,30 @@ public class ChronoscopeVisualization implements Exportable {
               }
               dontfire = false;
             }
-
-            public void onPlotMoved(XYPlot plot, double domainAmt, int type, boolean animated) {
+          });
+          plot.addPlotHoverHandler(new PlotHoverHandler() {
+            public void onHover(PlotHoverEvent event) {
               GVizEventHelper
                   .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
-                      GVizEventHelper.RANGECHANGE_EVENT, rangeProps(
-                      plot.getDomain().getStart(), plot.getDomain().length(),
-                      eventTypeToString(type)));
+                      GVizEventHelper.HOVER_EVENT,
+                      wrapJSArray(event.getHoverPoints()));
+            }
+
+            private native JavaScriptObject wrapJSArray(int[] hoverPoints) /*-{
+              return hoverPoints;
+            }-*/;
+          });
+          plot.addPlotMovedHandler(new PlotMovedHandler() {
+            public void onMoved(PlotMovedEvent event) {
+              GVizEventHelper
+                  .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
+                      GVizEventHelper.RANGECHANGE_EVENT,
+                      rangeProps(event.getDomain().getStart(),
+                          event.getDomain().length(),
+                          eventTypeToString(event.getMoveType())));
             }
           });
+
           view.getChart().reloadStyles();
           if ("maximum".equals(scaleType)) {
             for (int i = 0; i < ds.length; i++) {
@@ -191,9 +206,8 @@ public class ChronoscopeVisualization implements Exportable {
 
       RootPanel.get(id).add(cp);
     } catch (Exception e) {
-      RootPanel.get(id)
-          .add(new Label(
-              "There was an error setting up the chart: " + e.getMessage()));
+      RootPanel.get(id).add(new Label(
+          "There was an error setting up the chart: " + e.getMessage()));
     }
   }
 
@@ -202,15 +216,15 @@ public class ChronoscopeVisualization implements Exportable {
     return { start: new $wnd.Date(domainOrigin), end: new $wnd.Date(currentDomain-domainorigin), event: eventType };
   }-*/;
 
-  private String eventTypeToString(int type) {
+  private String eventTypeToString(PlotMovedEvent.MoveType type) {
     switch (type) {
-      case XYPlotListener.DRAGGED:
+      case DRAGGED:
         return "dragged";
-      case XYPlotListener.ZOOMED:
+      case ZOOMED:
         return "zoomed";
-      case XYPlotListener.PAGED:
+      case PAGED:
         return "paged";
-      case XYPlotListener.CENTERED:
+      case CENTERED:
         return "centered";
     }
     return "zoomed";
@@ -223,8 +237,9 @@ public class ChronoscopeVisualization implements Exportable {
       return JavaScriptObject.createArray();
     }
 
-    return GVizEventHelper.selection(
-        dataset2Column.get(focus.getDatasetIndex()), focus.getPointIndex());
+    return GVizEventHelper
+        .selection(dataset2Column.get(focus.getDatasetIndex()),
+            focus.getPointIndex());
   }
 
   @Export

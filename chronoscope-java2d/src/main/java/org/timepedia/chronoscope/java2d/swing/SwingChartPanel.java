@@ -111,7 +111,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
         } else if (kchar == 'r') {
           chart.redraw();
         } else if (e.getKeyChar() == 'm') {
-          chart.getView().fireContextMenuEvent(0, 0);
+          ((DefaultXYPlot)chart.getPlot()).fireContextMenuEvent(0,0);
         }
       }
     });
@@ -137,7 +137,7 @@ public class SwingChartPanel extends JPanel implements ViewReadyCallback,
       public void run() {
         if (isContextMenu) {
 
-          chart.getView().fireContextMenuEvent(mouseX, mouseY);
+          ((DefaultXYPlot)chart.getPlot()).fireContextMenuEvent(mouseX, mouseY);
         } else {
           if (clickCount >= 2) {
             chart.maxZoomTo(mouseX, mouseY);

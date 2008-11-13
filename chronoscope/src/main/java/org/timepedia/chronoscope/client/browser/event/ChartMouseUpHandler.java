@@ -44,7 +44,7 @@ public final class ChartMouseUpHandler
     ((DOMView) chart.getView()).focus();
     
     if (event.getButton() == MouseEvent.Button.RIGHT) {
-      chart.getView().fireContextMenuEvent(x, y);
+      ((DefaultXYPlot)chart.getPlot()).fireContextMenuEvent(x, y);
     }
     
     chartInfo.setHandled(true);
