@@ -291,22 +291,20 @@ public class Chronoscope implements Exportable, HistoryListener {
 
 
   @Export
-  public void setShowCredits(boolean enabled) {
+  public static void setShowCredits(boolean enabled) {
     ChronoscopeOptions.setShowCredits(enabled);
   }
 
   @Export
-  public void setHistorySupport(boolean enabled) {
+  public static void setHistorySupport(boolean enabled) {
     ChronoscopeOptions.setHistorySupport(enabled);
   }
 
   @Export
-  public void setErrorReporting(boolean enabled) {
+  public static void setErrorReporting(boolean enabled) {
     ChronoscopeOptions.setErrorReporting(enabled);
   }
-  /**
-   * @gwt.export
-   */
+
   @Export
   public static void setFontBookRendering(boolean enabled) {
     fontBookRenderingEnabled = enabled;
@@ -315,7 +313,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   /**
    * Defaults to GWT.getModuleBaseURL() + "fr"
    *
-   * @gwt.export
    */
   @Export
   public static void setFontBookServiceEndpoint(String endpoint) {
