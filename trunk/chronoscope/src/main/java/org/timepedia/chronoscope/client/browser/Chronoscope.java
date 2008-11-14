@@ -289,6 +289,21 @@ public class Chronoscope implements Exportable, HistoryListener {
     return microformatsEnabled;
   }
 
+
+  @Export
+  public void setShowCredits(boolean enabled) {
+    ChronoscopeOptions.setShowCredits(enabled);
+  }
+
+  @Export
+  public void setHistorySupport(boolean enabled) {
+    ChronoscopeOptions.setHistorySupport(enabled);
+  }
+
+  @Export
+  public void setErrorReporting(boolean enabled) {
+    ChronoscopeOptions.setErrorReporting(enabled);
+  }
   /**
    * @gwt.export
    */
@@ -429,9 +444,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
     exporter.export();
-
-    Exporter exporterOptions = (Exporter) GWT.create(ChronoscopeOptions.class);
-    exporterOptions.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
     exporter2.export();
