@@ -91,12 +91,12 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   
   private void assignGssPropsToLayer(GssProperties gss, Layer layer) {
     layer.setFillColor(gss.color);
-    //layer.setLineWidth(gss.lineThickness);
+    layer.setLineWidth(gss.lineThickness);
     layer.setShadowBlur(gss.shadowBlur);
     layer.setShadowColor(gss.shadowColor);
     layer.setShadowOffsetX(gss.shadowOffsetX);
     layer.setShadowOffsetY(gss.shadowOffsetY);
-    //layer.setStrokeColor(gss.color);
-    //layer.setTransparency((float) gssBarProps.transparency);
+    layer.setStrokeColor(gss.color);
+    layer.setTransparency((float) gssBarProps.transparency);
  }
 }
