@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.gss.GssUtil;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -80,7 +81,7 @@ public class BatikGssProperties extends GssProperties {
     }
     if (!"none".equals(bgImage) && bgImage
         .startsWith("http://timepedia.org/")) {
-      bgColor = createGradient(view.getCanvas().getRootLayer(), size, size,
+      bgColor = GssUtil.createGradient(view.getCanvas().getRootLayer(), size, size,
           bgImage);
     }
     if (!"shadow".equals(elem.getType())) {

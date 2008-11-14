@@ -5,58 +5,60 @@ import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 public class MockGssContext extends BrowserGssContext {
-
+  
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
-    if ("line".equals(gssElem.getType())) {
-      return pseudoElt.equals("disabled") ? new MockLineCssProperties(pseudoElt,
+    final String elementType = gssElem.getType();
+    
+    if ("line".equals(elementType)) {
+      return isDisabled(pseudoElt) ? new MockLineCssProperties(pseudoElt,
           true) : new MockLineCssProperties(pseudoElt, false);
     }
-    if ("bar".equals(gssElem.getType())) {
-      return pseudoElt.equals("disabled") ? new MockBarCssProperties(pseudoElt,
+    if ("bar".equals(elementType)) {
+      return isDisabled(pseudoElt) ? new MockBarCssProperties(pseudoElt,
           true) : new MockBarCssProperties(pseudoElt, false);
     }
-    if ("point".equals(gssElem.getType())) {
+    if ("point".equals(elementType)) {
       return pseudoElt.equals("hover") ? new MockHoverPointCssProperties(
-          pseudoElt, pseudoElt.equals("disabled"))
-          : new MockPointCssProperties(pseudoElt, pseudoElt.equals("disabled"));
+          pseudoElt, isDisabled(pseudoElt))
+          : new MockPointCssProperties(pseudoElt, isDisabled(pseudoElt));
     }
-    if ("plot".equals(gssElem.getType())) {
+    if ("plot".equals(elementType)) {
       return new MockPlotCssProperties();
     }
-    if ("axes".equals(gssElem.getType())) {
+    if ("axes".equals(elementType)) {
       return new MockAxesCssProperties();
     }
-    if ("axis".equals(gssElem.getType()) || "axislegend"
-        .equals(gssElem.getType())) {
+    if ("axis".equals(elementType) || "axislegend"
+        .equals(elementType)) {
       return new MockAxisCssProperties();
     }
-    if ("shadow".equals(gssElem.getType())) {
+    if ("shadow".equals(elementType)) {
       return new MockShadowCssProperties();
     }
-    if ("focus".equals(gssElem.getType())) {
+    if ("focus".equals(elementType)) {
       return new MockFocusCssProperties();
     }
-    if ("fill".equals(gssElem.getType())) {
+    if ("fill".equals(elementType)) {
       return new MockFillCssProperties(pseudoElt);
     }
-    if ("overview".equals(gssElem.getType())) {
+    if ("overview".equals(elementType)) {
       return new MockOverviewCssProperties();
-    } else if ("grid".equals(gssElem.getType())) {
+    } else if ("grid".equals(elementType)) {
       return new MockGridCssProperties();
     }
-    if ("marker".equals(gssElem.getType())) {
+    if ("marker".equals(elementType)) {
       return new MockMarkerCssProperties();
     }
-    if ("domainmarker".equals(gssElem.getType())) {
+    if ("domainmarker".equals(elementType)) {
       return new MockDomainMarkerCssProperties();
     }
-    if ("rangemarker".equals(gssElem.getType())) {
+    if ("rangemarker".equals(elementType)) {
       return new MockRangeMarkerCssProperties();
     }
     return new MockPlotCssProperties();
   }
 
-  static class MockLineCssProperties extends MockGssProperties {
+  private static class MockLineCssProperties extends MockGssProperties {
 
     public MockLineCssProperties(String pseudoElt, boolean disabled) {
       this.color = new Color(
@@ -67,7 +69,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockBarCssProperties extends MockGssProperties {
+  private static class MockBarCssProperties extends MockGssProperties {
 
     public MockBarCssProperties(String pseudoElt, boolean disabled) {
       this.color = new Color(
@@ -79,7 +81,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockFocusCssProperties extends MockGssProperties {
+  private static class MockFocusCssProperties extends MockGssProperties {
 
     public MockFocusCssProperties() {
       // point.focus { color: gray; width: 5px; border-style: solid;
@@ -91,7 +93,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockPointCssProperties extends MockGssProperties {
+  private static class MockPointCssProperties extends MockGssProperties {
 
     public MockPointCssProperties(String pseudoElt, boolean disabled) {
       this.size = 4;
@@ -104,7 +106,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockHoverPointCssProperties extends MockPointCssProperties {
+  private static class MockHoverPointCssProperties extends MockPointCssProperties {
 
     public MockHoverPointCssProperties(String pseudoElt, boolean disabled) {
       super(pseudoElt, disabled);
@@ -115,14 +117,14 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockAxesCssProperties extends MockGssProperties {
+  private static class MockAxesCssProperties extends MockGssProperties {
 
     public MockAxesCssProperties() {
-      bgColor = new Color("#FFFFFF");
+      bgColor = Color.WHITE;
     }
   }
 
-  class MockPlotCssProperties extends MockGssProperties {
+  private class MockPlotCssProperties extends MockGssProperties {
 
     public MockPlotCssProperties() {
       super();
@@ -140,7 +142,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockAxisCssProperties extends MockGssProperties {
+  private static class MockAxisCssProperties extends MockGssProperties {
 
     public MockAxisCssProperties() {
       bgColor = new Color("#FFFFFF");
@@ -149,7 +151,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockFillCssProperties extends MockGssProperties {
+  private static class MockFillCssProperties extends MockGssProperties {
 
     public MockFillCssProperties(String pseudoElt) {
       this.visible = !"s1".equals(pseudoElt);
@@ -165,7 +167,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockOverviewCssProperties extends MockGssProperties {
+  private static class MockOverviewCssProperties extends MockGssProperties {
 
     public MockOverviewCssProperties() {
       bgColor = new Color("#99CCFF");
@@ -177,7 +179,7 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockGridCssProperties extends MockGssProperties {
+  private static class MockGridCssProperties extends MockGssProperties {
 
     public MockGridCssProperties() {
       color = new Color("rgba(200,200,200,255)");
@@ -187,34 +189,38 @@ public class MockGssContext extends BrowserGssContext {
     }
   }
 
-  static class MockShadowCssProperties extends MockGssProperties {
+  private static class MockShadowCssProperties extends MockGssProperties {
   }
 
-  static class MockMarkerCssProperties extends MockGssProperties {
+  private static class MockMarkerCssProperties extends MockGssProperties {
 
     public MockMarkerCssProperties() {
       bgColor = new Color("#D0D0D0");
-      color = new Color("#000000");
+      color = Color.BLACK;
       lineThickness = 1;
       fontFamily = "Verdana";
     }
   }
 
-  static class MockDomainMarkerCssProperties extends MockGssProperties {
+  private static class MockDomainMarkerCssProperties extends MockGssProperties {
 
     public MockDomainMarkerCssProperties() {
       bgColor = new Color("#10f410");
-      color = new Color("#000000");
+      color = Color.BLACK;
       transparency = 0.3;
       lineThickness = 5;
     }
   }
 
-  static class MockRangeMarkerCssProperties extends MockGssProperties {
+  private static class MockRangeMarkerCssProperties extends MockGssProperties {
 
     public MockRangeMarkerCssProperties() {
       bgColor = new Color("#f41010");
-      color = new Color("#000000");
+      color = Color.BLACK;
     }
+  }
+  
+  private static boolean isDisabled(String pseudoElt) {
+    return "disabled".equals(pseudoElt);
   }
 }
