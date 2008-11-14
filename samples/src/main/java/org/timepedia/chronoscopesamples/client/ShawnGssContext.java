@@ -13,7 +13,7 @@ public class ShawnGssContext extends DefaultGssContext {
     GssProperties gssProps = super.getProperties(gssElem, pseudoElt);
 
     if ("fill".equals(gssElem.getType())) {
-      if ("disabled".equals(pseudoElt)) {
+      if (isDisabled(pseudoElt)) {
         gssProps.bgColor = Color.TRANSPARENT;
       } else {
         gssProps.bgColor = this.datasetColorMap.get(gssElem.getParentGssElement());
