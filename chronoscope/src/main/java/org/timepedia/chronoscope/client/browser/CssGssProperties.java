@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.gss.GssUtil;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 
 /**
@@ -109,7 +110,7 @@ String VALUE_VISIBLE = "visible";*/
     }
     if (!"none".equals(bgImage) && (bgImage.startsWith("http://timepedia.org/")
         || bgImage.indexOf("#") != -1)) {
-      bgColor = createGradient(view.getCanvas().getRootLayer(), size, size,
+      bgColor = GssUtil.createGradient(view.getCanvas().getRootLayer(), size, size,
           bgImage);
     } else if (!"none".equals(bgImage)) {
       // bgColor = view.getCanvas().createPattern(bgImage);
