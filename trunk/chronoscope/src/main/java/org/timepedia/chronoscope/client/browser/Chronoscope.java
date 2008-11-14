@@ -26,6 +26,7 @@ import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
+import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
@@ -456,6 +457,15 @@ public class Chronoscope implements Exportable, HistoryListener {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
     exporter.export();
 
+    Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
+    exporterMarker.export();
+
+    Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
+    exporterRangeMarker.export();
+
+    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
+    exporterDomainMarker.export();
+    
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
     exporter2.export();
 
