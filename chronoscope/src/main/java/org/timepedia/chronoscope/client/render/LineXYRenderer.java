@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
@@ -32,7 +33,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   @Override
   public void beginPoints(Layer layer, RenderState renderState) {
-    activeGssPointProps = renderState.isDisabled() ? gssDisabledPointProps : gssPointProps;
     lx = ly = -1;
     layer.save();
   }
@@ -147,7 +147,17 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     final double dataX = point.getFirst();
     final double dataY = point.getSecond();
     
-    GssProperties gssProps = activeGssPointProps;
+    GssProperties gssProps;
+    if (isFocused) {
+      gssProps = this.gssFocusProps;
+    }
+    else if (renderState.isDisabled()) {
+      gssProps = this.gssDisabledPointProps;
+    }
+    else {
+      gssProps = this.gssPointProps;
+    }
+    
     if (gssProps.visible || isFocused) {
 
       if (gssProps.size < 1) {
@@ -159,6 +169,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       double dx = ux - lx;
 
       if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {
+        
         drawPoint(ux, uy, layer, gssProps);
         lx = ux;
         ly = uy;
