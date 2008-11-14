@@ -2,225 +2,204 @@ package org.timepedia.chronoscope.client.gss;
 
 import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.canvas.Color;
-import org.timepedia.chronoscope.client.render.LinearGradient;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockGssContext extends BrowserGssContext {
+  
+  // Determines the dataset color for a given GSS class.
+  protected DatasetColorMap datasetColorMap = new DatasetColorMap(); 
   
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
     final String elementType = gssElem.getType();
     
+    GssProperties gssProps = new MockGssProperties();
+    
     if ("line".equals(elementType)) {
-      return isDisabled(pseudoElt) ? new MockLineCssProperties(pseudoElt,
-          true) : new MockLineCssProperties(pseudoElt, false);
+      configLineProps(gssProps, gssElem.getParentGssElement(), pseudoElt);
     }
-    if ("bar".equals(elementType)) {
-      return isDisabled(pseudoElt) ? new MockBarCssProperties(pseudoElt,
-          true) : new MockBarCssProperties(pseudoElt, false);
+    else if ("bar".equals(elementType)) {
+      configBarProps(gssProps, gssElem.getParentGssElement(), pseudoElt);
     }
-    if ("point".equals(elementType)) {
-      return pseudoElt.equals("hover") ? new MockHoverPointCssProperties(
-          pseudoElt, isDisabled(pseudoElt))
-          : new MockPointCssProperties(pseudoElt, isDisabled(pseudoElt));
+    else if ("point".equals(elementType)) {
+      configPointProps(gssProps, gssElem.getParentGssElement(), pseudoElt);
     }
-    if ("plot".equals(elementType)) {
-      return new MockPlotCssProperties();
+    else if ("plot".equals(elementType)) {
+      configPlotProps(gssProps);
     }
-    if ("axes".equals(elementType)) {
-      return new MockAxesCssProperties();
+    else if ("fill".equals(elementType)) {
+      configFillProps(gssProps);
     }
-    if ("axis".equals(elementType) || "axislegend"
+    else if ("marker".equals(elementType)) {
+      configMarkerProps(gssProps);
+    }
+    else if ("domainmarker".equals(elementType)) {
+      configDomainMarkerProps(gssProps);
+    }
+    else if ("rangemarker".equals(elementType)) {
+      configRangeMarkerProps(gssProps);
+    }
+    else if ("axis".equals(elementType) || "axislegend"
         .equals(elementType)) {
-      return new MockAxisCssProperties();
+      configRangeAxisProps(gssProps);
     }
-    if ("shadow".equals(elementType)) {
-      return new MockShadowCssProperties();
+    else if ("axes".equals(elementType)) {
+      configRangeAxesProps(gssProps);
     }
-    if ("focus".equals(elementType)) {
-      return new MockFocusCssProperties();
+    else if ("grid".equals(elementType)) {
+      configGridProps(gssProps);
     }
-    if ("fill".equals(elementType)) {
-      return new MockFillCssProperties(pseudoElt);
+    else if ("overview".equals(elementType)) {
+      configOverviewProps(gssProps);
     }
-    if ("overview".equals(elementType)) {
-      return new MockOverviewCssProperties();
-    } else if ("grid".equals(elementType)) {
-      return new MockGridCssProperties();
+    else if ("tick".equals(elementType)) {
+      configTickProps(gssProps);
     }
-    if ("marker".equals(elementType)) {
-      return new MockMarkerCssProperties();
+    else if ("shadow".equals(elementType)) {
+      // do nothing for now...
     }
-    if ("domainmarker".equals(elementType)) {
-      return new MockDomainMarkerCssProperties();
-    }
-    if ("rangemarker".equals(elementType)) {
-      return new MockRangeMarkerCssProperties();
-    }
-    return new MockPlotCssProperties();
+
+    return gssProps;
   }
 
-  private static class MockLineCssProperties extends MockGssProperties {
-
-    public MockLineCssProperties(String pseudoElt, boolean disabled) {
-      this.color = new Color(
-          "s1".equals(pseudoElt) ? "rgb(245,86,95)" : "rgb(70,118,118)");
-      if (disabled) {
-        transparency = 0.2f;
-      }
-    }
-  }
-
-  private static class MockBarCssProperties extends MockGssProperties {
-
-    public MockBarCssProperties(String pseudoElt, boolean disabled) {
-      this.color = new Color(
-          "s1".equals(pseudoElt) ? "rgb(245,86,95)" : "rgb(70,118,118)");
-      if (disabled) {
-        transparency = 0.2f;
-      }
-      this.width = 5;
-    }
-  }
-
-  private static class MockFocusCssProperties extends MockGssProperties {
-
-    public MockFocusCssProperties() {
-      // point.focus { color: gray; width: 5px; border-style: solid;
-      // border-width: 2px; }
-
-      color = new Color("#D0D0D0");
-      size = 5;
-      lineThickness = 2;
-    }
-  }
-
-  private static class MockPointCssProperties extends MockGssProperties {
-
-    public MockPointCssProperties(String pseudoElt, boolean disabled) {
-      this.size = 4;
-      this.lineThickness = 2;
-      this.color = new Color("s1".equals(pseudoElt) ? "#FFFFFF" : "#008000");
-      this.bgColor = new Color("#004000");
-      if (true || disabled) {
-        this.visible = false;
-      }
-    }
-  }
-
-  private static class MockHoverPointCssProperties extends MockPointCssProperties {
-
-    public MockHoverPointCssProperties(String pseudoElt, boolean disabled) {
-      super(pseudoElt, disabled);
-      this.size = 6;
-      this.lineThickness = 2;
-
-      this.bgColor = new Color("#FF0000");
-    }
-  }
-
-  private static class MockAxesCssProperties extends MockGssProperties {
-
-    public MockAxesCssProperties() {
-      bgColor = Color.WHITE;
-    }
-  }
-
-  private class MockPlotCssProperties extends MockGssProperties {
-
-    public MockPlotCssProperties() {
-      super();
-// ServerLinearGradient gradient = new ServerLinearGradient(0, 0, 0, 1);
-// gradient.addColorStop(0, "#00ABEB");
-// gradient.addColorStop(1, "#FFFFFF");
-// this.bgColor = gradient;
-      LinearGradient ag = getView().getCanvas().getRootLayer()
-          .createLinearGradient(0, 0, 600, 453);
-//                   new FlashLinearGradient(null, 0,0, 600, 453);
-      ag.addColorStop(0, "#00ABEB");
-      ag.addColorStop(1, "#FFFFFF");
-      this.bgColor = ag;
-//           this.bgColor=new Color("#0000FF");
-    }
-  }
-
-  private static class MockAxisCssProperties extends MockGssProperties {
-
-    public MockAxisCssProperties() {
-      bgColor = new Color("#FFFFFF");
-      fontFamily = "Verdana";
-      fontSize = "12pt";
-    }
-  }
-
-  private static class MockFillCssProperties extends MockGssProperties {
-
-    public MockFillCssProperties(String pseudoElt) {
-      this.visible = !"s1".equals(pseudoElt);
-//    bgColor = new Color("rgb(245,86,95)");
-//    FlashLinearGradient ag=new FlashLinearGradient(null, 0,0, 1,1);
-//           ag.addColorStop(0, "#00ABEB");
-//           ag.addColorStop(1, "#FFFFFF");
-//           this.bgColor=ag;
-      bgColor = new Color("#00ABAB");
-      fontFamily = "Verdana";
-      fontSize = "8pt";
-      transparency = 0.4;
-    }
-  }
-
-  private static class MockOverviewCssProperties extends MockGssProperties {
-
-    public MockOverviewCssProperties() {
-      bgColor = new Color("#99CCFF");
-      color = new Color("#0099FF");
-      fontFamily = "Verdana";
-      fontSize = "12pt";
-      transparency = 0.4;
-      lineThickness = 2;
-    }
-  }
-
-  private static class MockGridCssProperties extends MockGssProperties {
-
-    public MockGridCssProperties() {
-      color = new Color("rgba(200,200,200,255)");
-      fontFamily = "Verdana";
-      fontSize = "8pt";
-      transparency = 1.0f;
-    }
-  }
-
-  private static class MockShadowCssProperties extends MockGssProperties {
-  }
-
-  private static class MockMarkerCssProperties extends MockGssProperties {
-
-    public MockMarkerCssProperties() {
-      bgColor = new Color("#D0D0D0");
-      color = Color.BLACK;
-      lineThickness = 1;
-      fontFamily = "Verdana";
-    }
-  }
-
-  private static class MockDomainMarkerCssProperties extends MockGssProperties {
-
-    public MockDomainMarkerCssProperties() {
-      bgColor = new Color("#10f410");
-      color = Color.BLACK;
-      transparency = 0.3;
-      lineThickness = 5;
-    }
-  }
-
-  private static class MockRangeMarkerCssProperties extends MockGssProperties {
-
-    public MockRangeMarkerCssProperties() {
-      bgColor = new Color("#f41010");
-      color = Color.BLACK;
-    }
-  }
-  
   private static boolean isDisabled(String pseudoElt) {
     return "disabled".equals(pseudoElt);
+  }
+  
+  private static boolean isHover(String pseudoElt) {
+    return "hover".equals(pseudoElt);
+  }
+  
+  private static boolean isFocus(String pseudoElt) {
+    return "focus".equals(pseudoElt);
+  }
+  
+  private void configBarProps(GssProperties p, GssElement elt, String pseudoElt) {
+    configLineProps(p, elt, pseudoElt);
+    p.width = 5;
+  }
+  
+  private void configLineProps(GssProperties p, GssElement elt, String pseudoElt) {
+    p.lineThickness = 1;
+    p.shadowBlur = 0;
+    p.shadowOffsetX = 0;
+    p.shadowOffsetY = 0;
+
+    p.color = datasetColorMap.get(elt);
+    if (isDisabled(pseudoElt)) {
+      p.transparency = 0.3;
+    }
+  }
+
+  private void configDomainMarkerProps(GssProperties p) {
+    p.bgColor = new Color("#10f410");
+    p.color = Color.BLACK;
+    p.transparency = 0.3;
+    p.lineThickness = 5;
+  }
+  
+  private void configFillProps(GssProperties p) {
+    p.visible = true;
+    p.bgColor = Color.BLACK;
+    p.transparency = 0.0f;
+  }
+  
+  private void configGridProps(GssProperties p) {
+    p.color = new Color("rgba(200,200,200,255)");
+    p.fontFamily = "Helvetica";
+    p.fontSize = "9pt";
+    p.transparency = 1.0f;
+    p.lineThickness = 0;
+  }
+  
+  private void configMarkerProps(GssProperties p) {
+    p.bgColor = new Color("#D0D0D0");
+    p.color = Color.BLACK;
+    p.lineThickness = 1;
+    p.fontFamily = "Verdana";
+  }
+  
+  private void configOverviewProps(GssProperties p) {
+    p.bgColor = new Color("#99CCFF");
+    p.color = new Color("#0099FF");
+    p.fontFamily = "Verdana";
+    p.fontSize = "12pt";
+    p.transparency = 0.4;
+    p.lineThickness = 2;
+  }
+  
+  private void configPointProps(GssProperties p, GssElement elt, String pseudoElt) {
+    boolean isHover = isHover(pseudoElt);
+    boolean isFocus = isFocus(pseudoElt);
+    
+    p.size = isHover ? 5 : 4;
+    p.visible = (isHover || isFocus);
+    p.lineThickness = 2;
+    
+    // Determines the color of the point's outer ring
+    p.color = isFocus ? Color.BLACK : Color.WHITE;
+    // Determines the color of the point's center area
+    p.bgColor = isHover ? new Color(50,0,255) : new Color(0,0,255);
+  }
+
+  private void configPlotProps(GssProperties p) {
+    p.bgColor = new Color("transparent");
+    p.fontFamily = "Helvetica";
+    p.fontSize = "9pt";
+  }
+  
+  private void configRangeAxesProps(GssProperties p) {
+    p.bgColor = Color.WHITE;
+  }
+
+  private void configRangeAxisProps(GssProperties p) {
+    p.tickPosition = "inside";
+    p.bgColor = new Color("#FFFFFF");
+    p.fontFamily = "Helvetica";
+    p.fontWeight = "normal";
+    p.fontSize = "9pt";
+    p.color = new Color("#000000");
+  }
+
+  private void configRangeMarkerProps(GssProperties p) {
+    p.bgColor = new Color("#f41010");
+    p.color = Color.BLACK;
+  }
+  
+  private void configTickProps(GssProperties p) {
+    p.bgColor = new Color("transparent");
+    p.fontFamily = "Helvetica";
+    p.fontSize = "9pt";
+    p.color = new Color("#000000");
+  }
+
+  /**
+   * Maps a GSS class (presumably referring to some dataset) to a color.
+   */
+  protected static final class DatasetColorMap {
+    // Use this color if the dataset color cannot be determined from the
+    // provided GSS class string.
+    private static final Color DEFAULT_COLOR = new Color("#FF00FF");
+    
+    private Map<String,Color> gssClass2color = new HashMap<String,Color>();
+    
+    public DatasetColorMap() {
+      gssClass2color.put("s0", new Color("#2E43DF"));
+      gssClass2color.put("s1", new Color("#2CAA1B"));
+      gssClass2color.put("s2", new Color("#C21C1C"));
+      gssClass2color.put("s3", new Color("#E98419"));
+      gssClass2color.put("s4", new Color("#F8DD0D"));
+      gssClass2color.put("s5", new Color("#A72AA2"));
+    }
+    
+    public Color get(GssElement gssElement) {
+      if (gssElement == null) {
+        return DEFAULT_COLOR;
+      }
+      
+      Color c = gssClass2color.get(gssElement.getTypeClass());
+      return (c != null) ? c : DEFAULT_COLOR;
+    }
   }
 }

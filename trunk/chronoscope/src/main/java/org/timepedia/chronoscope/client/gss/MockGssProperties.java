@@ -24,5 +24,6 @@ public class MockGssProperties extends GssProperties {
     this.size = 1;
     this.transparency = 1;
     this.visible = true;
+    
   }
 }
