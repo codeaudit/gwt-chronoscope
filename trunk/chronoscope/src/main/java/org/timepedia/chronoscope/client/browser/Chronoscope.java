@@ -131,6 +131,21 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   /**
+   * Legacy method to support old API. Preferred method is to use
+   * instance passed to onChronoscopeLoaded, which allows behavior to be
+   * overriden.
+   * @Deprecated
+   */
+  @Export
+  public static ChartPanel createTimeseriesChartById(String id,
+      JsArray<JSONDataset> jsonDatasets, int chartWidth, int chartHeight,
+      ViewReadyCallback readyListener) {
+    return getInstance()
+        .createTimeseriesChart(id, jsonDatasets, chartWidth, chartHeight,
+            readyListener);
+  }
+
+  /**
    * Create a chart inside the DOM element with the given ID with the given JSON
    * datasets
    *
@@ -312,7 +327,6 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   /**
    * Defaults to GWT.getModuleBaseURL() + "fr"
-   *
    */
   @Export
   public static void setFontBookServiceEndpoint(String endpoint) {
