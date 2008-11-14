@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -8,8 +9,8 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
   private double currInterval, prevInterval;
-  private double barGapFactor = 0.75;
-  private GssProperties gssBarProps;
+  private double barWidthAsPercent;
+  private GssProperties activeGssBarProps, gssBarPropsEnabled, gssBarPropsDisabled;
   
   @Override
   public void beginCurve(Layer layer, RenderState renderState) {
@@ -19,8 +20,8 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     currInterval = prevInterval = -1;
 
     final boolean isDisabled = renderState.isDisabled();
-    gssBarProps = isDisabled ? gssDisabledLineProps : gssLineProps;
-    assignGssPropsToLayer(gssBarProps, layer);
+    activeGssBarProps = isDisabled ? gssBarPropsDisabled : gssBarPropsEnabled;
+    assignGssPropsToLayer(activeGssBarProps, layer);
   }
 
   @Override
@@ -44,11 +45,11 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
       if (methodCallCount == 1) {
         // Calculate the screen-x and width of first bar
-        width = (currInterval / 2.0) * barGapFactor;
+        width = (currInterval / 2.0) * barWidthAsPercent;
         x = lx;
       }
       else {
-        width = MathUtil.min(prevInterval, currInterval) * barGapFactor;
+        width = MathUtil.min(prevInterval, currInterval) * barWidthAsPercent;
         x = lx - (width / 2.0);
       }
       
@@ -65,11 +66,16 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   public int getMaxDrawableDatapoints() {
     return 70;
   }
+  
+  @Override
+  public String getType() {
+    return "bar";
+  }
 
   @Override
   public void endCurve(Layer layer, RenderState renderState) {
     // Render the final bar (i.e. te furthest one to the right)
-    double width = (currInterval / 2.0) * barGapFactor;
+    double width = (currInterval / 2.0) * barWidthAsPercent;
     double height = plot.getInnerBounds().bottomY() - ly;
     double x = lx - width;
     double y = ly;
@@ -78,7 +84,17 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     
     layer.restore();
   }
-
+  
+  @Override
+  public void initGss(View view) {
+    super.initGss(view);
+    gssBarPropsEnabled = view.getGssProperties(this, "");
+    gssBarPropsDisabled = view.getGssProperties(this, "disabled");
+    
+    double barWidthAsPercent = (double)gssBarPropsEnabled.width / 100.0;
+    this.barWidthAsPercent = MathUtil.bound(barWidthAsPercent, 0.05, 1.0);
+  }
+  
   private void drawVerticalBar(Layer layer, double x, double y, double w, double h) {
     layer.beginPath();
     layer.moveTo(x, y);
@@ -97,6 +113,6 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     layer.setShadowOffsetX(gss.shadowOffsetX);
     layer.setShadowOffsetY(gss.shadowOffsetY);
     layer.setStrokeColor(gss.color);
-    layer.setTransparency((float) gssBarProps.transparency);
+    layer.setTransparency((float) gss.transparency);
  }
 }
