@@ -155,11 +155,11 @@ public class MockGssContext extends BrowserGssContext {
 
   private void configRangeAxisProps(GssProperties p) {
     p.tickPosition = "inside";
-    p.bgColor = new Color("#FFFFFF");
+    p.bgColor = Color.WHITE;
     p.fontFamily = "Helvetica";
     p.fontWeight = "normal";
     p.fontSize = "9pt";
-    p.color = new Color("#000000");
+    p.color = Color.BLACK;
   }
 
   private void configRangeMarkerProps(GssProperties p) {
@@ -171,7 +171,7 @@ public class MockGssContext extends BrowserGssContext {
     p.bgColor = new Color("transparent");
     p.fontFamily = "Helvetica";
     p.fontSize = "9pt";
-    p.color = new Color("#000000");
+    p.color = Color.BLACK;
   }
 
   /**
