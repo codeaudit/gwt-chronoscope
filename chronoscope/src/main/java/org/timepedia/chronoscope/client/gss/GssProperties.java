@@ -9,43 +9,53 @@ import org.timepedia.chronoscope.client.canvas.PaintStyle;
  */
 public abstract class GssProperties {
 
-  public boolean visible = true;
+  public PaintStyle bgColor = new Color("#000000");
 
   public Color color = new Color("#FFFFFF");
 
-  public PaintStyle bgColor = new Color("#000000");
+  public String fontFamily = "Verdana";
+
+  public String fontSize = "9pt";
+
+  public String fontWeight = "normal";
+
+  public int height;
+
+  public int left = 0;
 
   public double lineThickness = 1;
 
   public double shadowBlur = 0;
 
+  public Color shadowColor = new Color("#000000");
+
   public double shadowOffsetX = 0;
 
   public double shadowOffsetY = 0;
 
-  public Color shadowColor = new Color("#000000");
-
-  public int width = 1;
-
-  public double transparency = 1.0;
-
   public double size = 5;
 
-  public int left = 0;
+  public String tickAlign = "middle";
+
+  public String tickPosition = "outside";
 
   public int top = 0;
 
-  public String fontFamily="Verdana";
+  public double transparency = 1.0;
 
-  public String fontWeight="normal";
+  public boolean visible = true;
 
-  public String fontSize="9pt";
+  public int width = 1;
 
-  public int height;
-  
-  public String tickPosition="outside";
-  
-  public String tickAlign="middle";
+  public GssProperties setColor(Color color) {
+    this.color = color;
+    return this;
+  }
+
+  public GssProperties setTransparency(double transparency) {
+    this.transparency = transparency;
+    return this;
+  }
 
   public String toString() {
     return "visible: " + visible + "\ncolor: " + color + "\nbgColor:" + bgColor
