@@ -77,7 +77,11 @@ public class MockGssContext extends BrowserGssContext {
   
   private void configBarProps(GssProperties p, GssElement elt, String pseudoElt) {
     configLineProps(p, elt, pseudoElt);
-    p.width = 5;
+    
+    // width represents the percentage of maximum bar width.  E.g. a value of 
+    // 100 means each bar will be drawn at maximum width (i.e. all bars will 
+    // be touching each other).
+    p.width = 75;
   }
   
   private void configLineProps(GssProperties p, GssElement elt, String pseudoElt) {

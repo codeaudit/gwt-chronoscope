@@ -105,7 +105,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     this.plot = plot;
   }
   
-  public final void initGss(View view) {
+  public void initGss(View view) {
     if (isGssInitialized) {
       return;
     }
