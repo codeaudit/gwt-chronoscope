@@ -7,7 +7,7 @@ import org.timepedia.chronoscope.client.canvas.PaintStyle;
  * A GSS analogue of CssProperties for a GssElement. Only a small subset of
  * properties are needed.
  */
-public abstract class GssProperties {
+public class GssProperties {
 
   public PaintStyle bgColor = new Color("#000000");
 

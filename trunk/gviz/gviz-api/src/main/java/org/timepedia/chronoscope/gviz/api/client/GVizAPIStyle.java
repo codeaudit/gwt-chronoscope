@@ -53,25 +53,10 @@ public enum GVizAPIStyle {
 
             if ("fill".equals(gssElem.getType())) {
                 GssProperties props = super.getProperties(gssElem, pseudoElt);
-                if ("disabled".equals(pseudoElt)) {
-                    props.bgColor = new Color("rgba(0,0,0,0)");
-
+                if (isDisabled(pseudoElt)) {
+                    props.bgColor = Color.TRANSPARENT;
                 } else {
-                    String seriesNum = gssElem.getParentGssElement().getTypeClass();
-                    if (seriesNum.matches(".*\\bs\\d+\\b")) {
-                        int ind = seriesNum.indexOf("s");
-                        if (ind != -1) {
-                            int snum = 0;
-                            try {
-                                snum = Integer.parseInt(seriesNum.substring(ind + 1).trim());
-                            } catch (NumberFormatException e) {
-                            }
-                            props.bgColor = new Color(colors[Math.min(snum, colors.length - 1)]);
-
-                        }
-                    } else {
-                        props.bgColor = new Color("rgb(255,0,255)");
-                    }
+                    props.bgColor = datasetColorMap.get(gssElem.getParentGssElement());
                     props.transparency = 0.3;
                 }
                 return props;
