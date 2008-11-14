@@ -63,15 +63,15 @@ public class MockGssContext extends BrowserGssContext {
     return gssProps;
   }
 
-  private static boolean isDisabled(String pseudoElt) {
+  protected boolean isDisabled(String pseudoElt) {
     return "disabled".equals(pseudoElt);
   }
   
-  private static boolean isHover(String pseudoElt) {
+  protected boolean isHover(String pseudoElt) {
     return "hover".equals(pseudoElt);
   }
   
-  private static boolean isFocus(String pseudoElt) {
+  protected boolean isFocus(String pseudoElt) {
     return "focus".equals(pseudoElt);
   }
   

@@ -26,8 +26,4 @@ public class DefaultGssContext extends MockGssContext {
           p.visible = this.showAxisLabels;
       }
     }
-    
-    protected static String colors[] = {"#2E43DF", "#2CAA1B", "#C21C1C",
-            "#E98419", "#F8DD0D", "#A72AA2"
-    };
 }
