@@ -321,5 +321,16 @@
             </properties>
         </profile>
 
+        <profile>
+            <id>prod</id>
+            <properties>
+                <gwtversion>1.5.2</gwtversion>
+                <gwt.loglevel>ERROR</gwt.loglevel>
+                <gwt.outputstyle>OBF</gwt.outputstyle>
+                <gwt.modulesuffix></gwt.modulesuffix>
+                <!--		<maven.test.skip>true</maven.test.skip> -->
+            </properties>
+        </profile>
+
     </profiles>
 </project>
