@@ -237,11 +237,12 @@ public class Chronoscope implements Exportable, HistoryListener {
     } else {
       request = buildDatasetRequest(json);
     }
-
+    
+    // Properties common to basic and multires datasets
     request.setIdentifier(json.getId());
     request.setLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
-
+    request.setPreferredRenderer(json.getPreferredRenderer());
     final double minInterval = json.getMinInterval();
     if (minInterval > 0) {
       request.setApproximateMinimumInterval(minInterval);

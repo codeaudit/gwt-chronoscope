@@ -80,4 +80,9 @@ public class JSONDataset extends JavaScriptObject {
   public final native String getPartitionStrategy() /*-{
     return this.partitionStrategy || "binary";
   }-*/;
+
+  @Deprecated
+  public final native String getPreferredRenderer() /*-{
+    return this.preferredRenderer || "line";
+  }-*/;
 }

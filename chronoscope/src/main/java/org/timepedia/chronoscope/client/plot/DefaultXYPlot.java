@@ -23,29 +23,29 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
+import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverEvent;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.event.PlotFocusHandler;
-import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
-import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
+import org.timepedia.chronoscope.client.render.DatasetRendererMap;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
-import org.timepedia.chronoscope.client.render.LineXYRenderer;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
+import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -75,6 +75,8 @@ import java.util.Map;
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
 
+  private DatasetRendererMap datasetRendererMap = new DatasetRendererMap();
+  
   private enum DistanceFormula {
 
     /**
@@ -222,8 +224,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     overlays = new ArrayList<Overlay>();
     plotNumber = globalPlotNumber++;
   }
-  
-  
 
   /**
    * @gwt.export
@@ -431,15 +431,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.focus = null;
 
     initViewIndependent(datasets);
-
+    datasetRenderers = initDatasetRenderers(view, datasets);
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
-
-    for (DatasetRenderer<T> r : this.datasetRenderers) {
-      r.initGss(view);
-    }
     
     bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
         Position.BOTTOM, this, view);
@@ -815,35 +811,30 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
-  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> r) {
+  public void setDatasetRendererMap(DatasetRendererMap datasetRendererMap) {
+    this.datasetRendererMap = datasetRendererMap;
+  }
+  
+  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer) {
+    ArgChecker.isNotNull(renderer, "renderer");
+    
     //initialize the renderer
-    r.setParentGssElement(createGssElementForDataset(datasetIndex));
-    r.setPlot(this);
-    r.setDatasetIndex(datasetIndex);
+    renderer.setParentGssElement(createGssElementForDataset(datasetIndex));
+    renderer.setPlot(this);
+    renderer.setDatasetIndex(datasetIndex);
     boolean isViewReady = this.view != null;
     if (isViewReady) {
-      r.initGss(this.view);
+      renderer.initGss(this.view);
     }
     
-    datasetRenderers.set(datasetIndex, r);
-  }
-
-  public void setDatasetRenderers(List<DatasetRenderer<T>> renderers) {
-    this.datasetRenderers = renderers;
-
-    boolean isViewReady = this.view != null;
-    if (isViewReady) {
-      this.init(this.view);
-    }
+    datasetRenderers.set(datasetIndex, renderer);
   }
 
   public void setDatasets(Datasets<T> datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isGT(datasets.size(), 0, "datasets.size");
+    datasets.addListener(this);
     this.datasets = datasets;
-    if (datasets != null) {
-      datasets.addListener(this);
-    }
   }
 
   public void setDomainAxisRenderer(AxisPanel domainAxisRenderer) {
@@ -1449,26 +1440,28 @@ public class DefaultXYPlot<T extends Tuple2D>
     Arrays.fill(currentMiplevels, 0);
   }
 
+  private List<DatasetRenderer<T>> initDatasetRenderers(View view, Datasets<T> datasets) {
+    List<DatasetRenderer<T>> datasetRenderers = new ArrayList<DatasetRenderer<T>>();
+    
+    for (int i = 0; i < datasets.size(); i++) {
+      Dataset<T> dataset = datasets.get(i);
+      DatasetRenderer<T> renderer = datasetRendererMap.get(dataset);
+      renderer.setParentGssElement(createGssElementForDataset(i));
+      renderer.setPlot(this);
+      renderer.setDatasetIndex(i);
+      renderer.initGss(view);
+      datasetRenderers.add(renderer);
+    }
+    
+    return datasetRenderers;
+  }
+  
   /**
    * Methods which do not depend on any visual state of the chart being
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
   private void initViewIndependent(Datasets<T> datasets) {
-    if (datasetRenderers.size() != datasets.size()) {
-      datasetRenderers = new ArrayList<DatasetRenderer<T>>();
-      for (int i = 0; i < datasets.size(); i++) {
-        datasetRenderers.add(new LineXYRenderer<T>());
-      }
-    }
-
-    for (int i = 0; i < datasets.size(); i++) {
-      DatasetRenderer<T> r = datasetRenderers.get(i);
-      r.setParentGssElement(createGssElementForDataset(i));
-      r.setPlot(this);
-      r.setDatasetIndex(i);
-    }
-
     hoverPoints = new int[datasets.size()];
     resetHoverPoints();
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()

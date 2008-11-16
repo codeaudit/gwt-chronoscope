@@ -24,7 +24,7 @@ public class ChartPanel extends Composite implements Exportable {
   private ViewReadyCallback viewReadyCallback;
   private int width = 400, height = 250;
   
-  public void init() {
+  public final void init() {
     ArgChecker.isNotNull(this.datasets, "this.datasets");
     ArgChecker.isNotNull(this.domElement, "this.domElement");
     

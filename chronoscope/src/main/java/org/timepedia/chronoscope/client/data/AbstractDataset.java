@@ -14,7 +14,9 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
   protected double approximateMinimumInterval;
 
   protected String axisId, identifier, rangeLabel;
-
+  
+  protected String preferredRenderer;
+  
   public final String getAxisId() {
     return axisId;
   }
@@ -33,6 +35,10 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
 
   public final int getNumSamples() {
     return getNumSamples(0);
+  }
+  
+  public final String getPreferredRenderer() {
+    return preferredRenderer;
   }
 
   public final String getRangeLabel() {
