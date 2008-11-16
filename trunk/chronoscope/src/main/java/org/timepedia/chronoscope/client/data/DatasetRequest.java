@@ -124,7 +124,8 @@ public abstract class DatasetRequest {
   private String axisId, identifier, label;
   private MipMapStrategy defaultMipMapStrategy = BinaryMipMapStrategy.MEAN;
   private double rangeBottom = Double.NaN, rangeTop = Double.NaN;
-
+  private String preferredRenderer;
+  
   public double getApproximateMinimumInterval() {
     return approximateMinimumInterval;
   }
@@ -144,7 +145,15 @@ public abstract class DatasetRequest {
   public MipMapStrategy getDefaultMipMapStrategy() {
     return defaultMipMapStrategy;
   }
-
+  
+  /**
+   * See {@link Dataset#getPreferredRenderer()}.
+   */
+  @Deprecated
+  public String getPreferredRenderer() {
+    return this.preferredRenderer;
+  }
+  
   public double getRangeBottom() {
     return rangeBottom;
   }
@@ -177,7 +186,12 @@ public abstract class DatasetRequest {
   public void setDefaultMipMapStrategy(MipMapStrategy mipMapStrategy) {
     this.defaultMipMapStrategy = mipMapStrategy;
   }
-
+  
+  @Deprecated
+  public void setPreferredRenderer(String preferredRenderer) {
+    this.preferredRenderer = preferredRenderer;
+  }
+  
   public void setRangeBottom(double rangeBottom) {
     this.rangeBottom = rangeBottom;
   }

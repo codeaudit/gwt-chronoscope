@@ -94,6 +94,13 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   double getMinValue(int coordinate);
 
   /**
+   * Returns a key representing the preferred {@link DatsetRenderer} to use when 
+   * drawing this dataset.
+   */
+  @Deprecated
+  String getPreferredRenderer();
+  
+  /**
    * Returns the number of samples in the dataset (mip level 0).
    */
   int getNumSamples();

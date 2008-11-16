@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.util;
 import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.data.AbstractDataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class UtilTest extends TestCase {
   }
   
   
-  private static final class JUnitDataset implements Dataset<Tuple2D> {
+  private static final class JUnitDataset extends AbstractDataset<Tuple2D> {
     private double[] domain;
     
     public JUnitDataset(double[] domain) {
@@ -81,44 +82,16 @@ public class UtilTest extends TestCase {
       throw new UnsupportedOperationException();
     }
 
-    public String getAxisId() {
-      throw new UnsupportedOperationException();
-    }
-
-    public double getDomainBegin() {
-      throw new UnsupportedOperationException();
-    }
-
-    public double getDomainEnd() {
-      throw new UnsupportedOperationException();
-    }
-
-    public String getIdentifier() {
-      throw new UnsupportedOperationException();
-    }
-
-    public int getNumSamples() {
-      return domain.length;
-    }
-
     public int getNumSamples(int level) {
-      return getNumSamples();
-    }
-
-    public String getRangeLabel() {
-      throw new UnsupportedOperationException();
+      return this.domain.length;
     }
 
     public int getTupleLength() {
       return 2;
     }
 
-    public double getX(int index) {
-      return domain[index];
-    }
-
     public double getX(int index, int level) {
-      return getX(index);
+      return domain[index];
     }
 
     public Tuple2D getFlyweightTuple(int index) {
