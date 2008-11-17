@@ -31,12 +31,15 @@ public class StaticImageChartPanel implements ViewReadyCallback {
     plot = new DefaultXYPlot();
     Datasets dss=new Datasets(datasets);
     plot.setDatasets(dss);
+    plot.setOverviewEnabled(false);
     plot.setPlotRenderer(new XYPlotRenderer());
     chart.setPlot(plot);
-
+    
     view = new ViewJava2D();
+    chart.setView(view);
     view.initialize(width, height, false, gssContext, this);
     view.onAttach();
+    
   }
 
   public StaticImageChartPanel(Dataset[] datasets, int width, int height) {
@@ -52,6 +55,7 @@ public class StaticImageChartPanel implements ViewReadyCallback {
   }
 
   public void onViewReady(View view) {
+    plot.init(view);
     chart.setView(view);
     chart.init();
     chart.redraw();

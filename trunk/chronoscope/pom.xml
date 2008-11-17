@@ -78,14 +78,6 @@
     </repository>
   </repositories>
 
-   <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-            <id>timepedia-deploy</id>
-            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </distributionManagement>
-
   <build>
     <plugins>
       <plugin>
