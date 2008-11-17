@@ -21,7 +21,8 @@ import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
-import org.timepedia.chronoscope.client.browser.JSONDataset;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
+import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
@@ -44,7 +45,7 @@ public class ChartBench implements EntryPoint {
   
   private MockDatasetFactory mockDsFactory = new MockDatasetFactory();
   
-  private static native JSONDataset getJson(String varName) /*-{
+  private static native JsonDatasetJSO getJson(String varName) /*-{
        return $wnd[varName];   
     }-*/;
 
@@ -60,7 +61,7 @@ public class ChartBench implements EntryPoint {
       Chronoscope.initialize();
 
       final Dataset[] ds = new Dataset[2];
-      ds[0] = Chronoscope.getInstance().createDataset(getJson("unratedata"));
+      ds[0] = Chronoscope.getInstance().createDataset(new GwtJsonDataset(getJson("unratedata")));
       ds[1] = mockDsFactory.getBasicDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);

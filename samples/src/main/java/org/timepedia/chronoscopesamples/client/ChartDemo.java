@@ -1,6 +1,7 @@
 package org.timepedia.chronoscopesamples.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -10,7 +11,8 @@ import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
-import org.timepedia.chronoscope.client.browser.JSONDataset;
+import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
@@ -28,13 +30,15 @@ public class ChartDemo implements EntryPoint {
 
   private static volatile double GOLDEN__RATIO = 1.618;
 
-  private static native JSONDataset getJson(String varName) /*-{
-       return $wnd[varName];   
+  private FlexTable benchTable;
+
+  private static native JsonDatasetJSO getJson(String varName) /*-{
+       return $wnd[varName];
     }-*/;
 
   public void onModuleLoad() {
     try {
-      // You must specify the chart dimensions for now, rather than have the chart 
+      // You must specify the chart dimensions for now, rather than have the chart
       // grow to fill its container
       int chartWidth = 450;
       int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
@@ -44,22 +48,21 @@ public class ChartDemo implements EntryPoint {
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(true);
       Chronoscope.initialize();
-      
+
       Chronoscope chronoscope = Chronoscope.getInstance();
-      
+
       final Datasets<Tuple2D> datasets = new Datasets<Tuple2D>();
-      datasets.add(chronoscope.createDataset(getJson("interestRates01")));
-      datasets.add(chronoscope.createDataset(getJson("interestRates02")));
-      
+      datasets.add(Chronoscope.getInstance().createDataset(new GwtJsonDataset(getJson("unratedata"))));
+
       MockDatasetFactory datasetFactory = new MockDatasetFactory();
       Dataset mockDataset = datasetFactory.getBasicDataset();
       datasets.add(mockDataset);
-      
+
       Dataset[] dsArray = datasets.toArray();
-      
+
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(dsArray, chartWidth, chartHeight);
-      
+
       chartPanel.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(final View view) {
           Dataset dataset = datasets.get(0);
@@ -70,7 +73,7 @@ public class ChartDemo implements EntryPoint {
               m.openInfoWindow("Hello");
             }
           });
-          
+
           XYPlot plot = view.getChart().getPlot();
           //plot.setDatasetRenderer(1, new BarChartXYRenderer());
           plot.addOverlay(m);

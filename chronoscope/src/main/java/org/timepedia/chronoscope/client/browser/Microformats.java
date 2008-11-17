@@ -21,6 +21,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.HistoryManager;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -271,7 +272,7 @@ public class Microformats {
     }
   }
 
-  public static native JsArray<JSONDataset> importMicroformatTable0(String id,
+  public static native JsArray<JsonDatasetJSO> importMicroformatTable0(String id,
       Element table) /*-{
 
           var label="";

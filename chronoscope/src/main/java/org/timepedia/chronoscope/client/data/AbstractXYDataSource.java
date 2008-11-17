@@ -6,7 +6,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
-import org.timepedia.chronoscope.client.browser.JSONDataset;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public abstract class AbstractXYDataSource extends XYDataSource {
 
-  private static native JsArray<JSONDataset> getJson(String text) /*-{
+  private static native JsArray<JsonDatasetJSO> getJson(String text) /*-{
        var a=eval(text);
        if(a instanceof Array) return a;
        return [a];
