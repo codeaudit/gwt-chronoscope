@@ -763,7 +763,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw();
     tmpPlotDomain.copyTo(plotDomain);
     overlays = oldOverlays;
-    redraw();
+    redraw(true);
   }
 
   public void removeOverlay(Overlay over) {

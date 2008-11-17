@@ -45,7 +45,6 @@ public class RangeAxisPanel extends AxisPanel {
 
   public void draw(Layer layer, Bounds axisBounds) {
     double tickPositions[] = rangeAxis.computeTickPositions();
-
     layer.save();
     if (!GRID_ONLY) {
       clearAxis(layer, axisBounds);
@@ -70,7 +69,7 @@ public class RangeAxisPanel extends AxisPanel {
         }
         drawHorizontalTick(plot, layer, tickPositions[i], axisBounds, 6);
       } else {
-        drawVerticalTick(plot, layer, tickPositions[i], tickPosition0,
+        drawVerticalTick(layer, tickPositions[i], tickPosition0,
             axisRange, axisBounds, GRID_ONLY);
       }
     }
@@ -82,6 +81,7 @@ public class RangeAxisPanel extends AxisPanel {
         drawHorizontalAxisLabel(layer, axisBounds);
       }
     }
+
     layer.restore();
   }
 
@@ -223,13 +223,13 @@ public class RangeAxisPanel extends AxisPanel {
     layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
 
     if (gridProperties.visible) {
-      Layer player = plot.getPlotLayer();
-      player.save();
-      player.setFillColor(gridProperties.color);
-      player.setTransparency((float) gridProperties.transparency);
-      player.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
+      Layer plotLayer = plot.getPlotLayer();
+      plotLayer.save();
+      plotLayer.setFillColor(gridProperties.color);
+      plotLayer.setTransparency((float) gridProperties.transparency);
+      plotLayer.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
           plot.getInnerBounds().height);
-      player.restore();
+      plotLayer.restore();
     }
     layer.restore();
     drawHorizontalLabel(layer, bounds, ux, range);
@@ -239,7 +239,7 @@ public class RangeAxisPanel extends AxisPanel {
     if (labelProperties.visible) {
       boolean isLeft = parentPanel.getPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
-
+      
 //      double dir = (isLeft ? bounds
 //          .width - (isInnerMost ? 0 : axis.getMaxLabelWidth() - 10) - axis
 //          .getAxisLabelWidth() : (isInnerMost ? 0 : axis.getMaxLabelWidth()));
@@ -307,7 +307,7 @@ public class RangeAxisPanel extends AxisPanel {
         bounds.bottomY());
   }
 
-  private void drawVerticalTick(XYPlot plot, Layer layer, double range,
+  private void drawVerticalTick(Layer layer, double range,
       double rangeLow, double rangeSize, Bounds bounds, boolean gridOnly) {
     double uy =
         (bounds.height - ((range - rangeLow) / rangeSize * bounds.height))
