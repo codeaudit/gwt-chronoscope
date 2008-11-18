@@ -16,7 +16,7 @@ public class MockGssContext extends BrowserGssContext {
     
     GssProperties gssProps = new MockGssProperties();
     
-    if ("line".equals(elementType)) {
+    if ("line".equals(elementType) || "candlestick".equals(elementType)) {
       configLineProps(gssProps, gssElem.getParentGssElement(), pseudoElt);
     }
     else if ("bar".equals(elementType)) {
