@@ -14,6 +14,7 @@ import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
+import org.timepedia.chronoscope.client.render.DatasetRendererMap;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -385,10 +386,16 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Associates a {@link DatasetRenderer} with a {@link Dataset}.
    *
    * @param datasetIndex the index of the dataset to be rendered
-   * @param renderer     the renderer responsible for drawing the dataset
+   * @param renderer the renderer responsible for drawing the dataset
    */
   void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer);
-
+  
+  /**
+   * Sets the map that determines which {@link DatasetRenderer} to use 
+   * for a given {@link Dataset} object.
+   */
+  void setDatasetRendererMap(DatasetRendererMap datasetRendererMap);
+  
   /**
    * Overrides the default X-axis renderer (Date formatted labels)
    */

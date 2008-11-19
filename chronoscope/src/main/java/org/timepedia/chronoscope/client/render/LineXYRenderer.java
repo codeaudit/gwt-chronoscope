@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
@@ -67,10 +66,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
             layer.moveTo(lx, ly);
           }
           
-          // Draw a line from the end of the previous line segment (or the 1st point
-          // of the visible curve if this is the first line segment to be drawn) 
-          // to (ux, uy).
-          layer.lineTo(ux, uy);
+          lineTo(layer, ux, uy);
           
           lx = ux;
           ly = uy;
@@ -214,7 +210,14 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public String getTypeClass() {
     return null;
   }
-
+  
+  protected void lineTo(Layer layer, double nextX, double nextY) {
+    // Draw a line from the end of the previous line segment (or the 1st point
+    // of the visible curve if this is the first line segment to be drawn) 
+    // to (ux, uy).
+    layer.lineTo(nextX, nextY);
+  }
+  
   /**
    * Draws a point at the specified screen coordinates
    */
