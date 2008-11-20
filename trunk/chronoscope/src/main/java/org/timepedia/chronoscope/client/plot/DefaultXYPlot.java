@@ -77,42 +77,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private DatasetRendererMap datasetRendererMap = new DatasetRendererMap();
   
-  private enum DistanceFormula {
-
-    /**
-     * The distance from point (x1,x2) to point (y1,y2) on an XY plane.
-     */
-    XY {double dist(double x1, double y1, double x2, double y2) {
-      return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    }},
-    /**
-     * Considers only the distance between x1 and x2, ignoring the y values of
-     * points (x1,y1) and (x2,y2).
-     */
-    X_ONLY {double dist(double x1, double y1, double x2, double y2) {
-      return Math.abs(x1 - x2);
-    }};
-
-    /**
-     * The distance from points (x1,y1) to (x2,y2).
-     */
-    abstract double dist(double x1, double y1, double x2, double y2);
-  }
-
-  /**
-   * Represents the point nearest to some specified data point.
-   */
-  private static final class NearestPoint {
-
-    public int pointIndex;
-
-    public double dist;
-
-    public String toString() {
-      return "pointIndex=" + pointIndex + ";dist=" + dist;
-    }
-  }
-
   private static int globalPlotNumber = 0;
 
   private static final String LAYER_HOVER = "hoverLayer";
@@ -267,11 +231,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     for (Overlay o : overlays) {
       double oPos = o.getDomainX();
-      if (plotDomain.contains(oPos)) {
-        if (o.isHit(x, y)) {
-          o.click(x, y);
-          return true;
-        }
+      if (plotDomain.contains(oPos) && o.isHit(x, y)) {
+        o.click(x, y);
+        return true;
       }
     }
 
@@ -540,7 +502,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void moveTo(double domainX) {
-    final double domainAmtMoved = domainX - this.plotDomain.getStart();
     movePlotDomain(domainX);
     fireMoveEvent(PlotMovedEvent.MoveType.DRAGGED);
     this.redraw();
@@ -642,15 +603,16 @@ public class DefaultXYPlot<T extends Tuple2D>
         .createInfoWindow(html, domainToWindowX(domainX, datasetIndex),
             rangeToWindowY(rangeY, datasetIndex) + 5);
 
-    if (ensureVisible(domainX, rangeY, new PortableTimerTask() {
-      public void run(PortableTimer timer) {
-        window.open();
-      }
-    })) {
-
-    } else {
+    final PortableTimerTask timerTask = new PortableTimerTask() {
+        public void run(PortableTimer timer) {
+          window.open();
+        }
+    };
+    
+    if (!ensureVisible(domainX, rangeY, timerTask)) {
       window.open();
     }
+    
     return window;
   }
 
@@ -805,7 +767,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void setCurrentMipLevel(int datasetIndex, int mipLevel) {
     if (currentMiplevels[datasetIndex] != mipLevel) {
-      resetHoverPoints();
+      resetHoverPoints(datasets.size());
       // TODO: maybe adjust to nearest one in next level of detail
       currentMiplevels[datasetIndex] = mipLevel;
     }
@@ -1024,8 +986,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         if (lerpFactor < 1) {
           t.schedule(10);
         } else if (lastFrame) {
-          final double domainAmt = srcDomain.getStart() - visibleDomain
-              .getStart();
           fireMoveEvent(eventType);
           if (continuation != null) {
             continuation.run(t);
@@ -1462,8 +1422,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    * here that doesn't depend on the axes or layers being initialized.
    */
   private void initViewIndependent(Datasets<T> datasets) {
-    hoverPoints = new int[datasets.size()];
-    resetHoverPoints();
+    resetHoverPoints(datasets.size());
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
         / datasets.size();
     visibleDomainMax = Util
@@ -1517,8 +1476,16 @@ public class DefaultXYPlot<T extends Tuple2D>
     HistoryManager.pushHistory();
   }
 
-  private void resetHoverPoints() {
-    Arrays.fill(this.hoverPoints, NO_SELECTION);
+  /**
+   * Fills this.hoverPoints[] with {@link #NO_SELECTION} values.
+   * If hoverPoints[] is null or not the same length as this.datsets.size(), 
+   * it is initialized to the correct size.
+   */
+  private void resetHoverPoints(int numDatasets) {
+    if (hoverPoints == null || hoverPoints.length != numDatasets) {
+      hoverPoints = new int[numDatasets];
+    }
+    Arrays.fill(hoverPoints, NO_SELECTION);
   }
 
   private void setFocusAndNotifyView(Focus focus) {
@@ -1601,10 +1568,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private double windowYtoRange(int y, int datasetIndex) {
-    return getRangeAxis(datasetIndex).userToData(windowYtoUser(y));
-  }
-
-  private double windowYtoUser(int y) {
-    return (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
+    double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
+    return getRangeAxis(datasetIndex).userToData(userY);
   }
 }
