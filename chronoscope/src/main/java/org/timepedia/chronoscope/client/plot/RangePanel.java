@@ -23,9 +23,11 @@ import java.util.Map;
  * @author chad takahashi
  */
 final class RangePanel extends AuxiliaryPanel {
-  private CompositeAxisPanel leftPanel, rightPanel;
   private final Map<String, RangeAxis> id2rangeAxis
       = new HashMap<String, RangeAxis>();
+  private boolean isDrawn = false;
+  private CompositeAxisPanel leftPanel, rightPanel;
+  
 
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
@@ -34,7 +36,16 @@ final class RangePanel extends AuxiliaryPanel {
   private List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
 
   @Override
+  public void clearDrawCaches() {
+    isDrawn = false;
+  }
+
+  @Override
   public void draw() {
+    if (!isDrawRequired()) {
+      return;
+    }
+    
     layer.save();
     layer.setFillColor(Color.TRANSPARENT);
     layer.clear();
@@ -50,20 +61,40 @@ final class RangePanel extends AuxiliaryPanel {
     }
     
     layer.restore();
+    
+    isDrawn = true;
   }
 
   public CompositeAxisPanel getLeftSubPanel() {
     return leftPanel;
   }
   
-  public CompositeAxisPanel getRightSubPanel() {
-    return rightPanel;
-  }
-  
   public List<RangeAxis> getRangeAxes() {
     return this.rangeAxes;
   }
   
+  public CompositeAxisPanel getRightSubPanel() {
+    return rightPanel;
+  }
+  
+  @Override
+  public void initLayer() {
+    // assumes that leftPanel and rightPanel share the same height.
+    Bounds layerBounds = new Bounds(0, plot.getBounds().y,
+        view.getWidth(), leftPanel.getHeight());
+    
+    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    layer.setFillColor(Color.TRANSPARENT);
+    layer.clear();
+  }
+  
+  @Override
+  public void layout() {
+    leftPanel.layout();
+    rightPanel.layout();
+  }
+
   @Override
   protected void initHook() {
     final String leftPanelName = "rangeAxisLayerLeft" + plot.plotNumber; 
@@ -78,23 +109,10 @@ final class RangePanel extends AuxiliaryPanel {
   }
   
   @Override
-  public void initLayer() {
-    // assumes that leftPanel and rightPanel share the same height.
-    Bounds layerBounds = new Bounds(0, plot.getBounds().y,
-        view.getWidth(), leftPanel.getHeight());
-    
-    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    layer.setFillColor(Color.TRANSPARENT);
-    layer.clear();
+  protected void setEnabledHook(boolean enabled) {
+    throw new UnsupportedOperationException("not implemented yet...");
   }
 
-  @Override
-  public void layout() {
-    leftPanel.layout();
-    rightPanel.layout();
-  }
-  
   private List<RangeAxis> autoAssignDatasetAxes(Datasets datasets) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
@@ -130,10 +148,18 @@ final class RangePanel extends AuxiliaryPanel {
 
     return rangeAxes;
   }
-
-  @Override
-  protected void setEnabledHook(boolean enabled) {
-    throw new UnsupportedOperationException("not implemented yet...");
+  
+  private boolean isDrawRequired() {
+    if (!isDrawn) {
+      return true;
+    }
+    
+    for (RangeAxis axis : rangeAxes) {
+      if (axis.isAutoZoomVisibleRange()) {
+        return true;
+      }
+    }
+    
+    return false;
   }
-
 }
