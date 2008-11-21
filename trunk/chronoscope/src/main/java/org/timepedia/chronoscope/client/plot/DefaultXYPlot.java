@@ -12,8 +12,6 @@ import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.DomainAxis;
-import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -34,18 +32,14 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
-import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DatasetRendererMap;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
-import org.timepedia.chronoscope.client.render.LegendAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
-import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
-import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
@@ -57,9 +51,7 @@ import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -111,35 +103,27 @@ public class DefaultXYPlot<T extends Tuple2D>
   private double beginHighlight = Double.MIN_VALUE, endHighlight
       = Double.MIN_VALUE;
 
-  private CompositeAxisPanel bottomPanel;
-
   private int currentMiplevels[];
 
   private Datasets<T> datasets;
 
-  private AxisPanel domainAxisPanel;
-
-  private boolean drewVertical;
+  private boolean highlightDrawn, rangePanelDrawn;
 
   private Focus focus = null;
 
-  private boolean highlightDrawn;
-
-  private Layer bottomPanelLayer, highLightLayer, overviewLayer, plotLayer,
-      topPanelLayer, verticalAxisLayer, hoverLayer;
+  private BottomPanel bottomPanel;
+  
+  private TopPanel topPanel;
+  
+  private RangePanel rangePanel;
+  
+  private Layer highLightLayer, plotLayer, hoverLayer;
 
   private int[] hoverPoints;
-
-  private final Map<String, RangeAxis> id2rangeAxis
-      = new HashMap<String, RangeAxis>();
 
   private Bounds innerBounds;
 
   private boolean isAnimating = false;
-
-  private LegendAxisPanel legendAxisPanel;
-
-  private boolean legendEnabled = true;
 
   private int maxDrawableDatapoints = 400;
 
@@ -147,29 +131,13 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private ArrayList<Overlay> overlays;
 
-  private OverviewAxisPanel overviewAxisPanel;
-
-  private boolean overviewDrawn = false;
-
-  private boolean overviewEnabled = true;
-
   private Bounds plotBounds;
 
   private Interval plotDomain, lastPlotDomain;
 
-  private int plotNumber = 0;
+  int plotNumber = 0;
 
   private XYPlotRenderer<T> plotRenderer;
-
-  // Maps a dataset id to the RangeAxis to which it has been bound.
-  // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
-  // bound to.  The relationship from dataset to axis is 
-  // many-to-one.
-  private List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
-
-  private CompositeAxisPanel rangePanelLeft, rangePanelRight;
-
-  private CompositeAxisPanel topPanel;
 
   private View view;
 
@@ -177,10 +145,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private List<DatasetRenderer<T>> datasetRenderers
       = new ArrayList<DatasetRenderer<T>>();
-
-  private DomainAxis domainAxis;
-
-  private AxisPanel overrideDomainAxisRenderer;
 
   private HandlerManager handlerManager = new HandlerManager(this);
 
@@ -230,25 +194,28 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     for (Overlay o : overlays) {
-      double oPos = o.getDomainX();
-      if (plotDomain.contains(oPos) && o.isHit(x, y)) {
+      boolean wasOverlayHit = 
+        plotDomain.contains(o.getDomainX()) && o.isHit(x, y);
+
+      if (wasOverlayHit) {
         o.click(x, y);
         return true;
       }
     }
 
-    return legendEnabled ? legendAxisPanel.click(x, y) : false;
+    return topPanel.isEnabled() ? topPanel.click(x, y) : false;
   }
 
   /**
    * Any cached drawings of this axis are flushed and redrawn on next update
    */
   public void damageAxes(ValueAxis axis) {
-    drewVertical = false;
+    rangePanelDrawn = false;
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
-    double userX = domainAxisPanel.getValueAxis().dataToUser(dataX);
+    ValueAxis valueAxis = bottomPanel.getDomainAxisPanel().getValueAxis();
+    double userX = valueAxis.dataToUser(dataX);
     return userX * plotBounds.width;
   }
 
@@ -313,11 +280,11 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public ValueAxis getDomainAxis() {
-    return domainAxisPanel.getValueAxis();
+    return bottomPanel.getDomainAxisPanel().getValueAxis();
   }
 
   public AxisPanel getDomainAxisRenderer() {
-    return domainAxisPanel;
+    return bottomPanel.getDomainAxisPanel();
   }
 
   public Focus getFocus() {
@@ -353,11 +320,11 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public OverviewAxisPanel getOverviewAxisPanel() {
-    return overviewAxisPanel;
+    return bottomPanel.getOverviewAxisPanel();
   }
 
   public Layer getOverviewLayer() {
-    return overviewLayer;
+    return bottomPanel.getOveriewLayer();
   }
 
   public Layer getPlotLayer() {
@@ -369,7 +336,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   @Export("getAxis")
   public RangeAxis getRangeAxis(int datasetIndex) {
-    return rangeAxes.get(datasetIndex);
+    return rangePanel.getRangeAxes().get(datasetIndex);
   }
 
   public double getSelectionBegin() {
@@ -394,64 +361,47 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initViewIndependent(datasets);
     datasetRenderers = initDatasetRenderers(view, datasets);
+    
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
     
-    bottomPanel = new CompositeAxisPanel("domainAxisLayer" + plotNumber,
-        Position.BOTTOM, this, view);
-
-    domainAxisPanel = overrideDomainAxisRenderer != null
-        ? overrideDomainAxisRenderer : new DomainAxisPanel();
-    domainAxisPanel.setParentPanel(bottomPanel);
-    if (domainAxis == null) {
-      //don't stomp on existing configured axis
-      domainAxis = new DomainAxis(this, view);
-    }
-    domainAxisPanel.setValueAxis(domainAxis);
-    domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
-
-    bottomPanel.add(domainAxisPanel);
-    if (this.isOverviewEnabled()) {
-      overviewAxisPanel = new OverviewAxisPanel();
-      overviewAxisPanel.setValueAxis(new OverviewAxis(this, "Overview"));
-      bottomPanel.add(overviewAxisPanel);
-    }
-
-    if (rangePanelLeft != null) {
-      rangePanelLeft.layout();
+    if (bottomPanel != null) {
+      bottomPanel.layout();
     } else {
-      rangePanelLeft = new CompositeAxisPanel("rangeAxisLayerLeft" + plotNumber,
-          CompositeAxisPanel.Position.LEFT, this, view);
+      bottomPanel = new BottomPanel();
+      initAuxiliaryPanel(bottomPanel, view);
     }
-
-    if (rangePanelRight != null) {
-      rangePanelRight.layout();
+    
+    if (rangePanel != null) {
+      rangePanel.layout();
     } else {
-      rangePanelRight = new CompositeAxisPanel(
-          "rangeAxisLayerRight" + plotNumber, CompositeAxisPanel.Position.RIGHT,
-          this, view);
+      rangePanel = new RangePanel();
+      initAuxiliaryPanel(rangePanel, view);
     }
-
-    this.rangeAxes = autoAssignDatasetAxes();
-
-    topPanel = new CompositeAxisPanel("topPanel" + plotNumber,
-        CompositeAxisPanel.Position.TOP, this, view);
-    if (legendEnabled) {
-      legendAxisPanel = new LegendAxisPanel();
-      legendAxisPanel.setZoomListener(this);
-      topPanel.add(legendAxisPanel);
+    
+    // TODO: the top panel's initialization currently depends on the initialization
+    // of the bottomPanel.  Remove this dependency if possible.
+    if (topPanel != null) {
+      topPanel.layout();
+    } else {
+      topPanel = new TopPanel();
+      initAuxiliaryPanel(topPanel, view);
     }
-
+    
     plotBounds = computePlotBounds();
     innerBounds = new Bounds(0, 0, plotBounds.width, plotBounds.height);
 
     clearDrawCaches();
     lastPlotDomain = new Interval(0, 0);
-    initLayers();
-    background = new GssBackground(view);
     
+    initLayers();
+    topPanel.initLayer();
+    bottomPanel.initLayer();
+    rangePanel.initLayer();
+    
+    background = new GssBackground(view);  
     view.canvasSetupDone();
   }
 
@@ -460,7 +410,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public boolean isOverviewEnabled() {
-    return this.overviewEnabled;
+    return bottomPanel.isOverviewEnabled();
   }
 
   public void maxZoomOut() {
@@ -577,12 +527,8 @@ public class DefaultXYPlot<T extends Tuple2D>
         overlays.add(o);
       }
     }
-
-    rangeAxes.remove(datasetIndex);
-    datasetRenderers.remove(datasetIndex);
-    this.rangePanelLeft = null;
-    this.rangePanelRight = null;
-    this.id2rangeAxis.clear();
+    
+    this.rangePanel = null;
 
     initAndRedraw();
   }
@@ -675,18 +621,22 @@ public class DefaultXYPlot<T extends Tuple2D>
     } else {
       plotRenderer.drawHoverPoints();
     }
-
-    boolean drawVertical = !drewVertical;
-    for (RangeAxis axis : rangeAxes) {
-      drawVertical = drawVertical || axis.isAutoZoomVisibleRange();
+    
+    boolean forceRangePanelDraw = false;
+    for (RangeAxis axis : rangePanel.getRangeAxes()) {
+      if (axis.isAutoZoomVisibleRange()) {
+        forceRangePanelDraw = true;
+        break;
+      }
     }
-    if (drawVertical && canDrawFast) {
-      drawRangeAxes();
+    if (!rangePanelDrawn || forceRangePanelDraw) {
+      rangePanel.draw();
+      rangePanelDrawn = true;
     }
 
     if (plotDomainChanged || forceCenterPlotRedraw) {
-      if (overviewEnabled) {
-        drawOverviewOfDatasets();
+      if (bottomPanel.isOverviewEnabled()) {
+        bottomPanel.drawOverviewOfDatasets();
       }
 
       plotLayer.save();
@@ -695,14 +645,14 @@ public class DefaultXYPlot<T extends Tuple2D>
       drawPlot();
 
       if (canDrawFast) {
-        drawOverviewHighlight();
+        bottomPanel.draw();
         drawOverlays(plotLayer);
       }
       plotLayer.restore();
     }
 
     if (canDrawFast) {
-      drawTopPanel();
+      topPanel.draw();
       drawPlotHighlight(highLightLayer);
     }
 
@@ -716,7 +666,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   @Export
   public void reloadStyles() {
-    overviewDrawn = false;
+    bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = plotDomain.copy();
     init(view);
     ArrayList<Overlay> oldOverlays = overlays;
@@ -762,7 +712,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
-    rangeAxes.get(dataset).setAutoZoomVisibleRange(autoZoom);
+    rangePanel.getRangeAxes().get(dataset).setAutoZoomVisibleRange(autoZoom);
   }
 
   public void setCurrentMipLevel(int datasetIndex, int mipLevel) {
@@ -799,14 +749,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.datasets = datasets;
   }
 
-  public void setDomainAxisRenderer(AxisPanel domainAxisRenderer) {
-    overrideDomainAxisRenderer = domainAxisRenderer;
-    bottomPanel.remove(domainAxisPanel);
-    domainAxisPanel = domainAxisRenderer;
-    domainAxisRenderer.setParentPanel(bottomPanel);
-    domainAxisRenderer.setValueAxis(domainAxis);
-    domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
-    bottomPanel.insertBefore(overviewAxisPanel, domainAxisPanel);
+  public void setDomainAxisRenderer(AxisPanel domainAxisPanel) {
+    bottomPanel.setDomainAxisPanel((DomainAxisPanel)domainAxisPanel);
   }
 
   public void setFocus(Focus focus) {
@@ -898,11 +842,11 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setLegendEnabled(boolean b) {
-    legendEnabled = b;
+    topPanel.setEnabled(b);
   }
 
   public void setOverviewEnabled(boolean overviewEnabled) {
-    this.overviewEnabled = overviewEnabled;
+    bottomPanel.setOverviewEnabled(overviewEnabled);
   }
 
   public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
@@ -1004,45 +948,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     animationTimer.schedule(10);
   }
 
-  private List<RangeAxis> autoAssignDatasetAxes() {
-    ArgChecker.isNotNull(view, "view");
-    ArgChecker.isNotNull(datasets, "datasets");
-
-    List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
-
-    for (int i = 0; i < datasets.size(); i++) {
-      Dataset<T> ds = datasets.get(i);
-
-      RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
-
-      if (ra == null) {
-        int numLeftAxes = rangePanelLeft.getAxisCount();
-        int numRightAxes = rangePanelRight.getAxisCount();
-        boolean useLeftPanel = (numLeftAxes <= numRightAxes);
-        CompositeAxisPanel currRangePanel = useLeftPanel ? rangePanelLeft
-            : rangePanelRight;
-        ra = new RangeAxis(this, view, ds.getRangeLabel(), ds.getAxisId(), i,
-            ds.getMinValue(1), ds.getMaxValue(1));
-        RangeAxisPanel axisPanel = new RangeAxisPanel();
-        axisPanel.setValueAxis(ra);
-        ra.setAxisRenderer(axisPanel);
-        currRangePanel.add(axisPanel);
-        id2rangeAxis.put(ra.getAxisId(), ra);
-      } else {
-        ra.setInitialRange(
-            Math.min(ra.getUnadjustedRangeLow(), ds.getMinValue(1)),
-            Math.max(ra.getUnadjustedRangeHigh(), ds.getMaxValue(1)));
-      }
-
-      rangeAxes.add(ra);
-    }
-
-    return rangeAxes;
-  }
-
   private void clearDrawCaches() {
-    drewVertical = false;
-    overviewDrawn = false;
+    rangePanelDrawn = false;
+    bottomPanel.clearDrawCaches();
   }
 
   private Bounds computePlotBounds() {
@@ -1050,34 +958,33 @@ public class DefaultXYPlot<T extends Tuple2D>
     final double viewHeight = view.getHeight();
     Bounds b = new Bounds();
 
-    double centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-        .getHeight();
+    double centerPlotHeight = viewHeight - topPanel.getHeight() - 
+        bottomPanel.getHeight();
 
     // If center plot too squished, remove the overview axis
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-      if (overviewEnabled) {
-        bottomPanel.remove(overviewAxisPanel);
-        overviewEnabled = false;
-        centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-            .getHeight();
+      if (bottomPanel.isOverviewEnabled()) {
+        bottomPanel.setOverviewEnabled(false);
+        //bottomPanel.removeOverviewAxisPanel();
+        centerPlotHeight = viewHeight - topPanel.getHeight() - 
+            bottomPanel.getHeight();
       }
     }
 
     // If center plot still too squished, remove the legend axis
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-      if (legendEnabled) {
-        topPanel.remove(legendAxisPanel);
-        legendEnabled = false;
-        centerPlotHeight = viewHeight - topPanel.getHeight() - bottomPanel
-            .getHeight();
+      if (topPanel.isEnabled()) {
+        topPanel.setEnabled(false);
+        centerPlotHeight = viewHeight - topPanel.getHeight() - 
+            bottomPanel.getHeight();
       }
     }
 
-    b.x = rangePanelLeft.getWidth();
+    b.x = rangePanel.getLeftSubPanel().getWidth();
     b.y = topPanel.getHeight();
     b.height = centerPlotHeight;
-    b.width = viewWidth - rangePanelLeft.getWidth() - rangePanelRight
-        .getWidth();
+    b.width = viewWidth - rangePanel.getLeftSubPanel().getWidth() - 
+        rangePanel.getRightSubPanel().getWidth();
 
     return b;
   }
@@ -1102,73 +1009,15 @@ public class DefaultXYPlot<T extends Tuple2D>
     layer.restore();
   }
 
-  /**
-   * Draws the highlighted region (if any) of the dataset overview axis.
-   */
-  private void drawOverviewHighlight() {
-    if (bottomPanel.getAxisCount() == 0) {
-      return;
+  void drawPlot() {
+    plotLayer.setScrollLeft(0);
+    background
+        .paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
+    // reset the visible RangeAxis ticks if it's been zoomed
+    for (RangeAxis axis : rangePanel.getRangeAxes()) {
+      axis.initVisibleRange();
     }
-
-    bottomPanelLayer.save();
-    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        bottomPanelLayer.getBounds().height);
-    bottomPanel.draw(bottomPanelLayer, domainPanelBounds);
-    bottomPanelLayer.restore();
-  }
-
-  /**
-   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all the
-   * datasets managed by this plot.
-   */
-  private void drawOverviewOfDatasets() {
-    if (overviewDrawn) {
-      return;
-    }
-
-    // save original endpoints so they can be restored later
-    double dO = plotDomain.getStart();
-    double dE = plotDomain.getEnd();
-
-    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
-    drawPlot();
-    overviewLayer.save();
-    overviewLayer.setVisibility(false);
-    overviewLayer.clear();
-    overviewLayer.drawImage(plotLayer, 0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight());
-    overviewLayer.restore();
-
-    // restore original endpoints
-    plotDomain.setEndpoints(dO, dE);
-
-    overviewDrawn = true;
-  }
-
-  private void drawPlot() {
-    final double doChange = plotDomain.getStart() - lastPlotDomain.getStart();
-    final double cdChange = plotDomain.length() - lastPlotDomain.length();
-
-    double numPixels = doChange / plotDomain.length() * plotLayer.getWidth();
-    // disabled for now, implement smooth local scrolling by rendering
-    // a chart with overdraw clipped to the view, and scroll overdraw
-    // regions into view
-    // as needed
-    if (false && cdChange == 0 && numPixels < plotLayer.getWidth() / 2) {
-      plotLayer.setScrollLeft((int) (plotLayer.getScrollLeft() - numPixels));
-      this.movePlotDomain(plotDomain.getStart() + doChange);
-    } else {
-      plotLayer.setScrollLeft(0);
-      background
-          .paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
-
-      // reset the visible RangeAxis ticks if it's been zoomed
-      for (RangeAxis axis : rangeAxes) {
-        axis.initVisibleRange();
-      }
-
-      plotRenderer.drawDatasets();
-    }
+    plotRenderer.drawDatasets();
   }
 
   /**
@@ -1205,42 +1054,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     highlightDrawn = true;
   }
 
-  private void drawRangeAxes() {
-    verticalAxisLayer.save();
-    verticalAxisLayer.setFillColor(Color.TRANSPARENT);
-    verticalAxisLayer.clear();
-
-    Bounds leftPanelBounds = new Bounds(0, 0, rangePanelLeft.getWidth(),
-        rangePanelLeft.getHeight());
-    rangePanelLeft.draw(verticalAxisLayer, leftPanelBounds);
-
-    if (rangePanelRight.getAxisCount() > 0) {
-      Bounds rightPanelBounds = new Bounds(plotBounds.rightX(), 0,
-          rangePanelRight.getWidth(), rangePanelRight.getHeight());
-      rangePanelRight.draw(verticalAxisLayer, rightPanelBounds);
-    }
-    verticalAxisLayer.restore();
-
-    drewVertical = true;
-  }
-
-  private void drawTopPanel() {
-    if (topPanel.getAxisCount() == 0) {
-      return;
-    }
-
-    topPanelLayer.save();
-    Bounds topPanelBounds = new Bounds(0, 0, topPanelLayer.getBounds().width,
-        topPanelLayer.getBounds().height);
-    topPanel.draw(topPanelLayer, topPanelBounds);
-    topPanelLayer.restore();
-  }
-
   private Interval fenceDomain(double destDomainOrig, double destDomainLength) {
     final double minDomain = datasets.getMinDomain();
     final double maxDomain = datasets.getMaxDomain();
     final double maxDomainLength = maxDomain - minDomain;
-    final double minTickSize = domainAxisPanel.getMinimumTickSize();
+    final double minTickSize = 
+        bottomPanel.getDomainAxisPanel().getMinimumTickSize();
 
     // First ensure that the destination domain length is smaller than the 
     // difference between the minimum and maximum dataset domain values.  
@@ -1351,7 +1170,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
   }
 
-  private Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
+  Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
     Canvas canvas = view.getCanvas();
     if (layer != null) {
       canvas.disposeLayer(layer);
@@ -1359,6 +1178,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     return canvas.createLayer(layerPrefix + plotNumber, layerBounds);
   }
 
+  /**
+   * Initializes the layers needed by the center plot.
+   */
   private void initLayers() {
     view.getCanvas().getRootLayer().setLayerOrder(Layer.Z_LAYER_BACKGROUND);
 
@@ -1369,30 +1191,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
-
-    if (overviewEnabled) {
-      overviewLayer = initLayer(overviewLayer, "overviewLayer", plotBounds);
-      overviewLayer.setVisibility(false);
-    }
-
-    Bounds topLayerBounds = new Bounds(0, 0, view.getWidth(),
-        topPanel.getHeight());
-    topPanelLayer = initLayer(topPanelLayer, "topLayer", topLayerBounds);
-    topPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-
-    Bounds verticalAxisLayerBounds = new Bounds(0, plotBounds.y,
-        view.getWidth(), rangePanelLeft.getHeight());
-    verticalAxisLayer = initLayer(verticalAxisLayer, "verticalAxis",
-        verticalAxisLayerBounds);
-    verticalAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    verticalAxisLayer.setFillColor(Color.TRANSPARENT);
-    verticalAxisLayer.clear();
-
-    Bounds bottomPanelBounds = new Bounds(0, plotBounds.bottomY(),
-        view.getWidth(), bottomPanel.getHeight());
-    bottomPanelLayer = initLayer(bottomPanelLayer, "domainAxis",
-        bottomPanelBounds);
-    bottomPanelLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
   }
 
   private void initMipLevels() {
@@ -1564,11 +1362,18 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private double windowXtoDomain(double x) {
-    return domainAxisPanel.getValueAxis().userToData(windowXtoUser(x));
+    return bottomPanel.getDomainAxisPanel()
+        .getValueAxis().userToData(windowXtoUser(x));
   }
 
   private double windowYtoRange(int y, int datasetIndex) {
     double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
     return getRangeAxis(datasetIndex).userToData(userY);
+  }
+  
+  private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
+    panel.setPlot(this);
+    panel.setView(view);
+    panel.init();
   }
 }
