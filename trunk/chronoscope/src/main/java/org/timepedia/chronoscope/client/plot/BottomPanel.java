@@ -39,14 +39,11 @@ final class BottomPanel extends AuxiliaryPanel {
   
   private Layer overviewLayer;
   
+  @Override
   public void clearDrawCaches() {
     overviewDrawn = false;
   }
   
-  /**
-   * Draws the domain axis ticks and the highlighted region (if any) of the 
-   * dataset overview.
-   */
   @Override
   public void draw() {
     if (compositePanel.getAxisCount() == 0) {
@@ -58,41 +55,14 @@ final class BottomPanel extends AuxiliaryPanel {
     Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
         layer.getBounds().height);
     compositePanel.draw(layer, domainPanelBounds);
+    
+    if (overviewEnabled && !overviewDrawn) {
+      drawDatasetOverview();
+    }
+
     layer.restore();
   }
 
-  /**
-   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all the
-   * datasets managed by this plot.
-   */
-  public void drawOverviewOfDatasets() {
-    if (overviewDrawn || !overviewEnabled || !enabled) {
-      return;
-    }
-    
-    Interval plotDomain = plot.getDomain();
-    
-    // save original endpoints so they can be restored later
-    double dO = plotDomain.getStart();
-    double dE = plotDomain.getEnd();
-
-    Datasets datasets = plot.getDatasets();
-    
-    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
-    plot.drawPlot();
-    overviewLayer.save();
-    overviewLayer.setVisibility(false);
-    overviewLayer.clear();
-    overviewLayer.drawImage(plot.getPlotLayer(), 0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight());
-    overviewLayer.restore();
-
-    // restore original endpoints
-    plotDomain.setEndpoints(dO, dE);
-
-    overviewDrawn = true;
-  }
-  
   public CompositeAxisPanel getCompositeAxisPanel() {
     return this.compositePanel;
   }
@@ -112,7 +82,7 @@ final class BottomPanel extends AuxiliaryPanel {
   public OverviewAxisPanel getOverviewAxisPanel() {
     return this.overviewAxisPanel;
   }
-
+  
   @Override
   public void initLayer() {
     Bounds bottomPanelBounds = new Bounds(0, plot.getBounds().bottomY(),
@@ -125,7 +95,7 @@ final class BottomPanel extends AuxiliaryPanel {
       overviewLayer.setVisibility(false);
     }
   }
-  
+
   public boolean isOverviewEnabled() {
     return this.overviewEnabled;
   }
@@ -192,15 +162,35 @@ final class BottomPanel extends AuxiliaryPanel {
       }
     }
   }
-
-  private void initOverviewAxisPanel() {
-    compositePanel.remove(overviewAxisPanel);
-    
-    overviewAxisPanel = new OverviewAxisPanel();
-    overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
-    compositePanel.add(overviewAxisPanel);
-  }
   
+  /**
+   * Draws the overview (the  miniaturized fully-zoomed-out-view) of all the
+   * datasets managed by this plot.
+   */
+  private void drawDatasetOverview() {
+    Interval plotDomain = plot.getDomain();
+    
+    // save original endpoints so they can be restored later
+    double dO = plotDomain.getStart();
+    double dE = plotDomain.getEnd();
+
+    Datasets datasets = plot.getDatasets();
+    
+    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
+    plot.drawPlot();
+    overviewLayer.save();
+    overviewLayer.setVisibility(false);
+    overviewLayer.clear();
+    overviewLayer.drawImage(plot.getPlotLayer(), 0, 0, overviewLayer.getWidth(),
+        overviewLayer.getHeight());
+    overviewLayer.restore();
+
+    // restore original endpoints
+    plotDomain.setEndpoints(dO, dE);
+
+    overviewDrawn = true;
+  }
+
   private void initDomainAxisPanel() {
     if (domainAxisPanel == null) {
       domainAxisPanel = new DomainAxisPanel();
@@ -220,5 +210,13 @@ final class BottomPanel extends AuxiliaryPanel {
     }
 
     compositePanel.add(domainAxisPanel);
+  }
+  
+  private void initOverviewAxisPanel() {
+    compositePanel.remove(overviewAxisPanel);
+    
+    overviewAxisPanel = new OverviewAxisPanel();
+    overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
+    compositePanel.add(overviewAxisPanel);
   }
 }

@@ -23,12 +23,27 @@ abstract class AuxiliaryPanel {
   protected abstract void setEnabledHook(boolean enabled);
   
   /**
+   * Calling this method will cause the next invocation of {@link #draw()}
+   * to force a fresh rendering onto the layer in cases where subclasses
+   * are caching previously drawn information.
+   */
+  public void clearDrawCaches() {
+    // to be overridden by subclasses
+  }
+  
+  /**
    * Draws this panel
    */
   public abstract void draw();
   
+  /**
+   * Recalculates the positions of subpanels contained within this panel.
+   */
   public abstract void layout();
   
+  /**
+   * Initializes the layer(s) onto which this panel is drawn.
+   */
   public abstract void initLayer();
   
   public final void init() {
@@ -41,9 +56,13 @@ abstract class AuxiliaryPanel {
     return this.enabled;
   }
   
-  public void setEnabled(boolean b) {
-    this.enabled = b;
-    setEnabledHook(b);
+  public void setEnabled(boolean enabled) {
+    if (this.enabled == enabled) {
+      return;
+    }
+    
+    this.enabled = enabled;
+    setEnabledHook(enabled);
   }
   
   public void setPlot(DefaultXYPlot plot) {

@@ -107,7 +107,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private Datasets<T> datasets;
 
-  private boolean highlightDrawn, rangePanelDrawn;
+  private boolean highlightDrawn;
 
   private Focus focus = null;
 
@@ -210,7 +210,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    * Any cached drawings of this axis are flushed and redrawn on next update
    */
   public void damageAxes(ValueAxis axis) {
-    rangePanelDrawn = false;
+    rangePanel.clearDrawCaches();
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
@@ -622,33 +622,19 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotRenderer.drawHoverPoints();
     }
     
-    boolean forceRangePanelDraw = false;
-    for (RangeAxis axis : rangePanel.getRangeAxes()) {
-      if (axis.isAutoZoomVisibleRange()) {
-        forceRangePanelDraw = true;
-        break;
-      }
-    }
-    if (!rangePanelDrawn || forceRangePanelDraw) {
-      rangePanel.draw();
-      rangePanelDrawn = true;
-    }
-
     if (plotDomainChanged || forceCenterPlotRedraw) {
-      if (bottomPanel.isOverviewEnabled()) {
-        bottomPanel.drawOverviewOfDatasets();
-      }
-
       plotLayer.save();
       plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
       plotLayer.clear();
       drawPlot();
+      plotLayer.restore();
 
+      rangePanel.draw();
+      
       if (canDrawFast) {
         bottomPanel.draw();
         drawOverlays(plotLayer);
       }
-      plotLayer.restore();
     }
 
     if (canDrawFast) {
@@ -949,8 +935,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private void clearDrawCaches() {
-    rangePanelDrawn = false;
     bottomPanel.clearDrawCaches();
+    topPanel.clearDrawCaches();
+    rangePanel.clearDrawCaches();
   }
 
   private Bounds computePlotBounds() {
