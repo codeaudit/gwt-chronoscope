@@ -40,35 +40,10 @@ final class RangePanel extends AuxiliaryPanel {
     isDrawn = false;
   }
 
-  @Override
-  public void draw() {
-    if (!isDrawRequired()) {
-      return;
-    }
-    
-    layer.save();
-    layer.setFillColor(Color.TRANSPARENT);
-    layer.clear();
-    
-    Bounds leftPanelBounds = new Bounds(0, 0, leftPanel.getWidth(), 
-        leftPanel.getHeight());
-    leftPanel.draw(layer, leftPanelBounds);
-
-    if (rightPanel.getAxisCount() > 0) {
-      Bounds rightPanelBounds = new Bounds(plot.getBounds().rightX(), 0, 
-          rightPanel.getWidth(), rightPanel.getHeight());
-      rightPanel.draw(layer, rightPanelBounds);
-    }
-    
-    layer.restore();
-    
-    isDrawn = true;
-  }
-
   public CompositeAxisPanel getLeftSubPanel() {
     return leftPanel;
   }
-  
+
   public List<RangeAxis> getRangeAxes() {
     return this.rangeAxes;
   }
@@ -94,6 +69,31 @@ final class RangePanel extends AuxiliaryPanel {
     leftPanel.layout();
     rightPanel.layout();
   }
+  
+  @Override
+  protected void drawHook() {
+    if (!isDrawRequired()) {
+      return;
+    }
+    
+    layer.save();
+    layer.setFillColor(Color.TRANSPARENT);
+    layer.clear();
+    
+    Bounds leftPanelBounds = new Bounds(0, 0, leftPanel.getWidth(), 
+        leftPanel.getHeight());
+    leftPanel.draw(layer, leftPanelBounds);
+
+    if (rightPanel.getAxisCount() > 0) {
+      Bounds rightPanelBounds = new Bounds(plot.getBounds().rightX(), 0, 
+          rightPanel.getWidth(), rightPanel.getHeight());
+      rightPanel.draw(layer, rightPanelBounds);
+    }
+    
+    layer.restore();
+    
+    isDrawn = true;
+  }
 
   @Override
   protected void initHook() {
@@ -110,7 +110,12 @@ final class RangePanel extends AuxiliaryPanel {
   
   @Override
   protected void setEnabledHook(boolean enabled) {
-    throw new UnsupportedOperationException("not implemented yet...");
+    if (enabled) {
+      
+    }
+    else {
+     
+    }
   }
 
   private List<RangeAxis> autoAssignDatasetAxes(Datasets datasets) {

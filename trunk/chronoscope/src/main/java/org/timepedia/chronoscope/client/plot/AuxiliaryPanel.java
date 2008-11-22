@@ -18,6 +18,8 @@ abstract class AuxiliaryPanel {
   protected Layer layer;
   protected boolean enabled = true;
   
+  protected abstract void drawHook();
+  
   protected abstract void initHook();
   
   protected abstract void setEnabledHook(boolean enabled);
@@ -34,7 +36,11 @@ abstract class AuxiliaryPanel {
   /**
    * Draws this panel
    */
-  public abstract void draw();
+  public final void draw() {
+    if (this.enabled) {
+      drawHook();
+    }
+  }
   
   /**
    * Recalculates the positions of subpanels contained within this panel.

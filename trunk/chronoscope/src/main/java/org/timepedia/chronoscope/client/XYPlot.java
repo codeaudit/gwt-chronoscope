@@ -429,15 +429,22 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   boolean setHover(int x, int y);
 
   /**
-   * Enable or disable display of the legend.
+   * Enables or disables the legend panel above the center plot panel.
    */
   void setLegendEnabled(boolean enabled);
 
   /**
-   * Enable mini-chart overview on x-axis.
+   * Enables or disables the mini-chart overview below the center plot
+   * panel.
    */
-  void setOverviewEnabled(boolean overviewEnabled);
+  void setOverviewEnabled(boolean enabled);
 
+  /**
+   * Enables or disables all auxiliary panels (top legend, bottom domain
+   * axis and overview axis, and left/right range axes).
+   */
+  void setSubPanelsEnabled(boolean enabled);
+  
   /**
    * Causes chart to perform an animated zoom such that the current selection
    * becomes the currently visible domain.
