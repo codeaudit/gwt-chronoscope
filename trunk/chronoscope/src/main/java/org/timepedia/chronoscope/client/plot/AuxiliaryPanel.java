@@ -17,6 +17,7 @@ abstract class AuxiliaryPanel {
   protected View view;
   protected Layer layer;
   protected boolean enabled = true;
+  protected boolean initialized = false;
   
   protected abstract void drawHook();
   
@@ -56,10 +57,15 @@ abstract class AuxiliaryPanel {
     ArgChecker.isNotNull(plot, "plot");
     ArgChecker.isNotNull(view, "view");
     initHook();
+    initialized = true;
   }
   
   public boolean isEnabled() {
     return this.enabled;
+  }
+  
+  public boolean isInitialized() {
+    return initialized;
   }
   
   public void setEnabled(boolean enabled) {
@@ -68,6 +74,11 @@ abstract class AuxiliaryPanel {
     }
     
     this.enabled = enabled;
+    
+    if (!this.initialized) {
+      return;
+    }
+    
     setEnabledHook(enabled);
   }
   

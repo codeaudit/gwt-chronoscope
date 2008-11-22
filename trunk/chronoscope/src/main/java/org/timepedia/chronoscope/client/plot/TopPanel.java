@@ -65,13 +65,13 @@ final class TopPanel extends AuxiliaryPanel {
     }
     
     if (enabled) {
-      //initLegendAxisPanel();
-      compositePanel.add(legendAxisPanel);
+      if (legendAxisPanel == null) {
+        initLegendAxisPanel();
+      }
     }
     else { // disable the legend
       if (legendAxisPanel != null) {
         compositePanel.remove(legendAxisPanel);
-        //legendAxisPanel = null;
       }
     }
   }
@@ -79,9 +79,12 @@ final class TopPanel extends AuxiliaryPanel {
   private void initLegendAxisPanel() {
     if (legendAxisPanel == null) {
       legendAxisPanel = new LegendAxisPanel();
-      legendAxisPanel.setZoomListener(plot);
-      compositePanel.add(legendAxisPanel);
     }
+    else {
+      compositePanel.remove(legendAxisPanel);
+    }
+    legendAxisPanel.setZoomListener(plot);
+    compositePanel.add(legendAxisPanel);
   }
 
 }

@@ -110,12 +110,7 @@ final class RangePanel extends AuxiliaryPanel {
   
   @Override
   protected void setEnabledHook(boolean enabled) {
-    if (enabled) {
-      
-    }
-    else {
-     
-    }
+    // nothing to do 
   }
 
   private List<RangeAxis> autoAssignDatasetAxes(Datasets datasets) {

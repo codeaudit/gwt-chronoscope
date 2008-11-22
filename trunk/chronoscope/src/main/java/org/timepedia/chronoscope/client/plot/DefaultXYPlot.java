@@ -151,6 +151,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   public DefaultXYPlot() {
     overlays = new ArrayList<Overlay>();
     plotNumber = globalPlotNumber++;
+    
+    bottomPanel = new BottomPanel();
+    topPanel = new TopPanel();
+    rangePanel = new RangePanel();
   }
 
   /**
@@ -367,26 +371,23 @@ public class DefaultXYPlot<T extends Tuple2D>
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
     
-    if (bottomPanel != null) {
+    if (bottomPanel.isInitialized()) {
       bottomPanel.layout();
     } else {
-      bottomPanel = new BottomPanel();
       initAuxiliaryPanel(bottomPanel, view);
     }
     
-    if (rangePanel != null) {
+    if (rangePanel.isInitialized()) {
       rangePanel.layout();
     } else {
-      rangePanel = new RangePanel();
       initAuxiliaryPanel(rangePanel, view);
     }
     
     // TODO: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
-    if (topPanel != null) {
+    if (topPanel.isInitialized()) {
       topPanel.layout();
     } else {
-      topPanel = new TopPanel();
       initAuxiliaryPanel(topPanel, view);
     }
     
