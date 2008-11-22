@@ -95,15 +95,22 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel.insertBefore(overviewAxisPanel, domainAxisPanel);
   }
   
-  public void setOverviewEnabled(boolean enabled) {
-    if (this.overviewEnabled == enabled) {
+  public void setOverviewEnabled(boolean overviewEnabled) {
+    if (this.overviewEnabled == overviewEnabled) {
       return;
     }
     
-    this.overviewEnabled = enabled;
-    if (enabled) {
+    this.overviewEnabled = overviewEnabled;
+
+    if (!this.initialized) {
+      return;
+    }
+    
+    if (overviewEnabled) {
       compositePanel.clear();
+      initDomainAxisPanel();
       compositePanel.add(domainAxisPanel);
+      initOverviewAxisPanel();
       compositePanel.add(overviewAxisPanel);
       this.enabled = true;
     } else {
@@ -137,11 +144,16 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
     
+    // Domain axis panel must be initialized even if BottomPanel is not 
+    // currently enabled, because other auxiliary panels might rely on the
+    // domain axis calculations
+    initDomainAxisPanel();
+
     if (this.isEnabled()) {
-      initDomainAxisPanel();
-      
+      compositePanel.add(domainAxisPanel);
       if (overviewEnabled) {
         initOverviewAxisPanel();
+        compositePanel.add(overviewAxisPanel);
       }
     }
   }
@@ -151,16 +163,15 @@ final class BottomPanel extends AuxiliaryPanel {
       return;
     }
     
-    this.overviewEnabled = enabled;
-    
     compositePanel.clear();
     if (enabled) {
+      initDomainAxisPanel();
       compositePanel.add(domainAxisPanel);
+      initOverviewAxisPanel();
       compositePanel.add(overviewAxisPanel);
     }
     
     clearDrawCaches();
-    //setOverviewEnabled(enabled);
   }
   
   /**
@@ -208,15 +219,15 @@ final class BottomPanel extends AuxiliaryPanel {
       domainAxisPanel.setValueAxis(domainAxis);
       domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
     }
-
-    compositePanel.add(domainAxisPanel);
   }
   
   private void initOverviewAxisPanel() {
-    compositePanel.remove(overviewAxisPanel);
-    
-    overviewAxisPanel = new OverviewAxisPanel();
-    overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
-    compositePanel.add(overviewAxisPanel);
+    if (overviewAxisPanel == null) {
+      overviewAxisPanel = new OverviewAxisPanel();
+      overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
+    }
+    else {
+      compositePanel.remove(overviewAxisPanel);
+    }
   }
 }
