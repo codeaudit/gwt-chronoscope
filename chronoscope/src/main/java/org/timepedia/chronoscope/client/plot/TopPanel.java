@@ -18,8 +18,24 @@ final class TopPanel extends AuxiliaryPanel {
     return legendAxisPanel.click(x, y);
   }
   
+  public double getHeight() {
+    return compositePanel.getHeight();
+  }
+
   @Override
-  public void draw() {
+  public void initLayer() {
+    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), this.getHeight());
+    layer = plot.initLayer(layer, "topLayer", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+  }
+  
+  @Override
+  public void layout() {
+    compositePanel.layout();
+  }
+
+  @Override
+  protected void drawHook() {
     if (compositePanel.getAxisCount() == 0) {
       return;
     }
@@ -30,7 +46,7 @@ final class TopPanel extends AuxiliaryPanel {
     compositePanel.draw(layer, panelBounds);
     layer.restore();
   }
-
+  
   @Override
   protected void initHook() {
     final String panelName = "topPanel" + plot.plotNumber; 
@@ -41,22 +57,6 @@ final class TopPanel extends AuxiliaryPanel {
       initLegendAxisPanel();
     }
   }
-  
-  @Override
-  public void initLayer() {
-    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), this.getHeight());
-    layer = plot.initLayer(layer, "topLayer", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-  }
-
-  public double getHeight() {
-    return compositePanel.getHeight();
-  }
-  
-  @Override
-  public void layout() {
-    compositePanel.layout();
-  }
 
   @Override
   protected void setEnabledHook(boolean enabled) {
@@ -65,12 +65,13 @@ final class TopPanel extends AuxiliaryPanel {
     }
     
     if (enabled) {
-      initLegendAxisPanel();
+      //initLegendAxisPanel();
+      compositePanel.add(legendAxisPanel);
     }
     else { // disable the legend
       if (legendAxisPanel != null) {
         compositePanel.remove(legendAxisPanel);
-        legendAxisPanel = null;
+        //legendAxisPanel = null;
       }
     }
   }

@@ -10,6 +10,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A container that manages 0 or more {@link AxisPanel} objects. 
@@ -102,6 +103,18 @@ public final class CompositeAxisPanel implements GssElement {
     subPanel.init();
   }
 
+  /**
+   * Removes and unregisters all child panels from this container.
+   */
+  public void clear() {
+    // Need to copy list to avoid ConcurrentModificationException
+    List<AxisPanel> subPanelCopy = new ArrayList<AxisPanel>(this.subPanels);
+    
+    for (AxisPanel p : subPanelCopy) {
+      remove(p);
+    }
+  }
+  
   public void draw(Layer layer, Bounds panelBounds) {
     if (subPanels.size() == 0) {
       return;
@@ -217,8 +230,17 @@ public final class CompositeAxisPanel implements GssElement {
     }
   }
 
+  /**
+   * Removes and deregisters the specified child panel from this container.
+   * @param childPanel
+   */
   public void remove(AxisPanel childPanel) {
     subPanels.remove(childPanel);
+    if (childPanel != null) {
+      childPanel.setParentPanel(null);
+      childPanel.setPlot(null);
+      childPanel.setView(null);
+    }
   }
 
   private void clearPanel(Layer layer, Bounds panelBounds) {

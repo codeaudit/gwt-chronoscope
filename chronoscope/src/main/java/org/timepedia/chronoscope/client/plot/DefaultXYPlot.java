@@ -834,6 +834,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setOverviewEnabled(boolean overviewEnabled) {
     bottomPanel.setOverviewEnabled(overviewEnabled);
   }
+  
+  public void setSubPanelsEnabled(boolean enabled) {
+    topPanel.setEnabled(enabled);
+    bottomPanel.setEnabled(enabled);
+    rangePanel.setEnabled(enabled);
+  }
 
   public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
     if (plotRenderer != null) {

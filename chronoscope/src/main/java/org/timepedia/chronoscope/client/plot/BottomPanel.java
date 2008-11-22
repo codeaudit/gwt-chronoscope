@@ -44,29 +44,10 @@ final class BottomPanel extends AuxiliaryPanel {
     overviewDrawn = false;
   }
   
-  @Override
-  public void draw() {
-    if (compositePanel.getAxisCount() == 0) {
-      return;
-    }
-
-    layer.save();
-    Bounds plotBounds = plot.getBounds();
-    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        layer.getBounds().height);
-    compositePanel.draw(layer, domainPanelBounds);
-    
-    if (overviewEnabled && !overviewDrawn) {
-      drawDatasetOverview();
-    }
-
-    layer.restore();
-  }
-
   public CompositeAxisPanel getCompositeAxisPanel() {
     return this.compositePanel;
   }
-  
+
   public AxisPanel getDomainAxisPanel() {
     return this.domainAxisPanel;
   }
@@ -95,11 +76,11 @@ final class BottomPanel extends AuxiliaryPanel {
       overviewLayer.setVisibility(false);
     }
   }
-
+  
   public boolean isOverviewEnabled() {
     return this.overviewEnabled;
   }
-  
+
   @Override
   public void layout() {
     compositePanel.layout();
@@ -121,11 +102,34 @@ final class BottomPanel extends AuxiliaryPanel {
     
     this.overviewEnabled = enabled;
     if (enabled) {
-      initOverviewAxisPanel();
+      compositePanel.clear();
+      compositePanel.add(domainAxisPanel);
+      compositePanel.add(overviewAxisPanel);
+      this.enabled = true;
     } else {
       compositePanel.remove(overviewAxisPanel);
-      overviewAxisPanel = null;
     }
+    
+    clearDrawCaches();
+  }
+  
+  @Override
+  protected void drawHook() {
+    if (compositePanel.getAxisCount() == 0) {
+      return;
+    }
+
+    layer.save();
+    Bounds plotBounds = plot.getBounds();
+    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+        layer.getBounds().height);
+    compositePanel.draw(layer, domainPanelBounds);
+    
+    if (overviewEnabled && !overviewDrawn) {
+      drawDatasetOverview();
+    }
+
+    layer.restore();
   }
   
   @Override
@@ -147,20 +151,16 @@ final class BottomPanel extends AuxiliaryPanel {
       return;
     }
     
-    setOverviewEnabled(enabled);
+    this.overviewEnabled = enabled;
     
+    compositePanel.clear();
     if (enabled) {
-      initDomainAxisPanel();
+      compositePanel.add(domainAxisPanel);
+      compositePanel.add(overviewAxisPanel);
     }
-    else { // disable
-      if (domainAxisPanel != null) {
-        // Remove the domainAxisPanel from the composite panel so that it
-        // doesn't get rendered, but keep its reference around (as well
-        // as its associated ValueAxis) because xyplot needs it for
-        // userData<-->domainData conversions.
-        compositePanel.remove(domainAxisPanel);
-      }
-    }
+    
+    clearDrawCaches();
+    //setOverviewEnabled(enabled);
   }
   
   /**
