@@ -100,8 +100,13 @@ final class BottomPanel extends AuxiliaryPanel {
       return;
     }
     
-    this.overviewEnabled = overviewEnabled;
+    clearDrawCaches();
 
+    this.overviewEnabled = overviewEnabled;
+    if (overviewEnabled) {
+      this.enabled = true;
+    }
+    
     if (!this.initialized) {
       return;
     }
@@ -112,31 +117,29 @@ final class BottomPanel extends AuxiliaryPanel {
       compositePanel.add(domainAxisPanel);
       initOverviewAxisPanel();
       compositePanel.add(overviewAxisPanel);
-      this.enabled = true;
     } else {
       compositePanel.remove(overviewAxisPanel);
     }
     
-    clearDrawCaches();
+    if (isInitialized()) {
+      plot.reloadStyles();
+    }
   }
   
   @Override
   protected void drawHook() {
-    if (compositePanel.getAxisCount() == 0) {
-      return;
+    if (compositePanel.getAxisCount() > 0) {
+      layer.save();
+      Bounds plotBounds = plot.getBounds();
+      Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
+          layer.getBounds().height);
+      compositePanel.draw(layer, domainPanelBounds);
+      layer.restore();
     }
 
-    layer.save();
-    Bounds plotBounds = plot.getBounds();
-    Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-        layer.getBounds().height);
-    compositePanel.draw(layer, domainPanelBounds);
-    
     if (overviewEnabled && !overviewDrawn) {
       drawDatasetOverview();
     }
-
-    layer.restore();
   }
   
   @Override
@@ -144,34 +147,40 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
     
-    // Domain axis panel must be initialized even if BottomPanel is not 
-    // currently enabled, because other auxiliary panels might rely on the
-    // domain axis calculations
+    // Both DomainAxisPanel and OverviewAxisPanel must be initialized even 
+    // if BottomPanel is not currently enabled, because other auxiliary panels 
+    // still refer to them.  
     initDomainAxisPanel();
+    initOverviewAxisPanel();
 
     if (this.isEnabled()) {
       compositePanel.add(domainAxisPanel);
       if (overviewEnabled) {
-        initOverviewAxisPanel();
         compositePanel.add(overviewAxisPanel);
       }
     }
   }
   
   protected void setEnabledHook(boolean enabled) {
-    if (compositePanel == null) {
+    overviewEnabled = enabled;
+    clearDrawCaches();
+    
+    if (!isInitialized()) {
       return;
     }
     
+    initDomainAxisPanel();
+    initOverviewAxisPanel();
     compositePanel.clear();
+
     if (enabled) {
-      initDomainAxisPanel();
       compositePanel.add(domainAxisPanel);
-      initOverviewAxisPanel();
       compositePanel.add(overviewAxisPanel);
     }
     
-    clearDrawCaches();
+    if (isInitialized()) {
+      plot.reloadStyles();
+    }
   }
   
   /**

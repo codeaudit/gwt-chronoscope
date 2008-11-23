@@ -69,16 +69,7 @@ abstract class AuxiliaryPanel {
   }
   
   public void setEnabled(boolean enabled) {
-    if (this.enabled == enabled) {
-      return;
-    }
-    
     this.enabled = enabled;
-    
-    if (!this.initialized) {
-      return;
-    }
-    
     setEnabledHook(enabled);
   }
   
