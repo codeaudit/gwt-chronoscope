@@ -799,7 +799,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // True iff one or more hoverPoints have changed since the last call to this method
     boolean isDirty = false;
 
-    NearestPoint nearestHoverPt = this.nearestSingleton;
+    NearestPoint nearestHoverPt = this.nearestSingleton;        
     for (int i = 0; i < datasets.size(); i++) {
       double dataX = windowXtoDomain(x);
       double dataY = windowYtoRange(y, i);

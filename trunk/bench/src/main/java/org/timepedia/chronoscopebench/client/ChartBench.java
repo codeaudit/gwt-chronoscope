@@ -19,6 +19,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
@@ -61,7 +62,7 @@ public class ChartBench implements EntryPoint {
       Chronoscope.initialize();
 
       final Dataset[] ds = new Dataset[2];
-      ds[0] = Chronoscope.getInstance().createDataset(new GwtJsonDataset(getJson("unratedata")));
+      ds[0] = DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("unratedata")));
       ds[1] = mockDsFactory.getBasicDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);

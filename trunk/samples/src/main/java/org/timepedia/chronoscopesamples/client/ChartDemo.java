@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
@@ -19,7 +20,6 @@ import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
  * @author Ray Cromwell <ray@timepedia.org>
@@ -53,8 +53,8 @@ public class ChartDemo implements EntryPoint {
       Chronoscope chronoscope = Chronoscope.getInstance();
 
       final Datasets<Tuple2D> datasets = new Datasets<Tuple2D>();
-      datasets.add(Chronoscope.getInstance().createDataset(new GwtJsonDataset(getJson("interestRates01"))));
-      datasets.add(Chronoscope.getInstance().createDataset(new GwtJsonDataset(getJson("interestRates02"))));
+      datasets.add(DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("interestRates01"))));
+      datasets.add(DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("interestRates02"))));
 
       MockDatasetFactory datasetFactory = new MockDatasetFactory();
       Dataset mockDataset = datasetFactory.getBasicDataset();
