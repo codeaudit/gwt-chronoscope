@@ -46,7 +46,7 @@ public final class JsArrayParser {
   public double[] parseFromDate(JsonArrayString jsArray, String dtformat) {
     ArgChecker.isNotNull(jsArray, "jsArray");
     ArgChecker.isNotNull(dtformat, "dtformat");
-    DateFormatterFactory dff=DateFormatterFactory.getInstance();
+    DateFormatterFactory dff = DateFormatterFactory.getInstance();
 
     DateFormatter df = dff.getDateFormatter(dtformat);
     final int len = jsArray.length();
@@ -54,7 +54,7 @@ public final class JsArrayParser {
 
     double aVal[] = new double[len];
     for (int i = 0; i < len; i++) {
-      Date javaDate = new Date((long)df.parse(jsArray.get(i)));
+      Date javaDate = new Date((long) df.parse(jsArray.get(i)));
       chronoDate.set().year(javaDate.getYear() + 1900)
           .month(javaDate.getMonth()).day(javaDate.getDate()).done();
       aVal[i] = chronoDate.getTime();

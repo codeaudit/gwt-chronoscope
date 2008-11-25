@@ -7,24 +7,19 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
-import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYDataSource;
+import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.DatasetRequest;
-import org.timepedia.chronoscope.client.data.json.JsonArray;
-import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
-import org.timepedia.chronoscope.client.data.json.JsonDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -32,9 +27,6 @@ import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
-import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Array2D;
-import org.timepedia.chronoscope.client.util.JavaArray2D;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -90,8 +82,6 @@ public class Chronoscope implements Exportable {
   private static Chronoscope instance;
 
   private static int globalChartNumber = 0;
-
-  private static JsArrayParser jsArrayParser = new JsArrayParser();
 
   /**
    * A factory function to create a vertical marker given start and end dates,
@@ -211,48 +201,7 @@ public class Chronoscope implements Exportable {
 
   @Export
   public Dataset createDataset(JsonDatasetJSO json) {
-    return createDataset(new GwtJsonDataset(json));
-  }
-
-  /**
-   * Parse a JSON object representing a multiresolution dataset into a class
-   * implementing the {@link Dataset} interface. <p> The JSON format is as
-   * follows:
-   * <pre>
-   * dataset = {
-   *    id: "unique id for this dataset",
-   *    mipped: true,
-   *    domain: [ [level 0 values], [level 1 values], ... ],
-   *    range: [ [level 0 values], [level 1 values], ... ],
-   *    rangeBottom: min over level 0 values,
-   *    rangeTop: max over level 0 values,
-   *    label: "default label for this dataset",
-   *    axis: "an axis identifier (usually units). Datasets with like axis ids
-   * share the same range Axis"
-   * }
-   * </pre>
-   */
-  public static Dataset createDataset(JsonDataset json) {
-    validateJSON(json);
-
-    DatasetRequest request;
-    if (json.isMipped()) {
-      request = buildPreMipmappedDatasetRequest(json);
-    } else {
-      request = buildDatasetRequest(json);
-    }
-
-    // Properties common to basic and multires datasets
-    request.setIdentifier(json.getId());
-    request.setLabel(json.getLabel());
-    request.setAxisId(json.getAxisId());
-    request.setPreferredRenderer(json.getPreferredRenderer());
-    final double minInterval = json.getMinInterval();
-    if (minInterval > 0) {
-      request.setApproximateMinimumInterval(minInterval);
-    }
-
-    return ComponentFactory.get().getDatasetFactory().create(request);
+    return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json));
   }
 
   /**
@@ -268,7 +217,7 @@ public class Chronoscope implements Exportable {
     int numDatasets = jsonDatasets.length();
     Dataset ds[] = new Dataset[numDatasets];
     for (int i = 0; i < numDatasets; i++) {
-      ds[i] = createDataset(new GwtJsonDataset(jsonDatasets.get(i)));
+      ds[i] = DatasetReader.createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)));
     }
     return ds;
   }
@@ -361,10 +310,6 @@ public class Chronoscope implements Exportable {
 
   static {
     XYDataSource.setFactory(new BrowserXYDataSourceFactory());
-  }
-
-  private static Array2D createArray2D(double[][] a) {
-    return new JavaArray2D(a);
   }
 
   /**
@@ -500,67 +445,6 @@ public class Chronoscope implements Exportable {
     }
   }
 
-  private static DatasetRequest buildDatasetRequest(JsonDataset json) {
-    DatasetRequest.Basic request = new DatasetRequest.Basic();
-    final String dtformat = json.getDateTimeFormat();
-
-    request.setDefaultMipMapStrategy(
-        ComponentFactory.get().getMipMapStrategy(json.getPartitionStrategy()));
-
-    double[] domainArray = null;
-    if (dtformat != null) {
-      domainArray = jsArrayParser
-          .parseFromDate(json.getDomainString(), dtformat);
-    } else {
-      domainArray = jsArrayParser
-          .parse(json.getDomain(), json.getDomainScale());
-    }
-    request.addTupleSlice(domainArray);
-
-    JsonArray<JsonArrayNumber> tupleRange = json.getTupleRange();
-    if (tupleRange != null) {
-      for (int i = 0; i < tupleRange.length(); i++) {
-        request.addTupleSlice(jsArrayParser.parse(tupleRange.get(i)));
-      }
-    } else {
-      request.addTupleSlice(jsArrayParser.parse(json.getRange()));
-    }
-
-    return request;
-  }
-
-  private static DatasetRequest buildPreMipmappedDatasetRequest(
-      JsonDataset json) {
-    DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
-
-    JsonArray<JsonArrayNumber> mdomain = json.getMultiDomain();
-    JsonArray<JsonArrayNumber> mrange = json.getMultiRange();
-
-    int dmipLevels = mdomain.length();
-    int rmiplevel = mrange.length();
-    if (dmipLevels != rmiplevel) {
-      if (ChronoscopeOptions.isErrorReportingEnabled()) {
-        Window.alert("Domain and Range dataset levels are not equal");
-      }
-    }
-
-    double domains[][] = new double[dmipLevels][];
-    double ranges[][] = new double[dmipLevels][];
-    double domainScale = json.getDomainScale();
-    for (int i = 0; i < dmipLevels; i++) {
-      domains[i] = jsArrayParser.parse(mdomain.get(i), domainScale);
-      ranges[i] = jsArrayParser.parse(mrange.get(i));
-    }
-
-    DatasetRequest.MultiRes mippedRequest = (DatasetRequest.MultiRes) request;
-    request.setRangeTop(json.getRangeTop());
-    request.setRangeBottom(json.getRangeBottom());
-    mippedRequest.addMultiresTupleSlice(createArray2D(domains));
-    mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
-
-    return request;
-  }
-
   private void checkForChronoscopeCSS() {
     if (!isCssIncluded("Chronoscope.css")
         && ChronoscopeOptions.errorReportingEnabled) {
@@ -647,12 +531,4 @@ public class Chronoscope implements Exportable {
     t.schedule(10);
   }
 
-  private static void validateJSON(JsonDataset jsonDataset) {
-    ArgChecker.isNotNull(jsonDataset, "jsonDataset");
-    if (jsonDataset.isMipped() && jsonDataset.getDateTimeFormat() != null) {
-      throw new IllegalArgumentException(
-          "dtformat and mipped cannot be used together in dataset with id "
-              + jsonDataset.getId());
-    }
-  }
 }
