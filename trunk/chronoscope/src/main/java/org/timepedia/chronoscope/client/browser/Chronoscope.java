@@ -8,29 +8,27 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.XYDataSource;
+import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
-import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
-import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
-import org.timepedia.chronoscope.client.data.json.JsonDataset;
-import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
 import org.timepedia.chronoscope.client.data.json.JsonArray;
+import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
+import org.timepedia.chronoscope.client.data.json.JsonDataset;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
-import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
+import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
@@ -51,7 +49,7 @@ import org.timepedia.exporter.client.ExporterUtil;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class Chronoscope implements Exportable, HistoryListener {
+public class Chronoscope implements Exportable {
 
   public interface URLResolver {
 
@@ -136,9 +134,9 @@ public class Chronoscope implements Exportable, HistoryListener {
   }
 
   /**
-   * Legacy method to support old API. Preferred method is to use
-   * instance passed to onChronoscopeLoaded, which allows behavior to be
-   * overriden.
+   * Legacy method to support old API. Preferred method is to use instance
+   * passed to onChronoscopeLoaded, which allows behavior to be overriden.
+   *
    * @Deprecated
    */
   @Export
@@ -211,7 +209,6 @@ public class Chronoscope implements Exportable, HistoryListener {
         chartHeight, readyCallback);
   }
 
-
   @Export
   public Dataset createDataset(JsonDatasetJSO json) {
     return createDataset(new GwtJsonDataset(json));
@@ -234,7 +231,6 @@ public class Chronoscope implements Exportable, HistoryListener {
    * share the same range Axis"
    * }
    * </pre>
-   *
    */
   public static Dataset createDataset(JsonDataset json) {
     validateJSON(json);
@@ -245,7 +241,7 @@ public class Chronoscope implements Exportable, HistoryListener {
     } else {
       request = buildDatasetRequest(json);
     }
-    
+
     // Properties common to basic and multires datasets
     request.setIdentifier(json.getId());
     request.setLabel(json.getLabel());
@@ -261,8 +257,8 @@ public class Chronoscope implements Exportable, HistoryListener {
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.GwtJsonDataset)} for details of the
-   * format.
+   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.GwtJsonDataset)}
+   * for details of the format.
    */
   public Dataset[] createDatasets(JsArray<JsonDatasetJSO> jsonDatasets) {
     if (jsonDatasets == null) {
@@ -313,7 +309,6 @@ public class Chronoscope implements Exportable, HistoryListener {
   public static boolean isMicroformatsEnabled() {
     return microformatsEnabled;
   }
-
 
   @Export
   public static void setShowCredits(boolean enabled) {
@@ -376,8 +371,8 @@ public class Chronoscope implements Exportable, HistoryListener {
    * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
-  public ChartPanel createChartPanel(String id, JsArray<JsonDatasetJSO> datasets,
-      ViewReadyCallback listener) {
+  public ChartPanel createChartPanel(String id,
+      JsArray<JsonDatasetJSO> datasets, ViewReadyCallback listener) {
     Element elem = DOM.getElementById(id);
     int width = DOM.getElementPropertyInt(elem, "clientWidth");
     int height = DOM.getElementPropertyInt(elem, "clientHeight");
@@ -445,7 +440,7 @@ public class Chronoscope implements Exportable, HistoryListener {
       }
 
       if (ChronoscopeOptions.isHistorySupportEnabled()) {
-        initHistory();
+        GwtHistoryManagerImpl.initHistory();
       }
 //            }
 //        });
@@ -455,10 +450,6 @@ public class Chronoscope implements Exportable, HistoryListener {
       }
       throw new RuntimeException(e);
     }
-  }
-
-  public void onHistoryChanged(String historyToken) {
-    HistoryManager.restoreHistory(historyToken);
   }
 
   protected ChartPanel newChartPanel() {
@@ -475,9 +466,10 @@ public class Chronoscope implements Exportable, HistoryListener {
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
     exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
+    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class)
+        ;
     exporterDomainMarker.export();
-    
+
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
     exporter2.export();
 
@@ -537,7 +529,8 @@ public class Chronoscope implements Exportable, HistoryListener {
     return request;
   }
 
-  private static DatasetRequest buildPreMipmappedDatasetRequest(JsonDataset json) {
+  private static DatasetRequest buildPreMipmappedDatasetRequest(
+      JsonDataset json) {
     DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
 
     JsonArray<JsonArrayNumber> mdomain = json.getMultiDomain();
@@ -584,14 +577,6 @@ public class Chronoscope implements Exportable, HistoryListener {
         if($wnd.onChronoscopeLoaded)
           $wnd.onChronoscopeLoaded(chronoscope);
     }-*/;
-
-  private void initHistory() {
-    History.addHistoryListener(this);
-    String initToken = History.getToken();
-    if (initToken.length() > 0) {
-      onHistoryChanged(initToken);
-    }
-  }
 
   private native void injectCss(String s) /*-{
         var link = $doc.createElement("link");
