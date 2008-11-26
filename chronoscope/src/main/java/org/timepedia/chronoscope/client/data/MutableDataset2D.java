@@ -48,8 +48,8 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
       newY = m.getY();
       newX = m.getX();
       double newInterval = newX - getX(getNumSamples() - 1);
-      this.approximateMinimumInterval = Math.min(
-          this.approximateMinimumInterval, newInterval);
+      this.minInterval = Math.min(
+          this.minInterval, newInterval);
       appendXY(newX, newY);
     } 
     else if (mutation instanceof Mutation.RangeMutation) {

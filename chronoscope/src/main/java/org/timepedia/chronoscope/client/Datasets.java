@@ -105,7 +105,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   /**
-   * Returns the minimum value of {@link Dataset#getApproximateMinimumInterval()}
+   * Returns the minimum value of {@link Dataset#getMinInterval()}
    * across all datasets in this container.
    */
   public double getMinInterval() {
@@ -183,7 +183,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
     minDomain = MathUtil.min(minDomain, dataset.getMinValue(0));
     maxDomain = MathUtil.max(maxDomain, dataset.getMaxValue(0));
     minInterval = Math
-        .min(minInterval, dataset.getApproximateMinimumInterval());
+        .min(minInterval, dataset.getMinInterval());
   }
 
   private void verifyDatasetNotEmpty() {

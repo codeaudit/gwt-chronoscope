@@ -39,10 +39,10 @@ import org.timepedia.exporter.client.NoExport;
 public interface Dataset<T extends Tuple2D> extends Exportable {
 
   /**
-   * Returns <em>approximately</em> the smallest domain interval between two
-   * points.
+   * Returns the smallest domain interval between any two consecutive points
+   * within the dataset.
    */
-  double getApproximateMinimumInterval();
+  double getMinInterval();
 
   /**
    * Return an id used to identify the axis this dataset should be assigned to,

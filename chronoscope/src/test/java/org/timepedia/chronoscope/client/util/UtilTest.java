@@ -78,10 +78,6 @@ public class UtilTest extends TestCase {
       this.domain = domain;
     }
     
-    public double getApproximateMinimumInterval() {
-      throw new UnsupportedOperationException();
-    }
-
     public int getNumSamples(int level) {
       return this.domain.length;
     }

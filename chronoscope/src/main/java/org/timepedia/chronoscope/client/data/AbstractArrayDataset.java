@@ -41,11 +41,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     loadTupleData(request);
     validate(dimensions);
 
-    if (Double.isNaN(request.getApproximateMinimumInterval())) {
-      approximateMinimumInterval = calcMinDomainInterval(dimensions[0]);
-    } else {
-      approximateMinimumInterval = request.getApproximateMinimumInterval();
-    }
+    minInterval = calcMinDomainInterval(dimensions[0]);
 
     // Assign rangeBottom and rangeTop
     final int numLevels = dimensions[0].numRows();
@@ -61,10 +57,6 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     }
     
     this.flyweightTuple = new FlyweightTuple(this.dimensions);
-  }
-
-  public double getApproximateMinimumInterval() {
-    return approximateMinimumInterval;
   }
 
   public final T getFlyweightTuple(int index) {
