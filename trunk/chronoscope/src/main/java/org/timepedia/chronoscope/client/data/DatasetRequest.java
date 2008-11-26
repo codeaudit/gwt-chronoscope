@@ -120,16 +120,11 @@ public abstract class DatasetRequest {
     }
   }
 
-  private double approximateMinimumInterval = Double.NaN;
   private String axisId, identifier, label;
   private MipMapStrategy defaultMipMapStrategy = BinaryMipMapStrategy.MEAN;
   private double rangeBottom = Double.NaN, rangeTop = Double.NaN;
   private String preferredRenderer;
   
-  public double getApproximateMinimumInterval() {
-    return approximateMinimumInterval;
-  }
-
   public String getAxisId() {
     return axisId;
   }
@@ -167,10 +162,6 @@ public abstract class DatasetRequest {
    */
   public abstract int getTupleLength();
   
-  public void setApproximateMinimumInterval(double approximateMinimumInterval) {
-    this.approximateMinimumInterval = approximateMinimumInterval;
-  }
-
   public void setAxisId(String axisId) {
     this.axisId = axisId;
   }

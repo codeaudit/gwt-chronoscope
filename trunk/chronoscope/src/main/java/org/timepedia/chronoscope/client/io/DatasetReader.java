@@ -54,10 +54,6 @@ public class DatasetReader {
     request.setLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
     request.setPreferredRenderer(json.getPreferredRenderer());
-    final double minInterval = json.getMinInterval();
-    if (minInterval > 0) {
-      request.setApproximateMinimumInterval(minInterval);
-    }
 
     return ComponentFactory.get().getDatasetFactory().create(request);
   }
