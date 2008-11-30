@@ -99,8 +99,8 @@ public class OverviewAxisPanel extends AxisPanel {
    * should be drawn.
    */
   private Bounds calcHighlightBounds(XYPlot plot, Bounds axisBounds) {
-    double globalDomainMin = plot.getDatasets().getMinDomain();
-    double globalDomainWidth = plot.getDatasets().getMaxDomain() - globalDomainMin;
+    double globalDomainMin = plot.getWidestDomain().getStart();
+    double globalDomainWidth = plot.getWidestDomain().length();
     double visibleDomainMin = plot.getDomain().getStart();
     double visibleDomainWidth = plot.getDomain().length();
     

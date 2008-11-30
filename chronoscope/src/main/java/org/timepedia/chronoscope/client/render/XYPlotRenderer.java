@@ -40,7 +40,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
       DrawableDataset drawableDataset = dds.get(datasetIdx);
-      Dataset dataSet = drawableDataset.dataset;
+      Dataset<T> dataSet = drawableDataset.dataset;
 
       final double plotDomainStart = plotDomain.getStart();
       final double plotDomainLength = plotDomain.length();
@@ -132,6 +132,22 @@ public class XYPlotRenderer<T extends Tuple2D> {
     renderer.endPoints(layer, renderState);
   }
 
+  public Interval calcWidestPlotDomain() {
+    if (drawableDatasets.isEmpty()) {
+      return null;
+    }
+    
+    double min = Double.POSITIVE_INFINITY;
+    double max = Double.NEGATIVE_INFINITY;
+    for (DrawableDataset dds : drawableDatasets) {
+      Dataset<T> ds = dds.dataset;
+      min = Math.min(min, dds.renderer.getMinDrawableDomain(ds));
+      max = Math.max(max, dds.renderer.getMaxDrawableDomain(ds));
+    }
+    
+    return new Interval(min, max);
+  }
+  
   public void drawDatasets() {
     computeVisibleDomainAndRange(drawableDatasets, plot.getDomain());
     setupRangeAxisVisibleRanges(drawableDatasets);
@@ -169,9 +185,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
   
   public void init() {
     drawableDatasets = new ArrayList<DrawableDataset>();
-    Datasets datasets = plot.getDatasets();
+    Datasets<T> datasets = plot.getDatasets();
     for (int i = 0; i < datasets.size(); i++) {
-      DatasetRenderer renderer = plot.getDatasetRenderer(i);
+      DatasetRenderer<T> renderer = plot.getDatasetRenderer(i);
       int maxDrawablePoints = Math.min(plot.getMaxDrawableDataPoints(), 
           renderer.getMaxDrawableDatapoints());
       

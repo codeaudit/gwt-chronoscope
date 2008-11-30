@@ -1,10 +1,12 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.TimeUnit;
 
 public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
@@ -45,8 +47,8 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
       if (methodCallCount == 1) {
         // Calculate the screen-x and width of first bar
-        width = (currInterval / 2.0) * barWidthAsPercent;
-        x = lx;
+        width = currInterval * barWidthAsPercent;
+        x = lx - (width / 2.0);
       }
       else {
         width = MathUtil.min(prevInterval, currInterval) * barWidthAsPercent;
@@ -68,6 +70,35 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   }
   
   @Override
+  public double getMaxDrawableDomain(Dataset<T> dataset) {
+    // Barcharts require some padding before the first bar and
+    // after the last bar so that these bars are not cropped.
+    if (dataset.getNumSamples() <= 1) {
+      return dataset.getMaxValue(0);
+    }
+    else {
+      int lastIdx = dataset.getNumSamples() - 1;
+      double xLast = dataset.getX(lastIdx);
+      double lastInterval = xLast - dataset.getX(lastIdx - 1);
+      return xLast + (lastInterval / 2.0);
+    }
+  }
+
+  @Override
+  public double getMinDrawableDomain(Dataset<T> dataset) {
+    // Barcharts require some padding before the first bar and
+    // after the last bar so that these bars are not cropped.
+    if (dataset.getNumSamples() <= 1) {
+      return dataset.getMinValue(0);
+    }
+    else {
+      double x0 = dataset.getMinValue(0);
+      double firstInterval = dataset.getX(1) - x0;
+      return x0 - (firstInterval / 2.0);
+    }
+  }
+  
+  @Override
   public String getType() {
     return "bar";
   }
@@ -75,9 +106,9 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   @Override
   public void endCurve(Layer layer, RenderState renderState) {
     // Render the final bar (i.e. te furthest one to the right)
-    double width = (currInterval / 2.0) * barWidthAsPercent;
+    double width = currInterval * barWidthAsPercent;
+    double x = lx - (width / 2.0);
     double height = plot.getInnerBounds().bottomY() - ly;
-    double x = lx - width;
     double y = ly;
 
     drawVerticalBar(layer, x, y, width, height);

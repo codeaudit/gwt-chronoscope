@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.plot;
 
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
@@ -188,15 +187,12 @@ final class BottomPanel extends AuxiliaryPanel {
    * datasets managed by this plot.
    */
   private void drawDatasetOverview() {
-    Interval plotDomain = plot.getDomain();
-    
     // save original endpoints so they can be restored later
-    double dO = plotDomain.getStart();
-    double dE = plotDomain.getEnd();
+    Interval origVisPlotDomain = plot.getDomain().copy();
 
-    Datasets datasets = plot.getDatasets();
-    
-    plotDomain.setEndpoints(datasets.getMinDomain(), datasets.getMaxDomain());
+    plot.getWidestDomain().copyTo(plot.getDomain());
+    //plot.getDomain().setEndpoints(plot.getDatasets().getMinDomain(), plot.getDatasets().getMaxDomain());
+
     plot.drawPlot();
     overviewLayer.save();
     overviewLayer.setVisibility(false);
@@ -206,7 +202,7 @@ final class BottomPanel extends AuxiliaryPanel {
     overviewLayer.restore();
 
     // restore original endpoints
-    plotDomain.setEndpoints(dO, dE);
+    origVisPlotDomain.copyTo(plot.getDomain());
 
     overviewDrawn = true;
   }

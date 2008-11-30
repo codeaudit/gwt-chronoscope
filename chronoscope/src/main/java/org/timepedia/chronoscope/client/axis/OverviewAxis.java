@@ -21,11 +21,11 @@ public class OverviewAxis extends ValueAxis {
   }
 
   public double getRangeHigh() {
-    return plot.getDatasets().getMaxDomain();
+    return plot.getWidestDomain().getEnd();
   }
 
   public double getRangeLow() {
-    return plot.getDatasets().getMinDomain();
+    return plot.getWidestDomain().getStart();
   }
 
   public final double userToData(double userValue) {
