@@ -378,11 +378,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setAnimating(boolean animating);
 
   /**
-   * Set the active mip level for a given dataset
-   */
-  void setCurrentMipLevel(int datasetIndex, int level);
-
-  /**
    * Associates a {@link DatasetRenderer} with a {@link Dataset}.
    *
    * @param datasetIndex the index of the dataset to be rendered
@@ -450,6 +445,5 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
-
   
 }
