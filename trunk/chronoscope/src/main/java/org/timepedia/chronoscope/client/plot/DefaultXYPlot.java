@@ -35,10 +35,10 @@ import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DatasetRendererMap;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
+import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
-import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -132,8 +132,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private Bounds plotBounds;
 
-  private Interval plotDomain, lastPlotDomain;
-
+  private Interval visDomain, lastVisDomain, widestDomain;
+  
   int plotNumber = 0;
 
   private XYPlotRenderer<T> plotRenderer;
@@ -198,7 +198,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     for (Overlay o : overlays) {
       boolean wasOverlayHit = 
-        plotDomain.contains(o.getDomainX()) && o.isHit(x, y);
+        visDomain.contains(o.getDomainX()) && o.isHit(x, y);
 
       if (wasOverlayHit) {
         o.click(x, y);
@@ -233,7 +233,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
     view.ensureViewVisible();
-    if (!plotDomain.containsOpen(domainX)) {
+    if (!visDomain.containsOpen(domainX)) {
       scrollAndCenter(domainX, callback);
       return true;
     }
@@ -278,7 +278,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Interval getDomain() {
-    return this.plotDomain;
+    return this.visDomain;
   }
 
   public ValueAxis getDomainAxis() {
@@ -294,8 +294,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public String getHistoryToken() {
-    return getChart().getChartId() + "(O" + plotDomain.getStart() + ",D"
-        + plotDomain.length() + ")";
+    return getChart().getChartId() + "(O" + visDomain.getStart() + ",D"
+        + visDomain.length() + ")";
   }
 
   public Layer getHoverLayer() {
@@ -352,6 +352,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     return visibleDomainMax;
   }
 
+  public Interval getWidestDomain() {
+    return this.widestDomain;
+  }
+  
   public void init(View view) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
@@ -364,6 +368,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     datasetRenderers = initDatasetRenderers(view, datasets);
     plotRenderer.setPlot(this);
     plotRenderer.init();
+    
+    widestDomain = plotRenderer.calcWidestPlotDomain();
+    visDomain = widestDomain.copy();
     
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker
@@ -394,7 +401,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     innerBounds = new Bounds(0, 0, plotBounds.width, plotBounds.height);
 
     clearDrawCaches();
-    lastPlotDomain = new Interval(0, 0);
+    lastVisDomain = new Interval(0, 0);
     
     initLayers();
     topPanel.initLayer();
@@ -415,9 +422,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void maxZoomOut() {
     pushHistory();
-    double minDomain = datasets.getMinDomain();
-    double maxDomain = datasets.getMaxDomain();
-    animateTo(minDomain, maxDomain - minDomain, PlotMovedEvent.MoveType.ZOOMED);
+    animateTo(widestDomain.getStart(), widestDomain.length(), 
+        PlotMovedEvent.MoveType.ZOOMED);
   }
 
   public boolean maxZoomTo(int x, int y) {
@@ -463,8 +469,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void nextZoom() {
     pushHistory();
-    double nDomain = plotDomain.length() / ZOOM_FACTOR;
-    animateTo(plotDomain.midpoint() - nDomain / 2, nDomain,
+    double nDomain = visDomain.length() / ZOOM_FACTOR;
+    animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
 
@@ -481,8 +487,8 @@ public class DefaultXYPlot<T extends Tuple2D>
       datasetIndex = 0;
     }
     damageAxes(getRangeAxis(datasetIndex));
-    if (domainEnd > plotDomain.getEnd()) {
-      animateTo(domainEnd - plotDomain.length() / 2, plotDomain.length(),
+    if (domainEnd > visDomain.getEnd()) {
+      animateTo(domainEnd - visDomain.length() / 2, visDomain.length(),
           PlotMovedEvent.MoveType.DRAGGED, new PortableTimerTask() {
             public void run(PortableTimer timer) {
               initAndRedraw();
@@ -576,8 +582,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void prevZoom() {
     pushHistory();
-    double nDomain = plotDomain.length() * ZOOM_FACTOR;
-    animateTo(plotDomain.midpoint() - nDomain / 2, nDomain,
+    double nDomain = visDomain.length() * ZOOM_FACTOR;
+    animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
 
@@ -613,7 +619,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean canDrawFast = !(isAnimating() && ChronoscopeOptions
         .isLowPerformance());
 
-    final boolean plotDomainChanged = !plotDomain.equals(lastPlotDomain);
+    final boolean plotDomainChanged = !visDomain.equals(lastVisDomain);
 
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating) {
@@ -643,7 +649,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     backingCanvas.endFrame();
-    plotDomain.copyTo(lastPlotDomain);
+    visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
   }
 
@@ -653,13 +659,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void reloadStyles() {
     bottomPanel.clearDrawCaches();
-    Interval tmpPlotDomain = plotDomain.copy();
+    Interval tmpPlotDomain = visDomain.copy();
     init(view);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
-    initializeDomain(datasets);
+    visDomain = plotRenderer.calcWidestPlotDomain();
     redraw();
-    tmpPlotDomain.copyTo(plotDomain);
+    tmpPlotDomain.copyTo(visDomain);
     overlays = oldOverlays;
     redraw(true);
   }
@@ -671,20 +677,20 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void scrollAndCenter(double domainX, PortableTimerTask continuation) {
     pushHistory();
 
-    final double newOrigin = domainX - plotDomain.length() / 2;
-    animateTo(newOrigin, plotDomain.length(), PlotMovedEvent.MoveType.CENTERED,
+    final double newOrigin = domainX - visDomain.length() / 2;
+    animateTo(newOrigin, visDomain.length(), PlotMovedEvent.MoveType.CENTERED,
         continuation);
   }
 
   public void scrollPixels(int amt) {
-    final double domainAmt = (double) amt / plotBounds.width * plotDomain
+    final double domainAmt = (double) amt / plotBounds.width * visDomain
         .length();
-    final double minDomain = datasets.getMinDomain();
-    final double maxDomain = datasets.getMaxDomain();
+    final double minDomain = widestDomain.getStart();
+    final double maxDomain = widestDomain.getEnd();
 
-    double newDomainOrigin = plotDomain.getStart() + domainAmt;
-    if (newDomainOrigin + plotDomain.length() > maxDomain) {
-      newDomainOrigin = maxDomain - plotDomain.length();
+    double newDomainOrigin = visDomain.getStart() + domainAmt;
+    if (newDomainOrigin + visDomain.length() > maxDomain) {
+      newDomainOrigin = maxDomain - visDomain.length();
     } else if (newDomainOrigin < minDomain) {
       newDomainOrigin = minDomain;
     }
@@ -877,7 +883,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     animationContinuation = continuation;
-    final Interval visibleDomain = this.plotDomain;
+    final Interval visibleDomain = this.visDomain;
 
     animationTimer = view.createTimer(new PortableTimerTask() {
       final double destDomainMid = destDomain.midpoint();
@@ -997,7 +1003,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   void drawPlot() {
     plotLayer.setScrollLeft(0);
     background
-        .paint(this, plotLayer, plotDomain.getStart(), plotDomain.length());
+        .paint(this, plotLayer, visDomain.getStart(), visDomain.length());
     // reset the visible RangeAxis ticks if it's been zoomed
     for (RangeAxis axis : rangePanel.getRangeAxes()) {
       axis.initVisibleRange();
@@ -1009,8 +1015,8 @@ public class DefaultXYPlot<T extends Tuple2D>
    * Draws the highlighted region onto the center plot.
    */
   private void drawPlotHighlight(Layer layer) {
-    final double domainStart = plotDomain.getStart();
-    final double domainEnd = plotDomain.getEnd();
+    final double domainStart = visDomain.getStart();
+    final double domainEnd = visDomain.getEnd();
 
     if (endHighlight - beginHighlight == 0
         || (beginHighlight < domainStart && endHighlight < domainStart) || (
@@ -1040,8 +1046,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private Interval fenceDomain(double destDomainOrig, double destDomainLength) {
-    final double minDomain = datasets.getMinDomain();
-    final double maxDomain = datasets.getMaxDomain();
+    final double minDomain = widestDomain.getStart();
+    final double maxDomain = widestDomain.getEnd();
     final double maxDomainLength = maxDomain - minDomain;
     final double minTickSize = 
         bottomPanel.getDomainAxisPanel().getMinimumTickSize();
@@ -1151,11 +1157,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw();
   }
 
-  private void initializeDomain(Datasets<T> datasets) {
-    plotDomain = new Interval(datasets.getMinDomain(), datasets.getMaxDomain());
-    //plotDomain = new Interval(datasets.getMinDomain() - TimeUnit.YEAR.ms() * 3, datasets.getMaxDomain() + TimeUnit.YEAR.ms() * 3);
-  }
-
   Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
     Canvas canvas = view.getCanvas();
     if (layer != null) {
@@ -1205,7 +1206,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         / datasets.size();
     visibleDomainMax = Util
         .calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
-    initializeDomain(datasets);
     resetHoverPoints(datasets.size());
   }
 
@@ -1214,7 +1214,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    * zoom in, pan) are possible.
    */
   private boolean isAnimatable() {
-    return this.plotDomain.length() != 0.0;
+    return this.visDomain.length() != 0.0;
   }
 
   private void maxZoomToPoint(int pointIndex, int datasetIndex) {
@@ -1240,15 +1240,15 @@ public class DefaultXYPlot<T extends Tuple2D>
    * length (i.e. the domain end value is implicitly modified).
    */
   private void movePlotDomain(double newDomainStart) {
-    double len = this.plotDomain.length();
-    this.plotDomain.setEndpoints(newDomainStart, newDomainStart + len);
+    double len = this.visDomain.length();
+    this.visDomain.setEndpoints(newDomainStart, newDomainStart + len);
   }
 
   private void page(double pageSize) {
     pushHistory();
-    final double newOrigin = plotDomain.getStart() + (plotDomain.length()
+    final double newOrigin = visDomain.getStart() + (visDomain.length()
         * pageSize);
-    animateTo(newOrigin, plotDomain.length(), PlotMovedEvent.MoveType.PAGED);
+    animateTo(newOrigin, visDomain.length(), PlotMovedEvent.MoveType.PAGED);
   }
 
   private void pushHistory() {
@@ -1308,7 +1308,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       ds = datasets.get(focusDataset);
 
       mipLevel = plotRenderer.getDrawableDataset(focusDataset).currMipLevel;
-      double domainCenter = plotDomain.midpoint();
+      double domainCenter = visDomain.midpoint();
       focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
     } else {
       // some data point currently has the focus.

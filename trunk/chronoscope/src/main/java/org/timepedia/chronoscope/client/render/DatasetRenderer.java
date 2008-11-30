@@ -89,6 +89,28 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return plot.getMaxDrawableDataPoints();
   }
   
+  /**
+   * Subclasses can override this method to return a maximum domain value
+   * greater than the maximum according to <tt>dataset</tt>, which is 
+   * sometimes necessary depending on how each datapoint is rendered
+   * (e.g. barchart requires domain padding to avoid cropping of the
+   * end point bars).
+   */
+  public double getMaxDrawableDomain(Dataset<T> dataset) {
+    return dataset.getMaxValue(0);
+  }
+  
+  /**
+   * Subclasses can override this method to return a minimum domain value
+   * smaller than the minimum according to <tt>dataset</tt>, which is 
+   * sometimes necessary depending on how each datapoint is rendered
+   * (e.g. barchart requires domain padding to avoid cropping of the
+   * end point bars).
+   */
+  public double getMinDrawableDomain(Dataset<T> dataset) {
+    return dataset.getMinValue(0);
+  }
+  
   public final GssElement getParentGssElement() {
     return this.parentGssElement;
   }

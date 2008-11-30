@@ -249,6 +249,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   double getVisibleDomainMax();
 
   /**
+   * Returns the widest possible domain for this plot, which corresponds to
+   * "max zoom out".
+   */
+  Interval getWidestDomain();
+  
+  /**
    * Initialize or re-initialize the plot using the given view
    */
   void init(View view);
