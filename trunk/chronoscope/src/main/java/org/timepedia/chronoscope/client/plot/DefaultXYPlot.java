@@ -825,14 +825,17 @@ public class DefaultXYPlot<T extends Tuple2D>
     return isCloseToCurve;
   }
 
+  @Export
   public void setLegendEnabled(boolean b) {
     topPanel.setEnabled(b);
   }
 
+  @Export
   public void setOverviewEnabled(boolean overviewEnabled) {
     bottomPanel.setOverviewEnabled(overviewEnabled);
   }
   
+  @Export
   public void setSubPanelsEnabled(boolean enabled) {
     topPanel.setEnabled(enabled);
     bottomPanel.setEnabled(enabled);
