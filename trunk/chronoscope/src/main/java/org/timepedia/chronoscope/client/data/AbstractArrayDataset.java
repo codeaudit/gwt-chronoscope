@@ -17,11 +17,16 @@ import java.util.List;
  * @author Chad Takahashi
  */
 public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDataset<T> {
-
+  
   /**
-   * Stores the mipmapped values for each element.
+   * Stores the mipmapped data for the domain.
    */
-  protected Array2D[] dimensions;
+  protected Array2D mmDomain;
+  
+  /**
+   * Stores the mipmapped data for each tuple coordinate in the range.
+   */
+  protected Array2D[] mmRangeTuple;
 
   protected FlyweightTuple flyweightTuple;
 
@@ -39,24 +44,24 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     preferredRenderer = request.getPreferredRenderer();
     
     loadTupleData(request);
-    validate(dimensions);
+    validate(mmDomain, mmRangeTuple);
 
-    minInterval = calcMinDomainInterval(dimensions[0]);
+    minInterval = calcMinDomainInterval(mmDomain);
 
     // Assign rangeBottom and rangeTop
-    final int numLevels = dimensions[0].numRows();
+    final int numLevels = mmDomain.numRows();
     minRange = request.getRangeBottom();
     maxRange = request.getRangeTop();
     if (Double.isNaN(maxRange) || Double.isNaN(minRange)) {
       // Question: Will the max range at mip level 1 or greater ever be greater
       // than the max range at mip level 0? If not, then can we just find
       // min/max values at level 0?
-      Interval rangeInterval = calcRangeInterval(dimensions[1], numLevels);
+      Interval rangeInterval = calcRangeInterval(mmRangeTuple[0], numLevels);
       minRange = rangeInterval.getStart();
       maxRange = rangeInterval.getEnd();
     }
     
-    this.flyweightTuple = new FlyweightTuple(this.dimensions);
+    this.flyweightTuple = new FlyweightTuple(this.mmDomain, this.mmRangeTuple);
   }
 
   public final T getFlyweightTuple(int index) {
@@ -68,7 +73,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   public double getMaxValue(int coordinate) {
     switch (coordinate) {
       case 0:
-        return dimensions[0].get(0, getNumSamples() - 1);
+        return mmDomain.get(0, getNumSamples() - 1);
       case 1:
         return this.maxRange;
       default:
@@ -79,7 +84,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   public double getMinValue(int coordinate) {
     switch (coordinate) {
       case 0:
-        return dimensions[0].get(0, 0);
+        return mmDomain.get(0, 0);
       case 1:
         return this.minRange;
       default:
@@ -88,15 +93,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   }
 
   public int getNumSamples(int mipLevel) {
-    return dimensions[0].numColumns(mipLevel);
+    return mmDomain.numColumns(mipLevel);
   }
   
   public int getTupleLength() {
-    return dimensions.length;
+    return 1 + mmRangeTuple.length;
   }
 
   public double getX(int index, int mipLevel) {
-    return dimensions[0].get(mipLevel, index);
+    return mmDomain.get(mipLevel, index);
   }
 
   /**
@@ -118,14 +123,24 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return new Interval(lo, hi);
   }
 
+  /**
+   * Calculates or extracts the mipmapped domain and range datastructures from
+   * the specified dataset request and assigns them to {@link #mmDomain}
+   * and {@link #mmRangeTuple}.
+   * 
+   * @param datasetReq
+   */
   private void loadTupleData(DatasetRequest datasetReq) {
-    dimensions = new Array2D[datasetReq.getTupleLength()];
+    final int rangeTupleLength = datasetReq.getTupleLength() - 1;
+    
+    mmRangeTuple = new Array2D[rangeTupleLength];
     
     if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
       DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq;
-      for (int i = 0; i < dimensions.length; i++) {
-        dimensions[i] = multiResReq.getMultiresTupleSlice(i);
+      mmDomain = multiResReq.getMultiresTupleSlice(0);
+      for (int i = 0; i < rangeTupleLength; i++) {
+        mmRangeTuple[i] = multiResReq.getMultiresTupleSlice(i + 1);
       }
     } 
     else if (datasetReq instanceof DatasetRequest.Basic) {
@@ -137,14 +152,14 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
       double[] domain = basicReq.getTupleSlice(0);
       
       List<double[]> tupleRange = new ArrayList<double[]>();
-      for (int i = 1; i < dimensions.length; i++) {
-        tupleRange.add(basicReq.getTupleSlice(i));
+      for (int i = 0; i < rangeTupleLength; i++) {
+        tupleRange.add(basicReq.getTupleSlice(i + 1));
       }
       
-      MipMapResult mipmappedData = mms.mipmap(domain, tupleRange);
-      dimensions[0] = mipmappedData.domain;
-      for (int i = 1; i < dimensions.length; i++) {
-        dimensions[i] = mipmappedData.tupleRange.get(i - 1);
+      MipMapResult mipmapResult = mms.mipmap(domain, tupleRange);
+      mmDomain = mipmapResult.domain;
+      for (int i = 0; i < rangeTupleLength; i++) {
+        mmRangeTuple[i] = mipmapResult.tupleRange.get(i);
       }
     }
     else {
@@ -156,14 +171,14 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   /**
    * Validates mipmapped domain and range objects
    */
-  private static void validate(Array2D[] mipmappedTupleData) {
-    ArgChecker.isNotNull(mipmappedTupleData, "mipmappedTupleData");
+  private static void validate(Array2D mipmappedDomain, Array2D[] mipmappedRange) {
+    ArgChecker.isNotNull(mipmappedDomain, "mipmappedDomain");
+    ArgChecker.isNotNull(mipmappedRange, "mipmappedRange");
     
-    Array2D[] a = mipmappedTupleData;
-    for (int i = 1; i < mipmappedTupleData.length; i++) {
-      if (!a[i].isSameSize(a[i - 1])) {
-        throw new IllegalArgumentException("Dimensions of mipmapped data at index " + i + 
-            " differ from index " + (i - 1));
+    for (int i = 0; i < mipmappedRange.length; i++) {
+      if (!mipmappedDomain.isSameSize(mipmappedRange[i])) {
+        throw new IllegalArgumentException("mipmappedrange[" + i + "] " +
+            "not same size as domain");
       }
     }
   }
@@ -171,20 +186,21 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   /**
    * Returns the smallest domain interval at row 0 in the specified Array2D object.
    * If only 1 column exists at row 0, then 0 is returned as the minimum interval.
+   * 
+   * @param mmDomain the mipmapped domain data
    */
-  private static double calcMinDomainInterval(Array2D a) {
+  private static double calcMinDomainInterval(Array2D mmDomain) {
     double min = Double.MAX_VALUE;
-    final int numColumns = a.numColumns(0);
+    final int numColumns = mmDomain.numColumns(0);
     
     if (numColumns < 2) {
       // An interval requires at least 2 points, so in this case, just return 0.
       min = 0.0;
-      //throw new RuntimeException("Array2D must have at least 2 columns at MIP level 0: " + numColumns);
     }
     else {
-      double prevValue = a.get(0, 0);
+      double prevValue = mmDomain.get(0, 0);
       for (int i = 1; i < numColumns; i++) {
-        double currValue = a.get(0, i);
+        double currValue = mmDomain.get(0, i);
         min = Math.min(min, currValue - prevValue);
         prevValue = currValue;
       }

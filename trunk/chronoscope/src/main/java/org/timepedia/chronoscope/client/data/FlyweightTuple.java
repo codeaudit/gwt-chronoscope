@@ -14,8 +14,16 @@ public final class FlyweightTuple implements Tuple5D {
   private int dataPointIndex = -1;
   private final int tupleLength;
   
-  public FlyweightTuple(Array2D[] tupleDimensions) {
-    this.tupleDimensions = tupleDimensions;
+  /**
+   * Constructs a tuple object backed by the specified mipmapped domain and ranges.
+   */
+  public FlyweightTuple(Array2D mmDomain, Array2D[] mmRange) {
+    this.tupleDimensions = new Array2D[1 + mmRange.length];
+    this.tupleDimensions[0] = mmDomain;
+    for (int i = 0; i < mmRange.length; i++) {
+      this.tupleDimensions[i + 1] = mmRange[i];
+    }
+    
     this.tupleLength = tupleDimensions.length;
   }
   
