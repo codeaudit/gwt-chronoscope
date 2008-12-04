@@ -311,13 +311,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getMaxDrawableDataPoints() {
-    int x = (int) (isAnimating ? maxDrawableDatapoints
+    return (int) (isAnimating ? maxDrawableDatapoints
         : ChronoscopeOptions.getMaxStaticDatapoints());
- 
-    System.out.println("maxdrawPts = " + x);
-    
-
-    return x;
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {

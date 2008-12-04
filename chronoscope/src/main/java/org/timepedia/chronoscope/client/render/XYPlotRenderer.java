@@ -49,7 +49,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
         continue;
       }
 
-      final int maxPoints = drawableDataset.maxDrawablePoints;
+      final int maxPoints = Math.min(drawableDataset.maxDrawablePoints, 
+          plot.getMaxDrawableDataPoints());
       int domainStartIdx = 0;
       int domainEndIdx = 0;
       int mipLevel = -1;
@@ -101,7 +102,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     renderState
         .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
-
+    
     renderer.beginCurve(layer, renderState);
 
     int domainStart = dds.visDomainStartIndex;
@@ -188,13 +189,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
     Datasets<T> datasets = plot.getDatasets();
     for (int i = 0; i < datasets.size(); i++) {
       DatasetRenderer<T> renderer = plot.getDatasetRenderer(i);
-      int maxDrawablePoints = Math.min(plot.getMaxDrawableDataPoints(), 
-          renderer.getMaxDrawableDatapoints());
       
       DrawableDataset drawableDataset = new DrawableDataset();
       drawableDataset.dataset = datasets.get(i);
       drawableDataset.renderer = renderer;
-      drawableDataset.maxDrawablePoints = maxDrawablePoints;
+      drawableDataset.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
       drawableDataset.currMipLevel = 0;
       
       drawableDatasets.add(drawableDataset);

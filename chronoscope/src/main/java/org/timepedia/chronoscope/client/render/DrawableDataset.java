@@ -21,7 +21,8 @@ public class DrawableDataset {
   public DatasetRenderer renderer;
   
   /**
-   * The maximum number of domain points that should be rendered on the plot.
+   * The maximum number of domain points that this dataset's associated renderer
+   * is capable of handling.
    */
   public int maxDrawablePoints;
   
