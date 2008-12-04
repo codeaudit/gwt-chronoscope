@@ -118,20 +118,20 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return new Interval(lo, hi);
   }
 
-  private void loadTupleData(DatasetRequest tupleData) {
-    dimensions = new Array2D[tupleData.getTupleLength()];
+  private void loadTupleData(DatasetRequest datasetReq) {
+    dimensions = new Array2D[datasetReq.getTupleLength()];
     
-    if (tupleData instanceof DatasetRequest.MultiRes) {
+    if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
-      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) tupleData;
+      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq;
       for (int i = 0; i < dimensions.length; i++) {
         dimensions[i] = multiResReq.getMultiresTupleSlice(i);
       }
     } 
-    else if (tupleData instanceof DatasetRequest.Basic) {
+    else if (datasetReq instanceof DatasetRequest.Basic) {
       // Use MipMapStrategy to calculate multiDomain and MultiRange from
       // the domain[] and range[] specified in the basic request.
-      DatasetRequest.Basic basicReq = (DatasetRequest.Basic) tupleData;
+      DatasetRequest.Basic basicReq = (DatasetRequest.Basic) datasetReq;
       MipMapStrategy mms = basicReq.getDefaultMipMapStrategy();
       
       double[] domain = basicReq.getTupleSlice(0);
@@ -141,15 +141,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
         tupleRange.add(basicReq.getTupleSlice(i));
       }
       
-      List<Array2D> mipmappedData = mms.mipmap(domain, tupleRange);
-      dimensions[0] = mipmappedData.get(0);
+      MipMapResult mipmappedData = mms.mipmap(domain, tupleRange);
+      dimensions[0] = mipmappedData.domain;
       for (int i = 1; i < dimensions.length; i++) {
-        dimensions[i] = mipmappedData.get(i);
+        dimensions[i] = mipmappedData.tupleRange.get(i - 1);
       }
     }
     else {
       throw new RuntimeException("Unsupported request type: " 
-          + tupleData.getClass().getName());
+          + datasetReq.getClass().getName());
     }
   }
   

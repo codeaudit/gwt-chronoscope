@@ -23,7 +23,7 @@ public interface MipMapStrategy {
    * @return A list of {@link Array2D} objects in which item 0 represents the
    *         mipmapped domain and item 1 represents the mipmapped range.
    */
-  List<Array2D> mipmap(double[] domain, double[] range);
+  MipMapResult mipmap(double[] domain, double[] range);
 
   /**
    * Calculates the specified domain and n-tuple range at decreasing levels of
@@ -37,7 +37,7 @@ public interface MipMapStrategy {
    *         mipmapped domain and items [1..endOfList] each represent a single
    *         dimension of the tuples in the mipmapped range.
    */
-  List<Array2D> mipmap(double[] domain, List<double[]> range);
+  MipMapResult mipmap(double[] domain, List<double[]> range);
 
   /**
    * Allows insertion of a new domain value to the end of an existing
