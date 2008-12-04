@@ -2,15 +2,12 @@ package org.timepedia.chronoscope.client.data;
 
 import junit.framework.TestCase;
 
-import org.timepedia.chronoscope.client.data.BinaryMipMapStrategy;
-import org.timepedia.chronoscope.client.data.MipMapStrategy;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author chad takahashi
@@ -21,26 +18,26 @@ public class BinaryMipMapStrategyTest extends TestCase {
   
   private enum ConstructType {
     DEFAULT {
-      public List<Array2D> mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
+      public MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
         return mipmapper.mipmap(domain, range);
       }
     },
     APPEND {
-      public List<Array2D> mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
+      public MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
         OODoubleArray ooDomain = new OODoubleArray(domain);
         OODoubleArray ooRange = new OODoubleArray(range);
         
         double[] modifiedDomain = ooDomain.removeLast().getArray();
         double[] modifiedRange = ooRange.removeLast().getArray();
-        List<Array2D> mipmappedData = mipmapper.mipmap(modifiedDomain, modifiedRange);
+        MipMapResult mipmapResult = mipmapper.mipmap(modifiedDomain, modifiedRange);
 
-        mipmapper.appendDomainValue(ooDomain.getLast(), mipmappedData.get(0));
-        mipmapper.appendRangeValue(ooRange.getLast(), mipmappedData.get(1));
-        return mipmappedData;
+        mipmapper.appendDomainValue(ooDomain.getLast(), mipmapResult.domain);
+        mipmapper.appendRangeValue(ooRange.getLast(), mipmapResult.tupleRange.get(0));
+        return mipmapResult;
       }
     };
     
-    public abstract List<Array2D> mipmap(MipMapStrategy mipmapper, double[] domain, double[] range);
+    public abstract MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range);
   }
   
   public void setUp() {
@@ -72,9 +69,8 @@ public class BinaryMipMapStrategyTest extends TestCase {
       // supported mutations as well as the immutable construction.
       for (ConstructType t : ConstructType.values()) {
         //log("Testing constructType " + t);
-        List<Array2D> mipmappedData = t.mipmap(mipmap, ds.domain, ds.range);
-        Array2D mipmappedDomain = mipmappedData.get(0);
-        verifyMultiDomain(ds, mipmappedDomain, t);
+        MipMapResult mipmapResult = t.mipmap(mipmap, ds.domain, ds.range);
+        verifyMultiDomain(ds, mipmapResult.domain, t);
       }
     }
   }
@@ -82,9 +78,8 @@ public class BinaryMipMapStrategyTest extends TestCase {
   public void testCalcMultiRange() {
     for (SimpleDataset ds : testDatasets) {
       for (ConstructType t : ConstructType.values()) {
-        List<Array2D> mipmappedData = t.mipmap(mipmap, ds.domain, ds.range);
-        Array2D mipmappedRange = mipmappedData.get(1);
-        verifyMultiRange(ds, mipmappedRange, t);
+        MipMapResult mipmapResult = t.mipmap(mipmap, ds.domain, ds.range);
+        verifyMultiRange(ds, mipmapResult.tupleRange.get(0), t);
       }
     }
   }

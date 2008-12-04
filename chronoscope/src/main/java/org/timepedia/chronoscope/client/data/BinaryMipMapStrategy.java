@@ -19,21 +19,23 @@ import java.util.List;
  */
 public abstract class BinaryMipMapStrategy implements MipMapStrategy {
 
-  public List<Array2D> mipmap(double[] domain, List<double[]> range) {
+  public MipMapResult mipmap(double[] domain, List<double[]> range) {
     ArgChecker.isNotNull(domain, "domain");
     ArgChecker.isNotNull(range, "range");
 
-    List<Array2D> mipmap = new ArrayList<Array2D>();
-    mipmap.add(mipmapDomain(domain));
-
-    for (int i = 0; i < range.size(); i++) {
-      mipmap.add(mipmapRange(range.get(i)));
-    }
+    MipMapResult result = new MipMapResult();
+    result.domain = mipmapDomain(domain);
     
-    return mipmap;
+    List<Array2D> tupleRange = new ArrayList<Array2D>();
+    for (int i = 0; i < range.size(); i++) {
+      tupleRange.add(mipmapRange(range.get(i)));
+    }
+    result.tupleRange = tupleRange;
+    
+    return result;
   }
 
-  public List<Array2D> mipmap(double[] domain, double[] range) {
+  public MipMapResult mipmap(double[] domain, double[] range) {
     ArgChecker.isNotNull(domain, "domain");
     ArgChecker.isNotNull(range, "range");
     
