@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.util;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 /**
  * Conglomeration of common utility functions.
@@ -21,7 +22,9 @@ public final class Util {
    * @param domainValue - The sought-after domain value
    * @param mipLevel    - The mip level to search on within the dataset
    */
-  public static int binarySearch(Dataset ds, double domainValue, int mipLevel) {
+  public static <T extends Tuple2D> int binarySearch(Dataset<T> ds, double domainValue, 
+      int mipLevel) {
+    
     int low = 0;
     int high = ds.getNumSamples(mipLevel) - 1;
 
