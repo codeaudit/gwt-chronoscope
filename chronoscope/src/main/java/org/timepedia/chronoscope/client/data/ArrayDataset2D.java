@@ -9,11 +9,9 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
  * @author Chad Takahashi
  */
 public class ArrayDataset2D extends AbstractArrayDataset<Tuple2D> {
-  private FlyweightTuple flyweightTuple;
   
   public ArrayDataset2D(DatasetRequest request) {
     super(request);
-    flyweightTuple = new FlyweightTuple(this.dimensions);
   }
 
   @Override
