@@ -25,13 +25,13 @@ public class DrawableDataset {
    */
   public int maxDrawablePoints;
   
-  /*
+  /**
    * Stores the start and end data point indices that are currently visible in
    * the plot.
    */
   public int visDomainStartIndex, visDomainEndIndex;
   
-  /*
+  /**
    * Stores the min and max range values within the sub-domain of this dataset
    * corresponding to the currently-visible plot.
    */

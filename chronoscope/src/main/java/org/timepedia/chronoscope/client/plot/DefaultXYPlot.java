@@ -311,8 +311,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getMaxDrawableDataPoints() {
-    return (int) (isAnimating ? maxDrawableDatapoints
+    int x = (int) (isAnimating ? maxDrawableDatapoints
         : ChronoscopeOptions.getMaxStaticDatapoints());
+ 
+    System.out.println("maxdrawPts = " + x);
+    
+
+    return x;
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
@@ -480,8 +485,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void onDatasetChanged(Dataset<T> dataset, double domainStart,
       double domainEnd) {
-    visibleDomainMax = Util
-        .calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     int datasetIndex = this.datasets.indexOf(dataset);
     if (datasetIndex == -1) {
       datasetIndex = 0;
@@ -1207,8 +1211,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void initViewIndependent(Datasets<T> datasets) {
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
         / datasets.size();
-    visibleDomainMax = Util
-        .calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
     resetHoverPoints(datasets.size());
   }
 
@@ -1361,4 +1364,45 @@ public class DefaultXYPlot<T extends Tuple2D>
     panel.init();
   }
   
+  
+  /**
+   * Returns the greatest domain value across all datasets for the specified
+   * <tt>maxDrawableDataPoints</tt> value.  For each dataset, the max domain value 
+   * is obtained from the lowest mip level (i.e. highest resolution) whose 
+   * corresponding datapoint cardinality is not greater than
+   * <tt>maxDrawableDataPoints</tt>.
+   */
+  private static <T extends Tuple2D> double calcVisibleDomainMax(int maxDrawableDataPoints,
+      Datasets<T> dataSets) {
+    
+    double end = Double.MIN_VALUE;
+    
+    for (Dataset<T> ds : dataSets) {
+      // find the lowest mip level whose # of data points is not greater
+      // than maxDrawablePts
+      int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPoints);
+      int numSamples = ds.getNumSamples(lowestMipLevel);
+      end = Math.max(end, ds.getX(numSamples - 1, lowestMipLevel));
+    }
+
+    return end;
+  }
+
+  /**
+   * Finds the lowest mip level (highest resolution) of the specified dataset
+   * whose data point cardinality is not greater than <tt>maxDrawablePts</tt>.
+   */
+  private static <T extends Tuple2D> int findLowestMipLevel(Dataset<T> ds, 
+      int maxDrawablePts) {
+    
+    int mipLevel = 0;
+    while (true) {
+      int numPoints = ds.getNumSamples(mipLevel);
+      if (numPoints <= maxDrawablePts) {
+        return mipLevel;
+      }
+      ++mipLevel;
+    }
+  }
+
 }
