@@ -55,7 +55,7 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
     else if (mutation instanceof Mutation.RangeMutation) {
       Mutation.RangeMutation m = (Mutation.RangeMutation) mutation;
       newY = m.getY();
-      mipMapStrategy.setRangeValue(m.getPointIndex(), newY, mmRangeTuple[1]);
+      mipMapStrategy.setRangeValue(m.getPointIndex(), newY, mmRangeTuple[0]);
       newX = this.getX(m.getPointIndex());
     } 
     else {
@@ -76,8 +76,8 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
               + getDomainEnd());
     }
 
-    mipMapStrategy.appendDomainValue(x, mmRangeTuple[0]);
-    mipMapStrategy.appendRangeValue(y, mmRangeTuple[1]);
+    mipMapStrategy.appendDomainValue(x, mmDomain);
+    mipMapStrategy.appendRangeValue(y, mmRangeTuple[0]);
   }
 
   private void notifyListeners(Dataset<Tuple2D> ds, double domainStart, double domainEnd) {

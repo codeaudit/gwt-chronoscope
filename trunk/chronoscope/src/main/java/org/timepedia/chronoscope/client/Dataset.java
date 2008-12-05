@@ -122,12 +122,12 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   int getTupleLength();
   
   /**
-   * Return the domain value for the given index on level 0
+   * Return the domain value for the given index on mip level 0.
    */
   double getX(int index);
 
   /**
-   * Return the domain value for the given index on the given mip level
+   * Return the domain value for the given index on the given mip level.
    */
   double getX(int index, int level);
 
