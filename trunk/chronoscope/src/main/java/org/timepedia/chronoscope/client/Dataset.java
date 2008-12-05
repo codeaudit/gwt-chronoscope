@@ -53,6 +53,13 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getAxisId();
 
   /**
+   * Returns an interval representing the min and max values for the specified 
+   * tuple coordinate.
+   */
+  @NoExport
+  Interval getExtrema(int tupleCoordinate);
+  
+  /**
    * Return the minimum domain value in this dataset, which corresponds to the
    * first value in the tuple at index 0.
    */
@@ -83,20 +90,8 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getIdentifier();
 
   /**
-   * Returns the maximum value at the specified tuple coordinate across all
-   * tuples in this dataset.
-   */
-  double getMaxValue(int coordinate);
-
-  /**
-   * Returns the minimum value at the specified tuple coordinate across all
-   * tuples in this dataset.
-   */
-  double getMinValue(int coordinate);
-  
-  /**
    * The min/max range values that {@link RangeAxis} will use as its bounds for computing
-   * the range tick values.  If null, then the actual min/max range values of this data
+   * the range tick values.  If null, then the actual min/max range values of this dataset
    * will be used instead.
    */
   @NoExport
