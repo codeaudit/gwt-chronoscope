@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -170,15 +171,15 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private double visRangeMin, visRangeMax;
 
   public RangeAxis(XYPlot plot, View view, String rangeLabel, String axisId,
-      int axisIndex, double rangeLow, double rangeHigh) {
+      int axisIndex, Interval rangeInterval) {
     super(rangeLabel, axisId);
     this.axisIndex = axisIndex;
     tickLabelNumberFormatter = DEFAULT_TICK_LABEL_Number_FORMATTER
         = new DefaultTickLabelNumberFormatter();
     this.plot = plot;
     this.view = view;
-    this.rangeLow = rangeLow;
-    this.rangeHigh = rangeHigh;
+    this.rangeLow = rangeInterval.getStart();
+    this.rangeHigh = rangeInterval.getEnd();
     this.adjustedRangeLow = rangeLow;
     this.adjustedRangeHigh = rangeHigh;
   }

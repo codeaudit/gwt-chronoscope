@@ -19,12 +19,17 @@ import java.util.List;
 public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDataset<T> {
   
   /**
-   * Stores the mipmapped data for the domain.
+   * Stores the mipmapped data for the domain.  Row r represents the r-th mip level,
+   * and column c represents the c-th domain value within a given mip level.  For
+   * example, <tt>get(2, 5)</tt> represents the domain value at column index 5 within
+   * mip level 2.
    */
   protected Array2D mmDomain;
   
   /**
-   * Stores the mipmapped data for each tuple coordinate in the range.
+   * Stores the mipmapped data for each tuple coordinate in the range.  Each element
+   * in the array represents the mipmapped data for a single coordinate within the
+   * range tuple.
    */
   protected Array2D[] mmRangeTuple;
 
@@ -48,20 +53,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
 
     minInterval = calcMinDomainInterval(mmDomain);
 
-    // Assign rangeBottom and rangeTop
+    // Assign min/max range-Y values
     final int numLevels = mmDomain.numRows();
-    minRange = request.getRangeBottom();
-    maxRange = request.getRangeTop();
-    if (Double.isNaN(maxRange) || Double.isNaN(minRange)) {
-      // Question: Will the max range at mip level 1 or greater ever be greater
-      // than the max range at mip level 0? If not, then can we just find
-      // min/max values at level 0?
-      Interval rangeInterval = calcRangeInterval(mmRangeTuple[0], numLevels);
-      minRange = rangeInterval.getStart();
-      maxRange = rangeInterval.getEnd();
-    }
+    Interval rangeInterval = calcRangeInterval(mmRangeTuple[0], numLevels);
+    minRange = rangeInterval.getStart();
+    maxRange = rangeInterval.getEnd();
+
+    preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
     
-    this.flyweightTuple = new FlyweightTuple(this.mmDomain, this.mmRangeTuple);
+    flyweightTuple = new FlyweightTuple(this.mmDomain, this.mmRangeTuple);
   }
 
   public final T getFlyweightTuple(int index) {
@@ -109,6 +109,11 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
    */
   private Interval calcRangeInterval(Array2D rangeMipmap, int numLevels) {
     // Calculate min and max range values across all mip levels
+
+    // Question: Will the max range at mip level 1 or greater ever be greater
+    // than the max range at mip level 0? If not, then can we just find
+    // min/max values at level 0?
+
     double lo = Double.POSITIVE_INFINITY;
     double hi = Double.NEGATIVE_INFINITY;
 

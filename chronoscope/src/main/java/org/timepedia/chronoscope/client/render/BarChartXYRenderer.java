@@ -89,10 +89,10 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     // Barcharts require some padding before the first bar and
     // after the last bar so that these bars are not cropped.
     if (dataset.getNumSamples() <= 1) {
-      return dataset.getMinValue(0);
+      return dataset.getDomainBegin();
     }
     else {
-      double x0 = dataset.getMinValue(0);
+      double x0 = dataset.getDomainBegin();
       double firstInterval = dataset.getX(1) - x0;
       return x0 - (firstInterval / 2.0);
     }

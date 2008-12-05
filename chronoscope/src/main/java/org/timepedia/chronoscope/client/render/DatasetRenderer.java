@@ -97,7 +97,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * end point bars).
    */
   public double getMaxDrawableDomain(Dataset<T> dataset) {
-    return dataset.getMaxValue(0);
+    return dataset.getDomainEnd();
   }
   
   /**
@@ -108,7 +108,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * end point bars).
    */
   public double getMinDrawableDomain(Dataset<T> dataset) {
-    return dataset.getMinValue(0);
+    return dataset.getDomainBegin();
   }
   
   public final GssElement getParentGssElement() {
