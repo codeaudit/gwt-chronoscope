@@ -35,8 +35,11 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
 
   protected FlyweightTuple flyweightTuple;
 
-  protected double minRange, maxRange;
-
+  /**
+   * Stores the min/max range values for each tuple coordinate in {@link #mmRangeTuple}.
+   */
+  protected Interval[] rangeIntervals;
+  
   /**
    * Constructs an {@link Dataset} from the specified request object.
    */
@@ -55,9 +58,10 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
 
     // Assign min/max range-Y values
     final int numLevels = mmDomain.numRows();
-    Interval rangeInterval = calcRangeInterval(mmRangeTuple[0], numLevels);
-    minRange = rangeInterval.getStart();
-    maxRange = rangeInterval.getEnd();
+    rangeIntervals = new Interval[mmRangeTuple.length];
+    for (int i = 0; i < rangeIntervals.length; i++) {
+      rangeIntervals[i] = calcRangeInterval(mmRangeTuple[i], numLevels);
+    }
 
     preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
     
@@ -70,28 +74,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
 
   public abstract T getFlyweightTuple(int index, int mipLevel);
 
-  public double getMaxValue(int coordinate) {
-    switch (coordinate) {
-      case 0:
-        return mmDomain.get(0, getNumSamples() - 1);
-      case 1:
-        return this.maxRange;
-      default:
-        throw new IllegalArgumentException("coordinate out of range: " + coordinate);
+  public Interval getExtrema(int tupleCoordinate) {
+    if (tupleCoordinate == 0) {
+      return new Interval(mmDomain.get(0, 0), mmDomain.get(0, getNumSamples() - 1));
+    }
+    else {
+      return rangeIntervals[tupleCoordinate - 1].copy();
     }
   }
   
-  public double getMinValue(int coordinate) {
-    switch (coordinate) {
-      case 0:
-        return mmDomain.get(0, 0);
-      case 1:
-        return this.minRange;
-      default:
-        throw new IllegalArgumentException("coordinate out of range: " + coordinate);
-    }
-  }
-
   public int getNumSamples(int mipLevel) {
     return mmDomain.numColumns(mipLevel);
   }
@@ -132,8 +123,6 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
    * Calculates or extracts the mipmapped domain and range datastructures from
    * the specified dataset request and assigns them to {@link #mmDomain}
    * and {@link #mmRangeTuple}.
-   * 
-   * @param datasetReq
    */
   private void loadTupleData(DatasetRequest datasetReq) {
     final int rangeTupleLength = datasetReq.getTupleLength() - 1;

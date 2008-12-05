@@ -64,8 +64,10 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
           + mutation.getClass().getName() + " currently not supported");
     }
     
-    minRange = Math.min(minRange, newY);
-    maxRange = Math.max(maxRange, newY);
+    //TODO: mutations currently only work for 2-tuples.  Need to add mutation support
+    // for  n-tuples.
+    rangeIntervals[0].expand(newY);
+
     notifyListeners(this, newX, newX);
   }
 

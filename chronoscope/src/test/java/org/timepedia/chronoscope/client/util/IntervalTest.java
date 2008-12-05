@@ -67,6 +67,30 @@ public class IntervalTest extends TestCase {
     assertEquals(i.getEnd(), lsCopy.getEnd());
   }
   
+  public void testExpand() {
+    Interval i = new Interval(1, 3);
+    i.expand(-7);
+    assertEquals(new Interval(-7, 3), i);
+
+    i = new Interval(1, 3);
+    i.expand(5);
+    assertEquals(new Interval(1, 5), i);
+
+    i = new Interval(1, 3);
+    i.expand(1);
+    assertEquals(new Interval(1, 3), i);
+    
+    
+    i = new Interval(1, 3);
+    i.expand(2);
+    assertEquals(new Interval(1, 3), i);
+
+    i = new Interval(1, 3);
+    i.expand(3);
+    assertEquals(new Interval(1, 3), i);
+
+  }
+  
   public void testGetEnd() {
     assertEquals(10.0, new Interval(5, 10).getEnd());
     assertEquals(-10.0, new Interval(-12, -10).getEnd());

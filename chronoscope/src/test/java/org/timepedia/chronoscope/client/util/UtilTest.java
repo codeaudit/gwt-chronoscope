@@ -98,11 +98,7 @@ public class UtilTest extends TestCase {
       throw new UnsupportedOperationException();
     }
 
-    public double getMaxValue(int coordinate) {
-      throw new UnsupportedOperationException();
-    }
-
-    public double getMinValue(int coordinate) {
+    public Interval getExtrema(int tupleCoordinate) {
       throw new UnsupportedOperationException();
     }
   }

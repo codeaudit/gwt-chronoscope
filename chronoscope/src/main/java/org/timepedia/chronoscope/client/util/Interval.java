@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.util;
 
+import org.timepedia.exporter.client.Export;
+
 /**
  * A mathematical interval representing a connected portion of a real line. 
  * An interval has 2 endpoints: {@link #getStart()} and {@link #getEnd()}.
@@ -9,6 +11,8 @@ package org.timepedia.chronoscope.client.util;
  * whatever.
  * 
  * @author chad takahashi
+ * 
+ *
  */
 public class Interval {
   private double start, end;
@@ -57,6 +61,25 @@ public class Interval {
     
     Interval i = (Interval)obj;
     return this.start == i.start && this.end == i.end;
+  }
+  
+  /**
+   * Expands this interval so that the specified value is guaranteed fall within
+   * it after this method call.  If this interval already contains <tt>value</tt>,
+   * then nothing changes.
+   * <p>
+   * For example, if i represents the interval [-5, 3], then i.expand(7) expands
+   * the interval to be [-5, 7].  Similarly, i.expand(-7) results in the interval
+   * [-7, 3].  i.expand(1), however, does not change the state of interval i, since
+   * 1 is already contained in the interval [-5, 3].  
+   */
+  public void expand(double value) {
+    if (value < start) {
+      start = value;
+    }
+    else if (value > end) {
+      end = value;
+    }
   }
   
   /**

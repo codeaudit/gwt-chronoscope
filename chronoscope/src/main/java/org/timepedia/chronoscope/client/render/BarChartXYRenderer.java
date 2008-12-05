@@ -6,7 +6,6 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.TimeUnit;
 
 public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
@@ -74,7 +73,7 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     // Barcharts require some padding before the first bar and
     // after the last bar so that these bars are not cropped.
     if (dataset.getNumSamples() <= 1) {
-      return dataset.getMaxValue(0);
+      return dataset.getDomainEnd();
     }
     else {
       int lastIdx = dataset.getNumSamples() - 1;

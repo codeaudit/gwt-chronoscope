@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.MutableDataset;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
 
@@ -32,10 +33,8 @@ public class ArrayDataset2DTest extends TestCase {
     Dataset ds = dsFactory.create(request);
 
     assertEquals(1, ds.getNumSamples());
-    assertEquals(1000.0, ds.getMinValue(0));
-    assertEquals(1000.0, ds.getMaxValue(0));
-    assertEquals(10.0, ds.getMinValue(1));
-    assertEquals(10.0, ds.getMaxValue(1));
+    assertEquals(new Interval(1000, 1000), ds.getExtrema(0));
+    assertEquals(new Interval(10, 10), ds.getExtrema(1));
     assertEquals(0.0, ds.getMinInterval());
   }
   
@@ -69,10 +68,8 @@ public class ArrayDataset2DTest extends TestCase {
   }
   
   private static void assertEqual(Dataset expected, Dataset actual, int numMipLevels) {
-    assertEquals(expected.getMinValue(0), actual.getMinValue(0));
-    assertEquals(expected.getMaxValue(0), actual.getMaxValue(0));
-    assertEquals(expected.getMinValue(1), actual.getMinValue(1));
-    assertEquals(expected.getMaxValue(1), actual.getMaxValue(1));
+    assertEquals(expected.getExtrema(0), actual.getExtrema(0));
+    assertEquals(expected.getExtrema(1), actual.getExtrema(1));
     assertEquals(expected.getMinInterval(), actual.getMinInterval());
     
     for (int i = 0; i < numMipLevels; i++) {
