@@ -8,8 +8,7 @@ public class DomainAxis extends RangeAxis {
   private XYPlot plot;
 
   public DomainAxis(XYPlot plot, View view) {
-    super(plot, view, "Time", "s", 0, plot.getDomain().getStart(),
-        plot.getDomain().getEnd());
+    super(plot, view, "Time", "s", 0, plot.getDomain());
     this.plot = plot;
   }
 

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -92,7 +93,15 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * tuples in this dataset.
    */
   double getMinValue(int coordinate);
-
+  
+  /**
+   * The min/max range values that {@link RangeAxis} will use as its bounds for computing
+   * the range tick values.  If null, then the actual min/max range values of this data
+   * will be used instead.
+   */
+  @NoExport
+  Interval getPreferredRangeAxisInterval();
+  
   /**
    * Returns a key representing the preferred {@link DatsetRenderer} to use when 
    * drawing this dataset.
@@ -122,12 +131,12 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   int getTupleLength();
   
   /**
-   * Return the domain value for the given index on mip level 0.
+   * Return the domain value for the given data point index on mip level 0.
    */
   double getX(int index);
 
   /**
-   * Return the domain value for the given index on the given mip level.
+   * Return the domain value for the given data point index on the given mip level.
    */
   double getX(int index, int level);
 

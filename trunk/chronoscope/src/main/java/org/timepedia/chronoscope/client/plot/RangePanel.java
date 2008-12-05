@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,8 +131,14 @@ final class RangePanel extends AuxiliaryPanel {
         boolean useLeftPanel = (numLeftAxes <= numRightAxes);
         CompositeAxisPanel currRangePanel = useLeftPanel ? leftPanel
             : rightPanel;
+        
+        Interval rangeAxisInterval = ds.getPreferredRangeAxisInterval();
+        if (rangeAxisInterval == null) {
+          rangeAxisInterval = new Interval(ds.getMinValue(1), ds.getMaxValue(1));
+        }
+        
         ra = new RangeAxis(plot, view, ds.getRangeLabel(), ds.getAxisId(), i,
-            ds.getMinValue(1), ds.getMaxValue(1));
+            rangeAxisInterval);
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(ra);
         ra.setAxisRenderer(axisPanel);

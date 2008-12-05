@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
+import org.timepedia.chronoscope.client.util.Interval;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,10 +150,22 @@ public abstract class DatasetRequest {
     return this.preferredRenderer;
   }
   
+  /**
+   * The client can optionally specify its own range bottom and top, which will 
+   * be used by the {@link RangeAxis} to override the actual min/max range values 
+   * contained in the {@link Dataset}.  Should be set in conjunction with
+   * {@link #getRangeTop()}.
+   */
   public double getRangeBottom() {
     return rangeBottom;
   }
 
+  /**
+   * The client can optionally specify its own range bottom and top, which will 
+   * be used by the {@link RangeAxis} to override the actual min/max range values 
+   * contained in the {@link Dataset}.  Should be set in conjunction with
+   * {@link #getRangeBo(ttom)}.
+   */
   public double getRangeTop() {
     return rangeTop;
   }
@@ -161,6 +174,20 @@ public abstract class DatasetRequest {
    * Returns the number of elements that each tuple is capable of storing.
    */
   public abstract int getTupleLength();
+  
+  /**
+   * Returns the preferred range axis interval, whose start value is 
+   * {@link #getRangeBottom()} and whose end value is {@link #getRangeTop()}.
+   * 
+   * @see {@link Dataset#getPreferredRangeAxisInterval()}
+   */
+  public Interval getPreferredRangeAxisInterval() {
+    if (!(Double.isNaN(rangeBottom) || Double.isNaN(rangeTop))) {
+      return new Interval(rangeBottom, rangeTop);
+    }
+    
+    return null;
+  }
   
   public void setAxisId(String axisId) {
     this.axisId = axisId;

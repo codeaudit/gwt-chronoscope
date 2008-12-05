@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * Provides skeletal implementation of an {@link Dataset} to simplify implementation
@@ -16,6 +17,8 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
   protected String axisId, identifier, rangeLabel;
   
   protected String preferredRenderer;
+  
+  protected Interval preferredRangeAxisInterval;
   
   public final String getAxisId() {
     return axisId;
@@ -39,6 +42,10 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
   
   public final int getNumSamples() {
     return getNumSamples(0);
+  }
+  
+  public final Interval getPreferredRangeAxisInterval() {
+    return preferredRangeAxisInterval;
   }
   
   public final String getPreferredRenderer() {
