@@ -47,7 +47,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     ArgChecker.isNotNull(request, "request");
     request.validate();
     axisId = (String) ArgChecker.isNotNull(request.getAxisId(), "axisId");
-    rangeLabel = (String) ArgChecker.isNotNull(request.getLabel(), "label");
+    rangeLabel = (String) ArgChecker.isNotNull(request.getRangeLabel(), "label");
     identifier = request.getIdentifier();
     preferredRenderer = request.getPreferredRenderer();
     

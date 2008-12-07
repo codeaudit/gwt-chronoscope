@@ -32,10 +32,6 @@ public interface MipMapStrategy {
    * @param domain - the domain to be mipmapped.
    * @param range - the n-tuple range to be mipmapped; range.get(i) returns an
    *    array representing the i-th dimension of the range tuple values.
-   * 
-   * @return A list of {@link Array2D} objects in which item 0 represents the
-   *         mipmapped domain and items [1..endOfList] each represent a single
-   *         dimension of the tuples in the mipmapped range.
    */
   MipMapResult mipmap(double[] domain, List<double[]> range);
 
