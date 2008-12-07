@@ -52,7 +52,7 @@ public class Fixtures {
       request.addTupleSlice(rangeValuesAscending);
       request.setIdentifier("test");
       request.setAxisId("test");
-      request.setLabel("test");
+      request.setRangeLabel("test");
       return dsFactory.create(request);
     }
 
@@ -62,7 +62,7 @@ public class Fixtures {
       request.addTupleSlice(rangeValuesDescending);
       request.setIdentifier("test");
       request.setAxisId("test");
-      request.setLabel("test");
+      request.setRangeLabel("test");
       return dsFactory.create(request);
     }
 

@@ -101,7 +101,7 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       request.addTupleSlice(domains[i]);
       request.addTupleSlice(ranges[i]);
       request.setIdentifier(ids[i]);
-      request.setLabel(ids[i]);
+      request.setRangeLabel(ids[i]);
       request.setAxisId("axis" + i);
       
       datasets[i] = dsFactory.create(request);

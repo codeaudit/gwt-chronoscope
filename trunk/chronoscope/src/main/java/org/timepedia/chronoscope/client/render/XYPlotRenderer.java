@@ -86,7 +86,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     Dataset<T> dataSet = dds.dataset;
     DatasetRenderer<T> renderer = dds.renderer;
     
-    if (dataSet.getNumSamples(0) < 2) {
+    if (dataSet.getNumSamples() < 2) {
       return;
     }
 

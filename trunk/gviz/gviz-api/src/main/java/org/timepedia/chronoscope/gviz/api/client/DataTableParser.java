@@ -83,7 +83,7 @@ public class DataTableParser {
       request.addTupleSlice(pair.domain);
       request.addTupleSlice(pair.range);
       request.setIdentifier("col" + i);
-      request.setLabel(label);
+      request.setRangeLabel(label);
       request.setAxisId(units);
       ds[numCols++] = dsFactory.create(request);
       

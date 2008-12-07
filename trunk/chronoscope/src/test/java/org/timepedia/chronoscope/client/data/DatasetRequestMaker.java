@@ -11,7 +11,7 @@ public final class DatasetRequestMaker {
   public DatasetRequest.Basic newRequest(double[] domain, double[] range) {
     DatasetRequest.Basic request = new DatasetRequest.Basic();
     request.setAxisId("Dummy_Axis_Id");
-    request.setLabel("Dummy_Range_Label");
+    request.setRangeLabel("Dummy_Range_Label");
     request.setDefaultMipMapStrategy(BinaryMipMapStrategy.MEAN);
     request.addTupleSlice(domain);
     request.addTupleSlice(range);

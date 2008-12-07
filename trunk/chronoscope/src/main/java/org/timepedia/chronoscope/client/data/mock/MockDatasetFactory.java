@@ -39,7 +39,7 @@ public class MockDatasetFactory {
     DatasetRequest.Basic request = new DatasetRequest.Basic();
     request.setIdentifier("mock");
     request.setAxisId("none");
-    request.setLabel("Mock");
+    request.setRangeLabel("Mock");
     request.addTupleSlice(domainValues);
     request.addTupleSlice(rangeValues);
     

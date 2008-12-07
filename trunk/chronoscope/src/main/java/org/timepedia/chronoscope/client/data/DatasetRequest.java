@@ -121,7 +121,7 @@ public abstract class DatasetRequest {
     }
   }
 
-  private String axisId, identifier, label;
+  private String axisId, identifier, rangeLabel;
   private MipMapStrategy defaultMipMapStrategy = BinaryMipMapStrategy.MEAN;
   private double rangeBottom = Double.NaN, rangeTop = Double.NaN;
   private String preferredRenderer;
@@ -134,8 +134,8 @@ public abstract class DatasetRequest {
     return identifier;
   }
 
-  public String getLabel() {
-    return label;
+  public String getRangeLabel() {
+    return rangeLabel;
   }
 
   public MipMapStrategy getDefaultMipMapStrategy() {
@@ -197,8 +197,8 @@ public abstract class DatasetRequest {
     this.identifier = identifier;
   }
 
-  public void setLabel(String label) {
-    this.label = label;
+  public void setRangeLabel(String label) {
+    this.rangeLabel = label;
   }
 
   public void setDefaultMipMapStrategy(MipMapStrategy mipMapStrategy) {

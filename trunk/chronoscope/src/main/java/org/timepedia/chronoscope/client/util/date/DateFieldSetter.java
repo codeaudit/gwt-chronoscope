@@ -5,6 +5,8 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
 /**
  * Facilitates setting of date fields via method chaining.
  * 
+ * @see {@link ChronoDate#set()}.
+ * 
  * @author chad takahashi
  */
 public class DateFieldSetter {
@@ -70,9 +72,9 @@ public class DateFieldSetter {
     return this;
   }
 
-  public void done() {
-    // TODO: signal to parent I'm done.
+  public ChronoDate done() {
     parent.commitDateFieldChanges();
+    return parent;
   }
   
 }
