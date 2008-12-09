@@ -18,13 +18,13 @@ public class MutableDataset2DTest extends TestCase {
     MutableDataset ds = dsFactory.createMutable(request);
     
 
-    assertEquals(50.0, ds.getMinInterval());
+    assertEquals(50.0, ds.getMinDomainInterval());
     assertEquals(new Interval(1, 3), ds.getExtrema(1));
     
     // Add a new point whose distance from the previous point is 25 ms.  This should
     // decrease the minimum interval reported by the Dataset.
     ds.mutate(Mutation.append(275, 4));
-    assertEquals(25.0, ds.getMinInterval());
+    assertEquals(25.0, ds.getMinDomainInterval());
     assertEquals(new Interval(1, 4), ds.getExtrema(1));
   }
 }

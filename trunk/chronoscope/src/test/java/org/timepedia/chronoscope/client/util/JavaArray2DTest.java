@@ -5,9 +5,7 @@ import junit.framework.TestCase;
 import org.timepedia.chronoscope.client.util.JavaArray2D;
 
 /**
- * 
  * @author Chad Takahashi
- * 
  */
 public class JavaArray2DTest extends TestCase {
 
@@ -77,6 +75,19 @@ public class JavaArray2DTest extends TestCase {
 
   }
 
+  public void testGetRow() {
+    double[][] data = new double[][] { {10, 20, 30, 40}, {100, 200}, {300}};
+    JavaArray2D a = new JavaArray2D(data);
+    
+    for (int r = 0; r < data.length; r++) {
+      Array1D row = a.getRow(r);
+      assertEquals(data[r].length, row.size());
+      for (int i = 0; i < row.size(); i++) {
+        assertEquals(data[r][i], row.get(i));
+      }
+    }
+  }
+
   public void testSet() {
     double[][] data = new double[][] { {10, 20}, {30}};
 
@@ -94,11 +105,7 @@ public class JavaArray2DTest extends TestCase {
     assertSameSize(data, a);
   }
 
-  /**
-   * 
-   */
   public void testGetIllegalIndex() {
-    // Original data has 2 rows: row 0 has 2 columns, row 1 has 1 column.
     double[][] data = new double[][] { {10, 20}, {30, 40}};
 
     JavaArray2D a2d = new JavaArray2D(data);
@@ -150,4 +157,5 @@ public class JavaArray2DTest extends TestCase {
       assertEquals(a1[i].length, a2.numColumns(i));
     }
   }
+  
 }

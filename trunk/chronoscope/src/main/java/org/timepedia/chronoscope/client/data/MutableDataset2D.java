@@ -48,14 +48,15 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
       newY = m.getY();
       newX = m.getX();
       double newInterval = newX - getX(getNumSamples() - 1);
-      this.minInterval = Math.min(
-          this.minInterval, newInterval);
+      this.minDomainInterval = Math.min(
+          this.minDomainInterval, newInterval);
       appendXY(newX, newY);
     } 
     else if (mutation instanceof Mutation.RangeMutation) {
       Mutation.RangeMutation m = (Mutation.RangeMutation) mutation;
       newY = m.getY();
-      mipMapStrategy.setRangeValue(m.getPointIndex(), newY, mmRangeTuple[0]);
+      mipMapStrategy.setRangeValue(m.getPointIndex(), newY,
+          mipMapChain.getMipMappedRangeTuples().get(0));
       newX = this.getX(m.getPointIndex());
     } 
     else {
@@ -77,9 +78,8 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
           "Insertions not allowed; x was <= domainEnd: " + x + ":"
               + getDomainEnd());
     }
-
-    mipMapStrategy.appendDomainValue(x, mmDomain);
-    mipMapStrategy.appendRangeValue(y, mmRangeTuple[0]);
+    
+    mipMapStrategy.appendXY(x, y, mipMapChain);
   }
 
   private void notifyListeners(Dataset<Tuple2D> ds, double domainStart, double domainEnd) {

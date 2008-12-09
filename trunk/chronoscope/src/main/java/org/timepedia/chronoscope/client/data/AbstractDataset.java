@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.util.Interval;
  */
 public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
 
-  protected double minInterval;
+  protected double minDomainInterval;
 
   protected String axisId, identifier, rangeLabel;
   
@@ -36,8 +36,8 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
     return identifier;
   }
 
-  public final double getMinInterval() {
-    return minInterval;
+  public final double getMinDomainInterval() {
+    return minDomainInterval;
   }
   
   public final int getNumSamples() {

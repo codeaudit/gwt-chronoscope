@@ -88,7 +88,11 @@ public abstract class DatasetRequest {
    */
   public static final class MultiRes extends DatasetRequest {
     private List<Array2D> mipmappedTupleData = new ArrayList<Array2D>();
-
+    
+    public List<Array2D> getMultiResTuples() {
+      return mipmappedTupleData;
+    }
+    
     public Array2D getMultiresTupleSlice(int tupleIndex) {
       return mipmappedTupleData.get(tupleIndex);
     }

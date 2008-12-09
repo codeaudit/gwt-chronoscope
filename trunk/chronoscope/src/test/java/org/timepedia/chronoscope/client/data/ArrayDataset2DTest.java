@@ -35,7 +35,7 @@ public class ArrayDataset2DTest extends TestCase {
     assertEquals(1, ds.getNumSamples());
     assertEquals(new Interval(1000, 1000), ds.getExtrema(0));
     assertEquals(new Interval(10, 10), ds.getExtrema(1));
-    assertEquals(0.0, ds.getMinInterval());
+    assertEquals(0.0, ds.getMinDomainInterval());
   }
   
   public void testGeneral() {
@@ -70,7 +70,7 @@ public class ArrayDataset2DTest extends TestCase {
   private static void assertEqual(Dataset expected, Dataset actual, int numMipLevels) {
     assertEquals(expected.getExtrema(0), actual.getExtrema(0));
     assertEquals(expected.getExtrema(1), actual.getExtrema(1));
-    assertEquals(expected.getMinInterval(), actual.getMinInterval());
+    assertEquals(expected.getMinDomainInterval(), actual.getMinDomainInterval());
     
     for (int i = 0; i < numMipLevels; i++) {
       assertEquals(expected.getNumSamples(i), actual.getNumSamples(i));

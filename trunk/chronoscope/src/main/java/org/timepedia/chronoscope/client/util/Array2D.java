@@ -13,7 +13,9 @@ public interface Array2D {
    * Returns the value at the specified row and column
    */
   double get(int row, int column);
-
+  
+  Array1D getRow(int rowIndex);
+  
   /**
    * Returns true only if the other {@link Array2D} object has the same
    * number of rows, as well as the same number of columns-per-row, as this
