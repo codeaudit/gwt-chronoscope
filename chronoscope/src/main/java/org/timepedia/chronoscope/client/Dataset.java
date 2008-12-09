@@ -43,7 +43,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * Returns the smallest domain interval between any two consecutive points
    * within the dataset.
    */
-  double getMinInterval();
+  double getMinDomainInterval();
 
   /**
    * Return an id used to identify the axis this dataset should be assigned to,

@@ -77,6 +77,16 @@ public final class JavaArray2D implements Array2D {
     
     return a[row][column];
   }
+  
+  public Array1D getRow(int row) {
+    assert MathUtil.isBounded(row, 0, rowCount - 1) 
+      : "row out of bounds: " + row;
+    
+    // TODO: Cache these Array1D objects rather than creating a new one on each
+    // invocation of getRow().
+    return new Array1DImpl(a, row, columnCounts);
+  }
+  
 
   public boolean isSameSize(Array2D other) {
     ArgChecker.isNotNull(other, "other");
@@ -109,7 +119,7 @@ public final class JavaArray2D implements Array2D {
   }
 
   /**
-   * Assigns the value at the specified row and column
+   * Assigns the value at the specified row and column.
    */
   public void set(int rowIdx, int colIdx, double value) {
     int rowCapacity = a.length;
@@ -145,5 +155,43 @@ public final class JavaArray2D implements Array2D {
     columnCounts[rowIdx] = Math.max(columnCounts[rowIdx], colIdx + 1);
 
     a[rowIdx][colIdx] = value;
+  }
+  
+  private static final class Array1DImpl implements Array1D {
+    private double[] data;
+    private int row;
+    private int[] columnCounts;
+    
+    public Array1DImpl(double[][] data2d, int row, int[] columnCounts) {
+      this.data = data2d[row];
+      this.row = row;
+      this.columnCounts = columnCounts;
+    }
+    
+    public double get(int index) {
+      assert (index < this.columnCounts[row]) 
+          : "index out of bounds: " + index;
+      
+      return this.data[index];
+    }
+    
+    public double getLast() {
+      int arraySize = columnCounts[row];
+      if (arraySize > 0) {
+        return this.data[arraySize - 1];
+      }
+      else {
+        throw new IllegalStateException("array is empty");
+      }
+    }
+    
+    public int size() {
+      return this.columnCounts[row];
+    }
+
+    public void execFunction(ArrayFunction f) {
+      f.exec(data, columnCounts[row]);
+    }
+    
   }
 }

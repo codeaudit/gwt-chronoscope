@@ -18,26 +18,27 @@ public class BinaryMipMapStrategyTest extends TestCase {
   
   private enum ConstructType {
     DEFAULT {
-      public MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
+      public MipMapChain mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
         return mipmapper.mipmap(domain, range);
       }
     },
     APPEND {
-      public MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
+      public MipMapChain mipmap(MipMapStrategy mipmapper, double[] domain, double[] range) {
         OODoubleArray ooDomain = new OODoubleArray(domain);
         OODoubleArray ooRange = new OODoubleArray(range);
         
         double[] modifiedDomain = ooDomain.removeLast().getArray();
         double[] modifiedRange = ooRange.removeLast().getArray();
-        MipMapResult mipmapResult = mipmapper.mipmap(modifiedDomain, modifiedRange);
-
-        mipmapper.appendDomainValue(ooDomain.getLast(), mipmapResult.domain);
-        mipmapper.appendRangeValue(ooRange.getLast(), mipmapResult.tupleRange.get(0));
-        return mipmapResult;
+        MipMapChain mipMapChain = mipmapper.mipmap(modifiedDomain, modifiedRange);
+        
+        mipmapper.appendXY(ooDomain.getLast(), ooRange.getLast(), mipMapChain);
+        //mipmapper.appendDomainValue(ooDomain.getLast(), mipMapChain.getMipMappedDomain());
+        //mipmapper.appendRangeValue(ooRange.getLast(), mipMapChain.getMipMappedRangeTuples().get(0));
+        return mipMapChain;
       }
     };
     
-    public abstract MipMapResult mipmap(MipMapStrategy mipmapper, double[] domain, double[] range);
+    public abstract MipMapChain mipmap(MipMapStrategy mipmapper, double[] domain, double[] range);
   }
   
   public void setUp() {
@@ -69,8 +70,8 @@ public class BinaryMipMapStrategyTest extends TestCase {
       // supported mutations as well as the immutable construction.
       for (ConstructType t : ConstructType.values()) {
         //log("Testing constructType " + t);
-        MipMapResult mipmapResult = t.mipmap(mipmap, ds.domain, ds.range);
-        verifyMultiDomain(ds, mipmapResult.domain, t);
+        MipMapChain mipmapChain = t.mipmap(mipmap, ds.domain, ds.range);
+        verifyMultiDomain(ds, mipmapChain.getMipMappedDomain(), t);
       }
     }
   }
@@ -78,8 +79,8 @@ public class BinaryMipMapStrategyTest extends TestCase {
   public void testCalcMultiRange() {
     for (SimpleDataset ds : testDatasets) {
       for (ConstructType t : ConstructType.values()) {
-        MipMapResult mipmapResult = t.mipmap(mipmap, ds.domain, ds.range);
-        verifyMultiRange(ds, mipmapResult.tupleRange.get(0), t);
+        MipMapChain mipmapChain = t.mipmap(mipmap, ds.domain, ds.range);
+        verifyMultiRange(ds, mipmapChain.getMipMappedRangeTuples().get(0), t);
       }
     }
   }

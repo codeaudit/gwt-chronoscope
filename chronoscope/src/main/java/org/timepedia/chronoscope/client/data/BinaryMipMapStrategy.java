@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.JavaArray2D;
@@ -19,23 +17,21 @@ import java.util.List;
  */
 public abstract class BinaryMipMapStrategy implements MipMapStrategy {
 
-  public MipMapResult mipmap(double[] domain, List<double[]> range) {
+  public MipMapChain mipmap(double[] domain, List<double[]> range) {
     ArgChecker.isNotNull(domain, "domain");
     ArgChecker.isNotNull(range, "range");
 
-    MipMapResult result = new MipMapResult();
-    result.domain = mipmapDomain(domain);
+    Array2D mipMappedDomain = mipmapDomain(domain);
     
-    List<Array2D> tupleRange = new ArrayList<Array2D>();
+    List<Array2D> mipMappedRangeTuple = new ArrayList<Array2D>();
     for (int i = 0; i < range.size(); i++) {
-      tupleRange.add(mipmapRange(range.get(i)));
+      mipMappedRangeTuple.add(mipmapRange(range.get(i)));
     }
-    result.tupleRange = tupleRange;
     
-    return result;
+    return new MipMapChain(mipMappedDomain, mipMappedRangeTuple);
   }
 
-  public MipMapResult mipmap(double[] domain, double[] range) {
+  public MipMapChain mipmap(double[] domain, double[] range) {
     ArgChecker.isNotNull(domain, "domain");
     ArgChecker.isNotNull(range, "range");
     
@@ -103,6 +99,7 @@ public abstract class BinaryMipMapStrategy implements MipMapStrategy {
     protected double calcRangeValue(double prev1, double prev2) {
       return (prev1 + prev2) / 2.0;
     }
+
   };
 
   public static final MipMapStrategy MAX = new BinaryMipMapStrategy() {
@@ -119,14 +116,24 @@ public abstract class BinaryMipMapStrategy implements MipMapStrategy {
     setRangeValue(pointIndex, y, multiRange, 0);
   }
 
-  public final void appendDomainValue(double x, Array2D multiDomain) {
-    appendDomainValue(x, multiDomain, 0);
+  public void appendXY(double x, double y, MipMapChain mipMapChain) {
+    final int origNumMipLevels = mipMapChain.getMipMappedDomain().numRows();
+    
+    appendDomainValue(x, mipMapChain.getMipMappedDomain(), 0);
+    appendRangeValue(y, mipMapChain.getMipMappedRangeTuples().get(0), 0);
+    
+    final int newNumMipLevels = mipMapChain.getMipMappedDomain().numRows();
+    final int levelDiff = (newNumMipLevels - origNumMipLevels);
+    if (levelDiff == 1) {
+      final int newMipLevel = (newNumMipLevels - 1);
+      mipMapChain.addMipLevel(newMipLevel);
+    }
+    else if (levelDiff != 0) {
+      throw new IllegalStateException("levelDiff was " + levelDiff +
+          " after appendXY() method called");
+    }
   }
-
-  public final void appendRangeValue(double y, Array2D multiRange) {
-    appendRangeValue(y, multiRange, 0);
-  }
-
+  
   private void appendDomainValue(double x, Array2D a, int level) {
     //GWT.log("TESTING appendDomain: level=" + level + "; x=" + x, null);
     boolean levelExists = (level < a.numRows());
