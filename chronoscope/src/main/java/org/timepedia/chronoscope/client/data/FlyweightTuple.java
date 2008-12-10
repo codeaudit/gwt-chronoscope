@@ -7,24 +7,17 @@ import org.timepedia.chronoscope.client.util.Array1D;
  * @author chad takahashi
  */
 public final class FlyweightTuple implements Tuple5D {
-  private int index;
+  private int dataPointIndex = 0;
   private double[][] tupleData;
   private int tupleLength;
   
-  public FlyweightTuple() {
-    // do nothing
-  }
-  
-  public FlyweightTuple(int index, Array1D domain, Array1D[] rangeTuples) {
-    init(index, domain, rangeTuples);
-  }
-  
-  public void init(int index, Array1D domain, Array1D[] rangeTuples) {
-    this.index = index;
+  public FlyweightTuple(Array1D domain, Array1D[] rangeTuples) {
     this.tupleLength = 1 + rangeTuples.length;
-    if (tupleData == null || tupleData.length != this.tupleLength) {
-      tupleData = new double[tupleLength][];
-    }
+    tupleData = new double[tupleLength][];
+    setDomainAndRange(domain, rangeTuples);
+  }
+  
+  public void setDomainAndRange(Array1D domain, Array1D[] rangeTuples) {
     tupleData[0] = domain.backingArray();
     for (int i = 1; i < this.tupleLength; i++) {
       tupleData[i] = rangeTuples[i - 1].backingArray();
@@ -32,7 +25,7 @@ public final class FlyweightTuple implements Tuple5D {
   }
   
   public double get(int tupleIndex) {
-    return tupleData[tupleIndex][this.index];
+    return tupleData[tupleIndex][this.dataPointIndex];
   }
 
   public int size() {
@@ -40,26 +33,26 @@ public final class FlyweightTuple implements Tuple5D {
   }
 
   public double getFirst() {
-    return tupleData[0][this.index];
+    return tupleData[0][this.dataPointIndex];
   }
 
   public double getSecond() {
-    return tupleData[1][this.index];
+    return tupleData[1][this.dataPointIndex];
   }
 
   public double getThird() {
-    return tupleData[2][this.index];
+    return tupleData[2][this.dataPointIndex];
   }
 
   public double getFourth() {
-    return tupleData[3][this.index];
+    return tupleData[3][this.dataPointIndex];
   }
 
   public double getFifth() {
-    return tupleData[4][this.index];
+    return tupleData[4][this.dataPointIndex];
   }
   
-  public void next() {
-    ++this.index;
+  public void setDataPointIndex(int dataPointIndex) {
+    this.dataPointIndex = dataPointIndex;
   }
 }

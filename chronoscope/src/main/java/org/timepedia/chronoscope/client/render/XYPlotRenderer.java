@@ -120,10 +120,10 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     // Render the data curve
     int startIdx = Math.max(0, domainStart - 1);
-    int end = Math.min(domainEnd + 1, numSamples);
+    int endIdx = Math.min(domainEnd, numSamples - 1);
     int methodCallCount = 0;
     Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(startIdx);
-    for (int i = startIdx; i < end; i++) {
+    for (int i = startIdx; i <= endIdx; i++) {
       Tuple2D dataPt = tupleItr.next();
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
@@ -134,9 +134,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
     // Render the focus points on the curve
     renderer.beginPoints(layer, renderState);
     startIdx = Math.max(0, domainStart - 2);
-    end = Math.min(domainEnd + 1, numSamples);
+    endIdx = Math.min(domainEnd, numSamples - 1);
     tupleItr = currMipMap.getTupleIterator(startIdx);
-    for (int i = startIdx; i < end; i++) {
+    for (int i = startIdx; i <= endIdx; i++) {
       Tuple2D dataPt = tupleItr.next();
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast

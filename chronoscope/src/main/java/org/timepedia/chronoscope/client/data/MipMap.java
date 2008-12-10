@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Array2D;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Represents a version of a {@link Dataset} at a decreased level
@@ -21,7 +22,7 @@ public class MipMap {
   private int mipLevel;
   private Array1D domain;
   private Array1D[] rangeTuples;
-  private FlyweightTuple flyweightTuple = new FlyweightTuple();
+  private FlyweightTuple flyweightTuple;
   
   MipMap nextMipMap;
   
@@ -33,6 +34,7 @@ public class MipMap {
     for (int i = 0; i < this.rangeTuples.length; i++) {
       this.rangeTuples[i] = multiResRangeTuple[i].getRow(mipLevel);
     }
+    this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
   
   /**
@@ -55,7 +57,8 @@ public class MipMap {
    */
   public Tuple2D getTuple(int dataPointIndex) {
     ArgChecker.isLTE(dataPointIndex, this.size() - 1, "dataPointIndex");
-    this.flyweightTuple.init(dataPointIndex, this.domain, this.rangeTuples);
+    this.flyweightTuple.setDomainAndRange(domain, rangeTuples);
+    this.flyweightTuple.setDataPointIndex(dataPointIndex);
     return this.flyweightTuple;
   }
   
@@ -97,15 +100,19 @@ public class MipMap {
     final Array1D[] rangeTuples = this.rangeTuples;
     
     return new Iterator<Tuple2D>() {
-      final FlyweightTuple tuple = new FlyweightTuple(startIndex - 1, domain, rangeTuples);
+      final FlyweightTuple tuple = new FlyweightTuple(domain, rangeTuples);
+      final int endIndex = domain.size() - 1;
+      int ptr = startIndex;
       
       public boolean hasNext() {
-        // TODO: implement this
-        throw new UnsupportedOperationException();
+        return ptr <= endIndex;
       }
 
       public Tuple2D next() {
-        tuple.next();
+        if (!hasNext()) {
+          throw new NoSuchElementException("ptr=" + ptr + ", endIndex=" + endIndex);
+        }
+        tuple.setDataPointIndex(ptr++);
         return tuple;
       }
 
