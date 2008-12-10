@@ -48,7 +48,10 @@ public class MipMapChain {
       }
       this.name2mipmap = new HashMap<String,MipMap>();
       for (int i = 0; i < numMipLevels; i++) {
-        this.name2mipmap.put(mipLevelNames.get(i), this.mipMaps.get(i));
+        String mipLevelName = mipLevelNames.get(i);
+        if (mipLevelName != null) {
+          this.name2mipmap.put(mipLevelName, this.mipMaps.get(i));
+        }
       }
     }
   }

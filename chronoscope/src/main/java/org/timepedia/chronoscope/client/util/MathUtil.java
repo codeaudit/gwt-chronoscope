@@ -6,7 +6,8 @@ package org.timepedia.chronoscope.client.util;
  * @author chad takahashi &lt;chad@timepedia.org&gt;
  */
 public final class MathUtil {
-
+  private static final MinIntervalArrayFunction minIntervalFn = new MinIntervalArrayFunction();
+  
   /**
    * Keeps <tt>value</tt> bounded within the inclusive interval [min,max]. More
    * specifically, if <tt>value</tt> falls in the range [min,max], then
@@ -50,18 +51,8 @@ public final class MathUtil {
       throw new IllegalArgumentException("a.length was < 2: " + a.length);
     }
     
-    double smallestInterval = Double.POSITIVE_INFINITY;
-    for (int i = 1; i < a.length; i++) {
-      double curr = a[i];
-      double prev = a[i - 1];
-      if (curr < prev) {
-        throw new IllegalArgumentException("array not in sorted order: a[" + i + "]=" + a[i] + 
-            ", a[" + (i - 1) + "]=" + a[(i - 1)]);
-      }
-      smallestInterval = Math.min(smallestInterval, (curr - prev));
-    }
-   
-    return smallestInterval;
+    minIntervalFn.exec(a, a.length);
+    return minIntervalFn.getMinInterval();
   }
   
   /**

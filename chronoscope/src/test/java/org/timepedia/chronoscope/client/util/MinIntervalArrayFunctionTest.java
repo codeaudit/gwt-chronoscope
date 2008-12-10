@@ -17,5 +17,8 @@ public class MinIntervalArrayFunctionTest extends TestCase {
 
     fn.exec(new double[] {5}, 1);
     assertEquals(0.0, fn.getMinInterval());
+    
+    fn.exec(new double[] {-2, -3, 4, 2}, 4);
+    assertEquals(1.0, fn.getMinInterval());
   }
 }
