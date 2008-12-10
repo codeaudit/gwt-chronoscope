@@ -27,7 +27,7 @@ public class Array1DTest extends TestCase {
     catch (IllegalStateException e) {}
   }
   
-  private Array1D newArray(double[] a) {
+  public static Array1D newArray(double[] a) {
     double[][] dummy2dArray = new double[2][];
     dummy2dArray[0] = a;
     dummy2dArray[1] = new double[] {1, 2, 3}; // dummy values

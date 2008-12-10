@@ -85,6 +85,10 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     }
   }
   
+  public MipMapChain getMipMapChain() {
+    return this.mipMapChain;
+  }
+  
   public int getNumSamples(int mipLevel) {
     return this.mipMapChain.getMipMap(mipLevel).size();
   }

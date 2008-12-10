@@ -21,7 +21,7 @@ public class MipMapChain {
   private final int rangeTupleSize;
   
   private Array2D mipMappedDomain;
-  private List<Array2D> mipMappedRangeTuples;
+  private Array2D[] mipMappedRangeTuples;
 
   public MipMapChain(Array2D mipMappedDomain, List<Array2D> mipMappedRangeTuples) {
     this(mipMappedDomain, mipMappedRangeTuples, null);
@@ -31,13 +31,15 @@ public class MipMapChain {
         List<String> mipLevelNames) {
     
     validate(mipMappedDomain, mipMappedRangeTuples);
+    this.mipMappedDomain = mipMappedDomain;
+    this.mipMappedRangeTuples = mipMappedRangeTuples.toArray(new Array2D[0]);
     this.rangeTupleSize = mipMappedRangeTuples.size();
     
     final int numMipLevels = mipMappedDomain.numRows();
     
     this.mipMaps = new ArrayList<MipMap>();
     for (int i = 0; i < numMipLevels; i++) {
-      MipMap mipMap = new MipMap(mipMappedDomain, mipMappedRangeTuples, i);
+      MipMap mipMap = new MipMap(mipMappedDomain, this.mipMappedRangeTuples, i);
       this.mipMaps.add(mipMap);
     }
     
@@ -50,9 +52,6 @@ public class MipMapChain {
         this.name2mipmap.put(mipLevelNames.get(i), this.mipMaps.get(i));
       }
     }
-    
-    this.mipMappedDomain = mipMappedDomain;
-    this.mipMappedRangeTuples = mipMappedRangeTuples;
   }
   
   void addMipLevel(int mipLevel) {
@@ -108,7 +107,7 @@ public class MipMapChain {
    * tuple values in this object.  This method is intended for use with 
    * JUnit tests.
    */
-  List<Array2D> getMipMappedRangeTuples() {
+  Array2D[] getMipMappedRangeTuples() {
     return this.mipMappedRangeTuples;
   }  
   

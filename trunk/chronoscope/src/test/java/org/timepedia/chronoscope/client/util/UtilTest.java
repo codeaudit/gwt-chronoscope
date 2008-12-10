@@ -2,8 +2,8 @@ package org.timepedia.chronoscope.client.util;
 
 import junit.framework.TestCase;
 
-import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.AbstractDataset;
+import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 import java.util.Arrays;
@@ -16,11 +16,11 @@ public class UtilTest extends TestCase {
 
   public void testBinarySearch() {
     double[] domain = new double[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    Dataset<Tuple2D> ds = new JUnitDataset(domain);
+    Array1D a = Array1DTest.newArray(domain);
     
     // Case 1: Verify that exact key matches are found
     for (int i = 0; i < domain.length; i++) {
-      assertEquals(i, Util.binarySearch(ds, domain[i], 0));
+      assertEquals(i, Util.binarySearch(a, domain[i]));
     }
     
     // Case 2: Verify that a non-matching key returns the index to the closest
@@ -29,16 +29,16 @@ public class UtilTest extends TestCase {
       // Pick a search key that's between index [i] and [i+1]
       double searchKey = (domain[i] + domain[i + 1]) / 2.0;
       int expectedIndex = i + 1; // closest matching index to the right
-      assertEquals(expectedIndex, Util.binarySearch(ds, searchKey, 0));
+      assertEquals(expectedIndex, Util.binarySearch(a, searchKey));
     }
     
     // Case 3: search key that's smaller than domain[0] should return index 0
-    assertEquals(0, Util.binarySearch(ds, domain[0] - 1.0, 0));
+    assertEquals(0, Util.binarySearch(a, domain[0] - 1.0));
 
     // Case 4: search key that's greater than domain[lastIndex] should
     // return lastIndex.
     final int lastIndex = domain.length - 1;
-    assertEquals(lastIndex, Util.binarySearch(ds, domain[lastIndex] + 1.0, 0));
+    assertEquals(lastIndex, Util.binarySearch(a, domain[lastIndex] + 1.0));
   }
   
   public void testCopyArray() {
@@ -99,6 +99,10 @@ public class UtilTest extends TestCase {
     }
 
     public Interval getExtrema(int tupleCoordinate) {
+      throw new UnsupportedOperationException();
+    }
+
+    public MipMapChain getMipMapChain() {
       throw new UnsupportedOperationException();
     }
   }

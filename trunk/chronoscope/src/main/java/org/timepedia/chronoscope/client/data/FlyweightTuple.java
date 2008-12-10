@@ -1,20 +1,23 @@
 package org.timepedia.chronoscope.client.data;
 
-import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple5D;
+import org.timepedia.chronoscope.client.util.Array1D;
 
 /**
  * @author chad takahashi
  */
 public final class FlyweightTuple implements Tuple5D {
   private int dataPointIndex = -1;
-  private final int tupleLength;
   private MipMapChain mipMapChain;
-  private MipMap mipMap;
+  private Array1D[] tupleData;
+  private Array1D domainX, rangeY;
+  private int mipLevel = -1;
+  private final int tupleLength;
   
   public FlyweightTuple(MipMapChain mipMapChain) {
     this.mipMapChain = mipMapChain;
     this.tupleLength = 1 + mipMapChain.getRangeTupleSize();
+    this.tupleData = new Array1D[this.tupleLength];
   }
   
   public void setDataPointIndex(int index) {
@@ -22,28 +25,30 @@ public final class FlyweightTuple implements Tuple5D {
   }
 
   public void setMipLevel(int mipLevel) {
-    this.mipMap = this.mipMapChain.getMipMap(mipLevel);
-  }
-
-  public Tuple2D copy() {
-    throw new UnsupportedOperationException();
+    if (mipLevel != this.mipLevel) {
+      MipMap mipMap = this.mipMapChain.getMipMap(mipLevel);
+      this.mipLevel = mipLevel;
+      this.domainX = mipMap.getDomain();
+      this.rangeY = mipMap.getRange(0);
+      this.tupleData[0] = this.domainX;
+      for (int i = 1; i < this.tupleLength; i++) {
+        this.tupleData[i] = mipMap.getRange(i - 1);
+      }
+    }
   }
 
   public double get(int tupleIndex) {
-    if (tupleIndex == 0) {
-      return mipMap.getDomain().get(dataPointIndex);
-    }
-    else {
-      return mipMap.getRange(tupleIndex - 1).get(dataPointIndex);
-    }
+    return this.tupleData[tupleIndex].get(this.dataPointIndex);
   }
 
   public double getFirst() {
-    return get(0);
+    return this.domainX.get(this.dataPointIndex);
+    //return get(0);
   }
 
   public double getSecond() {
-    return get(1);
+    return this.rangeY.get(this.dataPointIndex);
+    //return get(1);
   }
 
   public double getThird() {

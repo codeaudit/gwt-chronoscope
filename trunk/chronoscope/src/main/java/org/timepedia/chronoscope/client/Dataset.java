@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client;
 
+import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
@@ -45,6 +46,9 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    */
   double getMinDomainInterval();
 
+  @NoExport
+  MipMapChain getMipMapChain();
+  
   /**
    * Return an id used to identify the axis this dataset should be assigned to,
    * typically the physical units (e.g. meters/second). Datasets with identical

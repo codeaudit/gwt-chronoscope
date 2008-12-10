@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.data.MipMap;
 
 /**
  * Represents a dataset along with all the associated information needed to 
@@ -9,6 +10,13 @@ import org.timepedia.chronoscope.client.Dataset;
  * @author chad takahashi
  */
 public class DrawableDataset {
+  
+  public void setCurrMipLevel(int mipLevel) {
+    if (mipLevel != this.currMipLevel) {
+      this.currMipLevel = mipLevel;
+      this.currMipMap = this.dataset.getMipMapChain().getMipMap(mipLevel);
+    }
+  }
   
   /**
    * The dataset model to be rendered
@@ -39,8 +47,14 @@ public class DrawableDataset {
   public double visRangeMin, visRangeMax;
   
   /**
+   * Returns the {@link MipMap} that's currently being used by the active
+   * {@link #renderer}. 
+   */
+  public MipMap currMipMap;
+  
+  /**
    * The most recent mip level used to render this dataset.
    */
-  public int currMipLevel;
+  private int currMipLevel = -1;
 
 }
