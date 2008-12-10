@@ -22,8 +22,6 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   
   protected MipMapChain mipMapChain;
   
-  protected FlyweightTuple flyweightTuple;
-
   /**
    * Stores the min/max range values for each tuple coordinate in {@link #mmRangeTuple}.
    */
@@ -65,15 +63,11 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     }
 
     preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
-    
-    flyweightTuple = new FlyweightTuple(mipMapChain);
   }
 
   public final T getFlyweightTuple(int index) {
-    return getFlyweightTuple(index, 0);
+    return (T)rawData.getTuple(index);
   }
-
-  public abstract T getFlyweightTuple(int index, int mipLevel);
 
   public Interval getExtrema(int tupleCoordinate) {
     if (tupleCoordinate == 0) {
@@ -89,16 +83,16 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return this.mipMapChain;
   }
   
-  public int getNumSamples(int mipLevel) {
-    return this.mipMapChain.getMipMap(mipLevel).size();
+  public int getNumSamples() {
+    return this.rawData.size();
   }
   
   public int getTupleLength() {
     return 1 + this.mipMapChain.getRangeTupleSize();
   }
 
-  public double getX(int index, int mipLevel) {
-    return this.mipMapChain.getMipMap(mipLevel).getDomain().get(index);
+  public double getX(int index) {
+    return this.rawData.getDomain().get(index);
   }
 
   /**

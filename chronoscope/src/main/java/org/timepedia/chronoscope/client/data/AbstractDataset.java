@@ -40,10 +40,6 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
     return minDomainInterval;
   }
   
-  public final int getNumSamples() {
-    return getNumSamples(0);
-  }
-  
   public final Interval getPreferredRangeAxisInterval() {
     return preferredRangeAxisInterval;
   }
@@ -54,10 +50,6 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
 
   public final String getRangeLabel() {
     return rangeLabel;
-  }
-
-  public final double getX(int index) {
-    return getX(index, 0);
   }
 
 }

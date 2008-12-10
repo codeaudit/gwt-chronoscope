@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.MutableDataset;
+import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.junit.OODoubleArray;
@@ -72,14 +73,21 @@ public class ArrayDataset2DTest extends TestCase {
     assertEquals(expected.getExtrema(1), actual.getExtrema(1));
     assertEquals(expected.getMinDomainInterval(), actual.getMinDomainInterval());
     
+    MipMapChain expectedChain = expected.getMipMapChain();
+    MipMapChain actualChain = actual.getMipMapChain();
     for (int i = 0; i < numMipLevels; i++) {
-      assertEquals(expected.getNumSamples(i), actual.getNumSamples(i));
-      int numSamples = actual.getNumSamples(i);
+      MipMap expectedMipMap = expectedChain.getMipMap(i);
+      MipMap actualMipMap = actualChain.getMipMap(i);
+      
+      assertEquals(expectedMipMap.size(), actualMipMap.size());
+      int numSamples = actualMipMap.size();
+      Array1D expectedDomain = expectedMipMap.getDomain();
+      Array1D actualDomain = actualMipMap.getDomain();
       for (int j = 0; j < numSamples; j++) {
-        assertEquals(expected.getX(j, i), actual.getX(j, i));
+        assertEquals(expectedDomain.get(j), actualDomain.get(j));
         
-        assertEquals(expected.getFlyweightTuple(j, i).getSecond(), 
-                     actual.getFlyweightTuple(j, i).getSecond());
+        assertEquals(expectedMipMap.getTuple(j).getSecond(), 
+                     actualMipMap.getTuple(j).getSecond());
       }
     }
   }

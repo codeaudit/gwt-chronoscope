@@ -39,8 +39,7 @@ public class MipMapChain {
     
     this.mipMaps = new ArrayList<MipMap>();
     for (int i = 0; i < numMipLevels; i++) {
-      MipMap mipMap = new MipMap(mipMappedDomain, this.mipMappedRangeTuples, i);
-      this.mipMaps.add(mipMap);
+      addMipLevel();
     }
     
     if (mipLevelNames != null) {
@@ -54,9 +53,15 @@ public class MipMapChain {
     }
   }
   
-  void addMipLevel(int mipLevel) {
-    MipMap mipMap = new MipMap(mipMappedDomain, mipMappedRangeTuples, mipLevel);
-    this.mipMaps.add(mipMap);
+  void addMipLevel() {
+    final int currHighestMipLevel = mipMaps.size() - 1;
+    MipMap nextMipMap = 
+      new MipMap(mipMappedDomain, mipMappedRangeTuples, currHighestMipLevel + 1);
+    if (!this.mipMaps.isEmpty()) {
+      MipMap currMipMap = this.mipMaps.get(currHighestMipLevel);
+      currMipMap.nextMipMap = nextMipMap;
+    }
+    this.mipMaps.add(nextMipMap);
   }
   
   /**

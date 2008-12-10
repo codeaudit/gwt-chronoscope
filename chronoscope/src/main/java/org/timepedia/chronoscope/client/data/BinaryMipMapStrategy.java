@@ -125,8 +125,7 @@ public abstract class BinaryMipMapStrategy implements MipMapStrategy {
     final int newNumMipLevels = mipMapChain.getMipMappedDomain().numRows();
     final int levelDiff = (newNumMipLevels - origNumMipLevels);
     if (levelDiff == 1) {
-      final int newMipLevel = (newNumMipLevels - 1);
-      mipMapChain.addMipLevel(newMipLevel);
+      mipMapChain.addMipLevel();
     }
     else if (levelDiff != 0) {
       throw new IllegalStateException("levelDiff was " + levelDiff +

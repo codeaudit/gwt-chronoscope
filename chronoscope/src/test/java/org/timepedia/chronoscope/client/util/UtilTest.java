@@ -78,7 +78,7 @@ public class UtilTest extends TestCase {
       this.domain = domain;
     }
     
-    public int getNumSamples(int level) {
+    public int getNumSamples() {
       return this.domain.length;
     }
 
@@ -86,7 +86,7 @@ public class UtilTest extends TestCase {
       return 2;
     }
 
-    public double getX(int index, int level) {
+    public double getX(int index) {
       return domain[index];
     }
 

@@ -45,7 +45,11 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * within the dataset.
    */
   double getMinDomainInterval();
-
+  
+  /**
+   * Provides access to the ordered set of {@link MipMap} objects, which 
+   * represent this dataset at decreasing levels of resolution.
+   */
   @NoExport
   MipMapChain getMipMapChain();
   
@@ -76,17 +80,10 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   double getDomainEnd();
 
   /**
-   * Returns the tuple associated with the specified domain index at mip level
-   * 0.
+   * Returns the tuple associated with the specified data point index.
    */
   @NoExport
   T getFlyweightTuple(int index);
-
-  /**
-   * Returns the tuple associated with the specified domain index and mip level.
-   */
-  @NoExport
-  T getFlyweightTuple(int index, int mipLevel);
 
   /**
    * Return a unique identifier for this dataset.
@@ -109,14 +106,9 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getPreferredRenderer();
   
   /**
-   * Returns the number of samples in the dataset (mip level 0).
+   * Returns the number of samples in this dataset.
    */
   int getNumSamples();
-
-  /**
-   * Return the number of samples in the dataset at the specified mip level.
-   */
-  int getNumSamples(int level);
 
   /**
    * Return a label that may be used in a chart legend for this dataset.
@@ -133,10 +125,5 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * Return the domain value for the given data point index on mip level 0.
    */
   double getX(int index);
-
-  /**
-   * Return the domain value for the given data point index on the given mip level.
-   */
-  double getX(int index, int level);
 
 }
