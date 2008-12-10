@@ -7,68 +7,59 @@ import org.timepedia.chronoscope.client.util.Array1D;
  * @author chad takahashi
  */
 public final class FlyweightTuple implements Tuple5D {
-  private int dataPointIndex = -1;
-  private MipMapChain mipMapChain;
-  private Array1D[] tupleData;
-  private Array1D domainX, rangeY;
-  private int mipLevel = -1;
-  private final int tupleLength;
+  private int index;
+  private double[][] tupleData;
+  private int tupleLength;
   
-  public FlyweightTuple(MipMapChain mipMapChain) {
-    this.mipMapChain = mipMapChain;
-    this.tupleLength = 1 + mipMapChain.getRangeTupleSize();
-    this.tupleData = new Array1D[this.tupleLength];
+  public FlyweightTuple() {
+    // do nothing
   }
   
-  public void setDataPointIndex(int index) {
-    this.dataPointIndex = index;
+  public FlyweightTuple(int index, Array1D domain, Array1D[] rangeTuples) {
+    init(index, domain, rangeTuples);
   }
-
-  public void setMipLevel(int mipLevel) {
-    if (mipLevel != this.mipLevel) {
-      MipMap mipMap = this.mipMapChain.getMipMap(mipLevel);
-      this.mipLevel = mipLevel;
-      this.domainX = mipMap.getDomain();
-      this.rangeY = mipMap.getRange(0);
-      this.tupleData[0] = this.domainX;
-      for (int i = 1; i < this.tupleLength; i++) {
-        this.tupleData[i] = mipMap.getRange(i - 1);
-      }
+  
+  public void init(int index, Array1D domain, Array1D[] rangeTuples) {
+    this.index = index;
+    this.tupleLength = 1 + rangeTuples.length;
+    if (tupleData == null || tupleData.length != this.tupleLength) {
+      tupleData = new double[tupleLength][];
+    }
+    tupleData[0] = domain.backingArray();
+    for (int i = 1; i < this.tupleLength; i++) {
+      tupleData[i] = rangeTuples[i - 1].backingArray();
     }
   }
-
+  
   public double get(int tupleIndex) {
-    return this.tupleData[tupleIndex].get(this.dataPointIndex);
-  }
-
-  public double getFirst() {
-    return this.domainX.get(this.dataPointIndex);
-    //return get(0);
-  }
-
-  public double getSecond() {
-    return this.rangeY.get(this.dataPointIndex);
-    //return get(1);
-  }
-
-  public double getThird() {
-    return get(2);
-  }
-
-  public double getFourth() {
-    return get(3);
-  }
-
-  public double getFifth() {
-    return get(4);
+    return tupleData[tupleIndex][this.index];
   }
 
   public int size() {
     return tupleLength;
   }
 
-  public String toString() {
-    return "[" + get(0) + ", " + get(1) + ", " + get(2) + ", " + get(3) + ", "
-        + get(4) + "]";
+  public double getFirst() {
+    return tupleData[0][this.index];
+  }
+
+  public double getSecond() {
+    return tupleData[1][this.index];
+  }
+
+  public double getThird() {
+    return tupleData[2][this.index];
+  }
+
+  public double getFourth() {
+    return tupleData[3][this.index];
+  }
+
+  public double getFifth() {
+    return tupleData[4][this.index];
+  }
+  
+  public void next() {
+    ++this.index;
   }
 }

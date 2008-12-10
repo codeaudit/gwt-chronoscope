@@ -21,6 +21,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
+import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
@@ -1373,28 +1374,26 @@ public class DefaultXYPlot<T extends Tuple2D>
     for (Dataset<T> ds : dataSets) {
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawablePts
-      int lowestMipLevel = findLowestMipLevel(ds, maxDrawableDataPoints);
-      int numSamples = ds.getNumSamples(lowestMipLevel);
-      end = Math.max(end, ds.getX(numSamples - 1, lowestMipLevel));
+      MipMap mipMap = findLowestMipLevel(ds.getMipMapChain(), maxDrawableDataPoints);
+      end = Math.max(end, mipMap.getDomain().getLast());
     }
-
     return end;
   }
 
   /**
-   * Finds the lowest mip level (highest resolution) of the specified dataset
+   * Finds the lowest mip level (highest resolution) of the specified mipmap chain
    * whose data point cardinality is not greater than <tt>maxDrawablePts</tt>.
    */
-  private static <T extends Tuple2D> int findLowestMipLevel(Dataset<T> ds, 
+  private static MipMap findLowestMipLevel(MipMapChain mipMapChain, 
       int maxDrawablePts) {
     
-    int mipLevel = 0;
+    MipMap mipMap = mipMapChain.getMipMap(0);
     while (true) {
-      int numPoints = ds.getNumSamples(mipLevel);
+      int numPoints = mipMap.size();
       if (numPoints <= maxDrawablePts) {
-        return mipLevel;
+        return mipMap;
       }
-      ++mipLevel;
+      mipMap = mipMap.next();
     }
   }
 

@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.data.tuple.Tuple5D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Array2D;
@@ -22,7 +21,9 @@ public class MipMap {
   private int mipLevel;
   private Array1D domain;
   private Array1D[] rangeTuples;
-  private SimpleTuple flyweightTuple = new SimpleTuple();
+  private FlyweightTuple flyweightTuple = new FlyweightTuple();
+  
+  MipMap nextMipMap;
   
   MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
     this.mipLevel = mipLevel;
@@ -34,9 +35,11 @@ public class MipMap {
     }
   }
   
+  /**
+   * Returns the array of domain values within this {@link MipMap}.
+   */
   public Array1D getDomain() {
     return this.domain;
-    //return this.multiResDomain.getRow(mipLevel);
   }
   
   /**
@@ -47,12 +50,19 @@ public class MipMap {
     return this.mipLevel;
   }
   
+  /**
+   * Returns the datapoint tuple at the specified index within this {@link MipMap}.
+   */
   public Tuple2D getTuple(int dataPointIndex) {
     ArgChecker.isLTE(dataPointIndex, this.size() - 1, "dataPointIndex");
     this.flyweightTuple.init(dataPointIndex, this.domain, this.rangeTuples);
     return this.flyweightTuple;
   }
   
+  /**
+   * Returns the array of range values for a specific tuple element
+   *  within this {@link MipMap}.
+   */
   public Array1D getRange(int tupleIndex) {
     return this.rangeTuples[tupleIndex];
   }
@@ -62,6 +72,13 @@ public class MipMap {
    */
   public int getRangeTupleSize() {
     return this.rangeTuples.length;
+  }
+  
+  /**
+   * Returns the next {@link MipMap} in this chain.
+   */
+  public MipMap next() {
+    return nextMipMap;
   }
   
   /**
@@ -80,7 +97,7 @@ public class MipMap {
     final Array1D[] rangeTuples = this.rangeTuples;
     
     return new Iterator<Tuple2D>() {
-      final SimpleTuple tuple = new SimpleTuple(startIndex - 1, domain, rangeTuples);
+      final FlyweightTuple tuple = new FlyweightTuple(startIndex - 1, domain, rangeTuples);
       
       public boolean hasNext() {
         // TODO: implement this
@@ -98,61 +115,4 @@ public class MipMap {
     };
   }
   
-  private static final class SimpleTuple implements Tuple5D {
-    private int index;
-    private double[][] tupleData;
-    private int tupleLength;
-    
-    public SimpleTuple() {
-      // do nothing
-    }
-    
-    public SimpleTuple(int index, Array1D domain, Array1D[] rangeTuples) {
-      init(index, domain, rangeTuples);
-    }
-    
-    public void init(int index, Array1D domain, Array1D[] rangeTuples) {
-      this.index = index;
-      this.tupleLength = 1 + rangeTuples.length;
-      if (tupleData == null || tupleData.length != this.tupleLength) {
-        tupleData = new double[tupleLength][];
-      }
-      tupleData[0] = domain.backingArray();
-      for (int i = 1; i < this.tupleLength; i++) {
-        tupleData[i] = rangeTuples[i - 1].backingArray();
-      }
-    }
-    
-    public double get(int tupleIndex) {
-      return tupleData[tupleIndex][this.index];
-    }
-
-    public int size() {
-      return tupleLength;
-    }
-
-    public double getFirst() {
-      return tupleData[0][this.index];
-    }
-
-    public double getSecond() {
-      return tupleData[1][this.index];
-    }
-
-    public double getThird() {
-      return tupleData[2][this.index];
-    }
-
-    public double getFourth() {
-      return tupleData[3][this.index];
-    }
-
-    public double getFifth() {
-      return tupleData[4][this.index];
-    }
-    
-    public void next() {
-      ++this.index;
-    }
-  }
 }

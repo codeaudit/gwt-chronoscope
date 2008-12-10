@@ -69,8 +69,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
         if ((domainEndIdx - domainStartIdx) <= maxPoints) {
           break;
         }
-        // TODO: add linked list 'next()' method to MipMap class
-        currMipMap = mipMapChain.getMipMap(currMipMap.getLevel() + 1);
+
+        currMipMap = currMipMap.next();
       };
 
       if (drawableDataset.currMipMap.getLevel() != currMipMap.getLevel()) {
