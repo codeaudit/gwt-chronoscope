@@ -139,7 +139,7 @@ public class Interval {
   }
 
   public String toString() {
-    return "[" + (long) start + ", " + (long) end + "]";
+    return "[" + start + ", " + end + "]";
   }
   
 }

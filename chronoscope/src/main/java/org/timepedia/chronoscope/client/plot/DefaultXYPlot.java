@@ -20,6 +20,7 @@ import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
+import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
@@ -42,6 +43,7 @@ import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -253,7 +255,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getCurrentMipLevel(int datasetIndex) {
-    return plotRenderer.getDrawableDataset(datasetIndex).currMipLevel;
+    return plotRenderer.getDrawableDataset(datasetIndex).currMipMap.getLevel();
   }
 
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
@@ -269,12 +271,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public double getDataX(int datasetIndex, int pointIndex) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
-    return dds.dataset.getX(pointIndex, dds.currMipLevel);
+    return dds.currMipMap.getDomain().get(pointIndex);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
-    return dds.dataset.getFlyweightTuple(pointIndex, dds.currMipLevel).getSecond();
+    return dds.currMipMap.getTuple(pointIndex).getSecond();
   }
 
   public Interval getDomain() {
@@ -317,7 +319,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
-    return Util.binarySearch(dds.dataset, domainX, dds.currMipLevel);
+    return Util.binarySearch(dds.currMipMap.getDomain(), domainX);
   }
 
   public OverviewAxisPanel getOverviewAxisPanel() {
@@ -1102,16 +1104,14 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
-    Dataset<T> ds = dds.dataset;
-    final int currMipLevel = dds.currMipLevel;
-
+    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap;
+    
     // Find index of data point closest to the right of dataX at the current MIP level
-    int closestPtToRight = Util.binarySearch(ds, dataX, currMipLevel);
+    int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
 
     double sx = domainToScreenX(dataX, datasetIndex);
     double sy = rangeToScreenY(dataY, datasetIndex);
-    Tuple2D tupleRight = ds.getFlyweightTuple(closestPtToRight, currMipLevel);
+    Tuple2D tupleRight = currMipMap.getTuple(closestPtToRight);
     double rx = domainToScreenX(tupleRight.getFirst(), datasetIndex);
     double ry = rangeToScreenY(tupleRight.getSecond(), datasetIndex);
 
@@ -1121,7 +1121,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       np.dist = df.dist(sx, sy, rx, ry);
     } else {
       int closestPtToLeft = closestPtToRight - 1;
-      Tuple2D tupleLeft = ds.getFlyweightTuple(closestPtToLeft, currMipLevel);
+      Tuple2D tupleLeft = currMipMap.getTuple(closestPtToLeft);
       double lx = domainToScreenX(tupleLeft.getFirst(), datasetIndex);
       double ly = rangeToScreenY(tupleLeft.getSecond(), datasetIndex);
       double lDist = df.dist(sx, sy, lx, ly);
@@ -1222,10 +1222,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     pushHistory();
 
     Dataset<T> dataset = datasets.get(datasetIndex);
-
-    final int currMipLevel = plotRenderer.getDrawableDataset(datasetIndex).currMipLevel;
-    pointIndex = 
-        Util.binarySearch(dataset, dataset.getX(pointIndex, currMipLevel), 0);
+    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
+    double currMipLevelDomainX = dds.currMipMap.getDomain().get(pointIndex);
+    Array1D rawDomain = dds.dataset.getMipMapChain().getMipMap(0).getDomain();
+    pointIndex = Util.binarySearch(rawDomain, currMipLevelDomainX);
 
     final int zoomOffset = 10;
     final double newOrigin = dataset.getX(Math.max(0, pointIndex - zoomOffset));
@@ -1298,48 +1298,46 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     Dataset<T> ds;
-    int focusDataset, focusPoint;
-    int mipLevel;
-
+    int focusDatasetIdx, focusPointIdx;
+    
     if (focus == null) {
       // If no data point currently has the focus, then set the focus point to
       // the point on dataset [0] that's closest to the center of the screen.
-      focusDataset = 0;
-
-      ds = datasets.get(focusDataset);
-
-      mipLevel = plotRenderer.getDrawableDataset(focusDataset).currMipLevel;
+      focusDatasetIdx = 0;
+      ds = datasets.get(focusDatasetIdx);
+      MipMap mipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
       double domainCenter = visDomain.midpoint();
-      focusPoint = Util.binarySearch(ds, domainCenter, mipLevel);
+      focusPointIdx = Util.binarySearch(mipMap.getDomain(), domainCenter);
     } else {
       // some data point currently has the focus.
-      focusDataset = focus.getDatasetIndex();
-      focusPoint = focus.getPointIndex();
-      mipLevel = plotRenderer.getDrawableDataset(focusDataset).currMipLevel;
-      focusPoint += n;
+      focusDatasetIdx = focus.getDatasetIndex();
+      focusPointIdx = focus.getPointIndex();
+      MipMap mipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
+      focusPointIdx += n;
 
-      if (focusPoint >= datasets.get(focusDataset).getNumSamples(mipLevel)) {
-        ++focusDataset;
-        if (focusDataset >= datasets.size()) {
-          focusDataset = 0;
+      if (focusPointIdx >= mipMap.size()) {
+        ++focusDatasetIdx;
+        if (focusDatasetIdx >= datasets.size()) {
+          focusDatasetIdx = 0;
         }
-        focusPoint = 0;
-      } else if (focusPoint < 0) {
-        --focusDataset;
-        if (focusDataset < 0) {
-          focusDataset = datasets.size() - 1;
+        focusPointIdx = 0;
+      } else if (focusPointIdx < 0) {
+        --focusDatasetIdx;
+        if (focusDatasetIdx < 0) {
+          focusDatasetIdx = datasets.size() - 1;
         }
-        focusPoint = datasets.get(focusDataset).getNumSamples(mipLevel) - 1;
+        focusPointIdx = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size() - 1;
       }
 
-      ds = datasets.get(focusDataset);
+      ds = datasets.get(focusDatasetIdx);
     }
-
-    Tuple2D dataPt = ds.getFlyweightTuple(focusPoint, mipLevel);
+    
+    MipMap currMipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
+    Tuple2D dataPt = currMipMap.getTuple(focusPointIdx);
     double dataX = dataPt.getFirst();
     double dataY = dataPt.getSecond();
     ensureVisible(dataX, dataY, null);
-    setFocusAndNotifyView(focusDataset, focusPoint);
+    setFocusAndNotifyView(focusDatasetIdx, focusPointIdx);
     redraw();
   }
 

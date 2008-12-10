@@ -80,7 +80,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
     for (SimpleDataset ds : testDatasets) {
       for (ConstructType t : ConstructType.values()) {
         MipMapChain mipmapChain = t.mipmap(mipmap, ds.domain, ds.range);
-        verifyMultiRange(ds, mipmapChain.getMipMappedRangeTuples().get(0), t);
+        verifyMultiRange(ds, mipmapChain.getMipMappedRangeTuples()[0], t);
       }
     }
   }

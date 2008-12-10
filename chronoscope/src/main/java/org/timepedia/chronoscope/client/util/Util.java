@@ -9,39 +9,36 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 public final class Util {
 
   /**
-   * Searches the datapoints in a dataset for a domain value and returns the
-   * corresponding domain index at a given mip level.  If the dataset doesn't
-   * contain the specified domain value, then the domain index of the next
-   * largest domain value is returned. The one exception to this rule is when
-   * <tt>domainValue</tt> is greater than all domain values within the dataset,
-   * in which case the largest domain value in the dataset is returned. <p> The
-   * dataset's domain values are assumed to be in sorted ascending order (this
-   * should be enforced by all {@link Dataset} implementations).
+   * Searches the specified array for the specified value using a binary
+   * search algorithm.  If the array doesn't contain the specified value, 
+   * then the array index of the next largest value is returned. The one 
+   * exception to this rule is when <tt>value</tt> is greater than all 
+   * values within the array, in which case the largest value in the array
+   * is returned. 
+   * <p> 
+   * The array is assumed to be in sorted ascending order.
    *
-   * @param ds          - The dataset to search on
-   * @param domainValue - The sought-after domain value
-   * @param mipLevel    - The mip level to search on within the dataset
+   * @param a - The array to search on
+   * @param value - The sought-after value
    */
-  public static <T extends Tuple2D> int binarySearch(Dataset<T> ds, double domainValue, 
-      int mipLevel) {
-    
+  public static <T extends Tuple2D> int binarySearch(Array1D a, double value) {
     int low = 0;
-    int high = ds.getNumSamples(mipLevel) - 1;
+    int high = a.size() - 1;
 
     while (low <= high) {
       int mid = (low + high) >> 1;
-      double midVal = ds.getX(mid, mipLevel);
+      double midVal = a.get(mid);
 
-      if (midVal < domainValue) {
+      if (midVal < value) {
         low = mid + 1;
-      } else if (midVal > domainValue) {
+      } else if (midVal > value) {
         high = mid - 1;
       } else {
         return mid; // key found
       }
     }
 
-    return MathUtil.bound(low, 0, ds.getNumSamples(mipLevel) - 1);
+    return MathUtil.bound(low, 0, a.size() - 1);
   }
 
   /**

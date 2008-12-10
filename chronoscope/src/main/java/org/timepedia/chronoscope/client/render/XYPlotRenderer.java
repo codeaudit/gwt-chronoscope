@@ -6,13 +6,18 @@ import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.data.MipMap;
+import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.Array1D;
+import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,6 +29,8 @@ import java.util.List;
  */
 public class XYPlotRenderer<T extends Tuple2D> {
   protected RenderState renderState = new RenderState();
+  
+  private ExtremaArrayFunction extremaFn = new ExtremaArrayFunction();
   
   // Stores the order in which the datasets should be rendered.  For example, if
   // element [0] = 4, then this means the 5th dataset should be rendered first.
@@ -53,30 +60,31 @@ public class XYPlotRenderer<T extends Tuple2D> {
           plot.getMaxDrawableDataPoints());
       int domainStartIdx = 0;
       int domainEndIdx = 0;
-      int mipLevel = -1;
-      do {
-        mipLevel++;
-        domainStartIdx = Util.binarySearch(dataSet, plotDomainStart, mipLevel);
-        domainEndIdx = Util.binarySearch(dataSet, plotDomainStart + plotDomainLength, mipLevel);
-      } while ((domainEndIdx - domainStartIdx) > maxPoints);
+      MipMapChain mipMapChain = dataSet.getMipMapChain();
+      MipMap currMipMap = mipMapChain.getMipMap(0);
+      while (true) {
+        Array1D domain = currMipMap.getDomain();
+        domainStartIdx = Util.binarySearch(domain, plotDomainStart);
+        domainEndIdx = Util.binarySearch(domain, plotDomainStart + plotDomainLength);
+        if ((domainEndIdx - domainStartIdx) <= maxPoints) {
+          break;
+        }
+        // TODO: add linked list 'next()' method to MipMap class
+        currMipMap = mipMapChain.getMipMap(currMipMap.getLevel() + 1);
+      };
 
-      if (drawableDataset.currMipLevel != mipLevel) {
-        drawableDataset.currMipLevel = mipLevel;
+      if (drawableDataset.currMipMap.getLevel() != currMipMap.getLevel()) {
+        drawableDataset.currMipMap = currMipMap;
         plot.getHoverPoints()[datasetIdx] = DefaultXYPlot.NO_SELECTION;
       }
       
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
-      double rangeMin = Double.POSITIVE_INFINITY;
-      double rangeMax = Double.NEGATIVE_INFINITY;
-      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-        double y = dataSet.getFlyweightTuple(i, mipLevel).getSecond();
-        rangeMin = Math.min(rangeMin, y);
-        rangeMax = Math.max(rangeMax, y);
-      }
-      drawableDataset.visRangeMin = rangeMin;
-      drawableDataset.visRangeMax = rangeMax;
+      currMipMap.getRange(0).execFunction(this.extremaFn);
+      Interval rangeYExtrema = this.extremaFn.getExtrema();
+      drawableDataset.visRangeMin = rangeYExtrema.getStart();
+      drawableDataset.visRangeMax = rangeYExtrema.getEnd();
     }
   }
 
@@ -107,14 +115,16 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     int domainStart = dds.visDomainStartIndex;
     int domainEnd = dds.visDomainEndIndex;
-    int mipLevel = dds.currMipLevel;
-    int numSamples = dataSet.getNumSamples(mipLevel);
+    MipMap currMipMap = dds.currMipMap;
+    int numSamples = currMipMap.size();
 
     // Render the data curve
+    int startIdx = Math.max(0, domainStart - 1);
     int end = Math.min(domainEnd + 1, numSamples);
     int methodCallCount = 0;
-    for (int i = Math.max(0, domainStart - 1); i < end; i++) {
-      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+    Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(startIdx);
+    for (int i = startIdx; i < end; i++) {
+      Tuple2D dataPt = tupleItr.next();
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
       renderer.drawCurvePart(layer, (T)dataPt, methodCallCount++, renderState);
@@ -123,9 +133,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
     
     // Render the focus points on the curve
     renderer.beginPoints(layer, renderState);
+    startIdx = Math.max(0, domainStart - 2);
     end = Math.min(domainEnd + 1, numSamples);
-    for (int i = Math.max(0, domainStart - 2); i < end; i++) {
-      Tuple2D dataPt = dataSet.getFlyweightTuple(i, mipLevel);
+    tupleItr = currMipMap.getTupleIterator(startIdx);
+    for (int i = startIdx; i < end; i++) {
+      Tuple2D dataPt = tupleItr.next();
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
       renderer.drawPoint(layer, (T)dataPt, renderState);
@@ -172,7 +184,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
       final int hoverPoint = hoverPoints[i];
       if (hoverPoint != -1) {
         Dataset<T> dataset = dds.dataset;
-        T dataPt = dataset.getFlyweightTuple(hoverPoint, dds.currMipLevel);
+        // TODO: add generics to MipMap class to remove this cast
+        T dataPt = (T)dds.currMipMap.getTuple(hoverPoint);
+        //T dataPt = dataset.getFlyweightTuple(hoverPoint, dds.currMipMap.getLevel());
         dds.renderer.drawHoverPoint(layer, dataPt, i);
       }
     }
@@ -194,7 +208,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       drawableDataset.dataset = datasets.get(i);
       drawableDataset.renderer = renderer;
       drawableDataset.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
-      drawableDataset.currMipLevel = 0;
+      drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain().getMipMap(0);
       
       drawableDatasets.add(drawableDataset);
     }

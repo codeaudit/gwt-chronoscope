@@ -120,7 +120,7 @@ public abstract class BinaryMipMapStrategy implements MipMapStrategy {
     final int origNumMipLevels = mipMapChain.getMipMappedDomain().numRows();
     
     appendDomainValue(x, mipMapChain.getMipMappedDomain(), 0);
-    appendRangeValue(y, mipMapChain.getMipMappedRangeTuples().get(0), 0);
+    appendRangeValue(y, mipMapChain.getMipMappedRangeTuples()[0], 0);
     
     final int newNumMipLevels = mipMapChain.getMipMappedDomain().numRows();
     final int levelDiff = (newNumMipLevels - origNumMipLevels);

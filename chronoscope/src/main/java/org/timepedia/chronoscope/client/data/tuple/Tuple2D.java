@@ -10,11 +10,6 @@ import org.timepedia.exporter.client.Exportable;
 public interface Tuple2D extends Exportable {
 
   /**
-   * Returns a copy of this tuple.
-   */
-  Tuple2D copy();
-
-  /**
    * Returns the value that the specified index within this tuple
    * 
    * @param index - The 0-based index

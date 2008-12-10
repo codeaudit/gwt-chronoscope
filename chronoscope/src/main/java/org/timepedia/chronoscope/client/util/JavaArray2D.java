@@ -21,6 +21,7 @@ public final class JavaArray2D implements Array2D {
   private double[][] a;
   private int[] columnCounts;
   private int rowCount;
+  private Array1D[] rows;
 
   /**
    * Constructs an {@link JavaArray2D} object from the specified Java
@@ -42,6 +43,7 @@ public final class JavaArray2D implements Array2D {
 
     rowCount = a.length;
     columnCounts = new int[rowCount];
+    rows = new Array1D[rowCount];
 
     for (int i = 0; i < rowCount; i++) {
       columnCounts[i] = a[i].length;
@@ -78,13 +80,17 @@ public final class JavaArray2D implements Array2D {
     return a[row][column];
   }
   
-  public Array1D getRow(int row) {
-    assert MathUtil.isBounded(row, 0, rowCount - 1) 
-      : "row out of bounds: " + row;
+  public Array1D getRow(int rowIndex) {
+    assert MathUtil.isBounded(rowIndex, 0, rowCount - 1) 
+      : "row out of bounds: " + rowIndex;
     
-    // TODO: Cache these Array1D objects rather than creating a new one on each
-    // invocation of getRow().
-    return new Array1DImpl(a, row, columnCounts);
+    Array1D row = rows[rowIndex];
+    if (row == null) {
+      row = new Array1DImpl(this, rowIndex);
+      //row = new Array1DImpl(a, rowIndex, columnCounts);
+      rows[rowIndex] = row;
+    }
+    return row;
   }
   
 
@@ -139,8 +145,11 @@ public final class JavaArray2D implements Array2D {
       System.arraycopy(columnCounts, 0, newColumnCounts, 0, rowCapacity);
       columnCounts = newColumnCounts;
     }
-
-    rowCount = Math.max(rowCount, rowIdx + 1);
+    
+    if ((rowIdx + 1) > rowCount) {
+      rowCount = rowIdx + 1;
+      rows = new Array1D[rowCount];
+    }
 
     int colCapacity = a[rowIdx].length;
     boolean needMoreColumnCapacity = (colIdx >= colCapacity);
@@ -158,27 +167,29 @@ public final class JavaArray2D implements Array2D {
   }
   
   private static final class Array1DImpl implements Array1D {
-    private double[] data;
     private int row;
-    private int[] columnCounts;
+    private JavaArray2D parentArray;
     
-    public Array1DImpl(double[][] data2d, int row, int[] columnCounts) {
-      this.data = data2d[row];
+    public Array1DImpl(JavaArray2D parentArray, int row) {
+      this.parentArray = parentArray;
       this.row = row;
-      this.columnCounts = columnCounts;
+    }
+    
+    public double[] backingArray() {
+      return this.parentArray.a[this.row];
     }
     
     public double get(int index) {
-      assert (index < this.columnCounts[row]) 
+      assert (index < parentArray.columnCounts[row]) 
           : "index out of bounds: " + index;
       
-      return this.data[index];
+      return this.parentArray.a[this.row][index];
     }
     
     public double getLast() {
-      int arraySize = columnCounts[row];
+      int arraySize = parentArray.columnCounts[row];
       if (arraySize > 0) {
-        return this.data[arraySize - 1];
+        return this.parentArray.a[this.row][arraySize - 1];
       }
       else {
         throw new IllegalStateException("array is empty");
@@ -186,11 +197,11 @@ public final class JavaArray2D implements Array2D {
     }
     
     public int size() {
-      return this.columnCounts[row];
+      return this.parentArray.columnCounts[row];
     }
 
     public void execFunction(ArrayFunction f) {
-      f.exec(data, columnCounts[row]);
+      f.exec(parentArray.a[row], parentArray.columnCounts[row]);
     }
     
   }

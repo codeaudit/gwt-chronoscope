@@ -11,6 +11,17 @@ package org.timepedia.chronoscope.client.util;
 public interface Array1D {
   
   /**
+   * Returns the primitive <tt>double</tt> array that backs this
+   * object.  Note that the length of the backing array might 
+   * be greater than what {@link #size()} reports if this is
+   * a growable array.
+   * <p>
+   * This method should only be used when maximum performance 
+   * is needed.
+   */
+  double[] backingArray();
+  
+  /**
    * Returns the value at the index-th position in this array.
    */
   double get(int index);
@@ -29,4 +40,5 @@ public interface Array1D {
    * Applies the specified function to the elements in this array.
    */
   void execFunction(ArrayFunction f);
+  
 }

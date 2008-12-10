@@ -56,7 +56,7 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
       Mutation.RangeMutation m = (Mutation.RangeMutation) mutation;
       newY = m.getY();
       mipMapStrategy.setRangeValue(m.getPointIndex(), newY,
-          mipMapChain.getMipMappedRangeTuples().get(0));
+          mipMapChain.getMipMappedRangeTuples()[0]);
       newX = this.getX(m.getPointIndex());
     } 
     else {
