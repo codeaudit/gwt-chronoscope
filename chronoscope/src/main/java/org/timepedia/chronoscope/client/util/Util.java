@@ -45,14 +45,26 @@ public final class Util {
    * Returns a copy of the specified array.
    */
   public static double[] copyArray(double[] a) {
+    if (a != null) {
+      return copyArray(a, a.length);
+    }
+    else {
+      return null;
+    }
+  }
+
+  /**
+   * Returns a copy of the first <tt>length</tt> elements of the specified array.
+   */
+  public static double[] copyArray(double[] a, int length) {
     if (a == null) {
       return null;
     }
-    double[] copy = new double[a.length];
-    System.arraycopy(a, 0, copy, 0, a.length);
+    double[] copy = new double[length];
+    System.arraycopy(a, 0, copy, 0, length);
     return copy;
   }
-
+  
   /**
    * Returns a copy of the specified array.
    */
@@ -71,16 +83,11 @@ public final class Util {
   public static double[][] copyArray(double[][] a) {
     double[][] copy = new double[a.length][];
     for (int i = 0; i < a.length; i++) {
-      if (a[i] != null) {
-        copy[i] = new double[a[i].length];
-        System.arraycopy(a[i], 0, copy[i], 0, a[i].length);
-      } else {
-        copy[i] = null;
-      }
+      copy[i] = copyArray(a[i]);
     }
     return copy;
   }
-
+  
   /**
    * Determines if a and b are equal, taking into consideration that a or b (or
    * both a and b) could be null.

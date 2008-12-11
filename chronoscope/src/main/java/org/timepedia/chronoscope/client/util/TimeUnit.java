@@ -32,6 +32,25 @@ public enum TimeUnit {
     return ms;
   }
   
+  /**
+   * Returns the next largest time unit, or null if this is the largest time unit.
+   */
+  public TimeUnit nextLargest() {
+    if (this.ordinal() < TimeUnit.values().length - 1) {
+      return TimeUnit.values()[this.ordinal() + 1];
+    }
+    
+    return null;
+  }
+  
+  public TimeUnit nextSmallest() {
+    if (this.ordinal() > 0) {
+      return TimeUnit.values()[this.ordinal() - 1];
+    }
+    
+    return null;
+  }
+  
   public static final void main(String[] args) {
     System.out.println((long)TimeUnit.YEAR.ms);
   }
