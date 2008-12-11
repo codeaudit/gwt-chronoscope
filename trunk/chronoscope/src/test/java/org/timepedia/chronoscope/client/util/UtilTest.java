@@ -44,16 +44,21 @@ public class UtilTest extends TestCase {
   public void testCopyArray() {
     double[] a = {1, 3, 2};
     assertTrue(Arrays.equals(a, Util.copyArray(a)));
+    assertTrue(Arrays.equals(new double[] {1, 3}, Util.copyArray(a, 2)));
     
-    double[][] a2d = new double[][] {
-        {1, 2},
-        {3}
+    double[][] srcArray2D = new double[][] {
+        {1, 2, 3},
+        null,
+        {4, 5}
         };
-    double[][] a2dCopy = Util.copyArray(a2d);
-    for (int i = 0; i < a2d.length; i++) {
-      double[] row = a2d[i];
-      for (int j = 0; j < row.length; j++) {
-        assertEquals(row[j], a2dCopy[i][j]);
+    double[][] a2dCopy = Util.copyArray(srcArray2D);
+    for (int i = 0; i < srcArray2D.length; i++) {
+      double[] srcRow = srcArray2D[i];
+      if (srcRow != null) {
+        assertTrue(Arrays.equals(srcRow, a2dCopy[i]));
+      }
+      else {
+        assertNull(a2dCopy[i]);
       }
     }
   }
@@ -91,10 +96,6 @@ public class UtilTest extends TestCase {
     }
 
     public Tuple2D getFlyweightTuple(int index) {
-      throw new UnsupportedOperationException();
-    }
-
-    public Tuple2D getFlyweightTuple(int index, int mipLevel) {
       throw new UnsupportedOperationException();
     }
 

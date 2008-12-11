@@ -19,14 +19,28 @@ import java.util.NoSuchElementException;
  * @author chad takahashi
  */
 public class MipMap {
-  private int mipLevel;
   private Array1D domain;
-  private Array1D[] rangeTuples;
   private FlyweightTuple flyweightTuple;
+  private int mipLevel;
+  private Array1D[] rangeTuples;
   
   MipMap nextMipMap;
   
+  public MipMap(Array1D domain, Array1D[] rangeTuples) {
+    ArgChecker.isNotNull(domain, "domain");
+    ArgChecker.isNotNull(rangeTuples, "rangeTuples");
+    
+    this.mipLevel = 0;
+    this.domain = domain;
+    this.rangeTuples = rangeTuples;
+    this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
+  }
+  
   MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
+    ArgChecker.isNotNull(multiResDomain, "multiResDomain");
+    ArgChecker.isNotNull(multiResRangeTuple, "multiResRangeTuple");
+    ArgChecker.isNonNegative(mipLevel, "mipLevel");
+    
     this.mipLevel = mipLevel;
     this.domain = multiResDomain.getRow(mipLevel);
     
@@ -81,7 +95,7 @@ public class MipMap {
    * Returns the next {@link MipMap} in this chain.
    */
   public MipMap next() {
-    return nextMipMap;
+    return this.nextMipMap;
   }
   
   /**
