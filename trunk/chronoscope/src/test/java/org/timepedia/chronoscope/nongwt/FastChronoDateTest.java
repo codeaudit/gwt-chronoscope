@@ -315,7 +315,22 @@ public class FastChronoDateTest extends TestCase {
     d = createTestDate(1582, 2, 20, 23, 59, 59, 123);
     d.truncate(TimeUnit.WEEK);
     assertEquals(1582, 2, 18, d);
-}
+  }
+  
+  public void testCopyTo() {
+    ChronoDate source = createTestDate(1971, 5, 1);
+    source.set().hour(9).min(57).sec(23).ms(555);
+    double sourceTimeStamp = source.getTime();
+    
+    ChronoDate target = ChronoDate.getSystemDate();
+    source.copyTo(target);
+    assertEquals(sourceTimeStamp, target.getTime());
+    
+    try {
+      ChronoDate.getSystemDate().copyTo(null);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {}
+  }
   
   public void testGetDaysInMonth() {
     ChronoDate d = createTestDate(1582, 0, 1);

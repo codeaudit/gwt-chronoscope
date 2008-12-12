@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.util.date;
 
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 import java.util.Date;
@@ -38,6 +39,17 @@ public abstract class ChronoDate {
    */
   public abstract void add(TimeUnit timeUnit, int numUnits);
 
+  /**
+   * Copies the state of this date over to the target date.
+   */
+  public void copyTo(ChronoDate target) {
+    ArgChecker.isNotNull(target, "target");
+    // TODO: Subclasses can potentially speed up this calc if we check if 
+    // 'target' is also an instance of this class and, if so, manually transfer 
+    // over the fields.
+    target.setTime(this.getTime());
+  }
+  
   /**
    * Returns the year, month, day, etc. portion of this date object.
    * 
