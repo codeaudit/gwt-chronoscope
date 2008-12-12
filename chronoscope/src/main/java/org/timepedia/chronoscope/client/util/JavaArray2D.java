@@ -24,10 +24,28 @@ public final class JavaArray2D implements Array2D {
   private Array1D[] rows;
 
   /**
-   * Constructs an {@link JavaArray2D} object from the specified Java
+   * Constructs a {@link JavaArray2D} object from the specified Java
    * 2-dimensional array.
    */
   public JavaArray2D(double[][] a) {
+    init(a);
+  }
+  
+  /**
+   * Creates a 2-dimensional array having exactly 1 row.
+   */
+  public JavaArray2D(double[] row) {
+    ArgChecker.isNotNull(row, "row");
+    double[][] array2d = new double[1][];
+    array2d[0] = row;
+    init(array2d);
+  }
+  
+  /**
+   * Constructs a {@link JavaArray2D} object from the specified Java
+   * 2-dimensional array.
+   */
+  private void init(double[][] a) {
     // Validate a[][]:
     ArgChecker.isNotNull(a, "a");
     // array must have at least 1 row
