@@ -130,10 +130,10 @@ public final class CompositeAxisPanel implements GssElement {
     
     Bounds lPBounds = new Bounds(panelBounds);
     for (int i = 0; i < subPanels.size(); i++) {
-      if (!layerConfigured) {
-        layer.setTextLayerBounds(panelName + i, lPBounds);
-      }
       AxisPanel axis = subPanels.get(i);
+      if (!layerConfigured) {
+        layer.setTextLayerBounds(axis.getTextLayerName(), lPBounds);
+      }
       lPBounds.width = axis.getWidth();
       lPBounds.height = axis.getHeight();
 
