@@ -9,6 +9,28 @@ import org.timepedia.chronoscope.client.util.JavaArray2D;
  */
 public class JavaArray2DTest extends TestCase {
   
+  public void testDefaultConstructor() {
+    assertEquals(0, new JavaArray2D().numRows());
+    
+    assertTrue(new JavaArray2D().isSameSize(new JavaArray2D()));
+    
+    try {
+      new JavaArray2D().getRow(0);
+      fail("Expected AssertionError");
+    } catch (AssertionError e) {}
+    
+    JavaArray2D a = new JavaArray2D();
+    a.set(0, 0, 100);
+    a.set(2, 2, 300);
+    assertEquals(100.0, a.get(0, 0));
+    assertEquals(0, a.numColumns(1)); // row 1 has not been assigned anything
+    assertEquals(300.0, a.get(2, 2));
+    
+    // Columns 0 and 1 not exlicitly assigned in this row; expects default value of 0.
+    assertEquals(0.0, a.get(2, 0));
+    assertEquals(0.0, a.get(2, 1));
+  }
+  
   public void testSingleRowConstructor() {
     double[] row = new double[] { 1, 3, 5};
     
@@ -21,6 +43,38 @@ public class JavaArray2DTest extends TestCase {
     assertEquals(3, a.numColumns(0));
     for (int i = 0; i < expectedRow.length; i++) {
       assertEquals(expectedRow[i], a.get(0, i));
+    }
+  }
+  
+  public void testAddRow() {
+    JavaArray2D a = new JavaArray2D();
+    
+    double[] row0 = new double[] {1, 2};
+    double[] row1 = new double[] {3, 4};
+    
+    a.addRowByRef(row0);
+    a.addRowByValue(row1);
+    
+    assertEquals(1.0, a.get(0, 0));
+    assertEquals(2.0, a.get(0, 1));
+    assertEquals(3.0, a.get(1, 0));
+    assertEquals(4.0, a.get(1, 1));
+    
+    // Row0 was added by reference.  Verify that JavaArray2D actually points to row0
+    row0[0] = 999.0;
+    assertEquals(999.0, a.get(0, 0));
+    
+    // row1 was added by value.  Verify that JavaArray2D is not affected by changes
+    // to row1's state.
+    row1[0] = 999.0;
+    assertEquals(3.0, a.get(1, 0));
+    
+    // Verify that access to the array elemts via the Array1D interface
+    // works as expected
+    for (int i = 0; i < a.numRows(); i++) {
+      for (int j = 0; j < a.numColumns(i); j++) {
+        assertEquals(a.get(i, j), a.getRow(i).get(j));
+      }
     }
   }
   
