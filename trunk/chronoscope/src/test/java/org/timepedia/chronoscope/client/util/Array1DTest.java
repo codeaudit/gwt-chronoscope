@@ -27,6 +27,29 @@ public class Array1DTest extends TestCase {
     catch (IllegalStateException e) {}
   }
   
+  public void testIsEmpty() {
+    Array1D a;
+    
+    a = newArray(new double[] {});
+    assertTrue(a.isEmpty());
+    
+    a = newArray(new double[] {1});
+    assertFalse(a.isEmpty());
+  }
+
+  public void testSize() {
+    Array1D a;
+    
+    a = newArray(new double[] {});
+    assertEquals(0, a.size());
+    
+    a = newArray(new double[] {1});
+    assertEquals(1, a.size());
+
+    a = newArray(new double[] {1, 2, 3, 4, 5});
+    assertEquals(5, a.size());
+  }
+
   public static Array1D newArray(double[] a) {
     double[][] dummy2dArray = new double[2][];
     dummy2dArray[0] = a;

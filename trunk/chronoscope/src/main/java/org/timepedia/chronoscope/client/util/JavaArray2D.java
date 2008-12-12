@@ -242,6 +242,10 @@ public final class JavaArray2D implements Array2D {
       }
     }
     
+    public boolean isEmpty() {
+      return size() == 0;
+    }
+    
     public int size() {
       return this.parentArray.columnCounts[row];
     }

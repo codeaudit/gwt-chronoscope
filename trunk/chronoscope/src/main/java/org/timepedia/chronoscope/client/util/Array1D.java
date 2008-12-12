@@ -37,6 +37,11 @@ public interface Array1D {
   int size();
   
   /**
+   * Returns true if this array has 0 elements.
+   */
+  boolean isEmpty();
+  
+  /**
    * Applies the specified function to the elements in this array.
    */
   void execFunction(ArrayFunction f);

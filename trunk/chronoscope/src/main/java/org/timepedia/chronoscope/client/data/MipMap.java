@@ -91,6 +91,10 @@ public class MipMap {
     return this.rangeTuples.length;
   }
   
+  public boolean isEmpty() {
+    return this.domain.isEmpty();
+  }
+  
   /**
    * Returns the next {@link MipMap} in this chain.
    */
