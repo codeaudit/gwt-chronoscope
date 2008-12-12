@@ -18,6 +18,10 @@ public abstract class AbstractPanel implements Panel {
     this.gssProperties = gssProperties;
   }
   
+  public final String getTextLayerName() {
+    return this.textLayerName;
+  }
+  
   public final void setTextLayerName(String textLayerName) {
     this.textLayerName = textLayerName;
   }

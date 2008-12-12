@@ -387,6 +387,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     
     if (rangePanel.isInitialized()) {
+      // Need to initLayer() to ensure that all text layers get wiped out
+      rangePanel.initLayer();
       rangePanel.layout();
     } else {
       initAuxiliaryPanel(rangePanel, view);
@@ -407,9 +409,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     lastVisDomain = new Interval(0, 0);
     
     initLayers();
-    topPanel.initLayer();
-    bottomPanel.initLayer();
-    rangePanel.initLayer();
     
     background = new GssBackground(view);  
     view.canvasSetupDone();
@@ -478,6 +477,15 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void onDatasetAdded(Dataset<T> dataset) {
+    // Range panel needs to be set back to an uninitialized state (in 
+    // particular so that it calls its autoAssignDatasetAxes() method).
+    //
+    // TODO: auxilliary panels should listen to dataset events directly
+    // and respond accordingly, rather than forcing this class to manage
+    // everything.
+    //this.initAuxiliaryPanel(this.rangePanel, this.view);
+    this.rangePanel = new RangePanel();
+    
     this.initAndRedraw();
   }
 
@@ -536,6 +544,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     
+    this.rangePanel.initLayer();
     this.rangePanel = new RangePanel();
     initAndRedraw();
   }
@@ -639,6 +648,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       rangePanel.draw();
       
       if (canDrawFast) {
+        bottomPanel.clearDrawCaches();
         bottomPanel.draw();
         drawOverlays(plotLayer);
       }
@@ -1156,7 +1166,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private void initAndRedraw() {
     init(this.view);
-    redraw();
+    redraw(true);
   }
 
   Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
@@ -1180,6 +1190,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
+  
+    topPanel.initLayer();
+    bottomPanel.initLayer();
+    rangePanel.initLayer();
   }
 
   private List<DatasetRenderer<T>> initDatasetRenderers(View view, Datasets<T> datasets) {
