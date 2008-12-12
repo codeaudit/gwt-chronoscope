@@ -78,6 +78,30 @@ public final class Util {
   }
 
   /**
+   * Finds the index of the array value that's the closest to 'searchValue' without
+   * equaling or exceeding it.  If searchValue is not greater than a[0], then 
+   * -1 is returned.
+   * 
+   * @param a - the array to search over, which is assumed to have at least 1 element
+   * @param searchValue - the value to search for
+   * @param startIndex - the index in the domain to start searching
+   */
+  public static int search(double[] a, double searchValue, int startIndex) {
+    ArgChecker.isNonNegative(startIndex, "startIndex");
+    
+    final int domainLen = a.length;
+    
+    // TODO: replace linear search with a binary search!
+    for (int i = startIndex; i < domainLen; i++) {
+      if (a[i] >= searchValue) {
+        return (i - 1);
+      }
+    }
+    
+    return domainLen - 1;
+  }
+
+  /**
    * Returns a copy of the specified 2-dimensional array.
    */
   public static double[][] copyArray(double[][] a) {

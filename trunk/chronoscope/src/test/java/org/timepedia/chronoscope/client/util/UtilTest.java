@@ -41,6 +41,20 @@ public class UtilTest extends TestCase {
     assertEquals(lastIndex, Util.binarySearch(a, domain[lastIndex] + 1.0));
   }
   
+  public void testSearch() {
+    double[] a = new double[] {2, 4, 6, 8};
+    assertEquals(-1, Util.search(a, 1, 0));
+    assertEquals(-1, Util.search(a, 2, 0));
+    
+    assertEquals(0, Util.search(a, 4, 0));
+    assertEquals(1, Util.search(a, 6, 0));
+    assertEquals(2, Util.search(a, 8, 0));
+    assertEquals(3, Util.search(a, 9, 0));
+    assertEquals(3, Util.search(a, 10, 0));
+    
+    assertEquals(-1, Util.search(new double[] {}, 99, 0));
+  }
+  
   public void testCopyArray() {
     double[] a = {1, 3, 2};
     assertTrue(Arrays.equals(a, Util.copyArray(a)));
