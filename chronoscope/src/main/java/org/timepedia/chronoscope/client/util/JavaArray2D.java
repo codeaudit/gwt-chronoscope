@@ -22,7 +22,17 @@ public final class JavaArray2D implements Array2D {
   private int[] columnCounts;
   private int rowCount;
   private Array1D[] rows;
-
+  
+  public JavaArray2D() {
+    final int initialRowCapacity = 10;
+    columnCounts = new int[initialRowCapacity];
+    a = new double[initialRowCapacity][];
+    for (int i = 0; i < initialRowCapacity; i++) {
+      a[i] = new double[0];
+    }
+    rowCount = 0;
+  }
+  
   /**
    * Constructs a {@link JavaArray2D} object from the specified Java
    * 2-dimensional array.
@@ -70,10 +80,24 @@ public final class JavaArray2D implements Array2D {
     this.a = a;
   }
 
+  public void addRowByRef(double[] row) {
+    ArgChecker.isNotNull(row, "row");
+    final int newRowIndex = rowCount;
+    ensureRowCapacity(newRowIndex);
+    a[newRowIndex] = row;
+    columnCounts[newRowIndex] = row.length;
+  }
+  
+  public void addRowByValue(double[] row) {
+    addRowByRef(Util.copyArray(row));
+  }
+  
   /**
    * Returns the value at the specified row and column
    */
   public double get(int row, int column) {
+    assert (rowCount > 0)
+      : "Attempted to call get() when array is empty";
     assert MathUtil.isBounded(row, 0, rowCount - 1) 
       : "row out of bounds: " + row;
     assert MathUtil.isBounded(column, 0, numColumns(row) - 1)
@@ -105,7 +129,6 @@ public final class JavaArray2D implements Array2D {
     Array1D row = rows[rowIndex];
     if (row == null) {
       row = new Array1DImpl(this, rowIndex);
-      //row = new Array1DImpl(a, rowIndex, columnCounts);
       rows[rowIndex] = row;
     }
     return row;
@@ -132,6 +155,7 @@ public final class JavaArray2D implements Array2D {
    * number of columns).
    */
   public int numColumns(int rowIndex) {
+    assert (rowIndex < this.rowCount) : "rowIndex out of bounds";
     return columnCounts[rowIndex];
   }
 
@@ -146,6 +170,24 @@ public final class JavaArray2D implements Array2D {
    * Assigns the value at the specified row and column.
    */
   public void set(int rowIdx, int colIdx, double value) {
+    ensureRowCapacity(rowIdx);
+    
+    int colCapacity = a[rowIdx].length;
+    boolean needMoreColumnCapacity = (colIdx >= colCapacity);
+    if (needMoreColumnCapacity) {
+      int newColCapacity = newCapacity(colCapacity, colIdx);
+      double[] newRow = new double[newColCapacity];
+      double[] row = a[rowIdx];
+      System.arraycopy(row, 0, newRow, 0, row.length);
+      a[rowIdx] = newRow;
+    }
+
+    columnCounts[rowIdx] = Math.max(columnCounts[rowIdx], colIdx + 1);
+
+    a[rowIdx][colIdx] = value;
+  }
+  
+  private void ensureRowCapacity(int rowIdx) {
     int rowCapacity = a.length;
     boolean needMoreRowCapacity = (rowIdx >= rowCapacity);
 
@@ -168,20 +210,6 @@ public final class JavaArray2D implements Array2D {
       rowCount = rowIdx + 1;
       rows = new Array1D[rowCount];
     }
-
-    int colCapacity = a[rowIdx].length;
-    boolean needMoreColumnCapacity = (colIdx >= colCapacity);
-    if (needMoreColumnCapacity) {
-      int newColCapacity = newCapacity(colCapacity, colIdx);
-      double[] newRow = new double[newColCapacity];
-      double[] row = a[rowIdx];
-      System.arraycopy(row, 0, newRow, 0, row.length);
-      a[rowIdx] = newRow;
-    }
-
-    columnCounts[rowIdx] = Math.max(columnCounts[rowIdx], colIdx + 1);
-
-    a[rowIdx][colIdx] = value;
   }
   
   private static final class Array1DImpl implements Array1D {
@@ -221,6 +249,5 @@ public final class JavaArray2D implements Array2D {
     public void execFunction(ArrayFunction f) {
       f.exec(parentArray.a[row], parentArray.columnCounts[row]);
     }
-    
   }
 }

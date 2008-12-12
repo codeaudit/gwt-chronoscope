@@ -10,6 +10,16 @@ package org.timepedia.chronoscope.client.util;
 public interface Array2D {
 
   /**
+   * Adds a new row to this array by reference.
+   */
+  public void addRowByRef(double[] row);
+  
+  /**
+   * Adds a new row to this array by value.
+   */
+  public void addRowByValue(double[] row);
+
+  /**
    * Returns the value at the specified row and column
    */
   double get(int row, int column);
