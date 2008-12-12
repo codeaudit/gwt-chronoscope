@@ -8,7 +8,22 @@ import org.timepedia.chronoscope.client.util.JavaArray2D;
  * @author Chad Takahashi
  */
 public class JavaArray2DTest extends TestCase {
-
+  
+  public void testSingleRowConstructor() {
+    double[] row = new double[] { 1, 3, 5};
+    
+    // make a copy of 'row' to use as expected array to guard against
+    // case where JavaArray2D accidentally modifies the input array.
+    double[] expectedRow = Util.copyArray(row);
+    
+    JavaArray2D a = new JavaArray2D(row);
+    assertEquals(1, a.numRows());
+    assertEquals(3, a.numColumns(0));
+    for (int i = 0; i < expectedRow.length; i++) {
+      assertEquals(expectedRow[i], a.get(0, i));
+    }
+  }
+  
   public void testDimensions() {
     double[][] data = new double[][] { {10, 20}, {30}};
     JavaArray2D a = new JavaArray2D(data);
@@ -18,11 +33,18 @@ public class JavaArray2DTest extends TestCase {
   public void testIllegalConstructorCalls() {
     // null constructor arg
     try {
-      new JavaArray2D(null);
+      new JavaArray2D((double[])null); // 1D array constructor
       fail("Expected IllegalArgumentException");
     }
     catch (IllegalArgumentException e) {}
-    
+
+    // null constructor arg
+    try {
+      new JavaArray2D((double[][])null); // 2D array constructor
+      fail("Expected IllegalArgumentException");
+    }
+    catch (IllegalArgumentException e) {}
+
     // a[][] with 0 rows
     try {
       new JavaArray2D(new double[0][1]);
