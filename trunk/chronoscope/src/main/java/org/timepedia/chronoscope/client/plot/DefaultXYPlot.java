@@ -648,7 +648,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       rangePanel.draw();
       
       if (canDrawFast) {
-        bottomPanel.clearDrawCaches();
         bottomPanel.draw();
         drawOverlays(plotLayer);
       }
