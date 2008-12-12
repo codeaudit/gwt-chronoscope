@@ -536,8 +536,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     
-    this.rangePanel = null;
-
+    this.rangePanel = new RangePanel();
     initAndRedraw();
   }
 
