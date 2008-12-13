@@ -40,6 +40,13 @@ public abstract class ChronoDate {
   public abstract void add(TimeUnit timeUnit, int numUnits);
 
   /**
+   * Returns a copy of this date.
+   */
+  public ChronoDate copy() {
+    return ChronoDate.get(this.getTime());
+  }
+  
+  /**
    * Copies the state of this date over to the target date.
    */
   public void copyTo(ChronoDate target) {
