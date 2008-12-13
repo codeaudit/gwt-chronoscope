@@ -127,6 +127,10 @@ final class BottomPanel extends AuxiliaryPanel {
   
   @Override
   protected void drawHook() {
+    if (overviewEnabled && !overviewDrawn) {
+      drawDatasetOverview();
+    }
+
     if (compositePanel.getAxisCount() > 0) {
       layer.save();
       Bounds plotBounds = plot.getBounds();
@@ -134,10 +138,6 @@ final class BottomPanel extends AuxiliaryPanel {
           layer.getBounds().height);
       compositePanel.draw(layer, domainPanelBounds);
       layer.restore();
-    }
-
-    if (overviewEnabled && !overviewDrawn) {
-      drawDatasetOverview();
     }
   }
   

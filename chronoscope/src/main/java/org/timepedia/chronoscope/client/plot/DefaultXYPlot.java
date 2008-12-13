@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.plot;
 
 import com.google.gwt.gen2.event.shared.HandlerManager;
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -388,7 +389,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     
     if (rangePanel.isInitialized()) {
       // Need to initLayer() to ensure that all text layers get wiped out
-      rangePanel.initLayer();
       rangePanel.layout();
     } else {
       initAuxiliaryPanel(rangePanel, view);
@@ -657,7 +657,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       topPanel.draw();
       drawPlotHighlight(highLightLayer);
     }
-
+    
     backingCanvas.endFrame();
     visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
