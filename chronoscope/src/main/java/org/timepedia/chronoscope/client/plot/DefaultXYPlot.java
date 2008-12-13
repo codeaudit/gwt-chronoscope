@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.plot;
 
 import com.google.gwt.gen2.event.shared.HandlerManager;
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
