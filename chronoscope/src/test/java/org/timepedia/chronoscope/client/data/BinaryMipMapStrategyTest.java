@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class BinaryMipMapStrategyTest extends TestCase {
   private MipMapStrategy mipmap;
-  private Collection<SimpleDataset> testDatasets;
+  private Collection<JUnitDataset> testDatasets;
   
   private enum ConstructType {
     DEFAULT {
@@ -44,27 +44,27 @@ public class BinaryMipMapStrategyTest extends TestCase {
   public void setUp() {
     mipmap = BinaryMipMapStrategy.MAX;
     
-    testDatasets = new ArrayList<SimpleDataset>();
-    testDatasets.add(new SimpleDataset("ChadChartDemo",
+    testDatasets = new ArrayList<JUnitDataset>();
+    testDatasets.add(new JUnitDataset("ChadChartDemo",
         new double[] {1000, 2000, 3000, 4000},
         new double[] {10, 50, 20, 60}));
     
-    testDatasets.add(new SimpleDataset("testcase_1",
+    testDatasets.add(new JUnitDataset("testcase_1",
         new double[] {1000, 2000},
         new double[] {90, 20}));
-    testDatasets.add(new SimpleDataset("testcase_2",
+    testDatasets.add(new JUnitDataset("testcase_2",
         new double[] {1000, 2000, 3000},
         new double[] {90, 20, 40}));
-    testDatasets.add(new SimpleDataset("testcase_3",
+    testDatasets.add(new JUnitDataset("testcase_3",
         new double[] {1000, 2000, 3000, 4000},
         new double[] {90, 20, 40, 60}));
-    testDatasets.add(new SimpleDataset("testcase_4",
+    testDatasets.add(new JUnitDataset("testcase_4",
         new double[] {1000, 2000, 3000, 4000, 5000},
         new double[] {90, 20, 40, 60, 100}));
   }
 
   public void testCalcMultiDomain() {
-    for (SimpleDataset ds : testDatasets) {
+    for (JUnitDataset ds : testDatasets) {
       // For each dataset, test multiDomain content for each ConstructType.
       // Need to assert that the same multiDomain structure results from all
       // supported mutations as well as the immutable construction.
@@ -77,7 +77,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
   }
   
   public void testCalcMultiRange() {
-    for (SimpleDataset ds : testDatasets) {
+    for (JUnitDataset ds : testDatasets) {
       for (ConstructType t : ConstructType.values()) {
         MipMapChain mipmapChain = t.mipmap(mipmap, ds.domain, ds.range);
         verifyMultiRange(ds, mipmapChain.getMipMappedRangeTuples()[0], t);
@@ -85,7 +85,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
     }
   }
   
-  private void verifyMultiDomain(SimpleDataset ds, Array2D multiDomain, ConstructType t) {
+  private void verifyMultiDomain(JUnitDataset ds, Array2D multiDomain, ConstructType t) {
     final String testCaseId = getTestCaseId(ds, t);
 
     double[] data = ds.domain;
@@ -111,7 +111,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
     }
   }
   
-  private void verifyMultiRange(SimpleDataset ds, Array2D multiRange, ConstructType t) {
+  private void verifyMultiRange(JUnitDataset ds, Array2D multiRange, ConstructType t) {
     final String testCaseId = getTestCaseId(ds, t);
 
     double[] data = ds.range;
@@ -158,7 +158,7 @@ public class BinaryMipMapStrategyTest extends TestCase {
     return row;
   }
   
-  private static String getTestCaseId(SimpleDataset ds, ConstructType ct) {
+  private static String getTestCaseId(JUnitDataset ds, ConstructType ct) {
     return "[" + ds.id + " " + ct + "]";
   }
   

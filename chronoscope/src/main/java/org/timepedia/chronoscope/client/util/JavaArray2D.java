@@ -253,5 +253,9 @@ public final class JavaArray2D implements Array2D {
     public void execFunction(ArrayFunction f) {
       f.exec(parentArray.a[row], parentArray.columnCounts[row]);
     }
+    
+    public double[] toArray() {
+      return Util.copyArray(backingArray(), size());
+    }
   }
 }

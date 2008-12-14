@@ -8,6 +8,15 @@ import junit.framework.TestCase;
  */
 public class Array1DTest extends TestCase {
   
+  public void testToArray() {
+    Array1D a = newArray(new double[] {10, 20, 30});
+    double[] aCopy = a.toArray();
+    assertEquals(a.size(), aCopy.length);
+    for (int i = 0; i < a.size(); i++) {
+      assertEquals(a.get(i), aCopy[i]);
+    }
+  }
+  
   public void testExecFunction() {
     Array1D a = newArray(new double[] {10, 20, 30, 40});
     SumArrayFunction sum = new SumArrayFunction();
