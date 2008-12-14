@@ -46,4 +46,8 @@ public interface Array1D {
    */
   void execFunction(ArrayFunction f);
   
+  /**
+   * Returns a copy of this array as a primitive double array.
+   */
+  double[] toArray();
 }
