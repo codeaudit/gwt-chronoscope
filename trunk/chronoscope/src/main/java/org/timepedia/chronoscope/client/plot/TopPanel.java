@@ -65,9 +65,7 @@ final class TopPanel extends AuxiliaryPanel {
     }
     
     if (enabled) {
-      if (legendAxisPanel == null) {
-        initLegendAxisPanel();
-      }
+      initLegendAxisPanel();
     }
     else { // disable the legend
       if (legendAxisPanel != null) {
