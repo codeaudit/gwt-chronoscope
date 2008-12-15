@@ -66,7 +66,7 @@
                   <type>zip</type>
                   <overWrite>true</overWrite>
                   <outputDirectory>
-                    ${settings.localRepository}/com/google/gwt/gwt-dev/${gwtversion}
+                    ${gwt.localRepository}/com/google/gwt/gwt-dev/${gwtversion}
                   </outputDirectory>
                 </artifactItem>
               </artifactItems>
