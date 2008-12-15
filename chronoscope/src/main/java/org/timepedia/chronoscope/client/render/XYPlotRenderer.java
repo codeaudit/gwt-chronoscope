@@ -81,10 +81,16 @@ public class XYPlotRenderer<T extends Tuple2D> {
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
-      currMipMap.getRange(0).execFunction(this.extremaFn);
-      Interval rangeYExtrema = this.extremaFn.getExtrema();
-      drawableDataset.visRangeMin = rangeYExtrema.getStart();
-      drawableDataset.visRangeMax = rangeYExtrema.getEnd();
+      double rangeMin = Double.POSITIVE_INFINITY;
+      double rangeMax = Double.NEGATIVE_INFINITY;
+      Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
+      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
+        double y = tupleItr.next().getSecond();
+        rangeMin = Math.min(rangeMin, y);
+        rangeMax = Math.max(rangeMax, y);
+      }
+      drawableDataset.visRangeMin = rangeMin;
+      drawableDataset.visRangeMax = rangeMax;
     }
   }
 
