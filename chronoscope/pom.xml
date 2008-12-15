@@ -98,9 +98,8 @@
                   <version>${gwtversion}</version>
                   <classifier>${gwtplatform}-libs</classifier>
                   <type>zip</type>
-                  <overWrite>true</overWrite>
                   <outputDirectory>
-                    ${settings.localRepository}/com/google/gwt/gwt-dev/${gwtversion}
+                    ${user.dir}/.m2/repository/com/google/gwt/gwt-dev/${gwtversion}
                   </outputDirectory>
                 </artifactItem>
               </artifactItems>
