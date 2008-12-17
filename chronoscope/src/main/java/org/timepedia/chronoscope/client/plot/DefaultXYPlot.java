@@ -21,7 +21,6 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
-import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
@@ -30,16 +29,13 @@ import org.timepedia.chronoscope.client.event.PlotHoverEvent;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
-import org.timepedia.chronoscope.client.render.DatasetRendererMap;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
-import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
@@ -74,8 +70,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   // Indicator that nothing is selected (e.g. a data point or a data set).
   public static final int NO_SELECTION = -1;
 
-  private DatasetRendererMap datasetRendererMap = new DatasetRendererMap();
-  
   private static int globalPlotNumber = 0;
 
   private static final String LAYER_HOVER = "hoverLayer";
@@ -135,7 +129,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private Bounds plotBounds;
 
-  private Interval visDomain, lastVisDomain, widestDomain;
+  public Interval visDomain, lastVisDomain, widestDomain;
   
   int plotNumber = 0;
 
@@ -144,9 +138,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   private View view;
 
   private double visibleDomainMax;
-
-  private List<DatasetRenderer<T>> datasetRenderers
-      = new ArrayList<DatasetRenderer<T>>();
 
   private HandlerManager handlerManager = new HandlerManager(this);
 
@@ -260,7 +251,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
-    return datasetRenderers.get(datasetIndex);
+    return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
   }
 
   /**
@@ -271,12 +262,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public double getDataX(int datasetIndex, int pointIndex) {
-    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
+    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
     return dds.currMipMap.getDomain().get(pointIndex);
   }
 
   public double getDataY(int datasetIndex, int pointIndex) {
-    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
+    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
     return dds.currMipMap.getTuple(pointIndex).getSecond();
   }
 
@@ -319,7 +310,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getNearestVisiblePoint(double domainX, int datasetIndex) {
-    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIndex);
+    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
     return Util.binarySearch(dds.currMipMap.getDomain(), domainX);
   }
 
@@ -368,9 +359,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.focus = null;
 
     initViewIndependent(datasets);
-    datasetRenderers = initDatasetRenderers(view, datasets);
-    plotRenderer.setPlot(this);
-    plotRenderer.init();
+    
+    if (!plotRenderer.isInitialized()) {
+      plotRenderer.setPlot(this);
+      plotRenderer.setView(view);
+      plotRenderer.init();
+    }
     
     widestDomain = plotRenderer.calcWidestPlotDomain();
     visDomain = widestDomain.copy();
@@ -479,12 +473,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     // Range panel needs to be set back to an uninitialized state (in 
     // particular so that it calls its autoAssignDatasetAxes() method).
     //
-    // TODO: auxilliary panels should listen to dataset events directly
+    // TODO: auxiliary panels should listen to dataset events directly
     // and respond accordingly, rather than forcing this class to manage
     // everything.
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
     this.rangePanel = new RangePanel();
-    
+    this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
     this.initAndRedraw();
   }
 
@@ -545,6 +539,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     
     this.rangePanel.initLayer();
     this.rangePanel = new RangePanel();
+    this.plotRenderer.removeDataset(dataset);
     initAndRedraw();
   }
 
@@ -716,23 +711,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.getRangeAxes().get(dataset).setAutoZoomVisibleRange(autoZoom);
   }
 
-  public void setDatasetRendererMap(DatasetRendererMap datasetRendererMap) {
-    this.datasetRendererMap = datasetRendererMap;
-  }
-  
   public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
-    
-    //initialize the renderer
-    renderer.setParentGssElement(createGssElementForDataset(datasetIndex));
-    renderer.setPlot(this);
-    renderer.setDatasetIndex(datasetIndex);
-    boolean isViewReady = this.view != null;
-    if (isViewReady) {
-      renderer.initGss(this.view);
-    }
-    
-    datasetRenderers.set(datasetIndex, renderer);
+    this.plotRenderer.setDatasetRenderer(datasetIndex, renderer);
+    this.initAndRedraw();
   }
 
   public void setDatasets(Datasets<T> datasets) {
@@ -871,12 +853,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private void animateTo(final double destDomainOrigin,
       final double destDomainLength, final PlotMovedEvent.MoveType eventType,
-      final PortableTimerTask continuation, boolean fence) {
+      final PortableTimerTask continuation, final boolean fence) {
 
     if (!isAnimatable()) {
       return;
     }
-
+    
     // if there is already an animation running, cancel it
     if (animationTimer != null) {
       animationTimer.cancelTimer();
@@ -896,7 +878,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     animationContinuation = continuation;
     final Interval visibleDomain = this.visDomain;
-
+    
     animationTimer = view.createTimer(new PortableTimerTask() {
       final double destDomainMid = destDomain.midpoint();
 
@@ -990,10 +972,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         rangePanel.getRightSubPanel().getWidth();
 
     return b;
-  }
-
-  private GssElement createGssElementForDataset(int datasetIndex) {
-    return new GssElementImpl("series", null, "s" + datasetIndex);
   }
 
   /**
@@ -1194,22 +1172,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.initLayer();
   }
 
-  private List<DatasetRenderer<T>> initDatasetRenderers(View view, Datasets<T> datasets) {
-    List<DatasetRenderer<T>> datasetRenderers = new ArrayList<DatasetRenderer<T>>();
-    
-    for (int i = 0; i < datasets.size(); i++) {
-      Dataset<T> dataset = datasets.get(i);
-      DatasetRenderer<T> renderer = datasetRendererMap.get(dataset);
-      renderer.setParentGssElement(createGssElementForDataset(i));
-      renderer.setPlot(this);
-      renderer.setDatasetIndex(i);
-      renderer.initGss(view);
-      datasetRenderers.add(renderer);
-    }
-    
-    return datasetRenderers;
-  }
-  
   /**
    * Methods which do not depend on any visual state of the chart being
    * initialized first. Can be moved early in Plot initialization. Put stuff
@@ -1384,28 +1346,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     
     for (Dataset<T> ds : dataSets) {
       // find the lowest mip level whose # of data points is not greater
-      // than maxDrawablePts
-      MipMap mipMap = findLowestMipLevel(ds.getMipMapChain(), maxDrawableDataPoints);
+      // than maxDrawableDataPoints
+      MipMap mipMap = ds.getMipMapChain().findHighestResolution(maxDrawableDataPoints);
       end = Math.max(end, mipMap.getDomain().getLast());
     }
     return end;
-  }
-
-  /**
-   * Finds the lowest mip level (highest resolution) of the specified mipmap chain
-   * whose data point cardinality is not greater than <tt>maxDrawablePts</tt>.
-   */
-  private static MipMap findLowestMipLevel(MipMapChain mipMapChain, 
-      int maxDrawablePts) {
-    
-    MipMap mipMap = mipMapChain.getMipMap(0);
-    while (true) {
-      int numPoints = mipMap.size();
-      if (numPoints <= maxDrawablePts) {
-        return mipMap;
-      }
-      mipMap = mipMap.next();
-    }
   }
 
 }

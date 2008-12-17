@@ -392,12 +392,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer);
   
   /**
-   * Sets the map that determines which {@link DatasetRenderer} to use 
-   * for a given {@link Dataset} object.
-   */
-  void setDatasetRendererMap(DatasetRendererMap datasetRendererMap);
-  
-  /**
    * Overrides the default X-axis renderer (Date formatted labels)
    */
   void setDomainAxisRenderer(AxisPanel domainAxis);
