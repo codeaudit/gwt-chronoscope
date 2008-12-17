@@ -68,6 +68,21 @@ public class MipMapChain {
   }
   
   /**
+   * Returns the "densest" (having the most data points) MipMap in this chain whose
+   * number of datapoints is not greater than <tt>maxDataPoints</tt>.
+   */
+  public MipMap findHighestResolution(int maxDataPoints) {
+    MipMap mipMap = getMipMap(0);
+    while (true) {
+      int numPoints = mipMap.size();
+      if (numPoints <= maxDataPoints) {
+        return mipMap;
+      }
+      mipMap = mipMap.next();
+    }
+  }
+  
+  /**
    * Returns the index-th mapmap in this chain, where index 0 represents
    * the raw data.
    */

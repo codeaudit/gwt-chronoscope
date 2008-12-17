@@ -83,6 +83,14 @@ public class Interval {
   }
   
   /**
+   * Expands this interval so that the specified interval falls inside this interval.
+   */
+  public void expand(Interval interval) {
+    expand(interval.start);
+    expand(interval.end);
+  }
+  
+  /**
    * The value of the ending point of this interval.
    */
   public double getEnd() {

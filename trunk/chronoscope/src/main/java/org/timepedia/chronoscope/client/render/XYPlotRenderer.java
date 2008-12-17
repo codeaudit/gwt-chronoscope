@@ -6,12 +6,14 @@ import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array1D;
-import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.Util;
@@ -23,82 +25,96 @@ import java.util.List;
 /**
  * Responsible for iterating over {@link Dataset}s in a defined drawing order, 
  * and then deciding on how to map the visible portions of the domain onto the 
- * associated dataset renderers.
+ * associated {@link DatasetRenderer}s.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class XYPlotRenderer<T extends Tuple2D> {
   protected RenderState renderState = new RenderState();
   
-  private ExtremaArrayFunction extremaFn = new ExtremaArrayFunction();
+  private DatasetRendererMap datasetRendererMap = new DatasetRendererMap();
   
   // Stores the order in which the datasets should be rendered.  For example, if
   // element [0] = 4, then this means the 5th dataset should be rendered first.
   private int[] datasetRenderOrder;
   
-  private List<DrawableDataset> drawableDatasets;
+  private List<DrawableDataset<T>> drawableDatasets;
   
+  private boolean initialized = false;
+
   private XYPlot<T> plot;
   
-  private void computeVisibleDomainAndRange(List<DrawableDataset> dds, 
+  private View view;
+  
+  private void computeVisibleDomainAndRange(List<DrawableDataset<T>> dds, 
       Interval plotDomain) {
     
     final int numDatasets = dds.size();
     
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
-      DrawableDataset drawableDataset = dds.get(datasetIdx);
+      DrawableDataset<T> drawableDataset = dds.get(datasetIdx);
       Dataset<T> dataSet = drawableDataset.dataset;
 
       final double plotDomainStart = plotDomain.getStart();
-      final double plotDomainLength = plotDomain.length();
+      final double plotDomainEnd = plotDomain.getEnd();
       if (!(MathUtil.isBounded(plotDomainStart, dataSet.getDomainBegin()
-          - plotDomainLength, dataSet.getDomainEnd()))) {
+          - plotDomain.length(), dataSet.getDomainEnd()))) {
         continue;
       }
 
-      final int maxPoints = Math.min(drawableDataset.maxDrawablePoints, 
-          plot.getMaxDrawableDataPoints());
+      // Find the highest-resolution mipmap whose number of data points
+      // that lie within the plot domain is <= maxDataPoints.
+      final int maxDrawableDataPoints = getMaxDrawableDataPoints(drawableDataset);
       int domainStartIdx = 0;
       int domainEndIdx = 0;
       MipMapChain mipMapChain = dataSet.getMipMapChain();
-      MipMap currMipMap = mipMapChain.getMipMap(0);
+      MipMap bestMipMap = mipMapChain.getMipMap(0);
       while (true) {
-        Array1D domain = currMipMap.getDomain();
+        Array1D domain = bestMipMap.getDomain();
         domainStartIdx = Util.binarySearch(domain, plotDomainStart);
-        domainEndIdx = Util.binarySearch(domain, plotDomainStart + plotDomainLength);
-        if ((domainEndIdx - domainStartIdx) <= maxPoints) {
+        domainEndIdx = Util.binarySearch(domain, plotDomainEnd);
+        if ((domainEndIdx - domainStartIdx) <= maxDrawableDataPoints) {
           break;
         }
-
-        currMipMap = currMipMap.next();
+        bestMipMap = bestMipMap.next();
       };
 
-      if (drawableDataset.currMipMap.getLevel() != currMipMap.getLevel()) {
-        drawableDataset.currMipMap = currMipMap;
+      if (drawableDataset.currMipMap.getLevel() != bestMipMap.getLevel()) {
+        drawableDataset.currMipMap = bestMipMap;
         plot.getHoverPoints()[datasetIdx] = DefaultXYPlot.NO_SELECTION;
       }
       
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
-      double rangeMin = Double.POSITIVE_INFINITY;
-      double rangeMax = Double.NEGATIVE_INFINITY;
-      Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
-      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-        double y = tupleItr.next().getSecond();
-        rangeMin = Math.min(rangeMin, y);
-        rangeMax = Math.max(rangeMax, y);
-      }
-      drawableDataset.visRangeMin = rangeMin;
-      drawableDataset.visRangeMax = rangeMax;
+      calcVisualRange(drawableDataset, bestMipMap, domainStartIdx, domainEndIdx);
     }
   }
-
+  
+  /**
+   * Calculates the range-Y extrema values of the specified MipMap and assigns
+   * these values to drawableDataset.
+   */
+  private void calcVisualRange(DrawableDataset<T> drawableDataset, MipMap mipMap, 
+      int domainStartIdx, int domainEndIdx) {
+    
+    double rangeMin = Double.POSITIVE_INFINITY;
+    double rangeMax = Double.NEGATIVE_INFINITY;
+    Iterator<Tuple2D> tupleItr = mipMap.getTupleIterator(domainStartIdx);
+    for (int i = domainStartIdx; i <= domainEndIdx; i++) {
+      double y = tupleItr.next().getSecond();
+      rangeMin = Math.min(rangeMin, y);
+      rangeMax = Math.max(rangeMax, y);
+    }
+    drawableDataset.visRangeMin = rangeMin;
+    drawableDataset.visRangeMax = rangeMax;
+  }
+  
   private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
     DrawableDataset dds = drawableDatasets.get(datasetIndex);
     
     Dataset<T> dataSet = dds.dataset;
-    DatasetRenderer<T> renderer = dds.renderer;
+    DatasetRenderer<T> renderer = dds.getRenderer();
     
     if (dataSet.getNumSamples() < 2) {
       return;
@@ -119,18 +135,23 @@ public class XYPlotRenderer<T extends Tuple2D> {
     
     renderer.beginCurve(layer, renderState);
 
-    int domainStart = dds.visDomainStartIndex;
-    int domainEnd = dds.visDomainEndIndex;
     MipMap currMipMap = dds.currMipMap;
-    int numSamples = currMipMap.size();
+    final int domainStart = dds.visDomainStartIndex;
+    final int domainEnd = dds.visDomainEndIndex;
+    final int numSamples = currMipMap.size();
 
     // Render the data curve
     int startIdx = Math.max(0, domainStart - 1);
     int endIdx = Math.min(domainEnd, numSamples - 1);
+
+    //System.out.println("TESTING: XYPlotRenderer: " + (endIdx - startIdx + 1));
+    //System.out.println("TESTING: XYPlotRenderer: startIdx=" + startIdx + "; endIdx=" + endIdx);
+    
     int methodCallCount = 0;
     Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(startIdx);
     for (int i = startIdx; i <= endIdx; i++) {
       Tuple2D dataPt = tupleItr.next();
+      //System.out.println("TESTING: XYPlotRenderer draw curve: startIdx=" + startIdx + "; startDate = " + startDate);
       renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
       // FIXME: refactor to remove cast
       renderer.drawCurvePart(layer, (T)dataPt, methodCallCount++, renderState);
@@ -141,6 +162,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     renderer.beginPoints(layer, renderState);
     startIdx = Math.max(0, domainStart - 2);
     endIdx = Math.min(domainEnd, numSamples - 1);
+    //System.out.println("TESTING: XYPlotRenderer draw points: startIdx=" + startIdx + "; startDate = " + startDate);
     tupleItr = currMipMap.getTupleIterator(startIdx);
     for (int i = startIdx; i <= endIdx; i++) {
       Tuple2D dataPt = tupleItr.next();
@@ -156,15 +178,22 @@ public class XYPlotRenderer<T extends Tuple2D> {
       return null;
     }
     
-    double min = Double.POSITIVE_INFINITY;
-    double max = Double.NEGATIVE_INFINITY;
-    for (DrawableDataset dds : drawableDatasets) {
+    Interval widestPlotDomain = null;
+    for (DrawableDataset<T> dds : drawableDatasets) {
       Dataset<T> ds = dds.dataset;
-      min = Math.min(min, dds.renderer.getMinDrawableDomain(ds));
-      max = Math.max(max, dds.renderer.getMaxDrawableDomain(ds));
+      final int maxDrawableDataPoints = getMaxDrawableDataPoints(dds);
+      MipMap mm = ds.getMipMapChain().findHighestResolution(maxDrawableDataPoints);
+      
+      Interval drawableDomain = dds.getRenderer().getDrawableDomain(mm.getDomain());
+      if (widestPlotDomain == null) {
+        widestPlotDomain = drawableDomain;
+      }
+      else {
+        widestPlotDomain.expand(drawableDomain);
+      }
     }
     
-    return new Interval(min, max);
+    return widestPlotDomain;
   }
   
   public void drawDatasets() {
@@ -193,42 +222,106 @@ public class XYPlotRenderer<T extends Tuple2D> {
         // TODO: add generics to MipMap class to remove this cast
         T dataPt = (T)dds.currMipMap.getTuple(hoverPoint);
         //T dataPt = dataset.getFlyweightTuple(hoverPoint, dds.currMipMap.getLevel());
-        dds.renderer.drawHoverPoint(layer, dataPt, i);
+        dds.getRenderer().drawHoverPoint(layer, dataPt, i);
       }
     }
     
     layer.restore();
   }
   
-  public DrawableDataset getDrawableDataset(int datasetIndex) {
-    return drawableDatasets.get(datasetIndex);
+  public DrawableDataset<T> getDrawableDataset(int datasetIndex) {
+    DrawableDataset<T> dds = drawableDatasets.get(datasetIndex);
+    return dds;
   }
   
   public void init() {
-    drawableDatasets = new ArrayList<DrawableDataset>();
+    ArgChecker.isNotNull(plot, "plot");
+    ArgChecker.isNotNull(view, "view");
+    
+    drawableDatasets = new ArrayList<DrawableDataset<T>>();
     Datasets<T> datasets = plot.getDatasets();
     for (int i = 0; i < datasets.size(); i++) {
-      DatasetRenderer<T> renderer = plot.getDatasetRenderer(i);
-      
-      DrawableDataset drawableDataset = new DrawableDataset();
-      drawableDataset.dataset = datasets.get(i);
-      drawableDataset.renderer = renderer;
-      drawableDataset.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
-      drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain().getMipMap(0);
-      
-      drawableDatasets.add(drawableDataset);
+      addDataset(i, datasets.get(i));
     }
+    
+    initialized = true;
+  }
+  
+  public boolean isInitialized() {
+    return initialized;
+  }
+  
+  /**
+   * Adds a new dataset to the list of datasets that this renderer is
+   * responsible for.
+   */
+  public void addDataset(int datasetIndex, Dataset<T> dataset) {
+    ArgChecker.isNotNull(dataset, "dataset");
+    
+    DrawableDataset<T> drawableDataset = new DrawableDataset<T>();
+    drawableDataset.dataset = dataset;
+    DatasetRenderer<T> renderer = this.datasetRendererMap.get(dataset);
+    configRenderer(renderer, datasetIndex);
+    drawableDataset.setRenderer(renderer);
+    drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain().getMipMap(0);
+    drawableDataset.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
 
+    drawableDatasets.add(drawableDataset);
     sortDatasetsIntoRenderOrder();
+  }
+  
+  /**
+   * Sets the map that determines which {@link DatasetRenderer} to use 
+   * for a given {@link Dataset} object.
+   */
+  public void setDatasetRendererMap(DatasetRendererMap datasetRendererMap) {
+    this.datasetRendererMap = datasetRendererMap;
+  }
+  
+  /**
+   * Removes the specified dataset from the list of datasets that this renderer
+   * is responsible for.
+   */
+  public void removeDataset(Dataset<T> dataset) {
+    ArgChecker.isNotNull(dataset, "dataset");
+    
+    for (int i = 0; i < drawableDatasets.size(); i++) {
+      DrawableDataset<T> drawableDataset = this.drawableDatasets.get(i);
+      if (dataset == drawableDataset.dataset) {
+        drawableDatasets.remove(i);
+        drawableDataset.invalidate();
+        return;
+      }
+    }
+    
+    throw new RuntimeException("dataset did not exist in drawableDatasets list");
   }
   
   public void setPlot(XYPlot<T> plot) {
     this.plot = plot;
   }
   
-  private void setupRangeAxisVisibleRanges(List<DrawableDataset> dds) {
+  /**
+   * Associates a {@link Dataset} (via its ordinal position in the {@link Datasets}
+   * collection) with a {@link DatasetRenderer}.
+   */
+  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer) {
+    ArgChecker.isNotNull(renderer, "renderer");
+    
+    configRenderer(renderer, datasetIndex);
+    DrawableDataset<T> dds = this.getDrawableDataset(datasetIndex);
+    dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
+    dds.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
+    dds.setRenderer(renderer);
+  }
+  
+  public void setView(View view) {
+    this.view = view;
+  }
+  
+  private void setupRangeAxisVisibleRanges(List<DrawableDataset<T>> dds) {
     for (int i = 0; i < dds.size(); i++) {
-      DrawableDataset ds = dds.get(i);
+      DrawableDataset<T> ds = dds.get(i);
       RangeAxis ra = plot.getRangeAxis(i);
       ra.setVisibleRange(ds.visRangeMin, ds.visRangeMax);
     }
@@ -245,7 +338,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     //  all unfocused barcharts first
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<T> renderer = drawableDatasets.get(i).renderer;
+      DatasetRenderer<T> renderer = drawableDatasets.get(i).getRenderer();
       if (renderer instanceof BarChartXYRenderer
           && (focus == null || focus.getDatasetIndex() != i)) {
         datasetRenderOrder[d++] = i;
@@ -254,7 +347,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     // next render unfocused non-barcharts
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<T> renderer = drawableDatasets.get(i).renderer;
+      DatasetRenderer<T> renderer = drawableDatasets.get(i).getRenderer();
       if (!(renderer instanceof BarChartXYRenderer)
           && (focus == null || focus.getDatasetIndex() != i)) {
         datasetRenderOrder[d++] = i;
@@ -266,5 +359,23 @@ public class XYPlotRenderer<T extends Tuple2D> {
       int num = plot.getFocus().getDatasetIndex();
       datasetRenderOrder[d++] = num;
     }
+  }
+  
+  private void configRenderer(DatasetRenderer<T> renderer, int datasetIndex) {
+    ArgChecker.isNotNull(renderer, "renderer");
+    
+    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
+    renderer.setParentGssElement(gssElem);
+    renderer.setPlot(this.plot);
+    renderer.setDatasetIndex(datasetIndex);
+    renderer.initGss(this.view);
+  }
+  
+  /**
+   * Returns the lesser of what the {@link XYPlot} and the {@link DatasetRenderer}
+   * report as the maximum number of datapoints that they can handle.
+   */
+  private int getMaxDrawableDataPoints(DrawableDataset dds) {
+    return Math.min(dds.maxDrawablePoints, plot.getMaxDrawableDataPoints());
   }
 }

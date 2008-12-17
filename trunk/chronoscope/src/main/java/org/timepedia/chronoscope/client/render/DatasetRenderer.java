@@ -4,9 +4,12 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.Array1D;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -90,25 +93,14 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   }
   
   /**
-   * Subclasses can override this method to return a maximum domain value
-   * greater than the maximum according to <tt>dataset</tt>, which is 
-   * sometimes necessary depending on how each datapoint is rendered
-   * (e.g. barchart requires domain padding to avoid cropping of the
-   * end point bars).
+   * Subclasses can override this method to return a domain span that's
+   * larger than the maximum according to current mipmapped domain associated 
+   * with the {@link DrawableDataset}.  This is sometimes necessary depending on 
+   * how each datapoint is rendered (e.g. barchart requires domain padding 
+   * to avoid cropping of the end point bars).
    */
-  public double getMaxDrawableDomain(Dataset<T> dataset) {
-    return dataset.getDomainEnd();
-  }
-  
-  /**
-   * Subclasses can override this method to return a minimum domain value
-   * smaller than the minimum according to <tt>dataset</tt>, which is 
-   * sometimes necessary depending on how each datapoint is rendered
-   * (e.g. barchart requires domain padding to avoid cropping of the
-   * end point bars).
-   */
-  public double getMinDrawableDomain(Dataset<T> dataset) {
-    return dataset.getDomainBegin();
+  protected Interval getDrawableDomain(Array1D mipmappedDomain) {
+    return new Interval(mipmappedDomain.get(0), mipmappedDomain.getLast());
   }
   
   public final GssElement getParentGssElement() {

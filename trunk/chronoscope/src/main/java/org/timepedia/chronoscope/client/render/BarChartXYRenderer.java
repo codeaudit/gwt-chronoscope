@@ -1,11 +1,13 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.util.Array1D;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
@@ -33,7 +35,9 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     final double dataY = point.getSecond();
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
-      
+
+    ChronoDate d = ChronoDate.get(dataX);
+
     if (methodCallCount == 0) {
       // nothing to do
     }
@@ -47,13 +51,12 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
       if (methodCallCount == 1) {
         // Calculate the screen-x and width of first bar
         width = currInterval * barWidthAsPercent;
-        x = lx - (width / 2.0);
       }
       else {
         width = MathUtil.min(prevInterval, currInterval) * barWidthAsPercent;
-        x = lx - (width / 2.0);
       }
       
+      x = lx - (width / 2.0);
       drawVerticalBar(layer, x, y ,width, height);
 
       prevInterval = currInterval;
@@ -65,35 +68,28 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
 
   @Override
   public int getMaxDrawableDatapoints() {
-    return 70;
+    return 100;
   }
   
   @Override
-  public double getMaxDrawableDomain(Dataset<T> dataset) {
-    // Barcharts require some padding before the first bar and
-    // after the last bar so that these bars are not cropped.
-    if (dataset.getNumSamples() <= 1) {
-      return dataset.getDomainEnd();
+  protected Interval getDrawableDomain(Array1D mipmappedDomain) {
+    if (mipmappedDomain.size() <= 1) {
+      return super.getDrawableDomain(mipmappedDomain);
     }
     else {
-      int lastIdx = dataset.getNumSamples() - 1;
-      double xLast = dataset.getX(lastIdx);
-      double lastInterval = xLast - dataset.getX(lastIdx - 1);
-      return xLast + (lastInterval / 2.0);
-    }
-  }
+      // Barcharts require some padding before the first bar and
+      // after the last bar so that these bars are not cropped.
 
-  @Override
-  public double getMinDrawableDomain(Dataset<T> dataset) {
-    // Barcharts require some padding before the first bar and
-    // after the last bar so that these bars are not cropped.
-    if (dataset.getNumSamples() <= 1) {
-      return dataset.getDomainBegin();
-    }
-    else {
-      double x0 = dataset.getDomainBegin();
-      double firstInterval = dataset.getX(1) - x0;
-      return x0 - (firstInterval / 2.0);
+      double x0 = mipmappedDomain.get(0);
+      double firstInterval = mipmappedDomain.get(1) - x0;
+      double minDomain = x0 - (firstInterval / 2.0);
+      
+      int lastIdx = mipmappedDomain.size() - 1;
+      double xLast = mipmappedDomain.get(lastIdx);
+      double lastInterval = xLast - mipmappedDomain.get(lastIdx - 1);
+      double maxDomain = xLast + (lastInterval / 2.0);
+      
+      return new Interval(minDomain, maxDomain);
     }
   }
   
@@ -125,6 +121,10 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     this.barWidthAsPercent = MathUtil.bound(barWidthAsPercent, 0.05, 1.0);
   }
   
+  /**
+   * Draws a vertical bar whose upper-left corner is positioned at coordinate (x,y),
+   * and has width=w and height=h.
+   */
   private void drawVerticalBar(Layer layer, double x, double y, double w, double h) {
     layer.beginPath();
     layer.moveTo(x, y);
