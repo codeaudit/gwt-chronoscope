@@ -27,7 +27,7 @@ final class BottomPanel extends AuxiliaryPanel {
   private DomainAxis domainAxis;
   
   // Renders the horizontal domain ticks and tick labels
-  private DomainAxisPanel domainAxisPanel;
+  private AxisPanel domainAxisPanel;
   
   // The miniaturized fully-zoomed-out representation of the datasets
   private OverviewAxisPanel overviewAxisPanel;
@@ -85,7 +85,7 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel.layout();
   }
   
-  public void setDomainAxisPanel(DomainAxisPanel axisPanel) {
+  public void setDomainAxisPanel(AxisPanel axisPanel) {
     compositePanel.remove(domainAxisPanel);
     domainAxisPanel = axisPanel;
     axisPanel.setParentPanel(compositePanel);

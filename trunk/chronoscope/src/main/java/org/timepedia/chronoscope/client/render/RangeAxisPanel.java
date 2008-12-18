@@ -19,7 +19,6 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 public class RangeAxisPanel extends AxisPanel {
 
   public enum TickPosition {
-
     INSIDE, OUTSIDE
   }
 
@@ -32,23 +31,29 @@ public class RangeAxisPanel extends AxisPanel {
   private double maxLabelWidth, maxLabelHeight;
 
   private RangeAxis rangeAxis;
+  
+  private double rotationAngle;
 
   public void computeLabelWidths(View view) {
-    //renderer.init();
+    final String valueAxisLabel = valueAxis.getLabel();
+    
     maxLabelWidth = getLabelWidth(view, getDummyLabel(), 0) + 10;
     maxLabelHeight = getLabelHeight(view, getDummyLabel(), 0) + 10;
-    axisLabelWidth = getLabelWidth(view, valueAxis.getLabel(),
-        getRotationAngle());
-    axisLabelHeight = getLabelHeight(view, valueAxis.getLabel(),
-        getRotationAngle());
+    axisLabelWidth = getLabelWidth(view, valueAxisLabel,
+        rotationAngle);
+    axisLabelHeight = getLabelHeight(view, valueAxisLabel,
+        rotationAngle);
   }
 
   public void draw(Layer layer, Bounds axisBounds) {
     double tickPositions[] = rangeAxis.computeTickPositions();
     layer.save();
+    
+    final boolean isHorizontal = getParentPanel().getPosition().isHorizontal();
+    
     if (!GRID_ONLY) {
       clearAxis(layer, axisBounds);
-      if (getParentPanel().getPosition().isHorizontal()) {
+      if (isHorizontal) {
         drawHorizontalLine(layer, axisBounds);
       } else {
         drawVerticalLine(layer, axisBounds);
@@ -62,12 +67,11 @@ public class RangeAxisPanel extends AxisPanel {
     final double axisRange = valueAxis.getRange();
     final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
-      if (getParentPanel().getPosition().isHorizontal()) {
-        if (tickPositions[i] < valueAxis.getRangeLow()
-            || tickPositions[i] > valueAxis.getRangeHigh()) {
-          continue;
+      if (isHorizontal) {
+        if (MathUtil.isBounded(tickPositions[i], valueAxis.getRangeLow(), 
+              valueAxis.getRangeHigh())) {
+          drawHorizontalTick(plot, layer, tickPositions[i], axisBounds, 6);
         }
-        drawHorizontalTick(plot, layer, tickPositions[i], axisBounds, 6);
       } else {
         drawVerticalTick(layer, tickPositions[i], tickPosition0,
             axisRange, axisBounds, GRID_ONLY);
@@ -75,10 +79,10 @@ public class RangeAxisPanel extends AxisPanel {
     }
 
     if (!GRID_ONLY) {
-      if (!getParentPanel().getPosition().isHorizontal()) {
-        drawVerticalAxisLabel(layer, axisBounds, plot.getChart());
-      } else {
+      if (isHorizontal) {
         drawHorizontalAxisLabel(layer, axisBounds);
+      } else {
+        drawVerticalAxisLabel(layer, axisBounds, plot.getChart());
       }
     }
 
@@ -116,24 +120,25 @@ public class RangeAxisPanel extends AxisPanel {
 
   @Override
   public double getWidth() {
-    final double computedAxisLabelWidth = isAxisLabelVisible() ? axisLabelWidth
-        + 5 : 0;
-
     double w = 0.0;
-    if (!parentPanel.getPosition().isHorizontal()) {
+    if (parentPanel.getPosition().isHorizontal()) {
+      w = plot.getInnerBounds().width;
+    } else {
+      final double widthBuffer = 5;
+      final double computedAxisLabelWidth = isAxisLabelVisible() ? axisLabelWidth
+          + widthBuffer : 0;
+
       boolean isLeft = parentPanel.getPosition() == Position.LEFT;
       if (isInnerMost(isLeft)) {
         if (getTickPosition() == RangeAxisPanel.TickPosition
             .INSIDE) {
           w = computedAxisLabelWidth;
         } else {
-          w = maxLabelWidth + 5 + computedAxisLabelWidth;
+          w = maxLabelWidth + widthBuffer + computedAxisLabelWidth;
         }
       } else {
-        w = maxLabelWidth + 5 + computedAxisLabelWidth;
+        w = maxLabelWidth + widthBuffer + computedAxisLabelWidth;
       }
-    } else {
-      w = plot.getInnerBounds().width;
     }
 
     return w;
@@ -147,6 +152,13 @@ public class RangeAxisPanel extends AxisPanel {
     gridProperties = view.getGssProperties(gridGssElem, "");
     rangeAxis = (RangeAxis) this.valueAxis;
     computeLabelWidths(view);
+    
+    if (this.getParentPanel().getPosition() == Position.RIGHT) {
+      rotationAngle = Math.PI / 2;
+    }
+    else {
+      rotationAngle =  - (Math.PI / 2);
+    }
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
@@ -249,7 +261,7 @@ public class RangeAxisPanel extends AxisPanel {
       layer.setStrokeColor(labelProperties.color);
       String label = valueAxis.getLabel();
 
-      layer.drawRotatedText(x, y, getRotationAngle(), label,
+      layer.drawRotatedText(x, y, rotationAngle, label,
           gssProperties.fontFamily, gssProperties.fontWeight,
           gssProperties.fontSize, textLayerName, chart);
     }
@@ -354,11 +366,6 @@ public class RangeAxisPanel extends AxisPanel {
     return view.getCanvas().getRootLayer().rotatedStringWidth(str,
         rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
         gssProperties.fontSize);
-  }
-
-  private double getRotationAngle() {
-    boolean isPanelOnRight = parentPanel.getPosition() == Position.RIGHT;
-    return (isPanelOnRight ? 1.0 : -1.0) * Math.PI / 2;
   }
 
   private TickPosition getTickPosition() {
