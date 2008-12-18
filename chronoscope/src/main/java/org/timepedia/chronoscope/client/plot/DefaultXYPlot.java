@@ -33,7 +33,6 @@ import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
-import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -728,7 +727,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setDomainAxisRenderer(AxisPanel domainAxisPanel) {
-    bottomPanel.setDomainAxisPanel((DomainAxisPanel)domainAxisPanel);
+    bottomPanel.setDomainAxisPanel(domainAxisPanel);
   }
 
   public void setFocus(Focus focus) {
