@@ -102,7 +102,6 @@ public class FastChronoDate extends ChronoDate {
         boolean isLeapYear = this.eraCalc.isLeapYear(dateFields.year);
         int daysInMonth = this.eraCalc.getDaysInMonth(dateFields.month, isLeapYear);
         int newDay = dateFields.day + numUnits;
-        //dateFields.day += numUnits;
         if (newDay <= daysInMonth) {
           dateFields.day = newDay;
         }
@@ -112,16 +111,6 @@ public class FastChronoDate extends ChronoDate {
           addRecursive(TimeUnit.MONTH, 1);
           addRecursive(TimeUnit.DAY, (numUnits - numDaysToNextMonth));
         }        
-        /*
-        if (dateFields.day > daysInMonth) {
-          int numMonths = dateFields.day / daysInMonth;
-          if (numMonths > 1) {
-            throw new RuntimeException("Addition of time units that cause overflow of greater than 1 month not allowed");
-          }
-          dateFields.day = dateFields.day % daysInMonth;
-          addRecursive(TimeUnit.MONTH, 1);
-        }
-        */
         break;
       case HOUR:
         dateFields.hour += numUnits;
