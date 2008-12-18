@@ -365,6 +365,9 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotRenderer.setView(view);
       plotRenderer.init();
     }
+    else {
+      plotRenderer.resetMipMapLevels();
+    }
     
     widestDomain = plotRenderer.calcWidestPlotDomain();
     visDomain = widestDomain.copy();

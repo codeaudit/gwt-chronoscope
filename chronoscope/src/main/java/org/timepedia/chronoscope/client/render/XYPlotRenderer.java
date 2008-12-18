@@ -301,6 +301,12 @@ public class XYPlotRenderer<T extends Tuple2D> {
     this.plot = plot;
   }
   
+  public void resetMipMapLevels() {
+    for (DrawableDataset<T> dds : this.drawableDatasets) {
+      dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
+    }
+  }
+  
   /**
    * Associates a {@link Dataset} (via its ordinal position in the {@link Datasets}
    * collection) with a {@link DatasetRenderer}.
