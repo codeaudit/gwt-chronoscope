@@ -205,6 +205,17 @@ public class FastChronoDateTest extends TestCase {
     d = createTestDate(1582, 11, 25);
     d.add(TimeUnit.DAY, 10);
     assertEquals(1583, 0, 4, d);
+    
+    // Test that day overflow logic works:
+    d = createTestDate(1975, 0, 31); // non-leapyear
+    d.add(TimeUnit.DAY, 35);
+    assertEquals(1975, 2, 7, d);
+    d = createTestDate(1976, 0, 31); // leapyear
+    d.add(TimeUnit.DAY, 35);
+    assertEquals(1976, 2, 6, d);
+    d = createTestDate(1976, 0, 1); // skip an entire year (leapyear)
+    d.add(TimeUnit.DAY, 366);
+    assertEquals(1977, 0, 1, d);
   }
   
   public void testAddWeeks() {

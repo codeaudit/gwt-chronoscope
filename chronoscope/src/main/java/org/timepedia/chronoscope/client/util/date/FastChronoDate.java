@@ -99,17 +99,29 @@ public class FastChronoDate extends ChronoDate {
         // Just multiply by 7 and let fall through to the DAY case
         numUnits *= 7;
       case DAY:
-        dateFields.day += numUnits;
         boolean isLeapYear = this.eraCalc.isLeapYear(dateFields.year);
         int daysInMonth = this.eraCalc.getDaysInMonth(dateFields.month, isLeapYear);
+        int newDay = dateFields.day + numUnits;
+        //dateFields.day += numUnits;
+        if (newDay <= daysInMonth) {
+          dateFields.day = newDay;
+        }
+        else {
+          int numDaysToNextMonth = daysInMonth - dateFields.day + 1;
+          dateFields.day = 1;
+          addRecursive(TimeUnit.MONTH, 1);
+          addRecursive(TimeUnit.DAY, (numUnits - numDaysToNextMonth));
+        }        
+        /*
         if (dateFields.day > daysInMonth) {
           int numMonths = dateFields.day / daysInMonth;
           if (numMonths > 1) {
             throw new RuntimeException("Addition of time units that cause overflow of greater than 1 month not allowed");
           }
           dateFields.day = dateFields.day % daysInMonth;
-          addRecursive(TimeUnit.MONTH, numMonths);
+          addRecursive(TimeUnit.MONTH, 1);
         }
+        */
         break;
       case HOUR:
         dateFields.hour += numUnits;
