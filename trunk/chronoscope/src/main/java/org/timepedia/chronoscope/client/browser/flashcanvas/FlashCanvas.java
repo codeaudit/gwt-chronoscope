@@ -128,7 +128,7 @@ public class FlashCanvas extends Canvas {
     DOM.setStyleAttribute(glassPane, "position", "absolute");
     DOM.setStyleAttribute(glassPane, "top", "0px");
     DOM.setStyleAttribute(glassPane, "left", "0px");
-    DOM.setStyleAttribute(glassPane, "zIndex", "1");
+    DOM.setStyleAttribute(glassPane, "zIndex", "0");
     //    addOnClick(glassPane);
 
     FlashResources flashResources = GWT.create(FlashResources.class);

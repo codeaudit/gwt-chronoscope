@@ -248,7 +248,7 @@ public class LegendAxisPanel extends AxisPanel {
   private static void hiliteBounds(Bounds b, Layer layer) {
     layer.save();
 
-    layer.setLayerOrder(1);
+    layer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
     //layer.setTransparency(.35f);
     layer.setFillColor(new Color("#50D0FF"));
     layer.fillRect(b.x, b.y, b.width, b.height);

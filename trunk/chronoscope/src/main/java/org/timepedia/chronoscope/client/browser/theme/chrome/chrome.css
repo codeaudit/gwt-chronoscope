@@ -435,6 +435,11 @@ html>body .gwt-MenuBarPopup .menuPopupBottomRight {
   border: 3px solid #e3e3e3;
   padding: 3px;
   background: white;
+  z-index: 998
+}
+
+.gwt-DecoratedPopupPanel {
+    z-index: 998
 }
 
 .gwt-DecoratedPopupPanel .popupContent {

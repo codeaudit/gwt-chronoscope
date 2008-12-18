@@ -198,7 +198,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       DOM.setIntStyleAttribute(layerElem, "width", (int) getWidth());
       DOM.setIntStyleAttribute(layerElem, "height", (int) getHeight());
       DOM.setStyleAttribute(layerElem, "backgroundColor", "transparent");
-      DOM.setStyleAttribute(layerElem, "zIndex", "3");
+      DOM.setStyleAttribute(layerElem, "zIndex", ""+(getLayerOrder()+1));
       DOM.setStyleAttribute(layerElem, "overflow", "visible");
       DOM.appendChild(DOM.getParent(getElement()), layerElem);
       layer = new TextLayer();
@@ -247,7 +247,7 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.setStyleAttribute(layerElem, "left", bounds.x + "px");
     DOM.setStyleAttribute(layerElem, "top", bounds.y + "px");
     DOM.setStyleAttribute(layerElem, "overflow", "visible");
-    DOM.setStyleAttribute(layerElem, "zIndex", "5");
+    DOM.setStyleAttribute(layerElem, "zIndex", ""+(getLayerOrder()+1));
     DOM.setStyleAttribute(layerElem, "backgroundColor", "transparent");
     DOM.setStyleAttribute(layerElem, "visibility", "visible");
   }
