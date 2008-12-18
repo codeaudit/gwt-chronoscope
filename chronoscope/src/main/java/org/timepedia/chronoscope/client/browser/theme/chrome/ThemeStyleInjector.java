@@ -54,6 +54,8 @@ public class ThemeStyleInjector  {
    */
   public static void injectTheme(Theme theme) {
     switch(theme) {
+      case NONE:
+        break;
       case DARK:
       case STANDARD:
       case CHROME:
