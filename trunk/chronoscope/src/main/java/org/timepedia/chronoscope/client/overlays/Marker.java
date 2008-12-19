@@ -55,13 +55,13 @@ public class Marker implements Overlay, GssElement, Exportable {
 
   private String label;
 
-  private GssProperties markerProps;
+  protected GssProperties markerProps;
 
   private MarkerShape markerShape;
 
   private double rangeY;
 
-  private int labelWidth, labelHeight;
+  protected int labelWidth, labelHeight;
 
   public Marker(double domainX, String label, int datasetIdx) {
     this.domainX = domainX;
@@ -102,21 +102,8 @@ public class Marker implements Overlay, GssElement, Exportable {
     if (plot == null) {
       throw new IllegalStateException("plot not set");
     }
-
-    // if no longer visible, close window
-    if (!plot.getDomain().containsOpen(domainX)) {
-      if (currentWindow != null) {
-        wasOpenWindow = currentWindow;
-        currentWindow.close();
-      }
+    if (handleInfoWindowVisibility()) {
       return;
-    }
-
-    // if window was hidden, and marker is now visible, show it
-    if (currentWindow == null && wasOpenWindow != null) {
-      currentWindow = wasOpenWindow;
-      wasOpenWindow = null;
-      currentWindow.open();
     }
 
     lazyInitScreenProps(backingCanvas);
@@ -147,6 +134,25 @@ public class Marker implements Overlay, GssElement, Exportable {
         markerProps.fontWeight, markerProps.fontSize, layer, Cursor.CLICKABLE);
     backingCanvas.restore();
 
+  }
+
+  protected boolean handleInfoWindowVisibility() {
+    // if no longer visible, close window
+    if (!plot.getDomain().containsOpen(domainX)) {
+      if (currentWindow != null) {
+        wasOpenWindow = currentWindow;
+        currentWindow.close();
+      }
+      return true;
+    }
+
+    // if window was hidden, and marker is now visible, show it
+    if (currentWindow == null && wasOpenWindow != null) {
+      currentWindow = wasOpenWindow;
+      wasOpenWindow = null;
+      currentWindow.open();
+    }
+    return false;
   }
 
   public int getDatasetIndex() {
@@ -317,7 +323,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     return interplatedRangeY;
   }
 
-  private void lazyInitScreenProps(Layer layer) {
+  protected void lazyInitScreenProps(Layer layer) {
     if (!isScreenPropsSet) {
       View view = plot.getChart().getView();
       markerProps = view.getGssProperties(this, "");
