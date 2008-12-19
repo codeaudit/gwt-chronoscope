@@ -496,11 +496,11 @@ public class DefaultXYPlot<T extends Tuple2D>
       animateTo(domainEnd - visDomain.length() / 2, visDomain.length(),
           PlotMovedEvent.MoveType.DRAGGED, new PortableTimerTask() {
             public void run(PortableTimer timer) {
-              initAndRedraw();
+              redraw(true);
             }
           }, false);
     } else {
-      initAndRedraw();
+      redraw(true);
     }
   }
 

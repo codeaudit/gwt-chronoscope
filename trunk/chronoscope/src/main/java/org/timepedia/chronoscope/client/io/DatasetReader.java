@@ -40,6 +40,11 @@ public class DatasetReader {
    * </pre>
    */
   public static Dataset createDatasetFromJson(JsonDataset json) {
+    DatasetRequest request = createDatasetRequestFromJson(json);
+    return ComponentFactory.get().getDatasetFactory().create(request);
+  }
+
+  public static DatasetRequest createDatasetRequestFromJson(JsonDataset json) {
     validateJSON(json);
 
     DatasetRequest request;
@@ -54,8 +59,12 @@ public class DatasetReader {
     request.setRangeLabel(json.getLabel());
     request.setAxisId(json.getAxisId());
     request.setPreferredRenderer(json.getPreferredRenderer());
+    return request;
+  }
 
-    return ComponentFactory.get().getDatasetFactory().create(request);
+  public static Dataset createMutableDatasetFromJson(JsonDataset json) {
+    DatasetRequest request = createDatasetRequestFromJson(json);
+    return ComponentFactory.get().getDatasetFactory().createMutable(request);
   }
 
   public static Array2D createArray2D(double[][] a) {
