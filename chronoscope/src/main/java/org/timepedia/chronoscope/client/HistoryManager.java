@@ -59,6 +59,7 @@ public class HistoryManager {
         String viewId = target.substring(0, target.indexOf("("));
         String[] var = target.substring(target.indexOf("(") + 1).split("\\,");
         Chart chart = (Chart) id2chart.get(viewId);
+        if(chart == null) continue;
         double dO = chart.getPlot().getDomain().getStart();
         double cD = chart.getPlot().getDomain().length();
         boolean changed = false;
