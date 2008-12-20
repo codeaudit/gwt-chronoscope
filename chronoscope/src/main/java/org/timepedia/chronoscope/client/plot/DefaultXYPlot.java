@@ -156,6 +156,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void addOverlay(Overlay overlay) {
     overlays.add(overlay);
     overlay.setPlot(this);
+    this.drawOverlays(plotLayer);
   }
   
   public HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
