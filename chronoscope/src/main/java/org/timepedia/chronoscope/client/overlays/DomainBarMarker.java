@@ -34,15 +34,9 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
 
   private final String label;
 
-  private int width = -1, height;
-
   private ArrayList clickListener;
 
   private XYPlot plot = null;
-
-  private String date;
-
-  private int seriesNum;
 
   private GssProperties markerProperties = null;
 

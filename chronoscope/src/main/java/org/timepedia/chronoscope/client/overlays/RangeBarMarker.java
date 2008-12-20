@@ -1,30 +1,28 @@
 package org.timepedia.chronoscope.client.overlays;
 
-import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 
 /**
  * An overlay which renders highlighted regions spanning the entire X dimensions
- * of the plot over a given range region
+ * of the plot over a given range region.
  *
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class RangeBarMarker implements Exportable, Overlay, GssElement {
-
-  private double domainWidth;
 
   private final double rangeLow;
 
@@ -32,15 +30,9 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
 
   private final String label;
 
-  private int width = -1, height;
-
   private ArrayList clickListener;
 
   private XYPlot plot = null;
-
-  private String date;
-
-  private int seriesNum;
 
   private GssProperties markerProperties = null;
 
@@ -108,16 +100,22 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
       backingCanvas.setStrokeColor(markerProperties.color);
       backingCanvas.stroke();
     }
+    
+    // Add a little left-padding to marker text so that it doesn't overlap
+    // the range values on the left range axis.  TODO:  Determine the actual
+    // distance (if any) that the text needs to be shifted to the right.
+    final double textStartX = x + 25;
+    
     if (labelHeight + 4 < Math.abs(y1 - y2)) {
-      backingCanvas.drawText(x, y1 + 2, label, markerLabelProperties.fontFamily,
+      backingCanvas.drawText(textStartX, y1 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer, Cursor.DEFAULT);
     } else if (y1 - labelHeight - 4 < plot.getInnerBounds().y) {
-      backingCanvas.drawText(x, y2 + 2, label, markerLabelProperties.fontFamily,
+      backingCanvas.drawText(textStartX, y2 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer, Cursor.DEFAULT);
     } else {
-      backingCanvas.drawText(x, y1 - labelHeight - 2, label,
+      backingCanvas.drawText(textStartX, y1 - labelHeight - 2, label,
           markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
           markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
     }

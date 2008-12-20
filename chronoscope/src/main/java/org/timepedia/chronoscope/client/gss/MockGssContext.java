@@ -170,6 +170,8 @@ public class MockGssContext extends BrowserGssContext {
   private void configRangeMarkerProps(GssProperties p) {
     p.bgColor = new Color("#f41010");
     p.color = Color.BLACK;
+    p.transparency = 0.5;
+    p.lineThickness = 5;
   }
   
   private void configTickProps(GssProperties p) {
