@@ -285,16 +285,28 @@ public class XYPlotRenderer<T extends Tuple2D> {
   public void removeDataset(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     
+    boolean wasDatasetFound = false;
     for (int i = 0; i < drawableDatasets.size(); i++) {
       DrawableDataset<T> drawableDataset = this.drawableDatasets.get(i);
       if (dataset == drawableDataset.dataset) {
         drawableDatasets.remove(i);
         drawableDataset.invalidate();
-        return;
+        wasDatasetFound = true;
+        break;
       }
     }
     
-    throw new RuntimeException("dataset did not exist in drawableDatasets list");
+    // throw a fit if we can't find the dataset-to-be-removed
+    if (!wasDatasetFound) {
+      throw new RuntimeException("dataset did not exist in drawableDatasets list");
+    }
+    
+    // Need to re-assign the datasetIndex value across all renderers to that 
+    // the indices are consecutive (necessary in the case where a dataset
+    // in the middle of the list is removed).
+    for (int i = 0; i < drawableDatasets.size(); i++) {
+      drawableDatasets.get(i).getRenderer().setDatasetIndex(i);
+    }
   }
   
   public void setPlot(XYPlot<T> plot) {
