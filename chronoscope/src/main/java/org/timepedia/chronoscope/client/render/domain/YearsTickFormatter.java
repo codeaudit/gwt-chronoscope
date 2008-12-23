@@ -17,6 +17,11 @@ public class YearsTickFormatter extends TickFormatter {
     this.tickInterval = TimeUnit.YEAR;
   }
 
+  public YearsTickFormatter(MilleniumTickFormatter milleniumTickFormatter) {
+    this();
+    this.superFormatter = milleniumTickFormatter;
+  }
+
   public String formatRelativeTick(ChronoDate d) {
     return String.valueOf(d.getYear());
   }
