@@ -57,8 +57,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
       final double plotDomainStart = plotDomain.getStart();
       final double plotDomainEnd = plotDomain.getEnd();
-      if (!(MathUtil.isBounded(plotDomainStart, dataSet.getDomainBegin()
-          - plotDomain.length(), dataSet.getDomainEnd()))) {
+      Interval domainExtrema = dataSet.getDomainExtrema();
+      if (!(MathUtil.isBounded(plotDomainStart, domainExtrema.getStart()
+          - plotDomain.length(), domainExtrema.getEnd()))) {
         continue;
       }
 

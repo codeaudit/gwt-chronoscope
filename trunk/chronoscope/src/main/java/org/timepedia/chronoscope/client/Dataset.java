@@ -62,23 +62,18 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
 
   /**
    * Returns an interval representing the min and max values for the specified 
-   * tuple coordinate.
+   * range tuple coordinate.
    */
   @NoExport
-  Interval getExtrema(int tupleCoordinate);
+  Interval getRangeExtrema(int rangeTupleCoordinate);
   
   /**
-   * Return the minimum domain value in this dataset, which corresponds to the
-   * first value in the tuple at index 0.
+   * Returns an interval that contains the minimum and maximum domain values
+   * of this dataset's domain.
    */
-  double getDomainBegin();
-
-  /**
-   * Return the maxiumum domain value in this dataset, which corresponds to the
-   * first value in the tuple at index <tt>{@link #getNumSamples() - 1}<?tt>.
-   */
-  double getDomainEnd();
-
+  @NoExport
+  Interval getDomainExtrema();
+  
   /**
    * Returns the tuple associated with the specified data point index.
    */

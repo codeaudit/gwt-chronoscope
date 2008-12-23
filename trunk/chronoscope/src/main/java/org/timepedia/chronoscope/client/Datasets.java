@@ -180,8 +180,8 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   }
 
   private void updateAggregateInfo(Dataset<T> dataset) {
-    minDomain = MathUtil.min(minDomain, dataset.getDomainBegin());
-    maxDomain = MathUtil.max(maxDomain, dataset.getDomainEnd());
+    minDomain = MathUtil.min(minDomain, dataset.getDomainExtrema().getStart());
+    maxDomain = MathUtil.max(maxDomain, dataset.getDomainExtrema().getEnd());
     minInterval = Math
         .min(minInterval, dataset.getMinDomainInterval());
   }

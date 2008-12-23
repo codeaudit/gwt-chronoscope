@@ -69,7 +69,7 @@ public class ChartDemo implements EntryPoint {
         public void onViewReady(final View view) {
           Dataset dataset = datasets.get(0);
           final Marker m = new Marker(
-              (dataset.getDomainBegin() + dataset.getDomainEnd()) / 2, "A", 0);
+              dataset.getDomainExtrema().midpoint(), "A", 0);
           m.addOverlayClickListener(new OverlayClickListener() {
             public void onOverlayClick(Overlay overlay, int x, int y) {
               m.openInfoWindow("Hello");

@@ -113,7 +113,7 @@ public class UtilTest extends TestCase {
       throw new UnsupportedOperationException();
     }
 
-    public Interval getExtrema(int tupleCoordinate) {
+    public Interval getRangeExtrema(int tupleCoordinate) {
       throw new UnsupportedOperationException();
     }
 

@@ -73,10 +73,10 @@ public class MutableDataset2D extends ArrayDataset2D implements MutableDataset<T
   }
 
   private void appendXY(double x, double y) {
-    if (x <= getDomainEnd()) {
+    if (x <= getDomainExtrema().getEnd()) {
       throw new IllegalArgumentException(
           "Insertions not allowed; x was <= domainEnd: " + x + ":"
-              + getDomainEnd());
+              + getDomainExtrema().getEnd());
     }
     
     mipMapStrategy.appendXY(x, y, mipMapChain);
