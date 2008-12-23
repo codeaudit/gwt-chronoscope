@@ -20,16 +20,15 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
   
   protected Interval preferredRangeAxisInterval;
   
+  private Interval domainExtrema = new Interval(0.0, 0.0);
+  
   public final String getAxisId() {
     return axisId;
   }
 
-  public final double getDomainBegin() {
-    return getX(0);
-  }
-
-  public final double getDomainEnd() {
-    return getX(getNumSamples() - 1);
+  public final Interval getDomainExtrema() {
+    this.domainExtrema.setEndpoints(getX(0), getX(getNumSamples() - 1));
+    return this.domainExtrema;
   }
 
   public final String getIdentifier() {

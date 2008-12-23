@@ -134,7 +134,7 @@ final class RangePanel extends AuxiliaryPanel {
         
         Interval rangeAxisInterval = ds.getPreferredRangeAxisInterval();
         if (rangeAxisInterval == null) {
-          rangeAxisInterval = ds.getExtrema(1);
+          rangeAxisInterval = ds.getRangeExtrema(0);
         }
         
         ra = new RangeAxis(plot, view, ds.getRangeLabel(), ds.getAxisId(), i,
@@ -145,7 +145,7 @@ final class RangePanel extends AuxiliaryPanel {
         currRangePanel.add(axisPanel);
         id2rangeAxis.put(ra.getAxisId(), ra);
       } else {
-        Interval yInterval = ds.getExtrema(1);
+        Interval yInterval = ds.getRangeExtrema(0);
         ra.setInitialRange(
             Math.min(ra.getUnadjustedRangeLow(), yInterval.getStart()),
             Math.max(ra.getUnadjustedRangeHigh(), yInterval.getEnd()));

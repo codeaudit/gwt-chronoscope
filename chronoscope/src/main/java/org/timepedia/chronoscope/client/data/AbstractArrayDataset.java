@@ -69,14 +69,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     return (T)rawData.getTuple(index);
   }
 
-  public Interval getExtrema(int tupleCoordinate) {
-    if (tupleCoordinate == 0) {
-      Array1D domain = this.rawData.getDomain();
-      return new Interval(domain.get(0), domain.getLast());
-    }
-    else {
-      return rangeIntervals[tupleCoordinate - 1].copy();
-    }
+  public Interval getRangeExtrema(int tupleCoordinate) {
+    return rangeIntervals[tupleCoordinate].copy();
   }
   
   public MipMapChain getMipMapChain() {
