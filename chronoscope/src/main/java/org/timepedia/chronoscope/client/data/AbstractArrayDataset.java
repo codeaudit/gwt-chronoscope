@@ -28,6 +28,11 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   protected Interval[] rangeIntervals;
   
   /**
+   * Stores the axis IDs for each range tuple coordinate
+   */
+  private String[] axisIds;
+  
+  /**
    * Mip level 0 of the {@link #mipMapChain}.
    */
   private MipMap rawData;
@@ -38,13 +43,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
   public AbstractArrayDataset(DatasetRequest request) {
     ArgChecker.isNotNull(request, "request");
     request.validate();
-    axisId = (String) ArgChecker.isNotNull(request.getAxisId(), "axisId");
     rangeLabel = (String) ArgChecker.isNotNull(request.getRangeLabel(), "label");
     identifier = request.getIdentifier();
     preferredRenderer = request.getPreferredRenderer();
     
     mipMapChain = loadTupleData(request);
     rawData = this.mipMapChain.getMipMap(0);
+    
+    axisIds = new String[mipMapChain.getRangeTupleSize()];
+    axisIds[0] = (String)ArgChecker.isNotNull(request.getAxisId(), "axisId");
     
     // TODO: implement validate()
     //mipMapChain.validate(); 
@@ -65,6 +72,13 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
   }
 
+  public final String getAxisId(int rangeTupleCoordinate) {
+    if (rangeTupleCoordinate > 0) {
+      throw new UnsupportedOperationException("rangeTupleCoordinate values > 0 not supported yet");
+    }
+    return axisIds[rangeTupleCoordinate];
+  }
+  
   public final T getFlyweightTuple(int index) {
     return (T)rawData.getTuple(index);
   }
@@ -101,8 +115,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
     if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
       DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq;
-      Array2D mipMappedDomain = multiResReq.getMultiresTupleSlice(0);
-      List<Array2D> mipMappedRangeTuples = multiResReq.getMultiResTuples();
+      Array2D mipMappedDomain = multiResReq.getMultiresDomain();
+      List<Array2D> mipMappedRangeTuples = multiResReq.getMultiResRangeTuples();
       mipMapChain = new MipMapChain(mipMappedDomain, mipMappedRangeTuples);
     } 
     else if (datasetReq instanceof DatasetRequest.Basic) {
@@ -111,14 +125,14 @@ public abstract class AbstractArrayDataset<T extends Tuple2D> extends AbstractDa
       DatasetRequest.Basic basicReq = (DatasetRequest.Basic) datasetReq;
       MipMapStrategy mms = basicReq.getDefaultMipMapStrategy();
       
-      double[] domain = basicReq.getTupleSlice(0);
+      double[] domain = basicReq.getDomain();
       
-      List<double[]> tupleRange = new ArrayList<double[]>();
+      List<double[]> rangeTuples = new ArrayList<double[]>();
       for (int i = 0; i < rangeTupleLength; i++) {
-        tupleRange.add(basicReq.getTupleSlice(i + 1));
+        rangeTuples.add(basicReq.getRangeTupleSlice(i));
       }
       
-      mipMapChain = mms.mipmap(domain, tupleRange);
+      mipMapChain = mms.mipmap(domain, rangeTuples);
     }
     else {
       throw new RuntimeException("Unsupported request type: " 

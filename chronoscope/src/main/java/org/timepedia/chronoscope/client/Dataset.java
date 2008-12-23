@@ -58,7 +58,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * typically the physical units (e.g. meters/second). Datasets with identical
    * axis ids will, by default, be allocated on the same axis.
    */
-  String getAxisId();
+  String getAxisId(int rangeTupleCoordinate);
 
   /**
    * Returns an interval representing the min and max values for the specified 

@@ -1,18 +1,16 @@
 package org.timepedia.chronoscope.client.io;
 
-import com.google.gwt.user.client.Window;
-
-import org.timepedia.chronoscope.client.browser.JsArrayParser;
-import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
+import org.timepedia.chronoscope.client.ComponentFactory;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.browser.JsArrayParser;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
+import org.timepedia.chronoscope.client.data.json.JsonArray;
+import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
+import org.timepedia.chronoscope.client.data.json.JsonDataset;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.JavaArray2D;
-import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.data.json.JsonDataset;
-import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
-import org.timepedia.chronoscope.client.data.json.JsonArray;
-import org.timepedia.chronoscope.client.data.DatasetRequest;
 
 /**
  * Various utility methods for parsing and validating JSON format.
@@ -86,15 +84,15 @@ public class DatasetReader {
       domainArray = jsArrayParser
           .parse(json.getDomain(), json.getDomainScale());
     }
-    request.addTupleSlice(domainArray);
+    request.setDomain(domainArray);
 
     JsonArray<JsonArrayNumber> tupleRange = json.getTupleRange();
     if (tupleRange != null) {
       for (int i = 0; i < tupleRange.length(); i++) {
-        request.addTupleSlice(jsArrayParser.parse(tupleRange.get(i)));
+        request.addRangeTupleSlice(jsArrayParser.parse(tupleRange.get(i)));
       }
     } else {
-      request.addTupleSlice(jsArrayParser.parse(json.getRange()));
+      request.addRangeTupleSlice(jsArrayParser.parse(json.getRange()));
     }
 
     return request;
@@ -102,8 +100,7 @@ public class DatasetReader {
 
   public static DatasetRequest buildPreMipmappedDatasetRequest(
       JsonDataset json) {
-    DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
-
+    
     JsonArray<JsonArrayNumber> mdomain = json.getMultiDomain();
     JsonArray<JsonArrayNumber> mrange = json.getMultiRange();
 
@@ -123,11 +120,11 @@ public class DatasetReader {
       ranges[i] = jsArrayParser.parse(mrange.get(i));
     }
 
-    DatasetRequest.MultiRes mippedRequest = (DatasetRequest.MultiRes) request;
+    DatasetRequest.MultiRes request = new DatasetRequest.MultiRes();
     request.setRangeTop(json.getRangeTop());
     request.setRangeBottom(json.getRangeBottom());
-    mippedRequest.addMultiresTupleSlice(createArray2D(domains));
-    mippedRequest.addMultiresTupleSlice(createArray2D(ranges));
+    request.setMultiresDomain(createArray2D(domains));
+    request.addMultiresRangeTupleSlice(createArray2D(ranges));
 
     return request;
   }
