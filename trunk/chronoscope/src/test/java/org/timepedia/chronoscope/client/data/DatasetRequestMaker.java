@@ -13,8 +13,8 @@ public final class DatasetRequestMaker {
     request.setAxisId("Dummy_Axis_Id");
     request.setRangeLabel("Dummy_Range_Label");
     request.setDefaultMipMapStrategy(BinaryMipMapStrategy.MEAN);
-    request.addTupleSlice(domain);
-    request.addTupleSlice(range);
+    request.setDomain(domain);
+    request.addRangeTupleSlice(range);
     
     return request;
   }

@@ -97,6 +97,10 @@ public class UtilTest extends TestCase {
       this.domain = domain;
     }
     
+    public String getAxisId(int rangeTupleCoordinate) {
+      throw new UnsupportedOperationException();
+    }
+    
     public int getNumSamples() {
       return this.domain.length;
     }

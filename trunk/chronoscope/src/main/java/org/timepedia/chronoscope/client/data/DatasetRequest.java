@@ -24,19 +24,28 @@ public abstract class DatasetRequest {
    * {@link #setDefaultMipMapStrategy(MipMapStrategy) MipMapStrategy} object.
    */
   public static final class Basic extends DatasetRequest {
-    // tupleData[n] represents the Nth dimension value of each tuple in the dataset
-    List<double[]> tupleData = new ArrayList<double[]>();
+    private double[] domainData;
+    
+    // tupleData[n] represents the Nth dimension value of each range tuple
+    private List<double[]> rangeTupleData = new ArrayList<double[]>();
+    
+    public double[] getDomain() {
+      if (domainData == null) {
+        throw new IllegalStateException("domain not set");
+      }
+      return domainData;
+    }
     
     public int getTupleLength() {
-      return tupleData.size();
+      return 1 + rangeTupleData.size();
     }
     
     /**
      * Returns an array containing the Nth element of every tuple in this request,
      * where N is the specified index. 
      */
-    public double[] getTupleSlice(int tupleIndex) {
-      return tupleData.get(tupleIndex);
+    public double[] getRangeTupleSlice(int rangeTupleIndex) {
+      return rangeTupleData.get(rangeTupleIndex);
     }
     
     /**
@@ -44,83 +53,97 @@ public abstract class DatasetRequest {
      * whose values must be in sorted ascending order.  Subsequent slices are
      * assumed to be components of an n-tuple range.
      *  
-     * See {@link #getTupleSlice(int)}.
+     * See {@link #getRangeTupleSlice(int)}.
      */
-    public void addTupleSlice(double[] slice) {
+    public void addRangeTupleSlice(double[] slice) {
       ArgChecker.isNotNull(slice, "slice");
-      tupleData.add(slice);
+      rangeTupleData.add(slice);
     }
     
     /**
-     * Replaces the tuple slice at the specified index with the new slice.
-     * 
-     * @return the tuple slice previously at the specified index.
+     * Sets the domain values for this request.
      */
-    public double[] setTupleSlice(int index, double[] slice) {
-      return tupleData.set(index, slice);
+    public void setDomain(double[] domain) {
+      ArgChecker.isNotNull(domain, "domain");
+      this.domainData = domain;
+    }
+    
+    /**
+     * Replaces the range tuple slice at the specified tuple coordinate 
+     * with the new slice.
+     * 
+     * @return the range tuple slice previously at the specified coordinate.
+     */
+    public double[] setRangeTupleSlice(int rangeTupleCoordinate, double[] slice) {
+      return rangeTupleData.set(rangeTupleCoordinate, slice);
     }
     
     public void validate() {
       super.validate();
       
-      // Make sure all list elements are non-null
-      for (int i = 0; i < tupleData.size(); i++) {
-        ArgChecker.isNotNull(tupleData.get(i), "tupleData.get(" + i + ")");
+      // Make sure everything's non-null
+      ArgChecker.isNotNull(domainData, "domainData");
+      for (int i = 0; i < rangeTupleData.size(); i++) {
+        ArgChecker.isNotNull(rangeTupleData.get(i), "tupleData[" + i + "]");
       }
       
       // Make sure all double[] elements are the same length
-      int prevLength = tupleData.get(0).length;
-      for (int i = 1; i < tupleData.size(); i++) {
-        double[] tupleSlice = tupleData.get(i);
+      final int domainLength = domainData.length;
+      for (int i = 0; i < rangeTupleData.size(); i++) {
+        double[] tupleSlice = rangeTupleData.get(i);
         int currLength = tupleSlice.length;
-        if (currLength != prevLength) {
-          throw new IllegalArgumentException("tupleData[" + i + "] has " + 
-              currLength + " elements, but tupleData[" + (i - 1) + "] has " +
-              prevLength);
+        if (currLength != domainLength) {
+          throw new IllegalArgumentException("tupleData[" + i + "].length=" + 
+              currLength + " but domainData.length=" + domainLength);
         }
-        prevLength = currLength;
       }
     }
   }
+  
   /**
    * Request in which the n-tuple values at each mipmap level must be 
-   * manually specified.
+   * explicitly assigned.
    */
   public static final class MultiRes extends DatasetRequest {
-    private List<Array2D> mipmappedTupleData = new ArrayList<Array2D>();
+    private Array2D mipmappedDomainData;
+    private List<Array2D> mipmappedRangeTupleData = new ArrayList<Array2D>();
     
-    public List<Array2D> getMultiResTuples() {
-      return mipmappedTupleData;
+    public List<Array2D> getMultiResRangeTuples() {
+      return mipmappedRangeTupleData;
     }
     
-    public Array2D getMultiresTupleSlice(int tupleIndex) {
-      return mipmappedTupleData.get(tupleIndex);
+    public Array2D getMultiresDomain() {
+      return mipmappedDomainData;
     }
     
-    public void addMultiresTupleSlice(Array2D slice) {
+    public void addMultiresRangeTupleSlice(Array2D slice) {
       ArgChecker.isNotNull(slice, "slice");
-      mipmappedTupleData.add(slice);
+      mipmappedRangeTupleData.add(slice);
     }
 
     public int getTupleLength() {
-      return mipmappedTupleData.size();
+      return 1 + mipmappedRangeTupleData.size();
     }
-
+    
+    public void setMultiresDomain(Array2D domain) {
+      ArgChecker.isNotNull(domain, "domain");
+      mipmappedDomainData = domain;
+    }
+    
     public void validate() {
-      for (int i = 0; i < mipmappedTupleData.size(); i++) {
-        ArgChecker.isNotNull(mipmappedTupleData.get(i), "mipmappedTupleData.get(" + i + ")");
+      ArgChecker.isNotNull(mipmappedDomainData, "mipmappedDomainData");
+      for (int i = 0; i < mipmappedRangeTupleData.size(); i++) {
+        ArgChecker.isNotNull(mipmappedRangeTupleData.get(i), "mipmappedTupleData[" + i + "]");
       }
 
       // Verify that multiDomain and multiRange have same number
       // of elements at each level
-      Array2D prevSlice = mipmappedTupleData.get(0);
-      for (int i = 1; i < mipmappedTupleData.size(); i++) {
-        Array2D mipmappedTupleSlice = mipmappedTupleData.get(i);
-        if (!mipmappedTupleSlice.isSameSize(prevSlice)) {
+      for (int i = 1; i < mipmappedRangeTupleData.size(); i++) {
+        Array2D mipmappedTupleSlice = mipmappedRangeTupleData.get(i);
+        if (!mipmappedTupleSlice.isSameSize(mipmappedDomainData)) {
           throw new IllegalArgumentException(
               "i=" + i + ": domain and range mipmaps differ in size");
         }
-        prevSlice = mipmappedTupleSlice;
       }
     }
   }

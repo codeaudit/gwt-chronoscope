@@ -123,7 +123,7 @@ final class RangePanel extends AuxiliaryPanel {
     for (int i = 0; i < datasets.size(); i++) {
       Dataset ds = datasets.get(i);
 
-      RangeAxis ra = id2rangeAxis.get(ds.getAxisId());
+      RangeAxis ra = id2rangeAxis.get(ds.getAxisId(0));
 
       if (ra == null) {
         int numLeftAxes = leftPanel.getAxisCount();
@@ -137,7 +137,7 @@ final class RangePanel extends AuxiliaryPanel {
           rangeAxisInterval = ds.getRangeExtrema(0);
         }
         
-        ra = new RangeAxis(plot, view, ds.getRangeLabel(), ds.getAxisId(), i,
+        ra = new RangeAxis(plot, view, ds.getRangeLabel(), ds.getAxisId(0), i,
             rangeAxisInterval);
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(ra);
