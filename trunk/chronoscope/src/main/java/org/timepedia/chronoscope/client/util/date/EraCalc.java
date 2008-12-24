@@ -13,7 +13,8 @@ public abstract class EraCalc {
       31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   private static final int[] DAYS_IN_MONTH_NON_LEAPYEAR = {
       31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-  private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc().init(1583, 2999);
+  private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc().init(1583, 1999999);
+  //private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc().init(1583, 12999);
   private static final EraCalc JULIAN_ERA_CALC = new JulianEraCalc();
   private static final EraCalc Y1582_ERA_CALC = new JulianCrossoverEraCalc();
   private static final double TS_1582_JAN_01 = getJavaTimestamp(1582);

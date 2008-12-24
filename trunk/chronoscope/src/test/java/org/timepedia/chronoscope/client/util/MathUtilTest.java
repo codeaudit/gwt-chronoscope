@@ -95,4 +95,16 @@ public class MathUtilTest extends TestCase {
     assertEquals(0, MathUtil.mod(3, 3));
     assertEquals(1, MathUtil.mod(4, 3));
   }
+  
+  public void testQuantize() {
+    assertEquals(0, MathUtil.quantize(0, 2));
+    assertEquals(0, MathUtil.quantize(1, 2));
+    assertEquals(2, MathUtil.quantize(2, 2));
+    assertEquals(2, MathUtil.quantize(3, 2));
+
+    assertEquals(-2, MathUtil.quantize(-1, 2));
+    assertEquals(-2, MathUtil.quantize(-2, 2));
+    assertEquals(-4, MathUtil.quantize(-3, 2));
+    assertEquals(-4, MathUtil.quantize(-4, 2));
+  }
 }

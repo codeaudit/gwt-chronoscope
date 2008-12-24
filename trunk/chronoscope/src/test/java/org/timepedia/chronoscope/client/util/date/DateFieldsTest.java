@@ -40,9 +40,17 @@ public class DateFieldsTest extends TestCase {
     testClearAfterYear(TimeUnit.DECADE, 1999, 1990);
     testClearAfterYear(TimeUnit.DECADE, 1419, 1410);
     testClearAfterYear(TimeUnit.DECADE, 1410, 1410);
+    testClearAfterYear(TimeUnit.DECADE, -1, -10);
+    testClearAfterYear(TimeUnit.DECADE, 0, 0);
 
     testClearAfterYear(TimeUnit.CENTURY, 1499, 1400);
     testClearAfterYear(TimeUnit.CENTURY, 2008, 2000);
+    testClearAfterYear(TimeUnit.CENTURY, -1, -100);
+    testClearAfterYear(TimeUnit.CENTURY, 0, 0);
+    
+    testClearAfterYear(TimeUnit.MILLENIUM, 1970, 1000);
+    testClearAfterYear(TimeUnit.MILLENIUM, -1, -1000);
+    testClearAfterYear(TimeUnit.MILLENIUM, 0, 0);
   }
   
   private void testClearAfterYear(TimeUnit timeUnit, int initialYearValue, int expectedYearValue) {

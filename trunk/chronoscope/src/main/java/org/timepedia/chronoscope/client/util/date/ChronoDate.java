@@ -76,6 +76,8 @@ public abstract class ChronoDate {
         return getMinute();
       case SEC:
         return getSecond();
+      case MILLENIUM: // define this near/at the bottom, as it's used less frequently
+        return (getYear() / 1000);
       default:
         throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported at this time");
     }

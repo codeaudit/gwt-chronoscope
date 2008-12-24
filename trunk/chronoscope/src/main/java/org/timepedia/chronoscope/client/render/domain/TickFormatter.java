@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
@@ -161,6 +162,7 @@ public abstract class TickFormatter {
    */
   public int incrementDate(ChronoDate date, int numTimeUnits) {
     date.add(getTickInterval(), numTimeUnits);
+    date.getTime();
     return numTimeUnits;
   }
 
@@ -208,22 +210,9 @@ public abstract class TickFormatter {
    */
   public ChronoDate quantizeDate(double timeStamp, int tickStep) {
     ChronoDate d = ChronoDate.get(timeStamp).truncate(this.tickInterval);
-    int normalizedValue = quantize(d.get(this.tickInterval), tickStep);
+    int normalizedValue = MathUtil.quantize(d.get(this.tickInterval), tickStep);
     d.set(this.tickInterval, normalizedValue);
     return d;
-  }
-  
-  /**
-   * Returns the largest integer that is less than or equal to <tt>value</tt>, 
-   * and is also a multiple of <tt>factor</tt>.  For example, 
-   * <code>quantize(10, 3)</code> would return the value 9.
-   * 
-   * @param value a non-negative value
-   * @param factor a non-negative factor
-   */
-  static int quantize(int value, int factor) {
-    return value - (value % factor);
-    //return (value / factor) * factor;
   }
   
 }

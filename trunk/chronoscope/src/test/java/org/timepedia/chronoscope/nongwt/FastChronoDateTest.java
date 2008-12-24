@@ -93,6 +93,30 @@ public class FastChronoDateTest extends TestCase {
     assertTimestampEquals(msg, year, javaDate.getTime(), (long)chronoDate.getTime());
   }
   
+  public void testMillisecondPrecision() {
+    // test precision using add()
+    {
+      ChronoDate d = ChronoDate.get(1980, 0, 1);
+      double expectedTs = d.getTime();
+      for (int i = 0; i < 10000; i++) {
+        d.add(TimeUnit.MS, 1);
+        expectedTs += 1.0;
+        assertEquals(expectedTs, d.getTime());
+      }
+    }
+    
+    // test precision using setTime()
+    {
+      ChronoDate d = ChronoDate.get(1980, 0, 1);
+      double expectedTs = d.getTime();
+      for (int i = 0; i < 1000; i++) {
+        ++expectedTs;
+        d.setTime(expectedTs);
+        assertEquals(expectedTs, d.getTime());
+      }
+    }
+  }
+  
   public void testSetTime() {
     final int year = 1255;
     final int month = 4;
@@ -418,5 +442,14 @@ public class FastChronoDateTest extends TestCase {
     long expectedTimestamp = createJavaDate(yr, mo, day, hr, min, sec).getTime();
     assertEquals(expectedTimestamp, (long)d.getTime());
   }
- 
+  
+  public void testSetMillenium() {
+    ChronoDate d = new FastChronoDate(-2345, 5, 25);
+    d.set(TimeUnit.MILLENIUM, 1);
+    assertEquals(1345, 5, 25, d);
+    
+    d = new FastChronoDate(-2345, 5, 25);
+    d.set(TimeUnit.MILLENIUM, -30);
+    assertEquals(-30345, 5, 25, d);
+  }
 }

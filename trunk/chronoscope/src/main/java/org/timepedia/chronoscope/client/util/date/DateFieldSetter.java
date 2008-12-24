@@ -66,6 +66,14 @@ public class DateFieldSetter {
         sec(value); break;
       case MS:
         ms(value); break;
+      case MILLENIUM:
+        if (value >= 0) {
+          year((value * 1000) + Math.abs(dateFields.year % 1000));
+        }
+        else {
+          year((value * 1000) + -Math.abs(dateFields.year % 1000));
+        }
+        break;
       default:
         throw new UnsupportedOperationException("TimeUnit '" + timeUnit + " not supported");
     }
