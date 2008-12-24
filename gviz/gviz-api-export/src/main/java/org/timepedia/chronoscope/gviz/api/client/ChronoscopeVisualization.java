@@ -279,7 +279,7 @@ public class ChronoscopeVisualization implements Exportable {
       double x = plot.getDatasets().get(datasetIndex).getX(pointIndex);
       Tuple2D tuple = plot.getDatasets().get(datasetIndex)
           .getFlyweightTuple(pointIndex);
-      double y = tuple.getSecond();
+      double y = tuple.getRange0();
       currentInfoWindow = plot.openInfoWindow(html, x, y, datasetIndex);
       currentInfoWindow
           .addInfoWindowClosedHandler(new InfoWindowClosedHandler() {
