@@ -251,6 +251,10 @@ public class Chronoscope implements Exportable {
     getInstance();
   }
 
+  protected static void setInstance(Chronoscope instance) {
+    Chronoscope.instance = instance;
+  }
+
   public static boolean isFontBookRenderingEnabled() {
     return fontBookRenderingEnabled;
   }
