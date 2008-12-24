@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
@@ -70,7 +71,7 @@ public class DaysTickFormatter extends TickFormatter {
   public ChronoDate quantizeDate(double dO, int idealTickStep) {
     ChronoDate d = ChronoDate.get(dO).truncate(this.tickInterval);
     final int dayIndex = d.getDay() - 1; // convert to 0-based day
-    int normalizedValue = 1 + quantize(dayIndex, idealTickStep);
+    int normalizedValue = 1 + MathUtil.quantize(dayIndex, idealTickStep);
     d.set(this.tickInterval, normalizedValue);
     return d;
   }

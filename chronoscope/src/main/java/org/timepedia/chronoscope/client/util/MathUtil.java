@@ -126,6 +126,22 @@ public final class MathUtil {
   }
 
   /**
+   * Returns the largest integer that is less than or equal to <tt>value</tt>, 
+   * and is also a multiple of <tt>factor</tt>.
+   * <ul>
+   * <li>Example 1 (positive value):  <code>quantize(10, 3)</code> returns 9.
+   * <li>Example 2 (negative value):  <code>quantize(-10, 3)</code> returns -12.
+   * </ul>
+   *  
+   * @param value the value to be quantize
+   * @param factor a non-negative factor
+   */
+  public static int quantize(int value, int factor) {
+    return value - MathUtil.mod(value, factor);
+    //return (value / factor) * factor;
+  }
+
+  /**
    * Round down input value to nearest value of 10. e.g. 323 returns 100. 
    * @param value
    * @return

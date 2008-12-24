@@ -51,7 +51,6 @@ public class DomainAxisPanel extends RangeAxisPanel {
   }
 
   public void draw(Layer layer, Bounds bounds) {
-    //init();
 
     if (!GRID_ONLY) {
       clearAxis(layer, bounds);
@@ -269,7 +268,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
         gssProperties.fontFamily, gssProperties.fontWeight,
         gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
-
+  
   private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux,
       int tickLength) {
     layer.save();

@@ -17,7 +17,7 @@ public final class TickFormatterFactory {
   private static final double AFFINITY_FACTOR = 0.35;
 
   private static TickFormatterFactory factory;
-  private static TickFormatter rootFormatter = new YearsTickFormatter();
+  private static TickFormatter rootFormatter = new MilleniumTickFormatter();
 
   private double cachedDomainWidth = Double.NEGATIVE_INFINITY;
   private TickFormatter cachedFormatter = null;

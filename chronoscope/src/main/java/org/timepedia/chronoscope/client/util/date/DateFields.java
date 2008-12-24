@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.util.date;
 
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 /**
@@ -51,13 +52,16 @@ public class DateFields {
     switch (timeUnit) {
       case MILLENIUM:
         // e.g. 1979 -> 1000; 972 -> 0; -200 -> -1000
-        this.year = (this.year / 1000) * 1000;
+        // e.g. (neg) -3 -> -1000
+        this.year = MathUtil.quantize(this.year, 1000);
       case CENTURY:
         // e.g. 1979 -> 1900; 1492 -> 1400; 1900 -> 1900
-        this.year = (this.year / 100) * 100;
+        // e.g. (neg) -3 -> -100
+        this.year = MathUtil.quantize(this.year, 100);
       case DECADE:
         // e.g. 1979 -> 1970; 1492 -> 1490; 1970 -> 1970
-        this.year = (this.year / 10) * 10;
+        // e.g. (neg) -3 -> -10
+        this.year = MathUtil.quantize(this.year, 10);
       case YEAR:
         this.month = 0;
       case MONTH:
