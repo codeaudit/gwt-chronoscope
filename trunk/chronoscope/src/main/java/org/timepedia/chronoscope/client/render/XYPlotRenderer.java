@@ -103,7 +103,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     double rangeMax = Double.NEGATIVE_INFINITY;
     Iterator<Tuple2D> tupleItr = mipMap.getTupleIterator(domainStartIdx);
     for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-      double y = tupleItr.next().getSecond();
+      double y = tupleItr.next().getRange0();
       rangeMin = Math.min(rangeMin, y);
       rangeMax = Math.max(rangeMax, y);
     }

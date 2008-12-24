@@ -24,8 +24,8 @@ public class ArrayDataset2DTest extends TestCase {
     Dataset ds = dsFactory.create(request);
     
     for (int i = 0; i < ds.getNumSamples(); i++) {
-      assertEquals(domain[i], ds.getFlyweightTuple(i).getFirst());
-      assertEquals(range[i], ds.getFlyweightTuple(i).getSecond());
+      assertEquals(domain[i], ds.getFlyweightTuple(i).getDomain());
+      assertEquals(range[i], ds.getFlyweightTuple(i).getRange0());
     }
   }
   
@@ -86,8 +86,8 @@ public class ArrayDataset2DTest extends TestCase {
       for (int j = 0; j < numSamples; j++) {
         assertEquals(expectedDomain.get(j), actualDomain.get(j));
         
-        assertEquals(expectedMipMap.getTuple(j).getSecond(), 
-                     actualMipMap.getTuple(j).getSecond());
+        assertEquals(expectedMipMap.getTuple(j).getRange0(), 
+                     actualMipMap.getTuple(j).getRange0());
       }
     }
   }

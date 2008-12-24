@@ -48,8 +48,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void drawCurvePart(Layer layer, T point, int methodCallCount, 
       RenderState renderState) {
     
-      double ux = plot.domainToScreenX(point.getFirst(), datasetIndex);
-      double uy = plot.rangeToScreenY(point.getSecond(), datasetIndex);
+      double ux = plot.domainToScreenX(point.getDomain(), datasetIndex);
+      double uy = plot.rangeToScreenY(point.getRange0(), datasetIndex);
       
       // guard webkit bug, coredump if draw two identical lineTo in a row
       if (activeGssLineProps.visible) {
@@ -82,8 +82,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       layerProps.size = 1;
     }
     
-    final double dataX = point.getFirst();
-    final double dataY = point.getSecond();
+    final double dataX = point.getDomain();
+    final double dataY = point.getRange0();
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
     drawPoint(ux, uy, layer, layerProps);
@@ -140,8 +140,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   @Override
   public void drawPoint(Layer layer, T point, RenderState renderState) {
     final boolean isFocused = renderState.isFocused();
-    final double dataX = point.getFirst();
-    final double dataY = point.getSecond();
+    final double dataX = point.getDomain();
+    final double dataY = point.getRange0();
     
     GssProperties gssProps;
     if (isFocused) {

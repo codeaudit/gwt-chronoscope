@@ -105,7 +105,7 @@ public class ChartBench implements EntryPoint {
     final double cD = plot.getDomain().length();
     final double dC = dO + cD / 2;
     final int lim = GWT.isScript() ? 100 : 5;
-    final int numTrials = 10;
+    final int numTrials = 4;
     final double trialTimes[] = new double[numTrials];
     
     if (benchTable == null) {

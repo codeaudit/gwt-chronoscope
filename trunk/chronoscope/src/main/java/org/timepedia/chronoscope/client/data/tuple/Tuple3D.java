@@ -7,6 +7,6 @@ package org.timepedia.chronoscope.client.data.tuple;
  */
 public interface Tuple3D extends Tuple2D {
 
-  double getThird();
+  double getRange1();
 
 }

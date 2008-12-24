@@ -31,8 +31,8 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   public void drawCurvePart(Layer layer, T point, int methodCallCount, 
       RenderState renderState) {
     
-    final double dataX = point.getFirst();
-    final double dataY = point.getSecond();
+    final double dataX = point.getDomain();
+    final double dataY = point.getRange0();
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
 
