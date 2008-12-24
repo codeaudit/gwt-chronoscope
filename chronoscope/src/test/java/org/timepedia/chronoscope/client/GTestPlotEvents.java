@@ -50,7 +50,7 @@ public class GTestPlotEvents extends ChronoscopeTestCaseBase {
 
         Dataset[] ds = Fixtures.getTestDataset();
         double dx = ds[0].getX(3);
-        double dy = ds[0].getFlyweightTuple(3).getSecond();
+        double dy = ds[0].getFlyweightTuple(3).getRange0();
         double x = plot.domainToWindowX(dx, 0);
         double y = plot.rangeToWindowY(dy, 0);
         

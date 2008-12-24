@@ -3,9 +3,8 @@ package org.timepedia.chronoscope.client.data.tuple;
 import org.timepedia.exporter.client.Exportable;
 
 /**
- * A homogeneous vector of doubles of fixed dimension D returned by the
- * getDimension() method. The first dimension, by convention, represents
- * strictly increasing values in the domain axis.
+ * An n-dimensional vector of primitive <tt>double</tt> values, where 
+ * <i>n</i> is denoted by {@link #size()}.
  */
 public interface Tuple2D extends Exportable {
 
@@ -14,19 +13,18 @@ public interface Tuple2D extends Exportable {
    * 
    * @param index - The 0-based index
    */
-  double get(int index);
+  double getRange(int index);
   
   /**
-   * The X value, which corresponds to index 0 for
-   * {@link Tuple#getCoordinate(int)}.
+   * The domain value of the data point that this tuple represents.
    */
-  double getFirst();
+  double getDomain();
 
   /**
-   * The Y value, which corresponds to index 1 for
-   * {@link Tuple#getCoordinate(int)}.
+   * The range value (or if this is a tuple having 3 or more dimensions,
+   * the first of several range values).
    */
-  double getSecond();
+  double getRange0();
   
   /**
    * The number of values in this tuple (also referred to as the tuple's 

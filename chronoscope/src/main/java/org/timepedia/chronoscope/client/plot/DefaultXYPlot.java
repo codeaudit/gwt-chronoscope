@@ -268,7 +268,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public double getDataY(int datasetIndex, int pointIndex) {
     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
-    return dds.currMipMap.getTuple(pointIndex).getSecond();
+    return dds.currMipMap.getTuple(pointIndex).getRange0();
   }
 
   public Interval getDomain() {
@@ -1101,8 +1101,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     double sx = domainToScreenX(dataX, datasetIndex);
     double sy = rangeToScreenY(dataY, datasetIndex);
     Tuple2D tupleRight = currMipMap.getTuple(closestPtToRight);
-    double rx = domainToScreenX(tupleRight.getFirst(), datasetIndex);
-    double ry = rangeToScreenY(tupleRight.getSecond(), datasetIndex);
+    double rx = domainToScreenX(tupleRight.getDomain(), datasetIndex);
+    double ry = rangeToScreenY(tupleRight.getRange0(), datasetIndex);
 
     int nearestHoverPt;
     if (closestPtToRight == 0) {
@@ -1111,8 +1111,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     } else {
       int closestPtToLeft = closestPtToRight - 1;
       Tuple2D tupleLeft = currMipMap.getTuple(closestPtToLeft);
-      double lx = domainToScreenX(tupleLeft.getFirst(), datasetIndex);
-      double ly = rangeToScreenY(tupleLeft.getSecond(), datasetIndex);
+      double lx = domainToScreenX(tupleLeft.getDomain(), datasetIndex);
+      double ly = rangeToScreenY(tupleLeft.getRange0(), datasetIndex);
       double lDist = df.dist(sx, sy, lx, ly);
       double rDist = df.dist(sx, sy, rx, ry);
 
@@ -1311,8 +1311,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     
     MipMap currMipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
     Tuple2D dataPt = currMipMap.getTuple(focusPointIdx);
-    double dataX = dataPt.getFirst();
-    double dataY = dataPt.getSecond();
+    double dataX = dataPt.getDomain();
+    double dataY = dataPt.getRange0();
     ensureVisible(dataX, dataY, null);
     setFocusAndNotifyView(focusDatasetIdx, focusPointIdx);
     redraw();
