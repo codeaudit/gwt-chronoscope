@@ -63,6 +63,10 @@ public class BoundsTest extends TestCase {
     Bounds b = new Bounds(10, 15, 100, 200);
     assertEquals(b.y + b.height, b.bottomY());
   }
+  
+  public void testMidpointX() {
+    assertEquals(2.0 + (10.0 / 2.0), new Bounds(2, 3, 10, 20).midpointX());
+  }
 
   public void testRightX() {
     Bounds b = new Bounds(10, 15, 100, 200);
