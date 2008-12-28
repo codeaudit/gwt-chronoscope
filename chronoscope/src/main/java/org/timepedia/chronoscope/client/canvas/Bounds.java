@@ -58,6 +58,13 @@ public class Bounds {
     }
     
     /**
+     * returns the midpoint of the horizontal length of this bounds.
+     */
+    public double midpointX() {
+      return x + (width / 2.0);
+    }
+    
+    /**
      * Returns the x-value of the right-hand edge of this bounds.
      */
     public double rightX() {
