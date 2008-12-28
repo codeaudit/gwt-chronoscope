@@ -275,11 +275,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return this.visDomain;
   }
 
-  public ValueAxis getDomainAxis() {
-    return bottomPanel.getDomainAxisPanel().getValueAxis();
-  }
-
-  public AxisPanel getDomainAxisRenderer() {
+  public AxisPanel getDomainAxisPanel() {
     return bottomPanel.getDomainAxisPanel();
   }
 
@@ -727,7 +723,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.datasets = datasets;
   }
 
-  public void setDomainAxisRenderer(AxisPanel domainAxisPanel) {
+  public void setDomainAxisPanel(AxisPanel domainAxisPanel) {
     bottomPanel.setDomainAxisPanel(domainAxisPanel);
   }
 
