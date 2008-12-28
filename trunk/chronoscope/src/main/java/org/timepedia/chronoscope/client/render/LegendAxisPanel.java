@@ -115,7 +115,7 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.init(rootLayer, plot.getDatasets().getMinInterval(),
         plot.getDatasets().getMaxDomain(),
-        (RangeAxisPanel) plot.getDomainAxisRenderer());
+        (RangeAxisPanel) plot.getDomainAxisPanel());
 
     dateRangePanel.updateDomainInterval(minDomain, maxDomain);
 
@@ -149,7 +149,7 @@ public class LegendAxisPanel extends AxisPanel {
     ZoomIntervals zooms = new ZoomIntervals();
 
     boolean isDateDomain = plot
-        .getDomainAxisRenderer() instanceof DomainAxisPanel;
+        .getDomainAxisPanel() instanceof DomainAxisPanel;
 
     if (isDateDomain) {
       zooms.add(new ZoomInterval("1d", TimeUnit.DAY.ms()));

@@ -34,7 +34,8 @@ public class OverviewAxis extends ValueAxis {
     // to pass in the overview-specific domain interval.
     double myRangeLow = getRangeLow();
     double myRangeHigh = getRangeHigh();
-    return plot.getDomainAxis().userToData(myRangeLow, myRangeHigh, userValue);
+    return plot.getDomainAxisPanel().getValueAxis()
+        .userToData(myRangeLow, myRangeHigh, userValue);
   }
 
 }

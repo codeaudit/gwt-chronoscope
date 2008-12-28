@@ -104,7 +104,7 @@ public class Microformats {
           plot.addOverlay(m);
           String[] hdrs = getTableHeaders(elt);
           if (hdrs != null && hdrs.length > 1) {
-            plot.getDomainAxis().setLabel(hdrs[0]);
+            plot.getDomainAxisPanel().getValueAxis().setLabel(hdrs[0]);
             for (int k = 1; k < hdrs.length; k++) {
               plot.getRangeAxis(k - 1).setLabel(hdrs[k]);
             }
