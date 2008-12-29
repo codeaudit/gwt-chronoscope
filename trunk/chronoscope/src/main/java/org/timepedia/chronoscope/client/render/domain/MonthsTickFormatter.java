@@ -10,7 +10,7 @@ public class MonthsTickFormatter extends TickFormatter {
     this.superFormatter = superTickFormatter;
     this.subFormatter = new DaysTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 3, 6};
-    this.tickInterval = TimeUnit.MONTH;
+    this.timeUnitTickInterval = TimeUnit.MONTH;
   }
 
   public String formatRelativeTick(ChronoDate d) {

@@ -11,7 +11,7 @@ public class DaysTickFormatter extends TickFormatter {
     this.superFormatter = superFormatter;
     this.subFormatter = new HoursTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 2, 7, 14};
-    this.tickInterval = TimeUnit.DAY;
+    this.timeUnitTickInterval = TimeUnit.DAY;
   }
 
   public String formatRelativeTick(ChronoDate d) {
@@ -61,7 +61,7 @@ public class DaysTickFormatter extends TickFormatter {
     }
     else {
       actualIncrement = numTimeUnits;
-      d.add(this.tickInterval, numTimeUnits);
+      d.add(this.timeUnitTickInterval, numTimeUnits);
     }
     
     return actualIncrement;
@@ -69,10 +69,10 @@ public class DaysTickFormatter extends TickFormatter {
 
   @Override
   public ChronoDate quantizeDate(double dO, int idealTickStep) {
-    ChronoDate d = ChronoDate.get(dO).truncate(this.tickInterval);
+    ChronoDate d = ChronoDate.get(dO).truncate(this.timeUnitTickInterval);
     final int dayIndex = d.getDay() - 1; // convert to 0-based day
     int normalizedValue = 1 + MathUtil.quantize(dayIndex, idealTickStep);
-    d.set(this.tickInterval, normalizedValue);
+    d.set(this.timeUnitTickInterval, normalizedValue);
     return d;
   }
 

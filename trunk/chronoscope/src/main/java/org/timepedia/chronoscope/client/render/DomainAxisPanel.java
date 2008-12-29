@@ -121,7 +121,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
   public double getMinimumTickSize() {
     if (minTickSize == -1) {
       TickFormatter leafFormatter = tickFormatFactory.getLeafFormatter();
-      minTickSize = leafFormatter.getTickInterval().ms();
+      minTickSize = leafFormatter.getTickInterval();
     }
     return minTickSize;
   }

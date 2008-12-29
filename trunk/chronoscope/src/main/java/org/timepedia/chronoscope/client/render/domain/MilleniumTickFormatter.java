@@ -13,7 +13,7 @@ public class MilleniumTickFormatter extends TickFormatter {
     this.subFormatter = new YearsTickFormatter(this);
     this.possibleTickSteps = new int[]{1, 2, 5, 10, 20, 25, 50, 100, 250, 500,
         1000, 2500, 5000, 10000, 25000, 50000, 100000};
-    this.tickInterval = TimeUnit.MILLENIUM;
+    this.timeUnitTickInterval = TimeUnit.MILLENIUM;
   }
 
   public String formatRelativeTick(ChronoDate d) {

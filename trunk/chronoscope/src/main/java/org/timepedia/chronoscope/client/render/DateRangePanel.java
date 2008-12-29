@@ -47,16 +47,16 @@ public class DateRangePanel extends AbstractPanel {
 
   private int typicalCharWidth;
 
-  private RangeAxisPanel domainAxisRenderer;
+  private RangeAxisPanel domainAxisPanel;
 
   private boolean isDateDomain;
 
   //public void init(Layer layer) {
   public void init(Layer layer, double minDomainInterval, double maxDomain,
-      RangeAxisPanel domainAxisRenderer) {
-    isDateDomain = domainAxisRenderer instanceof DomainAxisPanel;
+      RangeAxisPanel domainAxisPanel) {
+    isDateDomain = domainAxisPanel instanceof DomainAxisPanel;
 
-    this.domainAxisRenderer = domainAxisRenderer;
+    this.domainAxisPanel = domainAxisPanel;
     doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
@@ -79,7 +79,7 @@ public class DateRangePanel extends AbstractPanel {
       }
     } else {
       this.width = this
-          .calcWidth(domainAxisRenderer.formatLegendLabel(maxDomain), layer);
+          .calcWidth(domainAxisPanel.formatLegendLabel(maxDomain), layer);
     }
   }
 
@@ -118,8 +118,8 @@ public class DateRangePanel extends AbstractPanel {
         dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
       } else {
         dateRangeActive = dateRangeLong = dateRangeShort =
-            domainAxisRenderer.formatLegendLabel(startTimeStamp)
-                + DATE_DELIM_LONG + domainAxisRenderer
+            domainAxisPanel.formatLegendLabel(startTimeStamp)
+                + DATE_DELIM_LONG + domainAxisPanel
                 .formatLegendLabel(endTimeStamp);
       }
     }
