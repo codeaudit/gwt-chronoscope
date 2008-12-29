@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 /**
- * Factory for obtaining a suitable {@link TickFormatter} object for a given
+ * Factory for obtaining a suitable {@link DateTickFormatter} object for a given
  * domain span.
  * 
  * @author chad takahashi
@@ -33,7 +33,7 @@ public final class TickFormatterFactory {
   }
 
   /**
-   * Finds the smallest-scale {@link TickFormatter} that engulfs the 
+   * Finds the smallest-scale {@link DateTickFormatter} that engulfs the 
    * specified domain interval.
    */
   public TickFormatter findBestFormatter(double domainWidth) {

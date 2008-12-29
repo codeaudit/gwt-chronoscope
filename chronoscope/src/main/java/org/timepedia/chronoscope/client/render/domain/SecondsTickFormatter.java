@@ -3,9 +3,9 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
-public class SecondsTickFormatter extends TickFormatter {
+public class SecondsTickFormatter extends DateTickFormatter {
 
-  public SecondsTickFormatter(TickFormatter superFormatter) {
+  public SecondsTickFormatter(DateTickFormatter superFormatter) {
     super("XX:XX:XX");
     this.superFormatter = superFormatter;
     this.subFormatter = new TenthsOfSecondTickFormatter(this);
@@ -13,7 +13,8 @@ public class SecondsTickFormatter extends TickFormatter {
     this.timeUnitTickInterval = TimeUnit.SEC;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
+  public String formatTick() {
+    ChronoDate d = currTick;
     if (d.getHour() == 0 && d.getMinute() == 0 && d.getSecond() == 0) {
       return dateFormat.dayAndMonth(d);
     }

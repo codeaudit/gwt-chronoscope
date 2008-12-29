@@ -1,11 +1,10 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
-public class TenthsOfSecondTickFormatter extends TickFormatter {
+public class TenthsOfSecondTickFormatter extends DateTickFormatter {
 
-  public TenthsOfSecondTickFormatter(TickFormatter superFormatter) {
+  public TenthsOfSecondTickFormatter(DateTickFormatter superFormatter) {
     super("XX:XX:XX");
     this.superFormatter = superFormatter;
     this.subFormatter = null;
@@ -13,13 +12,14 @@ public class TenthsOfSecondTickFormatter extends TickFormatter {
     this.timeUnitTickInterval = TimeUnit.TENTH_SEC;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
-    return dateFormat.tenthOfSecond(d);
+  public String formatTick() {
+    return dateFormat.tenthOfSecond(currTick);
   }
 
   @Override
-  public ChronoDate quantizeDate(double dO, int idealTickStep) {
-    return ChronoDate.get(dO).truncate(TimeUnit.SEC);
+  public void resetToQuantizedTick(double dO, int idealTickStep) {
+    currTick.setTime(dO);
+    currTick.truncate(TimeUnit.SEC);
   }
 
 }

@@ -1,9 +1,8 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
-public class YearsTickFormatter extends TickFormatter {
+public class YearsTickFormatter extends DateTickFormatter {
 
   public YearsTickFormatter() {
     super("XXXX");
@@ -22,8 +21,8 @@ public class YearsTickFormatter extends TickFormatter {
     this.superFormatter = milleniumTickFormatter;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
-    return String.valueOf(d.getYear());
+  public String formatTick() {
+    return String.valueOf(currTick.getYear());
   }
 
   public int getSubTickStep(int primaryTickStep) {

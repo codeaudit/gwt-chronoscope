@@ -4,9 +4,9 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
-public class DaysTickFormatter extends TickFormatter {
+public class DaysTickFormatter extends DateTickFormatter {
 
-  public DaysTickFormatter(TickFormatter superFormatter) {
+  public DaysTickFormatter(DateTickFormatter superFormatter) {
     super("00-Xxx"); // e.g. "22-Aug"
     this.superFormatter = superFormatter;
     this.subFormatter = new HoursTickFormatter(this);
@@ -14,8 +14,8 @@ public class DaysTickFormatter extends TickFormatter {
     this.timeUnitTickInterval = TimeUnit.DAY;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
-    return dateFormat.dayAndMonth(d);
+  public String formatTick() {
+    return dateFormat.dayAndMonth(currTick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
@@ -37,7 +37,8 @@ public class DaysTickFormatter extends TickFormatter {
    * where N is the number of time units that compose the parent time unit. 
    */
   @Override
-  public int incrementDate(ChronoDate d, int numTimeUnits) {
+  public int incrementTick(int numTimeUnits) {
+    ChronoDate d = this.currTick;
     final int dayOfMonth = d.getDay();
     boolean doSkipToNextMonth = false;
     switch (numTimeUnits) {
@@ -68,12 +69,12 @@ public class DaysTickFormatter extends TickFormatter {
   }
 
   @Override
-  public ChronoDate quantizeDate(double dO, int idealTickStep) {
-    ChronoDate d = ChronoDate.get(dO).truncate(this.timeUnitTickInterval);
-    final int dayIndex = d.getDay() - 1; // convert to 0-based day
+  public void resetToQuantizedTick(double dO, int idealTickStep) {
+    currTick.setTime(dO);
+    currTick.truncate(this.timeUnitTickInterval);
+    final int dayIndex = currTick.getDay() - 1; // convert to 0-based day
     int normalizedValue = 1 + MathUtil.quantize(dayIndex, idealTickStep);
-    d.set(this.timeUnitTickInterval, normalizedValue);
-    return d;
+    currTick.set(this.timeUnitTickInterval, normalizedValue);
   }
 
   /**
