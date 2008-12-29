@@ -10,7 +10,7 @@ public class MinutesTickFormatter extends TickFormatter {
     this.superFormatter = superFormatter;
     this.subFormatter = new SecondsTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 5, 15, 30};
-    this.tickInterval = TimeUnit.MIN;
+    this.timeUnitTickInterval = TimeUnit.MIN;
   }
 
   public String formatRelativeTick(ChronoDate d) {

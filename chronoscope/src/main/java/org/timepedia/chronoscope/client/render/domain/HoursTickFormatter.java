@@ -13,7 +13,7 @@ public class HoursTickFormatter extends TickFormatter {
     this.superFormatter = superFormatter;
     this.subFormatter = new MinutesTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 3, 6, 12};
-    this.tickInterval = TimeUnit.HOUR;
+    this.timeUnitTickInterval = TimeUnit.HOUR;
   }
 
   public String formatRelativeTick(ChronoDate d) {

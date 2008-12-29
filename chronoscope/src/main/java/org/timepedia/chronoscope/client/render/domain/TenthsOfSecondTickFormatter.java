@@ -10,7 +10,7 @@ public class TenthsOfSecondTickFormatter extends TickFormatter {
     this.superFormatter = superFormatter;
     this.subFormatter = null;
     this.possibleTickSteps = new int[] {1, 2, 5, 10};
-    this.tickInterval = TimeUnit.TENTH_SEC;
+    this.timeUnitTickInterval = TimeUnit.TENTH_SEC;
   }
 
   public String formatRelativeTick(ChronoDate d) {

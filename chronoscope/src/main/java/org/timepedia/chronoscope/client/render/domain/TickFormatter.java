@@ -43,7 +43,7 @@ public abstract class TickFormatter {
    * 
    * @see #getTickInterval()
    */
-  protected TimeUnit tickInterval;
+  protected TimeUnit timeUnitTickInterval;
   
   private final String longestPossibleLabel;
 
@@ -64,7 +64,7 @@ public abstract class TickFormatter {
    * if this formatter formatted days of the week, then "Saturday" should be used,
    * since it is the longest name of the 7 days.
    */
-  public TickFormatter(String longestPossibleLabel) {
+  protected TickFormatter(String longestPossibleLabel) {
     ArgChecker.isNotNull(longestPossibleLabel, "longestPossibleLabel");
     this.longestPossibleLabel = longestPossibleLabel;
   }
@@ -83,7 +83,7 @@ public abstract class TickFormatter {
     }
     
     int[] tickSteps = this.possibleTickSteps;
-    final double tickDomainInterval = this.tickInterval.ms();
+    final double tickDomainInterval = this.timeUnitTickInterval.ms();
     
     // This is the smallest domain interval possible before the tick labels will
     // start running into each other
@@ -141,12 +141,12 @@ public abstract class TickFormatter {
   }
   
   /**
-   * The time unit that corresponds to a single tick for this formatter.
+   * Returns a positive value corresponding to a single tick for this formatter.
    * For example, if this is a day-of-month formatter, then this method would
-   * return {@link TimeUnit#DAY}.
+   * return {@link TimeUnit#DAY#ms()}.
    */
-  public final TimeUnit getTickInterval() {
-    return tickInterval;
+  public final double getTickInterval() {
+    return timeUnitTickInterval.ms();
   }
 
   /**
@@ -161,7 +161,7 @@ public abstract class TickFormatter {
    * get returned (the typical case for this is a date near the end of a month).
    */
   public int incrementDate(ChronoDate date, int numTimeUnits) {
-    date.add(getTickInterval(), numTimeUnits);
+    date.add(timeUnitTickInterval, numTimeUnits);
     date.getTime();
     return numTimeUnits;
   }
@@ -174,11 +174,11 @@ public abstract class TickFormatter {
    */
   public boolean inInterval(double domainWidth) {
     if (isRootFormatter()) {
-      return domainWidth > getTickInterval().ms();
+      return domainWidth > getTickInterval();
     }
     else {
-      double myTickWidth = getTickInterval().ms();
-      double parentTickWidth = superFormatter.getTickInterval().ms();
+      double myTickWidth = getTickInterval();
+      double parentTickWidth = superFormatter.getTickInterval();
       return domainWidth > myTickWidth && domainWidth <= parentTickWidth;
     }
   }
@@ -209,9 +209,9 @@ public abstract class TickFormatter {
    * @return the quantized date
    */
   public ChronoDate quantizeDate(double timeStamp, int tickStep) {
-    ChronoDate d = ChronoDate.get(timeStamp).truncate(this.tickInterval);
-    int normalizedValue = MathUtil.quantize(d.get(this.tickInterval), tickStep);
-    d.set(this.tickInterval, normalizedValue);
+    ChronoDate d = ChronoDate.get(timeStamp).truncate(this.timeUnitTickInterval);
+    int normalizedValue = MathUtil.quantize(d.get(this.timeUnitTickInterval), tickStep);
+    d.set(this.timeUnitTickInterval, normalizedValue);
     return d;
   }
   
