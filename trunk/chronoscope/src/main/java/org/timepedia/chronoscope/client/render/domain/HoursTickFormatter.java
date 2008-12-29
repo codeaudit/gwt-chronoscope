@@ -1,14 +1,13 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  * @author chad takahashi
  */
-public class HoursTickFormatter extends TickFormatter {
+public class HoursTickFormatter extends DateTickFormatter {
 
-  public HoursTickFormatter(TickFormatter superFormatter) {
+  public HoursTickFormatter(DateTickFormatter superFormatter) {
     super("00xx"); // e.g. "12pm"
     this.superFormatter = superFormatter;
     this.subFormatter = new MinutesTickFormatter(this);
@@ -16,11 +15,11 @@ public class HoursTickFormatter extends TickFormatter {
     this.timeUnitTickInterval = TimeUnit.HOUR;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
-    int hourOfDay = d.getHour();
+  public String formatTick() {
+    int hourOfDay = currTick.getHour();
     switch (hourOfDay) {
       case 0:
-        return dateFormat.dayAndMonth(d);
+        return dateFormat.dayAndMonth(currTick);
       default:
         return dateFormat.hour(hourOfDay);
     }

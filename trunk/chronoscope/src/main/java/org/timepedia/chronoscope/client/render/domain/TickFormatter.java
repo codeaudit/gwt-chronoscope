@@ -3,10 +3,6 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
-import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * Provides functionality for rendering the domain axis ticks in a context-sensitive
@@ -16,8 +12,6 @@ import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
  * @author Chad Takahashi &lt;chad@timepedia.org&gt;
  */
 public abstract class TickFormatter {
-  
-  protected DateFormatHelper dateFormat = new DateFormatHelper();
   
   /**
    * Stores the possible "tick steps" that are relevant for a given formatter.
@@ -37,13 +31,6 @@ public abstract class TickFormatter {
    * A pointer to this formatter's parent.
    */
   protected TickFormatter superFormatter;
-  
-  /**
-   * Subclasses assign this field upon construction.
-   * 
-   * @see #getTickInterval()
-   */
-  protected TimeUnit timeUnitTickInterval;
   
   private final String longestPossibleLabel;
 
@@ -83,7 +70,7 @@ public abstract class TickFormatter {
     }
     
     int[] tickSteps = this.possibleTickSteps;
-    final double tickDomainInterval = this.timeUnitTickInterval.ms();
+    final double tickDomainInterval = getTickInterval();
     
     // This is the smallest domain interval possible before the tick labels will
     // start running into each other
@@ -109,15 +96,16 @@ public abstract class TickFormatter {
     return idealTickStep;
   }
   
+  /**
+   * Formats the current tick as a String to be displayed on the domain axis panel.
+   */
+  public abstract String formatTick();
 
   /**
-   * Return a relative date, which assumes that a nearby fullTick is being
-   * rendered to give the user a visual context. For example, if rendering a
-   * month, then a relative tick label would be 'Nov', and if day, a relative
-   * day would be '13'.
+   * Returns the domain value of the current tick.
    */
-  public abstract String formatRelativeTick(ChronoDate tickDate);
-
+  public abstract double getTickDomainValue();
+  
   /**
    * Return the screen width of the largest possible tick label for this
    * formatter.
@@ -145,26 +133,20 @@ public abstract class TickFormatter {
    * For example, if this is a day-of-month formatter, then this method would
    * return {@link TimeUnit#DAY#ms()}.
    */
-  public final double getTickInterval() {
-    return timeUnitTickInterval.ms();
-  }
+  public abstract double getTickInterval();
 
   /**
-   * Increments <tt>date</tt> by the specified number of time units (where a 
-   * time unit can be an hour, day, second, etc.).  Subclasses may sometimes 
-   * need to override this method to modify the actual number of time units in
-   * order to ensure that the associated tick labels are stable when scrolling.
+   * Increments <tt>currTick</tt> by the specified number of tick steps. 
+   * Subclasses may sometimes need to override this method to modify the actual 
+   * number of tick steps in order to ensure that the associated tick labels are 
+   * stable when scrolling.
    * 
-   * @return the number of time units that were *actually* incremented; typically,
-   * this value will be the same as the <tt>numTimeUnits</tt> input parameter, but
+   * @return the number of tick steps that were *actually* incremented; typically,
+   * this value will be the same as the <tt>numTickSteps</tt> input parameter, but
    * in the aforementioned subclass override case, a different value could 
    * get returned (the typical case for this is a date near the end of a month).
    */
-  public int incrementDate(ChronoDate date, int numTimeUnits) {
-    date.add(timeUnitTickInterval, numTimeUnits);
-    date.getTime();
-    return numTimeUnits;
-  }
+  public abstract int incrementTick(int numTickSteps);
 
   /**
    * Returns true if this formatter is capable of rendering the specified domain width 
@@ -198,21 +180,19 @@ public abstract class TickFormatter {
   }
   
   /**
-   * Quantizes the specified timeStamp down to the specified tickStep.  For example, 
-   * suppose this is a MonthTickFormatter, 
-   * <tt>timeStamp = JUN-19-1985:22hrs:36min...</tt>, and 
-   * <tt>tickStep = 3</tt> (in this context, '3' refers to 3 months).  This method
-   * will return <tt>APR-1-1985:0hrs:0min, ...</tt>.
+   * Quantizes <tt>domainX</tt> to the nearest <tt>tickStep</tt> and sets
+   * this quantized value as the current tick.  For example, suppose that:
+   * <ul> 
+   * <li> this is a MonthTickFormatter, 
+   * <li> <tt>timeStamp = JUN-19-1985:22hrs:36min...</tt> 
+   * <li> <tt>tickStep = 3</tt> (in this context, '3' refers to 3 months).  
+   * </ul>
    * 
-   * @param timeStamp -The point in time, specified in milliseconds, to be quantized
-   * @param tickStep - The tick step to which the timeStamp will be quantized
-   * @return the quantized date
+   * This method would then return <tt>APR-1-1985:0hrs:0min, ...</tt>.
+   * 
+   * @param domainX -The domain value to be quantized
+   * @param tickStep - The tick step to which <tt>domainX</tt> will be quantized
    */
-  public ChronoDate quantizeDate(double timeStamp, int tickStep) {
-    ChronoDate d = ChronoDate.get(timeStamp).truncate(this.timeUnitTickInterval);
-    int normalizedValue = MathUtil.quantize(d.get(this.timeUnitTickInterval), tickStep);
-    d.set(this.timeUnitTickInterval, normalizedValue);
-    return d;
-  }
+  public abstract void resetToQuantizedTick(double domainX, int tickStep);
   
 }

@@ -1,11 +1,10 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
-public class MonthsTickFormatter extends TickFormatter {
+public class MonthsTickFormatter extends DateTickFormatter {
 
-  public MonthsTickFormatter(TickFormatter superTickFormatter) {
+  public MonthsTickFormatter(DateTickFormatter superTickFormatter) {
     super("XXX'XX");
     this.superFormatter = superTickFormatter;
     this.subFormatter = new DaysTickFormatter(this);
@@ -13,8 +12,8 @@ public class MonthsTickFormatter extends TickFormatter {
     this.timeUnitTickInterval = TimeUnit.MONTH;
   }
 
-  public String formatRelativeTick(ChronoDate d) {
-    return dateFormat.monthAndYear(d);
+  public String formatTick() {
+    return dateFormat.monthAndYear(currTick);
   }
 
   public int getSubTickStep(int primaryTickStep) {

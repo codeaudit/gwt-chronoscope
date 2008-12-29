@@ -8,9 +8,9 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.domain.TickFormatter;
+import org.timepedia.chronoscope.client.render.domain.DateTickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  * Renders zoomable dates on x-axis (domain axis).
@@ -58,29 +58,29 @@ public class DomainAxisPanel extends RangeAxisPanel {
     // This stuff shouldn't change in the case where the user is just scrolling 
     // left/right.
     final double domainWidth = plot.getDomain().length();
-    TickFormatter tlf = tickFormatFactory.findBestFormatter(domainWidth);
+    TickFormatter tickFormatter = tickFormatFactory.findBestFormatter(domainWidth);
     final double boundsRightX = bounds.rightX();
-    final double labelWidth = tlf.getMaxTickLabelWidth(layer, gssProperties);
+    final double labelWidth = tickFormatter.getMaxTickLabelWidth(layer, gssProperties);
     final double labelWidthDiv2 = labelWidth / 2.0;
     final int maxTicksForScreen = calcMaxTicksForScreen(layer, bounds,
-        domainWidth, tlf);
-    final int idealTickStep = tlf
+        domainWidth, tickFormatter);
+    final int idealTickStep = tickFormatter
         .calcIdealTickStep(domainWidth, maxTicksForScreen);
-    ChronoDate tickDate = tlf
-        .quantizeDate(plot.getDomain().getStart(), idealTickStep);
+    tickFormatter.resetToQuantizedTick(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;
     double prevTickScreenPos = 0.0;
     int actualTickStep = 0;
     while (stillEnoughSpace) {
-      double tickScreenPos = this.domainToScreenX(tickDate.getTime(), bounds);
+      double tickScreenPos = 
+          this.domainToScreenX(tickFormatter.getTickDomainValue(), bounds);
       stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
       if (stillEnoughSpace) {
         // Quantized tick date may have gone off the left edge; need to guard
         // against this case.
         if (tickScreenPos > bounds.x) {
-          String tickLabel = tlf.formatRelativeTick(tickDate);
+          String tickLabel = tickFormatter.formatTick();
           drawTick(layer, plot, bounds, tickScreenPos, TICK_HEIGHT);
           drawTickLabel(layer, bounds, tickScreenPos, tickLabel, labelWidth);
         }
@@ -88,7 +88,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
 
       // Draw auxiliary sub-ticks
       if (!isFirstTick) {
-        int subTickStep = tlf.getSubTickStep(actualTickStep);
+        int subTickStep = tickFormatter.getSubTickStep(actualTickStep);
         if (subTickStep > 1) {
           double auxTickWidth = (tickScreenPos - prevTickScreenPos)
               / subTickStep;
@@ -102,7 +102,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
         }
       }
 
-      actualTickStep = tlf.incrementDate(tickDate, idealTickStep);
+      actualTickStep = tickFormatter.incrementTick(idealTickStep);
       prevTickScreenPos = tickScreenPos;
       isFirstTick = false;
     }
@@ -259,16 +259,16 @@ public class DomainAxisPanel extends RangeAxisPanel {
   /**
    * Calculates the maximum number of ticks that can visually fit on the domain
    * axis given the visible screen width and the max width of a tick label for
-   * the specified {@link TickFormatter}.
+   * the specified {@link DateTickFormatter}.
    */
   private int calcMaxTicksForScreen(Layer layer, Bounds bounds,
-      double domainWidth, TickFormatter tlf) {
+      double domainWidth, TickFormatter tickFormatter) {
 
     // Needed to round screen width due to tiny variances that were causing the 
     // result of this method to fluctuate by +/- 1.
     double screenWidth = Math.round(domainToScreenWidth(domainWidth, bounds));
 
-    double maxLabelWidth = 15 + tlf.getMaxTickLabelWidth(layer, gssProperties);
+    double maxLabelWidth = 15 + tickFormatter.getMaxTickLabelWidth(layer, gssProperties);
 
     return (int) (screenWidth / maxLabelWidth);
   }
