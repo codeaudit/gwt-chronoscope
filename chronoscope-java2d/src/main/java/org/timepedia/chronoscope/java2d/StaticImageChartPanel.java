@@ -27,23 +27,35 @@ public class StaticImageChartPanel implements ViewReadyCallback {
 
   public StaticImageChartPanel(Dataset[] datasets, int width, int height,
       GssContext gssContext) {
-    chart = new Chart();
-    plot = new DefaultXYPlot();
-    Datasets dss=new Datasets(datasets);
-    plot.setDatasets(dss);
-    plot.setOverviewEnabled(false);
-    plot.setPlotRenderer(new XYPlotRenderer());
-    chart.setPlot(plot);
-    
-    view = new ViewJava2D();
-    chart.setView(view);
-    view.initialize(width, height, false, gssContext, this);
-    view.onAttach();
-    
+    this(datasets, true, width, height, gssContext);
   }
 
   public StaticImageChartPanel(Dataset[] datasets, int width, int height) {
     this(datasets, width, height, new MockGssContext());
+  }
+
+  public StaticImageChartPanel(Dataset[] ds, boolean interactive, int width,
+      int height) {
+    this(ds, interactive, width, height, new MockGssContext());
+  }
+
+  public StaticImageChartPanel(Dataset[] ds, boolean interactive, int width,
+      int height, GssContext gssContext) {
+    chart = new Chart();
+    plot = new DefaultXYPlot();
+    Datasets dss = new Datasets(ds);
+    if (!interactive) {
+      plot.setSubPanelsEnabled(false);
+    }
+    plot.setDatasets(dss);
+    plot.setOverviewEnabled(false);
+    plot.setPlotRenderer(new XYPlotRenderer());
+    chart.setPlot(plot);
+
+    view = new ViewJava2D();
+    chart.setView(view);
+    view.initialize(width, height, false, gssContext, this);
+    view.onAttach();
   }
 
   public Chart getChart() {
