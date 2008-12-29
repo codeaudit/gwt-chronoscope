@@ -98,12 +98,19 @@ public class LayerJava2D extends AbstractLayer {
     layerAlpha = 1.0f;
     visible = true;
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsConfiguration gc = ge.getDefaultScreenDevice()
-        .getDefaultConfiguration();
+    if (ge.isHeadlessInstance()) {
+      img = new BufferedImage((int) b.width, (int) b.height,
+          layerId.equals("backing") ? BufferedImage.TYPE_INT_RGB
+              : BufferedImage.TYPE_INT_ARGB);
+    } else {
+      GraphicsConfiguration gc = ge.getDefaultScreenDevice()
+          .getDefaultConfiguration();
 //        int imageType = layerId.equals("backing") && false ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
 //        img = new BufferedImage((int)b.width, (int)b.height, imageType);
-    img = gc.createCompatibleImage((int) b.width, (int) b.height, layerId
-        .equals("backing") ? Transparency.OPAQUE : Transparency.TRANSLUCENT);
+      img = gc.createCompatibleImage((int) b.width, (int) b.height,
+          layerId.equals("backing") ? Transparency.OPAQUE
+              : Transparency.TRANSLUCENT);
+    }
     ctx = (Graphics2D) img.createGraphics();
     ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
@@ -201,8 +208,9 @@ public class LayerJava2D extends AbstractLayer {
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    Font font = new Font(fontFamily, Font.PLAIN, Integer
-        .parseInt(fontSize.substring(0, fontSize.length() - 2)) * 12 / 9);
+    Font font = new Font(fontFamily, Font.PLAIN,
+        Integer.parseInt(fontSize.substring(0, fontSize.length() - 2)) * 12 / 9)
+        ;
     save();
     ctx.setFont(font);
     ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -227,11 +235,13 @@ public class LayerJava2D extends AbstractLayer {
     restore();
   }
 
-  public void setFillColor(org.timepedia.chronoscope.client.canvas.Color color) {
+  public void setFillColor(
+      org.timepedia.chronoscope.client.canvas.Color color) {
     setFillColor(color.getCSSColor());
   }
 
-  public void setStrokeColor(org.timepedia.chronoscope.client.canvas.Color color) {
+  public void setStrokeColor(
+      org.timepedia.chronoscope.client.canvas.Color color) {
     setStrokeColor(color.getCSSColor());
   }
 
@@ -249,8 +259,8 @@ public class LayerJava2D extends AbstractLayer {
 
       TextLayout tl = new TextLayout(label, font, ctx.getFontRenderContext());
       Rectangle2D b = tl.getBounds();
-      int h = (int)(tl.getAscent() + tl.getDescent() + tl.getLeading());
-      ctx.drawRect((int)x, (int)y, (int)b.getWidth(), h);
+      int h = (int) (tl.getAscent() + tl.getDescent() + tl.getLeading());
+      ctx.drawRect((int) x, (int) y, (int) b.getWidth(), h);
     }
 //    System.out.println("Drawing text " + label + " at " + x + ", "
 //        + (y + ctx.getFontMetrics().getMaxAscent()) + " y=" + y + ", maxAscent="
@@ -495,8 +505,8 @@ public class LayerJava2D extends AbstractLayer {
     Font f = ctx.getFont();
     TextLayout tl = new TextLayout(string, f, ctx.getFontRenderContext());
     Rectangle2D b = tl.getBounds();
-    int h = (int) (tl.getAscent() + tl.getDescent()+tl.getLeading());
-       // b.getHeight();//(int) fm.getMaxAscent() + fm.getMaxDescent() + 2;
+    int h = (int) (tl.getAscent() + tl.getDescent() + tl.getLeading());
+    // b.getHeight();//(int) fm.getMaxAscent() + fm.getMaxDescent() + 2;
 //    System.out.println("height of " + string + " is " + h + "  vs " + fm
 //        .getStringBounds(string, ctx));
     return h;
