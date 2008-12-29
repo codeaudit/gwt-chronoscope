@@ -98,8 +98,11 @@ public class LayerJava2D extends AbstractLayer {
     layerAlpha = 1.0f;
     visible = true;
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    int w = Math.max((int) b.width, 1);
+    int h = Math.max((int) b.height, 1);
+
     if (ge.isHeadlessInstance()) {
-      img = new BufferedImage((int) b.width, (int) b.height,
+      img = new BufferedImage(w, h,
           layerId.equals("backing") ? BufferedImage.TYPE_INT_RGB
               : BufferedImage.TYPE_INT_ARGB);
     } else {
@@ -107,7 +110,7 @@ public class LayerJava2D extends AbstractLayer {
           .getDefaultConfiguration();
 //        int imageType = layerId.equals("backing") && false ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
 //        img = new BufferedImage((int)b.width, (int)b.height, imageType);
-      img = gc.createCompatibleImage((int) b.width, (int) b.height,
+      img = gc.createCompatibleImage(w, h,
           layerId.equals("backing") ? Transparency.OPAQUE
               : Transparency.TRANSLUCENT);
     }
