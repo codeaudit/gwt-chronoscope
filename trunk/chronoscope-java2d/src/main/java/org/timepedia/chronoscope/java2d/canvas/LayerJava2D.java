@@ -499,6 +499,10 @@ public class LayerJava2D extends AbstractLayer {
 
   public int stringHeight(String string, String font, String bold,
       String size) {
+    if (string == null || string.length() == 0) {
+      return 0;
+    }
+
     ctx.setFont(new Font(font, Font.PLAIN,
         Integer.parseInt(size.substring(0, size.length() - 2))));
     FontMetrics fm = ctx.getFontMetrics();
@@ -514,6 +518,10 @@ public class LayerJava2D extends AbstractLayer {
   }
 
   public int stringWidth(String string, String font, String bold, String size) {
+    if (string == null || string.length() == 0) {
+      return 0;
+    }
+
     ctx.setFont(new Font(font, Font.PLAIN,
         Integer.parseInt(size.substring(0, size.length() - 2))));
     return ctx.getFontMetrics().stringWidth(string);
