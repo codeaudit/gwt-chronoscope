@@ -14,7 +14,7 @@ public class JsonDatasetJSO extends JavaScriptObject {
   }
 
   public final native String getDateTimeFormat() /*-{
-  return this.dtformat;
+  return this.dtformat || null;
 }-*/;
 
   public final native double getDomainScale() /*-{
