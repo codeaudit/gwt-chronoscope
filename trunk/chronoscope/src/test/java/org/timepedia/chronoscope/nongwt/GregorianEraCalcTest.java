@@ -16,12 +16,12 @@ public class GregorianEraCalcTest extends EraCalcTest {
   }
   
   public void testAssignYearField() {
-    GregorianEraCalc eraCalc = new GregorianEraCalc();
+    GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
     testAssignYearField(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
   
   public void testIsLeapYear() {
-    GregorianEraCalc eraCalc = new GregorianEraCalc();
+    GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
     
     for (int y = eraCalc.getMinYear(); y <= eraCalc.getMaxYear(); y++) {
       boolean expected = isLeapYear(y);
@@ -30,7 +30,7 @@ public class GregorianEraCalcTest extends EraCalcTest {
   }
   
   public void testCalcDayOfWeek() {
-    GregorianEraCalc eraCalc = new GregorianEraCalc();
+    GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
     super.testCalcDayOfWeek(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
   
@@ -71,7 +71,7 @@ public class GregorianEraCalcTest extends EraCalcTest {
 
   @Override
   protected EraCalc getEraCalc() {
-    return new GregorianEraCalc();
+    return new GregorianEraCalc(1583, 2999);
   }
 
 }

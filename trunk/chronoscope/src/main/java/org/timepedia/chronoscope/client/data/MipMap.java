@@ -110,7 +110,7 @@ public class MipMap {
   }
   
   /**
-   * Returns an interator over tuple data points at the resolution
+   * Returns an iterator over tuple data points at the resolution
    * of this mipmap.
    */
   public Iterator<Tuple2D> getTupleIterator(final int startIndex) {

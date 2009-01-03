@@ -8,17 +8,18 @@ import java.util.Date;
  * @author chad takahashi
  */
 public abstract class EraCalc {
-
+  static final GregorianConstants gregorianConstants = new GregorianConstants();
+  
   private static final int[] DAYS_IN_MONTH_LEAPYEAR = {
       31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   private static final int[] DAYS_IN_MONTH_NON_LEAPYEAR = {
       31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-  private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc().init(1583, 1999999);
+  private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc(1583, 1999999);
   //private static final EraCalc GREGORIAN_ERA_CALC = new GregorianEraCalc().init(1583, 12999);
   private static final EraCalc JULIAN_ERA_CALC = new JulianEraCalc();
   private static final EraCalc Y1582_ERA_CALC = new JulianCrossoverEraCalc();
-  private static final double TS_1582_JAN_01 = getJavaTimestamp(1582);
-  private static final double TS_1583_JAN_01 = getJavaTimestamp(1583);
+  private static final double TS_1582_JAN_01 = getTimestampForYear(1582);
+  private static final double TS_1583_JAN_01 = getTimestampForYear(1583);
 
   /**
    * Same as {@link #monthOffsetsInMs} and {@link #monthOffsetsInMsLeapYear},
@@ -100,8 +101,22 @@ public abstract class EraCalc {
    * Returns a timestamp created by java.utilDate for Jan-01 at midnight for the
    * specified year.
    */
-  static double getJavaTimestamp(int year) {
-    return new Date(year - 1900, 0, 1).getTime();
+  static double getTimestampForYear(int year) {
+    if (year < 2000) {
+      return new Date(year - 1900, 0, 1).getTime();
+    }
+    
+    final double numMillisIn4centuries = 
+          gregorianConstants.msIn4centuryPeriod;
+    double y2k_timestamp = new Date(2000 - 1900, 0, 1).getTime();
+    
+    final int numLeapCenturies = (year - 2000) / 400;
+    final int nearestLeapCentury = 2000 + (numLeapCenturies * 400);
+    final int leapCenturyOffset = year - nearestLeapCentury;
+    double offset = numMillisIn4centuries * numLeapCenturies;
+    offset += gregorianConstants.yearOffsetsInMs[leapCenturyOffset];
+    
+    return y2k_timestamp + offset;
   }
 
   /**
