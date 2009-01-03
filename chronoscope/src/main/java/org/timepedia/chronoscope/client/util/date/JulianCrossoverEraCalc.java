@@ -18,9 +18,9 @@ class JulianCrossoverEraCalc extends EraCalc {
   private static final int[] MONTH_OFFSETS_IN_DAYS = 
       EraCalc.calcMonthOffsetsInDays(DAYS_IN_MONTH_1582);
 
-  private static final double TS_1582_JAN_01 = EraCalc.getJavaTimestamp(1582);
+  private static final double TS_1582_JAN_01 = EraCalc.getTimestampForYear(1582);
   
-  private static final double TS_1583_JAN_01 = getJavaTimestamp(1583);
+  private static final double TS_1583_JAN_01 = getTimestampForYear(1583);
 
   public JulianCrossoverEraCalc() {
     this.monthOffsetsInMs = calcMonthOffsetsInMs(DAYS_IN_MONTH_1582);

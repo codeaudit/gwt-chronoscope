@@ -14,7 +14,7 @@ public class JulianEraCalc extends EraCalc {
   private static final int MAX_LEAP_YEAR = 1580;
   
   // millisecond timestamp corresponding to Jan-01 00:00:00.0 of maxLeapYear
-  private static final double MAX_LEAP_YEAR_TIMESTAMP = getJavaTimestamp(MAX_LEAP_YEAR);
+  private static final double MAX_LEAP_YEAR_TIMESTAMP = getTimestampForYear(MAX_LEAP_YEAR);
   
   // The latest year supported by this EraCalc object
   private static final int MAX_YEAR = 1581;
@@ -32,7 +32,7 @@ public class JulianEraCalc extends EraCalc {
   // where 'yyyy' = getMaxYear() + 1. For example, if maxYear=1581, then maxTimeStamp
   // should be set to the date 1582-Jan-01 00:00:00.0.  This means that the
   // largest valid date would be '1581-Dec-31 23:59:59.999'.
-  private static final double TS_1582_JAN_01 = getJavaTimestamp(1582);
+  private static final double TS_1582_JAN_01 = getTimestampForYear(1582);
     
   // [0] = # of days from beginning of 4-year period to Jan-01 of year 0
   // [1] = # of days from beginning of 4-year period to Jan-01 of year 1

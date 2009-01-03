@@ -65,7 +65,6 @@ public abstract class DateTickFormatter extends TickFormatter {
   public int incrementTick(int numTimeUnits) {
     ChronoDate date = currTick;
     date.add(timeUnitTickInterval, numTimeUnits);
-    date.getTime();
     return numTimeUnits;
   }
 
