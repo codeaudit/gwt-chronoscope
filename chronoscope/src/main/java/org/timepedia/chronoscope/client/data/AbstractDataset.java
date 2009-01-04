@@ -37,7 +37,7 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
     return minDomainInterval;
   }
 
-  public MipMapRegion getLowestMipMapForInterval(Interval region, int maxSamples) {
+  public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples) {
     int domainStartIdx = 0;
     int domainEndIdx = 0;
     MipMapChain mipMapChain = getMipMapChain();

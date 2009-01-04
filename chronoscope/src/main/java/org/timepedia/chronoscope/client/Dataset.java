@@ -55,7 +55,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * @return a MipMap and pair of start and end indices in the MipMap
    */
   @NoExport
-  MipMapRegion getLowestMipMapForInterval(Interval region, int maxSamples);
+  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples);
 
   /**
    * Provides access to the ordered set of {@link MipMap} objects, which
