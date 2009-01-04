@@ -3,7 +3,7 @@ package org.timepedia.chronoscope.client.data;
 import org.timepedia.chronoscope.client.Dataset;
 
 /**
- * Returned as the result of {@link Dataset#getLowestMipMapForInterval} containing the
+ * Returned as the result of {@link Dataset#getBestMipMapForInterval} containing the
  * resulting MipMap, start, and end index.
  */
 public class MipMapRegion {
