@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client;
 
 import org.timepedia.chronoscope.client.data.MipMapChain;
+import org.timepedia.chronoscope.client.data.MipMapRegion;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
@@ -32,7 +33,7 @@ import org.timepedia.exporter.client.NoExport;
  * It is recommended to use a method that makes successive levels half the size
  * of former levels, so that the height of the pyramid is
  * <tt>log_2(num_samples)</tt>.
- * 
+ *
  * @gwt.exportPackage chronoscope
  * @gwt.export
  */
@@ -45,14 +46,24 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * within the dataset.
    */
   double getMinDomainInterval();
-  
+
   /**
-   * Provides access to the ordered set of {@link MipMap} objects, which 
+   * Finds the best MipMap (highest resolution) containing the the given region,
+   * where the number of points in the region do not exceed <tt>maxSamples<tt>
+   * @param region the domain interval used for the search
+   * @param maxSamples the maximum number of points in the MipMap's region
+   * @return a MipMap and pair of start and end indices in the MipMap
+   */
+  @NoExport
+  MipMapRegion getLowestMipMapForInterval(Interval region, int maxSamples);
+
+  /**
+   * Provides access to the ordered set of {@link MipMap} objects, which
    * represent this dataset at decreasing levels of resolution.
    */
   @NoExport
   MipMapChain getMipMapChain();
-  
+
   /**
    * Return an id used to identify the axis this dataset should be assigned to,
    * typically the physical units (e.g. meters/second). Datasets with identical
@@ -61,12 +72,12 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getAxisId(int rangeTupleCoordinate);
 
   /**
-   * Returns an interval representing the min and max values for the specified 
+   * Returns an interval representing the min and max values for the specified
    * range tuple coordinate.
    */
   @NoExport
   Interval getRangeExtrema(int rangeTupleCoordinate);
-  
+
   /**
    * Returns an interval that contains the minimum and maximum domain values
    * of this dataset's domain.
@@ -92,14 +103,14 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    */
   @NoExport
   Interval getPreferredRangeAxisInterval();
-  
+
   /**
-   * Returns a key representing the preferred {@link DatsetRenderer} to use when 
+   * Returns a key representing the preferred {@link DatsetRenderer} to use when
    * drawing this dataset.
    */
   @Deprecated
   String getPreferredRenderer();
-  
+
   /**
    * Returns the number of samples in this dataset.
    */
@@ -115,7 +126,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * can hold (e.g. a 2-tuple, 5-tuple, etc.).
    */
   int getTupleLength();
-  
+
   /**
    * Return the domain value for the given data point index on mip level 0.
    */
