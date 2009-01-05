@@ -23,7 +23,7 @@ public abstract class DatasetRequest {
    * mipmapped data is then computed by the provided
    * {@link #setDefaultMipMapStrategy(MipMapStrategy) MipMapStrategy} object.
    */
-  public static final class Basic extends DatasetRequest {
+  public static class Basic extends DatasetRequest {
     private double[] domainData;
     
     // tupleData[n] represents the Nth dimension value of each range tuple
@@ -104,7 +104,7 @@ public abstract class DatasetRequest {
    * Request in which the n-tuple values at each mipmap level must be 
    * explicitly assigned.
    */
-  public static final class MultiRes extends DatasetRequest {
+  public static class MultiRes extends DatasetRequest {
     private Array2D mipmappedDomainData;
     private List<Array2D> mipmappedRangeTupleData = new ArrayList<Array2D>();
     
