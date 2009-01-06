@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -113,9 +114,10 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel = new DateRangePanel();
     dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
-    dateRangePanel.init(rootLayer, plot.getDatasets().getMinInterval(),
+    dateRangePanel.init(rootLayer, 
+        plot.getDatasets().getMinInterval(),
         plot.getDatasets().getMaxDomain(),
-        (RangeAxisPanel) plot.getDomainAxisPanel());
+        plot.getDomainAxisPanel());
 
     dateRangePanel.updateDomainInterval(minDomain, maxDomain);
 
@@ -148,8 +150,8 @@ public class LegendAxisPanel extends AxisPanel {
   private static ZoomIntervals createDefaultZoomIntervals(XYPlot plot) {
     ZoomIntervals zooms = new ZoomIntervals();
 
-    boolean isDateDomain = plot
-        .getDomainAxisPanel() instanceof DomainAxisPanel;
+    boolean isDateDomain = plot.getDomainAxisPanel().getTickFormatterFactory() 
+        instanceof DateTickFormatterFactory;
 
     if (isDateDomain) {
       zooms.add(new ZoomInterval("1d", TimeUnit.DAY.ms()));

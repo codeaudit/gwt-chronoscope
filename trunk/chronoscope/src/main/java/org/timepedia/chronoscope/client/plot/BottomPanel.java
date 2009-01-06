@@ -4,11 +4,9 @@ import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
-import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.Interval;
 
@@ -27,7 +25,7 @@ final class BottomPanel extends AuxiliaryPanel {
   private DomainAxis domainAxis;
   
   // Renders the horizontal domain ticks and tick labels
-  private AxisPanel domainAxisPanel;
+  private DomainAxisPanel domainAxisPanel;
   
   // The miniaturized fully-zoomed-out representation of the datasets
   private OverviewAxisPanel overviewAxisPanel;
@@ -47,7 +45,7 @@ final class BottomPanel extends AuxiliaryPanel {
     return this.compositePanel;
   }
 
-  public AxisPanel getDomainAxisPanel() {
+  public DomainAxisPanel getDomainAxisPanel() {
     return this.domainAxisPanel;
   }
   
@@ -85,13 +83,12 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel.layout();
   }
   
-  public void setDomainAxisPanel(AxisPanel axisPanel) {
-    compositePanel.remove(domainAxisPanel);
-    domainAxisPanel = axisPanel;
-    axisPanel.setParentPanel(compositePanel);
-    axisPanel.setValueAxis(domainAxis);
-    domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
-    compositePanel.insertBefore(overviewAxisPanel, domainAxisPanel);
+  public void setDomainAxisPanel(DomainAxisPanel domainAxisPanel) {
+    this.compositePanel.remove(this.domainAxisPanel);
+    this.domainAxisPanel = domainAxisPanel;
+    domainAxisPanel.setParentPanel(this.compositePanel);
+    domainAxisPanel.setValueAxis(domainAxis);
+    this.compositePanel.insertBefore(this.overviewAxisPanel, this.domainAxisPanel);
   }
   
   public void setOverviewEnabled(boolean overviewEnabled) {
@@ -214,16 +211,8 @@ final class BottomPanel extends AuxiliaryPanel {
     else {
       compositePanel.remove(domainAxisPanel);
     }
-
-    if (domainAxis == null) {
-      //don't stomp on existing configured axis
-      domainAxis = new DomainAxis(plot, view);
-    }
     
-    if (domainAxisPanel.getValueAxis() == null) {
-      domainAxisPanel.setValueAxis(domainAxis);
-      domainAxis.setAxisRenderer((RangeAxisPanel) domainAxisPanel);
-    }
+    domainAxisPanel.setValueAxis(new DomainAxis(plot));
   }
   
   private void initOverviewAxisPanel() {

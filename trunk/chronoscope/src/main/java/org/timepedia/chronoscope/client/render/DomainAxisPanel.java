@@ -7,18 +7,17 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.DateTickFormatter;
+import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
+import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
  * Renders zoomable dates on x-axis (domain axis).
  */
-public class DomainAxisPanel extends RangeAxisPanel {
-
-  private static TickFormatterFactory tickFormatFactory = TickFormatterFactory
-      .get();
+public class DomainAxisPanel extends AxisPanel {
 
   private static final String CREDITS = "Powered by Timefire";
 
@@ -42,6 +41,8 @@ public class DomainAxisPanel extends RangeAxisPanel {
   
   private double myHeight;
   
+  private TickFormatterFactory tickFormatterFactory = new DateTickFormatterFactory();
+
   public DomainAxisPanel() {
     gridGssElement = new GssElementImpl("grid", this);
     tickGssElement = new GssElementImpl("tick", this);
@@ -58,7 +59,10 @@ public class DomainAxisPanel extends RangeAxisPanel {
     // This stuff shouldn't change in the case where the user is just scrolling 
     // left/right.
     final double domainWidth = plot.getDomain().length();
-    TickFormatter tickFormatter = tickFormatFactory.findBestFormatter(domainWidth);
+    TickFormatter tickFormatter = tickFormatterFactory.findBestFormatter(domainWidth);
+    
+    //log("best formatter for domain " + (long)domainWidth + ": " + tickFormatter);
+    
     final double boundsRightX = bounds.rightX();
     final double labelWidth = tickFormatter.getMaxTickLabelWidth(layer, gssProperties);
     final double labelWidthDiv2 = labelWidth / 2.0;
@@ -66,16 +70,34 @@ public class DomainAxisPanel extends RangeAxisPanel {
         domainWidth, tickFormatter);
     final int idealTickStep = tickFormatter
         .calcIdealTickStep(domainWidth, maxTicksForScreen);
+   //log("dw=" + (long)domainWidth + "; maxTicks=" + maxTicksForScreen + 
+   //    "; idealStep=" + idealTickStep);
     tickFormatter.resetToQuantizedTick(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;
     double prevTickScreenPos = 0.0;
     int actualTickStep = 0;
+    
+    /*
+    log("idealTickStep=" + idealTickStep +
+        "; maxTicks=" + maxTicksForScreen +
+        "; domainStart=" + (long)plot.getDomain().getStart() +
+        "; domainLen=" + (long)plot.getDomain().length() +
+        "; quantizedDomainValue=" + (long)tickFormatter.getTickDomainValue());
+    */
+    
     while (stillEnoughSpace) {
       double tickScreenPos = 
           this.domainToScreenX(tickFormatter.getTickDomainValue(), bounds);
       stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
+      
+      /*
+      log("tickScreenPos=" + tickScreenPos + 
+          "; tickDomainValue=" + (long)tickFormatter.getTickDomainValue() +
+          "; boundsRightX=" + boundsRightX);
+      */
+      
       if (stillEnoughSpace) {
         // Quantized tick date may have gone off the left edge; need to guard
         // against this case.
@@ -85,7 +107,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
           drawTickLabel(layer, bounds, tickScreenPos, tickLabel, labelWidth);
         }
       }
-
+      
       // Draw auxiliary sub-ticks
       if (!isFirstTick) {
         int subTickStep = tickFormatter.getSubTickStep(actualTickStep);
@@ -101,7 +123,7 @@ public class DomainAxisPanel extends RangeAxisPanel {
           }
         }
       }
-
+      
       actualTickStep = tickFormatter.incrementTick(idealTickStep);
       prevTickScreenPos = tickScreenPos;
       isFirstTick = false;
@@ -120,12 +142,16 @@ public class DomainAxisPanel extends RangeAxisPanel {
 
   public double getMinimumTickSize() {
     if (minTickSize == -1) {
-      TickFormatter leafFormatter = tickFormatFactory.getLeafFormatter();
+      TickFormatter leafFormatter = tickFormatterFactory.getLeafFormatter();
       minTickSize = leafFormatter.getTickInterval();
     }
     return minTickSize;
   }
 
+  public TickFormatterFactory getTickFormatterFactory() {
+    return this.tickFormatterFactory;
+  }
+  
   public String getType() {
     return "axis";
   }
@@ -139,6 +165,11 @@ public class DomainAxisPanel extends RangeAxisPanel {
     return plot.getInnerBounds().width;
   }
 
+  public void setTickFormatterFactory(TickFormatterFactory tickFormatterFactory) {
+    ArgChecker.isNotNull(tickFormatterFactory, "tickFormatterFactory");
+    this.tickFormatterFactory = tickFormatterFactory;
+  }
+  
   @Override
   protected void initHook() {
     if (!parentPanel.getPosition().isHorizontal()) {
@@ -277,5 +308,9 @@ public class DomainAxisPanel extends RangeAxisPanel {
     return layer.stringHeight(str, gssProperties.fontFamily, 
         gssProperties.fontWeight, gssProperties.fontSize);
   }
-
+  
+  private static final void log(Object msg) {
+    System.out.println("TESTING DomainAxisPanel: " + msg);
+  }
 }
+  

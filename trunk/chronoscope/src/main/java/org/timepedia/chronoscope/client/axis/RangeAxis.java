@@ -86,7 +86,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
       "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
 
-  static double[] computeLinearTickPositions(double lrangeLow,
+  private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
     if (lrangeHigh == lrangeLow) {
@@ -152,7 +152,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private double rangeLow, rangeHigh;
 
-  protected RangeAxisPanel renderer;
+  private RangeAxisPanel axisPanel;
 
   private boolean rangeOverriden;
 
@@ -162,7 +162,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean showExponents = false;
 
-  protected double[] ticks;
+  private double[] ticks;
 
   private TickLabelNumberFormatter tickLabelNumberFormatter;
 
@@ -190,13 +190,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
       return ticks;
     }
 
-    boolean horizontal = renderer.getParentPanel().getPosition().isHorizontal();
-
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
         getUnadjustedRangeHigh(),
-        horizontal ? renderer.getWidth() : renderer.getHeight(),
-        horizontal ? renderer
-            .getMaxLabelWidth() : renderer.getMaxLabelHeight(), rangeOverriden);
+        axisPanel.getHeight(),
+        axisPanel.getMaxLabelHeight(), 
+        rangeOverriden);
+    
     adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
     adjustedRangeHigh = getUnadjustedRangeHigh();
     for (int i = 0; i < ticks.length; i++) {
@@ -326,8 +325,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     allowScientificNotation = enable;
   }
 
-  public void setAxisRenderer(RangeAxisPanel r) {
-    this.renderer = r;
+  public void setAxisPanel(RangeAxisPanel r) {
+    this.axisPanel = r;
   }
 
   /**
@@ -363,7 +362,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setLabel(String label) {
     super.setLabel(label);
     plot.damageAxes(this);
-    renderer.computeLabelWidths(view);
+    axisPanel.computeLabelWidths(view);
   }
 
   @Export

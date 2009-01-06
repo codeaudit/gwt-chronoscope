@@ -141,7 +141,7 @@ final class RangePanel extends AuxiliaryPanel {
             rangeAxisInterval);
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(ra);
-        ra.setAxisRenderer(axisPanel);
+        ra.setAxisPanel(axisPanel);
         currRangePanel.add(axisPanel);
         id2rangeAxis.put(ra.getAxisId(), ra);
       } else {

@@ -1,14 +1,13 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.canvas.View;
 
-public class DomainAxis extends RangeAxis {
+public class DomainAxis extends ValueAxis {
 
   private XYPlot plot;
-
-  public DomainAxis(XYPlot plot, View view) {
-    super(plot, view, "Time", "s", 0, plot.getDomain());
+  
+  public DomainAxis(XYPlot plot) {
+    super("Time", "s");
     this.plot = plot;
   }
 
@@ -22,18 +21,5 @@ public class DomainAxis extends RangeAxis {
 
   public double getRangeLow() {
     return plot.getDomain().getStart();
-  }
-
-  public double[] computeTickPositions() {
-   
-    boolean horizontal = renderer.getParentPanel().getPosition().isHorizontal();
-
-    ticks = computeLinearTickPositions(getRangeLow(),
-        getRangeHigh(),
-        horizontal ? renderer.getWidth() : renderer.getHeight(),
-        horizontal ? renderer
-            .getMaxLabelWidth() : renderer.getMaxLabelHeight(), false);
-
-    return ticks;
   }
 }

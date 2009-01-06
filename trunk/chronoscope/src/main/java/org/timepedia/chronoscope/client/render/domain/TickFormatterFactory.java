@@ -1,42 +1,40 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 /**
- * Factory for obtaining a suitable {@link DateTickFormatter} object for a given
+ * Factory for obtaining a suitable {@link TickFormatter} object for a given
  * domain span.
  * 
  * @author chad takahashi
  */
-public final class TickFormatterFactory {
+public abstract class TickFormatterFactory {
 
+  private double affinityFactor;
+  private TickFormatter rootFormatter;
+  private double cachedDomainWidth = Double.NEGATIVE_INFINITY;
+  private TickFormatter cachedFormatter = null;
+  
+  public TickFormatterFactory() {
+    this.affinityFactor = getAffinityFactor();
+    this.rootFormatter = createRootTickFormatter();    
+  }
+  
+  protected abstract TickFormatter createRootTickFormatter();
+  
   /**
    * A value in the range (0.0, 1.0], which determines how readily the
    * {@link #findBestFormatter(double)} algorithm will "jump down to" the next
    * sub-formatter. The larger the factor, the more "affinity" the algorithm
    * will have for the current formatter.
    */
-  private static final double AFFINITY_FACTOR = 0.35;
-
-  private static TickFormatterFactory factory;
-  private static TickFormatter rootFormatter = new MilleniumTickFormatter();
-
-  private double cachedDomainWidth = Double.NEGATIVE_INFINITY;
-  private TickFormatter cachedFormatter = null;
-
-  /**
-   * Returns a singleton instance of this factory.
-   */
-  public static TickFormatterFactory get() {
-    if (factory == null) {
-      factory = new TickFormatterFactory();
-    }
-    return factory;
+  protected double getAffinityFactor() {
+    return 0.35;
   }
-
+  
   /**
-   * Finds the smallest-scale {@link DateTickFormatter} that engulfs the 
+   * Finds the smallest-scale {@link TickFormatter} that engulfs the 
    * specified domain interval.
    */
-  public TickFormatter findBestFormatter(double domainWidth) {
+  public final TickFormatter findBestFormatter(double domainWidth) {
     if (domainWidth == cachedDomainWidth) {
       return cachedFormatter;
     }
@@ -44,7 +42,7 @@ public final class TickFormatterFactory {
     TickFormatter tlf = rootFormatter;
 
     while (!tlf.isLeafFormatter()) {
-      if (tlf.inInterval(domainWidth * AFFINITY_FACTOR)) {
+      if (tlf.inInterval(domainWidth * affinityFactor)) {
         break;
       }
       tlf = tlf.subFormatter;
@@ -55,7 +53,7 @@ public final class TickFormatterFactory {
     return tlf;
   }
   
-  public TickFormatter getLeafFormatter() {
+  public final TickFormatter getLeafFormatter() {
     TickFormatter formatter = rootFormatter;
     while (!formatter.isLeafFormatter()) {
       formatter = formatter.subFormatter;
@@ -63,12 +61,8 @@ public final class TickFormatterFactory {
     return formatter;
   }
 
-  public TickFormatter getRootFormatter() {
+  public final TickFormatter getRootFormatter() {
     return rootFormatter;
-  }
-  
-  private static void log(Object msg) {
-    System.out.println("TESTING:TickFormatterFactory> " + msg);
   }
 
 }
