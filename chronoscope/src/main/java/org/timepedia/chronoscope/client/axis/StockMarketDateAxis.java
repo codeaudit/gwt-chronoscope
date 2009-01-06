@@ -1,15 +1,14 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.canvas.View;
 
 /**
  *
  */
 public class StockMarketDateAxis extends DomainAxis {
 
-  public StockMarketDateAxis(XYPlot plot, View view) {
-    super(plot, view);
+  public StockMarketDateAxis(XYPlot plot) {
+    super(plot);
   }
 
   //  private Timeline timeline;

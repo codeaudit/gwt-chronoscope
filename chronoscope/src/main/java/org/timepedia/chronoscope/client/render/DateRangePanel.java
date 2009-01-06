@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
@@ -47,14 +48,15 @@ public class DateRangePanel extends AbstractPanel {
 
   private int typicalCharWidth;
 
-  private RangeAxisPanel domainAxisPanel;
+  private DomainAxisPanel domainAxisPanel;
 
   private boolean isDateDomain;
 
   //public void init(Layer layer) {
   public void init(Layer layer, double minDomainInterval, double maxDomain,
-      RangeAxisPanel domainAxisPanel) {
-    isDateDomain = domainAxisPanel instanceof DomainAxisPanel;
+      DomainAxisPanel domainAxisPanel) {
+    isDateDomain = 
+       domainAxisPanel.getTickFormatterFactory() instanceof DateTickFormatterFactory;
 
     this.domainAxisPanel = domainAxisPanel;
     doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
@@ -78,8 +80,8 @@ public class DateRangePanel extends AbstractPanel {
         //resizeToIdealWidth();
       }
     } else {
-      this.width = this
-          .calcWidth(domainAxisPanel.formatLegendLabel(maxDomain), layer);
+      final String typicalIntRange = "00000 - 00000";
+      this.width = this.calcWidth(typicalIntRange, layer);
     }
   }
 
@@ -118,9 +120,7 @@ public class DateRangePanel extends AbstractPanel {
         dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
       } else {
         dateRangeActive = dateRangeLong = dateRangeShort =
-            domainAxisPanel.formatLegendLabel(startTimeStamp)
-                + DATE_DELIM_LONG + domainAxisPanel
-                .formatLegendLabel(endTimeStamp);
+            formatInt(startTimeStamp) + DATE_DELIM_LONG + formatInt(endTimeStamp);
       }
     }
   }
@@ -155,5 +155,9 @@ public class DateRangePanel extends AbstractPanel {
 
   private int estimateStringWidth(String s) {
     return this.typicalCharWidth * s.length();
+  }
+  
+  private static String formatInt(double value) {
+    return Integer.toString((int)value);
   }
 }

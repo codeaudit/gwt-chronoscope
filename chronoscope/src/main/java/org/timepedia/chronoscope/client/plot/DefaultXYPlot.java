@@ -30,9 +30,9 @@ import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
 import org.timepedia.chronoscope.client.overlays.Marker;
-import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
+import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -275,7 +275,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return this.visDomain;
   }
 
-  public AxisPanel getDomainAxisPanel() {
+  public DomainAxisPanel getDomainAxisPanel() {
     return bottomPanel.getDomainAxisPanel();
   }
 
@@ -723,7 +723,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.datasets = datasets;
   }
 
-  public void setDomainAxisPanel(AxisPanel domainAxisPanel) {
+  public void setDomainAxisPanel(DomainAxisPanel domainAxisPanel) {
     bottomPanel.setDomainAxisPanel(domainAxisPanel);
   }
 

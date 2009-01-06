@@ -67,7 +67,7 @@ import java.util.List;
  * timeline values.
  * <P>
  * A timeline can be used as parameter to a 
- * {@link org.jfree.chart.axis.DateAxis} to define the values that this axis 
+ * {@link org.jfree.chart.axis.DomainAxis} to define the values that this axis 
  * supports. This class implements a timeline formed by segments of equal 
  * length (ex. days, hours, minutes) where some segments can be included in the
  * timeline and others excluded. Therefore timelines like "working days" or
@@ -158,7 +158,7 @@ import java.util.List;
  * newFifteenMinuteTimeline() are provided as examples to create special
  * SegmentedTimelines.
  *
- * @see org.jfree.chart.axis.DateAxis
+ * @see org.jfree.chart.axis.DomainAxis
  */
 public class SegmentedTimeline implements Timeline, Cloneable, Serializable {
 

@@ -12,8 +12,8 @@ import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
+import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
@@ -156,9 +156,9 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   Interval getDomain();
 
   /**
-   * Return the axis panel associated with X-axis.
+   * Return the domain axis panel associated with X-axis.
    */
-  AxisPanel getDomainAxisPanel();
+  DomainAxisPanel getDomainAxisPanel();
 
   /**
    * Returns the current focus point and dataset index within the focused
@@ -388,7 +388,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Overrides the default domin axis panel (Date formatted labels)
    */
-  void setDomainAxisPanel(AxisPanel domainAxisPanel);
+  void setDomainAxisPanel(DomainAxisPanel domainAxisPanel);
 
   /**
    * Sets the specified datapoint reference as the focused point in this plot.

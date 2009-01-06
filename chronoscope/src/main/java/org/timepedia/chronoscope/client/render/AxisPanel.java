@@ -90,8 +90,4 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
    */
   protected abstract void initHook();
 
-  //TODO: this really shouldn't be here
-  public double getMinimumTickSize() {
-    return 0;
-  }
 }
