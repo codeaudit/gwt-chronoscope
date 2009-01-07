@@ -3,6 +3,8 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
+import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
@@ -26,17 +28,11 @@ public class DateRangePanel extends AbstractPanel {
 
   private static final DateFormatHelper DATE_FMT = new DateFormatHelper();
 
-  private String dateRangeActive;
+  private String dateRangeActive, dateRangeShort, dateRangeLong;
 
-  private String dateRangeShort;
-
-  private String dateRangeLong;
-
-  private double startTimeStamp = -1;
+  private Interval domainInterval;
 
   private ChronoDate startDate = ChronoDate.getSystemDate();
-
-  private double endTimeStamp = -1;
 
   private ChronoDate endDate = ChronoDate.getSystemDate();
 
@@ -48,17 +44,12 @@ public class DateRangePanel extends AbstractPanel {
 
   private int typicalCharWidth;
 
-  private DomainAxisPanel domainAxisPanel;
-
   private boolean isDateDomain;
 
-  //public void init(Layer layer) {
-  public void init(Layer layer, double minDomainInterval, double maxDomain,
-      DomainAxisPanel domainAxisPanel) {
+  public void init(Layer layer, double minDomainInterval, DomainAxisPanel domainAxisPanel) {
     isDateDomain = 
        domainAxisPanel.getTickFormatterFactory() instanceof DateTickFormatterFactory;
 
-    this.domainAxisPanel = domainAxisPanel;
     doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
@@ -93,22 +84,22 @@ public class DateRangePanel extends AbstractPanel {
         Cursor.DEFAULT);
   }
 
-  public void updateDomainInterval(double startTimeStamp, double endTimeStamp) {
-    if (startTimeStamp > endTimeStamp) {
-      throw new IllegalArgumentException("startTimeStamp > endTimeStamp: "
-          + startTimeStamp + ", " + endTimeStamp);
+  public void updateDomainInterval(Interval domainInterval) {
+    ArgChecker.isNotNull(domainInterval, "domainInterval");
+    
+    final boolean domainIntervalChanged = !domainInterval.equals(this.domainInterval);
+    
+    if (this.domainInterval == null) {
+      this.domainInterval = domainInterval.copy();
+    }
+    else {
+      domainInterval.copyTo(this.domainInterval);
     }
 
-    boolean dateRangeChanged = (startTimeStamp != this.startTimeStamp) || (
-        endTimeStamp != this.endTimeStamp);
-
-    this.startTimeStamp = startTimeStamp;
-    this.endTimeStamp = endTimeStamp;
-
-    if (dateRangeChanged) {
+    if (domainIntervalChanged) {
       if (isDateDomain) {
-        startDate.setTime(startTimeStamp);
-        endDate.setTime(endTimeStamp);
+        startDate.setTime(domainInterval.getStart());
+        endDate.setTime(domainInterval.getEnd());
 
         String longStartDate = formatLongDate(startDate);
         String longEndDate = formatLongDate(endDate);
@@ -120,7 +111,8 @@ public class DateRangePanel extends AbstractPanel {
         dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
       } else {
         dateRangeActive = dateRangeLong = dateRangeShort =
-            formatInt(startTimeStamp) + DATE_DELIM_LONG + formatInt(endTimeStamp);
+            formatInt(domainInterval.getStart()) + DATE_DELIM_LONG + 
+                formatInt(domainInterval.getEnd());
       }
     }
   }
