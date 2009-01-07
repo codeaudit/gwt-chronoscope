@@ -37,16 +37,13 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   public void draw(Layer layer, Bounds axisBounds) {
-    Interval domainInterval = plot.getDomain();
     final int labelHeight = (int) this.zoomPanel.height;
     copyState(axisBounds, bounds);
     clearAxis(layer, axisBounds);
 
     // Position and size the panels
     zoomPanel.setLocation(axisBounds.x, axisBounds.y);
-    double startDate = domainInterval.getStart();
-    double endDate = domainInterval.getEnd();
-    dateRangePanel.updateDomainInterval(startDate, endDate);
+    dateRangePanel.updateDomainInterval(plot.getDomain());
     topRightJustify(dateRangePanel, axisBounds);
     layoutPanels(axisBounds);
     dsLegendPanel.setLocation(axisBounds.x,
@@ -112,13 +109,8 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel = new DateRangePanel();
     dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
-    dateRangePanel.init(rootLayer, 
-        plot.getDatasets().getMinInterval(),
-        domainExtrema.getEnd(),
-        plot.getDomainAxisPanel());
-
-    dateRangePanel.updateDomainInterval(domainExtrema.getStart(), 
-        domainExtrema.getEnd());
+    dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
+    dateRangePanel.updateDomainInterval(domainExtrema); 
 
     this.bounds = new Bounds();
   }
