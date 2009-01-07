@@ -35,12 +35,24 @@ public abstract class ValueAxis {
   }
 
   /**
+   * Returns the maximum data value on the axis
+   */
+  protected abstract double getRangeHigh();
+
+  /**
+   * Returns the minimum data value on the axis
+   */
+  protected abstract double getRangeLow();
+
+  /**
    * Maps a given dataValue in the interval [rangeLow, rangeHigh] to a a user
    * position in the range [0,1]
    * 
    * @param dataValue the value to be mapped
    */
-  public abstract double dataToUser(double dataValue);
+  public double dataToUser(double dataValue) {
+    return (dataValue - getRangeLow()) / getRange();
+  }
 
   /**
    * Gets the short label representing the units of this axis (m/s, $, etc)
@@ -58,29 +70,11 @@ public abstract class ValueAxis {
   }
 
   /**
-   * Returns the smallest range displayable on this axis, used to prevent
-   * zooming too far.
-   */
-  public double getMinimumTickSize() {
-    return Double.MIN_VALUE;
-  }
-
-  /**
    * Returns the range of the axis
    */
   public double getRange() {
     return getRangeHigh() - getRangeLow();
   }
-
-  /**
-   * Returns the maximum data value on the axis
-   */
-  public abstract double getRangeHigh();
-
-  /**
-   * Returns the minimum data value on the axis
-   */
-  public abstract double getRangeLow();
 
   /**
    * Sets the short label representing this axis ($, m/s, etc)
@@ -118,7 +112,7 @@ public abstract class ValueAxis {
    * @param rangeHigh the maximum data value on the axis
    * @param userValue the user value to be mapped
    */
-  protected double userToData(double rangeLow, double rangeHigh, double userValue) {
+  protected final double userToData(double rangeLow, double rangeHigh, double userValue) {
     return rangeLow + (userValue * (rangeHigh - rangeLow));
   }
 

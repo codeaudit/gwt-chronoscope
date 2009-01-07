@@ -208,10 +208,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return ticks;
   }
 
-  public double dataToUser(double dataY) {
-    return (dataY - getRangeLow()) / getRange();
-  }
-
   public int getAxisIndex() {
     return axisIndex;
   }
@@ -253,11 +249,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return "";
   }
 
-  public double getRangeHigh() {
+  protected double getRangeHigh() {
     return adjustedRangeHigh;
   }
 
-  public double getRangeLow() {
+  protected double getRangeLow() {
     return adjustedRangeLow;
   }
 
