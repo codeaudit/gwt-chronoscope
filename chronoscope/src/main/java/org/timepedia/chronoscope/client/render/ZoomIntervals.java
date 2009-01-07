@@ -3,6 +3,7 @@
  */
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.ArrayList;
@@ -34,11 +35,14 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
    * Applies the specified filter criteria to this container, which is realized
    * during element iteration.
    * 
-   * @param timeStart - the earliest timestamp across all datasets.
-   * @param timeEnd - the latest timestamp across all datasets.
+   * @param domainExtrema - the min and max values across all domain values in
+   *     all datasets.
    * @param minInterval - the smallest time interval across all datasets.
    */
-  public void applyFilter(double timeStart, double timeEnd, double minInterval) {
+  public void applyFilter(Interval domainExtrema, double minInterval) {
+    final double timeStart = domainExtrema.getStart();
+    final double timeEnd = domainExtrema.getEnd();
+    
     if (timeStart > timeEnd) {
       throw new IllegalArgumentException("timeSmart > timeEnd: " + timeStart
           + ", " + timeEnd);

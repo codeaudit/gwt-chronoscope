@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.data.DatasetRequestMaker;
 import org.timepedia.chronoscope.client.data.ChronoscopeDatasetFactory;
 import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.Mutation;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * @author chad takahashi
@@ -20,8 +21,7 @@ public class DatasetsTest extends TestCase {
     MutableDataset mds = newMutableDataset(new double[] {1.0, 2.0}, new double[] {10.0, 20.0});
     Datasets grp = new Datasets();
     grp.add(mds);
-    assertEquals(1.0, grp.getMinDomain());
-    assertEquals(2.0, grp.getMaxDomain());
+    assertEquals(new Interval(1.0, 2.0), grp.getDomainExtrema());
     assertEquals(1.0, grp.getMinInterval());
   }
   
@@ -60,8 +60,7 @@ public class DatasetsTest extends TestCase {
     mds.mutate(Mutation.setY(0, -9.0));
     mds.mutate(Mutation.append(4.1, 0.1));
     
-    assertEquals(1.0, grp.getMinDomain());
-    assertEquals(4.1, grp.getMaxDomain());
+    assertEquals(new Interval(1.0, 4.1), grp.getDomainExtrema());
     assertEquals(0.1, grp.getMinInterval(), 0.000000000000001);
   }
   
@@ -85,8 +84,7 @@ public class DatasetsTest extends TestCase {
     assertTrue(ds2 == grp.get(1));
     
     // make sure aggregate properties were updated
-    assertEquals(2.0, grp.getMinDomain());
-    assertEquals(7.0, grp.getMaxDomain());
+    assertEquals(new Interval(2.0, 7.0), grp.getDomainExtrema());
     assertEquals(3.0, grp.getMinInterval());
     
     // verify that the container de-registered itself as a listener

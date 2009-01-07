@@ -89,11 +89,9 @@ public class LegendAxisPanel extends AxisPanel {
     ArgChecker.isNotNull(zoomListener, "zoomListener");
 
     ZoomIntervals zoomIntervals = createDefaultZoomIntervals(plot);
-    final double approxMinInterval = Math
-        .max(0, plot.getDatasets().getMinInterval());
-    final double minDomain = plot.getDatasets().getMinDomain();
-    final double maxDomain = plot.getDatasets().getMaxDomain();
-    zoomIntervals.applyFilter(minDomain, maxDomain, approxMinInterval);
+    final double minInterval = Math.max(0, plot.getDatasets().getMinInterval());
+    Interval domainExtrema = plot.getDatasets().getDomainExtrema();
+    zoomIntervals.applyFilter(domainExtrema, minInterval);
 
     Layer rootLayer = view.getCanvas().getRootLayer();
 
@@ -116,10 +114,11 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.init(rootLayer, 
         plot.getDatasets().getMinInterval(),
-        plot.getDatasets().getMaxDomain(),
+        domainExtrema.getEnd(),
         plot.getDomainAxisPanel());
 
-    dateRangePanel.updateDomainInterval(minDomain, maxDomain);
+    dateRangePanel.updateDomainInterval(domainExtrema.getStart(), 
+        domainExtrema.getEnd());
 
     this.bounds = new Bounds();
   }
@@ -166,10 +165,9 @@ public class LegendAxisPanel extends AxisPanel {
       zooms.add(new ZoomInterval("1000y", TimeUnit.MILLENIUM.ms()));
       zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
     } else {
-      double beginDomain = plot.getDatasets().getMinDomain();
-      double endDomain = plot.getDatasets().getMaxDomain();
-      int startPower = MathUtil.roundToNearestPowerOfTen(beginDomain);
-      int endPower = MathUtil.roundToNearestPowerOfTen(endDomain);
+      Interval domainExtrema = plot.getDatasets().getDomainExtrema();
+      int startPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getStart());
+      int endPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getEnd());
 
       while (startPower <= endPower) {
         zooms.add(new ZoomInterval("" + startPower / 2, startPower / 2));
