@@ -128,6 +128,22 @@ public class IntervalTest extends TestCase {
     assertEquals(0.0, new Interval(-3, 3).midpoint());
   }
   
+  public void testGetPointFromRatio() {
+    assertEquals(15.0, new Interval(10, 20).getPointFromRatio(0.5));
+
+    assertEquals(10.0, new Interval(10, 10).getPointFromRatio(0.0));
+    assertEquals(10.0, new Interval(10, 10).getPointFromRatio(0.4));
+    assertEquals(10.0, new Interval(10, 10).getPointFromRatio(1.0));
+  }
+  
+  public void testGetRatioFromPoint() {
+    assertEquals(0.5, new Interval(10, 20).getRatioFromPoint(15));
+    assertEquals(0.0, new Interval(10, 20).getRatioFromPoint(10));
+    assertEquals(1.0, new Interval(10, 20).getRatioFromPoint(20));
+
+    assertEquals(0.0, new Interval(10, 10).getRatioFromPoint(15));
+ }
+  
   public void testSetEndpoints() {
     Interval i = new Interval(10, 20);
     i.setEndpoints(-5, 5);

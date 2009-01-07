@@ -88,6 +88,35 @@ public class Interval {
   }
   
   /**
+   * Returns a value in the range [0..1] representing the ratio of
+   * the specified point to the length of this interval.  For example,
+   * if interval i is [10, 20], then <tt>i.getRatioFromPoint(15)</tt>
+   * would return <tt>0.5</tt>.
+   */
+  public double getRatioFromPoint(double pt) {
+    if (end == start) {
+      return 0.0;
+    }
+    else {
+      return (pt - start) / (end - start);
+    }
+  }
+  
+  /**
+   * Returns a point on this interval that represents the specified
+   * ratio.  For example, if interval i is [10, 20], then
+   * <tt>getPointFromRatio(0.5)</tt> would return 15.
+   */
+  public double getPointFromRatio(double ratio) {
+    if (end == start) {
+      return start;
+    }
+    else {
+      return start + (ratio * (end - start));
+    }
+  }
+  
+  /**
    * The value of the ending point of this interval.
    */
   public double getEnd() {

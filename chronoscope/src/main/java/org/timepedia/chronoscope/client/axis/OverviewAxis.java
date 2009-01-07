@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * An implementation of ValueAxis which renders a miniature zoomed-out overview
@@ -20,22 +21,11 @@ public class OverviewAxis extends ValueAxis {
     throw new UnsupportedOperationException();
   }
 
-  public double getRangeHigh() {
-    return plot.getWidestDomain().getEnd();
+  public Interval getExtrema() {
+    return plot.getWidestDomain();
   }
 
-  public double getRangeLow() {
-    return plot.getWidestDomain().getStart();
+  public double userToData(double userValue) {
+    return plot.getWidestDomain().getPointFromRatio(userValue);
   }
-
-  public final double userToData(double userValue) {
-    // Use the userToData() implementation on the domain axis so that the 
-    // user-to-data mapping function is consistent with this axis... but need
-    // to pass in the overview-specific domain interval.
-    double myRangeLow = getRangeLow();
-    double myRangeHigh = getRangeHigh();
-    return plot.getDomainAxisPanel().getValueAxis()
-        .userToData(myRangeLow, myRangeHigh, userValue);
-  }
-
 }

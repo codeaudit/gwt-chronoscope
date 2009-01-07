@@ -32,7 +32,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       double scale = getScale();
       scale = Double.isNaN(scale) ? 1 : scale;
 
-      int intDigits = (int) Math.floor(Math.log10(getRangeHigh()));
+      int intDigits = (int) Math.floor(Math.log10(adjustedRangeHigh));
       if (isAllowAutoScale() && Double.isNaN(getScale())
           && intDigits + 1 > MAX_DIGITS) {
         scale = Math.pow(1000, intDigits / 3);
@@ -208,6 +208,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return ticks;
   }
 
+  public double dataToUser(double dataValue) {
+    return (dataValue - adjustedRangeLow) / (adjustedRangeHigh - adjustedRangeLow);
+  }
+
   public int getAxisIndex() {
     return axisIndex;
   }
@@ -236,7 +240,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       return "";
     }
     if (!Double.isNaN(getScale())) {
-      int intDigits = (int) Math.floor(Math.log10(getRange() + 1));
+      int intDigits = (int) Math.floor(Math.log10(getExtrema().length() + 1));
       if (intDigits > 0) {
         return " " + (intDigits < posExponentLabels.length
             ? posExponentLabels[intDigits] : "E" + intDigits);
@@ -249,12 +253,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return "";
   }
 
-  protected double getRangeHigh() {
-    return adjustedRangeHigh;
-  }
-
-  protected double getRangeLow() {
-    return adjustedRangeLow;
+  public Interval getExtrema() {
+    return new Interval(adjustedRangeLow, adjustedRangeHigh);
   }
 
   public double getScale() {
@@ -426,6 +426,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return autoZoom ? visRangeMin : rangeLow;
   }
 
+  public double userToData(double userValue) {
+   return adjustedRangeLow + ((adjustedRangeHigh - adjustedRangeLow) * userValue);
+  }
+  
   private void setRangeInternal(double rangeLow, double rangeHigh) {
     ticks = null;
     this.rangeLow = rangeLow;

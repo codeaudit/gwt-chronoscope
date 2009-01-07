@@ -57,7 +57,7 @@ public class RangeAxisPanel extends AxisPanel {
     layer.setFillColor(Color.WHITE);
     layer.setStrokeColor(Color.GREEN);
 
-    final double axisRange = valueAxis.getRange();
+    final double axisRange = valueAxis.getExtrema().length();
     final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
       drawTick(layer, tickPositions[i], tickPosition0,
