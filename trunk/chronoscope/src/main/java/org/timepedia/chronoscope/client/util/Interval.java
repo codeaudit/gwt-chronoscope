@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.util;
 
-import org.timepedia.exporter.client.Export;
 
 /**
  * A mathematical interval representing a connected portion of a real line. 
@@ -11,8 +10,6 @@ import org.timepedia.exporter.client.Export;
  * whatever.
  * 
  * @author chad takahashi
- * 
- *
  */
 public class Interval {
   private double start, end;

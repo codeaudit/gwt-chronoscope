@@ -2,6 +2,8 @@ package org.timepedia.chronoscope.client.render;
 
 import junit.framework.TestCase;
 
+import org.timepedia.chronoscope.client.util.Interval;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -55,7 +57,7 @@ public class ZoomIntervalsTest extends TestCase {
     double minInterval = z1d.getInterval() + 1;
     double timeStart = new Date().getTime();
     double timeEnd = timeStart + z5y.getInterval() - 1;
-    z.applyFilter(timeStart, timeEnd, minInterval);
+    z.applyFilter(new Interval(timeStart, timeEnd), minInterval);
     assertZoomEquals(z.iterator(), z1m, z1y, zMax);
     
     // Now clear the filter and make sure it goes back to initial state

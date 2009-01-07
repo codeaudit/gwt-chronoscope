@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MutableDataset2D;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 
 import java.util.ArrayList;
@@ -95,13 +96,14 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   public Dataset<T> get(int index) {
     return this.datasets.get(index);
   }
-
+  
   /**
-   * Returns the minimum domain value across all contained datasets.
+   * Returns an interval that contains the minimum and maximum domain value
+   * across all {@link Dataset} elements within this container.
    */
-  public double getMinDomain() {
+  public Interval getDomainExtrema() {
     verifyDatasetNotEmpty();
-    return this.minDomain;
+    return new Interval(this.minDomain, this.maxDomain);
   }
 
   /**
@@ -111,14 +113,6 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   public double getMinInterval() {
     verifyDatasetNotEmpty();
     return this.minInterval;
-  }
-
-  /**
-   * Returns the maximum domain value across all contained datasets.
-   */
-  public double getMaxDomain() {
-    verifyDatasetNotEmpty();
-    return this.maxDomain;
   }
 
   /**
