@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * An ValueAxis is a class responsible for mapping points in data space to
@@ -35,14 +36,9 @@ public abstract class ValueAxis {
   }
 
   /**
-   * Returns the maximum data value on the axis
+   * Returns the minimum and maximum data values on the axis.
    */
-  protected abstract double getRangeHigh();
-
-  /**
-   * Returns the minimum data value on the axis
-   */
-  protected abstract double getRangeLow();
+  public abstract Interval getExtrema();
 
   /**
    * Maps a given dataValue in the interval [rangeLow, rangeHigh] to a a user
@@ -50,9 +46,7 @@ public abstract class ValueAxis {
    * 
    * @param dataValue the value to be mapped
    */
-  public double dataToUser(double dataValue) {
-    return (dataValue - getRangeLow()) / getRange();
-  }
+  public abstract double dataToUser(double dataValue);
 
   /**
    * Gets the short label representing the units of this axis (m/s, $, etc)
@@ -72,8 +66,8 @@ public abstract class ValueAxis {
   /**
    * Returns the range of the axis
    */
-  public double getRange() {
-    return getRangeHigh() - getRangeLow();
+  public final double getRange() {
+    return getExtrema().length();
   }
 
   /**
@@ -94,26 +88,11 @@ public abstract class ValueAxis {
   }
 
   /**
-   * Maps a given user position in the range [0,1] into the interval [rangeLow,
-   * rangeHigh], where rangeLow = {@link #getRangeLow()} and 
-   * rangeHigh = {@link #getRangeHigh()}.
+   * Maps a given user position in the range [0,1] into the interval specified by
+   * {@link #getExtrema()}.
    * 
    * @param userValue the user value to be mapped
    */
-  public double userToData(double userValue) {
-    return userToData(getRangeLow(), getRangeHigh(), userValue);
-  }
+  public abstract double userToData(double userValue);
   
-  /**
-   * Maps a given user position in the range [0,1] into the interval [rangeLow,
-   * rangeHigh].
-   * 
-   * @param rangeLow the minimum data value on the axis
-   * @param rangeHigh the maximum data value on the axis
-   * @param userValue the user value to be mapped
-   */
-  protected final double userToData(double rangeLow, double rangeHigh, double userValue) {
-    return rangeLow + (userValue * (rangeHigh - rangeLow));
-  }
-
 }

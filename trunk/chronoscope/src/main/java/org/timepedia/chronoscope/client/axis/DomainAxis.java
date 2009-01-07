@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.axis;
 
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.util.Interval;
 
 public class DomainAxis extends ValueAxis {
 
@@ -11,11 +12,16 @@ public class DomainAxis extends ValueAxis {
     this.plot = plot;
   }
 
-  protected double getRangeHigh() {
-    return plot.getDomain().getEnd();
+  public double dataToUser(double dataValue) {
+    return plot.getDomain().getRatioFromPoint(dataValue);
   }
 
-  protected double getRangeLow() {
-    return plot.getDomain().getStart();
+  public Interval getExtrema() {
+    return plot.getDomain();
   }
+
+  public double userToData(double userValue) {
+    return plot.getDomain().getPointFromRatio(userValue);
+  }
+  
 }
