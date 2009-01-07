@@ -21,7 +21,9 @@ public final class IntTickFormatterFactory extends TickFormatterFactory {
       final int domainLength = domainLengths[i];
       
       // This creates a dummy label whose length corresponds to a typical range of
-      // svn rev#'s (i.e. it assumes that revs started at 1 and
+      // svn rev#'s (i.e. it assumes that revs started at 1 and are consecutive).
+      // TODO: Modify TickFormatter framework to allow for dynamic tick label 
+      // width calcs.
       String prototypeLabel = ZERO_STRINGS[1 + Integer.toString(domainLength).length()];
       
       IntTickFormatter curr = new IntTickFormatter(domainLength, prototypeLabel);

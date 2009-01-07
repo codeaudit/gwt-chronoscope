@@ -11,15 +11,11 @@ public class DomainAxis extends ValueAxis {
     this.plot = plot;
   }
 
-  public double dataToUser(double dataValue) {
-    return (dataValue - getRangeLow()) / getRange();
-  }
-
-  public double getRangeHigh() {
+  protected double getRangeHigh() {
     return plot.getDomain().getEnd();
   }
 
-  public double getRangeLow() {
+  protected double getRangeLow() {
     return plot.getDomain().getStart();
   }
 }
