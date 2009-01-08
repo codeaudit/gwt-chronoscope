@@ -88,7 +88,7 @@ final class BottomPanel extends AuxiliaryPanel {
     this.domainAxisPanel = domainAxisPanel;
     domainAxisPanel.setParentPanel(this.compositePanel);
     domainAxisPanel.setValueAxis(domainAxis);
-    this.compositePanel.insertBefore(this.overviewAxisPanel, this.domainAxisPanel);
+    this.compositePanel.add(this.domainAxisPanel);
   }
   
   public void setOverviewEnabled(boolean overviewEnabled) {

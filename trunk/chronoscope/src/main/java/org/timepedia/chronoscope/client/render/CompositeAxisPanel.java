@@ -23,15 +23,6 @@ public final class CompositeAxisPanel implements GssElement {
 
   private static final double TOP_PANEL_PAD = 23;
 
-  public void insertBefore(OverviewAxisPanel oldPanel,
-      AxisPanel subPanel) {
-    subPanel.setParentPanel(this);
-    subPanels.add(subPanels.indexOf(oldPanel), subPanel);
-    subPanel.setPlot(plot);
-    subPanel.setView(view);
-    subPanel.init();
-  }
-
   /**
    * Enumerator of the possible positions that this panel can occupy relative
    * to its containing panel.
