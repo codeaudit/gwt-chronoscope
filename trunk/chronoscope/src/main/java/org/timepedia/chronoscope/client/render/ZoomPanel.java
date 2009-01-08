@@ -16,7 +16,7 @@ import java.util.List;
  * 
  * @author Chad Takahashi
  */
-public class ZoomPanel extends AbstractPanel {
+public class ZoomPanel extends AbstractPanel implements SelfResizing {
   private static final int MAX_ZOOM_LINKS = 20;
   private static final String SPACE = "\u00A0";
   private static final String ZOOM_PREFIX = "Zoom:";

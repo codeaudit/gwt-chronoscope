@@ -14,7 +14,7 @@ import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
  *
  * @author Chad Takahashi
  */
-public class DateRangePanel extends AbstractPanel {
+public class DateRangePanel extends AbstractPanel implements SelfResizing {
 
   private static final String SPC = "\u00A0";
 

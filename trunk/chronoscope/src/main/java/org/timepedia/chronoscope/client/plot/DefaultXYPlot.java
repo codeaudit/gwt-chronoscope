@@ -476,8 +476,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     // and respond accordingly, rather than forcing this class to manage
     // everything.
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
-    this.rangePanel = new RangePanel();
     this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
+    this.rangePanel.initLayer();
+    this.rangePanel = new RangePanel();
     this.initAndRedraw();
   }
 
@@ -536,9 +537,9 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     
+    this.plotRenderer.removeDataset(dataset);
     this.rangePanel.initLayer();
     this.rangePanel = new RangePanel();
-    this.plotRenderer.removeDataset(dataset);
     initAndRedraw();
   }
 
@@ -963,7 +964,7 @@ public class DefaultXYPlot<T extends Tuple2D>
             bottomPanel.getHeight();
       }
     }
-
+    
     b.x = rangePanel.getLeftSubPanel().getWidth();
     b.y = topPanel.getHeight();
     b.height = centerPlotHeight;
