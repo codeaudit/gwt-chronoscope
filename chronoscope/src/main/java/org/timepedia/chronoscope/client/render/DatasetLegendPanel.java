@@ -59,14 +59,6 @@ public class DatasetLegendPanel extends AbstractPanel {
     draw(layer, null, plot.getDatasets().size(), false);
   }
   
-  public void resizeToIdealWidth() {
-    throw new UnsupportedOperationException();
-  }
-  
-  public void resizeToMinimalWidth() {
-    throw new UnsupportedOperationException();
-  }
-
   private void draw(Layer layer, Bounds b, int numDatasets, boolean onlyCalcSize) {
     double xCursor = this.x;
     double yCursor = this.y;

@@ -39,14 +39,6 @@ public abstract class AbstractPanel implements Panel {
     this.y = y;
   }
   
-  public void resizeToIdealWidth() {
-    throw new UnsupportedOperationException();
-  }
-
-  public void resizeToMinimalWidth() {
-    throw new UnsupportedOperationException();
-  }
-
   protected final int calcHeight(String s, Layer layer) {
     GssProperties gss = gssProperties;
     return layer.stringHeight(s, gss.fontFamily, gss.fontWeight, gss.fontSize);
