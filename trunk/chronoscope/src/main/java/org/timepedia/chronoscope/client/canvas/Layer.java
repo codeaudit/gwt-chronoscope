@@ -39,15 +39,15 @@ public interface Layer {
 
   int XOR = 11;
 
-  int Z_LAYER_BACKGROUND = -4;
+  int Z_LAYER_BACKGROUND = -1;
 
-  int Z_LAYER_PLOTAREA = 3;
+  int Z_LAYER_PLOTAREA = 0;
 
-  int Z_LAYER_AXIS = -2;
+  int Z_LAYER_AXIS = 1;
 
-  int Z_LAYER_HIGHLIGHT = -1;
+  int Z_LAYER_HIGHLIGHT = -2;
 
-  int Z_LAYER_HOVER = 0;
+  int Z_LAYER_HOVER = 3;
 
   void arc(double x, double y, double radius, double startAngle,
       double endAngle, int clockwise);

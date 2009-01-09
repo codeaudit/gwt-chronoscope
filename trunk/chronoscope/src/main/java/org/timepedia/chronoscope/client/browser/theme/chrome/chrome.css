@@ -340,9 +340,15 @@ html>body .gwt-DialogBox .dialogBottomRight {
 .gwt-MenuBar-vertical .subMenuIcon-selected {
   background: #cdcdcd;
 }
-.gwt-MenuBarPopup {
+.gwt-MenuBarPopup, .gwt-MenuBarPopup table, td {
   margin: 0px 0px 0px 3px;
+  padding: 0px;
 }
+
+.subMenuIcon {
+  vertical-align: middle;    
+}
+
 .gwt-MenuBarPopup .menuPopupTopCenter {
   background: HBORDER 0px -12px repeat-x;
 }
