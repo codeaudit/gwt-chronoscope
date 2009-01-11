@@ -41,37 +41,16 @@ final class BottomPanel extends AuxiliaryPanel {
     overviewDrawn = false;
   }
   
-  public CompositeAxisPanel getCompositeAxisPanel() {
-    return this.compositePanel;
+  public Bounds getBounds() {
+    return compositePanel.getBounds();
   }
-
+  
   public DomainAxisPanel getDomainAxisPanel() {
     return this.domainAxisPanel;
   }
   
-  public double getHeight() {
-    return compositePanel.getHeight();
-  }
-  
-  public Layer getOveriewLayer() {
-    return this.overviewLayer;
-  }
-  
   public OverviewAxisPanel getOverviewAxisPanel() {
     return this.overviewAxisPanel;
-  }
-  
-  @Override
-  public void initLayer() {
-    Bounds bottomPanelBounds = new Bounds(0, plot.getBounds().bottomY(),
-        view.getWidth(), compositePanel.getHeight());
-    layer = plot.initLayer(layer, "domainAxis", bottomPanelBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    
-    if (overviewEnabled) {
-      overviewLayer = plot.initLayer(overviewLayer, "overviewLayer", plot.getBounds());
-      overviewLayer.setVisibility(false);
-    }
   }
   
   public boolean isOverviewEnabled() {
@@ -89,6 +68,14 @@ final class BottomPanel extends AuxiliaryPanel {
     domainAxisPanel.setParentPanel(this.compositePanel);
     domainAxisPanel.setValueAxis(domainAxis);
     this.compositePanel.add(this.domainAxisPanel);
+  }
+  
+  public void setWidth(double width) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public final void setPosition(double x, double y) {
+    compositePanel.setPosition(x, y);
   }
   
   public void setOverviewEnabled(boolean overviewEnabled) {
@@ -128,20 +115,21 @@ final class BottomPanel extends AuxiliaryPanel {
       drawDatasetOverview();
     }
 
-    if (compositePanel.getAxisCount() > 0) {
-      layer.save();
-      Bounds plotBounds = plot.getBounds();
-      Bounds domainPanelBounds = new Bounds(plotBounds.x, 0, plotBounds.width,
-          layer.getBounds().height);
-      compositePanel.draw(layer, domainPanelBounds);
-      layer.restore();
-    }
+    compositePanel.draw();
   }
   
   @Override
   protected void initHook() {
+    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
+    Layer layer = plot.initLayer(null, "domainAxis", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    
+    overviewLayer = plot.initLayer(overviewLayer, "overviewLayer", layerBounds);
+    overviewLayer.setVisibility(false);
+
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
+    compositePanel.setLayer(layer);
     
     // Both DomainAxisPanel and OverviewAxisPanel must be initialized even 
     // if BottomPanel is not currently enabled, because other auxiliary panels 
@@ -188,7 +176,6 @@ final class BottomPanel extends AuxiliaryPanel {
     Interval origVisPlotDomain = plot.getDomain().copy();
 
     plot.getWidestDomain().copyTo(plot.getDomain());
-    //plot.getDomain().setEndpoints(plot.getDatasets().getMinDomain(), plot.getDatasets().getMaxDomain());
 
     plot.drawPlot();
     overviewLayer.save();
@@ -218,6 +205,7 @@ final class BottomPanel extends AuxiliaryPanel {
   private void initOverviewAxisPanel() {
     if (overviewAxisPanel == null) {
       overviewAxisPanel = new OverviewAxisPanel();
+      overviewAxisPanel.setOverviewLayer(overviewLayer);
       overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
     }
     else {

@@ -21,8 +21,6 @@ public class LegendAxisPanel extends AxisPanel {
    */
   private static final int LEGEND_Y_TOP_PAD = 3;
 
-  private Bounds bounds;
-
   private DateRangePanel dateRangePanel;
 
   private DatasetLegendPanel dsLegendPanel;
@@ -32,39 +30,26 @@ public class LegendAxisPanel extends AxisPanel {
   private ZoomPanel zoomPanel;
 
   public boolean click(int x, int y) {
-    zoomPanel.setLocation(bounds.x, bounds.y);
+    zoomPanel.setPosition(bounds.x, bounds.y);
     return zoomPanel.click(x, y);
   }
 
-  public void draw(Layer layer, Bounds axisBounds) {
-    final int labelHeight = (int) this.zoomPanel.height;
-    copyState(axisBounds, bounds);
-    clearAxis(layer, axisBounds);
+  public void draw() {
+    final int labelHeight = (int) this.zoomPanel.bounds.height;
+    clearAxis(layer, bounds);
 
     // Position and size the panels
-    zoomPanel.setLocation(axisBounds.x, axisBounds.y);
+    zoomPanel.setPosition(bounds.x, bounds.y);
     dateRangePanel.updateDomainInterval(plot.getDomain());
-    topRightJustify(dateRangePanel, axisBounds);
-    layoutPanels(axisBounds);
-    dsLegendPanel.setLocation(axisBounds.x,
-        axisBounds.y + labelHeight + LEGEND_Y_TOP_PAD);
+    topRightJustify(dateRangePanel, bounds);
+    layoutPanels(bounds);
+    dsLegendPanel.setPosition(bounds.x, bounds.y + labelHeight
+        + LEGEND_Y_TOP_PAD);
 
     // Draw the panels
-    zoomPanel.draw(layer);
-    dateRangePanel.draw(layer);
-    dsLegendPanel.draw(layer);
-  }
-
-  /**
-   * Returns the total height of the rendered legend axis
-   */
-  @Override
-  public double getHeight() {
-    double totalHeight = 0;
-    totalHeight += zoomPanel.getHeight();
-    totalHeight += LEGEND_Y_TOP_PAD;
-    totalHeight += dsLegendPanel.getHeight();
-    return totalHeight;
+    zoomPanel.draw();
+    dateRangePanel.draw();
+    dsLegendPanel.draw();
   }
 
   public String getType() {
@@ -76,10 +61,11 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   @Override
-  public double getWidth() {
-    return this.view.getWidth();
+  public void layout() {
+    bounds.height = calcHeight();
+    bounds.width = view.getWidth();
   }
-
+  
   @Override
   protected void initHook() {
     ArgChecker.isNotNull(plot, "plot");
@@ -97,26 +83,38 @@ public class LegendAxisPanel extends AxisPanel {
     dsLegendPanel.setView(view);
     dsLegendPanel.setGssProperties(labelProperties);
     dsLegendPanel.setTextLayerName(textLayerName);
-    dsLegendPanel.init(rootLayer);
+    dsLegendPanel.setLayer(layer);
+    dsLegendPanel.init();
 
     zoomPanel = new ZoomPanel();
     zoomPanel.setGssProperties(labelProperties);
     zoomPanel.setTextLayerName(textLayerName);
     zoomPanel.addListener(zoomListener);
     zoomPanel.setZoomIntervals(zoomIntervals);
-    zoomPanel.init(rootLayer);
+    zoomPanel.setLayer(layer);
+    zoomPanel.init();
 
     dateRangePanel = new DateRangePanel();
     dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
+    dateRangePanel.setLayer(layer);
     dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
-    dateRangePanel.updateDomainInterval(domainExtrema); 
-
-    this.bounds = new Bounds();
+    dateRangePanel.updateDomainInterval(domainExtrema);
   }
 
   public void setZoomListener(ZoomListener l) {
     this.zoomListener = l;
+  }
+
+  /**
+   * Returns the total height of the rendered legend axis
+   */
+  private double calcHeight() {
+    double totalHeight = 0;
+    totalHeight += zoomPanel.getBounds().height;
+    totalHeight += LEGEND_Y_TOP_PAD;
+    totalHeight += dsLegendPanel.getBounds().height;
+    return totalHeight;
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {
@@ -141,8 +139,7 @@ public class LegendAxisPanel extends AxisPanel {
   private static ZoomIntervals createDefaultZoomIntervals(XYPlot plot) {
     ZoomIntervals zooms = new ZoomIntervals();
 
-    boolean isDateDomain = plot.getDomainAxisPanel().getTickFormatterFactory() 
-        instanceof DateTickFormatterFactory;
+    boolean isDateDomain = plot.getDomainAxisPanel().getTickFormatterFactory() instanceof DateTickFormatterFactory;
 
     if (isDateDomain) {
       zooms.add(new ZoomInterval("1d", TimeUnit.DAY.ms()));
@@ -173,11 +170,11 @@ public class LegendAxisPanel extends AxisPanel {
 
   /**
    * Currently, this method naively lays out the ZoomPanel and DateRangePanel on
-   * the X-axis.  Ultimately, layout rules and heuristics will be split out into
+   * the X-axis. Ultimately, layout rules and heuristics will be split out into
    * a separate LayoutStrategy interface of some sort.
    */
   private void layoutPanels(Bounds parentBounds) {
-    // The minimum distance allowed between the zoom panel and the dataset 
+    // The minimum distance allowed between the zoom panel and the dataset
     // legend panel.
     final int minCushion = 3;
 
@@ -186,12 +183,12 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.resizeToIdealWidth();
     zoomPanel.resizeToIdealWidth();
     zoomPanel.show(true);
-    double idealZoomPanelWidth = zoomPanel.getWidth();
+    double idealZoomPanelWidth = zoomPanel.getBounds().width;
 
-    // First, see if the panels in their prettiest form will 
-    //fit within the container's bounds
-    double cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel
-        .getWidth();
+    // First, see if the panels in their prettiest form will
+    // fit within the container's bounds
+    double cushion = parentWidth - zoomPanel.getBounds().width
+        - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -199,7 +196,8 @@ public class LegendAxisPanel extends AxisPanel {
     // Doesn't fit? Then compress only the date range panel
     dateRangePanel.resizeToMinimalWidth();
     topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - idealZoomPanelWidth - dateRangePanel.getWidth();
+    cushion = parentWidth - idealZoomPanelWidth
+        - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -208,7 +206,8 @@ public class LegendAxisPanel extends AxisPanel {
     zoomPanel.resizeToMinimalWidth();
     dateRangePanel.resizeToIdealWidth();
     topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
+    cushion = parentWidth - zoomPanel.getBounds().width
+        - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -216,7 +215,8 @@ public class LegendAxisPanel extends AxisPanel {
     // Still doesn't fit? Then compress both panels
     dateRangePanel.resizeToMinimalWidth();
     topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - zoomPanel.getWidth() - dateRangePanel.getWidth();
+    cushion = parentWidth - zoomPanel.getBounds().width
+        - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -230,7 +230,7 @@ public class LegendAxisPanel extends AxisPanel {
    * bounds.
    */
   private void topRightJustify(Panel panel, Bounds parentBounds) {
-    panel.setLocation(parentBounds.rightX() - panel.getWidth() - 2,
+    panel.setPosition(parentBounds.rightX() - panel.getBounds().width - 2,
         parentBounds.y);
   }
 
@@ -241,7 +241,7 @@ public class LegendAxisPanel extends AxisPanel {
     layer.save();
 
     layer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-    //layer.setTransparency(.35f);
+    // layer.setTransparency(.35f);
     layer.setFillColor(new Color("#50D0FF"));
     layer.fillRect(b.x, b.y, b.width, b.height);
 

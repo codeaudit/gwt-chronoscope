@@ -314,10 +314,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return bottomPanel.getOverviewAxisPanel();
   }
 
-  public Layer getOverviewLayer() {
-    return bottomPanel.getOveriewLayer();
-  }
-
   public Layer getPlotLayer() {
     return initLayer(null, LAYER_PLOT, plotBounds);
   }
@@ -373,28 +369,22 @@ public class DefaultXYPlot<T extends Tuple2D>
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
     
-    if (bottomPanel.isInitialized()) {
-      bottomPanel.layout();
-    } else {
+    if (!bottomPanel.isInitialized()) {
       initAuxiliaryPanel(bottomPanel, view);
     }
     
-    if (rangePanel.isInitialized()) {
-      // Need to initLayer() to ensure that all text layers get wiped out
-      rangePanel.layout();
-    } else {
+    if (!rangePanel.isInitialized()) {
       initAuxiliaryPanel(rangePanel, view);
     }
     
     // TODO: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
-    if (topPanel.isInitialized()) {
-      topPanel.layout();
-    } else {
+    if (!topPanel.isInitialized()) {
       initAuxiliaryPanel(topPanel, view);
     }
     
-    plotBounds = computePlotBounds();
+    plotBounds = layoutAll();
+    
     innerBounds = new Bounds(0, 0, plotBounds.width, plotBounds.height);
 
     clearDrawCaches();
@@ -477,7 +467,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     // everything.
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
     this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
-    this.rangePanel.initLayer();
     this.rangePanel = new RangePanel();
     this.initAndRedraw();
   }
@@ -538,7 +527,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     
     this.plotRenderer.removeDataset(dataset);
-    this.rangePanel.initLayer();
     this.rangePanel = new RangePanel();
     initAndRedraw();
   }
@@ -938,21 +926,31 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.clearDrawCaches();
   }
 
-  private Bounds computePlotBounds() {
+  /**
+   * Perform layout on center plot and its surrounding panels.
+   * 
+   * @return the bounds of the center plot
+   */
+  private Bounds layoutAll() {
     final double viewWidth = view.getWidth();
     final double viewHeight = view.getHeight();
-    Bounds b = new Bounds();
+    
+    // First, layout the auxiliary panels
+    bottomPanel.layout();
+    rangePanel.layout();
+    topPanel.layout();
+    
+    Bounds plotBounds = new Bounds();
 
-    double centerPlotHeight = viewHeight - topPanel.getHeight() - 
-        bottomPanel.getHeight();
-
+    double centerPlotHeight = viewHeight - topPanel.getBounds().height - 
+        bottomPanel.getBounds().height;
+    
     // If center plot too squished, remove the overview axis
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
       if (bottomPanel.isOverviewEnabled()) {
         bottomPanel.setOverviewEnabled(false);
-        //bottomPanel.removeOverviewAxisPanel();
-        centerPlotHeight = viewHeight - topPanel.getHeight() - 
-            bottomPanel.getHeight();
+        centerPlotHeight = viewHeight - topPanel.getBounds().height - 
+            bottomPanel.getBounds().height;
       }
     }
 
@@ -960,18 +958,35 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
       if (topPanel.isEnabled()) {
         topPanel.setEnabled(false);
-        centerPlotHeight = viewHeight - topPanel.getHeight() - 
-            bottomPanel.getHeight();
+        centerPlotHeight = viewHeight - topPanel.getBounds().height - 
+            bottomPanel.getBounds().height;
       }
     }
     
-    b.x = rangePanel.getLeftSubPanel().getWidth();
-    b.y = topPanel.getHeight();
-    b.height = centerPlotHeight;
-    b.width = viewWidth - rangePanel.getLeftSubPanel().getWidth() - 
-        rangePanel.getRightSubPanel().getWidth();
-
-    return b;
+    // Set the center plot's bounds
+    Bounds leftRangeBounds = rangePanel.getLeftSubPanel().getBounds();
+    Bounds rightRangeBounds = rangePanel.getRightSubPanel().getBounds();
+    plotBounds.x = leftRangeBounds.width;
+    plotBounds.y = topPanel.getBounds().height;
+    plotBounds.height = centerPlotHeight;
+    plotBounds.width = viewWidth - leftRangeBounds.width - rightRangeBounds.width;
+    
+    // Set the positions of the auxiliary panels.
+    topPanel.setPosition(0, 0);
+    bottomPanel.setPosition(plotBounds.x, plotBounds.bottomY());
+    rangePanel.setPosition(0, plotBounds.y);
+    
+    // Need to re-assign the bottom panel's contained panels to the center plot
+    // area's width, now that we know what it is.
+    bottomPanel.getDomainAxisPanel().getBounds().width = plotBounds.width;
+    bottomPanel.getOverviewAxisPanel().getBounds().width = plotBounds.width;
+    bottomPanel.layout();
+    
+    rangePanel.setHeight(centerPlotHeight);
+    rangePanel.setCenterGapWidth(plotBounds.width);
+    rangePanel.layout();
+    
+    return plotBounds;
   }
 
   /**
@@ -1166,10 +1181,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
-  
-    topPanel.initLayer();
-    bottomPanel.initLayer();
-    rangePanel.initLayer();
   }
 
   /**

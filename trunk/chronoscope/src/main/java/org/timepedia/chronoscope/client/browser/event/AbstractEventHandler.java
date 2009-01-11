@@ -62,14 +62,14 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
   protected Object getComponent(int x, int y, XYPlot plot) {
     Bounds plotBounds = plot.getBounds();
     
+    // First check if (x,y) hit the center plot
     if (plotBounds.inside(x, y)) {
       return plot;
     }
     
-    int overviewAxisX = x;
-    int overviewAxisY = (int)(y - plotBounds.bottomY());
+    // Now check if (x,y) hit the overview axis
     OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
-    if (oaPanel != null && oaPanel.getBounds().inside(overviewAxisX, overviewAxisY)) {
+    if (oaPanel != null && oaPanel.getBounds().inside(x, y)) {
       return oaPanel.getValueAxis();
     }
     

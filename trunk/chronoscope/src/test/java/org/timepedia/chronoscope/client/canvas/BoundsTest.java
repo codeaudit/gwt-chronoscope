@@ -72,4 +72,11 @@ public class BoundsTest extends TestCase {
     Bounds b = new Bounds(10, 15, 100, 200);
     assertEquals(b.x + b.width, b.rightX());
   }
+  
+  public void testSetPosition() {
+    Bounds b = new Bounds();
+    b.setPosition(2.0, 3.0);
+    assertEquals(2.0, b.x);
+    assertEquals(3.0, b.y);
+  }
 }

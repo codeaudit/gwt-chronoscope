@@ -39,8 +39,6 @@ public class DomainAxisPanel extends AxisPanel {
 
   private double minTickSize = -1;
   
-  private double myHeight;
-  
   private TickFormatterFactory tickFormatterFactory = new DateTickFormatterFactory();
 
   public DomainAxisPanel() {
@@ -48,7 +46,7 @@ public class DomainAxisPanel extends AxisPanel {
     tickGssElement = new GssElementImpl("tick", this);
   }
 
-  public void draw(Layer layer, Bounds bounds) {
+  public void draw() {
 
     if (!GRID_ONLY) {
       clearAxis(layer, bounds);
@@ -135,11 +133,6 @@ public class DomainAxisPanel extends AxisPanel {
     }
   }
 
-  @Override
-  public double getHeight() {
-    return myHeight;
-  }
-
   public double getMinimumTickSize() {
     if (minTickSize == -1) {
       TickFormatter leafFormatter = tickFormatterFactory.getLeafFormatter();
@@ -161,10 +154,15 @@ public class DomainAxisPanel extends AxisPanel {
   }
 
   @Override
-  public double getWidth() {
-    return plot.getInnerBounds().width;
-  }
+  public void layout() {
+    Layer rootLayer = view.getCanvas().getRootLayer();
 
+    bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT + 
+        creditsLabel.getBounds().height + 1;
+    
+    //bounds.width = view.getWidth(); // default width for now
+  }
+  
   public void setTickFormatterFactory(TickFormatterFactory tickFormatterFactory) {
     ArgChecker.isNotNull(tickFormatterFactory, "tickFormatterFactory");
     this.tickFormatterFactory = tickFormatterFactory;
@@ -186,9 +184,6 @@ public class DomainAxisPanel extends AxisPanel {
     
     creditsLabel = new Label(CREDITS, this.textLayerName,
         rootLayer, "Veranda", "normal", "9pt");
-    
-    myHeight = getLabelHeight(rootLayer, "X") + TICK_HEIGHT + 
-        creditsLabel.getBounds().height + 1;
   }
 
   private void clearAxis(Layer layer, Bounds bounds) {

@@ -28,7 +28,10 @@ final class RangePanel extends AuxiliaryPanel {
       = new HashMap<String, RangeAxis>();
   private boolean isDrawn = false;
   private CompositeAxisPanel leftPanel, rightPanel;
+  private Layer layer;
   
+  // The gap, in pixels, between the left and right range panels.
+  private double centerGapWidth = 0;
 
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
@@ -41,6 +44,10 @@ final class RangePanel extends AuxiliaryPanel {
     isDrawn = false;
   }
 
+  public Bounds getBounds() {
+    throw new UnsupportedOperationException();
+  }
+  
   public CompositeAxisPanel getLeftSubPanel() {
     return leftPanel;
   }
@@ -54,21 +61,34 @@ final class RangePanel extends AuxiliaryPanel {
   }
   
   @Override
-  public void initLayer() {
-    // assumes that leftPanel and rightPanel share the same height.
-    Bounds layerBounds = new Bounds(0, plot.getBounds().y,
-        view.getWidth(), leftPanel.getHeight());
-    
-    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    layer.setFillColor(Color.TRANSPARENT);
-    layer.clear();
-  }
-  
-  @Override
   public void layout() {
     leftPanel.layout();
+    
     rightPanel.layout();
+    Bounds leftPanelBounds = leftPanel.getBounds();
+    rightPanel.setPosition(leftPanelBounds.rightX() + centerGapWidth, 
+        leftPanelBounds.y);
+  }
+  
+  public void setCenterGapWidth(double width) {
+    ArgChecker.isNonNegative(width, "width");
+    this.centerGapWidth = width;
+  }
+  
+  public void setHeight(double h) {
+    for (RangeAxis rangeAxis : rangeAxes) {
+      rangeAxis.getAxisPanel().getBounds().height = h;
+    }
+    layout();
+  }
+  
+  public final void setPosition(double x, double y) {
+    leftPanel.setPosition(x, y);
+    
+    // This isn't correct.  rightPanel x-position should be
+    // plot.bounds.rightX() I think.
+    //rightPanel.setPosition(x, y);
+    rightPanel.setPosition(leftPanel.getBounds().rightX() + centerGapWidth, y);
   }
   
   @Override
@@ -81,37 +101,51 @@ final class RangePanel extends AuxiliaryPanel {
     layer.setFillColor(Color.TRANSPARENT);
     layer.clear();
     
-    Bounds leftPanelBounds = new Bounds(0, 0, leftPanel.getWidth(), 
-        leftPanel.getHeight());
-    leftPanel.draw(layer, leftPanelBounds);
-
-    if (rightPanel.getAxisCount() > 0) {
-      Bounds rightPanelBounds = new Bounds(plot.getBounds().rightX(), 0, 
-          rightPanel.getWidth(), rightPanel.getHeight());
-      rightPanel.draw(layer, rightPanelBounds);
-    }
+    leftPanel.draw();
+    rightPanel.draw();
     
     layer.restore();
     
     isDrawn = true;
   }
 
+  boolean alreadyInitialized = false;
   @Override
   protected void initHook() {
-    final String leftPanelName = "rangeAxisLayerLeft" + plot.plotNumber; 
+    id2rangeAxis.clear();
+    
+    // assumes that leftPanel and rightPanel share the same height.
+    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
+    
+    layer = plot.initLayer(null, "verticalAxis", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    layer.setFillColor(Color.TRANSPARENT);
+    layer.clear();
+  
+    final String leftPanelName = "rangeAxisLayerLeft" + plot.plotNumber;
     leftPanel = new CompositeAxisPanel(leftPanelName,
         CompositeAxisPanel.Position.LEFT, plot, view);
+    leftPanel.setLayer(layer);
     
-    final String rightPanelName = "rangeAxisLayerRight" + plot.plotNumber; 
+    final String rightPanelName = "rangeAxisLayerRight" + plot.plotNumber;
     rightPanel = new CompositeAxisPanel(rightPanelName,
         CompositeAxisPanel.Position.RIGHT, plot, view);
+    rightPanel.setLayer(layer);
     
     rangeAxes = autoAssignDatasetAxes(plot.getDatasets());
-  }
+  
+    alreadyInitialized = true;
+}
   
   @Override
   protected void setEnabledHook(boolean enabled) {
-    // nothing to do 
+    if (enabled) {
+      init();
+    }
+    else {
+      leftPanel.clear();
+      rightPanel.clear();
+    }
   }
 
   private List<RangeAxis> autoAssignDatasetAxes(Datasets datasets) {

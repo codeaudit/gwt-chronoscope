@@ -19,7 +19,7 @@ import java.util.List;
  * and  allocating that space to each contained axis, as well as using its GSS 
  * {@link #axesProperties} to fill the background of the panel when cleared.
  */
-public final class CompositeAxisPanel implements GssElement {
+public final class CompositeAxisPanel implements Panel, GssElement {
 
   private static final double TOP_PANEL_PAD = 23;
 
@@ -59,15 +59,19 @@ public final class CompositeAxisPanel implements GssElement {
 
   private GssProperties axesProperties;
 
-  private final ArrayList<AxisPanel> subPanels = new ArrayList<AxisPanel>();
-
+  private Bounds bounds = new Bounds();
+  
+  private Layer layer;
+  
   private boolean layerConfigured = false;
 
   private final String panelName;
 
+  private XYPlot plot;
+  
   private final Position position;
   
-  private XYPlot plot;
+  private final ArrayList<AxisPanel> subPanels = new ArrayList<AxisPanel>();
   
   private View view;
   
@@ -91,6 +95,7 @@ public final class CompositeAxisPanel implements GssElement {
     subPanels.add(subPanel);
     subPanel.setPlot(plot);
     subPanel.setView(view);
+    subPanel.setLayer(layer);
     subPanel.init();
   }
 
@@ -106,41 +111,55 @@ public final class CompositeAxisPanel implements GssElement {
     }
   }
   
-  public void draw(Layer layer, Bounds panelBounds) {
+  public void draw() {
     if (subPanels.size() == 0) {
       return;
     }
 
+    layer.save();
+    
     if (axesProperties == null) {
       axesProperties = view.getGssProperties(this, "");
     }
 
     if (!AxisPanel.GRID_ONLY) {
-      clearPanel(layer, panelBounds);
+      clearPanel(layer);
     }
     
-    Bounds lPBounds = new Bounds(panelBounds);
+    Bounds subPanelBounds = new Bounds();
+    subPanelBounds.setPosition(bounds.x, bounds.y);
     for (int i = 0; i < subPanels.size(); i++) {
-      AxisPanel axis = subPanels.get(i);
+      AxisPanel subPanel = subPanels.get(i);
+      
+      subPanelBounds.width = subPanel.getBounds().width;
+      subPanelBounds.height = subPanel.getBounds().height;
+      
       if (!layerConfigured) {
-        layer.setTextLayerBounds(axis.getTextLayerName(), lPBounds);
+        layer.setTextLayerBounds(subPanel.getTextLayerName(), subPanelBounds);
       }
-      lPBounds.width = axis.getWidth();
-      lPBounds.height = axis.getHeight();
-
-      axis.draw(layer, lPBounds);
+      
+      //System.out.println("TESTING CompositeAxisPanel: " + axis.getTextLayerName() + "; i=" + i + ": axisBounds: " + axisBounds);
+      subPanel.setBounds(subPanelBounds);
+      subPanel.draw();
       
       if (position.isHorizontal()) {
-        lPBounds.y += lPBounds.height;
+        subPanelBounds.y += subPanelBounds.height;
       } else {
-        lPBounds.x += lPBounds.width;
+        subPanelBounds.x += subPanelBounds.width;
       }
     }
+    
+    layer.restore();
+
     layerConfigured = true;
   }
 
   public int getAxisCount() {
     return subPanels.size();
+  }
+  
+  public Bounds getBounds() {
+    return this.bounds;
   }
 
   /**
@@ -156,20 +175,7 @@ public final class CompositeAxisPanel implements GssElement {
     //return subPanels.indexOf(subPanel);
   }
 
-  public double getHeight() {
-    double height = 0;
-    for (int i = 0; i < subPanels.size(); i++) {
-      AxisPanel a = subPanels.get(i);
-      if (position.isHorizontal()) {
-        height += a.getHeight();
-      } else {
-        height = a.getHeight();
-      }
-    }
-    return height + (getPosition() == Position.TOP ? TOP_PANEL_PAD : 0);
-  }
-
-  public String getPanelName() {
+  public String getName() {
     return panelName;
   }
 
@@ -199,26 +205,18 @@ public final class CompositeAxisPanel implements GssElement {
         return null;
     }
   }
-
-  public double getWidth() {
-    double width = 0;
-    for (int i = 0; i < subPanels.size(); i++) {
-      AxisPanel a = subPanels.get(i);
-      if (position.isHorizontal()) {
-        width = Math.max(width, a.getWidth());
-      } else {
-        width += a.getWidth();
-      }
-    }
-    return width;
-  }
-
+  
   public void layout() {
     layerConfigured = false;
     axesProperties = null;
+    
     for(AxisPanel panel : subPanels) {
+      panel.init();
       panel.layout();
     }
+    
+    bounds.width = calcWidth();
+    bounds.height = calcHeight();
   }
 
   /**
@@ -228,21 +226,67 @@ public final class CompositeAxisPanel implements GssElement {
   public void remove(AxisPanel childPanel) {
     subPanels.remove(childPanel);
     if (childPanel != null) {
+      if (childPanel.layer != null) {
+        childPanel.layer.clearTextLayer(childPanel.getTextLayerName());
+        childPanel.layer.clear();
+      }
       childPanel.setParentPanel(null);
       childPanel.setPlot(null);
       childPanel.setView(null);
+      childPanel.setLayer(null);
+    }
+  }
+  
+  public void setLayer(Layer layer) {
+    this.layer = layer;
+    for (AxisPanel subPanel : subPanels) {
+      subPanel.setLayer(layer);
+    }
+  }
+  
+  public final void setPosition(double x, double y) {
+    bounds.x = x;
+    bounds.y = y;
+    for (AxisPanel subPanel : subPanels) {
+      subPanel.setPosition(x, y);
     }
   }
 
-  private void clearPanel(Layer layer, Bounds panelBounds) {
+  private double calcHeight() {
+    double height = 0;
+    for (int i = 0; i < subPanels.size(); i++) {
+      AxisPanel a = subPanels.get(i);
+      if (position.isHorizontal()) {
+        height += a.getBounds().height;
+      } else {
+        height = a.getBounds().height;
+      }
+    }
+    return height + (getPosition() == Position.TOP ? TOP_PANEL_PAD : 0);
+  }
+
+  private double calcWidth() {
+    double width = 0;
+    for (int i = 0; i < subPanels.size(); i++) {
+      AxisPanel subPanel = subPanels.get(i);
+      if (position.isHorizontal()) {
+        width = Math.max(width, subPanel.getBounds().width);
+      } else {
+        width += subPanel.getBounds().width;
+      }
+    }
+    return width;
+  }
+
+  private void clearPanel(Layer layer) {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
     layer.setStrokeColor(Color.WHITE);
     if (position.isHorizontal()) {
       layer.scale(layer.getWidth(), layer.getHeight());
-    } else if (panelBounds.area() > 0) {
-      layer.scale(panelBounds.width, panelBounds.height);
-      layer.translate(panelBounds.x, panelBounds.y);
+    } else if (bounds.area() > 0) {
+      layer.scale(bounds.width, bounds.height);
+      layer.translate(bounds.x, bounds.y);
     }
 
 //        layer.beginPath();

@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.render;
 
-import com.google.gwt.core.client.GWT;
-
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -37,8 +35,8 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     this.listeners = new ArrayList<ZoomListener>();
   }
   
-  public void init(Layer layer) { 
-    height = super.calcHeight("X", layer);
+  public void init() { 
+    bounds.height = super.calcHeight("X", layer);
     
     // Store the short and long versions of the following strings
     // so that during layout, the container can choose the best fit.
@@ -86,7 +84,7 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     return hitDetected;
   }
 
-  public void draw(Layer layer) {
+  public void draw() {
     if (!doShow) {
       return;
     }
@@ -98,13 +96,13 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
       isMetricsComputed = true;
     }
     
-    double xCursor = x;
-    drawZoomLink(layer, xCursor, y, zoomPrefix.value, false);
+    double xCursor = bounds.x;
+    drawZoomLink(layer, xCursor, bounds.y, zoomPrefix.value, false);
     xCursor += zoomPrefix.pixelWidth + space.pixelWidth;
 
     int i = 0;
     for (ZoomInterval zoom : zooms) {
-      drawZoomLink(layer, xCursor, y, zoom.getName(), true);
+      drawZoomLink(layer, xCursor, bounds.y, zoom.getName(), true);
       xCursor += zoomLinkWidths[i++] + space.pixelWidth;
     }
   }
@@ -141,14 +139,14 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
    * If (x,y) falls on a zoom link, then return the corresponding ZoomInterval, or null if nothing was "hit".
    */
   private ZoomInterval detectHit(int x, int y) {
-    if (!MathUtil.isBounded(y, this.y, this.y + this.height)) {
+    if (!MathUtil.isBounded(y, bounds.y, bounds.bottomY())) {
       return null;
     }
     
     double bx, be;
     
     // Move cursor to the 1st zoom link
-    bx = this.x + zoomPrefix.pixelWidth + space.pixelWidth;
+    bx = bounds.x + zoomPrefix.pixelWidth + space.pixelWidth;
 
     // Rifle through the zoom links and see if any of them were clicked on.
     int i = 0;
@@ -167,7 +165,7 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     if (!compactMode || zoomPrefix == null) {
       zoomPrefix = zoomPrefixShort;
       space = spaceShort;
-      width = calcPanelWidth();
+      bounds.width = calcPanelWidth();
     }
     compactMode = true;
   }
@@ -176,21 +174,21 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     if (compactMode || zoomPrefix == null) {
       zoomPrefix = zoomPrefixLong;
       space = spaceLong;
-      width = calcPanelWidth();
+      bounds.width = calcPanelWidth();
     }
     compactMode = false;
   }
 
   private double calcPanelWidth() {
-    width = zoomPrefix.pixelWidth + space.pixelWidth;
+    bounds.width = zoomPrefix.pixelWidth + space.pixelWidth;
 
     int i = 0;
     for (ZoomInterval zoom : zooms) {
-      width += zoomLinkWidths[i++];
-      width += space.pixelWidth;
+      bounds.width += zoomLinkWidths[i++];
+      bounds.width += space.pixelWidth;
     }
     
-    return width;
+    return bounds.width;
   }
   
   /**

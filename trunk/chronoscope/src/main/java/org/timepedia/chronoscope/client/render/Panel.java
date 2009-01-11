@@ -1,29 +1,28 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.canvas.Bounds;
+
 /**
- * Basic representation of a UI panel that has a size and screen location,
- * and can additionally resize itself to a minimal or ideal width.
+ * Basic representation of a UI panel that has a size and screen position.
  * 
  * @author Chad Takahashi
  */
 public interface Panel {
 
-  // TODO: Would it make sense to make Bounds an interface with getter methods
-  // so that other UI constructs can extend it?
+  /**
+   * Draws this panel onto its associated canvas layer.
+   */
+  void draw();
+  
+  /**
+   * Returns the location and dimension of this panel.
+   */
+  Bounds getBounds();
 
   /**
-   * Returns this panel's height.
+   * Sets the position of this panel's upper-left corner with respect
+   * to its parent.
    */
-  double getHeight();
-
-  /**
-   * Returns this panel's width.
-   */
-  double getWidth();
-
-  /**
-   * Sets this panel's screen location.
-   */
-  void setLocation(double x, double y);
+  void setPosition(double x, double y);
 
 }
