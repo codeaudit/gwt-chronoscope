@@ -192,7 +192,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
         getUnadjustedRangeHigh(),
-        axisPanel.getHeight(),
+        axisPanel.getBounds().height,
         axisPanel.getMaxLabelHeight(), 
         rangeOverriden);
     
@@ -214,6 +214,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public int getAxisIndex() {
     return axisIndex;
+  }
+  
+  public RangeAxisPanel getAxisPanel() {
+    return this.axisPanel;
   }
 
   public String getFormattedLabel(double label) {

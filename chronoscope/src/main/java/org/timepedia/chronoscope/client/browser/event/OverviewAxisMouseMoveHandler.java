@@ -1,12 +1,10 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.DomEvent;
 import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
 import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
@@ -19,21 +17,6 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 public class OverviewAxisMouseMoveHandler extends
   AbstractEventHandler<MouseMoveHandler> implements MouseMoveHandler {
   
-  /**
-   * Overrides superclass to provide the Y-value relative to this 
-   * component's immediate container (i.e. the DefaultXYPlot.domainPanel).
-   * <p>
-   * NOTE: This is a workaround until the upcoming Chronoscope 
-   * Component/Container classes have been integrated into the UI framework.
-   */
-  @Override
-  public int getLocalY(DomEvent event) {
-    ChartState chartInfo = getChartState(event);
-    XYPlot plot = chartInfo.chart.getPlot();
-    Bounds plotBounds = plot.getBounds();
-    return super.getLocalY(event) - (int)plotBounds.bottomY();
-  }
-
   public void onMouseMove(MouseMoveEvent event) {
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
@@ -53,7 +36,14 @@ public class OverviewAxisMouseMoveHandler extends
     int y = getLocalY(event);
     final boolean isInAxisBounds = overviewAxisBounds.inside(x, y);
     final boolean isDragging = uiAction.isDragging(overviewAxis);
-
+    
+    /*
+    System.out.println("TESTING OverviewAxisMouseMoveHandler: " + 
+        "x=" + x + "; y=" + y + "; overviewAxisBounds: " + overviewAxisBounds +
+        "; inAxisBounds=" + isInAxisBounds + "; dragging=" + isDragging +
+        "; objSrc=" + uiAction.getSource());
+    */
+    
     // Determine appropriate cursor type
     if (isInAxisBounds) {
       if (hiliteBounds != null && hiliteBounds.inside(x, y)) {

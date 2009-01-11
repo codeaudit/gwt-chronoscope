@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.plot;
 
-import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.render.Panel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
@@ -12,12 +12,11 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * 
  * @author chad takahashi
  */
-abstract class AuxiliaryPanel {
-  protected DefaultXYPlot plot;
-  protected View view;
-  protected Layer layer;
+abstract class AuxiliaryPanel implements Panel {
   protected boolean enabled = true;
   protected boolean initialized = false;
+  protected DefaultXYPlot plot;
+  protected View view;
   
   protected abstract void drawHook();
   
@@ -47,11 +46,6 @@ abstract class AuxiliaryPanel {
    * Recalculates the positions of subpanels contained within this panel.
    */
   public abstract void layout();
-  
-  /**
-   * Initializes the layer(s) onto which this panel is drawn.
-   */
-  public abstract void initLayer();
   
   public final void init() {
     ArgChecker.isNotNull(plot, "plot");

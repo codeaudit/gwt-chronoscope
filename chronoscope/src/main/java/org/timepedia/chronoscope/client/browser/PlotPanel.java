@@ -125,8 +125,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
-    int absTop = DOM.getAbsoluteTop(getElement());
-    int originY = absTop - Window.getScrollTop();
+    int originY = DOM.getAbsoluteTop(getElement()) - Window.getScrollTop();
 
     if (screenCoordinatesRelevant) {
       x = DOM.eventGetClientX(evt);
@@ -136,11 +135,14 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
       y = -1;
     }
 
-    if (!chartEventHandler.handleChartEvent(evt, chart, x, y, originX, originY)) {
-      super.onBrowserEvent(evt);
-    } else {
+    boolean wasChartEventHandled = 
+        chartEventHandler.handleChartEvent(evt, chart, x, y, originX, originY);
+    
+    if (wasChartEventHandled) {
       DOM.eventCancelBubble(evt, true);
       DOM.eventPreventDefault(evt);
+    } else {
+      super.onBrowserEvent(evt);
     }
   }
 

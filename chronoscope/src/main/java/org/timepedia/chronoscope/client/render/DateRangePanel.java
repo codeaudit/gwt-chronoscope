@@ -54,7 +54,7 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing {
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
     final String typicalDateChars = "0123456789-";
-    height = this.calcHeight("X", layer);
+    bounds.height = this.calcHeight("X", layer);
     typicalCharWidth = calcWidth(typicalDateChars, layer) / typicalDateChars
         .length();
 
@@ -62,24 +62,24 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing {
       if (compactMode) {
         final String typicalShortDateRange = "12/12/00" + DATE_DELIM_SHORT
             + "12/12/00";
-        this.width = this.calcWidth(typicalShortDateRange, layer);
+        bounds.width = this.calcWidth(typicalShortDateRange, layer);
         //resizeToMinimalWidth();
       } else {
         final String typicalLongDateRange = "12/12/0000" + DATE_DELIM_LONG
             + "12/12/0000";
-        this.width = this.calcWidth(typicalLongDateRange, layer);
+        bounds.width = this.calcWidth(typicalLongDateRange, layer);
         //resizeToIdealWidth();
       }
     } else {
       final String typicalIntRange = "00000 - 00000";
-      this.width = this.calcWidth(typicalIntRange, layer);
+      bounds.width = this.calcWidth(typicalIntRange, layer);
     }
   }
 
-  public void draw(Layer layer) {
+  public void draw() {
     layer.setStrokeColor(gssProperties.color);
 
-    layer.drawText(x, y, dateRangeActive, gssProperties.fontFamily,
+    layer.drawText(bounds.x, bounds.y, dateRangeActive, gssProperties.fontFamily,
         gssProperties.fontWeight, gssProperties.fontSize, textLayerName,
         Cursor.DEFAULT);
   }
@@ -120,13 +120,13 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing {
   public void resizeToMinimalWidth() {
     compactMode = true;
     dateRangeActive = dateRangeShort;
-    width = estimateStringWidth(dateRangeActive);
+    bounds.width = estimateStringWidth(dateRangeActive);
   }
 
   public void resizeToIdealWidth() {
     compactMode = false;
     dateRangeActive = dateRangeLong;
-    width = estimateStringWidth(dateRangeActive);
+    bounds.width = estimateStringWidth(dateRangeActive);
   }
 
   private String formatLongDate(ChronoDate d) {

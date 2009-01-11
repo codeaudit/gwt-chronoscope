@@ -30,21 +30,20 @@ public class DatasetLegendPanel extends AbstractPanel {
   private XYPlot plot;
   private View view;
   
-  public void init(Layer layer) {
+  public void init() {
     ArgChecker.isNotNull(plot, "plot");
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(gssProperties, "gssProperties");
     
     lblHeight = this.calcHeight("X", layer);
     
-    // TODO: might make more sense for container to set this panel's width
-    this.width = layer.getWidth(); 
-    
     this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
     
-    Bounds b = new Bounds();
-    draw(layer, b, plot.getDatasets().size(), true);
-    this.height = b.height;
+    bounds.width = layer.getWidth(); 
+    
+    Bounds b = calcBounds(layer, plot.getDatasets().size());
+    this.bounds.height = b.height;
+    this.bounds.width = view.getWidth();
   }
   
   public void setPlot(XYPlot plot) {
@@ -55,13 +54,24 @@ public class DatasetLegendPanel extends AbstractPanel {
     this.view = view;
   }
   
-  public void draw(Layer layer) {
-    draw(layer, null, plot.getDatasets().size(), false);
+  public void draw() {
+    draw(layer, plot.getDatasets().size());
   }
   
-  private void draw(Layer layer, Bounds b, int numDatasets, boolean onlyCalcSize) {
-    double xCursor = this.x;
-    double yCursor = this.y;
+  private Bounds calcBounds(Layer layer, int numDatasets) {
+    Bounds b = new Bounds();
+    draw(layer, numDatasets, b);
+    return b;
+  }
+  
+  private void draw(Layer layer, int numDatasets) {
+    draw(layer, numDatasets, null);
+  }
+  
+  private void draw(Layer layer, int numDatasets, Bounds b) {
+    final boolean onlyCalcSize = (b != null);
+    double xCursor = bounds.x;
+    double yCursor = bounds.y;
     
     for (int i = 0; i < numDatasets; i++) {
       double lblWidth = drawLegendLabel(xCursor, yCursor, layer, i, onlyCalcSize);
@@ -70,7 +80,7 @@ public class DatasetLegendPanel extends AbstractPanel {
       if (enoughRoomInCurrentRow) {
         xCursor += lblWidth;
       } else {
-        xCursor = this.x;
+        xCursor = bounds.x;
         yCursor += lblHeight;
         xCursor += drawLegendLabel(xCursor, yCursor, layer, i, onlyCalcSize);
       }
@@ -79,8 +89,8 @@ public class DatasetLegendPanel extends AbstractPanel {
     }
     
     if (b != null) {
-      b.x = this.x;
-      b.y = this.y;
+      b.x = this.bounds.x;
+      b.y = this.bounds.y;
       b.width = xCursor - b.x;
       // Note: since the (x,y) coordinate refers to the upper-left corner of the
       // bounds, we need to add 'lblHeight' to the final yCursor value to obtain
@@ -95,33 +105,33 @@ public class DatasetLegendPanel extends AbstractPanel {
    * @param lblX - x coordinate of label
    * @param lblY - y coordinate of label
    * @param layer - the graphics layer on which this artifact will be drawn
-   * @param seriesNum - corresponding the dataset index 
+   * @param datasetIdx - corresponding the dataset index 
    * @param onlyCalcWidth - if true, only width is calculated; otherwise the 
    *            label is actually drawn as well.
    *            
    * @return the full width of the label, or -1 if the label was too wide to fit
    * in the panel given the specified lblX and lblY coordinates.
    */
-  private double drawLegendLabel(double lblX, double lblY, Layer layer, int seriesNum, boolean onlyCalcWidth) {
-    DatasetRenderer renderer = plot.getDatasetRenderer(seriesNum);
+  private double drawLegendLabel(double lblX, double lblY, Layer layer, int datasetIdx, boolean onlyCalcWidth) {
+    DatasetRenderer renderer = plot.getDatasetRenderer(datasetIdx);
     
-    int hoverPoint = plot.getHoverPoints()[seriesNum];
-    String seriesLabel = createDatasetLabel(plot, seriesNum, hoverPoint);
+    int hoverPoint = plot.getHoverPoints()[datasetIdx];
+    String seriesLabel = createDatasetLabel(plot, datasetIdx, hoverPoint);
     
     // Compute the width of the dataset text label, taking into account historical
     // widths of this label.
     double txtWidth = calcWidth(seriesLabel, layer);
-    if (txtWidth > maxLabelWidths[seriesNum]) {
-      maxLabelWidths[seriesNum] = txtWidth;
+    if (txtWidth > maxLabelWidths[datasetIdx]) {
+      maxLabelWidths[datasetIdx] = txtWidth;
     }
     else {
-      txtWidth = maxLabelWidths[seriesNum];
+      txtWidth = maxLabelWidths[datasetIdx];
     }
     
     double iconWidth = renderer.calcLegendIconWidth(view);
     double totalWidth = txtWidth + LEGEND_ICON_PAD + iconWidth;
     
-    if (lblX + totalWidth >= this.x + this.width) {
+    if (lblX + totalWidth >= bounds.rightX()) {
       return -1;
     }
     
@@ -160,7 +170,7 @@ public class DatasetLegendPanel extends AbstractPanel {
    * for hovered data points. If pointIdx == -1, then the range value is 
    * omitted.
    */
-  private String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
+  private static String createDatasetLabel(XYPlot plot, int datasetIdx, int pointIdx) {
     Dataset ds = plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
     String lbl = ds.getRangeLabel() + rangeAxis.getLabelSuffix();

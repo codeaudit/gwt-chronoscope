@@ -208,11 +208,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   OverviewAxisPanel getOverviewAxisPanel();
 
   /**
-   * Returns the layer onto which the overview axis is rendered.
-   */
-  Layer getOverviewLayer();
-
-  /**
    * Returns the layer onto which the main plot area is rendered.
    */
   Layer getPlotLayer();

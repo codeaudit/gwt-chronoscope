@@ -11,17 +11,13 @@ public class OverviewAxisPanel extends AxisPanel {
 
   private static final int MIN_OVERVIEW_HEIGHT = 60;
   
-  private Bounds bounds = new Bounds();
-  
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
   
+  private Layer overviewLayer;
+  
   public OverviewAxisPanel() {
     highlightBoundsSingleton = new Bounds();
-  }
-  
-  public Bounds getBounds() {
-    return this.bounds;
   }
   
   /**
@@ -32,18 +28,12 @@ public class OverviewAxisPanel extends AxisPanel {
     return highlightBounds;
   }
   
-  public void draw(Layer layer, Bounds axisBounds) {
-    
-    axisBounds.copyTo(bounds);
-    
-    Layer overviewLayer = plot.getOverviewLayer();
-
+  public void draw() {
     layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight(), axisBounds.x, axisBounds.y, axisBounds.width,
-        axisBounds.height);
-    
-    highlightBounds = calcHighlightBounds(plot, axisBounds);
-    //GWT.log("TESTING: OverviewAxisRenderer: highlightBounds = " + highlightBounds, null);
+        overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
+        bounds.height);
+
+    highlightBounds = calcHighlightBounds(plot, bounds);
     
     if (highlightBounds != null) {
       layer.save();
@@ -74,22 +64,27 @@ public class OverviewAxisPanel extends AxisPanel {
     return "overview";
   }
   
-  @Override 
-  public double getWidth() {
-    XYPlot plot = this.view.getChart().getPlot();
-    return plot.getOverviewLayer().getWidth();
-  }
-
   public String getTypeClass() {
     return null;
+  }
+  
+  @Override
+  public void layout() {
+    bounds.height = gssProperties.height;
+    if (bounds.height < MIN_OVERVIEW_HEIGHT) {
+      bounds.height = MIN_OVERVIEW_HEIGHT;
+    }
+    
+    //bounds.width = view.getWidth();
+  }
+  
+  public void setOverviewLayer(Layer overviewLayer) {
+    this.overviewLayer = overviewLayer;
   }
 
   @Override
   protected void initHook() {
-    height = gssProperties.height;
-    if (height < MIN_OVERVIEW_HEIGHT) {
-      height = MIN_OVERVIEW_HEIGHT;
-    }
+    // do nothing
   }
 
   /*
@@ -118,7 +113,7 @@ public class OverviewAxisPanel extends AxisPanel {
       
       double endHighlight = axisBounds.x +
           ((visibleDomainMin - globalDomainMin + visibleDomainWidth) / globalDomainWidth * axisBounds.width);
-      endHighlight = Math.min(endHighlight, axisBounds.x + axisBounds.width);
+      endHighlight = Math.min(endHighlight, axisBounds.rightX());
       
       b = highlightBoundsSingleton;
       b.x = beginHighlight;

@@ -87,8 +87,17 @@ public class Bounds {
     public boolean inside(int px, int py) {
         return px >= x && px <= x + width && py >= y && py <= y + height;
     }
-
+    
+    /**
+     * Convenience method for setting the (x,y) position of this Bounds object.
+     * Equivalent to this: <code>bounds.x = x; bounds.y = y;</code>.
+     */
+    public void setPosition(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+    
     public String toString() {
-        return "Bounds[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
+        return "[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
     }
 }

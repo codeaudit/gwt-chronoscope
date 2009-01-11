@@ -13,20 +13,14 @@ import org.timepedia.chronoscope.client.render.LegendAxisPanel;
 final class TopPanel extends AuxiliaryPanel {
   private CompositeAxisPanel compositePanel;
   private LegendAxisPanel legendAxisPanel;
+  private Layer layer;
   
   public boolean click(int x, int y) {
     return legendAxisPanel.click(x, y);
   }
   
-  public double getHeight() {
-    return compositePanel.getHeight();
-  }
-
-  @Override
-  public void initLayer() {
-    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), this.getHeight());
-    layer = plot.initLayer(layer, "topLayer", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+  public Bounds getBounds() {
+    return compositePanel.getBounds();
   }
   
   @Override
@@ -34,24 +28,29 @@ final class TopPanel extends AuxiliaryPanel {
     compositePanel.layout();
   }
 
+  public final void setPosition(double x, double y) {
+    compositePanel.setPosition(x, y);
+  }
+  
   @Override
   protected void drawHook() {
     if (compositePanel.getAxisCount() == 0) {
       return;
     }
-
-    layer.save();
-    Bounds panelBounds = new Bounds(0, 0, layer.getBounds().width,
-        layer.getBounds().height);
-    compositePanel.draw(layer, panelBounds);
-    layer.restore();
+    compositePanel.draw();
   }
   
   @Override
   protected void initHook() {
+    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
+    layer = plot.initLayer(layer, "topLayer", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    layer.setVisibility(false);
+    
     final String panelName = "topPanel" + plot.plotNumber; 
     this.compositePanel = new CompositeAxisPanel(panelName,
         CompositeAxisPanel.Position.TOP, plot, view);
+    this.compositePanel.setLayer(layer);
     
     if (this.isEnabled()) {
       initLegendAxisPanel();

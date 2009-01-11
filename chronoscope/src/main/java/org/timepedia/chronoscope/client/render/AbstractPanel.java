@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
@@ -12,7 +13,8 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 public abstract class AbstractPanel implements Panel {
   protected GssProperties gssProperties;
   protected String textLayerName;
-  protected double x, y, width, height;
+  protected Bounds bounds = new Bounds();
+  protected Layer layer;
   
   public final void setGssProperties(GssProperties gssProperties) {
     this.gssProperties = gssProperties;
@@ -22,21 +24,20 @@ public abstract class AbstractPanel implements Panel {
     return this.textLayerName;
   }
   
+  public final void setLayer(Layer layer) {
+    this.layer = layer;
+  }
+  
   public final void setTextLayerName(String textLayerName) {
     this.textLayerName = textLayerName;
   }
 
-  public double getHeight() {
-    return height;
+  public final Bounds getBounds() {
+    return this.bounds;
   }
 
-  public double getWidth() {
-    return width;
-  }
-
-  public void setLocation(double x, double y) {
-    this.x = x;
-    this.y = y;
+  public final void setPosition(double x, double y) {
+    bounds.setPosition(x, y);
   }
   
   protected final int calcHeight(String s, Layer layer) {
