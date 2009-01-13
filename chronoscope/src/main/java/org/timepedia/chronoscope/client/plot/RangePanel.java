@@ -117,7 +117,7 @@ final class RangePanel extends AuxiliaryPanel {
     // assumes that leftPanel and rightPanel share the same height.
     Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
     
-    layer = plot.initLayer(null, "verticalAxis", layerBounds);
+    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
     layer.setLayerOrder(Layer.Z_LAYER_AXIS);
     layer.setFillColor(Color.TRANSPARENT);
     layer.clear();
