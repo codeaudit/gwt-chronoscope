@@ -45,7 +45,6 @@ final class TopPanel extends AuxiliaryPanel {
     Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
     layer = plot.initLayer(layer, "topLayer", layerBounds);
     layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    layer.setVisibility(false);
     
     final String panelName = "topPanel" + plot.plotNumber; 
     this.compositePanel = new CompositeAxisPanel(panelName,

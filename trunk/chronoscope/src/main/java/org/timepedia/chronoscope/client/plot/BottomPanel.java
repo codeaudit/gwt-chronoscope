@@ -125,7 +125,6 @@ final class BottomPanel extends AuxiliaryPanel {
     layer.setLayerOrder(Layer.Z_LAYER_AXIS);
     
     overviewLayer = plot.initLayer(overviewLayer, "overviewLayer", layerBounds);
-    overviewLayer.setVisibility(false);
 
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
