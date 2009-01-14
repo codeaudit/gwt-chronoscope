@@ -282,11 +282,11 @@ public final class CompositeAxisPanel implements Panel, GssElement {
     layer.save();
     layer.setFillColor(this.axesProperties.bgColor);
     layer.setStrokeColor(Color.WHITE);
-    if (position.isHorizontal()) {
-      layer.scale(layer.getWidth(), layer.getHeight());
-    } else if (bounds.area() > 0) {
-      layer.scale(bounds.width, bounds.height);
+    if (bounds.area() > 0) {
+      // guard needed to store firefox bug
+      // scaling by 0 in any dimension causes canvas to stop working
       layer.translate(bounds.x, bounds.y);
+      layer.scale(bounds.width, bounds.height);
     }
 
 //        layer.beginPath();
