@@ -39,6 +39,10 @@ final class RangePanel extends AuxiliaryPanel {
   // many-to-one.
   private List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
 
+  public RangePanel() {
+    
+  }
+  
   @Override
   public void clearDrawCaches() {
     isDrawn = false;
@@ -100,7 +104,7 @@ final class RangePanel extends AuxiliaryPanel {
     layer.save();
     layer.setFillColor(Color.TRANSPARENT);
     layer.clear();
-    
+
     leftPanel.draw();
     rightPanel.draw();
     
@@ -109,7 +113,6 @@ final class RangePanel extends AuxiliaryPanel {
     isDrawn = true;
   }
 
-  boolean alreadyInitialized = false;
   @Override
   protected void initHook() {
     id2rangeAxis.clear();
@@ -133,8 +136,6 @@ final class RangePanel extends AuxiliaryPanel {
     rightPanel.setLayer(layer);
     
     rangeAxes = autoAssignDatasetAxes(plot.getDatasets());
-  
-    alreadyInitialized = true;
 }
   
   @Override
