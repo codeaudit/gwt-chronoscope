@@ -89,15 +89,22 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLastTick) {
+
     if (lrangeHigh == lrangeLow) {
-      int logRange = ((int) Math.floor(Math.log10(lrangeHigh)));
-      if (logRange < 0) {
-        logRange += 1;
+      if (lrangeHigh != 0.0) {
+        int logRange = ((int) Math.floor(Math.log10(lrangeHigh)));
+        if (logRange < 0) {
+          logRange += 1;
+        }
+        double exponent = Math.pow(10, logRange);
+        double rounded = Math.floor(lrangeHigh / exponent);
+        lrangeHigh = (rounded + 1) * exponent;
+        lrangeLow = (rounded - 1) * exponent;
       }
-      double exponent = Math.pow(10, logRange);
-      double rounded = Math.floor(lrangeHigh / exponent);
-      lrangeHigh = (rounded + 1) * exponent;
-      lrangeLow = (rounded - 1) * exponent;
+      else {
+        lrangeHigh = 1.0;
+        lrangeLow = -1.0;
+      }
     }
 
     final double range = lrangeHigh - lrangeLow;
@@ -185,17 +192,15 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double[] computeTickPositions() {
-    
+
     if (ticks != null) {
       return ticks;
     }
 
     ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
-        getUnadjustedRangeHigh(),
-        axisPanel.getBounds().height,
-        axisPanel.getMaxLabelHeight(), 
-        rangeOverriden);
-    
+        getUnadjustedRangeHigh(), axisPanel.getBounds().height,
+        axisPanel.getMaxLabelHeight(), rangeOverriden);
+
     adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
     adjustedRangeHigh = getUnadjustedRangeHigh();
     for (int i = 0; i < ticks.length; i++) {
@@ -209,13 +214,14 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double dataToUser(double dataValue) {
-    return (dataValue - adjustedRangeLow) / (adjustedRangeHigh - adjustedRangeLow);
+    return (dataValue - adjustedRangeLow) / (adjustedRangeHigh
+        - adjustedRangeLow);
   }
 
   public int getAxisIndex() {
     return axisIndex;
   }
-  
+
   public RangeAxisPanel getAxisPanel() {
     return this.axisPanel;
   }
@@ -431,9 +437,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double userToData(double userValue) {
-   return adjustedRangeLow + ((adjustedRangeHigh - adjustedRangeLow) * userValue);
+    return adjustedRangeLow + ((adjustedRangeHigh - adjustedRangeLow)
+        * userValue);
   }
-  
+
   private void setRangeInternal(double rangeLow, double rangeHigh) {
     ticks = null;
     this.rangeLow = rangeLow;
