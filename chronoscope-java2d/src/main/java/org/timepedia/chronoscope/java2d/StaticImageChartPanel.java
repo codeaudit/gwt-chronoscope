@@ -25,6 +25,8 @@ public class StaticImageChartPanel implements ViewReadyCallback {
 
   private ViewJava2D view;
 
+  private boolean interactive;
+
   public StaticImageChartPanel(Dataset[] datasets, int width, int height,
       GssContext gssContext) {
     this(datasets, true, width, height, gssContext);
@@ -41,12 +43,11 @@ public class StaticImageChartPanel implements ViewReadyCallback {
 
   public StaticImageChartPanel(Dataset[] ds, boolean interactive, int width,
       int height, GssContext gssContext) {
+    this.interactive = interactive;
     chart = new Chart();
     plot = new DefaultXYPlot();
     Datasets dss = new Datasets(ds);
-    if (!interactive) {
-      plot.setSubPanelsEnabled(false);
-    }
+
     plot.setDatasets(dss);
     plot.setOverviewEnabled(false);
     plot.setPlotRenderer(new XYPlotRenderer());
@@ -70,7 +71,10 @@ public class StaticImageChartPanel implements ViewReadyCallback {
     plot.init(view);
     chart.setView(view);
     chart.init();
-    chart.redraw();
+    if (!interactive) {
+      plot.setSubPanelsEnabled(false);
+    }
+    plot.reloadStyles();
   }
 
   public void redraw() {
