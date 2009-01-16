@@ -101,17 +101,17 @@ public class DefaultXYPlot<T extends Tuple2D>
       = Double.MIN_VALUE;
 
   private Datasets<T> datasets;
-  
+
   private boolean highlightDrawn;
 
   private Focus focus = null;
 
   private BottomPanel bottomPanel;
-  
+
   private TopPanel topPanel;
-  
+
   private RangePanel rangePanel;
-  
+
   private Layer highLightLayer, plotLayer, hoverLayer;
 
   private int[] hoverPoints;
@@ -129,7 +129,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private Bounds plotBounds;
 
   public Interval visDomain, lastVisDomain, widestDomain;
-  
+
   int plotNumber = 0;
 
   private XYPlotRenderer<T> plotRenderer;
@@ -143,7 +143,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public DefaultXYPlot() {
     overlays = new ArrayList<Overlay>();
     plotNumber = globalPlotNumber++;
-    
+
     bottomPanel = new BottomPanel();
     topPanel = new TopPanel();
     rangePanel = new RangePanel();
@@ -158,7 +158,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     overlay.setPlot(this);
     this.drawOverlays(plotLayer);
   }
-  
+
   public HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
     return handlerManager.addHandler(PlotFocusEvent.TYPE, handler);
   }
@@ -166,7 +166,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public HandlerRegistration addPlotHoverHandler(PlotHoverHandler handler) {
     return handlerManager.addHandler(PlotHoverEvent.TYPE, handler);
   }
-  
+
   public HandlerRegistration addPlotMovedHandler(PlotMovedHandler handler) {
     return handlerManager.addHandler(PlotMovedEvent.TYPE, handler);
   }
@@ -191,8 +191,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     for (Overlay o : overlays) {
-      boolean wasOverlayHit = 
-        visDomain.contains(o.getDomainX()) && o.isHit(x, y);
+      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
+          .isHit(x, y);
 
       if (wasOverlayHit) {
         o.click(x, y);
@@ -341,7 +341,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public Interval getWidestDomain() {
     return this.widestDomain;
   }
-  
+
   public void init(View view) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
@@ -351,40 +351,39 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.focus = null;
 
     initViewIndependent(datasets);
-    
+
     if (!plotRenderer.isInitialized()) {
       plotRenderer.setPlot(this);
       plotRenderer.setView(view);
       plotRenderer.init();
-    }
-    else {
+    } else {
       plotRenderer.resetMipMapLevels();
     }
-    
+
     widestDomain = plotRenderer.calcWidestPlotDomain();
     visDomain = widestDomain.copy();
-    
+
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
-    
+
     initAuxiliaryPanel(bottomPanel, view);
     initAuxiliaryPanel(rangePanel, view);
     // TODO: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
     initAuxiliaryPanel(topPanel, view);
-    
+
     plotBounds = layoutAll();
-    
+
     innerBounds = new Bounds(0, 0, plotBounds.width, plotBounds.height);
 
     clearDrawCaches();
     lastVisDomain = new Interval(0, 0);
-    
+
     initLayers();
-    
-    background = new GssBackground(view);  
+
+    background = new GssBackground(view);
     view.canvasSetupDone();
   }
 
@@ -398,7 +397,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void maxZoomOut() {
     pushHistory();
-    animateTo(widestDomain.getStart(), widestDomain.length(), 
+    animateTo(widestDomain.getStart(), widestDomain.length(),
         PlotMovedEvent.MoveType.ZOOMED);
   }
 
@@ -465,7 +464,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void onDatasetChanged(Dataset<T> dataset, double domainStart,
       double domainEnd) {
-    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+        datasets);
     int datasetIndex = this.datasets.indexOf(dataset);
     if (datasetIndex == -1) {
       datasetIndex = 0;
@@ -517,7 +517,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         overlays.add(o);
       }
     }
-    
+
     this.plotRenderer.removeDataset(dataset);
     //this.rangePanel = new RangePanel();
     initAndRedraw();
@@ -528,7 +528,8 @@ public class DefaultXYPlot<T extends Tuple2D>
       maxZoomOut();
     } else {
       double domainStart = getDomain().midpoint() - (intervalInMillis / 2);
-      animateTo(domainStart, intervalInMillis, PlotMovedEvent.MoveType.ZOOMED, null);
+      animateTo(domainStart, intervalInMillis, PlotMovedEvent.MoveType.ZOOMED,
+          null);
     }
   }
 
@@ -540,15 +541,15 @@ public class DefaultXYPlot<T extends Tuple2D>
             rangeToWindowY(rangeY, datasetIndex) + 5);
 
     final PortableTimerTask timerTask = new PortableTimerTask() {
-        public void run(PortableTimer timer) {
-          window.open();
-        }
+      public void run(PortableTimer timer) {
+        window.open();
+      }
     };
-    
+
     if (!ensureVisible(domainX, rangeY, timerTask)) {
       window.open();
     }
-    
+
     return window;
   }
 
@@ -611,18 +612,22 @@ public class DefaultXYPlot<T extends Tuple2D>
     } else {
       plotRenderer.drawHoverPoints();
     }
-    
+
     if (plotDomainChanged || forceCenterPlotRedraw) {
+      plotLayer.clear();
+      background.paint(this, plotLayer, visDomain.getStart(), visDomain.length());
+      rangePanel.draw();
+
+      if (canDrawFast) {
+        bottomPanel.draw();
+      }
+
       plotLayer.save();
       plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-      plotLayer.clear();
       drawPlot();
       plotLayer.restore();
 
-      rangePanel.draw();
-      
       if (canDrawFast) {
-        bottomPanel.draw();
         drawOverlays(plotLayer);
       }
     }
@@ -631,7 +636,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       topPanel.draw();
       drawPlotHighlight(highLightLayer);
     }
-    
+
     backingCanvas.endFrame();
     visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
@@ -691,7 +696,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.getRangeAxes().get(dataset).setAutoZoomVisibleRange(autoZoom);
   }
 
-  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer) {
+  public void setDatasetRenderer(int datasetIndex,
+      DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
     this.plotRenderer.setDatasetRenderer(datasetIndex, renderer);
     this.initAndRedraw();
@@ -767,7 +773,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // True iff one or more hoverPoints have changed since the last call to this method
     boolean isDirty = false;
 
-    NearestPoint nearestHoverPt = this.nearestSingleton;        
+    NearestPoint nearestHoverPt = this.nearestSingleton;
     for (int i = 0; i < datasets.size(); i++) {
       double dataX = windowXtoDomain(x);
       double dataY = windowYtoRange(y, i);
@@ -805,7 +811,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setOverviewEnabled(boolean overviewEnabled) {
     bottomPanel.setOverviewEnabled(overviewEnabled);
   }
-  
+
   @Export
   public void setSubPanelsEnabled(boolean enabled) {
     topPanel.setEnabled(enabled);
@@ -819,7 +825,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     this.plotRenderer = plotRenderer;
   }
-  
+
   public double windowXtoUser(double x) {
     return (x - plotBounds.x) / plotBounds.width;
   }
@@ -838,7 +844,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (!isAnimatable()) {
       return;
     }
-    
+
     // if there is already an animation running, cancel it
     if (animationTimer != null) {
       animationTimer.cancelTimer();
@@ -858,7 +864,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     animationContinuation = continuation;
     final Interval visibleDomain = this.visDomain;
-    
+
     animationTimer = view.createTimer(new PortableTimerTask() {
       final double destDomainMid = destDomain.midpoint();
 
@@ -920,29 +926,29 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   /**
    * Perform layout on center plot and its surrounding panels.
-   * 
+   *
    * @return the bounds of the center plot
    */
   private Bounds layoutAll() {
     final double viewWidth = view.getWidth();
     final double viewHeight = view.getHeight();
-    
+
     // First, layout the auxiliary panels
     bottomPanel.layout();
     rangePanel.layout();
     topPanel.layout();
-    
+
     Bounds plotBounds = new Bounds();
 
-    double centerPlotHeight = viewHeight - topPanel.getBounds().height - 
-        bottomPanel.getBounds().height;
-    
+    double centerPlotHeight = viewHeight - topPanel.getBounds().height
+        - bottomPanel.getBounds().height;
+
     // If center plot too squished, remove the overview axis
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
       if (bottomPanel.isOverviewEnabled()) {
         bottomPanel.setOverviewEnabled(false);
-        centerPlotHeight = viewHeight - topPanel.getBounds().height - 
-            bottomPanel.getBounds().height;
+        centerPlotHeight = viewHeight - topPanel.getBounds().height
+            - bottomPanel.getBounds().height;
       }
     }
 
@@ -950,34 +956,35 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
       if (topPanel.isEnabled()) {
         topPanel.setEnabled(false);
-        centerPlotHeight = viewHeight - topPanel.getBounds().height - 
-            bottomPanel.getBounds().height;
+        centerPlotHeight = viewHeight - topPanel.getBounds().height
+            - bottomPanel.getBounds().height;
       }
     }
-    
+
     // Set the center plot's bounds
     Bounds leftRangeBounds = rangePanel.getLeftSubPanel().getBounds();
     Bounds rightRangeBounds = rangePanel.getRightSubPanel().getBounds();
     plotBounds.x = leftRangeBounds.width;
     plotBounds.y = topPanel.getBounds().height;
     plotBounds.height = centerPlotHeight;
-    plotBounds.width = viewWidth - leftRangeBounds.width - rightRangeBounds.width;
-    
+    plotBounds.width = viewWidth - leftRangeBounds.width
+        - rightRangeBounds.width;
+
     // Set the positions of the auxiliary panels.
     topPanel.setPosition(0, 0);
     bottomPanel.setPosition(plotBounds.x, plotBounds.bottomY());
     rangePanel.setPosition(0, plotBounds.y);
-    
+
     // Need to re-assign the bottom panel's contained panels to the center plot
     // area's width, now that we know what it is.
     bottomPanel.getDomainAxisPanel().getBounds().width = plotBounds.width;
     bottomPanel.getOverviewAxisPanel().getBounds().width = plotBounds.width;
     bottomPanel.layout();
-    
+
     rangePanel.setHeight(centerPlotHeight);
     rangePanel.setCenterGapWidth(plotBounds.width);
     rangePanel.layout();
-    
+
     return plotBounds;
   }
 
@@ -999,8 +1006,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   void drawPlot() {
     plotLayer.setScrollLeft(0);
-    background
-        .paint(this, plotLayer, visDomain.getStart(), visDomain.length());
     // reset the visible RangeAxis ticks if it's been zoomed
     for (RangeAxis axis : rangePanel.getRangeAxes()) {
       axis.initVisibleRange();
@@ -1046,8 +1051,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     final double minDomain = widestDomain.getStart();
     final double maxDomain = widestDomain.getEnd();
     final double maxDomainLength = maxDomain - minDomain;
-    final double minTickSize = 
-        bottomPanel.getDomainAxisPanel().getMinimumTickSize();
+    final double minTickSize = bottomPanel.getDomainAxisPanel()
+        .getMinimumTickSize();
 
     // First ensure that the destination domain length is smaller than the 
     // difference between the minimum and maximum dataset domain values.  
@@ -1097,8 +1102,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap;
-    
+    MipMap currMipMap = plotRenderer
+        .getDrawableDataset(datasetIndex).currMipMap;
+
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
 
@@ -1183,7 +1189,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void initViewIndependent(Datasets<T> datasets) {
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
         / datasets.size();
-    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(), datasets);
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+        datasets);
     resetHoverPoints(datasets.size());
   }
 
@@ -1234,9 +1241,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   /**
-   * Fills this.hoverPoints[] with {@link #NO_SELECTION} values.
-   * If hoverPoints[] is null or not the same length as this.datsets.size(), 
-   * it is initialized to the correct size.
+   * Fills this.hoverPoints[] with {@link #NO_SELECTION} values. If
+   * hoverPoints[] is null or not the same length as this.datsets.size(), it is
+   * initialized to the correct size.
    */
   private void resetHoverPoints(int numDatasets) {
     if (hoverPoints == null || hoverPoints.length != numDatasets) {
@@ -1276,20 +1283,22 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     Dataset<T> ds;
     int focusDatasetIdx, focusPointIdx;
-    
+
     if (focus == null) {
       // If no data point currently has the focus, then set the focus point to
       // the point on dataset [0] that's closest to the center of the screen.
       focusDatasetIdx = 0;
       ds = datasets.get(focusDatasetIdx);
-      MipMap mipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
+      MipMap mipMap = plotRenderer
+          .getDrawableDataset(focusDatasetIdx).currMipMap;
       double domainCenter = visDomain.midpoint();
       focusPointIdx = Util.binarySearch(mipMap.getDomain(), domainCenter);
     } else {
       // some data point currently has the focus.
       focusDatasetIdx = focus.getDatasetIndex();
       focusPointIdx = focus.getPointIndex();
-      MipMap mipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
+      MipMap mipMap = plotRenderer
+          .getDrawableDataset(focusDatasetIdx).currMipMap;
       focusPointIdx += n;
 
       if (focusPointIdx >= mipMap.size()) {
@@ -1303,13 +1312,16 @@ public class DefaultXYPlot<T extends Tuple2D>
         if (focusDatasetIdx < 0) {
           focusDatasetIdx = datasets.size() - 1;
         }
-        focusPointIdx = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size() - 1;
+        focusPointIdx =
+            plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size()
+                - 1;
       }
 
       ds = datasets.get(focusDatasetIdx);
     }
-    
-    MipMap currMipMap = plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap;
+
+    MipMap currMipMap = plotRenderer
+        .getDrawableDataset(focusDatasetIdx).currMipMap;
     Tuple2D dataPt = currMipMap.getTuple(focusPointIdx);
     double dataX = dataPt.getDomain();
     double dataY = dataPt.getRange0();
@@ -1319,41 +1331,40 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private double windowXtoDomain(double x) {
-    return bottomPanel.getDomainAxisPanel()
-        .getValueAxis().userToData(windowXtoUser(x));
+    return bottomPanel.getDomainAxisPanel().getValueAxis()
+        .userToData(windowXtoUser(x));
   }
 
   private double windowYtoRange(int y, int datasetIndex) {
     double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
     return getRangeAxis(datasetIndex).userToData(userY);
   }
-  
+
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
     panel.setPlot(this);
     panel.setView(view);
     panel.init();
   }
-  
-  
+
   /**
    * Returns the greatest domain value across all datasets for the specified
-   * <tt>maxDrawableDataPoints</tt> value.  For each dataset, the max domain value 
-   * is obtained from the lowest mip level (i.e. highest resolution) whose 
+   * <tt>maxDrawableDataPoints</tt> value.  For each dataset, the max domain
+   * value is obtained from the lowest mip level (i.e. highest resolution) whose
    * corresponding datapoint cardinality is not greater than
    * <tt>maxDrawableDataPoints</tt>.
    */
-  private static <T extends Tuple2D> double calcVisibleDomainMax(int maxDrawableDataPoints,
-      Datasets<T> dataSets) {
-    
+  private static <T extends Tuple2D> double calcVisibleDomainMax(
+      int maxDrawableDataPoints, Datasets<T> dataSets) {
+
     double end = Double.MIN_VALUE;
-    
+
     for (Dataset<T> ds : dataSets) {
       // find the lowest mip level whose # of data points is not greater
       // than maxDrawableDataPoints
-      MipMap mipMap = ds.getMipMapChain().findHighestResolution(maxDrawableDataPoints);
+      MipMap mipMap = ds.getMipMapChain()
+          .findHighestResolution(maxDrawableDataPoints);
       end = Math.max(end, mipMap.getDomain().getLast());
     }
     return end;
   }
-
 }
