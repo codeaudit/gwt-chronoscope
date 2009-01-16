@@ -98,11 +98,11 @@ public class RangeAxisPanel extends AxisPanel {
 
   @Override
   protected void initHook() {
+    rangeAxis = (RangeAxis) this.valueAxis;
     GssElement tickGssElem = new GssElementImpl("tick", this);
     GssElement gridGssElem = new GssElementImpl("grid", this);
     tickProperties = view.getGssProperties(tickGssElem, "");
     gridProperties = view.getGssProperties(gridGssElem, "");
-    rangeAxis = (RangeAxis) this.valueAxis;
 
     if (this.getParentPanel().getPosition() == Position.RIGHT) {
       rotationAngle = Math.PI / 2;
