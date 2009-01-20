@@ -12,7 +12,6 @@
   <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
    
  <inherits name='org.timepedia.exporter.Exporter'/>
- <inherits name='gwtquery.GwtQuery'/>
 
    
   <define-property name="hasflash" values="yes,no,force"/>
@@ -111,4 +110,6 @@
     <when-type-is class="org.timepedia.chronoscope.client.browser.ChartEventHandler"/>
     <when-property-is name="user.agent" value="gecko1_8"/>
   </replace-with>
+
+
 </module>
