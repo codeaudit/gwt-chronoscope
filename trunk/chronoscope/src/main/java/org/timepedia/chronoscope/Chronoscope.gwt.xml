@@ -98,7 +98,6 @@
     <when-property-is name="user.agent" value="safari"/>
   </replace-with>
   <set-property name="export" value="yes"/>
-  <set-property name="selectorCapability" value="js"/>
   <!--<set-property name="hasflash" value="yes"/>-->
   
    <replace-with class="org.timepedia.chronoscope.client.browser.ChartEventHandler">
