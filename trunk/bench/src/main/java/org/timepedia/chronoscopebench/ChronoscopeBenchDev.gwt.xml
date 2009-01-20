@@ -4,7 +4,6 @@
 
   <entry-point class='org.timepedia.chronoscopebench.client.ChartBench'/>
   <set-property name="user.agent" value="safari"/>
-  <set-property name="selectorCapability" value="js"/>
   <set-property name="hasflash" value="yes"/>
 </module>
 

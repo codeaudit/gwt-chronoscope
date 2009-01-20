@@ -10,7 +10,6 @@
 
     <entry-point class="org.timepedia.chronoscope.gviz.gadget.client.GVizChronoscopeGadget"/>
     <set-property name="user.agent" value="safari"/>
-    <set-property name="selectorCapability" value="js"/>
     <set-property name="hasflash" value="yes"/>
     <set-property name="export" value="no"/>
 </module>
