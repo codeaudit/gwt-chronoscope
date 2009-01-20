@@ -9,7 +9,6 @@
   <entry-point class="org.timepedia.chronoscope.gviz.api.client.GVizChronoscopeAPI" />
   <set-property name="export" value="yes"/>
   <set-property name="user.agent" value="safari"/>
-  <set-property name="selectorCapability" value="js"/>
   <set-property name="hasflash" value="yes"/>
 
   <add-linker name="xs"/>
