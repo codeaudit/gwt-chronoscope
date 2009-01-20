@@ -8,18 +8,17 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Focus;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
 import org.timepedia.chronoscope.client.InfoWindowEvent;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.JavascriptHelper;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverEvent;
@@ -29,6 +28,7 @@ import org.timepedia.chronoscope.client.event.PlotMovedHandler;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.overlays.Marker;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
@@ -38,8 +38,6 @@ import org.timepedia.exporter.client.ExporterUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import gwtquery.client.Properties;
 
 /**
  *
@@ -304,7 +302,21 @@ public class ChronoscopeVisualization implements Exportable {
         cp.getChart().getPlot().setFocus(focus);
       }
     }
-    ((DefaultXYPlot)cp.getChart().getPlot()).redraw(true);
+    ((DefaultXYPlot) cp.getChart().getPlot()).redraw(true);
+  }
+
+  final static class Properties extends JavaScriptObject {
+
+    protected Properties() {
+    }
+
+    public native String get(String key) /*-{
+       return this[key];
+    }-*/;
+
+    public native int getInt(String key) /*-{
+       return this[key];
+    }-*/;
   }
 
   private native double getDate(Properties opts, String field) /*-{
