@@ -47,6 +47,8 @@ public class GssProperties {
 
   public int width = 1;
 
+  public String pointShape = "circle";
+
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;
