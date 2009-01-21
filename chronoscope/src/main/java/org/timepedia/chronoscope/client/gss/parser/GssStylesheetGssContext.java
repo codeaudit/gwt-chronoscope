@@ -1,9 +1,10 @@
 package org.timepedia.chronoscope.client.gss.parser;
 
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.gss.GssPropertyManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,14 +55,15 @@ public class GssStylesheetGssContext extends DefaultGssContext {
             .getBestSpecificity();
       }
     });
-    for(GssRuleMatch match : matched) {
+    for (GssRuleMatch match : matched) {
       applyProperties(match.getProperties(), props);
     }
     return props;
   }
 
-  private void applyProperties(List<GssProperty> properties, GssProperties props) {
-    for(GssProperty property : properties) {
+  private void applyProperties(List<GssProperty> properties,
+      GssProperties props) {
+    for (GssProperty property : properties) {
       applyProperty(property, props);
     }
   }
@@ -69,19 +71,10 @@ public class GssStylesheetGssContext extends DefaultGssContext {
   private void applyProperty(GssProperty property, GssProperties props) {
     String pname = property.getPropertyName();
     String pval = property.getPropertyValue();
+    GssPropertyManager.GssPropertyType type = GssPropertyManager
+        .lookupGssPropertyType(pname);
 
-    if("color".equals(pname))
-        props.color=new Color(pval);
-    else if("background-color".equals(pname))
-        props.bgColor=new Color(pval);
-    else if("radius".equals(pname))
-      props.size=Integer.parseInt(pval);
-    else if("font-size".equals(pname))
-      props.fontSize=pval;
-    else if("line-width".equals(pname))
-      props.lineThickness = Double.parseDouble(pval);
-    else if("opacity".equals(pname))
-      props.transparency = Double.parseDouble(pval);
+    type.setPropertyFromString(props, pval);
   }
 
   private List<GssRuleMatch> findAllMatchingRules(GssElement gssElem,
