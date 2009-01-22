@@ -47,7 +47,7 @@ public class GssSelector {
     return lspecificity;
   }
 
-  public boolean matches(GssElement gssElem) {
+  public boolean matches(GssElement gssElem, String pseudoElt) {
     int endIdx = simpleSelectors.size() - 1;
     while (endIdx >= 0) {
       if (gssElem == null) {
@@ -55,7 +55,7 @@ public class GssSelector {
       }
 
       GssSimpleSelector gssSimple = simpleSelectors.get(endIdx);
-      if (!gssSimple.matches(gssElem)) {
+      if (!gssSimple.matches(gssElem, pseudoElt)) {
         return false;
       }
       gssElem = gssElem.getParentGssElement();
@@ -93,12 +93,12 @@ public class GssSelector {
       this.className = className;
     }
 
-    public boolean matches(GssElement gssElem) {
+    public boolean matches(GssElement gssElem, String pseudoElt) {
       if (elementName.equals(gssElem.getType()) || "*".equals(elementName)) {
         if (className == null) {
           return true;
         } else {
-          return gssElem.getTypeClass().contains(className);
+          return (gssElem.getTypeClass()+" "+pseudoElt).contains(className);
         }
       }
       return false;

@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.gss.parser;
 
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -18,10 +17,13 @@ import java.util.Map;
  */
 public class GssStylesheetGssContext extends DefaultGssContext {
 
-  private List<GssRule> rules;
+  private List<GssRule> rules = new ArrayList<GssRule>();
 
   private Map<GssElement, GssProperties> propertyMap
       = new HashMap<GssElement, GssProperties>();
+
+  public GssStylesheetGssContext() {
+  }
 
   public GssStylesheetGssContext(String stylesheet) {
     try {
@@ -42,10 +44,12 @@ public class GssStylesheetGssContext extends DefaultGssContext {
 
   @Override
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
-    GssProperties props = propertyMap.get(gssElem);
+    boolean notPseudo = pseudoElt != null && !"".equals(pseudoElt);
+    GssProperties props = notPseudo
+        ? propertyMap.get(gssElem) : null;
     if (props == null) {
       props = super.getProperties(gssElem, pseudoElt);
-      propertyMap.put(gssElem, props);
+      if(notPseudo) propertyMap.put(gssElem, props);
     }
     List<GssRuleMatch> matched = findAllMatchingRules(gssElem, pseudoElt);
     Collections.sort(matched, new Comparator<GssRuleMatch>() {
@@ -83,7 +87,7 @@ public class GssStylesheetGssContext extends DefaultGssContext {
     for (GssRule testRule : rules) {
       int bestSpecificity = -1;
       for (GssSelector testSelector : testRule.getSelectors()) {
-        if (testSelector.matches(gssElem)) {
+        if (testSelector.matches(gssElem, pseudoElt)) {
           bestSpecificity = Math
               .max(bestSpecificity, testSelector.getSpecificity());
         }
