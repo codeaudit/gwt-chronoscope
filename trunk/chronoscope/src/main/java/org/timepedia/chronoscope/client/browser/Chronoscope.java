@@ -227,7 +227,7 @@ public class Chronoscope implements Exportable {
   }
 
   public static String generateId() {
-    return "ZZchrono" + globalChartNumber++;
+    return "chart" + globalChartNumber++;
   }
 
   public static String getFontBookServiceEndpoint() {
@@ -302,14 +302,6 @@ public class Chronoscope implements Exportable {
   public static void useGwtTheme(Theme theme) {
     currentTheme = theme;
     ThemeStyleInjector.injectTheme(theme);
-  }
-
-  /**
-   * Given the ID of the DOM element containing the chart, we construct a
-   * GssContext
-   */
-  protected static GssContext createGssContext(String id) {
-    return new CssGssContext(id);
   }
 
   static {
@@ -387,7 +379,7 @@ public class Chronoscope implements Exportable {
       if (Chronoscope.isMicroformatsEnabled()) {
         Microformats.initializeMicroformats(Chronoscope.this);
       }
-
+      
       if (ChronoscopeOptions.isHistorySupportEnabled()) {
         GwtHistoryManagerImpl.initHistory();
       }

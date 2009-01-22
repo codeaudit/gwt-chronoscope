@@ -22,7 +22,7 @@ public class MockGssProperties extends GssProperties {
     this.shadowOffsetX = 0;
     this.shadowOffsetY = 0;
     this.size = 1;
-    this.transparency = 1;
+    this.transparency = 1.0;
     this.visible = true;
     
   }

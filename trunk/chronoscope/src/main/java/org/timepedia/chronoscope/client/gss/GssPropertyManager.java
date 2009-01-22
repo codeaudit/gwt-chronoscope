@@ -42,9 +42,15 @@ public class GssPropertyManager {
     return elementMap.values().iterator();
   }
 
+  public static Iterator<GssPropertyType> getAllProperties() {
+    return propertyMap.values().iterator();
+  }
+  
   public static class GssElementType {
 
     final private String typeName;
+
+    private String[] classes;
 
     private GssElementType[] childElementTypes;
 
@@ -62,10 +68,16 @@ public class GssPropertyManager {
       return exampleString;
     }
 
+    public String[] getClasses() {
+      return classes;
+    }
+
     protected GssElementType(String typeName, String[] classes,
         GssElementType[] childElementTypes, GssPropertyType[] propertyTypes,
         String docString, String exampleString) {
       this.typeName = typeName;
+      this.classes = classes;
+
       this.childElementTypes = childElementTypes;
       this.docString = docString;
       this.exampleString = exampleString;
@@ -346,7 +358,8 @@ public class GssPropertyManager {
       ;
 
   public static final GssElementType GSS_LINE_TYPE = new GssElementType("line",
-      new GssElementType[0], new GssPropertyType[]{GSS_LINE_THICKNESS_PROPERTY},
+      new GssElementType[]{GSS_FILL_TYPE},
+      new GssPropertyType[]{GSS_LINE_THICKNESS_PROPERTY},
       "Controls styles used for line rendering",
       "line { line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;
@@ -354,12 +367,28 @@ public class GssPropertyManager {
 
   public static final GssElementType GSS_SERIES_TYPE = new GssElementType(
       "series", new String[]{"selected", "disabled", "s#"},
-      new GssElementType[]{GSS_FILL_TYPE, GSS_LINE_TYPE},
+      new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
           GSS_COLOR_PROPERTY, GSS_VISBILITY_PROPERTY},
       "for each time series, there is a series element with class s#, for example, the first time series dataset is represented by series.s0, and the second by series.s1",
       "series.s1 line { color: green } /* Make the second times series line green */")
       ;
 
+   public static final GssElementType GSS_LABEL_TYPE = new GssElementType(
+      "domainmarker", new String[0],
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
+        GSS_VISBILITY_PROPERTY, GSS_COLOR_PROPERTY, GSS_FONT_FAMILY_PROPERTY, GSS_FONT_WEIGHT_PROPERTY, GSS_FONT_SIZE_PROPERTY},
+      "A label controls chart elements which have associated text like markers, tick labels, legend labels, etc.",
+      "label { color: blue; font-size: 12pt } /* Make all labels blue and 12pt */")
+      ;
+   public static final GssElementType GSS_DOMAINMARKER_TYPE = new GssElementType(
+      "domainmarker", new String[0],
+      new GssElementType[] { GSS_LABEL_TYPE},
+      new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
+        GSS_VISBILITY_PROPERTY},
+      "A highlighting marker that stretches along the X axis.",
+      "domainmarker { background-color: green; opacity: 0.3 } /* Make the highlight green and 70% transparent */")
+      ;
 
 }

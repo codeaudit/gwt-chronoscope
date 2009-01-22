@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.java2d;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.gss.parser.GssStylesheetGssContext;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 
 import java.awt.Image;
@@ -36,7 +37,7 @@ public class ChronoscopeImageUtil {
       int height, String css, boolean interactive, double domainOrigin,
       double currentDomain, boolean az) {
     StaticImageChartPanel sicp = new StaticImageChartPanel(ds, interactive,
-        width, height);
+        width, height, new GssStylesheetGssContext(css == null ? "" : css));
 
     Chart c = sicp.getChart();
 
