@@ -25,6 +25,9 @@ public class GssParser {
 
   public static List<GssRule> parse(String stylesheet)
       throws GssParseException {
+    if (stylesheet == null || "".equals(stylesheet.trim())) {
+      return new ArrayList<GssRule>();
+    }
     // first separate rules by splitting on "}"
     String rules[] = stylesheet.split("}");
     ArrayList<GssRule> gssRules = new ArrayList<GssRule>();
@@ -117,8 +120,7 @@ public class GssParser {
   }
 
   public static void main(String[] args) throws GssParseException {
-    List<GssRule> rules = parse(
-        "axes axis.domain, label { background-color: red }");
+    List<GssRule> rules = parse("");
     System.err.println(rules);
   }
 }
