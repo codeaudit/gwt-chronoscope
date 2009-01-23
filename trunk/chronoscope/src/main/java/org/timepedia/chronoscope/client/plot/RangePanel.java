@@ -37,7 +37,7 @@ final class RangePanel extends AuxiliaryPanel {
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
   // bound to.  The relationship from dataset to axis is 
   // many-to-one.
-  private List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
+  private RangeAxis[] rangeAxes;
 
   public RangePanel() {
     
@@ -56,7 +56,7 @@ final class RangePanel extends AuxiliaryPanel {
     return leftPanel;
   }
 
-  public List<RangeAxis> getRangeAxes() {
+  public RangeAxis[] getRangeAxes() {
     return this.rangeAxes;
   }
   
@@ -149,7 +149,7 @@ final class RangePanel extends AuxiliaryPanel {
     }
   }
 
-  private List<RangeAxis> autoAssignDatasetAxes(Datasets datasets) {
+  private RangeAxis[] autoAssignDatasetAxes(Datasets datasets) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
 
@@ -189,7 +189,7 @@ final class RangePanel extends AuxiliaryPanel {
       rangeAxes.add(ra);
     }
 
-    return rangeAxes;
+    return (RangeAxis[])rangeAxes.toArray(new RangeAxis[0]);
   }
   
   private boolean isDrawRequired() {
