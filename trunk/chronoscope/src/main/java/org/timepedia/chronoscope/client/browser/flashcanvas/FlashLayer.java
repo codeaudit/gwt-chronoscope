@@ -182,7 +182,11 @@ public class FlashLayer extends AbstractLayer {
   }
 
   public void fillRect(double x, double y, double w, double h) {
-    cmd("fr", x, y, w, h);
+    beginPath();
+    moveTo(x,y);
+    rect(x,y,w,h);
+    fill();
+//    cmd("fr", x, y, w, h);
   }
 
   public Bounds getBounds() {
