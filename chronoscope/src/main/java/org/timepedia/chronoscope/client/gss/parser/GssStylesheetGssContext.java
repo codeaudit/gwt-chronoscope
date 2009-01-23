@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.gss.DefaultGssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.gss.GssPropertyManager;
+import org.timepedia.chronoscope.client.render.GssElementImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class GssStylesheetGssContext extends DefaultGssContext {
 
   @Override
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
-    boolean notPseudo = pseudoElt != null && !"".equals(pseudoElt);
+    boolean notPseudo = pseudoElt == null || "".equals(pseudoElt);
     GssProperties props = notPseudo
         ? propertyMap.get(gssElem) : null;
     if (props == null) {
@@ -119,5 +120,10 @@ public class GssStylesheetGssContext extends DefaultGssContext {
       this.bestSpecificity = bestSpecificity;
       this.properties = properties;
     }
+  }
+
+  public static void main(String[] args) {
+    GssStylesheetGssContext gss=new GssStylesheetGssContext("point.focus {color: red}");
+    gss.getProperties(new GssElementImpl("point", null), "");
   }
 }
