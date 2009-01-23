@@ -187,6 +187,11 @@ final class BottomPanel extends AuxiliaryPanel {
     // restore original endpoints
     origVisPlotDomain.copyTo(plot.getDomain());
 
+    // TODO: hack, to prevent double-drawn blended filled line areas
+    // replace with a drawPlot routine that can draw with a custom layer
+    // and plotBounds
+    plot.getPlotLayer().clear();
+    plot.drawBackground();
     overviewDrawn = true;
   }
 
