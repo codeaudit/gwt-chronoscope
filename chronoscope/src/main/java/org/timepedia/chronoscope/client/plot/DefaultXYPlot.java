@@ -325,7 +325,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   @Export("getAxis")
   public RangeAxis getRangeAxis(int datasetIndex) {
-    return rangePanel.getRangeAxes().get(datasetIndex);
+    return rangePanel.getRangeAxes()[datasetIndex];
   }
 
   public double getSelectionBegin() {
@@ -698,7 +698,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
-    rangePanel.getRangeAxes().get(dataset).setAutoZoomVisibleRange(autoZoom);
+    rangePanel.getRangeAxes()[dataset].setAutoZoomVisibleRange(autoZoom);
   }
 
   public void setDatasetRenderer(int datasetIndex,
