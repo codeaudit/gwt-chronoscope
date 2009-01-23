@@ -156,7 +156,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void addOverlay(Overlay overlay) {
     overlays.add(overlay);
     overlay.setPlot(this);
-    this.drawOverlays(plotLayer);
+    //TODO: should we really redraw here? Kinda expensive if you want to bulk
+    // add hundreds of overlays
+    redraw(true);
   }
 
   public HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
@@ -615,7 +617,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     if (plotDomainChanged || forceCenterPlotRedraw) {
       plotLayer.clear();
-      background.paint(this, plotLayer, visDomain.getStart(), visDomain.length());
+      drawBackground();
       rangePanel.draw();
 
       if (canDrawFast) {
@@ -642,6 +644,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.flipCanvas();
   }
 
+  public void drawBackground() {
+    background.paint(this, plotLayer, visDomain.getStart(), visDomain.length());
+  }
+
   /**
    * @gwt.export
    */
@@ -653,7 +659,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
     visDomain = plotRenderer.calcWidestPlotDomain();
-    redraw();
     tmpPlotDomain.copyTo(visDomain);
     overlays = oldOverlays;
     redraw(true);
@@ -1154,8 +1159,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private void initAndRedraw() {
-    init(this.view);
-    redraw(true);
+//    init(this.view);
+//    redraw(true);
+    reloadStyles();
   }
 
   Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
