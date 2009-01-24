@@ -360,6 +360,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotRenderer.init();
     } else {
       plotRenderer.resetMipMapLevels();
+      plotRenderer.checkForGssChanges();
     }
 
     widestDomain = plotRenderer.calcWidestPlotDomain();
@@ -575,8 +576,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public double rangeToScreenY(double dataY, int datasetIndex) {
-    double userY = getRangeAxis(datasetIndex).dataToUser(dataY);
-    return plotBounds.height - userY * plotBounds.height;
+    return plotBounds.height
+        - getRangeAxis(datasetIndex).dataToUser(dataY) * plotBounds.height;
   }
 
   public double rangeToWindowY(double rangeY, int datasetIndex) {
@@ -1107,8 +1108,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    MipMap currMipMap = plotRenderer
-        .getDrawableDataset(datasetIndex).currMipMap;
+    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap
+        ;
 
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
