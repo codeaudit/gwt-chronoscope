@@ -228,7 +228,7 @@ public final class CompositeAxisPanel implements Panel, GssElement {
     if (childPanel != null) {
       if (childPanel.layer != null) {
         childPanel.layer.clearTextLayer(childPanel.getTextLayerName());
-        childPanel.layer.clear();
+//        childPanel.layer.clear();
       }
       childPanel.setParentPanel(null);
       childPanel.setPlot(null);

@@ -18,8 +18,17 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     implements GssElement, Exportable {
   
   private boolean isGssInitialized = false;
-  
-  protected GssProperties gssDisabledFillProps, gssDisabledLineProps, 
+  private boolean customInstalled = false;
+
+  public boolean isCustomInstalled() {
+    return customInstalled;
+  }
+
+  public void setCustomInstalled(boolean customInstalled) {
+    this.customInstalled = customInstalled;
+  }
+
+  protected GssProperties gssDisabledFillProps, gssDisabledLineProps,
   gssDisabledPointProps, gssFillProps, gssFocusProps, gssHoverProps,
   gssLineProps, gssPointProps;
   
