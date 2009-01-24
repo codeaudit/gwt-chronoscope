@@ -302,6 +302,16 @@ public class GssPropertyManager {
     }
   };
 
+   public static final GssPropertyType GSS_DISPLAY_PROPERTY
+      = new GssPropertyType("display", "",
+      GssPropertyType.TypeUnits.STRING,
+      "override display type for series, e.g. line, bar, step") {
+    @Override
+    public void setPropertyString(GssProperties props,
+       String str) {
+      props.display = str;
+    }
+  };
 
   public static final GssPropertyType GSS_VISBILITY_PROPERTY
       = new GssPropertyType("visibility", "", GssPropertyType.TypeUnits.STRING,

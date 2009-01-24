@@ -11,6 +11,7 @@ import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.MipMapRegion;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
+import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -257,8 +258,17 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     DrawableDataset<T> drawableDataset = new DrawableDataset<T>();
     drawableDataset.dataset = dataset;
-    DatasetRenderer<T> renderer = this.datasetRendererMap.get(dataset);
-    configRenderer(renderer, datasetIndex);
+    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
+    GssProperties seriesProp = view.getGssProperties(gssElem, "");
+    DatasetRenderer<T> renderer = null;
+
+    if(!"auto".equals(seriesProp.display)) {
+      renderer = this.datasetRendererMap.newDatasetRenderer(seriesProp.display);
+    }
+    else
+      renderer = this.datasetRendererMap.get(dataset);
+
+    configRenderer(renderer, datasetIndex, gssElem);
     drawableDataset.setRenderer(renderer);
     drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain()
         .getMipMap(0);
@@ -325,8 +335,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
   public void setDatasetRenderer(int datasetIndex,
       DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
-
-    configRenderer(renderer, datasetIndex);
+    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
+    configRenderer(renderer, datasetIndex, gssElem);
     DrawableDataset<T> dds = this.getDrawableDataset(datasetIndex);
     dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
     dds.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
@@ -380,10 +390,10 @@ public class XYPlotRenderer<T extends Tuple2D> {
     }
   }
 
-  private void configRenderer(DatasetRenderer<T> renderer, int datasetIndex) {
+  private void configRenderer(DatasetRenderer<T> renderer, int datasetIndex,
+      GssElement gssElem) {
     ArgChecker.isNotNull(renderer, "renderer");
 
-    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
     renderer.setParentGssElement(gssElem);
     renderer.setPlot(this.plot);
     renderer.setDatasetIndex(datasetIndex);
@@ -397,5 +407,28 @@ public class XYPlotRenderer<T extends Tuple2D> {
    */
   private int getMaxDrawableDataPoints(DrawableDataset dds) {
     return Math.min(dds.maxDrawablePoints, plot.getMaxDrawableDataPoints());
+  }
+
+  public void checkForGssChanges() {
+    int index = 0;
+    for (DrawableDataset<T> dds : this.drawableDatasets) {
+
+      dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
+      GssElement gssElem = new GssElementImpl("series", null, "s"+index);
+      GssProperties props = view.getGssProperties(gssElem, "");
+      String renderType = dds.dataset.getPreferredRenderer();
+      if(renderType == null || renderType.equals("")) renderType = "line";
+      if(!"auto".equals(props.display)) {
+        renderType = props.display;
+      }
+      DatasetRenderer dr = datasetRendererMap.newDatasetRenderer(renderType);
+      configRenderer(dr, index, gssElem);
+      dds.setRenderer(dr);
+      dds.maxDrawablePoints = dr.getMaxDrawableDatapoints();
+
+      index++;
+
+    }
+    sortDatasetsIntoRenderOrder();
   }
 }

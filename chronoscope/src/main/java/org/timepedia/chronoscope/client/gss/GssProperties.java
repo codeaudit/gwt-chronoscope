@@ -49,6 +49,8 @@ public class GssProperties {
 
   public String pointShape = "circle";
 
+  public String display = "auto";
+  
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;
