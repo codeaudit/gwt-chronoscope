@@ -705,6 +705,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setDatasetRenderer(int datasetIndex,
       DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
+    renderer.setCustomInstalled(true);
     this.plotRenderer.setDatasetRenderer(datasetIndex, renderer);
     this.initAndRedraw();
   }

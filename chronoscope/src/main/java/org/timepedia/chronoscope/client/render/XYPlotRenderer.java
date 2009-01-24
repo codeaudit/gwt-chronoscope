@@ -79,7 +79,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
       int domainStartIdx = bestMipMapRegion.getStartIndex();
       int domainEndIdx = bestMipMapRegion.getEndIndex();
-      
+
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
@@ -262,11 +262,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
     GssProperties seriesProp = view.getGssProperties(gssElem, "");
     DatasetRenderer<T> renderer = null;
 
-    if(!"auto".equals(seriesProp.display)) {
+    if (!"auto".equals(seriesProp.display)) {
       renderer = this.datasetRendererMap.newDatasetRenderer(seriesProp.display);
-    }
-    else
+    } else {
       renderer = this.datasetRendererMap.get(dataset);
+    }
 
     configRenderer(renderer, datasetIndex, gssElem);
     drawableDataset.setRenderer(renderer);
@@ -412,20 +412,22 @@ public class XYPlotRenderer<T extends Tuple2D> {
   public void checkForGssChanges() {
     int index = 0;
     for (DrawableDataset<T> dds : this.drawableDatasets) {
+      if (!dds.getRenderer().isCustomInstalled()) {
 
-      dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
-      GssElement gssElem = new GssElementImpl("series", null, "s"+index);
-      GssProperties props = view.getGssProperties(gssElem, "");
-      String renderType = dds.dataset.getPreferredRenderer();
-      if(renderType == null || renderType.equals("")) renderType = "line";
-      if(!"auto".equals(props.display)) {
-        renderType = props.display;
+        GssElement gssElem = new GssElementImpl("series", null, "s" + index);
+        GssProperties props = view.getGssProperties(gssElem, "");
+        String renderType = dds.dataset.getPreferredRenderer();
+        if (renderType == null || renderType.equals("")) {
+          renderType = "line";
+        }
+        if (!"auto".equals(props.display)) {
+          renderType = props.display;
+        }
+        DatasetRenderer dr = datasetRendererMap.newDatasetRenderer(renderType);
+        configRenderer(dr, index, gssElem);
+        dds.setRenderer(dr);
+        dds.maxDrawablePoints = dr.getMaxDrawableDatapoints();
       }
-      DatasetRenderer dr = datasetRendererMap.newDatasetRenderer(renderType);
-      configRenderer(dr, index, gssElem);
-      dds.setRenderer(dr);
-      dds.maxDrawablePoints = dr.getMaxDrawableDatapoints();
-
       index++;
 
     }
