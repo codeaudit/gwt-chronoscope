@@ -47,7 +47,6 @@ public class DomainAxisPanel extends AxisPanel {
   }
 
   public void draw() {
-
     if (!GRID_ONLY) {
       clearAxis(layer, bounds);
       drawHorizontalLine(layer, bounds);
@@ -170,7 +169,7 @@ public class DomainAxisPanel extends AxisPanel {
   
   @Override
   protected void initHook() {
-    if (!parentPanel.getPosition().isHorizontal()) {
+    if (!((CompositeAxisPanel)parent).getPosition().isHorizontal()) {
       throw new RuntimeException("DomainAxisPanel only works in a horizontal panel");
     }
     

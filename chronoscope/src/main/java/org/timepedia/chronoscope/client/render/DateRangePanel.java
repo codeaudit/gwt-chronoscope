@@ -54,25 +54,25 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing {
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
     final String typicalDateChars = "0123456789-";
-    bounds.height = this.calcHeight("X", layer);
-    typicalCharWidth = calcWidth(typicalDateChars, layer) / typicalDateChars
-        .length();
+    bounds.height = stringSizer.getHeight("X", gssProperties);
+    typicalCharWidth = stringSizer.getWidth(typicalDateChars, gssProperties) / 
+        typicalDateChars.length();
 
     if (isDateDomain) {
       if (compactMode) {
         final String typicalShortDateRange = "12/12/00" + DATE_DELIM_SHORT
             + "12/12/00";
-        bounds.width = this.calcWidth(typicalShortDateRange, layer);
+        bounds.width = stringSizer.getWidth(typicalShortDateRange, gssProperties);
         //resizeToMinimalWidth();
       } else {
         final String typicalLongDateRange = "12/12/0000" + DATE_DELIM_LONG
             + "12/12/0000";
-        bounds.width = this.calcWidth(typicalLongDateRange, layer);
+        bounds.width = stringSizer.getWidth(typicalLongDateRange, gssProperties);
         //resizeToIdealWidth();
       }
     } else {
       final String typicalIntRange = "00000 - 00000";
-      bounds.width = this.calcWidth(typicalIntRange, layer);
+      bounds.width = stringSizer.getWidth(typicalIntRange, gssProperties);
     }
   }
 

@@ -35,11 +35,11 @@ public class DatasetLegendPanel extends AbstractPanel {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(gssProperties, "gssProperties");
     
-    lblHeight = this.calcHeight("X", layer);
+    lblHeight = stringSizer.getHeight("X", gssProperties);
     
     this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
     
-    bounds.width = layer.getWidth(); 
+    bounds.width = view.getWidth(); 
     
     Bounds b = calcBounds(layer, plot.getDatasets().size());
     this.bounds.height = b.height;
@@ -120,7 +120,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     
     // Compute the width of the dataset text label, taking into account historical
     // widths of this label.
-    double txtWidth = calcWidth(seriesLabel, layer);
+    double txtWidth = stringSizer.getWidth(seriesLabel, gssProperties);
     if (txtWidth > maxLabelWidths[datasetIdx]) {
       maxLabelWidths[datasetIdx] = txtWidth;
     }
@@ -158,7 +158,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     for (int i = 0; i < estMaxWidths.length; i++) {
       int medianIdx = datasets.get(i).getNumSamples() >> 1;
       String lbl = createDatasetLabel(plot, i, medianIdx);
-      estMaxWidths[i] = this.calcWidth(lbl, layer);
+      estMaxWidths[i] = stringSizer.getWidth(lbl, gssProperties);
     }
     
     return estMaxWidths;

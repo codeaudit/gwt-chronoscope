@@ -26,7 +26,9 @@ public class RangeAxisPanel extends AxisPanel {
   private boolean boundsSet;
 
   private GssProperties gridProperties, tickProperties;
-
+  
+  private Bounds drawBounds = new Bounds();
+  
   private double maxLabelWidth, maxLabelHeight;
 
   private RangeAxis rangeAxis;
@@ -36,19 +38,23 @@ public class RangeAxisPanel extends AxisPanel {
   public void computeLabelWidths(View view) {
     final String valueAxisLabel = valueAxis.getLabel();
 
-    maxLabelWidth = getLabelWidth(view, getDummyLabel(), 0) + 10;
-    maxLabelHeight = getLabelHeight(view, getDummyLabel(), 0) + 10;
-    axisLabelWidth = getLabelWidth(view, valueAxisLabel, rotationAngle);
-    axisLabelHeight = getLabelHeight(view, valueAxisLabel, rotationAngle);
+    maxLabelWidth = stringSizer.getRotatedWidth(getDummyLabel(), gssProperties, 0) + 10;
+    maxLabelHeight = stringSizer.getRotatedHeight(getDummyLabel(), gssProperties, 0) + 10;
+    axisLabelWidth = stringSizer.getRotatedWidth(valueAxisLabel, gssProperties, rotationAngle);
+    axisLabelHeight = stringSizer.getRotatedHeight(valueAxisLabel, gssProperties, rotationAngle);
   }
 
   public void draw() {
+    bounds.copyTo(drawBounds);
+    drawBounds.x += getLayerOffsetX();
+    drawBounds.y += getLayerOffsetY();
+    
     double tickPositions[] = rangeAxis.computeTickPositions();
     layer.save();
-
+    
     if (!GRID_ONLY) {
-      clearAxis(layer, bounds);
-      drawLine(layer, bounds);
+      clearAxis(layer, drawBounds);
+      drawLine(layer, drawBounds);
     }
 
     layer.setTransparency(1.0f);
@@ -58,12 +64,12 @@ public class RangeAxisPanel extends AxisPanel {
     final double axisInterval = valueAxis.getExtrema().length();
     final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
-      drawTick(layer, tickPositions[i], tickPosition0, axisInterval, bounds,
+      drawTick(layer, tickPositions[i], tickPosition0, axisInterval, drawBounds,
           GRID_ONLY);
     }
 
     if (!GRID_ONLY) {
-      drawAxisLabel(layer, bounds, plot.getChart());
+      drawAxisLabel(layer, drawBounds, plot.getChart());
     }
 
     layer.restore();
@@ -104,7 +110,7 @@ public class RangeAxisPanel extends AxisPanel {
     tickProperties = view.getGssProperties(tickGssElem, "");
     gridProperties = view.getGssProperties(gridGssElem, "");
 
-    if (this.getParentPanel().getPosition() == Position.RIGHT) {
+    if (getParentPosition() == Position.RIGHT) {
       rotationAngle = Math.PI / 2;
     } else {
       rotationAngle = -(Math.PI / 2);
@@ -117,7 +123,7 @@ public class RangeAxisPanel extends AxisPanel {
     final double computedAxisLabelWidth = labelProperties.visible
         ? axisLabelWidth + widthBuffer : 0;
 
-    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+    boolean isLeft = getParentPosition() == Position.LEFT;
     if (isInnerMost(isLeft)) {
       if (getTickPosition() == RangeAxisPanel.TickPosition.INSIDE) {
         w = computedAxisLabelWidth;
@@ -147,23 +153,14 @@ public class RangeAxisPanel extends AxisPanel {
     layer.translate(bounds.x - 1, bounds.y - 1);
     layer.scale(bounds.width + 1, bounds.height + 1);
     layer.fillRect(0, 0, 1, 1);
-    //    
-    // layer.beginPath();
-    // layer.rect(0, 0, 1, 1);
-    // layer.setLineWidth(1.0f / bounds.width);
-    // layer.stroke();
-    // layer.fill();
     layer.restore();
   }
 
   private void drawAxisLabel(Layer layer, Bounds bounds, Chart chart) {
     if (labelProperties.visible) {
-      boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+      boolean isLeft = getParentPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
 
-      // double dir = (isLeft ? bounds
-      // .width - (isInnerMost ? 0 : axis.getMaxLabelWidth() - 10) - axis
-      // .getAxisLabelWidth() : (isInnerMost ? 0 : axis.getMaxLabelWidth()));
       double dir = isLeft ? 0 : (isInnerMost ? 0 : maxLabelWidth + 1);
       double x = bounds.x + dir;
       double y = bounds.y + (bounds.height / 2) - (axisLabelHeight / 2);
@@ -183,7 +180,7 @@ public class RangeAxisPanel extends AxisPanel {
         gssProperties.fontWeight, gssProperties.fontSize);
     double labelHeight = layer.stringHeight(label, gssProperties.fontFamily,
         gssProperties.fontWeight, gssProperties.fontSize);
-    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+    boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
     if ("inside".equals(gssProperties.tickPosition)) {
       dir = isLeft ? 5 + 1 : -labelWidth - 5;
@@ -214,7 +211,7 @@ public class RangeAxisPanel extends AxisPanel {
 
   private void drawLine(Layer layer, Bounds bounds) {
     layer.setFillColor(tickProperties.color);
-    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+    boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? bounds.width : 0);
     if ("inside".equals(gssProperties.tickPosition)) {
       if (isInnerMost(isLeft)) {
@@ -236,7 +233,7 @@ public class RangeAxisPanel extends AxisPanel {
     double uy = bounds.y + 
         (bounds.height - ((range - rangeLow) / rangeInterval * bounds.height));
     
-    boolean isLeft = parentPanel.getPosition() == Position.LEFT;
+    boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? (bounds.width - tickWidth) : 0);
     if ("inside".equals(gssProperties.tickPosition)) {
       if (isInnerMost(isLeft)) {
@@ -271,25 +268,24 @@ public class RangeAxisPanel extends AxisPanel {
         + ((maxDig == 1) ? "" : "." + "000000000".substring(0, maxDig - 1));
   }
 
-  private int getLabelHeight(View view, String str, double rotationAngle) {
-    return view.getCanvas().getRootLayer().rotatedStringHeight(str,
-        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize);
-  }
-
-  private int getLabelWidth(View view, String str, double rotationAngle) {
-    return view.getCanvas().getRootLayer().rotatedStringWidth(str,
-        rotationAngle, gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize);
-  }
-
   private TickPosition getTickPosition() {
     return "inside".equals(gssProperties.tickPosition) ? TickPosition.INSIDE
         : TickPosition.OUTSIDE;
   }
 
   private boolean isInnerMost(boolean isLeftPanel) {
-    return parentPanel.indexOf(this) == (isLeftPanel
-        ? parentPanel.getAxisCount() - 1 : 0);
+    CompositeAxisPanel parentContainer = (CompositeAxisPanel)this.parent;
+    
+    return parentContainer.indexOf(this) == (isLeftPanel
+        ? parentContainer.getAxisCount() - 1 : 0);
+  }
+  
+  private Position getParentPosition() {
+    return ((CompositeAxisPanel)parent).getPosition();
+  }
+
+
+  private static void log(Object msg) {
+    System.out.println("RangeAxisPanel> " + msg);
   }
 }

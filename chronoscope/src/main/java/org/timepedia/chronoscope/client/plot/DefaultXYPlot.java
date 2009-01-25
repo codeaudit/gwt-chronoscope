@@ -36,6 +36,7 @@ import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+import org.timepedia.chronoscope.client.render.StringSizer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -133,7 +134,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   int plotNumber = 0;
 
   private XYPlotRenderer<T> plotRenderer;
-
+  
+  private StringSizer stringSizer;
+  
   private View view;
 
   private double visibleDomainMax;
@@ -354,6 +357,11 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initViewIndependent(datasets);
 
+    if (stringSizer == null) {
+      stringSizer = new StringSizer();
+    }
+    stringSizer.setCanvas(view.getCanvas());
+    
     if (!plotRenderer.isInitialized()) {
       plotRenderer.setPlot(this);
       plotRenderer.setView(view);
@@ -980,16 +988,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     // Set the positions of the auxiliary panels.
     topPanel.setPosition(0, 0);
     bottomPanel.setPosition(plotBounds.x, plotBounds.bottomY());
+    bottomPanel.setWidth(plotBounds.width);
     rangePanel.setPosition(0, plotBounds.y);
 
-    // Need to re-assign the bottom panel's contained panels to the center plot
-    // area's width, now that we know what it is.
-    bottomPanel.getDomainAxisPanel().getBounds().width = plotBounds.width;
-    bottomPanel.getOverviewAxisPanel().getBounds().width = plotBounds.width;
-    bottomPanel.layout();
-
     rangePanel.setHeight(centerPlotHeight);
-    rangePanel.setCenterGapWidth(plotBounds.width);
+    rangePanel.setWidth(viewWidth);
     rangePanel.layout();
 
     return plotBounds;
@@ -1187,6 +1190,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
+    
+    topPanel.initLayer();
+    rangePanel.initLayer();
+    bottomPanel.initLayer();
   }
 
   /**
@@ -1351,6 +1358,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
     panel.setPlot(this);
     panel.setView(view);
+    panel.setStringSizer(stringSizer);
     panel.init();
   }
 
@@ -1374,5 +1382,9 @@ public class DefaultXYPlot<T extends Tuple2D>
       end = Math.max(end, mipMap.getDomain().getLast());
     }
     return end;
+  }
+
+  private static void log(Object msg) {
+    System.out.println("DefaultXYPlot> " + msg);
   }
 }

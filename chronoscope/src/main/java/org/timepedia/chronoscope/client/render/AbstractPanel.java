@@ -4,6 +4,9 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Skeletal implementation of {@link Panel}, which also provides some helper
  * methods that subclasses will typically need.
@@ -11,21 +14,54 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  * @author Chad Takahashi
  */
 public abstract class AbstractPanel implements Panel {
-  protected GssProperties gssProperties;
-  protected String textLayerName;
   protected Bounds bounds = new Bounds();
-  protected Layer layer;
+  protected GssProperties gssProperties;
+  protected Layer layer;  
+  protected String textLayerName;
+  protected StringSizer stringSizer;
+  protected Panel parent;
   
+  private double layerOffsetX, layerOffsetY;
+
   public final void setGssProperties(GssProperties gssProperties) {
     this.gssProperties = gssProperties;
+  }
+  
+  public List<Panel> getChildren() {
+    return Collections.emptyList();
+  }
+  
+  public Layer getLayer() {
+    return this.layer;
+  }
+  
+  public double getLayerOffsetX() {
+    return this.layerOffsetX;
+  }
+
+  public double getLayerOffsetY() {
+    return this.layerOffsetY;
+  }
+
+  public final Panel getParent() {
+    return this.parent;
   }
   
   public final String getTextLayerName() {
     return this.textLayerName;
   }
   
-  public final void setLayer(Layer layer) {
+  public void setLayer(Layer layer) {
     this.layer = layer;
+  }
+  
+  public void setLayerOffset(double x, double y) {
+    this.layerOffsetX = x;
+    this.layerOffsetY = y;
+  }
+  
+  public final void setParent(Panel parent) {
+    this.parent = parent;
   }
   
   public final void setTextLayerName(String textLayerName) {
@@ -38,16 +74,19 @@ public abstract class AbstractPanel implements Panel {
 
   public final void setPosition(double x, double y) {
     bounds.setPosition(x, y);
+    
+    Panel parentPanel = getParent();
+    layerOffsetX = x + parentPanel.getLayerOffsetX();
+    layerOffsetY = y + parentPanel.getLayerOffsetY();
   }
   
-  protected final int calcHeight(String s, Layer layer) {
-    GssProperties gss = gssProperties;
-    return layer.stringHeight(s, gss.fontFamily, gss.fontWeight, gss.fontSize);
-  }
-
-  protected final int calcWidth(String s, Layer layer) {
-    GssProperties gss = gssProperties;
-    return layer.stringWidth(s, gss.fontFamily, gss.fontWeight, gss.fontSize);
+  public final void setStringSizer(StringSizer stringSizer) {
+    this.stringSizer = stringSizer;
   }
   
+  public String toString() {
+    return "bounds=" + this.bounds +
+        "; layerOffset=(" + layerOffsetX + ", " + layerOffsetY + ")" +
+        "; layerBounds=" + layer.getBounds();
+  }
 }

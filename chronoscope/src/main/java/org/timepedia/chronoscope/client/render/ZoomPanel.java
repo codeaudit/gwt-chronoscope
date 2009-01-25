@@ -35,17 +35,17 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     this.listeners = new ArrayList<ZoomListener>();
   }
   
-  public void init() { 
-    bounds.height = super.calcHeight("X", layer);
+  public void init() {
+    bounds.height = stringSizer.getHeight("X", gssProperties);
     
     // Store the short and long versions of the following strings
     // so that during layout, the container can choose the best fit.
     spaceShort = new UIString("", 2);
-    spaceLong = new UIString("", calcWidth(SPACE, layer) + 1);
+    spaceLong = new UIString("", stringSizer.getWidth(SPACE, gssProperties) + 1);
     zoomPrefixShort = new UIString("", 0);
-    zoomPrefixLong = new UIString(ZOOM_PREFIX, calcWidth(ZOOM_PREFIX, layer));
+    zoomPrefixLong = new UIString(ZOOM_PREFIX, stringSizer.getWidth(ZOOM_PREFIX, gssProperties));
     
-    computeMetrics(layer);
+    computeMetrics();
     
     if (compactMode) {
       resizeToMinimalWidth();
@@ -92,7 +92,7 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
     layer.setStrokeColor(gssProperties.color);
 
     if (!isMetricsComputed) {
-      computeMetrics(layer);
+      computeMetrics();
       isMetricsComputed = true;
     }
     
@@ -117,12 +117,12 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
    * adds another 2 years worth of data, then the "5y" zoom link
    * will now need to be shown).
    */
-  private void computeMetrics(Layer layer) {
+  private void computeMetrics() {
     //fullZoomStringWidth = zoomPrefix.pixelWidth;
     int i = 0;
     for (ZoomInterval zoom : zooms) {
       //fullZoomStringWidth += space.pixelWidth;
-      int w = calcWidth(zoom.getName(), layer);
+      int w = stringSizer.getWidth(zoom.getName(), gssProperties);
       zoomLinkWidths[i++] = w;
       //fullZoomStringWidth += w;
     }

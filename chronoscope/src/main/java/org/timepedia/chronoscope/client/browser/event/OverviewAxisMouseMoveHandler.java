@@ -16,7 +16,7 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public class OverviewAxisMouseMoveHandler extends
   AbstractEventHandler<MouseMoveHandler> implements MouseMoveHandler {
-  
+    
   public void onMouseMove(MouseMoveEvent event) {
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
@@ -32,17 +32,16 @@ public class OverviewAxisMouseMoveHandler extends
     Bounds hiliteBounds = oaPanel.getHighlightBounds(); 
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
     
-    int x = getLocalX(event);
-    int y = getLocalY(event);
+    // Translate the view (x,y) point into an (x,y) point relative to
+    // the OverviewAxisPanel.
+    Bounds plotBounds = plot.getBounds();
+    int x = getLocalX(event) - (int)plotBounds.x;
+    int y = getLocalY(event) - (int)plotBounds.bottomY();
+    
     final boolean isInAxisBounds = overviewAxisBounds.inside(x, y);
     final boolean isDragging = uiAction.isDragging(overviewAxis);
     
-    /*
-    System.out.println("TESTING OverviewAxisMouseMoveHandler: " + 
-        "x=" + x + "; y=" + y + "; overviewAxisBounds: " + overviewAxisBounds +
-        "; inAxisBounds=" + isInAxisBounds + "; dragging=" + isDragging +
-        "; objSrc=" + uiAction.getSource());
-    */
+    //log("onMouseMove(" + x + ", " + y + ")" + ": inAxisBounds=" + isInAxisBounds + "; uiAction.startX=" + uiAction.getStartX());
     
     // Determine appropriate cursor type
     if (isInAxisBounds) {
@@ -55,6 +54,8 @@ public class OverviewAxisMouseMoveHandler extends
     }
     // else, mouse is outside of overview axis, so don't mess with cursor.
     
+    final double viewOffsetX = plotBounds.x;
+    
     if (uiAction.isSelecting(overviewAxis)) {
       chart.setAnimating(true);
 
@@ -63,7 +64,7 @@ public class OverviewAxisMouseMoveHandler extends
       // Determine the start and end domain of the highlight selection
       double startDomainX = toDomainX(uiAction.getStartX(), plot);
       double boundedX = MathUtil.bound(x, overviewAxisBounds.x, overviewAxisBounds.rightX());
-      double endDomainX = toDomainX(boundedX, plot);
+      double endDomainX = toDomainX(boundedX + viewOffsetX, plot);
       if (startDomainX > endDomainX) {
         double tmp = startDomainX;
         startDomainX = endDomainX;
@@ -80,12 +81,13 @@ public class OverviewAxisMouseMoveHandler extends
       // hiliteLeftDomainX represents the domain-x value of the left edge
       // of the highlight window within the overview axis.
       double hiliteLeftX = x - (hiliteBounds.width / 2.0);
-      double hiliteLeftDomainX = toDomainX(hiliteLeftX, plot);
+      double hiliteLeftDomainX = toDomainX(hiliteLeftX + viewOffsetX, plot);
      
       // Need to bound the domain-x value so that the highlight box doesn't
       // run off the overview axis.
       double minHiliteDomain = plot.getWidestDomain().getStart();
-      double maxHiliteDomain = toDomainX(overviewAxisBounds.rightX() - hiliteBounds.width, plot);
+      double maxHiliteDomain = 
+          toDomainX(overviewAxisBounds.rightX() + viewOffsetX - hiliteBounds.width, plot);
       hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 
       plot.moveTo(hiliteLeftDomainX);
@@ -100,4 +102,8 @@ public class OverviewAxisMouseMoveHandler extends
     return plot.getOverviewAxisPanel().getValueAxis().userToData(userX);
   }
 
+  
+  private static void log(Object msg) {
+    System.out.println("OverviewAxisMouseMoveHandler> " + msg);
+  }
 }

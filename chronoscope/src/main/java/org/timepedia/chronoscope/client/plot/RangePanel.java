@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
+import org.timepedia.chronoscope.client.render.Panel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -29,18 +30,16 @@ final class RangePanel extends AuxiliaryPanel {
   private boolean isDrawn = false;
   private CompositeAxisPanel leftPanel, rightPanel;
   private Layer layer;
+  private Bounds myBounds;
   
-  // The gap, in pixels, between the left and right range panels.
-  private double centerGapWidth = 0;
-
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
   // bound to.  The relationship from dataset to axis is 
   // many-to-one.
   private RangeAxis[] rangeAxes;
-
+  
   public RangePanel() {
-    
+    myBounds = new Bounds(0, 0, 30, 10); // default bounds
   }
   
   @Override
@@ -49,9 +48,34 @@ final class RangePanel extends AuxiliaryPanel {
   }
 
   public Bounds getBounds() {
-    throw new UnsupportedOperationException();
+    return myBounds;
   }
   
+  public List<Panel> getChildren() {
+    List<Panel> l = new ArrayList<Panel>();
+    l.add(leftPanel);
+    l.add(rightPanel);
+    return l;
+  }
+  
+  public Layer getLayer() {
+    return this.layer;
+  }
+  
+  public double getLayerOffsetX() {
+    return 0;
+    //return this.layer.getBounds().x;
+  }
+
+  public double getLayerOffsetY() {
+    return 0;
+    //return this.layer.getBounds().y;
+  }
+
+  public Panel getParent() {
+    return null;
+  }
+
   public CompositeAxisPanel getLeftSubPanel() {
     return leftPanel;
   }
@@ -64,35 +88,63 @@ final class RangePanel extends AuxiliaryPanel {
     return rightPanel;
   }
   
+  public void initLayer() {
+    // assumes that leftPanel and rightPanel share the same height.
+    Bounds layerBounds = new Bounds(myBounds);
+    
+    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    layer.setFillColor(Color.TRANSPARENT);
+    layer.clear();
+  
+    leftPanel.setLayer(layer);
+    rightPanel.setLayer(layer);
+  }
+
   @Override
   public void layout() {
-    leftPanel.layout();
+    if (layer == null) {
+      initLayer();
+    }
     
+    leftPanel.layout();
     rightPanel.layout();
-    Bounds leftPanelBounds = leftPanel.getBounds();
-    rightPanel.setPosition(leftPanelBounds.rightX() + centerGapWidth, 
-        leftPanelBounds.y);
+    
+    leftPanel.setPosition(0, 0);
+    rightPanel.setPosition(myBounds.width - rightPanel.getBounds().width, 0);
   }
   
-  public void setCenterGapWidth(double width) {
+  public void setWidth(double width) {
     ArgChecker.isNonNegative(width, "width");
-    this.centerGapWidth = width;
+    this.myBounds.width = width;
+    this.layout();
   }
   
-  public void setHeight(double h) {
+  public void setHeight(double height) {
+    ArgChecker.isNonNegative(height, "height");
+    this.myBounds.height = height;
+    
     for (RangeAxis rangeAxis : rangeAxes) {
-      rangeAxis.getAxisPanel().getBounds().height = h;
+      rangeAxis.getAxisPanel().getBounds().height = height;
     }
     layout();
   }
   
+  public void setLayerOffset(double x, double y) {
+    throw new UnsupportedOperationException();
+  }
+
   public final void setPosition(double x, double y) {
-    leftPanel.setPosition(x, y);
+    boolean positionChanged = !(x == myBounds.x && y == myBounds.y);
     
-    // This isn't correct.  rightPanel x-position should be
-    // plot.bounds.rightX() I think.
-    //rightPanel.setPosition(x, y);
-    rightPanel.setPosition(leftPanel.getBounds().rightX() + centerGapWidth, y);
+    if (positionChanged) {
+      myBounds.x = x;
+      myBounds.y = y;
+    }
+    
+    if (layer == null || positionChanged) {
+      initLayer();
+    }
   }
   
   @Override
@@ -117,26 +169,20 @@ final class RangePanel extends AuxiliaryPanel {
   protected void initHook() {
     id2rangeAxis.clear();
     
-    // assumes that leftPanel and rightPanel share the same height.
-    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
-    
-    layer = plot.initLayer(layer, "verticalAxis", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    layer.setFillColor(Color.TRANSPARENT);
-    layer.clear();
-  
     final String leftPanelName = "rangeAxisLayerLeft" + plot.plotNumber;
     leftPanel = new CompositeAxisPanel(leftPanelName,
         CompositeAxisPanel.Position.LEFT, plot, view);
-    leftPanel.setLayer(layer);
+    leftPanel.setParent(this);
+    leftPanel.setStringSizer(stringSizer);
     
     final String rightPanelName = "rangeAxisLayerRight" + plot.plotNumber;
     rightPanel = new CompositeAxisPanel(rightPanelName,
         CompositeAxisPanel.Position.RIGHT, plot, view);
-    rightPanel.setLayer(layer);
+    rightPanel.setParent(this);
+    rightPanel.setStringSizer(stringSizer);
     
     rangeAxes = autoAssignDatasetAxes(plot.getDatasets());
-}
+  }
   
   @Override
   protected void setEnabledHook(boolean enabled) {
@@ -204,5 +250,10 @@ final class RangePanel extends AuxiliaryPanel {
     }
     
     return false;
+  }
+
+  
+  private static void log(Object msg) {
+    System.out.println("RangePanel> " + msg);
   }
 }
