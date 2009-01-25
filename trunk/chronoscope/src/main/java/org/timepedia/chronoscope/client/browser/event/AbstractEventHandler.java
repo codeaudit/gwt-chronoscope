@@ -1,9 +1,9 @@
 package org.timepedia.chronoscope.client.browser.event;
 
+import com.google.gwt.gen2.event.dom.client.DomEvent;
+import com.google.gwt.gen2.event.shared.EventHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.gen2.event.shared.EventHandler;
-import com.google.gwt.gen2.event.dom.client.DomEvent;
 
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.ChartEventHandler;
@@ -67,12 +67,29 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
       return plot;
     }
     
+    //
     // Now check if (x,y) hit the overview axis
+    //
+    
     OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
-    if (oaPanel != null && oaPanel.getBounds().inside(x, y)) {
-      return oaPanel.getValueAxis();
+    if (oaPanel != null) {
+      Bounds layerBounds = oaPanel.getLayer().getBounds();
+      Bounds oaPanelBounds = oaPanel.getBounds();
+      double viewOffsetX = layerBounds.x + oaPanel.getLayerOffsetX();
+      double viewOffsetY = layerBounds.y + oaPanel.getLayerOffsetY();
+      Bounds oaPanelAbsBounds = new Bounds(
+          viewOffsetX, viewOffsetY,
+          oaPanelBounds.width, oaPanelBounds.height);
+      if (oaPanelAbsBounds.inside(x, y)) {
+        return oaPanel.getValueAxis();
+      }
     }
     
     return null;
   }
+
+  private static void log(Object msg) {
+    System.out.println("AbstractEventHandler> " + msg);
+  }
+
 }

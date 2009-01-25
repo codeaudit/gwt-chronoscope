@@ -4,6 +4,10 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
+import org.timepedia.chronoscope.client.render.Panel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the auxiliary panel on the top of the center dataset plot.
@@ -14,22 +18,74 @@ final class TopPanel extends AuxiliaryPanel {
   private CompositeAxisPanel compositePanel;
   private LegendAxisPanel legendAxisPanel;
   private Layer layer;
+  private Bounds myBounds;
+  
+  public TopPanel() {
+    myBounds = new Bounds(0, 0, 30, 10);
+  }
   
   public boolean click(int x, int y) {
     return legendAxisPanel.click(x, y);
   }
   
   public Bounds getBounds() {
-    return compositePanel.getBounds();
+    return myBounds;
+  }
+  
+  public List<Panel> getChildren() {
+    List<Panel> l = new ArrayList<Panel>();
+    l.add(compositePanel);
+    return l;
+  }
+  
+  public Layer getLayer() {
+    return this.layer;
+  }
+  
+  public double getLayerOffsetX() {
+    return 0;
+    //return this.layer.getBounds().x;
+  }
+
+  public double getLayerOffsetY() {
+    return 0;
+    //return this.layer.getBounds().y;
+  }
+
+  public Panel getParent() {
+    return null;
+  }
+
+  public void initLayer() {
+    Bounds layerBounds = getBounds();
+    layer = plot.initLayer(layer, "topLayer", layerBounds);
+    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    this.compositePanel.setLayer(layer);
   }
   
   @Override
   public void layout() {
+    compositePanel.setPosition(0, 0);
     compositePanel.layout();
+    myBounds.height = compositePanel.getBounds().height;
+    myBounds.width = compositePanel.getBounds().width;
+  }
+
+  public void setLayerOffset(double x, double y) {
+    throw new UnsupportedOperationException();
   }
 
   public final void setPosition(double x, double y) {
-    compositePanel.setPosition(x, y);
+    boolean positionChanged = !(x == myBounds.x && y == myBounds.y);
+    
+    if (positionChanged) {
+      myBounds.x = x;
+      myBounds.y = y;
+    }
+    
+    if (layer == null || positionChanged) {
+      initLayer();
+    }
   }
   
   @Override
@@ -42,14 +98,11 @@ final class TopPanel extends AuxiliaryPanel {
   
   @Override
   protected void initHook() {
-    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
-    layer = plot.initLayer(layer, "topLayer", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    
     final String panelName = "topPanel" + plot.plotNumber; 
     this.compositePanel = new CompositeAxisPanel(panelName,
         CompositeAxisPanel.Position.TOP, plot, view);
-    this.compositePanel.setLayer(layer);
+    this.compositePanel.setStringSizer(stringSizer);
+    this.compositePanel.setParent(this);
     
     if (this.isEnabled()) {
       initLegendAxisPanel();

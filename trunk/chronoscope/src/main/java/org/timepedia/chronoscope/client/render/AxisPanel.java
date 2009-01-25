@@ -19,8 +19,6 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
   
   protected GssProperties labelProperties;
   
-  protected CompositeAxisPanel parentPanel;
-
   protected XYPlot plot;
   
   protected ValueAxis valueAxis;
@@ -28,7 +26,7 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
   protected View view;
   
   public final GssElement getParentGssElement() {
-    return parentPanel;
+    return (CompositeAxisPanel)this.parent;
   }
   
   public final ValueAxis getValueAxis() {
@@ -39,14 +37,6 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
     this.bounds = new Bounds(b);
   }
   
-  public final void setParentPanel(CompositeAxisPanel parentPanel) {
-    this.parentPanel = parentPanel;
-  }
-
-  public CompositeAxisPanel getParentPanel() {
-    return parentPanel;
-  }
-
   public final void setPlot(XYPlot plot) {
     this.plot = plot;
   }
@@ -69,9 +59,11 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(plot, "plot");
     
+    CompositeAxisPanel parentAxisPanel = (CompositeAxisPanel)this.parent;
+    
     gssProperties = view.getGssProperties(this, "");
     labelProperties = view.getGssProperties(new GssElementImpl("label", this), "");
-    textLayerName = parentPanel.getName() + parentPanel.indexOf(this);    
+    textLayerName = parentAxisPanel.getName() + parentAxisPanel.indexOf(this);    
     initHook();
   }
   

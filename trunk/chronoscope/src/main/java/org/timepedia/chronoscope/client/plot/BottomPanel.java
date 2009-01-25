@@ -7,8 +7,13 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+import org.timepedia.chronoscope.client.render.Panel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
+import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages the auxiliary panel directly below the main plot, which is 
@@ -24,8 +29,12 @@ final class BottomPanel extends AuxiliaryPanel {
   // The model for the ticks and tick labels
   private DomainAxis domainAxis;
   
+  private Layer domainAxisLayer, overviewLayer;
+  
   // Renders the horizontal domain ticks and tick labels
   private DomainAxisPanel domainAxisPanel;
+  
+  private Bounds myBounds;
   
   // The miniaturized fully-zoomed-out representation of the datasets
   private OverviewAxisPanel overviewAxisPanel;
@@ -34,7 +43,9 @@ final class BottomPanel extends AuxiliaryPanel {
   
   private boolean overviewEnabled = true;
   
-  private Layer overviewLayer;
+  public BottomPanel() {
+    myBounds = new Bounds(0, 0, 100, 20);
+  }
   
   @Override
   public void clearDrawCaches() {
@@ -42,15 +53,50 @@ final class BottomPanel extends AuxiliaryPanel {
   }
   
   public Bounds getBounds() {
-    return compositePanel.getBounds();
+    return myBounds;
+  }
+  
+  public List<Panel> getChildren() {
+    List<Panel> l = new ArrayList<Panel>();
+    l.add(compositePanel);
+    return l;
   }
   
   public DomainAxisPanel getDomainAxisPanel() {
     return this.domainAxisPanel;
   }
   
+  public Layer getLayer() {
+    return this.domainAxisLayer;
+  }
+  
+  public double getLayerOffsetX() {
+    return 0;
+    //return myBounds.x;
+  }
+
+  public double getLayerOffsetY() {
+    return 0;
+    //return myBounds.y;
+  }
+
   public OverviewAxisPanel getOverviewAxisPanel() {
     return this.overviewAxisPanel;
+  }
+
+  public Panel getParent() {
+    return null;
+  }
+
+  public void initLayer() {
+    Bounds layerBounds = new Bounds(myBounds);
+    domainAxisLayer = plot.initLayer(domainAxisLayer, "domainAxis", layerBounds);
+    domainAxisLayer.setLayerOrder(Layer.Z_LAYER_AXIS);
+    
+    overviewLayer = plot.initLayer(overviewLayer, "overviewLayer", layerBounds);
+    overviewAxisPanel.setOverviewLayer(overviewLayer);
+
+    compositePanel.setLayer(domainAxisLayer);
   }
   
   public boolean isOverviewEnabled() {
@@ -59,23 +105,51 @@ final class BottomPanel extends AuxiliaryPanel {
 
   @Override
   public void layout() {
+    if (domainAxisLayer == null) {
+      initLayer();
+    }
+
+    compositePanel.setPosition(0, 0);
     compositePanel.layout();
+    
+    // The DomainAxisPanel and OverviewAxisPanel have fixed heights and,
+    // therefore, dictate the height of this panel.
+    // FIXME: need to automate method of determining which dimensions are
+    // determined by sub-panels and which dimensions are dictated by
+    // the parent panel.
+    myBounds.height = compositePanel.getBounds().height;
   }
   
   public void setDomainAxisPanel(DomainAxisPanel domainAxisPanel) {
     this.compositePanel.remove(this.domainAxisPanel);
     this.domainAxisPanel = domainAxisPanel;
-    domainAxisPanel.setParentPanel(this.compositePanel);
+    domainAxisPanel.setParent(this.compositePanel);
     domainAxisPanel.setValueAxis(domainAxis);
     this.compositePanel.add(this.domainAxisPanel);
   }
   
-  public void setWidth(double width) {
+  public void setLayerOffset(double x, double y) {
     throw new UnsupportedOperationException();
   }
   
+  public void setWidth(double width) {
+    ArgChecker.isNonNegative(width, "width");
+    myBounds.width = width;
+    compositePanel.setWidth(width);
+    layout();
+  }
+  
   public final void setPosition(double x, double y) {
-    compositePanel.setPosition(x, y);
+   boolean positionChanged = !(x == myBounds.x && y == myBounds.y);
+    
+   if (positionChanged) {
+      myBounds.x = x;
+      myBounds.y = y;
+   }
+    
+    if (domainAxisLayer == null || positionChanged) {
+      initLayer();
+    }
   }
   
   public void setOverviewEnabled(boolean overviewEnabled) {
@@ -120,15 +194,9 @@ final class BottomPanel extends AuxiliaryPanel {
   
   @Override
   protected void initHook() {
-    Bounds layerBounds = new Bounds(0, 0, view.getWidth(), view.getHeight());
-    Layer layer = plot.initLayer(null, "domainAxis", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    
-    overviewLayer = plot.initLayer(overviewLayer, "overviewLayer", layerBounds);
-
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
-    compositePanel.setLayer(layer);
+    compositePanel.setParent(this);
     
     // Both DomainAxisPanel and OverviewAxisPanel must be initialized even 
     // if BottomPanel is not currently enabled, because other auxiliary panels 
@@ -209,11 +277,16 @@ final class BottomPanel extends AuxiliaryPanel {
   private void initOverviewAxisPanel() {
     if (overviewAxisPanel == null) {
       overviewAxisPanel = new OverviewAxisPanel();
-      overviewAxisPanel.setOverviewLayer(overviewLayer);
       overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
     }
     else {
       compositePanel.remove(overviewAxisPanel);
     }
   }
+  
+  
+  private static void log(Object msg) {
+    System.out.println("BottomPanel> " + msg);
+  }
+
 }

@@ -61,6 +61,15 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   @Override
+  public void setLayer(Layer layer) {
+    super.setLayer(layer);
+    
+    dsLegendPanel.setLayer(layer);
+    zoomPanel.setLayer(layer);
+    dateRangePanel.setLayer(layer);
+  }
+  
+  @Override
   public void layout() {
     bounds.height = calcHeight();
     bounds.width = view.getWidth();
@@ -79,11 +88,12 @@ public class LegendAxisPanel extends AxisPanel {
     Layer rootLayer = view.getCanvas().getRootLayer();
 
     dsLegendPanel = new DatasetLegendPanel();
+    dsLegendPanel.setGssProperties(labelProperties);
     dsLegendPanel.setPlot(plot);
     dsLegendPanel.setView(view);
-    dsLegendPanel.setGssProperties(labelProperties);
     dsLegendPanel.setTextLayerName(textLayerName);
-    dsLegendPanel.setLayer(layer);
+    dsLegendPanel.setStringSizer(stringSizer);
+    dsLegendPanel.parent = this;
     dsLegendPanel.init();
 
     zoomPanel = new ZoomPanel();
@@ -91,14 +101,16 @@ public class LegendAxisPanel extends AxisPanel {
     zoomPanel.setTextLayerName(textLayerName);
     zoomPanel.addListener(zoomListener);
     zoomPanel.setZoomIntervals(zoomIntervals);
-    zoomPanel.setLayer(layer);
+    zoomPanel.setStringSizer(stringSizer);
+    zoomPanel.parent = this;
     zoomPanel.init();
 
     dateRangePanel = new DateRangePanel();
     dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
-    dateRangePanel.setLayer(layer);
+    dateRangePanel.setStringSizer(stringSizer);
     dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
+    dateRangePanel.parent = this;
     dateRangePanel.updateDomainInterval(domainExtrema);
   }
 
