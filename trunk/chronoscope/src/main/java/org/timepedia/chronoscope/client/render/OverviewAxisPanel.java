@@ -45,12 +45,12 @@ public class OverviewAxisPanel extends AxisPanel {
       layer.setTransparency(1.0f);
       layer.setLineWidth(gssProperties.lineThickness);
       layer.beginPath();
+      final double halfLineWidth = gssProperties.lineThickness / 2;
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
-      layer.moveTo(highlightBounds.x, highlightBounds.y + 1);  
-      layer.rect(highlightBounds.x, highlightBounds.y + 1,
-          highlightBounds.width, highlightBounds.height);
+      layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);  
+      layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
+          highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
       layer.stroke();
-      layer.setLineWidth(1);
       layer.restore();
       
       //plot.getChart().setCursor(Cursor.SELECTING);
