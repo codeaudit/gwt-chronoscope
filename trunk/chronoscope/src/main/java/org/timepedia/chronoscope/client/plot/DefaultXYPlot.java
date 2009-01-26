@@ -113,7 +113,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private RangePanel rangePanel;
 
-  private Layer highLightLayer, plotLayer, hoverLayer;
+  private Layer plotLayer, hoverLayer;
 
   private int[] hoverPoints;
 
@@ -294,7 +294,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Layer getHoverLayer() {
-    return initLayer(null, LAYER_HOVER, plotBounds);
+    return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
   }
 
   public int[] getHoverPoints() {
@@ -617,11 +617,13 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     final boolean plotDomainChanged = !visDomain.equals(lastVisDomain);
 
+    Layer hoverLayer = getHoverLayer();
+    
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating) {
-      getHoverLayer().clear();
+      hoverLayer.clear();
     } else {
-      plotRenderer.drawHoverPoints();
+      plotRenderer.drawHoverPoints(hoverLayer);
     }
 
     if (plotDomainChanged || forceCenterPlotRedraw) {
@@ -645,7 +647,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     if (canDrawFast) {
       topPanel.draw();
-      drawPlotHighlight(highLightLayer);
+      drawPlotHighlight(hoverLayer);
     }
 
     backingCanvas.endFrame();
@@ -1051,7 +1053,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     layer.setFillColor(new Color("#14FFFF"));
     // layer.setLayerAlpha(0.2f);
     layer.setTransparency(0.2f);
-    layer.clear();
+    //layer.clear();
     layer.fillRect(ux, 0, ex - ux, getInnerBounds().height);
     layer.restore();
     highlightDrawn = true;
@@ -1184,9 +1186,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.getCanvas().getRootLayer().setLayerOrder(Layer.Z_LAYER_BACKGROUND);
 
     plotLayer = initLayer(plotLayer, LAYER_PLOT, plotBounds);
-
-    highLightLayer = initLayer(highLightLayer, "highlight", plotBounds);
-    highLightLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);

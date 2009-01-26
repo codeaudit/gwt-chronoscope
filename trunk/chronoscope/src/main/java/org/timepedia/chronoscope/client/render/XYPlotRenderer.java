@@ -205,8 +205,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     }
   }
 
-  public void drawHoverPoints() {
-    Layer layer = plot.getHoverLayer();
+  public void drawHoverPoints(Layer layer) {
     layer.save();
     layer.clear();
 
