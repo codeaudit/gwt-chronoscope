@@ -470,7 +470,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
     this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
     this.rangePanel = new RangePanel();
-    this.initAndRedraw();
+    this.reloadStyles();
   }
 
   public void onDatasetChanged(Dataset<T> dataset, double domainStart,
@@ -530,8 +530,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     this.plotRenderer.removeDataset(dataset);
-    //this.rangePanel = new RangePanel();
-    initAndRedraw();
+    this.reloadStyles();
   }
 
   public void onZoom(double intervalInMillis) {
@@ -717,7 +716,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     ArgChecker.isNotNull(renderer, "renderer");
     renderer.setCustomInstalled(true);
     this.plotRenderer.setDatasetRenderer(datasetIndex, renderer);
-    this.initAndRedraw();
+    this.reloadStyles();
   }
 
   public void setDatasets(Datasets<T> datasets) {
@@ -857,7 +856,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void animateTo(final double destDomainOrigin,
       final double destDomainLength, final PlotMovedEvent.MoveType eventType,
       final PortableTimerTask continuation, final boolean fence) {
-
+      final DefaultXYPlot plot = this;
+      
     if (!isAnimatable()) {
       return;
     }
@@ -927,6 +927,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           redraw(true);
         } else {
           lastFrame = true;
+          plot.cancelHighlight();
           animationTimer.schedule(300);
         }
       }
@@ -935,6 +936,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     animationTimer.schedule(10);
   }
 
+  /**
+   * Turns off an existing plot highlight.
+   */
+  private void cancelHighlight() {
+    setHighlight(0, 0);
+  }
+  
   private void clearDrawCaches() {
     bottomPanel.clearDrawCaches();
     topPanel.clearDrawCaches();
@@ -1163,12 +1171,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void fireMoveEvent(PlotMovedEvent.MoveType moveType) {
     handlerManager
         .fireEvent(new PlotMovedEvent(this, getDomain().copy(), moveType));
-  }
-
-  private void initAndRedraw() {
-//    init(this.view);
-//    redraw(true);
-    reloadStyles();
   }
 
   Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {

@@ -19,7 +19,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public static final int MAX_DIGITS = 5;
 
-  class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
+  private class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
 
     String labelFormat = null;
 
@@ -340,7 +340,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
-
     this.autoZoom = autoZoom;
   }
 
