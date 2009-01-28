@@ -56,6 +56,10 @@ final class BottomPanel extends AuxiliaryPanel {
     return myBounds;
   }
   
+  public int getChildCount() {
+    return getChildren().size();
+  }
+  
   public List<Panel> getChildren() {
     List<Panel> l = new ArrayList<Panel>();
     l.add(compositePanel);

@@ -277,7 +277,7 @@ public class RangeAxisPanel extends AxisPanel {
     CompositeAxisPanel parentContainer = (CompositeAxisPanel)this.parent;
     
     return parentContainer.indexOf(this) == (isLeftPanel
-        ? parentContainer.getAxisCount() - 1 : 0);
+        ? parentContainer.getChildCount() - 1 : 0);
   }
   
   private Position getParentPosition() {

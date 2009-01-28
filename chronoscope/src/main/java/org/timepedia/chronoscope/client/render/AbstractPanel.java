@@ -27,6 +27,10 @@ public abstract class AbstractPanel implements Panel {
     this.gssProperties = gssProperties;
   }
   
+  public int getChildCount() {
+    return getChildren().size();
+  }
+  
   public List<Panel> getChildren() {
     return Collections.emptyList();
   }

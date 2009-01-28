@@ -47,6 +47,10 @@ public interface Panel {
   Panel getParent();
 
   /**
+   * Returns the number of child panels that this panel has.
+   */
+  int getChildCount();
+  /**
    * Returns the panels contained by this panel.
    */
   List<Panel> getChildren();

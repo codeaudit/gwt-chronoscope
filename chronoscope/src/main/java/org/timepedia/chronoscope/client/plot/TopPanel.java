@@ -32,6 +32,10 @@ final class TopPanel extends AuxiliaryPanel {
     return myBounds;
   }
   
+  public int getChildCount() {
+    return getChildren().size();
+  }
+  
   public List<Panel> getChildren() {
     List<Panel> l = new ArrayList<Panel>();
     l.add(compositePanel);
@@ -90,7 +94,7 @@ final class TopPanel extends AuxiliaryPanel {
   
   @Override
   protected void drawHook() {
-    if (compositePanel.getAxisCount() == 0) {
+    if (compositePanel.getChildCount() == 0) {
       return;
     }
     compositePanel.draw();

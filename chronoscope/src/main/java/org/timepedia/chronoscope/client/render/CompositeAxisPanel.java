@@ -145,14 +145,14 @@ public final class CompositeAxisPanel implements Panel, GssElement {
     layerConfigured = true;
   }
 
-  public int getAxisCount() {
-    return subPanels.size();
-  }
-  
   public Bounds getBounds() {
     return this.bounds;
   }
 
+  public int getChildCount() {
+    return this.subPanels.size();
+  }
+  
   public List<Panel> getChildren() {
     List<Panel> l = new ArrayList<Panel>(this.subPanels.size());
     for (Panel p : this.subPanels) {

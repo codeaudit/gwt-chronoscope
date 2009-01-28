@@ -25,8 +25,6 @@ import java.util.Map;
  * @author chad takahashi
  */
 final class RangePanel extends AuxiliaryPanel {
-  private final Map<String, RangeAxis> id2rangeAxis
-      = new HashMap<String, RangeAxis>();
   private boolean isDrawn = false;
   private CompositeAxisPanel leftPanel, rightPanel;
   private Layer layer;
@@ -49,6 +47,10 @@ final class RangePanel extends AuxiliaryPanel {
 
   public Bounds getBounds() {
     return myBounds;
+  }
+  
+  public int getChildCount() {
+    return getChildren().size();
   }
   
   public List<Panel> getChildren() {
@@ -167,8 +169,6 @@ final class RangePanel extends AuxiliaryPanel {
 
   @Override
   protected void initHook() {
-    id2rangeAxis.clear();
-    
     final String leftPanelName = "rangeAxisLayerLeft" + plot.plotNumber;
     leftPanel = new CompositeAxisPanel(leftPanelName,
         CompositeAxisPanel.Position.LEFT, plot, view);
@@ -199,6 +199,7 @@ final class RangePanel extends AuxiliaryPanel {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
 
+    Map<String, RangeAxis> id2rangeAxis = new HashMap<String, RangeAxis>();
     List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
 
     for (int i = 0; i < datasets.size(); i++) {
@@ -207,8 +208,8 @@ final class RangePanel extends AuxiliaryPanel {
       RangeAxis ra = id2rangeAxis.get(ds.getAxisId(0));
 
       if (ra == null) {
-        int numLeftAxes = leftPanel.getAxisCount();
-        int numRightAxes = rightPanel.getAxisCount();
+        int numLeftAxes = leftPanel.getChildCount();
+        int numRightAxes = rightPanel.getChildCount();
         boolean useLeftPanel = (numLeftAxes <= numRightAxes);
         CompositeAxisPanel currRangePanel = useLeftPanel ? leftPanel
             : rightPanel;
