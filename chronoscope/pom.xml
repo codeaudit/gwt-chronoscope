@@ -99,7 +99,7 @@
                   <classifier>${gwtplatform}-libs</classifier>
                   <type>zip</type>
                   <outputDirectory>
-                    ${user.dir}/.m2/repository/com/google/gwt/gwt-dev/${gwtversion}
+                    ${user.home}/.m2/repository/com/google/gwt/gwt-dev/${gwtversion}
                   </outputDirectory>
                 </artifactItem>
               </artifactItems>
