@@ -24,11 +24,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     String labelFormat = null;
 
     public String format(double value) {
-      computeLabelFormat(value);
+      computeLabelFormat();
       return view.numberFormat(labelFormat, value);
     }
 
-    private void computeLabelFormat(double label) {
+    private void computeLabelFormat() {
       double scale = getScale();
       scale = Double.isNaN(scale) ? 1 : scale;
 
