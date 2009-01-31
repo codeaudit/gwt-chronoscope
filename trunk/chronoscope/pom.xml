@@ -65,9 +65,10 @@
     <dependency>
       <groupId>org.timepedia.exporter</groupId>
       <artifactId>gwtexporter</artifactId>
-      <version>2.03</version>
+      <version>2.04</version>
       <type>jar</type>
     </dependency>
+
   </dependencies>
 
   <repositories>
@@ -151,15 +152,28 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+		  <finalName>js</finalName>
+                  <doclet>org.timepedia.exporter.doclet.JsDoclet</doclet>
+                  <docletArtifact>
+      <groupId>org.timepedia.exporter</groupId>
+      <artifactId>gwtexporter</artifactId>
+      <version>2.04</version>
+                  </docletArtifact>
+                  <!-- Other dir than apidocs -->
+                  <destDir>apidocs</destDir>
+                </configuration>
+
             <executions>
               <execution>
-                <id>attach-javadocs</id>
+                <id>attach-jsdocs</id>
                 <goals>
                   <goal>jar</goal>
                </goals>
              </execution>
            </executions>
          </plugin>
+
     </plugins>
     <!--<finalName>chronoscope</finalName>-->
     <resources>
