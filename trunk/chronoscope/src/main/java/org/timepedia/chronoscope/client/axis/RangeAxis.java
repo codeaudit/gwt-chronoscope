@@ -32,7 +32,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
       double scale = getScale();
       scale = Double.isNaN(scale) ? 1 : scale;
 
-      int intDigits = (int) Math.floor(Math.log10(adjustedRangeHigh));
+      int intDigits = (int) Math.floor(Math.log10(adjustedRangeMax));
       if (isAllowAutoScale() && Double.isNaN(getScale())
           && intDigits + 1 > MAX_DIGITS) {
         scale = Math.pow(1000, intDigits / 3);
@@ -74,13 +74,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
-  private static String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
+  private static final String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
       "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
       "(Millions)", "(Tens of Millions)", "(Hundreds of Millions)",
       "(Billions)", "(Tens of Billions)", "(Hundreds of Billions)",
       "(Trillions)", "(Tens of Trillions)", "(Hundreds of Trillions)"};
 
-  private static String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
+  private static final String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
       "(Thousandths)", "(Ten Thousandths)", "(Hundred Thousandths)",
       "(Millionths)", "(Ten Millionths)", "(Hundred Millionths)",
       "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
@@ -132,12 +132,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     double tickPositions[] = new double[numTicks];
     for (int i = 0; i < tickPositions.length; i++) {
-      if (tickPositions.length == i + 1 && forceLastTick) {
+      if ((tickPositions.length == (i + 1)) && forceLastTick) {
         axisStart = lrangeHigh;
       }
       tickPositions[i] = axisStart;
       axisStart += smoothInterval;
     }
+    
     return tickPositions;
   }
 
@@ -147,8 +148,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean autoZoom = false;
 
-  private double adjustedRangeLow, adjustedRangeHigh;
-
   private final int axisIndex;
 
   private TickLabelNumberFormatter DEFAULT_TICK_LABEL_Number_FORMATTER;
@@ -157,11 +156,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private XYPlot plot;
 
-  private double rangeLow, rangeHigh;
+  private double absRangeMin, absRangeMax, visRangeMin, visRangeMax,
+      adjustedRangeMin, adjustedRangeMax;
 
   private RangeAxisPanel axisPanel;
 
-  private boolean rangeOverriden;
+  private boolean rangeOverridden;
 
   private double scale = Double.NaN;
 
@@ -175,8 +175,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private View view;
 
-  private double visRangeMin, visRangeMax;
-
   public RangeAxis(XYPlot plot, View view, String rangeLabel, String axisId,
       int axisIndex, Interval rangeInterval) {
     super(rangeLabel, axisId);
@@ -185,37 +183,53 @@ public class RangeAxis extends ValueAxis implements Exportable {
         = new DefaultTickLabelNumberFormatter();
     this.plot = plot;
     this.view = view;
-    this.rangeLow = rangeInterval.getStart();
-    this.rangeHigh = rangeInterval.getEnd();
-    this.adjustedRangeLow = rangeLow;
-    this.adjustedRangeHigh = rangeHigh;
+    this.absRangeMin = rangeInterval.getStart();
+    this.absRangeMax = rangeInterval.getEnd();
+    this.adjustedRangeMin = absRangeMin;
+    this.adjustedRangeMax = absRangeMax;
   }
 
+  /**
+   * Increases the interval of this object's current range extrema 
+   * so that it's at least as wide as the specified <tt>rangeExtrema</tt>.
+   */
+  public void adjustRangeExtrema(Interval rangeExtrema) {
+    if (!rangeOverridden) {
+      setRangeInternal(
+          Math.min(absRangeMin, rangeExtrema.getStart()),
+          Math.max(absRangeMax, rangeExtrema.getEnd()));
+    }
+  }
+  
   public double[] computeTickPositions() {
 
     if (ticks != null) {
       return ticks;
     }
+    
+    final double rangeMin = autoZoom ? this.visRangeMin : this.absRangeMin;
+    final double rangeMax = autoZoom ? this.visRangeMax : this.absRangeMax;
+    
+    ticks = computeLinearTickPositions(rangeMin, rangeMax, 
+        axisPanel.getBounds().height, axisPanel.getMaxLabelHeight(), 
+        rangeOverridden);
 
-    ticks = computeLinearTickPositions(getUnadjustedRangeLow(),
-        getUnadjustedRangeHigh(), axisPanel.getBounds().height,
-        axisPanel.getMaxLabelHeight(), rangeOverriden);
-
-    adjustedRangeLow = rangeOverriden ? getUnadjustedRangeLow() : ticks[0];
-    adjustedRangeHigh = getUnadjustedRangeHigh();
-    for (int i = 0; i < ticks.length; i++) {
-      if (ticks[i] >= getUnadjustedRangeHigh() && !rangeOverriden) {
-        adjustedRangeHigh = ticks[i];
-        break;
-      }
+    if (rangeOverridden) {
+      adjustedRangeMin = rangeMin;
+      adjustedRangeMax = rangeMax;
     }
-
+    else {
+      adjustedRangeMin = ticks[0];
+      final double largestComputedTick = ticks[ticks.length - 1];
+      adjustedRangeMax = Math.max(rangeMax, largestComputedTick);
+    }
+    
     return ticks;
   }
 
   public double dataToUser(double dataValue) {
-    return (dataValue - adjustedRangeLow) / (adjustedRangeHigh
-        - adjustedRangeLow);
+    return (dataValue - adjustedRangeMin) / (adjustedRangeMax
+        - adjustedRangeMin);
   }
 
   public int getAxisIndex() {
@@ -264,7 +278,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public Interval getExtrema() {
-    return new Interval(adjustedRangeLow, adjustedRangeHigh);
+    return new Interval(adjustedRangeMin, adjustedRangeMax);
   }
 
   public double getScale() {
@@ -278,8 +292,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void initVisibleRange() {
     ticks = null;
     computeTickPositions();
-    visRangeMin = rangeLow;
-    visRangeMax = rangeHigh;
+    visRangeMin = absRangeMin;
+    visRangeMax = absRangeMax;
   }
 
   public boolean isAllowAutoScale() {
@@ -354,12 +368,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     forceScientificNotation = force;
   }
 
-  public void setInitialRange(double initLow, double initHigh) {
-    if (!rangeOverriden) {
-      setRangeInternal(initLow, initHigh);
-    }
-  }
-
   /**
    * @gwt.export
    */
@@ -372,7 +380,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   @Export
   public void setRange(double rangeLow, double rangeHigh) {
-    rangeOverriden = true;
+    rangeOverridden = true;
     setRangeInternal(rangeLow, rangeHigh);
   }
 
@@ -427,22 +435,14 @@ public class RangeAxis extends ValueAxis implements Exportable {
     computeTickPositions();
   }
 
-  public double getUnadjustedRangeHigh() {
-    return autoZoom ? visRangeMax : rangeHigh;
-  }
-
-  public double getUnadjustedRangeLow() {
-    return autoZoom ? visRangeMin : rangeLow;
-  }
-
   public double userToData(double userValue) {
-    return adjustedRangeLow + ((adjustedRangeHigh - adjustedRangeLow)
-        * userValue);
+    return adjustedRangeMin + 
+        ((adjustedRangeMax - adjustedRangeMin) * userValue);
   }
 
-  private void setRangeInternal(double rangeLow, double rangeHigh) {
+  private void setRangeInternal(double rangeMin, double rangeMax) {
     ticks = null;
-    this.rangeLow = rangeLow;
-    this.rangeHigh = rangeHigh;
+    this.absRangeMin = rangeMin;
+    this.absRangeMax = rangeMax;
   }
 }

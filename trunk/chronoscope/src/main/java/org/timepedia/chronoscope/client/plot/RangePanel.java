@@ -206,8 +206,10 @@ final class RangePanel extends AuxiliaryPanel {
       Dataset ds = datasets.get(i);
 
       RangeAxis ra = id2rangeAxis.get(ds.getAxisId(0));
-
-      if (ra == null) {
+      
+      if (ra != null) {
+        ra.adjustRangeExtrema(ds.getRangeExtrema(0));
+      } else {
         int numLeftAxes = leftPanel.getChildCount();
         int numRightAxes = rightPanel.getChildCount();
         boolean useLeftPanel = (numLeftAxes <= numRightAxes);
@@ -226,11 +228,6 @@ final class RangePanel extends AuxiliaryPanel {
         ra.setAxisPanel(axisPanel);
         currRangePanel.add(axisPanel);
         id2rangeAxis.put(ra.getAxisId(), ra);
-      } else {
-        Interval yInterval = ds.getRangeExtrema(0);
-        ra.setInitialRange(
-            Math.min(ra.getUnadjustedRangeLow(), yInterval.getStart()),
-            Math.max(ra.getUnadjustedRangeHigh(), yInterval.getEnd()));
       }
 
       rangeAxes.add(ra);
