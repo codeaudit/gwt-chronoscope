@@ -66,12 +66,6 @@ public class DrawableDataset<T extends Tuple2D> {
   public int visDomainStartIndex, visDomainEndIndex;
   
   /**
-   * Stores the min and max range values within the sub-domain of this dataset
-   * corresponding to the currently-visible plot.
-   */
-  public double visRangeMin, visRangeMax;
-  
-  /**
    * Returns the {@link MipMap} that's currently being used by the active
    * {@link #renderer}. 
    */

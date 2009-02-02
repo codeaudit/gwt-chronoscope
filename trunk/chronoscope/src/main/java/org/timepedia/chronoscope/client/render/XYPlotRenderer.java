@@ -4,7 +4,6 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Focus;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.MipMap;
@@ -56,7 +55,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
       Dataset<T> dataSet = drawableDataset.dataset;
 
       final double plotDomainStart = plotDomain.getStart();
-      final double plotDomainEnd = plotDomain.getEnd();
       Interval domainExtrema = dataSet.getDomainExtrema();
       if (!(MathUtil.isBounded(plotDomainStart,
           domainExtrema.getStart() - plotDomain.length(),
@@ -83,18 +81,15 @@ public class XYPlotRenderer<T extends Tuple2D> {
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
-      calcVisualRange(drawableDataset, bestMipMap, domainStartIdx,
-          domainEndIdx);
+      Interval visRange = calcVisibleRange(bestMipMap, domainStartIdx, domainEndIdx);
+      plot.getRangeAxis(datasetIdx).setVisibleRange(visRange.getStart(), visRange.getEnd());
     }
   }
 
   /**
-   * Calculates the range-Y extrema values of the specified MipMap and assigns
-   * these values to drawableDataset.
+   * Calculates the range-Y extrema values of the specified {@link MipMap}.
    */
-  private void calcVisualRange(DrawableDataset<T> drawableDataset,
-      MipMap mipMap, int domainStartIdx, int domainEndIdx) {
-
+  private Interval calcVisibleRange(MipMap mipMap, int domainStartIdx, int domainEndIdx) {
     double rangeMin = Double.POSITIVE_INFINITY;
     double rangeMax = Double.NEGATIVE_INFINITY;
     Iterator<Tuple2D> tupleItr = mipMap.getTupleIterator(domainStartIdx);
@@ -103,8 +98,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
       rangeMin = Math.min(rangeMin, y);
       rangeMax = Math.max(rangeMax, y);
     }
-    drawableDataset.visRangeMin = rangeMin;
-    drawableDataset.visRangeMax = rangeMax;
+
+    return new Interval(rangeMin, rangeMax);
   }
 
   private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
@@ -196,7 +191,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
   public void drawDatasets() {
     computeVisibleDomainAndRange(drawableDatasets, plot.getDomain());
-    setupRangeAxisVisibleRanges(drawableDatasets);
 
     final int numDatasets = plot.getDatasets().size();
     Layer plotLayer = plot.getPlotLayer();
@@ -344,14 +338,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
   public void setView(View view) {
     this.view = view;
-  }
-
-  private void setupRangeAxisVisibleRanges(List<DrawableDataset<T>> dds) {
-    for (int i = 0; i < dds.size(); i++) {
-      DrawableDataset<T> ds = dds.get(i);
-      RangeAxis ra = plot.getRangeAxis(i);
-      ra.setVisibleRange(ds.visRangeMin, ds.visRangeMax);
-    }
   }
 
   private void sortDatasetsIntoRenderOrder() {
