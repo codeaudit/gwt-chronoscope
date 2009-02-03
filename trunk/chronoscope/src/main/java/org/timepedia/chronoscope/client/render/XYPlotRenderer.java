@@ -54,11 +54,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       DrawableDataset<T> drawableDataset = dds.get(datasetIdx);
       Dataset<T> dataSet = drawableDataset.dataset;
 
-      final double plotDomainStart = plotDomain.getStart();
-      Interval domainExtrema = dataSet.getDomainExtrema();
-      if (!(MathUtil.isBounded(plotDomainStart,
-          domainExtrema.getStart() - plotDomain.length(),
-          domainExtrema.getEnd()))) {
+      if (!plotDomain.intersects(dataSet.getDomainExtrema())) {
         continue;
       }
 

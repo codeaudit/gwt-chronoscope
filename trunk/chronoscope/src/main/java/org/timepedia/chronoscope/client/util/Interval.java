@@ -138,6 +138,13 @@ public class Interval {
   }
   
   /**
+   * Returns true if the specified interval intersects this interval.
+   */
+  public boolean intersects(Interval i) {
+    return i.start <= this.end && i.end >= this.start;
+  }
+  
+  /**
    * The length of this interval (i.e. <tt>end - start</tt>).
    */
   public double length() {

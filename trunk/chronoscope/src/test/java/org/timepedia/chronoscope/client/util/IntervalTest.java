@@ -115,6 +115,26 @@ public class IntervalTest extends TestCase {
     assertEquals(-5.0, new Interval(-5, 10).getStart());
   }
   
+  public void testIntersects() {
+    Interval i = new Interval(-4, 4);
+    assertTrue(i.intersects(new Interval(-5, -4)));
+    assertTrue(i.intersects(new Interval(-5, 3)));
+    assertTrue(i.intersects(new Interval(-5, 4)));
+    assertTrue(i.intersects(new Interval(-5, 5)));
+    assertTrue(i.intersects(new Interval(-3, -2)));
+    assertTrue(i.intersects(new Interval(-3, 4)));
+    assertTrue(i.intersects(new Interval(-3, 4)));
+    assertTrue(i.intersects(new Interval(-3, 5)));
+    assertTrue(i.intersects(new Interval(2, 5)));
+    assertTrue(i.intersects(new Interval(4, 4)));
+    assertTrue(i.intersects(new Interval(4, 5)));
+    assertTrue(i.intersects(i));
+    
+    assertFalse(i.intersects(new Interval(-7, -6)));
+    assertFalse(i.intersects(new Interval(4.01, 4.02)));
+    assertFalse(i.intersects(new Interval(5, 7)));
+  }
+  
   public void testLength() {
     assertEquals(0.0, new Interval(5, 5).length());
     assertEquals(1.0, new Interval(5, 6).length());
