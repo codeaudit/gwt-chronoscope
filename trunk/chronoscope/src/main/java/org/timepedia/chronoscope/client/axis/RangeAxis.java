@@ -290,13 +290,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return tickLabelNumberFormatter;
   }
 
-  public void initVisibleRange() {
-    ticks = null;
-    computeTickPositions();
-    visRangeMin = absRangeMin;
-    visRangeMax = absRangeMax;
-  }
-
   public boolean isAllowAutoScale() {
     return allowAutoScale;
   }

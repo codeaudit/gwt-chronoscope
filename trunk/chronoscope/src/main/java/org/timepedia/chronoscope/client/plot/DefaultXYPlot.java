@@ -1026,10 +1026,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   void drawPlot() {
     plotLayer.setScrollLeft(0);
-    // reset the visible RangeAxis ticks if it's been zoomed
-    for (RangeAxis axis : rangePanel.getRangeAxes()) {
-      axis.initVisibleRange();
-    }
     plotRenderer.drawDatasets();
   }
 
