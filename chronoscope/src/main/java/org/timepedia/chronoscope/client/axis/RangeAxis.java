@@ -11,8 +11,6 @@ import org.timepedia.exporter.client.Exportable;
 
 /**
  * A RangeAxis is an ValueAxis that represents values, typically on the y-axis.
- *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class RangeAxis extends ValueAxis implements Exportable {
@@ -109,8 +107,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double range = lrangeHigh - lrangeLow;
 
-    final int maxNumLabels = (int) Math
-        .floor(axisHeight / (2 * tickLabelHeight));
+    final int maxNumLabels = 
+        (int) Math.floor(axisHeight / (2 * tickLabelHeight));
 
     final double roughInterval = range / maxNumLabels;
 
@@ -123,20 +121,23 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double smoothInterval = smoothSigDigits * exponent;
 
-    double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
+    final double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
-    if (axisStart + smoothInterval * (numTicks - 1) < lrangeHigh) {
+    if (axisStart + (smoothInterval * (numTicks - 1)) < lrangeHigh) {
       numTicks++;
     }
 
     double tickPositions[] = new double[numTicks];
+    double tickValue = axisStart;
     for (int i = 0; i < tickPositions.length; i++) {
-      if ((tickPositions.length == (i + 1)) && forceLastTick) {
-        axisStart = lrangeHigh;
-      }
-      tickPositions[i] = axisStart;
-      axisStart += smoothInterval;
+      tickPositions[i] = tickValue;
+      tickValue += smoothInterval;
+    }
+    // last tick requires special handling when user manually sets
+    // the range interval
+    if (forceLastTick) {
+      tickPositions[numTicks - 1] = lrangeHigh;
     }
     
     return tickPositions;
@@ -326,8 +327,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
    * 4, then the number 25000 will be rendered as 25, and the axis label will be
    * modified to include the word "Thousands". setAllowScientificNotation() will
    * override this and take priority, as well as setScale().
-   *
-   * @gwt.export
    */
   @Export
   public void setAllowAutoScale(boolean allowAutoScale) {
@@ -337,8 +336,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * If enabled (true by default), when maxTickLabelDigits is exceeded, labels
    * will be rendered in scientific notation.
-   *
-   * @gwt.export
    */
   @Export
   public void setAllowScientificNotation(boolean enable) {
@@ -349,9 +346,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.axisPanel = r;
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
     this.autoZoom = autoZoom;
@@ -360,17 +354,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * Force tick labels to always be rendered in scientific notation. (Default
    * false);
-   *
-   * @gwt.export
    */
   @Export
   public void setForceScientificNotation(boolean force) {
     forceScientificNotation = force;
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void setLabel(String label) {
     super.setLabel(label);
@@ -386,8 +375,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * Set a scale factor for displaying axis tick values
-   *
-   * @gwt.export
    */
   @Export
   public void setScale(double scale) {
@@ -400,8 +387,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * Set custom TickLabelNumberFormatter callbacks.
-   *
-   * @gwt.export
    */
   @Export
   public void setTickLabelNumberFormatter(
@@ -411,8 +396,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * Set the number format used to render ticks
-   *
-   * @gwt.export
    */
   @Export
   public void setTickNumberFormat(String format) {
@@ -424,9 +407,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
     this.visRangeMin = visRangeMin;
