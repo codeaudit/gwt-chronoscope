@@ -55,7 +55,7 @@ public class DatasetLegendPanel extends AbstractPanel {
   }
   
   public void draw() {
-    draw(layer, plot.getDatasets().size());
+    draw(layer, plot.getDatasets().size(), null);
   }
   
   private Bounds calcBounds(Layer layer, int numDatasets) {
@@ -63,11 +63,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     draw(layer, numDatasets, b);
     return b;
   }
-  
-  private void draw(Layer layer, int numDatasets) {
-    draw(layer, numDatasets, null);
-  }
-  
+
   private void draw(Layer layer, int numDatasets, Bounds b) {
     final boolean onlyCalcSize = (b != null);
     double xCursor = bounds.x;
@@ -177,7 +173,7 @@ public class DatasetLegendPanel extends AbstractPanel {
     
     final boolean doShowRangeValue = (pointIdx > -1);
     if (doShowRangeValue) {
-      double yData = plot.getDataY(datasetIdx, pointIdx);
+      double yData = plot.calcDisplayY(datasetIdx, pointIdx);
       lbl += " (" + rangeAxis.getFormattedLabel(yData) + ")";
     }
     return lbl;

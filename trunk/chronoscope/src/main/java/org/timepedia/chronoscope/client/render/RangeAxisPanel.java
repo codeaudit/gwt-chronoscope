@@ -49,7 +49,7 @@ public class RangeAxisPanel extends AxisPanel {
     drawBounds.x += getLayerOffsetX();
     drawBounds.y += getLayerOffsetY();
     
-    double tickPositions[] = rangeAxis.computeTickPositions();
+    double tickPositions[] = rangeAxis.calcTickPositions();
     layer.save();
     
     if (!GRID_ONLY) {
