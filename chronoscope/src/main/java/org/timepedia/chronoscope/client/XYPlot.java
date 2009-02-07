@@ -89,16 +89,25 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
       PlotMovedEvent.MoveType eventType, PortableTimerTask continuation);
 
   /**
+   * Returns the Y value (i.e. the range of a 2-tuple datapoint) that should be
+   * displayed to the user.  Typically, this value will correspond to the actual
+   * Y value in the {@link Dataset}, however, this value can sometimes represent
+   * a transformation of the raw Y value (e.g. a percentage change from some 
+   * point in time, or a logarithmic scale).
+   */
+  double calcDisplayY(int datasetIdx, int pointIdx);
+  
+  /**
    * Process a click on the Plot window given the screen space coordinates,
    * returns true if the click succeeded (e.g. it 'hit' something)
    */
   boolean click(int x, int y);
 
   /**
-   * Tell plot to discard cache of the axes layer containing this axis and
-   * redraw it on next update.
+   * Any cached drawings within the top, bottom, or range axis panels are 
+   * flushed and redrawn on next update.
    */
-  void damageAxes(ValueAxis axis);
+  void damageAxes();
 
   /**
    * Convert a domain X value to a screen X value using the axis of the given
@@ -211,12 +220,19 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Returns the layer onto which the main plot area is rendered.
    */
   Layer getPlotLayer();
-
+  
   /**
-   * @gwt.export getAxis
+   * Returns the {@link RangeAxis} object to which the specified dataset is bound.
+   * 
+   * @param datasetIndex The 0-based index of the dataset
    */
   RangeAxis getRangeAxis(int datasetIndex);
 
+  /**
+   * Returns the number of {@link RangeAxis} objects are present in this plot.
+   */
+  public int getRangeAxisCount();
+  
   /**
    * Get the domain value of the beginning of the current selection
    */

@@ -61,7 +61,6 @@ import java.util.List;
  * current selection and focus point.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class DefaultXYPlot<T extends Tuple2D>
@@ -100,7 +99,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private double beginHighlight = Double.MIN_VALUE, endHighlight
       = Double.MIN_VALUE;
-
+  
   private Datasets<T> datasets;
 
   private boolean highlightDrawn;
@@ -152,9 +151,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel = new RangePanel();
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void addOverlay(Overlay overlay) {
     overlays.add(overlay);
@@ -190,6 +186,19 @@ public class DefaultXYPlot<T extends Tuple2D>
         true);
   }
 
+  public double calcDisplayY(int datasetIdx, int pointIdx) {
+    DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIdx);
+    RangeAxis ra = getRangeAxis(datasetIdx);
+    double y = dds.currMipMap.getTuple(pointIdx).getRange0();
+    
+    if (ra.isCalcRangeAsPercent()) {
+      double refY = plotRenderer.calcReferenceY(ra, dds);
+      y = RangeAxis.calcPrctDiff(refY, y);
+    }
+    
+    return y;
+  }
+
   public boolean click(int x, int y) {
     if (setFocusXY(x, y)) {
       return true;
@@ -208,11 +217,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     return topPanel.isEnabled() ? topPanel.click(x, y) : false;
   }
 
-  /**
-   * Any cached drawings of this axis are flushed and redrawn on next update
-   */
-  public void damageAxes(ValueAxis axis) {
+  public void damageAxes() {
     rangePanel.clearDrawCaches();
+    bottomPanel.clearDrawCaches();
+    topPanel.clearDrawCaches();
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
@@ -225,9 +233,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotBounds.x + domainToScreenX(dataX, datasetIndex);
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
@@ -323,12 +328,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     return initLayer(null, LAYER_PLOT, plotBounds);
   }
 
-  /**
-   * @gwt.export getAxis
-   */
   @Export("getAxis")
   public RangeAxis getRangeAxis(int datasetIndex) {
     return rangePanel.getRangeAxes()[datasetIndex];
+  }
+  
+  public int getRangeAxisCount() {
+    return rangePanel.getRangeAxes().length;
   }
 
   public double getSelectionBegin() {
@@ -381,6 +387,14 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initAuxiliaryPanel(bottomPanel, view);
     initAuxiliaryPanel(rangePanel, view);
+    /*
+    if (!rangePanel.isInitialized()) {
+      initAuxiliaryPanel(rangePanel, view);
+    } else {
+      rangePanel.bindDatasetsToRangeAxes();
+    }
+    */
+    
     // TODO: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
     initAuxiliaryPanel(topPanel, view);
@@ -469,7 +483,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // everything.
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
     this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
-    this.rangePanel = new RangePanel();
+    //this.rangePanel = new RangePanel();
     this.reloadStyles();
   }
 
@@ -481,7 +495,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (datasetIndex == -1) {
       datasetIndex = 0;
     }
-    damageAxes(getRangeAxis(datasetIndex));
+    damageAxes();
     if (domainEnd > visDomain.getEnd()) {
       animateTo(domainEnd - visDomain.length() / 2, visDomain.length(),
           PlotMovedEvent.MoveType.DRAGGED, new PortableTimerTask() {
@@ -591,9 +605,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotBounds.y + rangeToScreenY(rangeY, datasetIndex);
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void redraw() {
     redraw(false);
@@ -658,9 +669,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     background.paint(this, plotLayer, visDomain.getStart(), visDomain.length());
   }
 
-  /**
-   * @gwt.export
-   */
   @Export
   public void reloadStyles() {
     bottomPanel.clearDrawCaches();

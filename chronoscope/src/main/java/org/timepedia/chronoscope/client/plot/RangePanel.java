@@ -10,7 +10,6 @@ import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.Panel;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Interval;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +37,11 @@ final class RangePanel extends AuxiliaryPanel {
   
   public RangePanel() {
     myBounds = new Bounds(0, 0, 30, 10); // default bounds
+  }
+  
+  public void bindDatasetsToRangeAxes() {
+    rangeAxes = bindDatasetsToRangeAxes(this.plot.getDatasets());
+    clearDrawCaches();
   }
   
   @Override
@@ -181,7 +185,7 @@ final class RangePanel extends AuxiliaryPanel {
     rightPanel.setParent(this);
     rightPanel.setStringSizer(stringSizer);
     
-    rangeAxes = autoAssignDatasetAxes(plot.getDatasets());
+    rangeAxes = bindDatasetsToRangeAxes(plot.getDatasets());
   }
   
   @Override
@@ -195,42 +199,39 @@ final class RangePanel extends AuxiliaryPanel {
     }
   }
 
-  private RangeAxis[] autoAssignDatasetAxes(Datasets datasets) {
+  private RangeAxis[] bindDatasetsToRangeAxes(Datasets datasets) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
 
     Map<String, RangeAxis> id2rangeAxis = new HashMap<String, RangeAxis>();
     List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
-
+    
+    leftPanel.clear();
+    rightPanel.clear();
+    
     for (int i = 0; i < datasets.size(); i++) {
-      Dataset ds = datasets.get(i);
+      Dataset dataset = datasets.get(i);
 
-      RangeAxis ra = id2rangeAxis.get(ds.getAxisId(0));
+      RangeAxis rangeAxis = id2rangeAxis.get(dataset.getAxisId(0));
       
-      if (ra != null) {
-        ra.adjustRangeExtrema(ds.getRangeExtrema(0));
+      if (rangeAxis != null) {
+        rangeAxis.adjustAbsRange(dataset);
       } else {
         int numLeftAxes = leftPanel.getChildCount();
         int numRightAxes = rightPanel.getChildCount();
         boolean useLeftPanel = (numLeftAxes <= numRightAxes);
-        CompositeAxisPanel currRangePanel = useLeftPanel ? leftPanel
-            : rightPanel;
+        CompositeAxisPanel currRangePanel = 
+            useLeftPanel ? leftPanel : rightPanel;
         
-        Interval rangeAxisInterval = ds.getPreferredRangeAxisInterval();
-        if (rangeAxisInterval == null) {
-          rangeAxisInterval = ds.getRangeExtrema(0);
-        }
-        
-        ra = new RangeAxis(plot, view, ds.getRangeLabel(), ds.getAxisId(0), i,
-            rangeAxisInterval);
+        rangeAxis = new RangeAxis(plot, view, dataset, i);
         RangeAxisPanel axisPanel = new RangeAxisPanel();
-        axisPanel.setValueAxis(ra);
-        ra.setAxisPanel(axisPanel);
+        axisPanel.setValueAxis(rangeAxis);
+        rangeAxis.setAxisPanel(axisPanel);
         currRangePanel.add(axisPanel);
-        id2rangeAxis.put(ra.getAxisId(), ra);
+        id2rangeAxis.put(rangeAxis.getAxisId(), rangeAxis);
       }
 
-      rangeAxes.add(ra);
+      rangeAxes.add(rangeAxis);
     }
 
     return (RangeAxis[])rangeAxes.toArray(new RangeAxis[0]);
