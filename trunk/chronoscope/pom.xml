@@ -57,7 +57,7 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-incubator</artifactId>
-      <version>1.04-SNAPSHOT</version>
+      <version>1.5</version>
       <type>jar</type>
     </dependency>
 
