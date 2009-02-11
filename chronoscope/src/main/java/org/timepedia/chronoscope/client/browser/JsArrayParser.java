@@ -1,13 +1,11 @@
 package org.timepedia.chronoscope.client.browser;
 
-
+import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
+import org.timepedia.chronoscope.client.data.json.JsonArrayString;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
-import org.timepedia.chronoscope.client.data.json.JsonArrayString;
-import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
 
 import java.util.Date;
 
@@ -56,7 +54,9 @@ public final class JsArrayParser {
     for (int i = 0; i < len; i++) {
       Date javaDate = new Date((long) df.parse(jsArray.get(i)));
       chronoDate.set().year(javaDate.getYear() + 1900)
-          .month(javaDate.getMonth()).day(javaDate.getDate()).done();
+          .month(javaDate.getMonth()).day(javaDate.getDate())
+          .hour(javaDate.getHours()).min(javaDate.getMinutes())
+          .sec(javaDate.getSeconds()).done();
       aVal[i] = chronoDate.getTime();
     }
     return aVal;

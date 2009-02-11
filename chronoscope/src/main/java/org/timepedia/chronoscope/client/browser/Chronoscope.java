@@ -309,9 +309,7 @@ public class Chronoscope implements Exportable {
   }
 
   /**
-   * @gwt.export createTimeseriesChartById
    */
-  @Export("createTimeseriesChartById")
   public ChartPanel createChartPanel(String id,
       JsArray<JsonDatasetJSO> datasets, ViewReadyCallback listener) {
     Element elem = DOM.getElementById(id);
