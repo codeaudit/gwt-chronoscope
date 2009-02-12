@@ -102,6 +102,10 @@ public abstract class View implements Exportable {
     return chart;
   }
 
+  public GssContext getGssContext() {
+    return gssContext;
+  }
+
   /**
    * Given a GssElement and pseudo class, we utilize the GssContext to retrieve
    * a GssProperties object for this GssElement
