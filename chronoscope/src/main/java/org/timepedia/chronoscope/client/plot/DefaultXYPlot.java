@@ -99,7 +99,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private double beginHighlight = Double.MIN_VALUE, endHighlight
       = Double.MIN_VALUE;
-  
+
   private Datasets<T> datasets;
 
   private boolean highlightDrawn;
@@ -133,9 +133,9 @@ public class DefaultXYPlot<T extends Tuple2D>
   int plotNumber = 0;
 
   private XYPlotRenderer<T> plotRenderer;
-  
+
   private StringSizer stringSizer;
-  
+
   private View view;
 
   private double visibleDomainMax;
@@ -190,12 +190,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIdx);
     RangeAxis ra = getRangeAxis(datasetIdx);
     double y = dds.currMipMap.getTuple(pointIdx).getRange0();
-    
+
     if (ra.isCalcRangeAsPercent()) {
       double refY = plotRenderer.calcReferenceY(ra, dds);
       y = RangeAxis.calcPrctDiff(refY, y);
     }
-    
+
     return y;
   }
 
@@ -332,7 +332,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public RangeAxis getRangeAxis(int datasetIndex) {
     return rangePanel.getRangeAxes()[datasetIndex];
   }
-  
+
   public int getRangeAxisCount() {
     return rangePanel.getRangeAxes().length;
   }
@@ -367,7 +367,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       stringSizer = new StringSizer();
     }
     stringSizer.setCanvas(view.getCanvas());
-    
+
     if (!plotRenderer.isInitialized()) {
       plotRenderer.setPlot(this);
       plotRenderer.setView(view);
@@ -394,7 +394,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       rangePanel.bindDatasetsToRangeAxes();
     }
     */
-    
+
     // TODO: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
     initAuxiliaryPanel(topPanel, view);
@@ -484,6 +484,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
     this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
     //this.rangePanel = new RangePanel();
+    fixDomainDisjoint();
     this.reloadStyles();
   }
 
@@ -544,7 +545,18 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     this.plotRenderer.removeDataset(dataset);
+    fixDomainDisjoint();
     this.reloadStyles();
+  }
+
+  /**
+   * If the Datasets extrema does not intersect the plot's domain, force the
+   * plot's domain to be the Datasets extrema.
+   */
+  private void fixDomainDisjoint() {
+    if (!datasets.getDomainExtrema().intersects(getDomain())) {
+      datasets.getDomainExtrema().copyTo(getDomain());
+    }
   }
 
   public void onZoom(double intervalInMillis) {
@@ -628,7 +640,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean plotDomainChanged = !visDomain.equals(lastVisDomain);
 
     Layer hoverLayer = getHoverLayer();
-    
+
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating) {
       hoverLayer.clear();
@@ -864,8 +876,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void animateTo(final double destDomainOrigin,
       final double destDomainLength, final PlotMovedEvent.MoveType eventType,
       final PortableTimerTask continuation, final boolean fence) {
-      final DefaultXYPlot plot = this;
-      
+    final DefaultXYPlot plot = this;
+
     if (!isAnimatable()) {
       return;
     }
@@ -950,7 +962,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void cancelHighlight() {
     setHighlight(0, 0);
   }
-  
+
   private void clearDrawCaches() {
     bottomPanel.clearDrawCaches();
     topPanel.clearDrawCaches();
@@ -1126,8 +1138,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap
-        ;
+    MipMap currMipMap = plotRenderer
+        .getDrawableDataset(datasetIndex).currMipMap;
 
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
@@ -1195,7 +1207,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
-    
+
     topPanel.initLayer();
     rangePanel.initLayer();
     bottomPanel.initLayer();
