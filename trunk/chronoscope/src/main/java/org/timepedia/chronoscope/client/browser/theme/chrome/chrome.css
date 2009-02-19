@@ -763,6 +763,7 @@ html>body .gwt-DecoratedStackPanel .gwt-StackPanelItem-below-selected .stackItem
 }
 .gwt-SuggestBoxPopup {
   margin-left: 3px;
+  z-index: 999;
 }
 .gwt-SuggestBoxPopup .item {
   padding: 2px 6px;
