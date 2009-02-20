@@ -8,8 +8,6 @@ import org.timepedia.chronoscope.client.event.PlotHoverEvent;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.util.PortableTimer;
-import org.timepedia.chronoscope.client.util.PortableTimerTask;
 
 public class GTestPlotEvents extends ChronoscopeTestCaseBase {
 
