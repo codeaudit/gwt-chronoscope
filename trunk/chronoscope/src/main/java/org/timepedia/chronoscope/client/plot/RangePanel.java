@@ -223,10 +223,15 @@ final class RangePanel extends AuxiliaryPanel {
         CompositeAxisPanel currRangePanel = 
             useLeftPanel ? leftPanel : rightPanel;
         
-        rangeAxis = new RangeAxis(plot, view, dataset, i);
+        rangeAxis = new RangeAxis(dataset.getRangeLabel(), dataset.getAxisId(0));
+        rangeAxis.setPlot(plot);
+        rangeAxis.setView(view);
+        rangeAxis.setAxisIndex(i);
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(rangeAxis);
         rangeAxis.setAxisPanel(axisPanel);
+        rangeAxis.adjustAbsRange(dataset);
+
         currRangePanel.add(axisPanel);
         id2rangeAxis.put(rangeAxis.getAxisId(), rangeAxis);
       }

@@ -151,7 +151,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private boolean autoZoom = false;
   
-  private final int axisIndex;
+  private int axisIndex;
 
   private boolean calcRangeAsPercent = false;
   
@@ -183,23 +183,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private View view;
 
-  public RangeAxis(XYPlot plot, View view, Dataset ds, int axisIndex) {
-    super(ds.getRangeLabel(), ds.getAxisId(0));
-    
-    this.axisIndex = axisIndex;
+  public RangeAxis(String rangeLabel, String axisId) {
+    super(rangeLabel, axisId);
     tickLabelNumberFormatter = defaultTickLabelNumberFormatter
         = new DefaultTickLabelNumberFormatter();
-    this.plot = plot;
-    this.view = view;
-
-    Interval rangeExtrema = ds.getPreferredRangeAxisInterval();
-    if (rangeExtrema == null) {
-      rangeExtrema = ds.getRangeExtrema(0);
-    }
-
-    setAbsRange(rangeExtrema.getStart(), rangeExtrema.getEnd());
-    this.adjustedRangeMin = this.absRangeMin;
-    this.adjustedRangeMax = this.absRangeMax;
   }
 
   /**
@@ -381,6 +368,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     allowScientificNotation = enable;
   }
 
+  public void setAxisIndex(int axisIndex) {
+    this.axisIndex = axisIndex;
+  }
+  
   public void setAxisPanel(RangeAxisPanel r) {
     this.axisPanel = r;
   }
@@ -420,6 +411,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     axisPanel.computeLabelWidths(view);
   }
 
+  public void setPlot(XYPlot plot) {
+    this.plot = plot;
+  }
+  
   @Export
   public void setRange(double rangeLow, double rangeHigh) {
     rangeOverridden = true;
@@ -460,6 +455,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
+  public void setView(View view) {
+    this.view = view;
+  }
+  
   @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
     this.visRangeMin = visRangeMin;
