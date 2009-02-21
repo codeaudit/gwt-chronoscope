@@ -13,8 +13,10 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents the vertical range axes to the left and right of the
@@ -28,6 +30,12 @@ final class RangePanel extends AuxiliaryPanel {
   private CompositeAxisPanel leftPanel, rightPanel;
   private Layer layer;
   private Bounds myBounds;
+  
+  // Maps axisId->RangeAxis entries and keeps them around (conditionally,
+  // based on the value of 'createNewAxesOnInit') between calls to initHook().
+  private Map<String, RangeAxis> id2rangeAxis = new HashMap<String, RangeAxis>();
+  
+  private boolean createNewAxesOnInit = true;
   
   // Maps a dataset id to the RangeAxis to which it has been bound.
   // E.g. rangeAxes[2] returns the RangeAxis that datasets.get(2) is 
@@ -126,6 +134,10 @@ final class RangePanel extends AuxiliaryPanel {
     this.layout();
   }
   
+  public void setCreateNewAxesOnInit(boolean b) {
+    this.createNewAxesOnInit = b;
+  }
+  
   public void setHeight(double height) {
     ArgChecker.isNonNegative(height, "height");
     this.myBounds.height = height;
@@ -203,39 +215,46 @@ final class RangePanel extends AuxiliaryPanel {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
 
-    Map<String, RangeAxis> id2rangeAxis = new HashMap<String, RangeAxis>();
-    List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
+    if (createNewAxesOnInit) {
+      id2rangeAxis.clear();
+    }
     
+    // Keeps track of unique axisIds *within the scope of this method*
+    Set<String> localRangeAxisIds = new HashSet<String>();
+    
+    List<RangeAxis> rangeAxes = new ArrayList<RangeAxis>();
     leftPanel.clear();
     rightPanel.clear();
     
     for (int i = 0; i < datasets.size(); i++) {
       Dataset dataset = datasets.get(i);
-
-      RangeAxis rangeAxis = id2rangeAxis.get(dataset.getAxisId(0));
       
-      if (rangeAxis != null) {
-        rangeAxis.adjustAbsRange(dataset);
-      } else {
-        int numLeftAxes = leftPanel.getChildCount();
-        int numRightAxes = rightPanel.getChildCount();
-        boolean useLeftPanel = (numLeftAxes <= numRightAxes);
-        CompositeAxisPanel currRangePanel = 
-            useLeftPanel ? leftPanel : rightPanel;
-        
-        rangeAxis = new RangeAxis(dataset.getRangeLabel(), dataset.getAxisId(0));
+      final String rangeAxisId = dataset.getAxisId(0);
+      RangeAxis rangeAxis = id2rangeAxis.get(rangeAxisId);
+      
+      // Determine if the rangeAxis should be added to the left or right range panel 
+      int numLeftAxes = leftPanel.getChildCount();
+      int numRightAxes = rightPanel.getChildCount();
+      boolean useLeftPanel = (numLeftAxes <= numRightAxes);
+      CompositeAxisPanel compositePanel = useLeftPanel ? leftPanel : rightPanel;
+
+      if (rangeAxis == null) {
+        rangeAxis = new RangeAxis(dataset.getRangeLabel(), rangeAxisId);
         rangeAxis.setPlot(plot);
         rangeAxis.setView(view);
         rangeAxis.setAxisIndex(i);
+        id2rangeAxis.put(rangeAxisId, rangeAxis);
+      }
+      
+      if (!localRangeAxisIds.contains(rangeAxisId)) {
         RangeAxisPanel axisPanel = new RangeAxisPanel();
         axisPanel.setValueAxis(rangeAxis);
         rangeAxis.setAxisPanel(axisPanel);
-        rangeAxis.adjustAbsRange(dataset);
-
-        currRangePanel.add(axisPanel);
-        id2rangeAxis.put(rangeAxis.getAxisId(), rangeAxis);
+        compositePanel.add(axisPanel);
+        localRangeAxisIds.add(rangeAxisId);
       }
-
+      
+      rangeAxis.adjustAbsRange(dataset);
       rangeAxes.add(rangeAxis);
     }
 

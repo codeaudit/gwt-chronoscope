@@ -185,6 +185,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public RangeAxis(String rangeLabel, String axisId) {
     super(rangeLabel, axisId);
+    
     tickLabelNumberFormatter = defaultTickLabelNumberFormatter
         = new DefaultTickLabelNumberFormatter();
   }
@@ -379,8 +380,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
   @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
     this.autoZoom = autoZoom;
-    this.plot.damageAxes();
-    this.adjustAbsRanges();
+    plot.damageAxes();
+    adjustAbsRanges();
+    plot.reloadStyles();
   }
   
   /**
@@ -392,7 +394,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setCalcRangeAsPercent(boolean b) {
     this.calcRangeAsPercent = b;
     this.plot.damageAxes();
-    this.adjustAbsRanges();
+    adjustAbsRanges();
   }
   
   /**
@@ -419,6 +421,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setRange(double rangeLow, double rangeHigh) {
     rangeOverridden = true;
     setAbsRange(rangeLow, rangeHigh);
+    this.plot.reloadStyles();
   }
 
   /**
@@ -464,9 +467,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
     ticks = null;
-    calcTickPositions();
   }
-
+  
   public double userToData(double userValue) {
     return adjustedRangeMin + 
         ((adjustedRangeMax - adjustedRangeMin) * userValue);
