@@ -353,7 +353,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return this.widestDomain;
   }
 
-  public void init(View view) {
+  private void init(View view, boolean forceNewRangeAxes) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isNotNull(plotRenderer, "plotRenderer");
@@ -384,8 +384,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     ArgChecker
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
-
+    
     initAuxiliaryPanel(bottomPanel, view);
+    rangePanel.setCreateNewAxesOnInit(forceNewRangeAxes);
     initAuxiliaryPanel(rangePanel, view);
     /*
     if (!rangePanel.isInitialized()) {
@@ -410,6 +411,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     background = new GssBackground(view);
     view.canvasSetupDone();
+  }
+  
+  public void init(View view) {
+    init(view, true);
   }
 
   public boolean isAnimating() {
@@ -651,6 +656,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (plotDomainChanged || forceCenterPlotRedraw) {
       plotLayer.clear();
       drawBackground();
+
       rangePanel.draw();
 
       if (canDrawFast) {
@@ -685,7 +691,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void reloadStyles() {
     bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = visDomain.copy();
-    init(view);
+    init(view, false);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
     visDomain = plotRenderer.calcWidestPlotDomain();
