@@ -6,6 +6,9 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +23,10 @@ import java.util.List;
  *
  * @author chad takahashi
  */
-public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
+@ExportPackage("chronoscope")
+public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>>,
+    Exportable
+{
 
   private double minInterval = Double.POSITIVE_INFINITY;
 
@@ -55,6 +61,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   /**
    * Adds the specified dataset to the existing datasets in this container.
    */
+  @Export
   public void add(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
@@ -93,6 +100,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   /**
    * Returns the dataset at the specified 0-based index within this container.
    */
+  @Export
   public Dataset<T> get(int index) {
     return this.datasets.get(index);
   }
@@ -101,6 +109,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
    * Returns an interval that contains the minimum and maximum domain value
    * across all {@link Dataset} elements within this container.
    */
+  @Export
   public Interval getDomainExtrema() {
     verifyDatasetNotEmpty();
     return new Interval(this.minDomain, this.maxDomain);
@@ -138,6 +147,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
    * once belonged to this container will no longer signal this container, which
    * in turn, will no longer forward the mutation event to its listeners.
    */
+  @Export
   public Dataset<T> remove(int index) {
     verifyDatasetNotEmpty();
     Dataset<T> removedDataset = datasets.remove(index);
@@ -152,6 +162,7 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>> {
   /**
    * Returns the number of datasets in this container.
    */
+  @Export
   public int size() {
     return this.datasets.size();
   }
