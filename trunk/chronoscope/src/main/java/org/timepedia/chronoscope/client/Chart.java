@@ -51,7 +51,6 @@ public class Chart implements Exportable {
   /**
    * The current view used for rendering.
    */
-  @Export
   public View getView() {
     return view;
   }

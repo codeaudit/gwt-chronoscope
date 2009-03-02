@@ -160,17 +160,14 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw(true);
   }
 
-  @Export
   public HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
     return handlerManager.addHandler(PlotFocusEvent.TYPE, handler);
   }
 
-  @Export
   public HandlerRegistration addPlotHoverHandler(PlotHoverHandler handler) {
     return handlerManager.addHandler(PlotHoverEvent.TYPE, handler);
   }
 
-  @Export
   public HandlerRegistration addPlotMovedHandler(PlotMovedHandler handler) {
     return handlerManager.addHandler(PlotMovedEvent.TYPE, handler);
   }

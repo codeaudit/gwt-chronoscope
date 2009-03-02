@@ -46,14 +46,7 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>gwtquery</groupId>
-      <artifactId>gwtquery</artifactId>
-      <version>0.31-SNAPSHOT</version>
-      <type>jar</type>
-    </dependency>
-
-
+  
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-incubator</artifactId>
