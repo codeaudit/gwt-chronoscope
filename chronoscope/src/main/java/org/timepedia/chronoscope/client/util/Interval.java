@@ -91,7 +91,7 @@ public class Interval implements Exportable {
   /**
    * Expands this interval so that the specified interval falls inside this interval.
    */
-  @Export
+  @Export("expandWithInterval")
   public void expand(Interval interval) {
     expand(interval.start);
     expand(interval.end);

@@ -19,7 +19,7 @@ public interface Overlay extends Exportable {
    *
    * @gwt.export addOverlayListener
    */
-  @Export
+  @Export("addOverlayListener")
   void addOverlayClickListener(OverlayClickListener cl);
 
   /**
