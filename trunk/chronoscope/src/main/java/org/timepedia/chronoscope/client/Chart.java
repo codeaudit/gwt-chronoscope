@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
 
 /**
  * The Chart class composes a {@link XYPlot} and a {@link View}. A plot is a 
@@ -14,6 +15,7 @@ import org.timepedia.exporter.client.Exportable;
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
+@ExportPackage("chronoscope")
 public class Chart implements Exportable {
   private XYPlot plot;
   private View view;
@@ -30,6 +32,7 @@ public class Chart implements Exportable {
   /**
    * A stable ID used to serialize chart state
    */
+  @Export
   public String getChartId() {
     return id;
   }
@@ -48,6 +51,7 @@ public class Chart implements Exportable {
   /**
    * The current view used for rendering.
    */
+  @Export
   public View getView() {
     return view;
   }
@@ -62,6 +66,7 @@ public class Chart implements Exportable {
    * Animated zoom out so that the entire domain of the dataset fits precisely
    * in the Plot
    */
+  @Export
   public void maxZoomOut() {
     plot.maxZoomOut();
   }
@@ -79,6 +84,7 @@ public class Chart implements Exportable {
    * the center of the destination plot, and the width of the destination domain
    * contains up to a maximum of plot.getMaxDrawablePoints()
    */
+  @Export
   public void maxZoomToFocus() {
     plot.maxZoomToFocus();
   }
@@ -86,6 +92,7 @@ public class Chart implements Exportable {
   /**
    * Advance the focused datapoint to the next point
    */
+  @Export
   public void nextFocus() {
     plot.nextFocus();
   }
@@ -93,6 +100,7 @@ public class Chart implements Exportable {
   /**
    * Animated zoom-in of the currently visible domain by a fixed zoomfactor
    */
+  @Export
   public void nextZoom() {
     plot.nextZoom();
   }
@@ -102,6 +110,7 @@ public class Chart implements Exportable {
    * currently visible domain. For example, 0.5 will move the domain origin by
    * getCurrentDomain() * 0.5
    */
+  @Export
   public void pageLeft(double amt) {
     plot.pageLeft(amt);
   }
@@ -111,6 +120,7 @@ public class Chart implements Exportable {
    * currently visible domain. For example, 0.5 will move the domain origin by
    * getCurrentDomain() * 0.5
    */
+  @Export
   public void pageRight(double amt) {
     plot.pageRight(amt);
   }
@@ -118,6 +128,7 @@ public class Chart implements Exportable {
   /**
    * Advance the focused datapoint to the previous point
    */
+  @Export
   public void prevFocus() {
     plot.prevFocus();
   }
@@ -125,6 +136,7 @@ public class Chart implements Exportable {
   /**
    * Animated zoom-out of the currently visible domain by a fixed zoomfactor
    */
+  @Export
   public void prevZoom() {
     plot.prevZoom();
   }
@@ -142,6 +154,7 @@ public class Chart implements Exportable {
    * Reprocess all style information and reinitialize the plot. useful for
    * style-sheet changing.
    */
+  @Export
   public void reloadStyles() {
     plot.reloadStyles();
   }
@@ -150,6 +163,7 @@ public class Chart implements Exportable {
    * Pan the current domain of the plot by the given number of screen pixels
    * (positive or negative)
    */
+  @Export
   public void scrollPixels(int pixels) {
     plot.scrollPixels(pixels);
   }
@@ -208,11 +222,17 @@ public class Chart implements Exportable {
    * Causes chart to perform an animated zoom such that the current selection
    * becomes the currently visible domain.
    */
+  @Export
   public void zoomToHighlight() {
     plot.zoomToHighlight();
   }
 
   public void setCursor(Cursor cursor) {
     view.setCursor(cursor);
+  }
+
+  @Export
+  public void setDomain(double start, double end) {
+    plot.getDomain().setEndpoints(start, end);
   }
 }
