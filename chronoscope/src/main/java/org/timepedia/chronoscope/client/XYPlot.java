@@ -17,7 +17,9 @@ import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
+import org.timepedia.chronoscope.client.plot.ExportableHandlerRegistration;
 import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
 
 /**
  * An interface to be implemented by classes implementing XY plots of {@link
@@ -54,17 +56,20 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Add a callback for PlotFocusEvents.
    */
-  HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler);
+  @Export("addFocusHandler")
+  ExportableHandlerRegistration addPlotFocusHandler(PlotFocusHandler handler);
 
   /**
    * Add a callback for PlotHoverEvents.
    */
-  HandlerRegistration addPlotHoverHandler(PlotHoverHandler handler);
+  @Export("addHoverHandler")
+  ExportableHandlerRegistration addPlotHoverHandler(PlotHoverHandler handler);
 
   /**
    * Add a callback for PlotMovedEvents.
    */
-  HandlerRegistration addPlotMovedHandler(PlotMovedHandler handler);
+  @Export("addMoveHandler")
+  ExportableHandlerRegistration addPlotMovedHandler(PlotMovedHandler handler);
 
   /**
    * Animate the domainOrigin and currentDomain values interpolating to the

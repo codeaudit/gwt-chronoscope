@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.timepedia.exporter</groupId>
       <artifactId>gwtexporter</artifactId>
-      <version>2.04</version>
+      <version>2.05</version>
       <type>jar</type>
     </dependency>
 

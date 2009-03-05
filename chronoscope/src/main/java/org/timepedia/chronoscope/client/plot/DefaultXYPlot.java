@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.gen2.event.shared.EventHandler;
 import com.google.gwt.gen2.event.shared.HandlerManager;
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
 
@@ -140,7 +142,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private double visibleDomainMax;
 
-  private HandlerManager handlerManager = new HandlerManager(this);
+  private ExportableHandlerManager handlerManager
+      = new ExportableHandlerManager(this);
 
   public DefaultXYPlot() {
     overlays = new ArrayList<Overlay>();
@@ -160,16 +163,19 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw(true);
   }
 
-  public HandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
-    return handlerManager.addHandler(PlotFocusEvent.TYPE, handler);
+  @Export("addFocusHandler")
+  public ExportableHandlerRegistration addPlotFocusHandler(PlotFocusHandler handler) {
+    return handlerManager.addExportableHandler(PlotFocusEvent.TYPE, handler);
   }
 
-  public HandlerRegistration addPlotHoverHandler(PlotHoverHandler handler) {
-    return handlerManager.addHandler(PlotHoverEvent.TYPE, handler);
+  @Export("addHoverHandler")
+  public ExportableHandlerRegistration addPlotHoverHandler(PlotHoverHandler handler) {
+    return handlerManager.addExportableHandler(PlotHoverEvent.TYPE, handler);
   }
 
-  public HandlerRegistration addPlotMovedHandler(PlotMovedHandler handler) {
-    return handlerManager.addHandler(PlotMovedEvent.TYPE, handler);
+  @Export("addMoveHandler")
+  public ExportableHandlerRegistration addPlotMovedHandler(PlotMovedHandler handler) {
+    return handlerManager.addExportableHandler(PlotMovedEvent.TYPE, handler);
   }
 
   public void animateTo(final double destDomainOrigin,
@@ -386,7 +392,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     ArgChecker
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
-    
+
     initAuxiliaryPanel(bottomPanel, view);
     rangePanel.setCreateNewAxesOnInit(forceNewRangeAxes);
     initAuxiliaryPanel(rangePanel, view);
@@ -414,7 +420,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     background = new GssBackground(view);
     view.canvasSetupDone();
   }
-  
+
   public void init(View view) {
     init(view, true);
   }
@@ -1411,5 +1417,18 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private static void log(Object msg) {
     System.out.println("DefaultXYPlot> " + msg);
+  }
+
+  private class ExportableHandlerManager extends HandlerManager {
+
+    public ExportableHandlerManager(DefaultXYPlot<T> xyPlot) {
+      super(xyPlot);
+    }
+    
+    public ExportableHandlerRegistration addExportableHandler(AbstractEvent.Type type,
+        EventHandler handlerType) {
+      super.addHandler(type, handlerType);
+      return new ExportableHandlerRegistration(this, type, handlerType);
+    }
   }
 }
