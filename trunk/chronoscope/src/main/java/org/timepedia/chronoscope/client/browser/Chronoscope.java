@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Window;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYDataSource;
+import org.timepedia.chronoscope.client.data.ArrayDataset2D;
 import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
@@ -399,6 +400,9 @@ public class Chronoscope implements Exportable {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
     exporter.export();
 
+    Exporter dexporter = GWT.create(ArrayDataset2D.class);
+    dexporter.export();
+    
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
     exporterMarker.export();
 

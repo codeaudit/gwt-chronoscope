@@ -8,6 +8,8 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MinIntervalArrayFunction;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
  * @author Chad Takahashi
  */
 public abstract class AbstractArrayDataset<T extends Tuple2D>
-    extends AbstractDataset<T> {
+    extends AbstractDataset<T> implements Exportable {
 
   protected MipMapChain mipMapChain;
 
@@ -75,6 +77,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
     preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
   }
 
+  @Export
   public final String getAxisId(int rangeTupleCoordinate) {
     if (rangeTupleCoordinate > 0) {
       throw new UnsupportedOperationException(
@@ -87,6 +90,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
     return (T) rawData.getTuple(index);
   }
 
+  @Export
   public Interval getRangeExtrema(int tupleCoordinate) {
     return rangeIntervals[tupleCoordinate].copy();
   }
@@ -95,6 +99,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
     return this.mipMapChain;
   }
 
+  @Export
   public int getNumSamples() {
     return this.rawData.size();
   }
@@ -103,6 +108,7 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
     return 1 + this.mipMapChain.getRangeTupleSize();
   }
 
+  @Export
   public double getX(int index) {
     return this.rawData.getDomain().get(index);
   }

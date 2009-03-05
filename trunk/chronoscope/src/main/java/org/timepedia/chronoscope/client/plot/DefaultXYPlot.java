@@ -274,6 +274,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   /**
    * Returns the datasets associated with this plot.
    */
+  @Export
   public Datasets<T> getDatasets() {
     return this.datasets;
   }
@@ -433,6 +434,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return bottomPanel.isOverviewEnabled();
   }
 
+  @Export
   public void maxZoomOut() {
     pushHistory();
     animateTo(widestDomain.getStart(), widestDomain.length(),
@@ -464,18 +466,21 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
+  @Export
   public void maxZoomToFocus() {
     if (focus != null) {
       maxZoomToPoint(focus.getPointIndex(), focus.getDatasetIndex());
     }
   }
 
+  @Export
   public void moveTo(double domainX) {
     movePlotDomain(domainX);
     fireMoveEvent(PlotMovedEvent.MoveType.DRAGGED);
     this.redraw();
   }
 
+  @Export
   public void nextFocus() {
     shiftFocus(+1);
   }
@@ -582,6 +587,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
+  @Export
   public InfoWindow openInfoWindow(final String html, final double domainX,
       final double rangeY, final int datasetIndex) {
 
@@ -602,18 +608,22 @@ public class DefaultXYPlot<T extends Tuple2D>
     return window;
   }
 
+  @Export
   public void pageLeft(double pageSize) {
     page(-pageSize);
   }
 
+  @Export
   public void pageRight(double pageSize) {
     page(pageSize);
   }
 
+  @Export
   public void prevFocus() {
     shiftFocus(-1);
   }
 
+  @Export
   public void prevZoom() {
     pushHistory();
     double nDomain = visDomain.length() * ZOOM_FACTOR;
@@ -708,6 +718,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw(true);
   }
 
+  @Export
   public void removeOverlay(Overlay over) {
     overlays.remove(over);
   }
@@ -720,6 +731,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         continuation);
   }
 
+  @Export
   public void scrollPixels(int amt) {
     final double domainAmt = (double) amt / plotBounds.width * visDomain
         .length();
@@ -797,6 +809,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return somePointHasFocus;
   }
 
+  @Export
   public void setHighlight(double startDomainX, double endDomainX) {
     beginHighlight = startDomainX;
     endHighlight = endDomainX;
@@ -880,6 +893,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return (x - plotBounds.x) / plotBounds.width;
   }
 
+  @Export
   public void zoomToHighlight() {
     final double newOrigin = beginHighlight;
     double newdomain = endHighlight - beginHighlight;
@@ -973,6 +987,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   /**
    * Turns off an existing plot highlight.
    */
+  @Export
   private void cancelHighlight() {
     setHighlight(0, 0);
   }
