@@ -5,6 +5,8 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.Util;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.Export;
 
 /**
  * Provides skeletal implementation of an {@link Dataset} to simplify
@@ -12,7 +14,8 @@ import org.timepedia.chronoscope.client.util.Util;
  *
  * @author Chad Takahashi
  */
-public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
+public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
+    Exportable {
 
   protected double minDomainInterval;
 
@@ -24,15 +27,18 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
 
   private Interval domainExtrema = new Interval(0.0, 0.0);
 
+  @Export
   public final Interval getDomainExtrema() {
     this.domainExtrema.setEndpoints(getX(0), getX(getNumSamples() - 1));
     return this.domainExtrema;
   }
 
+  @Export
   public final String getIdentifier() {
     return identifier;
   }
 
+  @Export
   public final double getMinDomainInterval() {
     return minDomainInterval;
   }
@@ -54,6 +60,7 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
     return new MipMapRegion(bestMipMap, domainStartIdx, domainEndIdx);
   }
 
+  @Export
   public final Interval getPreferredRangeAxisInterval() {
     return preferredRangeAxisInterval;
   }
@@ -62,6 +69,7 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T> {
     return preferredRenderer;
   }
 
+  @Export
   public final String getRangeLabel() {
     return rangeLabel;
   }

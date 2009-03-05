@@ -149,6 +149,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Returns the datasets associated with this plot.
    */
+  @Export
   Datasets<T> getDatasets();
 
   /**
@@ -316,6 +317,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * @param datasetIndex the dataset these values come from (used to decide Axis
    *                     used)
    */
+  @Export
   InfoWindow openInfoWindow(String html, double domainX, double rangeY,
       int datasetIndex);
 

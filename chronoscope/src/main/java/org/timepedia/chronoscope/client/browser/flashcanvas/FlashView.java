@@ -6,18 +6,15 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
-import com.google.gwt.gen2.event.shared.HandlerManager;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
-import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
-import org.timepedia.chronoscope.client.InfoWindowEvent;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext;
+import org.timepedia.chronoscope.client.browser.BrowserInfoWindow;
 import org.timepedia.chronoscope.client.browser.CssGssViewSupport;
 import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.browser.GwtView;
@@ -117,6 +114,8 @@ public class FlashView extends GwtView
   public void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(FlashView.class);
     exporter.export();
+    Exporter exporter2 = (Exporter) GWT.create(BrowserInfoWindow.class);
+    exporter2.export();
   }
 
   /**
@@ -169,8 +168,8 @@ public class FlashView extends GwtView
   }
 
   /**
-   * Opens an HTML popup info window at the given screen coordinates (within
-   * the plot bounds)
+   * Opens an HTML popup info window at the given screen coordinates (within the
+   * plot bounds)
    */
   public InfoWindow createInfoWindow(String html, double x, double y) {
     final PopupPanel pp = new PopupPanel(true);
@@ -180,35 +179,7 @@ public class FlashView extends GwtView
         DOM.getAbsoluteTop(getElement()) + (int) y);
     DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
     pp.show();
-    return new InfoWindow() {
-      HandlerManager manager = new HandlerManager(this);
-
-      {
-        pp.addPopupListener(new PopupListener() {
-
-          public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-            manager.fireEvent(new InfoWindowEvent());
-          }
-        });
-      }
-
-      public void close() {
-        pp.hide();
-      }
-
-      public void setPosition(double x, double y) {
-        pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
-            DOM.getAbsoluteTop(getElement()) + (int) y);
-      }
-
-      public void addInfoWindowClosedHandler(InfoWindowClosedHandler handler) {
-        manager.addHandler(InfoWindowEvent.TYPE, handler);
-      }
-
-      public void open() {
-        pp.show();
-      }
-    };
+    return new BrowserInfoWindow(this, pp);
   }
 
   public native double remainder(double numerator, double modulus) /*-{
