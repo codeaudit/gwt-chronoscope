@@ -204,6 +204,11 @@ public class Chronoscope implements Exportable {
   public Dataset createDataset(JsonDatasetJSO json) {
     return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json));
   }
+  
+  @Export
+  public Dataset createMutableDataset(JsonDatasetJSO json) {
+    return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json), true);
+  }
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution

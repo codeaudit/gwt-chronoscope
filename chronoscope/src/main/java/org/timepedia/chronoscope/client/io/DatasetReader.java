@@ -21,8 +21,8 @@ public class DatasetReader {
 
   /**
    * Parse a JSON object representing a multiresolution dataset into a class
-   * implementing the {@link org.timepedia.chronoscope.client.Dataset} interface. <p> The JSON format is as
-   * follows:
+   * implementing the {@link org.timepedia.chronoscope.client.Dataset}
+   * interface. <p> The JSON format is as follows:
    * <pre>
    * dataset = {
    *    id: "unique id for this dataset",
@@ -38,8 +38,15 @@ public class DatasetReader {
    * </pre>
    */
   public static Dataset createDatasetFromJson(JsonDataset json) {
+    return createDatasetFromJson(json, false);
+  }
+
+  public static Dataset createDatasetFromJson(JsonDataset json,
+      boolean mutable) {
     DatasetRequest request = createDatasetRequestFromJson(json);
-    return ComponentFactory.get().getDatasetFactory().create(request);
+    return mutable ? ComponentFactory.get().getDatasetFactory()
+        .createMutable(request)
+        : ComponentFactory.get().getDatasetFactory().create(request);
   }
 
   public static DatasetRequest createDatasetRequestFromJson(JsonDataset json) {
@@ -100,7 +107,7 @@ public class DatasetReader {
 
   public static DatasetRequest buildPreMipmappedDatasetRequest(
       JsonDataset json) {
-    
+
     JsonArray<JsonArrayNumber> mdomain = json.getMultiDomain();
     JsonArray<JsonArrayNumber> mrange = json.getMultiRange();
 
@@ -108,7 +115,8 @@ public class DatasetReader {
     int rmiplevel = mrange.length();
     if (dmipLevels != rmiplevel) {
       if (ChronoscopeOptions.isErrorReportingEnabled()) {
-       throw new RuntimeException("Domain and Range dataset levels are not equal");
+        throw new RuntimeException(
+            "Domain and Range dataset levels are not equal");
       }
     }
 
