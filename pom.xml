@@ -262,7 +262,7 @@
             </activation>
 
             <properties>
-                <gwtversion>1.5.2</gwtversion>
+                <gwtversion>1.5.3</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -324,7 +324,7 @@
         <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>1.5.2</gwtversion>
+                <gwtversion>1.5.3</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>

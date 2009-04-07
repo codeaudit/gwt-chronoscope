@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.overlays;
 
+import com.google.gwt.gen2.event.shared.AbstractEvent;
+
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.Overlay;
@@ -120,6 +122,9 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
           markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
     }
     backingCanvas.restore();
+  }
+
+  public void fire(AbstractEvent event) {
   }
 
   public void fireOverlayClickListener(int x, int y) {

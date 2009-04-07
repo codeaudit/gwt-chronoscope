@@ -25,6 +25,9 @@ public final class DefaultChronoDate extends ChronoDate {
       case MONTH:
         d.setMonth(d.getMonth() + numUnits);
         break;
+      case WEEK:
+        d.setDate(d.getDate() + numUnits * 7);
+        break;
       case DAY:
         d.setDate(d.getDate() + numUnits);
         break;
@@ -117,6 +120,11 @@ public final class DefaultChronoDate extends ChronoDate {
       case MONTH:
         maskedDate = new Date(d.getYear(), d.getMonth(), 1);
         break;
+      case WEEK:
+        FastChronoDate fd=new FastChronoDate(d.getTime());
+        fd.truncate(TimeUnit.WEEK);
+        maskedDate = new Date((long)fd.getTime());
+        break;
       case DAY:
         maskedDate = new Date(d.getYear(), d.getMonth(), d.getDate());
         break;
@@ -150,6 +158,11 @@ public final class DefaultChronoDate extends ChronoDate {
         break;
       case MONTH:
         d.setMonth(value); 
+        break;
+      case WEEK:
+        FastChronoDate fd=new FastChronoDate(d.getTime());
+        fd.set(timeUnit, value);
+        d.setTime((long) fd.getTime());
         break;
       case DAY:
         d.setDate(value);

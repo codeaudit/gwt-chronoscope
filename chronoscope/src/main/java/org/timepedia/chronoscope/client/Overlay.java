@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client;
 
+import com.google.gwt.gen2.event.shared.AbstractEvent;
+
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
 import org.timepedia.exporter.client.Exportable;
@@ -32,9 +34,12 @@ public interface Overlay extends Exportable {
    * textLayer
    */
   void draw(Layer layer, String textLayer);
+  void fire(AbstractEvent event);
 
+  @Export
   double getDomainX();
 
+  @Export
   double getRangeY();
 
   /**

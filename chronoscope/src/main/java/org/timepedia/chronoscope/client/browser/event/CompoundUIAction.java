@@ -23,8 +23,16 @@ public class CompoundUIAction {
   private Object source;
   private boolean isSelectAction;
   private int startX = -1;
-
+  private int dragStartX = -1;
   private boolean dragStarted;
+
+  public int getDragStartX() {
+    return dragStartX;
+  }
+
+  public void setDragStartX(int dragStartX) {
+    this.dragStartX = dragStartX;
+  }
 
   /**
    * Cancels this action.  Sets <tt>source</tt> to <tt>null</tt>, <tt>isSelecting</tt>
@@ -35,6 +43,8 @@ public class CompoundUIAction {
     isSelectAction = false;
     startX = -1;
     dragStarted=false;
+    dragStartX = -1;
+
   }
   
   /**

@@ -285,7 +285,7 @@ public class Chronoscope implements Exportable {
   }
 
   @Export
-  public static void setVerticalCrossHair(boolean enabled) {
+  public static void setVerticalCrosshair(boolean enabled) {
     ChronoscopeOptions.setVerticalCrosshairEnabled(enabled);
   }
 

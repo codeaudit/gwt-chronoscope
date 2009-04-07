@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.overlays;
 
+import com.google.gwt.gen2.event.shared.AbstractEvent;
+
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
@@ -109,6 +111,10 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
         markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
         markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
     backingCanvas.restore();
+  }
+
+  public void fire(AbstractEvent event) {
+    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   public void fireOverlayClickListener(int x, int y) {
