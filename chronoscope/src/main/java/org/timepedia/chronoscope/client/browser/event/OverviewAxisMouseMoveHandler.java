@@ -41,7 +41,7 @@ public class OverviewAxisMouseMoveHandler extends
     final boolean isInAxisBounds = overviewAxisBounds.inside(x, y);
     final boolean isDragging = uiAction.isDragging(overviewAxis);
     
-    //log("onMouseMove(" + x + ", " + y + ")" + ": inAxisBounds=" + isInAxisBounds + "; uiAction.startX=" + uiAction.getStartX());
+    //log("onMouseMove(" + x + ", " + y + ")" + ": inAxisBounds=" + isInAxisBounds + "; uiAction.startX=" + uiAction.getEndX());
     
     // Determine appropriate cursor type
     if (isInAxisBounds) {

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client;
 
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
+import com.google.gwt.gen2.event.shared.AbstractEvent;
 
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
@@ -12,6 +13,7 @@ import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
+import org.timepedia.chronoscope.client.event.ChartDragStartEvent;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -127,6 +129,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   double domainToWindowX(double domainX, int datasetIndex);
 
   /**
+   * Fire a event.
+   * @param event
+   */
+  void fireEvent(AbstractEvent event);
+
+  /**
    * Return the Bounds of the Plot relative to the View coordinate system
    */
   Bounds getBounds();
@@ -216,6 +224,14 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * the dataset to the given domain value
    */
   int getNearestVisiblePoint(double domainX, int datasetIndex);
+
+  /**
+   * Returns an overlay under the mouse coordinates at X,Y
+   * @param x
+   * @param y
+   * @return
+   */
+  Overlay getOverlayAt(int x, int y);
 
   /**
    * Return the current overview axis panel.
@@ -457,5 +473,4 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
-  
 }

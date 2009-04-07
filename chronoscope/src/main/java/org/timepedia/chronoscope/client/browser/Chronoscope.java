@@ -13,15 +13,14 @@ import com.google.gwt.user.client.Window;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.data.ArrayDataset2D;
-import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.data.ArrayDataset2D;
+import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
@@ -204,7 +203,7 @@ public class Chronoscope implements Exportable {
   public Dataset createDataset(JsonDatasetJSO json) {
     return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json));
   }
-  
+
   @Export
   public Dataset createMutableDataset(JsonDatasetJSO json) {
     return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json), true);
@@ -223,7 +222,8 @@ public class Chronoscope implements Exportable {
     int numDatasets = jsonDatasets.length();
     Dataset ds[] = new Dataset[numDatasets];
     for (int i = 0; i < numDatasets; i++) {
-      ds[i] = DatasetReader.createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)));
+      ds[i] = DatasetReader
+          .createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)));
     }
     return ds;
   }
@@ -284,6 +284,23 @@ public class Chronoscope implements Exportable {
     ChronoscopeOptions.setErrorReporting(enabled);
   }
 
+  @Export
+  public static void setVerticalCrossHair(boolean enabled) {
+    ChronoscopeOptions.setVerticalCrosshairEnabled(enabled);
+  }
+
+  @Export
+  public static void setHorizontalCrosshair(boolean enabled) {
+    ChronoscopeOptions.setHorizontalCrosshairEnabled(enabled);
+  }
+
+  
+
+  @Export
+  public static void setCrosshairLabels(boolean enabled) {
+    ChronoscopeOptions.setCrosshairLabels(true);
+  }
+  
   @Export
   public static void setFontBookRendering(boolean enabled) {
     fontBookRenderingEnabled = enabled;
@@ -383,7 +400,7 @@ public class Chronoscope implements Exportable {
       if (Chronoscope.isMicroformatsEnabled()) {
         Microformats.initializeMicroformats(Chronoscope.this);
       }
-      
+
       if (ChronoscopeOptions.isHistorySupportEnabled()) {
         GwtHistoryManagerImpl.initHistory();
       }
@@ -407,15 +424,15 @@ public class Chronoscope implements Exportable {
 
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
     dexporter.export();
-    
+
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
     exporterMarker.export();
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
     exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class)
-        ;
+    Exporter exporterDomainMarker = (Exporter) GWT
+        .create(DomainBarMarker.class);
     exporterDomainMarker.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
@@ -533,5 +550,4 @@ public class Chronoscope implements Exportable {
     };
     t.schedule(10);
   }
-
 }

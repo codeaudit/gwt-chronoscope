@@ -3,6 +3,8 @@
  */
 package org.timepedia.chronoscope.client.browser.event;
 
+import org.timepedia.chronoscope.client.XYPlot;
+
 /**
  * Represents a logical UI action whose completion requires 2 or more atomic UI
  * actions, as well has having distinct start and end states. Examples are:
@@ -21,7 +23,9 @@ public class CompoundUIAction {
   private Object source;
   private boolean isSelectAction;
   private int startX = -1;
-  
+
+  private boolean dragStarted;
+
   /**
    * Cancels this action.  Sets <tt>source</tt> to <tt>null</tt>, <tt>isSelecting</tt>
    * to <tt>false</tt>, and <tt>startX</tt> to <tt>-1</tt>.
@@ -30,6 +34,7 @@ public class CompoundUIAction {
     source = null;
     isSelectAction = false;
     startX = -1;
+    dragStarted=false;
   }
   
   /**
@@ -97,5 +102,13 @@ public class CompoundUIAction {
 
   public String toString() {
     return "source=" + source + "; startX=" + startX + "; selectAction=" + isSelectAction;
+  }
+
+  public boolean isDragStarted(XYPlot plot) {
+    return this.dragStarted;
+  }
+
+  public void setDragStarted(boolean dragStarted) {
+    this.dragStarted = dragStarted;
   }
 }

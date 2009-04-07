@@ -87,4 +87,8 @@ public abstract class DateTickFormatter extends TickFormatter {
     currTick.set(this.timeUnitTickInterval, normalizedValue);
   }
   
+  
+  public void setTick(double timestamp) {
+    currTick.setTime(timestamp);
+  }
 }

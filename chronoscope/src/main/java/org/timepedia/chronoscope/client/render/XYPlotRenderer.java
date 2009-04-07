@@ -248,7 +248,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
           LocalTuple tmpTuple = new LocalTuple();
           tmpTuple.setXY(hoverX, RangeAxis.calcPrctDiff(refY, hoverY));
-          dataPt = (T)tmpTuple;
+          dataPt = (T)(Object)tmpTuple;
         }
         dds.getRenderer().drawHoverPoint(layer, dataPt, i);
       }

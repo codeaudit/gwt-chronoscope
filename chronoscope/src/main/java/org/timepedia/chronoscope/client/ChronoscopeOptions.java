@@ -19,6 +19,12 @@ public class ChronoscopeOptions {
 
   private static boolean lowPerformance = false;
 
+  private static boolean verticalCrosshair = false;
+
+  private static boolean horizontalCrosshair = false;
+
+  private static boolean crossHairLabels = false;
+  
   /**
    * A factory function to create a push-pin marker given a Date, then the
    * dataset index to attach this marker to, and a label
@@ -51,6 +57,10 @@ public class ChronoscopeOptions {
     return historySupport;
   }
 
+  public static boolean isHorizontalCrosshairEnabled() {
+    return horizontalCrosshair;
+  }
+
   public static boolean isLowPerformance() {
     return lowPerformance;
   }
@@ -59,13 +69,21 @@ public class ChronoscopeOptions {
     return showCreditsEnabled;
   }
 
+  public static boolean isVerticalCrosshairEnabled() {
+    return verticalCrosshair;
+  }
+
   public static void setErrorReporting(boolean enabled) {
     errorReportingEnabled = enabled;
   }
 
-
   public static void setHistorySupport(boolean historySupport) {
     ChronoscopeOptions.historySupport = historySupport;
+  }
+
+  public static void setHorizontalCrosshairEnabled(
+      boolean horizontalCrosshair) {
+    ChronoscopeOptions.horizontalCrosshair = horizontalCrosshair;
   }
 
   public static void setLowPerformance(boolean lowPerformance) {
@@ -82,5 +100,17 @@ public class ChronoscopeOptions {
 
   public static void setShowCredits(boolean enabled) {
     showCreditsEnabled = enabled;
+  }
+
+  public static void setVerticalCrosshairEnabled(boolean verticalCrosshair) {
+    ChronoscopeOptions.verticalCrosshair = verticalCrosshair;
+  }
+
+  public static boolean isCrossHairLabels() {
+    return crossHairLabels;
+  }
+
+  public static void setCrosshairLabels(boolean crossHairLabels) {
+    ChronoscopeOptions.crossHairLabels = crossHairLabels;
   }
 }
