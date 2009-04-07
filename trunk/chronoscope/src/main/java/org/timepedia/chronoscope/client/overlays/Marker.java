@@ -157,6 +157,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
     return this.datasetIdx;
   }
 
+  @Export
   public double getDomainX() {
     return domainX;
   }
@@ -165,6 +166,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
     return null;
   }
 
+  @Export
   public double getRangeY() {
     return rangeY;
   }

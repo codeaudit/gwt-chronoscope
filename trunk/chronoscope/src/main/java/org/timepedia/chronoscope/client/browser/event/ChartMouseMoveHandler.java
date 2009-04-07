@@ -29,20 +29,26 @@ public final class ChartMouseMoveHandler
     if (uiAction.isSelecting(plot)) {
       chart.setAnimating(true);
       plot.setHighlight(uiAction.getStartX(), x);
-    } else if (uiAction.getSource() != null && uiAction.isDragging(uiAction.getSource())) {
-      int dragThd = uiAction.getSource() instanceof Overlay ? 5 : 10;
-      boolean dragThresholdReached = Math.abs(uiAction.getStartX() - x) > dragThd;
+    } else if (uiAction.getSource() != null && uiAction
+        .isDragging(uiAction.getSource())) {
+      int dragThd = uiAction.isDragStarted(plot) ? 1
+          : (uiAction.getSource() instanceof Overlay ? 5 : 10);
+
+      boolean dragThresholdReached = Math.abs(uiAction.getStartX() - x)
+          > dragThd;
       if (dragThresholdReached) {
         if (uiAction.getSource() instanceof Overlay) {
           if (!uiAction.isDragStarted(plot)) {
             plot.fireEvent(new ChartDragStartEvent(plot, x));
             uiAction.setDragStarted(true);
+            uiAction.setDragStartX(uiAction.getStartX());
           }
-          plot.fireEvent(new ChartDragEvent(plot, x));
+          ((Overlay) uiAction.getSource()).fire(new ChartDragEvent(plot, x));
+          chart.setHover(x,y);
         } else {
-          chart.setAnimating(true);
           chart.scrollPixels(uiAction.getStartX() - x);
         }
+        chart.setAnimating(true);
         uiAction.setStartX(x);
         event.stopPropagation();
         event.preventDefault();

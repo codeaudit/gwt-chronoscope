@@ -10,7 +10,6 @@ import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.DOMView;
-import org.timepedia.chronoscope.client.event.ChartDragEvent;
 import org.timepedia.chronoscope.client.event.ChartDragEndEvent;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
@@ -33,14 +32,14 @@ public final class ChartMouseUpHandler
     if (uiAction.isSelecting()) {
       chart.setAnimating(false);
       chart.zoomToHighlight();
-    } else if (uiAction.isDragging(plot) && x != uiAction.getStartX()) {
+    } else if (uiAction.getSource() != null && uiAction.isDragging(uiAction.getSource()) && x != uiAction.getDragStartX()) {
       if (uiAction.getSource() instanceof Overlay) {
-        plot.fireEvent(new ChartDragEndEvent(plot, x));
+        ((Overlay) uiAction.getSource()).fire(new ChartDragEndEvent(plot, x));
       } else {
         HistoryManager.pushHistory();
-        chart.setAnimating(false);
-        ((DefaultXYPlot) chart.getPlot()).redraw(true);
       }
+      chart.setAnimating(false);
+      ((DefaultXYPlot) chart.getPlot()).redraw(true);
     }
 
     chartInfo.getCompoundUIAction().cancel();

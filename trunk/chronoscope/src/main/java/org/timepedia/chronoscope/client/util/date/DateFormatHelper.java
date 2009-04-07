@@ -35,7 +35,7 @@ public final class DateFormatHelper {
    * Uses GWT DateTimeFormat class to obtain hour-of-day labels (e.g. "9am").
    */
   private static String[] createHoursOfDayLabels() {
-    DateFormatter fmt = getDateFormatter("ha"); // h=hour, a=AM/PM
+    DateFormatter fmt = getDateFormatter("H"); // h=hour, a=AM/PM
     String[] hourLabels = new String[24];
     for (int h = 0; h < hourLabels.length; h++) {
       hourLabels[h] = fmt
