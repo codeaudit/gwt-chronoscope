@@ -49,7 +49,8 @@ public class ChartEventHandler {
     // handlers.
     chartInfo = new ChartState();
     chartInfo.setTabKeyEventCode(this.getTabKeyEventType()); // browser-specific
-
+    chartInfo.setHandlerManager(handlerLookup);
+    
     // Register client event handlers
     handlerLookup = new HandlerManager(this);
     handlerLookup

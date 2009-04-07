@@ -52,4 +52,6 @@ public interface Overlay extends Exportable {
    * Sets the plot on which this Overlay is bound
    */
   void setPlot(XYPlot view);
+
+  
 }

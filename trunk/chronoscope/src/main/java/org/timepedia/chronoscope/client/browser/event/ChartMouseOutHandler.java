@@ -20,6 +20,7 @@ public class ChartMouseOutHandler extends AbstractEventHandler<MouseOutHandler>
     Chart chart = chartInfo.chart;
     chart.setAnimating(false);
     chart.setCursor(Cursor.DEFAULT);
+    chart.setHover(-1,-1);
     ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
   }

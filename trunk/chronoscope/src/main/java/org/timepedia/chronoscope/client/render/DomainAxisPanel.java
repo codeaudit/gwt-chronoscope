@@ -56,7 +56,7 @@ public class DomainAxisPanel extends AxisPanel {
     // This stuff shouldn't change in the case where the user is just scrolling 
     // left/right.
     final double domainWidth = plot.getDomain().length();
-    TickFormatter tickFormatter = tickFormatterFactory.findBestFormatter(domainWidth);
+    TickFormatter tickFormatter = getBestFormatter(domainWidth);
     
     //log("best formatter for domain " + (long)domainWidth + ": " + tickFormatter);
     
@@ -130,6 +130,10 @@ public class DomainAxisPanel extends AxisPanel {
       this.domainAxisLabel.draw(layer);
       drawAxisLabels(layer, bounds);
     }
+  }
+
+  public TickFormatter getBestFormatter(double domainWidth) {
+    return tickFormatterFactory.findBestFormatter(domainWidth);
   }
 
   public double getMinimumTickSize() {

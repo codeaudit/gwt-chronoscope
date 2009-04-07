@@ -5,9 +5,11 @@ import com.google.gwt.gen2.event.shared.EventHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 
+import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.ChartEventHandler;
 import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.overlays.Draggable;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 
 /**
@@ -23,7 +25,6 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
   public ChartState getChartState(DomEvent event) {
     return (ChartState) ChartEventHandler.getChartState();
   }
-  
 
   public int getLocalX(DomEvent event) {
     return getChartState(event).getLocalX();
@@ -36,8 +37,8 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
   /**
    * Handles TAB key and Shift-TAB key presses.
    */
-  protected boolean handleTabKey(Event event, ChartState chartInfo,
-      int keyCode, boolean isShiftKeyDown) {
+  protected boolean handleTabKey(Event event, ChartState chartInfo, int keyCode,
+      boolean isShiftKeyDown) {
     if (DOM.eventGetType(event) != chartInfo.getTabKeyEventCode()) {
       return false;
     }
@@ -53,43 +54,45 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
 
     return false;
   }
-  
+
   /**
-   * Returns the component that the specified (x,y) chart coordinate is on.  
-   * If the (x,y) point does not fall on a recognized component, then null 
-   * is returned.
+   * Returns the component that the specified (x,y) chart coordinate is on. If
+   * the (x,y) point does not fall on a recognized component, then null is
+   * returned.
    */
   protected Object getComponent(int x, int y, XYPlot plot) {
     Bounds plotBounds = plot.getBounds();
-    
+
     // First check if (x,y) hit the center plot
     if (plotBounds.inside(x, y)) {
+      Overlay o = plot.getOverlayAt(x, y);
+      if (o != null && (o instanceof Draggable) && ((Draggable)o).isDraggable()) {
+        return o;
+      }
       return plot;
     }
-    
+
     //
     // Now check if (x,y) hit the overview axis
     //
-    
+
     OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
     if (oaPanel != null) {
       Bounds layerBounds = oaPanel.getLayer().getBounds();
       Bounds oaPanelBounds = oaPanel.getBounds();
       double viewOffsetX = layerBounds.x + oaPanel.getLayerOffsetX();
       double viewOffsetY = layerBounds.y + oaPanel.getLayerOffsetY();
-      Bounds oaPanelAbsBounds = new Bounds(
-          viewOffsetX, viewOffsetY,
+      Bounds oaPanelAbsBounds = new Bounds(viewOffsetX, viewOffsetY,
           oaPanelBounds.width, oaPanelBounds.height);
       if (oaPanelAbsBounds.inside(x, y)) {
         return oaPanel.getValueAxis();
       }
     }
-    
+
     return null;
   }
 
   private static void log(Object msg) {
     System.out.println("AbstractEventHandler> " + msg);
   }
-
 }

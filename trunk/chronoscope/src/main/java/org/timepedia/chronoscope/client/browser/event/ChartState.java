@@ -4,6 +4,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.Event;
+import com.google.gwt.gen2.event.shared.HandlerManager;
 
 import org.timepedia.chronoscope.client.Chart;
 
@@ -25,6 +26,8 @@ public class ChartState {
   private int originX;
 
   private int originY;
+
+  private HandlerManager handlerLookup;
 
   public int getClientX() {
     return clientX;
@@ -102,5 +105,14 @@ public class ChartState {
   public String toString() {
     return "clientX=" + clientX + "; clientY=" + clientY + "; tabKeyEventCode="
         + tabKeyEventCode + "; compoundUIAction=" + compoundUIAction;
+  }
+
+  public HandlerManager getHandlerManager() {
+    return handlerLookup;
+  }
+
+  public void setHandlerManager(HandlerManager handlerLookup) {
+
+    this.handlerLookup = handlerLookup;
   }
 }

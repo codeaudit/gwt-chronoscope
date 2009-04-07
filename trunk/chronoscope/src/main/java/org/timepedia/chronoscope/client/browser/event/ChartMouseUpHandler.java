@@ -1,15 +1,17 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-
 import com.google.gwt.gen2.event.dom.client.MouseEvent;
-import com.google.gwt.gen2.event.dom.client.MouseUpHandler;
 import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
+import com.google.gwt.gen2.event.dom.client.MouseUpHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.HistoryManager;
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.DOMView;
+import org.timepedia.chronoscope.client.event.ChartDragEvent;
+import org.timepedia.chronoscope.client.event.ChartDragEndEvent;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
@@ -26,27 +28,30 @@ public final class ChartMouseUpHandler
     XYPlot plot = chart.getPlot();
     int x = getLocalX(event);
     int y = getLocalY(event);
-    
+
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
     if (uiAction.isSelecting()) {
       chart.setAnimating(false);
       chart.zoomToHighlight();
-    }
-    else if (uiAction.isDragging(plot) && x != uiAction.getStartX()) {
-      HistoryManager.pushHistory();
-      chart.setAnimating(false);
-      ((DefaultXYPlot)chart.getPlot()).redraw(true);
+    } else if (uiAction.isDragging(plot) && x != uiAction.getStartX()) {
+      if (uiAction.getSource() instanceof Overlay) {
+        plot.fireEvent(new ChartDragEndEvent(plot, x));
+      } else {
+        HistoryManager.pushHistory();
+        chart.setAnimating(false);
+        ((DefaultXYPlot) chart.getPlot()).redraw(true);
+      }
     }
 
     chartInfo.getCompoundUIAction().cancel();
     chart.setCursor(Cursor.DEFAULT);
 
     ((DOMView) chart.getView()).focus();
-    
+
     if (event.getButton() == MouseEvent.Button.RIGHT) {
-      ((DefaultXYPlot)chart.getPlot()).fireContextMenuEvent(x, y);
+      ((DefaultXYPlot) chart.getPlot()).fireContextMenuEvent(x, y);
     }
-    
+
     chartInfo.setHandled(true);
   }
 }

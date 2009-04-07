@@ -1,11 +1,14 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
 import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.event.ChartDragEvent;
+import org.timepedia.chronoscope.client.event.ChartDragStartEvent;
 
 /**
  * Handles the event where the mouse is moved within the chart area.
@@ -21,16 +24,25 @@ public final class ChartMouseMoveHandler
     XYPlot plot = chart.getPlot();
     int x = getLocalX(event);
     int y = getLocalY(event);
-    
+
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
     if (uiAction.isSelecting(plot)) {
       chart.setAnimating(true);
       plot.setHighlight(uiAction.getStartX(), x);
-    } else if (uiAction.isDragging(plot)) {
-      boolean dragThresholdReached = Math.abs(uiAction.getStartX() - x) > 10;
+    } else if (uiAction.getSource() != null && uiAction.isDragging(uiAction.getSource())) {
+      int dragThd = uiAction.getSource() instanceof Overlay ? 5 : 10;
+      boolean dragThresholdReached = Math.abs(uiAction.getStartX() - x) > dragThd;
       if (dragThresholdReached) {
-        chart.setAnimating(true);
-        chart.scrollPixels(uiAction.getStartX() - x);
+        if (uiAction.getSource() instanceof Overlay) {
+          if (!uiAction.isDragStarted(plot)) {
+            plot.fireEvent(new ChartDragStartEvent(plot, x));
+            uiAction.setDragStarted(true);
+          }
+          plot.fireEvent(new ChartDragEvent(plot, x));
+        } else {
+          chart.setAnimating(true);
+          chart.scrollPixels(uiAction.getStartX() - x);
+        }
         uiAction.setStartX(x);
         event.stopPropagation();
         event.preventDefault();
@@ -42,8 +54,7 @@ public final class ChartMouseMoveHandler
         chart.setCursor(Cursor.DRAGGABLE);
       }
     }
-    
+
     chartInfo.setHandled(true);
   }
-
 }

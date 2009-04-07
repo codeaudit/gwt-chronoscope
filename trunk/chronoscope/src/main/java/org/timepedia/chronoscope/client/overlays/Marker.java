@@ -2,16 +2,16 @@ package org.timepedia.chronoscope.client.overlays;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
-import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
 import org.timepedia.chronoscope.client.InfoWindowEvent;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.event.ChartDragEvent;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -27,7 +27,7 @@ import java.util.Date;
  * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-public class Marker implements Overlay, GssElement, Exportable {
+public class Marker extends DraggableOverlay implements GssElement, Exportable {
 
   private InfoWindow currentWindow;
 
@@ -43,13 +43,11 @@ public class Marker implements Overlay, GssElement, Exportable {
   // Determines how high (stretched-out) the marker is.
   private static final int MARKER_HEIGHT = 15;
 
-  protected XYPlot plot = null;
-
   private ArrayList<OverlayClickListener> clickListeners;
 
   private int datasetIdx = -1;
 
-  private final double domainX;
+  protected double domainX;
 
   private boolean isScreenPropsSet = false;
 
@@ -59,7 +57,7 @@ public class Marker implements Overlay, GssElement, Exportable {
 
   private MarkerShape markerShape;
 
-  private double rangeY;
+  protected double rangeY;
 
   protected int labelWidth, labelHeight;
 
@@ -130,10 +128,10 @@ public class Marker implements Overlay, GssElement, Exportable {
     x = drawOval(labelWidth, labelHeight, markerProps, backingCanvas, x, y, yp,
         arcDirection);
 
-    backingCanvas.drawText(x, y, label, markerProps.fontFamily,
-        markerProps.fontWeight, markerProps.fontSize, layer, Cursor.CLICKABLE);
+    backingCanvas
+        .drawText(x, y, label, markerProps.fontFamily, markerProps.fontWeight,
+            markerProps.fontSize, layer, Cursor.CLICKABLE);
     backingCanvas.restore();
-
   }
 
   protected boolean handleInfoWindowVisibility() {
@@ -174,7 +172,6 @@ public class Marker implements Overlay, GssElement, Exportable {
   public String getType() {
     return "marker";
   }
-
 
   public String getLabel() {
     return label;
@@ -223,12 +220,11 @@ public class Marker implements Overlay, GssElement, Exportable {
     }
     wasOpenWindow = null;
     currentWindow = plot.openInfoWindow(html, domainX, rangeY, datasetIdx);
-    currentWindow
-        .addInfoWindowClosedHandler(new InfoWindowClosedHandler() {
-          public void onInfoWindowClosed(InfoWindowEvent event) {
-            currentWindow = null;
-          }
-        });
+    currentWindow.addInfoWindowClosedHandler(new InfoWindowClosedHandler() {
+      public void onInfoWindowClosed(InfoWindowEvent event) {
+        currentWindow = null;
+      }
+    });
     return currentWindow;
   }
 
@@ -243,9 +239,10 @@ public class Marker implements Overlay, GssElement, Exportable {
   }
 
   public void setPlot(XYPlot plot) {
-    ArgChecker.isNotNull(plot, "plot");
-    this.plot = plot;
-    rangeY = interpolateRangeY(domainX, datasetIdx);
+    super.setPlot(plot);
+    if (plot != null) {
+      rangeY = interpolateRangeY(domainX, datasetIdx);
+    }
   }
 
   public String toString() {
@@ -309,7 +306,7 @@ public class Marker implements Overlay, GssElement, Exportable {
     return x;
   }
 
-  private double interpolateRangeY(double domainX, int datasetIdx) {
+  protected double interpolateRangeY(double domainX, int datasetIdx) {
     int p = plot.getNearestVisiblePoint(domainX, datasetIdx) - 1;
     p = Math.max(p, 0);
 
@@ -335,4 +332,10 @@ public class Marker implements Overlay, GssElement, Exportable {
     }
   }
 
+  @Override
+  public void onDrag(ChartDragEvent event) {
+    domainX = ((DefaultXYPlot) plot).windowXtoDomain(event.getCurrentX());
+    rangeY = interpolateRangeY(domainX, getDatasetIndex());
+    super.onDrag(event);
+  }
 }
