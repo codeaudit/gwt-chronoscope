@@ -122,6 +122,11 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
     this(Date.parse(date), label, datasetIdx);
   }
 
+  @Export
+  public Marker(String date, int datasetIdx, String label, String typeClass) {
+    this(Date.parse(date), label, datasetIdx, typeClass);
+  }
+
   /**
    * @gwt.export addOverlayListener
    */
