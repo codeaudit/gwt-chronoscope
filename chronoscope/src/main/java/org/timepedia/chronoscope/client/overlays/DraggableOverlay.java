@@ -39,6 +39,8 @@ public abstract class DraggableOverlay
 
   private HandlerManager manager = null;
 
+  private boolean dragging;
+
   @Export
   public void setDraggable(boolean draggable) {
     this.draggable = draggable;
@@ -83,17 +85,20 @@ public abstract class DraggableOverlay
   }
 
   public void onDragStart(ChartDragStartEvent event) {
-    plot.setAnimating(true);
+//    plot.setAnimating(true);
+    dragging=true;
   }
 
   public void onDragEnd(ChartDragEndEvent event) {
     plot.setAnimating(false);
+    dragging=false;
     if (manager != null) {
       manager.fireEvent(new OverlayChangeEvent(plot, this));
     }
   }
 
   public void onDrag(ChartDragEvent event) {
+    dragging=true;
     ((DefaultXYPlot) plot).redraw(true);
   }
 
@@ -102,5 +107,9 @@ public abstract class DraggableOverlay
 
   public boolean isDraggable() {
     return draggable;
+  }
+
+  public boolean isDragging() {
+    return dragging;
   }
 }

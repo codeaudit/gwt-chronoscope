@@ -358,6 +358,27 @@ public class GssPropertyManager {
     }
   };
 
+  public static final GssPropertyType GSS_TICK_POSITION_PROPERTY
+      = new GssPropertyType("tick-position", "", GssPropertyType.TypeUnits.STRING,
+      "A value of 'inside' puts tick labels inside the plot, a value of " 
+          + "'outside' renders them outside the plot") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.tickPosition = pval;
+    }
+  };
+  
+  public static final GssPropertyType GSS_TICK_ALIGN_PROPERTY
+      = new GssPropertyType("tick-align", "", GssPropertyType.TypeUnits.STRING,
+      "A value of 'above' renders tick labels at a position numerically " 
+          + "greater than the tick. A value of 'middle' centers the label on " 
+          + "the tick. A valuer of 'below' renders tick labels at a position" 
+          + " numerically lesser than the tick's value.") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.tickAlign = pval;
+    }
+  };
 
   public static final GssElementType GSS_FILL_TYPE = new GssElementType("fill",
       new GssElementType[0],
@@ -375,6 +396,8 @@ public class GssPropertyManager {
       ;
 
 
+   
+  
   public static final GssElementType GSS_SERIES_TYPE = new GssElementType(
       "series", new String[]{"selected", "disabled", "s#"},
       new GssElementType[0],
@@ -392,6 +415,16 @@ public class GssPropertyManager {
       "A label controls chart elements which have associated text like markers, tick labels, legend labels, etc.",
       "label { color: blue; font-size: 12pt } /* Make all labels blue and 12pt */")
       ;
+
+   public static final GssElementType GSS_MARKER_TYPE = new GssElementType(
+        "marker", new String[0],
+        new GssElementType[] { GSS_LABEL_TYPE},
+        new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
+          GSS_VISBILITY_PROPERTY},
+        "A marker that represents a single point on the curve.",
+        "marker { background-color: green; opacity: 0.3 } /* Make the marker green and 70% transparent */")
+        ;
+  
    public static final GssElementType GSS_DOMAINMARKER_TYPE = new GssElementType(
       "domainmarker", new String[0],
       new GssElementType[] { GSS_LABEL_TYPE},
@@ -401,4 +434,10 @@ public class GssPropertyManager {
       "domainmarker { background-color: green; opacity: 0.3 } /* Make the highlight green and 70% transparent */")
       ;
 
+  public static final GssElementType GSS_GUIDELINE_TYPE = new GssElementType("guideline",
+      new GssElementType[]{GSS_MARKER_TYPE},
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_VISBILITY_PROPERTY},
+      "Visibility of guidelines on markers",
+      "marker.foo guideline { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
+      ;
 }

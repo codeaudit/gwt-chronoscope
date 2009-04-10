@@ -46,9 +46,9 @@ public final class ChartMouseMoveHandler
           ((Overlay) uiAction.getSource()).fire(new ChartDragEvent(plot, x));
           chart.setHover(x,y);
         } else {
+          chart.setAnimating(true);
           chart.scrollPixels(uiAction.getStartX() - x);
         }
-        chart.setAnimating(true);
         uiAction.setStartX(x);
         event.stopPropagation();
         event.preventDefault();

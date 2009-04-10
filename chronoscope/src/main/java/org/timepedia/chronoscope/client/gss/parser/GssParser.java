@@ -32,6 +32,7 @@ public class GssParser {
     String rules[] = stylesheet.split("}");
     ArrayList<GssRule> gssRules = new ArrayList<GssRule>();
     for (String rule : rules) {
+      if("".equals(rule.trim())) continue;
       GssRule gssRule = parseRule(rule + "}");
       gssRules.add(gssRule);
     }
