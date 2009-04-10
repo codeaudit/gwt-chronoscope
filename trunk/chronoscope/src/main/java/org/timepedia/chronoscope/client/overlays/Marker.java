@@ -170,7 +170,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
     }
 
     backingCanvas.save();
-    if (guideLine && !isDragging()) {
+    if ((guideLine || guideLineProps.visible) && !isDragging()) {
       drawGuideLine(backingCanvas, (int) x);
     }
 
@@ -409,6 +409,8 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
       guideLineProps = view
           .getGssProperties(new GssElementImpl("guideline", this), "");
 
+      setGuideLine(guideLineProps.visible);
+      setGuideLineDateFormat(guideLineProps.dateFormat);
       isScreenPropsSet = true;
     }
   }

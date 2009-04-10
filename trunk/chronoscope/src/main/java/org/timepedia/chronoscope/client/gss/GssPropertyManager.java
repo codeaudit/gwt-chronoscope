@@ -250,6 +250,17 @@ public class GssPropertyManager {
     }
   }
 
+
+  public static final GssPropertyType GSS_DATE_FORMAT_PROPERTY
+      = new GssPropertyType("date-format", "", GssPropertyType.TypeUnits.STRING,
+      "Specifies the date format for labels which contain dates") {
+
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.dateFormat = pval;
+    }
+  };
+
   public static final GssPropertyType GSS_LINE_THICKNESS_PROPERTY
       = new GssPropertyType("line-thickness", "", GssPropertyType.TypeUnits.PX,
       "Specifies the thickness of lines drawn on the chart") {

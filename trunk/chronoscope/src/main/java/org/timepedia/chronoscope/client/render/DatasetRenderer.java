@@ -14,10 +14,11 @@ import org.timepedia.exporter.client.Exportable;
 /**
  * Responsible for visually rendering a {@link Dataset} onto a {@link Layer}.
  */
-public abstract class DatasetRenderer<T extends Tuple2D> 
+public abstract class DatasetRenderer<T extends Tuple2D>
     implements GssElement, Exportable {
-  
+
   private boolean isGssInitialized = false;
+
   private boolean customInstalled = false;
 
   public boolean isCustomInstalled() {
@@ -29,15 +30,15 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   }
 
   protected GssProperties gssDisabledFillProps, gssDisabledLineProps,
-  gssDisabledPointProps, gssFillProps, gssFocusProps, gssHoverProps,
-  gssLineProps, gssPointProps;
-  
+      gssDisabledPointProps, gssFillProps, gssFocusProps, gssHoverProps,
+      gssLineProps, gssPointProps, gssFocusGuidelineProps;
+
   protected int datasetIndex;
-  
+
   protected GssElement parentGssElement;
-  
+
   protected XYPlot<T> plot;
-  
+
   /**
    * Called before first data is plotted, typically drawing state is setup, or a
    * path is begun.
@@ -50,7 +51,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    */
   public abstract void beginPoints(Layer layer, RenderState renderState);
 
-  
+
   /**
    * Calculates the pixel width of the legend icon.
    */
@@ -61,7 +62,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * current drawing path, unless a more sophisticated shape like a bar chart is
    * being rendered.
    */
-  public abstract void drawCurvePart(Layer layer, T tuplDataPoint, 
+  public abstract void drawCurvePart(Layer layer, T tuplDataPoint,
       int methodCallCount, RenderState renderState);
 
   /**
@@ -78,7 +79,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   /**
    * Draw an individual point of the given tuple.
    */
-  public abstract void drawPoint(Layer layer, T tupleDataPoint, RenderState renderState);
+  public abstract void drawPoint(Layer layer, T tupleDataPoint,
+      RenderState renderState);
 
   /**
    * Called after last data is plotted (last call to drawCurvePart), typically
@@ -99,34 +101,34 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   public int getMaxDrawableDatapoints() {
     return plot.getMaxDrawableDataPoints();
   }
-  
+
   /**
-   * Subclasses can override this method to return a domain span that's
-   * larger than the maximum according to current mipmapped domain associated 
-   * with the {@link DrawableDataset}.  This is sometimes necessary depending on 
-   * how each datapoint is rendered (e.g. barchart requires domain padding 
-   * to avoid cropping of the end point bars).
+   * Subclasses can override this method to return a domain span that's larger
+   * than the maximum according to current mipmapped domain associated with the
+   * {@link DrawableDataset}.  This is sometimes necessary depending on how each
+   * datapoint is rendered (e.g. barchart requires domain padding to avoid
+   * cropping of the end point bars).
    */
   protected Interval getDrawableDomain(Array1D mipmappedDomain) {
     return new Interval(mipmappedDomain.get(0), mipmappedDomain.getLast());
   }
-  
+
   public final GssElement getParentGssElement() {
     return this.parentGssElement;
   }
-  
+
   public final void setDatasetIndex(int datasetIndex) {
     this.datasetIndex = datasetIndex;
   }
-  
+
   public final void setParentGssElement(GssElement parentGssElement) {
     this.parentGssElement = parentGssElement;
   }
-  
+
   public final void setPlot(XYPlot<T> plot) {
     this.plot = plot;
   }
-  
+
   public void initGss(View view) {
     if (isGssInitialized) {
       return;
@@ -140,6 +142,10 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
     gssFillProps = view.getGssProperties(fillElement, "");
     gssFocusProps = view.getGssProperties(pointElement, "focus");
+    gssFocusGuidelineProps = view
+        .getGssProperties(new GssElementImpl("guideline", pointElement),
+            "focus");
+
     gssHoverProps = view.getGssProperties(pointElement, "hover");
     gssLineProps = view.getGssProperties(this, "");
     gssPointProps = view.getGssProperties(pointElement, "");
