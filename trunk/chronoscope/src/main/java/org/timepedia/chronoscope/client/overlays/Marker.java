@@ -12,7 +12,10 @@ import org.timepedia.chronoscope.client.event.ChartDragEvent;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.render.GssElementImpl;
+import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -32,6 +35,12 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   private InfoWindow currentWindow;
 
   private InfoWindow wasOpenWindow;
+
+  private String typeClass;
+
+  private GssProperties guideLineProps;
+
+  private DateFormatter guideLineDateFmt;
 
   private static enum MarkerShape {
 
@@ -61,10 +70,46 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
 
   protected int labelWidth, labelHeight;
 
+  protected boolean guideLine = true;
+
+  protected String guideLineDate = null;
+
+  @Export
+  public boolean isGuideLine() {
+    return guideLine;
+  }
+
+  @Export
+  public void setGuideLine(boolean guideLine) {
+    this.guideLine = guideLine;
+  }
+
+  public String getGuideLineDate() {
+    return guideLineDate;
+  }
+
+  @Export
+  public void setGuideLineDateFormat(String guideLineDate) {
+    this.guideLineDate = guideLineDate;
+    if (guideLineDate != null) {
+      this.guideLineDateFmt = DateFormatterFactory.getInstance()
+          .getDateFormatter(guideLineDate);
+    }
+  }
+
   public Marker(double domainX, String label, int datasetIdx) {
     this.domainX = domainX;
     this.label = label;
+    typeClass = label;
+    // Silently fix an invalid dataset index
+    this.datasetIdx = Math.max(0, datasetIdx);
+  }
 
+  public Marker(double domainX, String label, int datasetIdx,
+      String typeClass) {
+    this.domainX = domainX;
+    this.label = label;
+    this.typeClass = typeClass;
     // Silently fix an invalid dataset index
     this.datasetIdx = Math.max(0, datasetIdx);
   }
@@ -120,6 +165,10 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
     }
 
     backingCanvas.save();
+    if (guideLine && !isDragging()) {
+      drawGuideLine(backingCanvas, (int) x);
+    }
+
     int arcDirection = (y < yp) ? 1 : 0;
     if (currentWindow != null) {
       currentWindow.setPosition(plot.domainToWindowX(domainX, datasetIdx),
@@ -184,7 +233,29 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   }
 
   public String getTypeClass() {
-    return label;
+    return typeClass;
+  }
+
+  public void drawGuideLine(Layer layer, int x) {
+    layer.save();
+    layer.setFillColor(guideLineProps.color);
+    double lt = Math.max(guideLineProps.lineThickness, 1);
+    int coffset = (int) Math.floor(lt / 2.0);
+
+    layer.fillRect(x - coffset, 0, lt, layer.getBounds().height);
+    if (guideLineDate != null) {
+      layer.setStrokeColor(Color.BLACK);
+      int hx = x;
+      double dx = ((DefaultXYPlot) plot)
+          .windowXtoDomain(hx + ((DefaultXYPlot) plot).getBounds().x);
+      String label = guideLineDateFmt.format(dx);
+      hx += dx < plot.getDomain().midpoint() ? 1.0
+          : -1 - layer.stringWidth(label, "Verdana", "", "9pt");
+
+      layer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "overlays",
+          Cursor.DEFAULT);
+    }
+    layer.restore();
   }
 
   public boolean isHit(int x, int y) {
@@ -330,14 +401,24 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
           markerProps.fontSize);
       labelHeight = layer.stringHeight(label, markerProps.fontFamily, "normal",
           markerProps.fontSize) + 2;
+      guideLineProps = view
+          .getGssProperties(new GssElementImpl("guideline", this), "");
+
       isScreenPropsSet = true;
     }
   }
 
   @Override
   public void onDrag(ChartDragEvent event) {
-    domainX = ((DefaultXYPlot) plot).windowXtoDomain(event.getCurrentX());
-    rangeY = interpolateRangeY(domainX, getDatasetIndex());
+
+    int point = plot.getNearestVisiblePoint(
+        ((DefaultXYPlot) plot).windowXtoDomain(event.getCurrentX()),
+        datasetIdx);
+//    rangeY = interpolateRangeY(domainX, getDatasetIndex());
+    if (point > -1) {
+      domainX = plot.getDataX(datasetIdx, point);
+      rangeY = plot.getDataY(datasetIdx, point);
+    }
     super.onDrag(event);
   }
 }
