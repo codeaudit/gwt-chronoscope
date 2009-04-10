@@ -38,9 +38,9 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
 
   private String typeClass;
 
-  private GssProperties guideLineProps;
+  protected GssProperties guideLineProps;
 
-  private DateFormatter guideLineDateFmt;
+  protected DateFormatter guideLineDateFmt;
 
   private static enum MarkerShape {
 
@@ -242,6 +242,8 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   }
 
   public void drawGuideLine(Layer layer, int x) {
+    if(guideLineProps == null) return;
+    
     layer.save();
     layer.setFillColor(guideLineProps.color);
     double lt = Math.max(guideLineProps.lineThickness, 1);
