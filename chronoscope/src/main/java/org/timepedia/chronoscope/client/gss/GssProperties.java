@@ -50,7 +50,9 @@ public class GssProperties {
   public String pointShape = "circle";
 
   public String display = "auto";
-  
+
+  public String dateFormat = null;
+
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;

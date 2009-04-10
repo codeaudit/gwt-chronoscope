@@ -16,6 +16,9 @@ public class DefaultGssContext extends MockGssContext {
         if ("label".equals(gssElem.getType())) {
           configLabelProps(p, gssElem.getParentGssElement());
         }
+        else if("guideline".equals(gssElem.getType())) {
+          p.visible=false;
+        }
         return p;
     }
     
