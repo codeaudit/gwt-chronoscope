@@ -938,6 +938,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   void drawPlot() {
+    plotLayer.clearTextLayer("plotTextLayer");
     plotLayer.setScrollLeft(0);
     plotRenderer.drawDatasets();
   }

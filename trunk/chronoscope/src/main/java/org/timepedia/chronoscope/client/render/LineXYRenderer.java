@@ -53,8 +53,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   public void drawGuideLine(Layer layer, int x) {
     layer.save();
-    String textLayer = "plotTextLayer" + datasetIndex;
-    layer.clearTextLayer(textLayer);
+    String textLayer = "plotTextLayer";
     layer.setFillColor(gssFocusGuidelineProps.color);
     double lt = Math.max(gssFocusGuidelineProps.lineThickness, 1);
     int coffset = (int) Math.floor(lt / 2.0);
