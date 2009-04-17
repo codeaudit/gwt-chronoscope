@@ -75,11 +75,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private int hoverY;
 
-  private boolean multiaxis=true;
-
-  public boolean isMultiAxis() {
-    return multiaxis;
-  }
+  private boolean multiaxis = true;
 
   private class ExportableHandlerManager extends HandlerManager {
 
@@ -713,6 +709,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.flipCanvas();
   }
 
+  private String lastCrosshairDateFormat = null;
   private DateFormatter crosshairFmt = DateFormatterFactory.getInstance()
       .getDateFormatter("yy/MMM/dd HH:mm");
 
@@ -721,7 +718,11 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.save();
       hoverLayer.setFillColor(Color.BLACK);
       hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
-      if (ChronoscopeOptions.isCrossHairLabels()) {
+      if (ChronoscopeOptions.isCrosshairLabels()) {
+        if(ChronoscopeOptions.getCrossHairLabels() != lastCrosshairDateFormat) {
+          lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
+          crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(lastCrosshairDateFormat);
+        }
         hoverLayer.setStrokeColor(Color.BLACK);
         int hx = hoverX;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
@@ -949,6 +950,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(newOrigin, newdomain, PlotMovedEvent.MoveType.ZOOMED);
   }
 
+  public boolean isMultiaxis() {
+    return multiaxis;
+  }
+
   void drawPlot() {
     plotLayer.clearTextLayer("plotTextLayer");
     plotLayer.setScrollLeft(0);
@@ -1165,8 +1170,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    MipMap currMipMap = plotRenderer
-        .getDrawableDataset(datasetIndex).currMipMap;
+    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap
+        ;
 
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
@@ -1449,13 +1454,28 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private void setFocusAndNotifyView(int datasetIndex, int pointIndex) {
+
+    boolean damage = false;
+    if (!multiaxis) {
+      if (focus == null || focus.getDatasetIndex() != datasetIndex) {
+        RangeAxis ra = getRangeAxis(datasetIndex);
+        ra.getAxisPanel().setValueAxis(ra);
+        damage = true;
+
+      }
+    }
     if (this.focus == null) {
       this.focus = new Focus();
     }
     this.focus.setDatasetIndex(datasetIndex);
     this.focus.setPointIndex(pointIndex);
 
+    if (!multiaxis && damage) {
+      damageAxes();
+      rangePanel.layout();
+    }
     fireFocusEvent(datasetIndex, pointIndex);
+
   }
 
   /**

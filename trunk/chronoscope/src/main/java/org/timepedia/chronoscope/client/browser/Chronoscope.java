@@ -297,8 +297,8 @@ public class Chronoscope implements Exportable {
   
 
   @Export
-  public static void setCrosshairLabels(boolean enabled) {
-    ChronoscopeOptions.setCrosshairLabels(true);
+  public static void setCrosshairLabelsFormat(String enabled) {
+    ChronoscopeOptions.setCrosshairLabels(enabled);
   }
   
   @Export

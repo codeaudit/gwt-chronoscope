@@ -123,7 +123,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.save();
 
     GssProperties alineProp, apointProp;
-    if (plot.getFocus() != null) {
+    if (plot.getFocus() != null
+        && plot.getFocus().getDatasetIndex() != this.datasetIndex) {
       alineProp = gssDisabledLineProps;
       apointProp = gssDisabledPointProps;
     } else {

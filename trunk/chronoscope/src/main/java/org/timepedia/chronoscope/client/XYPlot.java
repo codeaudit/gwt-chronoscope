@@ -482,4 +482,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * becomes the currently visible domain.
    */
   void zoomToHighlight();
+
+  boolean isMultiaxis();
 }
