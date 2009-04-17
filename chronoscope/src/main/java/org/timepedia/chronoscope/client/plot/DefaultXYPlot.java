@@ -75,6 +75,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private int hoverY;
 
+  private boolean multiaxis=true;
+
+  public boolean isMultiAxis() {
+    return multiaxis;
+  }
+
   private class ExportableHandlerManager extends HandlerManager {
 
     public ExportableHandlerManager(DefaultXYPlot<T> xyPlot) {
@@ -784,6 +790,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void setAnimating(boolean animating) {
     this.isAnimating = animating;
+  }
+
+  @Export
+  public void setMultiaxis(boolean enabled) {
+    this.multiaxis = enabled;
+    reloadStyles();
   }
 
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
