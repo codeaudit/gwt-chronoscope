@@ -69,4 +69,7 @@ public interface Panel {
    */
   void setPosition(double x, double y);
 
+
+  void layout();
+
 }

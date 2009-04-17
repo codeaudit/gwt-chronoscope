@@ -23,7 +23,7 @@ public class ChronoscopeOptions {
 
   private static boolean horizontalCrosshair = false;
 
-  private static boolean crossHairLabels = false;
+  private static String crossHairLabels = null;
   
   /**
    * A factory function to create a push-pin marker given a Date, then the
@@ -106,11 +106,15 @@ public class ChronoscopeOptions {
     ChronoscopeOptions.verticalCrosshair = verticalCrosshair;
   }
 
-  public static boolean isCrossHairLabels() {
+  public static boolean isCrosshairLabels() {
+    return crossHairLabels != null;
+  }
+
+  public static String getCrossHairLabels() {
     return crossHairLabels;
   }
 
-  public static void setCrosshairLabels(boolean crossHairLabels) {
-    ChronoscopeOptions.crossHairLabels = crossHairLabels;
+  public static void setCrosshairLabels(String fmt) {
+    ChronoscopeOptions.crossHairLabels = fmt;
   }
 }
