@@ -412,6 +412,15 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setAnimating(boolean animating);
 
   /**
+   * Enables or disables multi-axis mode. True by default, if multi-axis
+   * is disabled, each chart effectively has a single RangeAxis which is
+   * toggled by which dataset is currently in focus.
+   * @param enabled true by default
+   */
+  @Export
+  void setMultiaxis(boolean enabled);
+  
+  /**
    * Associates a {@link DatasetRenderer} with a {@link Dataset}.
    *
    * @param datasetIndex the index of the dataset to be rendered
