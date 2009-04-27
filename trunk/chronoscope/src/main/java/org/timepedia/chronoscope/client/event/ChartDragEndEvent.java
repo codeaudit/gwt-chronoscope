@@ -8,16 +8,10 @@ import org.timepedia.exporter.client.Exportable;
  *
  */
 @ExportPackage("chronoscope")
-public class ChartDragEndEvent extends PlotEvent implements Exportable {
+public class ChartDragEndEvent extends PlotEvent<ChartDragEndHandler> implements Exportable {
 
-  public static Type<ChartDragEndEvent, ChartDragEndHandler> TYPE
-      = new Type<ChartDragEndEvent, ChartDragEndHandler>() {
-    @Override
-    protected void fire(ChartDragEndHandler chartDragEndHandler,
-        ChartDragEndEvent event) {
-      chartDragEndHandler.onDragEnd(event);
-    }
-  };
+  public static Type<ChartDragEndHandler> TYPE
+      = new Type<ChartDragEndHandler>();
 
   private int endX;
 
@@ -30,7 +24,11 @@ public class ChartDragEndEvent extends PlotEvent implements Exportable {
     return endX;
   }
 
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(ChartDragEndHandler chartDragEndHandler) {
+    chartDragEndHandler.onDragEnd(this);
   }
 }

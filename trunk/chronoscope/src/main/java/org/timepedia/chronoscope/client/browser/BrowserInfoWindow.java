@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.gen2.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.DOM;

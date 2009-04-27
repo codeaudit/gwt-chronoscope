@@ -5,16 +5,10 @@ import org.timepedia.chronoscope.client.XYPlot;
 /**
  * Fired by plot implementations when the context menu is trigged.
  */
-public class PlotContextMenuEvent extends PlotEvent {
+public class PlotContextMenuEvent extends PlotEvent<PlotContextMenuHandler> {
 
-  public static Type<PlotContextMenuEvent, PlotContextMenuHandler> TYPE
-      = new Type<PlotContextMenuEvent, PlotContextMenuHandler>() {
-    @Override
-    protected void fire(PlotContextMenuHandler contextMenuHandler,
-        PlotContextMenuEvent event) {
-      contextMenuHandler.onContextMenu(event);
-    }
-  };
+  public static Type<PlotContextMenuHandler> TYPE
+      = new Type<PlotContextMenuHandler>();
 
   private int clickX;
 
@@ -34,7 +28,11 @@ public class PlotContextMenuEvent extends PlotEvent {
     return clickY;
   }
 
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(PlotContextMenuHandler plotContextMenuHandler) {
+    plotContextMenuHandler.onContextMenu(this);
   }
 }

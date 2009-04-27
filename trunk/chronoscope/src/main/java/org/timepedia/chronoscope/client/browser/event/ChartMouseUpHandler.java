@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.MouseEvent;
-import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
-import com.google.gwt.gen2.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -13,6 +13,7 @@ import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.event.ChartDragEndEvent;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
+import com.google.gwt.user.client.Event;
 /**
  * Handles the event where the user releases the mouse button.
  *
@@ -47,7 +48,7 @@ public final class ChartMouseUpHandler
 
     ((DOMView) chart.getView()).focus();
 
-    if (event.getButton() == MouseEvent.Button.RIGHT) {
+    if (event.getNativeButton() == Event.BUTTON_RIGHT) {
       ((DefaultXYPlot) chart.getPlot()).fireContextMenuEvent(x, y);
     }
 

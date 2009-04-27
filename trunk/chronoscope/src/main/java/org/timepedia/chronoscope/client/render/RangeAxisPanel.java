@@ -235,7 +235,7 @@ public class RangeAxisPanel extends AxisPanel {
 
   private GssProperties getTickProps(GssProperties defprop) {
     GssProperties tprop = defprop;
-    if (!plot.isMultiaxis()) {
+    if (false && !plot.isMultiaxis()) {
       int dIdx = plot.getFocus() != null ? plot.getFocus().getDatasetIndex()
           : -1;
 

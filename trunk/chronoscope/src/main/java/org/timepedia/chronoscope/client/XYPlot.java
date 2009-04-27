@@ -1,10 +1,8 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.gen2.event.shared.HandlerRegistration;
-import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.event.shared.GwtEvent;
 
 import org.timepedia.chronoscope.client.axis.RangeAxis;
-import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -13,7 +11,6 @@ import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.event.ChartDragStartEvent;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -132,7 +129,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Fire a event.
    * @param event
    */
-  void fireEvent(AbstractEvent event);
+  void fireEvent(GwtEvent event);
 
   /**
    * Return the Bounds of the Plot relative to the View coordinate system

@@ -1,8 +1,8 @@
 package org.timepedia.chronoscope.client.overlays;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-import com.google.gwt.gen2.event.shared.HandlerManager;
-import com.google.gwt.gen2.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
@@ -46,7 +46,7 @@ public abstract class DraggableOverlay
     this.draggable = draggable;
   }
 
-  public void fire(AbstractEvent event) {
+  public void fire(GwtEvent event) {
     if (manager != null) {
       manager.fireEvent(event);
     }

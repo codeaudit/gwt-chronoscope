@@ -1,26 +1,23 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.event.shared.GwtEvent;
 
 import org.timepedia.exporter.client.ExportPackage;
-import org.timepedia.exporter.client.Export;
 
 /**
 */
 @ExportPackage("chronoscope")
 public class InfoWindowEvent
-    extends AbstractEvent {
+    extends GwtEvent<InfoWindowClosedHandler> {
 
-  public static Type<InfoWindowEvent, InfoWindowClosedHandler> TYPE
-      = new Type<InfoWindowEvent, InfoWindowClosedHandler>() {
+  public static Type<InfoWindowClosedHandler> TYPE
+      = new Type<InfoWindowClosedHandler>();
 
-    protected void fire(InfoWindowClosedHandler infoWindowClosedHandler,
-        InfoWindowEvent event) {
-      infoWindowClosedHandler.onInfoWindowClosed(event);
-    }
-  };
-
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(InfoWindowClosedHandler infoWindowClosedHandler) {
+    infoWindowClosedHandler.onInfoWindowClosed(this);
   }
 }

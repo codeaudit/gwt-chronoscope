@@ -3,10 +3,8 @@
  */
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.gen2.event.dom.client.MouseWheelHandler;
-import com.google.gwt.gen2.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 

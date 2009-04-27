@@ -1,20 +1,23 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.gen2.event.dom.client.ClickEvent;
-import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
-import com.google.gwt.gen2.event.dom.client.KeyDownEvent;
-import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
-import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
-import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
-import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
-import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
-import com.google.gwt.gen2.event.dom.client.MouseOverEvent;
-import com.google.gwt.gen2.event.dom.client.MouseUpEvent;
-import com.google.gwt.gen2.event.dom.client.MouseWheelEvent;
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-import com.google.gwt.gen2.event.shared.HandlerManager;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.dom.client.NativeEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
@@ -34,7 +37,7 @@ import org.timepedia.chronoscope.client.browser.event.OverviewAxisMouseMoveHandl
 /**
  *
  */
-public class ChartEventHandler {
+public class ChartEventHandler implements HasHandlers {
 
   protected HandlerManager handlerLookup;
 
@@ -54,25 +57,25 @@ public class ChartEventHandler {
     // Register client event handlers
     handlerLookup = new HandlerManager(this);
     handlerLookup
-        .addHandler(MouseDownEvent.TYPE, new ChartMouseDownHandler());
-    handlerLookup.addHandler(MouseUpEvent.TYPE, new ChartMouseUpHandler());
+        .addHandler(MouseDownEvent.getType(), new ChartMouseDownHandler());
+    handlerLookup.addHandler(MouseUpEvent.getType(), new ChartMouseUpHandler());
     handlerLookup
-        .addHandler(MouseOutEvent.TYPE, new ChartMouseOutHandler());
+        .addHandler(MouseOutEvent.getType(), new ChartMouseOutHandler());
     handlerLookup
-        .addHandler(MouseOverEvent.TYPE, new ChartMouseOverHandler());
+        .addHandler(MouseOverEvent.getType(), new ChartMouseOverHandler());
     handlerLookup
-        .addHandler(MouseMoveEvent.TYPE, new ChartMouseMoveHandler());
+        .addHandler(MouseMoveEvent.getType(), new ChartMouseMoveHandler());
     handlerLookup
-        .addHandler(MouseMoveEvent.TYPE, new OverviewAxisMouseMoveHandler());
+        .addHandler(MouseMoveEvent.getType(), new OverviewAxisMouseMoveHandler());
     handlerLookup
-        .addHandler(MouseWheelEvent.TYPE, new ChartMouseWheelHandler());
-    handlerLookup.addHandler(ClickEvent.TYPE, new ChartMouseClickHandler());
+        .addHandler(MouseWheelEvent.getType(), new ChartMouseWheelHandler());
+    handlerLookup.addHandler(ClickEvent.getType(), new ChartMouseClickHandler());
     handlerLookup
-        .addHandler(DoubleClickEvent.TYPE, new ChartDblClickHandler());
-    handlerLookup.addHandler(KeyDownEvent.TYPE, new ChartKeyDownHandler());
-    handlerLookup.addHandler(KeyUpEvent.TYPE, new ChartKeyUpHandler());
+        .addHandler(DoubleClickEvent.getType(), new ChartDblClickHandler());
+    handlerLookup.addHandler(KeyDownEvent.getType(), new ChartKeyDownHandler());
+    handlerLookup.addHandler(KeyUpEvent.getType(), new ChartKeyUpHandler());
     handlerLookup
-        .addHandler(KeyPressEvent.TYPE, new ChartKeyPressHandler());
+        .addHandler(KeyPressEvent.getType(), new ChartKeyPressHandler());
   }
 
   public boolean handleChartEvent(Event event, Chart chart, int clientX,
@@ -84,43 +87,10 @@ public class ChartEventHandler {
     chartInfo.setOriginX(originX);
     chartInfo.setOriginY(originY);
 
-    AbstractEvent browserEvent = getBrowserEvent(event);
-    if (browserEvent != null) {
-      handlerLookup.fireEvent(browserEvent);
-    } else {
-      // shouldn't happen normally
-      throw new RuntimeException("getBrowserEvent returned null");
-    }
+    DomEvent.fireNativeEvent(event, this);
     return chartInfo.isHandled();
   }
 
-  protected AbstractEvent getBrowserEvent(Event event) {
-    switch (event.getTypeInt()) {
-      case Event.ONCLICK:
-        return new ClickEvent(event);
-      case Event.ONDBLCLICK:
-        return new DoubleClickEvent(event);
-      case Event.ONKEYDOWN:
-        return new KeyDownEvent(event);
-      case Event.ONKEYUP:
-        return new KeyUpEvent(event);
-      case Event.ONKEYPRESS:
-        return new KeyPressEvent(event);
-      case Event.ONMOUSEDOWN:
-        return new MouseDownEvent(event);
-      case Event.ONMOUSEMOVE:
-        return new MouseMoveEvent(event);
-      case Event.ONMOUSEOUT:
-        return new MouseOutEvent(event);
-      case Event.ONMOUSEUP:
-        return new MouseUpEvent(event);
-      case Event.ONMOUSEWHEEL:
-        return new MouseWheelEvent(event);
-      case Event.ONMOUSEOVER:
-        return new MouseOverEvent(event);
-    }
-    return null;
-  }
 
   /**
    * Safari and IE use KEYDOWN for TAB, FF uses KEYPRESS
@@ -135,6 +105,10 @@ public class ChartEventHandler {
     uiObject.sinkEvents(Event.ONCLICK);
     uiObject.sinkEvents(Event.ONDBLCLICK);
     uiObject.sinkEvents(Event.ONMOUSEWHEEL);
+  }
+
+  public void fireEvent(GwtEvent<?> gwtEvent) {
+    handlerLookup.fireEvent(gwtEvent);
   }
 }
                 

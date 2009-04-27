@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.event.shared.GwtEvent;
 
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
@@ -34,7 +34,7 @@ public interface Overlay extends Exportable {
    * textLayer
    */
   void draw(Layer layer, String textLayer);
-  void fire(AbstractEvent event);
+  void fire(GwtEvent event);
 
   @Export
   double getDomainX();

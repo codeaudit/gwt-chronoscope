@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.event;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Exportable;
@@ -12,20 +10,14 @@ import org.timepedia.exporter.client.Export;
  * Fired by plot implementations when the chart domain changes.
  */
 @ExportPackage("chronoscope")
-public class PlotMovedEvent extends PlotEvent implements Exportable {
+public class PlotMovedEvent extends PlotEvent<PlotMovedHandler> implements Exportable {
   
   public enum MoveType {
     DRAGGED, PAGED, ZOOMED, CENTERED;
   }
 
-  public static Type<PlotMovedEvent, PlotMovedHandler> TYPE
-      = new Type<PlotMovedEvent, PlotMovedHandler>() {
-    @Override
-    protected void fire(PlotMovedHandler plotMovedHandler,
-        PlotMovedEvent event) {
-      plotMovedHandler.onMoved(event);
-    }
-  };
+  public static Type<PlotMovedHandler> TYPE
+      = new Type<PlotMovedHandler>();
 
   private Interval domain;
 
@@ -47,7 +39,11 @@ public class PlotMovedEvent extends PlotEvent implements Exportable {
     return moveType;
   }
 
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(PlotMovedHandler plotMovedHandler) {
+    plotMovedHandler.onMoved(this);
   }
 }
