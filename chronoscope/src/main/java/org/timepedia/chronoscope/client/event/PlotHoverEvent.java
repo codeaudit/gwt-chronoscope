@@ -10,16 +10,10 @@ import org.timepedia.exporter.client.Export;
  * Fired by plot implementations when the set of hovered points changes.
  */
 @ExportPackage("chronoscope")
-public class PlotHoverEvent extends PlotEvent implements Exportable {
+public class PlotHoverEvent extends PlotEvent<PlotHoverHandler> implements Exportable {
 
-  public static Type<PlotHoverEvent, PlotHoverHandler> TYPE
-      = new Type<PlotHoverEvent, PlotHoverHandler>() {
-    @Override
-    protected void fire(PlotHoverHandler plotHoverHandler,
-        PlotHoverEvent event) {
-      plotHoverHandler.onHover(event);
-    }
-  };
+  public static Type<PlotHoverHandler> TYPE
+      = new Type<PlotHoverHandler>();
 
   private int[] hoverPoints;
 
@@ -52,7 +46,11 @@ public class PlotHoverEvent extends PlotEvent implements Exportable {
     return d;
   }
   
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(PlotHoverHandler plotHoverHandler) {
+    plotHoverHandler.onHover(this);
   }
 }

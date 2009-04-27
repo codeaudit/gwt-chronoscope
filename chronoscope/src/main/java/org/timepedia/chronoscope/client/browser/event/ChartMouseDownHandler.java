@@ -1,14 +1,13 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.MouseDownEvent;
-import com.google.gwt.gen2.event.dom.client.MouseDownHandler;
-import com.google.gwt.gen2.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.user.client.Event;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.event.ChartDragStartEvent;
 
 /**
  * Handles the event where the user depresses a mouse button.
@@ -26,7 +25,7 @@ public final class ChartMouseDownHandler
 
     boolean handled;
 
-    if (event.getButton() == MouseEvent.Button.RIGHT) {
+    if (event.getNativeButton() == Event.BUTTON_RIGHT) {
       // Ignore mouse right-click -- let browser handle event.
       handled = false;
     } else {

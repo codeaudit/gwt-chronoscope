@@ -1,9 +1,9 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-import com.google.gwt.gen2.event.shared.EventHandler;
-import com.google.gwt.gen2.event.shared.HandlerManager;
-import com.google.gwt.gen2.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -84,7 +84,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     public ExportableHandlerRegistration addExportableHandler(
-        AbstractEvent.Type type, EventHandler handlerType) {
+        GwtEvent.Type type, EventHandler handlerType) {
       super.addHandler(type, handlerType);
       return new ExportableHandlerRegistration(this, type, handlerType);
     }
@@ -202,7 +202,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel = new RangePanel();
   }
 
-  public <R extends AbstractEvent, S extends AbstractEvent.Type<R, T>, T extends EventHandler> HandlerRegistration addHandler(
+  public <S extends GwtEvent.Type<T>, T extends EventHandler> HandlerRegistration addHandler(
       S type, T handler) {
     return handlerManager.addHandler(type, handler);
   }
@@ -314,7 +314,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     handlerManager.fireEvent(new PlotContextMenuEvent(this, x, y));
   }
 
-  public void fireEvent(AbstractEvent event) {
+  public void fireEvent(GwtEvent event) {
     handlerManager.fireEvent(event);
   }
 

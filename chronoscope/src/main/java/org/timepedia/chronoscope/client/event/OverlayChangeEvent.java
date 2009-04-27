@@ -10,16 +10,10 @@ import org.timepedia.exporter.client.Export;
  *
  */
 @ExportPackage("chronoscope")
-public class OverlayChangeEvent extends PlotEvent implements Exportable {
+public class OverlayChangeEvent extends PlotEvent<OverlayChangeHandler> implements Exportable {
 
-  public static Type<OverlayChangeEvent, OverlayChangeHandler> TYPE
-      = new Type<OverlayChangeEvent, OverlayChangeHandler>() {
-    @Override
-    protected void fire(OverlayChangeHandler changeHandler,
-        OverlayChangeEvent event) {
-      changeHandler.onOverlayChanged(event);
-    }
-  };
+  public static Type<OverlayChangeHandler> TYPE
+      = new Type<OverlayChangeHandler>();
 
   @Export
   public Overlay getOverlay() {
@@ -33,7 +27,11 @@ public class OverlayChangeEvent extends PlotEvent implements Exportable {
     this.overlay = o;
   }
 
-  protected Type getType() {
+  public Type getAssociatedType() {
     return TYPE;
+  }
+
+  protected void dispatch(OverlayChangeHandler overlayChangeHandler) {
+    overlayChangeHandler.onOverlayChanged(this);
   }
 }

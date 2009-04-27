@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.overlays;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.event.shared.GwtEvent;
 
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
@@ -113,7 +113,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
     backingCanvas.restore();
   }
 
-  public void fire(AbstractEvent event) {
+  public void fire(GwtEvent event) {
     //To change body of implemented methods use File | Settings | File Templates.
   }
 

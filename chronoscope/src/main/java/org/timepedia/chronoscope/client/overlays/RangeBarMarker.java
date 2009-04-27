@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.overlays;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
+import com.google.gwt.event.shared.GwtEvent;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
@@ -124,7 +124,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     backingCanvas.restore();
   }
 
-  public void fire(AbstractEvent event) {
+  public void fire(GwtEvent event) {
   }
 
   public void fireOverlayClickListener(int x, int y) {

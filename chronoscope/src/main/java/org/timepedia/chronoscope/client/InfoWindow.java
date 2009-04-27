@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client;
 
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExportPackage;

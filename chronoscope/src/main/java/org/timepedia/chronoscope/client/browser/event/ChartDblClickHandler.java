@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.gen2.event.dom.client.DoubleClickHandler;
-import com.google.gwt.gen2.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 
