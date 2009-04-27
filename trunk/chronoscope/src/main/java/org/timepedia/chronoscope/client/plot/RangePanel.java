@@ -239,7 +239,7 @@ final class RangePanel extends AuxiliaryPanel {
       int numLeftAxes = leftPanel.getChildCount();
       int numRightAxes = rightPanel.getChildCount();
       boolean useLeftPanel = (numLeftAxes <= numRightAxes);
-      CompositeAxisPanel compositePanel = useLeftPanel || !plot.isMultiAxis()
+      CompositeAxisPanel compositePanel = useLeftPanel || !plot.isMultiaxis()
           ? leftPanel : rightPanel;
       RangeAxisPanel axisPanel = null;
 
@@ -252,7 +252,7 @@ final class RangePanel extends AuxiliaryPanel {
       }
 
       if (!localRangeAxisIds.contains(rangeAxisId)) {
-        if (axisPanel == null || plot.isMultiAxis()) {
+        if (axisPanel == null || plot.isMultiaxis()) {
           axisPanel = new RangeAxisPanel();
 
           axisPanel.setValueAxis(rangeAxis);
