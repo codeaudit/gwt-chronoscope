@@ -3,6 +3,8 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +15,8 @@ import java.util.List;
  * 
  * @author Chad Takahashi
  */
-public abstract class AbstractPanel implements Panel {
+@ExportPackage("chronoscope")
+public abstract class AbstractPanel implements Panel, Exportable {
   protected Bounds bounds = new Bounds();
   protected GssProperties gssProperties;
   protected Layer layer;  
