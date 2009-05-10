@@ -13,11 +13,15 @@ import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
 
 /**
  * Renders zoomable dates on x-axis (domain axis).
  */
-public class DomainAxisPanel extends AxisPanel {
+@ExportPackage("chronoscope")
+public class DomainAxisPanel extends AxisPanel implements Exportable {
 
   private static final String CREDITS = "Powered by Timefire";
 
@@ -165,7 +169,8 @@ public class DomainAxisPanel extends AxisPanel {
     
     //bounds.width = view.getWidth(); // default width for now
   }
-  
+
+  @Export
   public void setTickFormatterFactory(TickFormatterFactory tickFormatterFactory) {
     ArgChecker.isNotNull(tickFormatterFactory, "tickFormatterFactory");
     this.tickFormatterFactory = tickFormatterFactory;

@@ -1,12 +1,16 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+
 /**
  * Factory for obtaining a suitable {@link TickFormatter} object for a given
  * domain span.
  * 
  * @author chad takahashi
  */
-public abstract class TickFormatterFactory {
+@ExportPackage("chronoscope")
+public abstract class TickFormatterFactory implements Exportable {
 
   private double affinityFactor;
   private TickFormatter rootFormatter;

@@ -178,6 +178,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Return the domain axis panel associated with X-axis.
    */
+  @Export
   DomainAxisPanel getDomainAxisPanel();
 
   /**

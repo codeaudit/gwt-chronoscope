@@ -358,6 +358,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return this.visDomain;
   }
 
+  @Export
   public DomainAxisPanel getDomainAxisPanel() {
     return bottomPanel.getDomainAxisPanel();
   }

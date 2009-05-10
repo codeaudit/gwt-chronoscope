@@ -3,6 +3,9 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 /**
  * An ValueAxis is a class responsible for mapping points in data space to
@@ -17,7 +20,8 @@ import org.timepedia.chronoscope.client.util.Interval;
  * 
  * @see org.timepedia.chronoscope.client.render.AxisPanel
  */
-public abstract class ValueAxis {
+@ExportPackage("chronoscope")
+public abstract class ValueAxis implements Exportable {
 
   private String label;
 
@@ -74,6 +78,7 @@ public abstract class ValueAxis {
    * Sets the short label representing this axis ($, m/s, etc)
    * @param axisId
    */
+  @Export
   public void setAxisId(String axisId) {
     //TODO: this needs to update DefaultXYPlot's internal maps
     this.axisId = axisId;

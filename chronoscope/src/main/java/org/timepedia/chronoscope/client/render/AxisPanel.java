@@ -7,12 +7,17 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.exporter.client.Exportable;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Export;
 
 /**
  * Base class for all axis panels, which are panels that surround the center plot panel.
  * 1 or more axis panels can be added to a {@link CompositeAxisPanel}.
  */
-public abstract class AxisPanel extends AbstractPanel implements GssElement {
+@ExportPackage("chronoscope")
+public abstract class AxisPanel extends AbstractPanel implements GssElement
+, Exportable {
 
   // if true, only render gridlines into the plots, render nothing else.
   public static final boolean GRID_ONLY = false;
@@ -28,7 +33,8 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement {
   public final GssElement getParentGssElement() {
     return (CompositeAxisPanel)this.parent;
   }
-  
+
+  @Export
   public final ValueAxis getValueAxis() {
     return this.valueAxis;
   }
