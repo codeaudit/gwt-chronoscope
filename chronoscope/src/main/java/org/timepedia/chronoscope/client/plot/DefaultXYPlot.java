@@ -75,7 +75,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private int hoverY;
 
-  private boolean multiaxis = true;
+  private boolean multiaxis = ChronoscopeOptions.getDefaultMultiaxisMode();
 
   private class ExportableHandlerManager extends HandlerManager {
 

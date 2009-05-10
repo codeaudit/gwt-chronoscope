@@ -2,19 +2,19 @@ package org.timepedia.chronoscope.client.overlays;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +35,8 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   private final double domainWidth;
 
   private final String label;
+
+  private String gssLabel;
 
   private ArrayList clickListener;
 
@@ -59,6 +61,30 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
 
     this.domainX = Date.parse(startDate);
     this.domainWidth = Date.parse(endDate) - this.domainX;
+    this.gssLabel = label.replaceAll("[^a-zA-Z0-9._-]+", "");
+  }
+
+  /**
+   * @gwt.export
+   */
+  @Export
+  public DomainBarMarker(String startDate, String endDate, String label,
+      String gssLabel) {
+    this.label = label;
+    this.gssLabel = gssLabel;
+
+    this.domainX = Date.parse(startDate);
+    this.domainWidth = Date.parse(endDate) - this.domainX;
+  }
+
+  @Export
+  /**
+   * Change the gss class for this marker.
+   */
+  public void setGssLabel(String gssLabel) {
+    this.gssLabel = gssLabel;
+    this.markerProperties = null;
+    this.markerLabelProperties = null;
   }
 
   /**
@@ -80,8 +106,8 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
     final double plotDomainStart = plot.getDomain().getStart();
     final double plotDomainEnd = plot.getDomain().getEnd();
     final double myDomainEnd = domainX + domainWidth;
-    if (domainX <= plotDomainStart && myDomainEnd < plotDomainStart ||
-        domainX > plotDomainEnd && myDomainEnd > plotDomainEnd) {
+    if (domainX <= plotDomainStart && myDomainEnd < plotDomainStart
+        || domainX > plotDomainEnd && myDomainEnd > plotDomainEnd) {
       return;
     }
 
@@ -139,7 +165,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   public String getType() {
-    return "domainmarker";
+    return "domainmarker "+gssLabel;
   }
 
   public String getTypeClass() {

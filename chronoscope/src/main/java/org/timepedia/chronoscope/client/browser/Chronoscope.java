@@ -306,6 +306,11 @@ public class Chronoscope implements Exportable {
     fontBookRenderingEnabled = enabled;
   }
 
+  @Export
+  public static void setDefaultMultiaxisMode(boolean mode) {
+    ChronoscopeOptions.setDefaultMultiaxisMode(mode);
+  }
+
   /**
    * Defaults to GWT.getModuleBaseURL() + "fr"
    */
