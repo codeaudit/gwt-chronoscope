@@ -24,7 +24,9 @@ public class ChronoscopeOptions {
   private static boolean horizontalCrosshair = false;
 
   private static String crossHairLabels = null;
-  
+
+  private static boolean defaultMultiaxisMode = true;
+
   /**
    * A factory function to create a push-pin marker given a Date, then the
    * dataset index to attach this marker to, and a label
@@ -117,4 +119,13 @@ public class ChronoscopeOptions {
   public static void setCrosshairLabels(String fmt) {
     ChronoscopeOptions.crossHairLabels = fmt;
   }
+
+  public static void setDefaultMultiaxisMode(boolean mode) {
+    defaultMultiaxisMode = mode;
+  }
+
+  public static boolean getDefaultMultiaxisMode() {
+    return defaultMultiaxisMode;
+  }
+
 }
