@@ -165,11 +165,11 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   public String getType() {
-    return "domainmarker "+gssLabel;
+    return "domainmarker";
   }
 
   public String getTypeClass() {
-    return "horizontal";
+    return "horizontal "+gssLabel;
   }
 
   public boolean isHit(int x, int y) {
