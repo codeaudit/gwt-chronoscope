@@ -27,6 +27,8 @@ import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
+import org.timepedia.chronoscope.client.render.domain.IntTickFormatterFactory;
+import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -94,6 +96,19 @@ public class Chronoscope implements Exportable {
       String endDate, String label) {
     return new DomainBarMarker(startDate, endDate, label);
   }
+
+  /**
+   * A factory function to create a vertical marker given start and end dates,
+   * and a label with a gss class.
+   *
+   * @gwt.export
+   */
+  @Export
+  public static DomainBarMarker createBarMarker(String startDate,
+      String endDate, String label, String gssClass) {
+    return new DomainBarMarker(startDate, endDate, label, gssClass);
+  }
+
 
   /**
    * A factory function to create a horizontal span marker between two range
@@ -294,13 +309,12 @@ public class Chronoscope implements Exportable {
     ChronoscopeOptions.setHorizontalCrosshairEnabled(enabled);
   }
 
-  
 
   @Export
   public static void setCrosshairLabelsFormat(String enabled) {
     ChronoscopeOptions.setCrosshairLabels(enabled);
   }
-  
+
   @Export
   public static void setFontBookRendering(boolean enabled) {
     fontBookRenderingEnabled = enabled;
@@ -397,7 +411,7 @@ public class Chronoscope implements Exportable {
       }
 
 //      checkForChronoscopeCSS();
-//        tryInjectChronoscopeCSS(new Command() {
+//        tryInjectChronoscopeCSS(new Command() {                       c
 //            public void execute() {
       exportFunctions();
 
@@ -451,6 +465,12 @@ public class Chronoscope implements Exportable {
 
     Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
     exporter4.export();
+
+    Exporter exporter8 = (Exporter) GWT.create(IntTickFormatterFactory.class);
+    exporter8.export();
+
+    Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
+    exporter9.export();
 
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();
