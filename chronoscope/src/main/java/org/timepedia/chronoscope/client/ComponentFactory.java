@@ -48,11 +48,11 @@ public abstract class ComponentFactory {
     ArgChecker.isNotNull(factory, "factory");
     
     // Only allow ComponentFactory to be set once
-    if (componentFactoryAlreadyAssigned) {
-      throw new IllegalStateException("ComponentFactory instance already set");
-    }
+//    if (componentFactoryAlreadyAssigned) {
+//      throw new IllegalStateException("ComponentFactory instance already set");
+//    }
     
-    componentFactoryAlreadyAssigned = true;
+//    componentFactoryAlreadyAssigned = true;
     singleton = factory;
   }
 }
