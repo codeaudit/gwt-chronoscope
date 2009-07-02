@@ -276,7 +276,17 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
 
-    return topPanel.isEnabled() ? topPanel.click(x, y) : false;
+    if(topPanel.isEnabled()) {
+      if(topPanel.click(x,y)) {
+        return true;
+      }
+    }
+    if(bottomPanel.isEnabled()) {
+      if(bottomPanel.click(x,y)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public void damageAxes() {
