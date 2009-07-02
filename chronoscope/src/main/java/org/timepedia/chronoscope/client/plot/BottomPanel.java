@@ -293,4 +293,7 @@ final class BottomPanel extends AuxiliaryPanel {
     System.out.println("BottomPanel> " + msg);
   }
 
+  public boolean click(int x, int y) {
+    return domainAxisPanel.click(x,y);
+  }
 }
