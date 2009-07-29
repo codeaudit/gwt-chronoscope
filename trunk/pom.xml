@@ -1,18 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>Chronoscope Project</name>
     <url>http://timepedia.org/chronoscope</url>
-    <description>Chronoscope is Timepedia's charting and visualization platform for GWT, used as the centerpiece of
+    <description>Chronoscope is Timepedia's charting and visualization platform
+        for GWT, used as the centerpiece of
         Timepedia's
-        upcoming website. Timepedia is developing a collaborative time-oriented search engine with analytic and
+        upcoming website. Timepedia is developing a collaborative time-oriented
+        search engine with analytic and
         visualization
-        capabilities. Chronoscope is currently structured around our needs but we hope that opening it up to the
+        capabilities. Chronoscope is currently structured around our needs but
+        we hope that opening it up to the
         community will help
         it become a well-rounded charting framework.
     </description>
@@ -57,30 +61,78 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://gwt-chronoscope.googlecode.com/svn/trunk</developerConnection>
+        <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://gwt-chronoscope.googlecode.com/svn/trunk
+        </developerConnection>
         <url>http://code.google.com/p/gwt-chronoscope/source/browse/trunk</url>
     </scm>
 
     <modules>
         <module>chronoscope</module>
         <module>bench</module>
-<!--        <module>samples</module> -->
+        <!--        <module>samples</module> -->
         <module>gviz</module>
-        <module>widget</module> 
+        <module>widget</module>
         <module>chronoscope-java2d</module>
     </modules>
 
-   <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
             <id>timepedia-deploy</id>
-            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </distributionManagement>
+            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/
+            </url>
+        </repository>
+    </distributionManagement>
 
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                        <webResources>
+                            <resource>
+                                <directory>
+                                    ${project.build.directory}/public/${project.build.finalName}
+                                </directory>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <configuration>
+                        <logLevel>${gwt.loglevel}</logLevel>
+                        <style>${gwt.outputstyle}</style>
+                        <gwtVersion>${gwtversion}</gwtVersion>
+                        <webappDirectory>${project.build.directory}/public
+                        </webappDirectory>
+                        <modules>
+                            <module>
+                                ${gwt.module}${gwt.modulesuffix}
+                            </module>
+                        </modules>
+                        <inplace>${gwt.inplace}</inplace>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
 
             <!--
@@ -147,7 +199,8 @@
                         <DISPLAY>:5</DISPLAY>
                     </environmentVariables>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
+                    <forkedProcessTimeoutInSeconds>60
+                    </forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
 
@@ -158,7 +211,7 @@
                     <dependency>
                         <groupId>org.timepedia.chronoscope</groupId>
                         <artifactId>buildtools</artifactId>
-                        <version>1.0-SNAPSHOT</version>
+                        <version>1.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -253,7 +306,7 @@
 
     </repositories>
 
-  
+
     <profiles>
         <profile>
             <id>default</id>
@@ -262,11 +315,15 @@
             </activation>
 
             <properties>
-                <gwtversion>1.6.4</gwtversion>
+                <gwtversion>1.7.0</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
+                <gwt.localRepository>${user.home}/.m2/repository
+                </gwt.localRepository>
                 <!--		<maven.test.skip>true</maven.test.skip> -->
+                <gwt.inplace>false</gwt.inplace>
+
             </properties>
         </profile>
 
@@ -280,8 +337,9 @@
             </activation>
             <properties>
                 <gwtplatform>linux</gwtplatform>
-              <google.webtoolkit.extrajvmargs>-Xmx512m</google.webtoolkit.extrajvmargs>
-              
+                <google.webtoolkit.extrajvmargs>-Xmx512m
+                </google.webtoolkit.extrajvmargs>
+
             </properties>
         </profile>
 
@@ -294,7 +352,8 @@
             </activation>
             <properties>
                 <gwtplatform>windows</gwtplatform>
-                <google.webtoolkit.extrajvmargs>-Xmx512m</google.webtoolkit.extrajvmargs>
+                <google.webtoolkit.extrajvmargs>-Xmx512m
+                </google.webtoolkit.extrajvmargs>
             </properties>
         </profile>
 
@@ -308,7 +367,8 @@
             <properties>
                 <gwtplatform>mac</gwtplatform>
                 <!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
-                <google.webtoolkit.extrajvmargs>-Xmx512m -XstartOnFirstThread</google.webtoolkit.extrajvmargs>
+                <google.webtoolkit.extrajvmargs>-Xmx512m -XstartOnFirstThread
+                </google.webtoolkit.extrajvmargs>
             </properties>
         </profile>
 
@@ -318,13 +378,16 @@
                 <gwt.loglevel>WARN</gwt.loglevel>
                 <gwt.modulesuffix>Dev</gwt.modulesuffix>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
+                <gwt.draft>-draftCompile</gwt.draft>
+                <maven.test.skip>true</maven.test.skip>
+                <gwt.inplace>false</gwt.inplace>
             </properties>
         </profile>
 
         <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>1.6.4</gwtversion>
+                <gwtversion>1.7.0</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
