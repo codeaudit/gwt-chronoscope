@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
 
   <name>Chronoscope Chart Bench</name>
@@ -76,7 +76,7 @@
           <logLevel>${gwt.loglevel}</logLevel>
           <style>${gwt.outputstyle}</style>
           <output>${project.build.directory}/public</output>
-<!--	  <extraJvmArgs>-XdisableCastChecking</extraJvmArgs> -->
+<!--	  <extraJvmArgs>-Xmx1024m -Dgwt.jjs.dumpAst=true</extraJvmArgs> -->
           <runTarget>
             org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}/index.html
           </runTarget>
