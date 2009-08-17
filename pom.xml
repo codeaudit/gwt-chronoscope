@@ -315,7 +315,7 @@
             </activation>
 
             <properties>
-                <gwtversion>1.7.0</gwtversion>
+                <gwtversion>1.6.4</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -387,7 +387,7 @@
         <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>1.7.0</gwtversion>
+                <gwtversion>1.6.4</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
