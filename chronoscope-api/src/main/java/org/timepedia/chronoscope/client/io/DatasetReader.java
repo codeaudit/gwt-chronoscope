@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.io;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.browser.JsArrayParser;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.json.JsonArray;
 import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;

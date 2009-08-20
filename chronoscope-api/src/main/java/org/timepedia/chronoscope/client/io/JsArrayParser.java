@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.browser;
+package org.timepedia.chronoscope.client.io;
 
 import org.timepedia.chronoscope.client.data.json.JsonArrayNumber;
 import org.timepedia.chronoscope.client.data.json.JsonArrayString;
