@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.canvas;
+package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

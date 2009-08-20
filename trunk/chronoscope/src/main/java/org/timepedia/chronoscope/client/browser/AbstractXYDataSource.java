@@ -1,11 +1,13 @@
-package org.timepedia.chronoscope.client.data;
+package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.JsArray;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.XYDataSource;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.data.DataSourceCallback;
+import org.timepedia.chronoscope.client.data.DatasetFactory;
+import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 
 import java.util.ArrayList;

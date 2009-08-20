@@ -1,12 +1,12 @@
-package org.timepedia.chronoscope.client.canvas;
+package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import org.timepedia.chronoscope.client.browser.Chronoscope;
-import org.timepedia.chronoscope.client.browser.FontRendererServiceAsyncJson;
 import org.timepedia.chronoscope.client.util.Util;
+import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
+import org.timepedia.chronoscope.client.browser.FontRendererServiceAsync;
 
 /**
  * Service which uses Java2D to compute font metrics of a series of glyphs for

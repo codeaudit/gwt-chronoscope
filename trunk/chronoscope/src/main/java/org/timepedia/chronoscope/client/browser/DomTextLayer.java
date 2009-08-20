@@ -18,8 +18,8 @@ import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasFontMetrics;
-import org.timepedia.chronoscope.client.canvas.FontRendererService;
-import org.timepedia.chronoscope.client.canvas.FontRendererServiceAsync;
+import org.timepedia.chronoscope.client.browser.FontRendererService;
+import org.timepedia.chronoscope.client.browser.FontRendererServiceAsync;
 import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
 
 import java.util.HashMap;

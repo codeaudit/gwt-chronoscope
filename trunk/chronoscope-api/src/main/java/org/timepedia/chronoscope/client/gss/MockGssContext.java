@@ -1,12 +1,11 @@
 package org.timepedia.chronoscope.client.gss;
 
-import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.canvas.Color;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MockGssContext extends BrowserGssContext {
+public class MockGssContext extends GssContext {
   
   // Determines the dataset color for a given GSS class.
   protected DatasetColorMap datasetColorMap = new DatasetColorMap(); 

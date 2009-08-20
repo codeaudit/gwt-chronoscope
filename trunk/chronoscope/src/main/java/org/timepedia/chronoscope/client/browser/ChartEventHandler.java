@@ -17,7 +17,6 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.dom.client.NativeEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;

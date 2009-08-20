@@ -1,4 +1,4 @@
-package org.timepedia.chronoscope.client.browser;
+package org.timepedia.chronoscope.client;
 
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExportClosure;

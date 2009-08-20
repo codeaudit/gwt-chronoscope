@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.server.servlet;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import org.timepedia.chronoscope.client.canvas.FontRendererService;
+import org.timepedia.chronoscope.client.browser.FontRendererService;
 import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
 
 import java.awt.Color;
