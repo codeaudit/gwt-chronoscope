@@ -1,4 +1,8 @@
-package org.timepedia.chronoscope.java2d.canvas;
+package org.timepedia.chronoscope.client.browser;
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -15,30 +19,30 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
-import java.awt.Image;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * A Java2D Canvas implementation to facillitate Server, Applet, and Application
- * rendering
+ * An implementation of Canvas that creates a CANVAS tag per Layer, as well as
+ * using DIVs and images to render text on the CANVAS
  */
-public class CanvasJava2D extends Canvas {
+public class BrowserCanvas extends Canvas {
 
-  private Layer rootLayer;
+  private BrowserLayer rootLayer;
 
-  private HashMap<String, Layer> id2Layer = new HashMap<String, Layer>();
+  private final Map<String,Layer> id2Layer = new HashMap<String,Layer>();
 
-  private LayerJava2D backingLayer;
+  private final int width;
 
-  public CanvasJava2D(View view, int w, int h) {
+  private final int height;
+
+  private Element canvasElement;
+
+  public BrowserCanvas(View view, int width, int height) {
     super(view);
-    rootLayer = createLayer("rootLayer", new Bounds(0, 0, w, h));
-    backingLayer = new LayerJava2D(this, "backing", new Bounds(0, 0, w, h));
-    rootLayer.setFillColor(Color.TRANSPARENT);
-    rootLayer.clearRect(0, 0, w, h);
+    this.width = width;
+    this.height = height;
+    init(width, height);
   }
 
   public void arc(double x, double y, double radius, double startAngle,
@@ -47,6 +51,11 @@ public class CanvasJava2D extends Canvas {
   }
 
   public void attach(View view, CanvasReadyCallback canvasReadyCallback) {
+    BrowserView bv = (BrowserView) view;
+    DOM.appendChild(bv.getElement(), canvasElement);
+    rootLayer = (BrowserLayer) createLayer("rootLayer",
+        new Bounds(0, 0, width, height));
+
     super.attach(view, canvasReadyCallback);
   }
 
@@ -58,8 +67,8 @@ public class CanvasJava2D extends Canvas {
     rootLayer.clearRect(x, y, width, height);
   }
 
-  public void clearTextLayer(String textLayer) {
-    rootLayer.clearTextLayer(textLayer);
+  public void clearTextLayer(String layerName) {
+    rootLayer.clearTextLayer(layerName);
   }
 
   public void clip(double x, double y, double width, double height) {
@@ -77,17 +86,18 @@ public class CanvasJava2D extends Canvas {
   public Layer createLayer(String layerId, Bounds b) {
     Layer layer = getLayer(layerId);
     if (layer == null) {
-      layer = new LayerJava2D(this, layerId, b);
+      layer = new BrowserLayer(this, layerId, b);
       id2Layer.put(layer.getLayerId(), layer);
+      DOM.appendChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
       layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
     }
     return layer;
   }
 
-  public LinearGradient createLinearGradient(double startx, double starty,
-      double endx, double endy) {
-    return rootLayer.createLinearGradient(startx, starty, endx, endy);
+  public LinearGradient createLinearGradient(double x, double y, double w,
+      double h) {
+    return rootLayer.createLinearGradient(x, y, w, h);
   }
 
   public PaintStyle createPattern(String imageUri) {
@@ -99,10 +109,14 @@ public class CanvasJava2D extends Canvas {
     return rootLayer.createRadialGradient(x0, y0, r0, x1, y1, r1);
   }
 
+  public Element createTextDiv() {
+    return rootLayer.createTextDiv();
+  }
+
   public void disposeLayer(String layerId) {
     Layer layer = getLayer(layerId);
     if (layer != null) {
-      ((LayerJava2D) layer).dipose();
+      DOM.removeChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
     }
     id2Layer.remove(layerId);
   }
@@ -118,68 +132,26 @@ public class CanvasJava2D extends Canvas {
         .drawImage(layer, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
   }
 
-  public void drawRotatedText(double x, double y, double v, String label,
+  public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    rootLayer.drawRotatedText(x, y, v, label, fontFamily, fontWeight, fontSize,
-        layerName, chart);
+    rootLayer.drawRotatedText(x, y, angle, label, fontFamily, fontWeight,
+        fontSize, layerName, chart);
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String textLayer, Cursor cursor) {
+      String fontWeight, String fontSize, String layerName, Cursor cursor) {
     rootLayer
-        .drawText(x, y, label, fontFamily, fontWeight, fontSize, textLayer, cursor);
-  }
-
-  public void endFrame() {
-    super.endFrame();
-    ArrayList<Layer> layers = new ArrayList<Layer>(id2Layer.values());
-    Collections.sort(layers, new Comparator<Layer>() {
-      public int compare(Layer l1, Layer l2) {
-        int diff = l1.getLayerOrder() - l2.getLayerOrder();
-        if (diff != 0) {
-          return diff;
-        } else if (l1.getLayerOrder() == Layer.Z_LAYER_AXIS && l1.getLayerId()
-            .startsWith("verticalAxis")) {
-          return +1;
-        } else {
-          return 0;
-        }
-      }
-    });
-    int ord = 0;
-    backingLayer.save();
-    backingLayer.setFillColor("rgba(255,255,255,255)");
-    backingLayer.setComposite(Layer.COPY);
-    backingLayer
-        .fillRect(0, 0, backingLayer.getWidth(), backingLayer.getHeight());
-    backingLayer.restore();
-
-    int i = 0;
-    for (Layer l : layers) {
-      Bounds b = l.getBounds();
-
-      if (l.isVisible() /* && !"rootLayer".equals(l.getLayerId()) && ("plotLayer".equals(l.getLayerId()) || "verticalAxis".equals(l.getLayerId()) ||
-            "domainAxis".equals(l.getLayerId()) || "topLayer".equals(l.getLayerId())) */) {
-        //    if(l.getLayerId().startsWith("highlight")) break;
-//                System.out.println("layer " + l.getLayerId());
-        backingLayer.save();
-        backingLayer
-            .drawImage(l, 0, 0, b.width, b.height, b.x, b.y, b.width, b.height);
-        backingLayer.restore();
-      }
-    }
-//        backingLayer.setFillColor("rgb(255, 0, 255)");
-//        backingLayer.fillRect(0, 0, backingLayer.getWidth(), backingLayer.getHeight());
+        .drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
+            cursor);
   }
 
   public void fill() {
     rootLayer.fill();
   }
 
-  public void fillRect(double startx, double starty, double width,
-      double height) {
-    rootLayer.fillRect(startx, starty, width, height);
+  public void fillRect(double x, double y, double w, double h) {
+    rootLayer.fillRect(x, y, w, h);
   }
 
   public void fillRect() {
@@ -190,16 +162,16 @@ public class CanvasJava2D extends Canvas {
     return rootLayer.getBounds();
   }
 
-  public Canvas getCanvas() {
-    return rootLayer.getCanvas();
+  public JavaScriptObject getContext() {
+    return rootLayer.getContext();
+  }
+
+  public Element getElement() {
+    return canvasElement;
   }
 
   public double getHeight() {
     return rootLayer.getHeight();
-  }
-
-  public Image getImage() {
-    return backingLayer.getImage();
   }
 
   public Layer getLayer(String layerId) {
@@ -223,8 +195,7 @@ public class CanvasJava2D extends Canvas {
   }
 
   public CanvasImage createImage(String url) {
-    //TODO: implement
-    return null;
+    return new BrowserCanvasImage(url);
   }
 
   public int getScrollLeft() {
@@ -233,6 +204,10 @@ public class CanvasJava2D extends Canvas {
 
   public String getStrokeColor() {
     return rootLayer.getStrokeColor();
+  }
+
+  public DomTextLayer.TextLayer getTextLayer(String layerName) {
+    return rootLayer.getTextLayer(layerName);
   }
 
   public String getTransparency() {
@@ -351,8 +326,8 @@ public class CanvasJava2D extends Canvas {
     rootLayer.setStrokeColor(p);
   }
 
-  public void setTextLayerBounds(String textLayer, Bounds textLayerBounds) {
-    rootLayer.setTextLayerBounds(textLayer, textLayerBounds);
+  public void setTextLayerBounds(String layerName, Bounds bounds) {
+    rootLayer.setTextLayerBounds(layerName, bounds);
   }
 
   public void setTransparency(float value) {
@@ -360,6 +335,8 @@ public class CanvasJava2D extends Canvas {
   }
 
   public void setVisibility(boolean visibility) {
+    DOM.setStyleAttribute(canvasElement, "visibility",
+        visibility ? "visible" : "hidden");
     rootLayer.setVisibility(visibility);
   }
 
@@ -378,5 +355,17 @@ public class CanvasJava2D extends Canvas {
 
   public void translate(double x, double y) {
     rootLayer.translate(x, y);
+  }
+
+  void init(int width, int height) {
+    canvasElement = DOM.createDiv();
+    DOM.setElementAttribute(canvasElement, "width", "" + width);
+    DOM.setElementAttribute(canvasElement, "height", "" + height);
+    DOM.setStyleAttribute(canvasElement, "width", "" + width + "px");
+    DOM.setStyleAttribute(canvasElement, "height", "" + height + "px");
+    DOM.setStyleAttribute(canvasElement, "visibility", "hidden");
+    DOM.setStyleAttribute(canvasElement, "position", "absolute");
+    DOM.setStyleAttribute(canvasElement, "top", "0px");
+    DOM.setStyleAttribute(canvasElement, "left", "0px");
   }
 }
