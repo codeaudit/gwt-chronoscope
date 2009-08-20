@@ -1,2 +1,0 @@
-Revision: $Revision$
-Version: 0.86-SNAPSHOT
