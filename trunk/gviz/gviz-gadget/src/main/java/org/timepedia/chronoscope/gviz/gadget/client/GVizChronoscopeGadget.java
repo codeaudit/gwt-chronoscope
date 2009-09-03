@@ -71,7 +71,7 @@ public class GVizChronoscopeGadget extends Gadget<GVizPreferences>
   }
 
   protected void init(final GVizPreferences prefs) {
-    Chronoscope.setUrlResolver(new Chronoscope.URLResolver() {
+    Chronoscope.get().setUrlResolver(new Chronoscope.URLResolver() {
       public String resolveURL(String s) {
          return intrinsics.getCachedUrl(s);
       }

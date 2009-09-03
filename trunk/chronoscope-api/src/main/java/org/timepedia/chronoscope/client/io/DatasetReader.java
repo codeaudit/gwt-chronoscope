@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.io;
 
+import com.google.inject.Inject;
+
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
@@ -17,6 +19,13 @@ import org.timepedia.chronoscope.client.util.JavaArray2D;
 public class DatasetReader {
 
   public static JsArrayParser jsArrayParser = new JsArrayParser();
+
+  private ComponentFactory compFactory;
+
+  @Inject
+  public DatasetReader(ComponentFactory compFactory) {
+    this.compFactory = compFactory;
+  }
 
   /**
    * Parse a JSON object representing a multiresolution dataset into a class
@@ -36,19 +45,19 @@ public class DatasetReader {
    * }
    * </pre>
    */
-  public static Dataset createDatasetFromJson(JsonDataset json) {
+  public Dataset createDatasetFromJson(JsonDataset json) {
     return createDatasetFromJson(json, false);
   }
 
-  public static Dataset createDatasetFromJson(JsonDataset json,
+  public Dataset createDatasetFromJson(JsonDataset json,
       boolean mutable) {
     DatasetRequest request = createDatasetRequestFromJson(json);
-    return mutable ? ComponentFactory.get().getDatasetFactory()
+    return mutable ? compFactory.getDatasetFactory()
         .createMutable(request)
-        : ComponentFactory.get().getDatasetFactory().create(request);
+        : compFactory.getDatasetFactory().create(request);
   }
 
-  public static DatasetRequest createDatasetRequestFromJson(JsonDataset json) {
+  public DatasetRequest createDatasetRequestFromJson(JsonDataset json) {
     validateJSON(json);
 
     DatasetRequest request;
@@ -66,21 +75,21 @@ public class DatasetReader {
     return request;
   }
 
-  public static Dataset createMutableDatasetFromJson(JsonDataset json) {
+  public Dataset createMutableDatasetFromJson(JsonDataset json) {
     DatasetRequest request = createDatasetRequestFromJson(json);
-    return ComponentFactory.get().getDatasetFactory().createMutable(request);
+    return compFactory.getDatasetFactory().createMutable(request);
   }
 
   public static Array2D createArray2D(double[][] a) {
     return new JavaArray2D(a);
   }
 
-  public static DatasetRequest buildDatasetRequest(JsonDataset json) {
+  public DatasetRequest buildDatasetRequest(JsonDataset json) {
     DatasetRequest.Basic request = new DatasetRequest.Basic();
     final String dtformat = json.getDateTimeFormat();
 
     request.setDefaultMipMapStrategy(
-        ComponentFactory.get().getMipMapStrategy(json.getPartitionStrategy()));
+       compFactory.getMipMapStrategy(json.getPartitionStrategy()));
 
     double[] domainArray = null;
     if (dtformat != null) {

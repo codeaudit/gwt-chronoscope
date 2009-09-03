@@ -4,15 +4,16 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.gwt.http.HTTP'/>
   <inherits name='com.google.gwt.i18n.I18N'/>
+  <inherits name="com.google.gwt.inject.Inject"/>
+  <inherits name="org.timepedia.chronoscope.ChronoscopeAPI"/>
   <!-- need immutable resource bundle for flash -->
-  <inherits name="com.google.gwt.gen2.event.Event"/>
   <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
   
   <inherits name='com.google.gwt.libideas.StyleInjector'/>
   <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
    
  <inherits name='org.timepedia.exporter.Exporter'/>
-
+ 
    
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[

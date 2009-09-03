@@ -125,7 +125,7 @@ public class BrowserView extends GwtView
    */
   public void focus() {
     focusImpl.focus(containerDiv);
-  }
+  }                                              
 
   /**
    * The DIV containing the canvas and other misc elements
