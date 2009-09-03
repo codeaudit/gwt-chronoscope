@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * A specialized date class for use with the Chronoscope framework.
- * 
+ *
  * @author chad takahashi
  */
 public abstract class ChronoDate {
@@ -23,7 +23,7 @@ public abstract class ChronoDate {
   public static final ChronoDate get(int year, int month, int day) {
     return new FastChronoDate(year, month, day);
   }
-  
+
   /**
    * Returns a date representing the current time/date.
    */
@@ -45,7 +45,7 @@ public abstract class ChronoDate {
   public ChronoDate copy() {
     return ChronoDate.get(this.getTime());
   }
-  
+
   /**
    * Copies the state of this date over to the target date.
    */
@@ -56,14 +56,18 @@ public abstract class ChronoDate {
     // over the fields.
     target.setTime(this.getTime());
   }
-  
+
   /**
    * Returns the year, month, day, etc. portion of this date object.
-   * 
+   *
    * @param timeUnit - The portion of this date whose value is to be returned
    */
   public final int get(TimeUnit timeUnit) {
     switch (timeUnit) {
+      case CENTURY:
+        return getYear() / 100;
+      case DECADE:
+        return getYear() / 10;
       case YEAR:
         return getYear();
       case MONTH:
@@ -79,20 +83,21 @@ public abstract class ChronoDate {
       case MILLENIUM: // define this near/at the bottom, as it's used less frequently
         return (getYear() / 1000);
       default:
-        throw new UnsupportedOperationException("TimeUnit " + timeUnit + " not supported at this time");
+        throw new UnsupportedOperationException(
+            "TimeUnit " + timeUnit + " not supported at this time");
     }
   }
-  
+
   /**
    * Returns the number of days in this date's month.
    */
   public abstract int getDaysInMonth();
-  
+
   /**
    * Returns the day of the week that this date falls on.
    */
   public abstract DayOfWeek getDayOfWeek();
-  
+
   public abstract int getDay();
 
   public abstract int getHour();
@@ -111,23 +116,22 @@ public abstract class ChronoDate {
   public abstract int getYear();
 
   /**
-   * Sets the constituent components of this date via method chaining.  
-   * For example, to set the date to 'January 19th, 1956':
+   * Sets the constituent components of this date via method chaining. For
+   * example, to set the date to 'January 19th, 1956':
    * <blockquote><pre>
    * myDate.set().year(1956).month(0).day(19).done();
    * </pre></blockquote>
-   * 
-   * Don't forget to call {@link DateFieldSetter#done()}!  
-   * Otherwise the date modifications will not take effect.
+   *
+   * Don't forget to call {@link DateFieldSetter#done()}! Otherwise the date
+   * modifications will not take effect.
    */
   public abstract DateFieldSetter set();
 
   /**
-   * Sets the specified date field to the specified value.
-   * <p>
-   * NOTE: If you need to set more than 1 date field, use
-   * {@link #set()} instead.  This method defers date field validation 
-   * until the {@link DateFieldSetter#done()} method is called.
+   * Sets the specified date field to the specified value. <p> NOTE: If you need
+   * to set more than 1 date field, use {@link #set()} instead.  This method
+   * defers date field validation until the {@link DateFieldSetter#done()}
+   * method is called.
    */
   public abstract void set(TimeUnit dateField, int value);
 
@@ -138,13 +142,12 @@ public abstract class ChronoDate {
 
   /**
    * Truncates this date up to the specified time unit. For example, if
-   * <tt>myDate = '1987-Mar-12 14:30:59'</tt>, then
-   * <tt>truncate(myDate, TimeUnit.MONTH)</tt> will truncate this date up to
-   * the month resulting in the date <tt>'1987-Mar-01 00:00:00'</tt>.
-   * 
+   * <tt>myDate = '1987-Mar-12 14:30:59'</tt>, then <tt>truncate(myDate,
+   * TimeUnit.MONTH)</tt> will truncate this date up to the month resulting in
+   * the date <tt>'1987-Mar-01 00:00:00'</tt>.
+   *
    * @throws UnsupportedOperationException if the specified timeUnit is not
-   *           supported by a particular subclass.
+   *                                       supported by a particular subclass.
    */
   public abstract ChronoDate truncate(TimeUnit timeUnit);
-  
 }
