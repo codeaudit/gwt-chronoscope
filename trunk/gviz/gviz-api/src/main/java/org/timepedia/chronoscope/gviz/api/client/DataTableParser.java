@@ -14,6 +14,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -28,7 +29,7 @@ import java.util.Map;
  *
  */
 public class DataTableParser {
-  
+
   static class DataPair {
 
     public double domain[];
@@ -54,7 +55,8 @@ public class DataTableParser {
       }
     }
 
-    DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
+    DatasetFactory dsFactory = Chronoscope.get().getComponentFactory()
+        .getDatasetFactory();
 
     Dataset[] ds = new Dataset[numCols];
     numCols = 0;
@@ -78,7 +80,7 @@ public class DataTableParser {
 
       DataPair pair = table2datapair(table, startRow, i);
       sortAscendingDate(pair);
-      
+
       DatasetRequest.Basic request = new DatasetRequest.Basic();
       request.setDomain(pair.domain);
       request.addRangeTupleSlice(pair.range);
@@ -86,7 +88,7 @@ public class DataTableParser {
       request.setRangeLabel(label);
       request.setAxisId(units);
       ds[numCols++] = dsFactory.create(request);
-      
+
       if (dataset2Column != null) {
         dataset2Column.put(numCols - 1, i);
       }
@@ -304,17 +306,17 @@ public class DataTableParser {
 
   public static class Pair implements Comparable<Pair> {
 
-       public double x, y;
+    public double x, y;
 
-       public Pair(double x, double y) {
-         this.x = x;
-         this.y = y;
-       }
+    public Pair(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
 
-       public int compareTo(Pair o) {
-         return (int) (this.x - o.x);
-       }
-     }
+    public int compareTo(Pair o) {
+      return (int) (this.x - o.x);
+    }
+  }
 
   private static void sortAscendingDate(DataPair pair) {
 
