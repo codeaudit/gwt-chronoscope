@@ -10,7 +10,7 @@ import org.timepedia.chronoscope.client.data.DatasetRequest;
  */
 public class Fixtures {
   
-    private static final DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
+    private static final DatasetFactory dsFactory = new ChronoscopeComponentFactory().getDatasetFactory();
     
     public static final String[] pre70s = {"1961", "1962", "1963", "1964", "1965"};
 

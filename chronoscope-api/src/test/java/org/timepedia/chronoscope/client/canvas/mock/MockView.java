@@ -8,12 +8,11 @@ import com.google.gwt.core.client.GWT;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
+import org.timepedia.chronoscope.client.ChronoscopeClickListener;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.browser.ChronoscopeClickListener;
-import org.timepedia.chronoscope.client.browser.DOMView;
-import org.timepedia.chronoscope.client.browser.GwtView;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 
@@ -22,7 +21,7 @@ import java.util.Date;
 /**
  *
  */
-public class MockView extends GwtView implements DOMView {
+public class MockView extends View  {
 
   public MockView() {
   }

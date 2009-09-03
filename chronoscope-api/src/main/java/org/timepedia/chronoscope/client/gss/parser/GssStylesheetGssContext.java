@@ -50,7 +50,9 @@ public class GssStylesheetGssContext extends DefaultGssContext {
         ? propertyMap.get(gssElem) : null;
     if (props == null) {
       props = super.getProperties(gssElem, pseudoElt);
-      if(notPseudo) propertyMap.put(gssElem, props);
+      if(notPseudo) {
+        propertyMap.put(gssElem, props);
+      }
     }
     List<GssRuleMatch> matched = findAllMatchingRules(gssElem, pseudoElt);
     Collections.sort(matched, new Comparator<GssRuleMatch>() {

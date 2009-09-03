@@ -2,6 +2,8 @@ package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.JsArray;
 
+import com.google.inject.Inject;
+
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.XYDataSource;
@@ -25,10 +27,16 @@ public abstract class AbstractXYDataSource extends XYDataSource {
        return [a];
     }-*/;
 
+  protected DatasetFactory datasetFactory;
+
   protected String uri;
 
-  public AbstractXYDataSource(String uri) {
+//  @Inject
+  public void setDatasetFactory(DatasetFactory datasetFactory) {
+    this.datasetFactory = datasetFactory;
+  }
 
+  public AbstractXYDataSource(String uri) {
     this.uri = uri;
   }
 
@@ -95,8 +103,7 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       }
     }
 
-    DatasetFactory dsFactory = ComponentFactory.get().getDatasetFactory();
-    
+
     Dataset datasets[] = new Dataset[numseries];
     for (int i = 0; i < datasets.length; i++) {
       DatasetRequest.Basic request = new DatasetRequest.Basic();
@@ -106,7 +113,7 @@ public abstract class AbstractXYDataSource extends XYDataSource {
       request.setRangeLabel(ids[i]);
       request.setAxisId("axis" + i);
       
-      datasets[i] = dsFactory.create(request);
+      datasets[i] = datasetFactory.create(request);
     }
     async.onSuccess(datasets);
   }
