@@ -316,7 +316,7 @@
             </activation>
 
             <properties>
-                <gwtversion>2.0.intraprocedural</gwtversion>
+                <gwtversion>1.6.4</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
