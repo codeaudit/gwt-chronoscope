@@ -62,7 +62,7 @@ public class Chronoscope
 
   private DatasetReader datasetReader;
 
-  private static ChronoscopeBrowserInjector injector;
+  protected static ChronoscopeBrowserInjector injector;
 
   @GinModules(ChronoscopeBrowserModule.class)
   public interface ChronoscopeBrowserInjector extends Ginjector {
@@ -76,8 +76,9 @@ public class Chronoscope
 
     public void configure() {
       try {
-        bind(new TypeLiteral<org.timepedia.chronoscope.client.Chronoscope<ChartPanel>>() {})
-            .toProvider(ChronoscopeProvider.class).in(Singleton.class);
+        bind(
+            new TypeLiteral<org.timepedia.chronoscope.client.Chronoscope<ChartPanel>>() {
+            }).toProvider(ChronoscopeProvider.class).in(Singleton.class);
         bind(ComponentFactory.class).to(ChronoscopeComponentFactory.class);
         bind(URLResolver.class).to(NopURLResolver.class);
       } catch (Exception e) {
@@ -86,7 +87,7 @@ public class Chronoscope
     }
   }
 
-  static class ChronoscopeProvider implements Provider<Chronoscope> {
+  public static class ChronoscopeProvider implements Provider<Chronoscope> {
 
     private DatasetReader reader;
 
@@ -144,7 +145,7 @@ public class Chronoscope
     public String resolveURL(String url);
   }
 
-  static class NopURLResolver implements URLResolver {
+  public static class NopURLResolver implements URLResolver {
 
     public String resolveURL(String url) {
       return url;
@@ -188,7 +189,6 @@ public class Chronoscope
       String endDate, String label, String gssClass) {
     return new DomainBarMarker(startDate, endDate, label, gssClass);
   }
-
 
   /**
    * A factory function to create a horizontal span marker between two range
@@ -388,7 +388,6 @@ public class Chronoscope
   public static void setHorizontalCrosshair(boolean enabled) {
     ChronoscopeOptions.setHorizontalCrosshairEnabled(enabled);
   }
-
 
   @Export
   public static void setCrosshairLabelsFormat(String enabled) {

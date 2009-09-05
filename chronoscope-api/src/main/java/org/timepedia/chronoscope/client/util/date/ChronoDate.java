@@ -16,8 +16,8 @@ public abstract class ChronoDate {
    * Factory method that creates a new date object for the specified timeStamp.
    */
   public static final ChronoDate get(double timeStamp) {
-    return new DefaultChronoDate(timeStamp);
-//    return new FastChronoDate(timeStamp);
+//    return new DefaultChronoDate(timeStamp);
+    return new FastChronoDate(timeStamp);
   }
 
   public static final ChronoDate get(int year, int month, int day) {
