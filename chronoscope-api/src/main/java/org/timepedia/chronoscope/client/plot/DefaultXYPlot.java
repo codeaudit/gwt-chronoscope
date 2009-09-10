@@ -276,13 +276,13 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
 
-    if(topPanel.isEnabled()) {
-      if(topPanel.click(x,y)) {
+    if (topPanel.isEnabled()) {
+      if (topPanel.click(x, y)) {
         return true;
       }
     }
-    if(bottomPanel.isEnabled()) {
-      if(bottomPanel.click(x,y)) {
+    if (bottomPanel.isEnabled()) {
+      if (bottomPanel.click(x, y)) {
         return true;
       }
     }
@@ -721,8 +721,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   private String lastCrosshairDateFormat = null;
-  private DateFormatter crosshairFmt = DateFormatterFactory.getInstance()
-      .getDateFormatter("yy/MMM/dd HH:mm");
+
+  private DateFormatter crosshairFmt = null;
 
   private void drawCrossHairs(Layer hoverLayer) {
     if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
@@ -730,9 +730,11 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.setFillColor(Color.BLACK);
       hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
       if (ChronoscopeOptions.isCrosshairLabels()) {
-        if(ChronoscopeOptions.getCrossHairLabels() != lastCrosshairDateFormat) {
+        if (ChronoscopeOptions.getCrossHairLabels()
+            != lastCrosshairDateFormat) {
           lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
-          crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(lastCrosshairDateFormat);
+          crosshairFmt = DateFormatterFactory.getInstance()
+              .getDateFormatter(lastCrosshairDateFormat);
         }
         hoverLayer.setStrokeColor(Color.BLACK);
         int hx = hoverX;
@@ -1181,8 +1183,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void findNearestPt(double dataX, double dataY, int datasetIndex,
       DistanceFormula df, NearestPoint np) {
 
-    MipMap currMipMap = plotRenderer.getDrawableDataset(datasetIndex).currMipMap
-        ;
+    MipMap currMipMap = plotRenderer
+        .getDrawableDataset(datasetIndex).currMipMap;
 
     // Find index of data point closest to the right of dataX at the current MIP level
     int closestPtToRight = Util.binarySearch(currMipMap.getDomain(), dataX);
@@ -1300,6 +1302,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     background = new GssBackground(view);
     view.canvasSetupDone();
+    crosshairFmt = DateFormatterFactory.getInstance()
+        .getDateFormatter("yy/MMM/dd HH:mm");
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
@@ -1472,7 +1476,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         RangeAxis ra = getRangeAxis(datasetIndex);
         ra.getAxisPanel().setValueAxis(ra);
         damage = true;
-
       }
     }
     if (this.focus == null) {
@@ -1486,7 +1489,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       rangePanel.layout();
     }
     fireFocusEvent(datasetIndex, pointIndex);
-
   }
 
   /**
