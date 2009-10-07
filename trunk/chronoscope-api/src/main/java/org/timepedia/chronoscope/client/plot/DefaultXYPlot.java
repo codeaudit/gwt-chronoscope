@@ -657,9 +657,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotBounds.y + rangeToScreenY(rangeY, datasetIndex);
   }
 
+  boolean firstDraw = true;
+
   @Export
   public void redraw() {
-    redraw(false);
+    redraw(firstDraw);
+    firstDraw = false;
   }
 
   /**
@@ -671,7 +674,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void redraw(boolean forceCenterPlotRedraw) {
     Canvas backingCanvas = view.getCanvas();
     backingCanvas.beginFrame();
-
+    plotLayer.save();
     // if on a low performance device, don't re-render axes or legend
     // when animating
     final boolean canDrawFast = !(isAnimating() && ChronoscopeOptions
@@ -683,7 +686,9 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating) {
+      hoverLayer.save();
       hoverLayer.clear();
+      hoverLayer.restore();
     } else {
       plotRenderer.drawHoverPoints(hoverLayer);
     }
@@ -714,7 +719,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       topPanel.draw();
       drawPlotHighlight(hoverLayer);
     }
-
+    plotLayer.restore();
     backingCanvas.endFrame();
     visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
@@ -1106,7 +1111,9 @@ public class DefaultXYPlot<T extends Tuple2D>
         beginHighlight > domainEnd && endHighlight > domainEnd)) {
 
       if (highlightDrawn) {
+        layer.save();
         layer.clear();
+        layer.restore();
         highlightDrawn = false;
       }
 

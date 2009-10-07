@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.client.browser.flashcanvas;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
@@ -75,7 +74,7 @@ public class FlashCanvas extends Canvas {
 
   private String clickHandlerFn = "";
 
-  private JavaScriptObject ctx = null;
+  private StringBuffer ctx = null;
 
   public FlashCanvas(View view, int width, int height) {
     super(view);
@@ -133,7 +132,8 @@ public class FlashCanvas extends Canvas {
 
     FlashResources flashResources = GWT.create(FlashResources.class);
 
-    String swfUrl = Chronoscope.getURL(flashResources.flashCanvas().getUrl());
+    String swfUrl = Chronoscope
+        .getURL("flcanvas.swf");//flashResources.flashCanvas().getUrl());
 
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
@@ -229,60 +229,64 @@ public class FlashCanvas extends Canvas {
     rootLayer.closePath();
   }
 
-  public final native void cmd(String cmd, String arg) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 1, arg);
-      }-*/;
+  public final void cmd(String cmd, String arg) {
+    ctx.append(cmd + CMDSEP + 1 + CMDSEP + arg + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, float arg) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 1, arg);
-      }-*/;
+  public final void cmd(String cmd, float arg) {
+    ctx.append(cmd + CMDSEP + 1 + CMDSEP + arg + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double arg) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 1, arg);
-      }-*/;
+  public final void cmd(String cmd, double arg) {
+    ctx.append(cmd + CMDSEP + 1 + CMDSEP + arg + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double arg1, double arg2) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 2, arg1, arg2);
-      }-*/;
+  public final void cmd(String cmd, double arg1, double arg2) {
+    ctx.append(cmd + CMDSEP + 2 + CMDSEP + arg1 + CMDSEP + arg2 + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double arg1, double arg2,
-      double arg3, double arg4) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 4, arg1, arg2,
-                     arg3, arg4);
-         }-*/;
+  public final void cmd(String cmd, double arg1, double arg2, double arg3,
+      double arg4) {
+    ctx.append(cmd + CMDSEP + 4 + CMDSEP + arg1 + CMDSEP + arg2 + CMDSEP + arg3
+        + CMDSEP + arg4 + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double arg1, double arg2,
-      double arg3, double arg4, double arg5, double arg6) /*-{
-                this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 6, arg1, arg2,
-                     arg3, arg4, arg5, arg6);
-      }-*/;
+  public final void cmd(String cmd, double arg1, double arg2, double arg3,
+      double arg4, double arg5, double arg6) {
+    ctx.append(cmd + CMDSEP + 6 + CMDSEP + arg1 + CMDSEP + arg2 + CMDSEP + arg3
+        + CMDSEP + arg4 + CMDSEP + arg5 + CMDSEP + arg6 + CMDSEP);
+  }
 
-  public final native void cmd(String cmd) /*-{
-                this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 0);
-      }-*/;
+  public final void cmd(String cmd) {
+    ctx.append(cmd + CMDSEP + 0 + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, String arg1, int arg2) /*-{
-             this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 2, arg1, arg2);
-         }-*/;
+  public final void cmd(String cmd, String arg1, int arg2) {
+    ctx.append(cmd + CMDSEP + 2 + CMDSEP + arg1 + CMDSEP + arg2 + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double x, double y, String label,
-      String fontFamily, String fontWeight, String fontSize, String layerName) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 7, x, y, label, fontFamily,
-                   fontWeight, fontSize, layerName);
-    }-*/;
+  public final void cmd(String cmd, double x, double y, String label,
+      String fontFamily, String fontWeight, String fontSize, String layerName) {
+    ctx.append(
+        cmd + CMDSEP + 7 + CMDSEP + x + CMDSEP + y + CMDSEP + label + CMDSEP
+            + fontFamily + CMDSEP + fontWeight + CMDSEP + fontSize + CMDSEP
+            + layerName + CMDSEP);
+  }
 
-  public native void cmd(String cmd, String layerName, double x, double y,
-      double width, double height) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 5, layerName, x, y,
-                   width, height);
-    }-*/;
+  public void cmd(String cmd, String layerName, double x, double y,
+      double width, double height) {
+    ctx.append(
+        cmd + CMDSEP + 5 + CMDSEP + layerName + CMDSEP + x + CMDSEP + y + CMDSEP
+            + width + CMDSEP + height + CMDSEP);
+  }
 
-  public final native void cmd(String cmd, double x, double y, double a,
-      String label, String fontFamily, String fontWeight, String fontSize,
-      String layerName) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8, x, y, a, label, fontFamily,
-                   fontWeight, fontSize, layerName);
-    }-*/;
+  public final void cmd(String cmd, double x, double y, double a, String label,
+      String fontFamily, String fontWeight, String fontSize, String layerName) {
+    ctx.append(
+        cmd + CMDSEP + 8 + CMDSEP + x + CMDSEP + y + CMDSEP + a + CMDSEP + label
+            + CMDSEP + fontFamily + CMDSEP + fontWeight + CMDSEP + fontSize
+            + CMDSEP + layerName + CMDSEP);
+  }
 
   public DisplayList createDisplayList(String id) {
     return rootLayer.createDisplayList(id);
@@ -297,8 +301,10 @@ public class FlashCanvas extends Canvas {
       id2Layer.put(layer.getLayerId(), layer);
       //    DOM.appendChild(canvasElement, ( (FlashLayer) layer ).getLayerElement());
 
+      layer.save();
       layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
+      layer.restore();
     }
     return layer;
   }
@@ -342,15 +348,15 @@ public class FlashCanvas extends Canvas {
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    rootLayer.drawRotatedText(x, y, angle, label, fontFamily, fontWeight,
-        fontSize, layerName, chart);
+    rootLayer
+        .drawRotatedText(x, y, angle, label, fontFamily, fontWeight, fontSize,
+            layerName, chart);
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName) {
-    rootLayer
-        .drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
-            Cursor.DEFAULT);
+    rootLayer.drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
+        Cursor.DEFAULT);
   }
 
   public void endFrame() {
@@ -384,9 +390,9 @@ public class FlashCanvas extends Canvas {
     return canvasElement;
   }
 
-  public native String getFlashDisplayList() /*-{
-           return this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.join(@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::CMDSEP);
-    }-*/;
+  public String getFlashDisplayList() {
+    return ctx.append("ZZ,0").toString();
+  }
 
   public double getHeight() {
     return rootLayer.getHeight();
@@ -449,18 +455,17 @@ public class FlashCanvas extends Canvas {
     cmd("L", selectedLayerId);
   }
 
-  public final native void push(String cmd) /*-{
-          this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd);
-      }-*/;
+  public final void push(String cmd) {
+    ctx.append(cmd + CMDSEP);
+  }
 
-  public final native void push(float f) /*-{
-          this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(f);
+  public final void push(float cmd) {
+    ctx.append(cmd + CMDSEP);
+  }
 
-      }-*/;
-
-  public final native void push(double f) /*-{
-          this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(f);
-      }-*/;
+  public final void push(double cmd) {
+    ctx.append(cmd + CMDSEP);
+  }
 
   public final void pushNCmd(String cmd, int n) {
     push(cmd);
@@ -483,14 +488,16 @@ public class FlashCanvas extends Canvas {
 
   public int rotatedStringHeight(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
-    return rootLayer.rotatedStringHeight(str, rotationAngle, fontFamily,
-        fontWeight, fontSize);
+    return rootLayer
+        .rotatedStringHeight(str, rotationAngle, fontFamily, fontWeight,
+            fontSize);
   }
 
   public int rotatedStringWidth(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
-    return rootLayer.rotatedStringWidth(str, rotationAngle, fontFamily,
-        fontWeight, fontSize);
+    return rootLayer
+        .rotatedStringWidth(str, rotationAngle, fontFamily, fontWeight,
+            fontSize);
   }
 
   public void save() {
@@ -655,9 +662,9 @@ public class FlashCanvas extends Canvas {
     t.schedule(1000);
   }
 
-  private native JavaScriptObject makectx() /*-{
-          return new Array();
-      }-*/;
+  private StringBuffer makectx() {
+    return new StringBuffer();
+  }
 
   private void resyncLayers() {
     for (Iterator iterator = layers.iterator(); iterator.hasNext();) {
