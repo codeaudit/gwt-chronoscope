@@ -38,7 +38,7 @@
             <artifactId>gwtexporter</artifactId>
             <version>2.06</version>
             <type>jar</type>
-	    <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -71,28 +71,28 @@
                 </executions>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<finalName>js</finalName>-->
-                    <!--<doclet>org.timepedia.exporter.doclet.JsDoclet</doclet>-->
-                    <!--<docletArtifact>-->
-                        <!--<groupId>org.timepedia.exporter</groupId>-->
-                        <!--<artifactId>gwtexporter</artifactId>-->
-                        <!--<version>2.04</version>-->
-                    <!--</docletArtifact>-->
-                    <!--&lt;!&ndash; Other dir than apidocs &ndash;&gt;-->
-                    <!--<destDir>apidocs</destDir>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<finalName>js</finalName>-->
+            <!--<doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet/doclet>-->
+            <!--<docletArtifact>-->
+            <!--<groupId>org.timepedia.chronoscope</groupId>-->
+            <!--<artifactId>chronoscope-api</artifactId>-->
+            <!--<version>1.0</version>-->
+            <!--</docletArtifact>-->
+            <!--&lt;!&ndash; Other dir than apidocs &ndash;&gt;-->
+            <!--<destDir>apidocs</destDir>-->
+            <!--</configuration>-->
 
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>attach-jsdocs</id>-->
-                        <!--<goals>-->
-                            <!--<goal>jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>attach-jsdocs</id>-->
+            <!--<goals>-->
+            <!--<goal>jar</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
         </plugins>
