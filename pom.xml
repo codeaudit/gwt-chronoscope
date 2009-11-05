@@ -110,13 +110,20 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>1.1</version>
+                    <version>1.2-SNAPSHOT</version>
                     <configuration>
                         <logLevel>${gwt.loglevel}</logLevel>
                         <style>${gwt.outputstyle}</style>
                         <gwtVersion>${gwtversion}</gwtVersion>
                         <webappDirectory>${project.build.directory}/public
                         </webappDirectory>
+		<runTarget>${gwt.module}${gwt.modulesuffix}/index.html</runTarget>
+                <hostedWebapp>
+		  ${project.build.directory}/public/${project.build.finalName}
+		</hostedWebapp>
+		<draftCompile>${gwt.draft}</draftCompile>
+		<disableCastChecking>${gwt.xdisable}</disableCastChecking>
+		<disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
                         <modules>
                             <module>
                                 ${gwt.module}${gwt.modulesuffix}
@@ -288,6 +295,11 @@
             <id>gwt-maven</id>
             <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>codehaus-snapshots</id>
+            <url>http://snapshots.repository.codehaus.org/</url>
+        </pluginRepository>
+
     </pluginRepositories>
 
     <repositories>
@@ -316,7 +328,7 @@
             </activation>
 
             <properties>
-                <gwtversion>2.0.intraprocedural</gwtversion>
+                <gwtversion>2.0.0-m2</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -378,8 +390,8 @@
             <properties>
                 <gwt.loglevel>WARN</gwt.loglevel>
                 <gwt.modulesuffix>Dev</gwt.modulesuffix>
-                <gwt.outputstyle>OBF</gwt.outputstyle>
-                <gwt.draft>-draftCompile</gwt.draft>
+                <gwt.outputstyle>PRETTY</gwt.outputstyle>
+                <gwt.draft>true</gwt.draft>
                 <maven.test.skip>true</maven.test.skip>
                 <gwt.inplace>false</gwt.inplace>
             </properties>
@@ -388,9 +400,10 @@
         <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>2.0.intraprocedural</gwtversion>
+                <gwtversion>2.0.0-m2</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
+		<gwt.xdisable>true</gwt.xdisable>
                 <gwt.modulesuffix></gwt.modulesuffix>
                 <!--		<maven.test.skip>true</maven.test.skip> -->
             </properties>

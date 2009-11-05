@@ -56,9 +56,9 @@ public class ChartDemo implements EntryPoint {
       datasets.add(chronoscope.getDatasetReader().createDatasetFromJson(new GwtJsonDataset(getJson("interestRates01"))));
       datasets.add(chronoscope.getDatasetReader().createDatasetFromJson(new GwtJsonDataset(getJson("interestRates02"))));
 
-      MockDatasetFactory datasetFactory = new MockDatasetFactory();
-      Dataset mockDataset = datasetFactory.getBasicDataset();
-      datasets.add(mockDataset);
+//      MockDatasetFactory datasetFactory = new MockDatasetFactory();
+//      Dataset mockDataset = datasetFactory.getBasicDataset();
+//      datasets.add(mockDataset);
 
       Dataset[] dsArray = datasets.toArray();
 
