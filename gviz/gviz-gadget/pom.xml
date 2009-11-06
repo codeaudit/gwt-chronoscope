@@ -65,7 +65,7 @@
 
             <properties>
                 <gwt.module>
-                    org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget
+                    org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}
                 </gwt.module>
             </properties>
         </profile>

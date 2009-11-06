@@ -126,7 +126,7 @@
 		<disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
                         <modules>
                             <module>
-                                ${gwt.module}${gwt.modulesuffix}
+                                ${gwt.module}
                             </module>
                         </modules>
                         <inplace>${gwt.inplace}</inplace>
