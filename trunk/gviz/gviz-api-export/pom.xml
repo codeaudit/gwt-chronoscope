@@ -58,7 +58,7 @@
 
             <properties>
                 <gwt.module>
-                    org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport
+                    org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPIExport${gwt.modulesuffix}
                 </gwt.module>
             </properties>
         </profile>

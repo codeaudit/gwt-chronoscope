@@ -42,7 +42,7 @@
             </activation>
             <properties>
                 <gwt.module>
-              org.timepedia.chronoscopebench.ChronoscopeBench
+              org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}
                 </gwt.module>
             </properties>
         </profile>

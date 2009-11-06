@@ -74,7 +74,7 @@
 
             <properties>
                 <gwt.module>
-                    org.timepedia.chronoscope.widget.ChronoscopeWidget
+                    org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}
                 </gwt.module>
             </properties>
         </profile>
