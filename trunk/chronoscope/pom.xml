@@ -30,14 +30,6 @@
             <artifactId>gwt-user</artifactId>
             <version>${gwtversion}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-incubator</artifactId>
-            <version>1.6</version>
-            <type>jar</type>
-        </dependency>
-
         <dependency>
             <groupId>org.timepedia.exporter</groupId>
             <artifactId>gwtexporter</artifactId>
