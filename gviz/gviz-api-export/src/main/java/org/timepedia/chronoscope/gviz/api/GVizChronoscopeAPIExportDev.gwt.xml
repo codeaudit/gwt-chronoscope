@@ -3,8 +3,6 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='org.timepedia.chronoscope.Chronoscope'/>
   <inherits name="com.google.gwt.http.HTTP" />
-  <inherits name='com.google.gwt.libideas.StyleInjector'/>
-  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
   <inherits name="org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPI" />
   <entry-point class="org.timepedia.chronoscope.gviz.api.client.GVizChronoscopeAPI" />
   <set-property name="export" value="yes"/>
