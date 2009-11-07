@@ -15,33 +15,32 @@
  */
 package org.timepedia.chronoscope.client.browser.theme.chrome;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.libideas.client.StyleInjector;
-import com.google.gwt.libideas.resources.client.CssResource;
-import com.google.gwt.libideas.resources.client.DataResource;
-import com.google.gwt.libideas.resources.client.ImmutableResourceBundle;
-import com.google.gwt.libideas.resources.client.ImageResource;
+import com.google.gwt.dom.client.StyleInjector;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.DataResource;
+import com.google.gwt.user.client.ui.ImageBundle;
 
 import org.timepedia.chronoscope.client.browser.theme.Theme;
-import static org.timepedia.chronoscope.client.browser.theme.Theme.*;
 
 public class ThemeStyleInjector  {
 
   /**
    * Resources used.
    */
-  public interface Resources extends ImmutableResourceBundle {
-    Resources INSTANCE = GWT.create(Resources.class);
+  public interface Resources extends ClientBundle {
+//    Resources INSTANCE = GWT.create(Resources.class);
 
-    @Resource("corner.png")
+    @Source("corner.png")
     DataResource corner();
 
-    @Resource("hborder.png")
+    @Source("hborder.png")
     DataResource hborder();
     
-    @Resource("vborder.png")
+    @Source("vborder.png")
     DataResource vborder();
     
-    @Resource("chrome.css")
+    @Source("chrome.css")
     CssResource css();
     
    
@@ -60,7 +59,7 @@ public class ThemeStyleInjector  {
       case STANDARD:
       case CHROME:
       default:
-      StyleInjector.injectStylesheet(Resources.INSTANCE.css().getText());
+//      StyleInjector.injectStylesheet(Resources.INSTANCE.css().getText());
     }
   }
 }

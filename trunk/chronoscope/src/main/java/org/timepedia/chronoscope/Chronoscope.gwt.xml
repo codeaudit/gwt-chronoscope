@@ -6,11 +6,7 @@
   <inherits name='com.google.gwt.i18n.I18N'/>
   <inherits name="com.google.gwt.inject.Inject"/>
   <inherits name="org.timepedia.chronoscope.ChronoscopeAPI"/>
-  <!-- need immutable resource bundle for flash -->
-  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
-  
-  <inherits name='com.google.gwt.libideas.StyleInjector'/>
-  <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
+  <inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
    
  <inherits name='org.timepedia.exporter.Exporter'/>
  
