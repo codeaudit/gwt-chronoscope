@@ -64,6 +64,8 @@ public class Chronoscope
 
   protected static ChronoscopeBrowserInjector injector;
 
+  private static boolean alreadyRan;
+
   @GinModules(ChronoscopeBrowserModule.class)
   public interface ChronoscopeBrowserInjector extends Ginjector {
 
@@ -341,7 +343,10 @@ public class Chronoscope
   }
 
   public static Chronoscope getInstance() {
-    return get();
+    if(instance == null) {
+      instance = get();
+    }
+    return instance;
   }
 
   public static String getURL(String url) {
@@ -487,6 +492,10 @@ public class Chronoscope
 
   protected void init() {
     try {
+      if(alreadyRan) {
+        return;
+      }
+      alreadyRan = true;
       //TODO: hack, we need a more general purpose way of ensuring this
       //stuff is injected on a per platform basis (not GWT specific)
       // Force initialization of platform specific factories
