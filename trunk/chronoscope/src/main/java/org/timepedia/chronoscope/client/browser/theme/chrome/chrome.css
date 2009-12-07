@@ -18,6 +18,8 @@
 @url VBORDER vborder;
 @url CORNER corner;
 
+/** chrono chrome 
+
 body, table td, a, div, .p, pre {
   font-family: Arial, sans-serif;
   font-size: small;
@@ -33,6 +35,7 @@ body {
 a, a:visited, a:hover {
   color: #0000AA;
 }
+*/
 iframe {
   border-top: 2px solid #666;
   border-left: 2px solid #666;
@@ -858,32 +861,49 @@ html>body .gwt-SuggestBoxPopup .suggestPopupBottomRight {
 }
 
 .gwt-TabBar {
+  cursor: default;
+  background: #ebebeb HBORDER repeat-x 0px -2003px;
+  border: 1px solid #BBBBBB;
+
 }
 .gwt-TabBar .gwt-TabBarFirst {
-  width: 5px;  /* first tab distance from the left */
+  /*width: 5px;  *//* first tab distance from the left */
 }
 .gwt-TabBar .gwt-TabBarRest {
 }
 .gwt-TabBar .gwt-TabBarItem {
-  margin-left: 6px;
-  padding: 3px 6px 3px 6px;
-  cursor: pointer;
-  cursor: hand;
-  color: black;
-  font-weight: bold;
-  text-align: center;
+  /*margin-left: 6px;*/
+  /*padding: 3px 6px 3px 6px;*/
+  /*cursor: pointer;*/
+  /*cursor: hand;*/
+  /*color: black;*/
+  /*font-weight: bold;*/
+  /*text-align: center;*/
+
+  cursor: default;
   background: #e3e3e3;
+  padding: 0px 10px;
+  vertical-align: bottom;
+  color: #666666;
+  font-weight: bold;
+
 }
 .gwt-TabBar .gwt-TabBarItem-selected {
   cursor: default;
-  background: #bcbcbc;
+  /*background: #bcbcbc;*/
+  background: #cdcdcd;
+
 } 
 .gwt-TabPanel {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 0px;
+  magin-bottom:0px;
 }
+
 .gwt-TabPanelBottom {
-  border-color: #bcbcbc;
-  border-style: solid;
-  border-width: 3px 2px 2px;
+  background: #ebebeb HBORDER repeat-x 0px -2003px;
+  border: 1px solid #BBBBBB;
   overflow: hidden;
   padding: 6px;
 }
