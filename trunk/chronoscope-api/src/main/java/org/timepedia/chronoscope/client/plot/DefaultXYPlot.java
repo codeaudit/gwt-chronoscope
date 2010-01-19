@@ -1,8 +1,7 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -92,6 +91,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   // Indicator that nothing is selected (e.g. a data point or a data set).
+
   public static final int NO_SELECTION = -1;
 
   private static int globalPlotNumber = 0;
@@ -102,10 +102,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   // The maximum distance that the mouse pointer can stray from a candidate
   // data point and still be considered as referring to that point.
+
   private static final int MAX_FOCUS_DIST = 8;
 
   // The maximum distance (only considers x-axis) that the mouse pointer can 
   // stray from a data point and still cause that point to be "hovered".
+
   private static final int MAX_HOVER_DIST = 8;
 
   private static final double MIN_PLOT_HEIGHT = 50;
@@ -187,7 +189,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private StringSizer stringSizer;
 
-  private View view;
+  protected View view;
 
   private double visibleDomainMax;
 
@@ -249,10 +251,10 @@ public class DefaultXYPlot<T extends Tuple2D>
         true);
   }
 
-  public double calcDisplayY(int datasetIdx, int pointIdx) {
+  public double calcDisplayY(int datasetIdx, int pointIdx, int dimension) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIdx);
     RangeAxis ra = getRangeAxis(datasetIdx);
-    double y = dds.currMipMap.getTuple(pointIdx).getRange0();
+    double y = dds.getRenderer().getRangeValue(dds.currMipMap.getTuple(pointIdx), dimension);
 
     if (ra.isCalcRangeAsPercent()) {
       double refY = plotRenderer.calcReferenceY(ra, dds);
@@ -473,7 +475,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     int nearPointIndex = NO_SELECTION;
     int nearDataSetIndex = 0;
     double minNearestDist = MAX_FOCUS_DIST;
-
     for (int i = 0; i < datasets.size(); i++) {
       double domainX = windowXtoDomain(x);
       double rangeY = windowYtoRange(y, i);
@@ -848,6 +849,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public boolean setFocusXY(int x, int y) {
     int nearestPt = NO_SELECTION;
     int nearestSer = 0;
+    int nearestDim = 0;
     double minNearestDist = MAX_FOCUS_DIST;
 
     for (int i = 0; i < datasets.size(); i++) {
@@ -860,12 +862,13 @@ public class DefaultXYPlot<T extends Tuple2D>
         nearestPt = nearest.pointIndex;
         nearestSer = i;
         minNearestDist = nearest.dist;
+        nearestDim = nearest.dim;
       }
     }
 
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
-      setFocusAndNotifyView(nearestSer, nearestPt);
+      setFocusAndNotifyView(nearestSer, nearestPt, nearestDim);
     } else {
       setFocusAndNotifyView(null);
     }
@@ -1207,6 +1210,15 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (closestPtToRight == 0) {
       nearestHoverPt = closestPtToRight;
       np.dist = df.dist(sx, sy, rx, ry);
+      np.dim = 0;
+      for (int d = 1; d < currMipMap.getRangeTupleSize(); d++) {
+        double dist2 = df.dist(sx, sy, rx,
+            rangeToScreenY(tupleRight.getRange(d), datasetIndex));
+        if (dist2 < np.dist) {
+          np.dist = dist2;
+          np.dim = d;
+        }
+      }
     } else {
       int closestPtToLeft = closestPtToRight - 1;
       Tuple2D tupleLeft = currMipMap.getTuple(closestPtToLeft);
@@ -1214,13 +1226,28 @@ public class DefaultXYPlot<T extends Tuple2D>
       double ly = rangeToScreenY(tupleLeft.getRange0(), datasetIndex);
       double lDist = df.dist(sx, sy, lx, ly);
       double rDist = df.dist(sx, sy, rx, ry);
-
+      np.dim = 0;
       if (lDist <= rDist) {
         nearestHoverPt = closestPtToLeft;
         np.dist = lDist;
       } else {
         nearestHoverPt = closestPtToRight;
         np.dist = rDist;
+      }
+      for (int d = 1; d < currMipMap.getRangeTupleSize(); d++) {
+        lDist = df.dist(sx, sy, lx,
+            rangeToScreenY(tupleLeft.getRange(d), datasetIndex));
+        rDist = df.dist(sx, sy, rx,
+            rangeToScreenY(tupleRight.getRange(d), datasetIndex));
+        if (lDist <= rDist && lDist < np.dist) {
+          nearestHoverPt = closestPtToLeft;
+          np.dist = lDist;
+          np.dim = d;
+        } else {
+          nearestHoverPt = closestPtToRight;
+          np.dist = rDist;
+          np.dim = d;
+        }
       }
     }
 
@@ -1259,6 +1286,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     this.view = view;
     this.focus = null;
+    plotRenderer.setPlot(this);
+    plotRenderer.setView(view);
 
     initViewIndependent(datasets);
 
@@ -1268,8 +1297,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     stringSizer.setCanvas(view.getCanvas());
 
     if (!plotRenderer.isInitialized()) {
-      plotRenderer.setPlot(this);
-      plotRenderer.setView(view);
       plotRenderer.init();
     } else {
       plotRenderer.resetMipMapLevels();
@@ -1342,7 +1369,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    * initialized first. Can be moved early in Plot initialization. Put stuff
    * here that doesn't depend on the axes or layers being initialized.
    */
-  private void initViewIndependent(Datasets<T> datasets) {
+  protected void initViewIndependent(Datasets<T> datasets) {
     maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
         / datasets.size();
     visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
@@ -1472,11 +1499,13 @@ public class DefaultXYPlot<T extends Tuple2D>
       this.focus = null;
       fireFocusEvent(NO_SELECTION, NO_SELECTION);
     } else {
-      setFocusAndNotifyView(focus.getDatasetIndex(), focus.getPointIndex());
+      setFocusAndNotifyView(focus.getDatasetIndex(), focus.getPointIndex(),
+          focus.getDimensionIndex());
     }
   }
 
-  private void setFocusAndNotifyView(int datasetIndex, int pointIndex) {
+  private void setFocusAndNotifyView(int datasetIndex, int pointIndex,
+      int nearestDim) {
 
     boolean damage = false;
     if (!multiaxis) {
@@ -1491,6 +1520,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     this.focus.setDatasetIndex(datasetIndex);
     this.focus.setPointIndex(pointIndex);
+    this.focus.setDimensionIndex(nearestDim);
 
     if (!multiaxis && damage) {
       damageAxes();
@@ -1510,7 +1540,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     Dataset<T> ds;
-    int focusDatasetIdx, focusPointIdx;
+    int focusDatasetIdx, focusPointIdx, focusDim = 0;
 
     if (focus == null) {
       // If no data point currently has the focus, then set the focus point to
@@ -1525,24 +1555,39 @@ public class DefaultXYPlot<T extends Tuple2D>
       // some data point currently has the focus.
       focusDatasetIdx = focus.getDatasetIndex();
       focusPointIdx = focus.getPointIndex();
+      focusDim = focus.getDimensionIndex();
       MipMap mipMap = plotRenderer
           .getDrawableDataset(focusDatasetIdx).currMipMap;
       focusPointIdx += n;
 
       if (focusPointIdx >= mipMap.size()) {
-        ++focusDatasetIdx;
-        if (focusDatasetIdx >= datasets.size()) {
-          focusDatasetIdx = 0;
+        focusDim++;
+        if (focus.getDimensionIndex() < mipMap.getRangeTupleSize()) {
+          focusPointIdx = 0;
+        } else {
+          focusDim = 0;
+          ++focusDatasetIdx;
+          if (focusDatasetIdx >= datasets.size()) {
+            focusDatasetIdx = 0;
+          }
         }
         focusPointIdx = 0;
       } else if (focusPointIdx < 0) {
-        --focusDatasetIdx;
-        if (focusDatasetIdx < 0) {
-          focusDatasetIdx = datasets.size() - 1;
+        focusDim--;
+        if (focusDim >= 0) {
+          focusPointIdx =
+              plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size()
+                  - 1;
+        } else {
+          focusDim = 0;
+          --focusDatasetIdx;
+          if (focusDatasetIdx < 0) {
+            focusDatasetIdx = datasets.size() - 1;
+          }
+          focusPointIdx =
+              plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size()
+                  - 1;
         }
-        focusPointIdx =
-            plotRenderer.getDrawableDataset(focusDatasetIdx).currMipMap.size()
-                - 1;
       }
 
       ds = datasets.get(focusDatasetIdx);
@@ -1554,7 +1599,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     double dataX = dataPt.getDomain();
     double dataY = dataPt.getRange0();
     ensureVisible(dataX, dataY, null);
-    setFocusAndNotifyView(focusDatasetIdx, focusPointIdx);
+    setFocusAndNotifyView(focusDatasetIdx, focusPointIdx, focusDim);
     redraw();
   }
 

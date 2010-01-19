@@ -7,6 +7,10 @@ import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.Util;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.NoExport;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides skeletal implementation of an {@link Dataset} to simplify
@@ -27,6 +31,7 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
 
   private Interval domainExtrema = new Interval(0.0, 0.0);
 
+  private Map<String, Object> userData = new HashMap<String, Object>(); 
   @Export
   public final Interval getDomainExtrema() {
     this.domainExtrema.setEndpoints(getX(0), getX(getNumSamples() - 1));
@@ -74,4 +79,13 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
     return rangeLabel;
   }
 
+  @NoExport
+  public <T> T getUserData(String key) {
+    return (T)userData.get(key);
+  }
+
+  @NoExport
+  public void setUserData(String key, Object val) {
+    userData.put(key, val);
+  }
 }

@@ -11,6 +11,8 @@ final class NearestPoint {
 
   public double dist;
 
+  public int dim;
+
   public String toString() {
     return "pointIndex=" + pointIndex + ";dist=" + dist;
   }

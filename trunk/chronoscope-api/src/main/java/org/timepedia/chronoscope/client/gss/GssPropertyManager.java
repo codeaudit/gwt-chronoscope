@@ -250,6 +250,16 @@ public class GssPropertyManager {
     }
   }
 
+  public static final GssPropertyType GSS_GROUP_PROPERTY
+      = new GssPropertyType("group", "", GssPropertyType.TypeUnits.STRING,
+      "Asserts that a series is to be grouped with other series having the same" 
+          + " group id into a new composite dataseries.") {
+
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.group = pval;
+    }
+  };
 
   public static final GssPropertyType GSS_DATE_FORMAT_PROPERTY
       = new GssPropertyType("date-format", "", GssPropertyType.TypeUnits.STRING,
@@ -405,15 +415,12 @@ public class GssPropertyManager {
       "Controls styles used for line rendering",
       "line { line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;
-
-
-   
   
   public static final GssElementType GSS_SERIES_TYPE = new GssElementType(
       "series", new String[]{"selected", "disabled", "s#"},
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
-          GSS_COLOR_PROPERTY, GSS_VISBILITY_PROPERTY},
+          GSS_COLOR_PROPERTY, GSS_VISBILITY_PROPERTY, GSS_GROUP_PROPERTY},
       "for each time series, there is a series element with class s#, for example, the first time series dataset is represented by series.s0, and the second by series.s1",
       "series.s1 line { color: green } /* Make the second times series line green */")
       ;

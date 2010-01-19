@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -198,11 +199,13 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   public void adjustAbsRange(Dataset ds) {
     if (!rangeOverridden) {
-      Interval rangeExtrema = ds.getRangeExtrema(0);
+      DatasetRenderer dr = plot.getDatasetRenderer(
+          plot.getDatasets().indexOf(ds));
+      Interval rangeExtrema = dr.getRangeExtrema(ds);
       double rangeMin = rangeExtrema.getStart();
       double rangeMax = rangeExtrema.getEnd();
       if (calcRangeAsPercent) {
-        final double refY = ds.getFlyweightTuple(0).getRange0();
+        final double refY = dr.getRange(ds.getFlyweightTuple(0));
         rangeMin = calcPrctDiff(refY, rangeMin);
         rangeMax = calcPrctDiff(refY, rangeMax);
       }

@@ -8,6 +8,7 @@ package org.timepedia.chronoscope.client;
 public final class Focus {
   private int datasetIndex;
   private int pointIndex;
+  private int dimensionIndex = 0;
 
   /**
    * Constructs a <tt>Focus</tt> whose {@link #getDatasetIndex()} and
@@ -23,11 +24,25 @@ public final class Focus {
     this.pointIndex = pointIndex;
   }
 
+   private Focus(int datasetIndex, int pointIndex, int dim) {
+    this.datasetIndex = datasetIndex;
+    this.pointIndex = pointIndex;
+    this.dimensionIndex = dim;
+  }
+  
   /**
    * Returns a copy of this object
    */
   public Focus copy() {
-    return new Focus(this.datasetIndex, this.pointIndex);
+    return new Focus(this.datasetIndex, this.pointIndex, this.dimensionIndex);
+  }
+
+  public int getDimensionIndex() {
+    return dimensionIndex;
+  }
+
+  public void setDimensionIndex(int dimensionIndex) {
+    this.dimensionIndex = dimensionIndex;
   }
 
   public boolean equals(Object obj) {
@@ -39,7 +54,8 @@ public final class Focus {
 
     Focus otherFocus = (Focus) obj;
     return this.pointIndex == otherFocus.pointIndex
-    && this.datasetIndex == otherFocus.datasetIndex;
+    && this.datasetIndex == otherFocus.datasetIndex &&
+       this.dimensionIndex == otherFocus.dimensionIndex;
   }
 
   /**

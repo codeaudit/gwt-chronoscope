@@ -75,7 +75,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * Render a small icon or sparkline representing this curve at the given x,y
    * screen coordinates, and return the the Bounds of the icon.
    */
-  public abstract void drawLegendIcon(Layer layer, double x, double y);
+  public abstract void drawLegendIcon(Layer layer, double x, double y, int dim);
 
   /**
    * Draw an individual point of the given tuple.
@@ -156,5 +156,33 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   public GssProperties getCurveProperties() {
     return gssLineProps;
+  }
+  
+  public int getNumPasses(Dataset dataset) {
+    return 1;
+  }
+
+  public double getRange(Tuple2D tuple2D) {
+    return tuple2D.getRange0();
+  }
+
+  public Interval getRangeExtrema(Dataset ds) {
+    return ds.getRangeExtrema(0);
+  }
+
+  public int getFocusDimension(int pass) {
+    return 0;
+  }
+
+  public int getLegendEntries(Dataset dataset) {
+    return 1;
+  }
+
+  public void drawLegendIcon(Layer layer, double lblX, double v) {
+    drawLegendIcon(layer, lblX, v, 0);
+  }
+
+  public double getRangeValue(Tuple2D tuple, int dimension) {
+    return tuple.getRange0();
   }
 }

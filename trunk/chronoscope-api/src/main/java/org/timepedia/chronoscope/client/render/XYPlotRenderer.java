@@ -35,25 +35,26 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
   // Stores the order in which the datasets should be rendered.  For example, if
   // element [0] = 4, then this means the 5th dataset should be rendered first.
+
   private int[] datasetRenderOrder;
 
   private List<DrawableDataset<T>> drawableDatasets;
 
   private boolean initialized = false;
 
-  private XYPlot<T> plot;
+  protected XYPlot<T> plot;
 
-  private View view;
+  protected View view;
 
   private void calcVisibleDomainAndRange(List<DrawableDataset<T>> dds,
       Interval plotDomain) {
 
     final int numDatasets = dds.size();
-    
+
     for (int i = 0; i < plot.getRangeAxisCount(); i++) {
       plot.getRangeAxis(i).resetVisibleRange();
     }
-    
+
     for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
       DrawableDataset<T> drawableDataset = dds.get(datasetIdx);
       Dataset<T> dataSet = drawableDataset.dataset;
@@ -84,17 +85,17 @@ public class XYPlotRenderer<T extends Tuple2D> {
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
       RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
-      Interval visRange = calcVisibleRange(bestMipMap, domainStartIdx, domainEndIdx);
-      
+      Interval visRange = calcVisibleRange(bestMipMap, domainStartIdx,
+          domainEndIdx, drawableDataset.getRenderer());
+
       if (rangeAxis.isCalcRangeAsPercent()) {
         final double refY = calcReferenceY(rangeAxis, drawableDataset);
         double maxY = visRange.getEnd();
         double minY = visRange.getStart();
-        visRange.setEndpoints(
-            RangeAxis.calcPrctDiff(refY, minY), 
+        visRange.setEndpoints(RangeAxis.calcPrctDiff(refY, minY),
             RangeAxis.calcPrctDiff(refY, maxY));
       }
-      
+
       rangeAxis.adjustVisibleRange(visRange);
     }
   }
@@ -102,12 +103,13 @@ public class XYPlotRenderer<T extends Tuple2D> {
   /**
    * Calculates the range-Y extrema values of the specified {@link MipMap}.
    */
-  private Interval calcVisibleRange(MipMap mipMap, int domainStartIdx, int domainEndIdx) {
+  private Interval calcVisibleRange(MipMap mipMap, int domainStartIdx,
+      int domainEndIdx, DatasetRenderer<T> renderer) {
     double rangeMin = Double.POSITIVE_INFINITY;
     double rangeMax = Double.NEGATIVE_INFINITY;
     Iterator<Tuple2D> tupleItr = mipMap.getTupleIterator(domainStartIdx);
     for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-      double y = tupleItr.next().getRange0();
+      double y = renderer.getRange(tupleItr.next());
       rangeMin = Math.min(rangeMin, y);
       rangeMax = Math.max(rangeMax, y);
     }
@@ -135,57 +137,63 @@ public class XYPlotRenderer<T extends Tuple2D> {
       focusPoint = focus.getPointIndex();
     }
 
-    renderState
-        .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
-
-    renderer.beginCurve(layer, renderState);
-
+    
     MipMap currMipMap = dds.currMipMap;
     final int domainStartIdx = dds.visDomainStartIndex;
     final int domainEndIdx = dds.visDomainEndIndex;
-    
+
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIndex);
     final boolean calcRangeAsPercent = rangeAxis.isCalcRangeAsPercent();
-    
+
     // Render the curve
-    
+
     final double refY = calcReferenceY(rangeAxis, dds);
-    
+
     int methodCallCount = 0;
-    Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
-    for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-      Tuple2D dataPt = tupleItr.next();
-      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+    for (int pass = 0; pass < renderer.getNumPasses(dds.dataset); pass++) {
+      renderState
+              .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
+
+      renderer.beginCurve(layer, renderState);
       
-      if (calcRangeAsPercent) {
-        LocalTuple tmpTuple = new LocalTuple();
-        tmpTuple.setXY(dataPt.getDomain(), 
-            RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
-        dataPt = tmpTuple;
+      Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
+      renderState.setPassNumber(pass);
+      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
+        Tuple2D dataPt = tupleItr.next();
+        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+        
+        if (calcRangeAsPercent) {
+          LocalTuple tmpTuple = new LocalTuple();
+          tmpTuple.setXY(dataPt.getDomain(),
+              RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+          dataPt = tmpTuple;
+        }
+        // FIXME: refactor to remove cast
+        renderer
+            .drawCurvePart(layer, (T) dataPt, methodCallCount++, renderState);
       }
-      // FIXME: refactor to remove cast
-      renderer.drawCurvePart(layer, (T) dataPt, methodCallCount++, renderState);
-    }
-    renderer.endCurve(layer, renderState);
+      renderer.endCurve(layer, renderState);
 
-    // Render the focus points on the curve
-    renderer.beginPoints(layer, renderState);
-    //startIdx = Math.max(0, domainStartIdx - 2);
-    tupleItr = currMipMap.getTupleIterator(domainStartIdx);
-    for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-      Tuple2D dataPt = tupleItr.next();
-      renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+      // Render the focus points on the curve
+      renderer.beginPoints(layer, renderState);
+      //startIdx = Math.max(0, domainStartIdx - 2);
+      tupleItr = currMipMap.getTupleIterator(domainStartIdx);
+      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
+        Tuple2D dataPt = tupleItr.next();
+        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i &&
+        renderer.getFocusDimension(pass) == focus.getDatasetIndex());
 
-      if (calcRangeAsPercent) {
-        LocalTuple tmpTuple = new LocalTuple();
-        tmpTuple.setXY(dataPt.getDomain(), 
-            RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
-        dataPt = tmpTuple;
+        if (calcRangeAsPercent) {
+          LocalTuple tmpTuple = new LocalTuple();
+          tmpTuple.setXY(dataPt.getDomain(),
+              RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+          dataPt = tmpTuple;
+        }
+        // FIXME: refactor to remove cast
+        renderer.drawPoint(layer, (T) dataPt, renderState);
       }
-      // FIXME: refactor to remove cast
-      renderer.drawPoint(layer, (T) dataPt, renderState);
+      renderer.endPoints(layer, renderState);
     }
-    renderer.endPoints(layer, renderState);
   }
 
   public Interval calcWidestPlotDomain() {
@@ -236,7 +244,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
         // TODO: add generics to MipMap class to remove this cast
         T dataPt = (T) dds.currMipMap.getTuple(hoverPoint);
         RangeAxis rangeAxis = plot.getRangeAxis(i);
-        
+
         if (rangeAxis.isCalcRangeAsPercent()) {
           // Need to store domain/range values from the flyweight dataPt object
           // in tmp variables, because currMipMap.getTuple() overwrites the 
@@ -248,7 +256,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
           LocalTuple tmpTuple = new LocalTuple();
           tmpTuple.setXY(hoverX, RangeAxis.calcPrctDiff(refY, hoverY));
-          dataPt = (T)(Object)tmpTuple;
+          dataPt = (T) (Object) tmpTuple;
         }
         dds.getRenderer().drawHoverPoint(layer, dataPt, i);
       }
@@ -451,24 +459,25 @@ public class XYPlotRenderer<T extends Tuple2D> {
         dds.maxDrawablePoints = dr.getMaxDrawableDatapoints();
       }
       index++;
-
     }
     sortDatasetsIntoRenderOrder();
   }
 
   public double calcReferenceY(RangeAxis ra, DrawableDataset dds) {
-    final int refYIndex = ra.isAutoZoomVisibleRange() ? dds.visDomainStartIndex : 0;
-    return dds.currMipMap.getTuple(refYIndex).getRange0();
+    final int refYIndex = ra.isAutoZoomVisibleRange() ? dds.visDomainStartIndex
+        : 0;
+    return dds.getRenderer().getRange(dds.currMipMap.getTuple(refYIndex));
   }
-  
+
   private static final class LocalTuple implements Tuple2D {
+
     private double x, y;
-    
+
     public void setXY(double x, double y) {
       this.x = x;
       this.y = y;
     }
-    
+
     public double getDomain() {
       return x;
     }
@@ -477,7 +486,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
       if (index == 0) {
         return y;
       }
-      throw new UnsupportedOperationException("unsupported tuple index: " + index);
+      throw new UnsupportedOperationException(
+          "unsupported tuple index: " + index);
     }
 
     public double getRange0() {
@@ -487,9 +497,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
     public int size() {
       return 2;
     }
-    
+
     public String toString() {
-      return "x=" + (long)x + "; y=" + y;
+      return "x=" + (long) x + "; y=" + y;
     }
   }
 }

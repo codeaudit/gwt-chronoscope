@@ -9,7 +9,17 @@ package org.timepedia.chronoscope.client.render;
 public class RenderState {
   private boolean isFocused;
   private boolean isDisabled;
-  
+  private int passNumber = 0;
+  private Object userData;
+
+  public <T> T getUserData() {
+    return (T)userData;
+  }
+
+  public void setUserData(Object userData) {
+    this.userData = userData;
+  }
+
   public boolean isDisabled() {
     return isDisabled;
   }
@@ -28,5 +38,13 @@ public class RenderState {
   
   public String toString() {
     return "disabled=" + isDisabled + ";focused=" + isFocused;
+  }
+
+  public int getPassNumber() {
+    return passNumber;
+  }
+
+  public void setPassNumber(int passNumber) {
+    this.passNumber = passNumber;
   }
 }
