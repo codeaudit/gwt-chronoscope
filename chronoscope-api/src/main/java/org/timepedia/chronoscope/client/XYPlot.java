@@ -99,7 +99,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * a transformation of the raw Y value (e.g. a percentage change from some 
    * point in time, or a logarithmic scale).
    */
-  double calcDisplayY(int datasetIdx, int pointIdx);
+  double calcDisplayY(int datasetIdx, int pointIdx, int dimension);
   
   /**
    * Process a click on the Plot window given the screen space coordinates,

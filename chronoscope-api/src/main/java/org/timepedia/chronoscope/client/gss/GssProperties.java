@@ -53,6 +53,8 @@ public class GssProperties {
 
   public String dateFormat = null;
 
+  public String group = null;
+  
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;

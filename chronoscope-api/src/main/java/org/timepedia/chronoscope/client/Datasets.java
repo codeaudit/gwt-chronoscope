@@ -63,16 +63,23 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>>,
    */
   @Export
   public void add(Dataset<T> dataset) {
+    addPrivate(dataset);
+    this.myDatasetListener.onDatasetAdded(dataset);
+  }
+
+  /**
+   * Adds the specified dataset to the existing datasets in this container
+   * without firing events.
+   */
+  public void addPrivate(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
     if (dataset instanceof MutableDataset) {
       ((MutableDataset) dataset).addListener(this.myDatasetListener);
     }
-
     updateAggregateInfo(dataset);
-    this.myDatasetListener.onDatasetAdded(dataset);
   }
-
+  
   /**
    * Registers listeners who wish to be notified of changes to this container as
    * well as its elements.
@@ -103,6 +110,20 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>>,
   @Export
   public Dataset<T> get(int index) {
     return this.datasets.get(index);
+  }
+
+  /**
+  * Returns the dataset with the specified identifier.
+   * @return
+   */
+  @Export 
+  public Dataset<T> getById(String id) {
+    for (Dataset<T> d : datasets) {
+      if(id.equals(d.getIdentifier())) {
+        return d;
+      }
+    }
+    return null;
   }
   
   /**
@@ -149,16 +170,24 @@ public final class Datasets<T extends Tuple2D> implements Iterable<Dataset<T>>,
    */
   @Export
   public Dataset<T> remove(int index) {
+    Dataset<T> removedDataset = removePrivate(index);
+    myDatasetListener.onDatasetRemoved(removedDataset, index);
+    return removedDataset;
+  }
+
+  /**
+   * Remove a dataset without firing listeners.
+   */
+  public Dataset<T> removePrivate(int index) {
     verifyDatasetNotEmpty();
     Dataset<T> removedDataset = datasets.remove(index);
     recalcAggregateInfo();
     if (removedDataset instanceof MutableDataset) {
       ((MutableDataset) removedDataset).removeListener(myDatasetListener);
     }
-    myDatasetListener.onDatasetRemoved(removedDataset, index);
     return removedDataset;
   }
-
+  
   /**
    * Returns the number of datasets in this container.
    */

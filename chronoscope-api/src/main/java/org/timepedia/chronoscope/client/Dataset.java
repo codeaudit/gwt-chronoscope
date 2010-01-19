@@ -42,10 +42,11 @@ import org.timepedia.exporter.client.NoExport;
 public interface Dataset<T extends Tuple2D> extends Exportable {
 
   /**
-   * Returns the smallest domain interval between any two consecutive points
-   * within the dataset.
+   * Return an id used to identify the axis this dataset should be assigned to,
+   * typically the physical units (e.g. meters/second). Datasets with identical
+   * axis ids will, by default, be allocated on the same axis.
    */
-  double getMinDomainInterval();
+  String getAxisId(int rangeTupleCoordinate);
 
   /**
    * Finds the best MipMap (highest resolution) containing the the given region,
@@ -56,26 +57,6 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    */
   @NoExport
   MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples);
-
-  /**
-   * Provides access to the ordered set of {@link MipMap} objects, which
-   * represent this dataset at decreasing levels of resolution.
-   */
-  @NoExport
-  MipMapChain getMipMapChain();
-
-  /**
-   * Return an id used to identify the axis this dataset should be assigned to,
-   * typically the physical units (e.g. meters/second). Datasets with identical
-   * axis ids will, by default, be allocated on the same axis.
-   */
-  String getAxisId(int rangeTupleCoordinate);
-
-  /**
-   * Returns an interval representing the min and max values for the specified
-   * range tuple coordinate.
-   */
-  Interval getRangeExtrema(int rangeTupleCoordinate);
 
   /**
    * Returns an interval that contains the minimum and maximum domain values
@@ -95,6 +76,24 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getIdentifier();
 
   /**
+   * Returns the smallest domain interval between any two consecutive points
+   * within the dataset.
+   */
+  double getMinDomainInterval();
+
+  /**
+   * Provides access to the ordered set of {@link MipMap} objects, which
+   * represent this dataset at decreasing levels of resolution.
+   */
+  @NoExport
+  MipMapChain getMipMapChain();
+
+  /**
+   * Returns the number of samples in this dataset.
+   */
+  int getNumSamples();
+
+  /**
    * The min/max range values that {@link RangeAxis} will use as its bounds for computing
    * the range tick values.  If null, then the actual min/max range values of this dataset
    * will be used instead.
@@ -110,9 +109,10 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   String getPreferredRenderer();
 
   /**
-   * Returns the number of samples in this dataset.
+   * Returns an interval representing the min and max values for the specified
+   * range tuple coordinate.
    */
-  int getNumSamples();
+  Interval getRangeExtrema(int rangeTupleCoordinate);
 
   /**
    * Return a label that may be used in a chart legend for this dataset.
@@ -129,5 +129,11 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * Return the domain value for the given data point index on mip level 0.
    */
   double getX(int index);
+  
+  @NoExport
+  <T> T getUserData(String key);
+  
+  @NoExport
+  void setUserData(String key, Object val);
 
 }
