@@ -88,7 +88,6 @@ public abstract class AbstractPanel implements Panel, Exportable {
   }
 
   public void layout() {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   public final void setStringSizer(StringSizer stringSizer) {

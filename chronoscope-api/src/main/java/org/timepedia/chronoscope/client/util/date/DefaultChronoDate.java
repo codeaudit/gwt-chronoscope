@@ -67,7 +67,7 @@ public final class DefaultChronoDate extends ChronoDate {
   }
   
   @Override
-  public DayOfWeek getDayOfWeek() {
+  public DayOfWeek getDayOfWeek() { // FIXME
     throw new UnsupportedOperationException();
   }
   

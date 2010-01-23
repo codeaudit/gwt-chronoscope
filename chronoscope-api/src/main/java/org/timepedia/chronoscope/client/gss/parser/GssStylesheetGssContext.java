@@ -80,8 +80,9 @@ public class GssStylesheetGssContext extends DefaultGssContext {
     String pval = property.getPropertyValue();
     GssPropertyManager.GssPropertyType type = GssPropertyManager
         .lookupGssPropertyType(pname);
-
-    type.setPropertyFromString(props, pval);
+    if (null != type) {
+      type.setPropertyFromString(props, pval);
+    }
   }
 
   private List<GssRuleMatch> findAllMatchingRules(GssElement gssElem,

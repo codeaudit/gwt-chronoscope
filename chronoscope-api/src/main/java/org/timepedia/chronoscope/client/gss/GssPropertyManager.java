@@ -121,21 +121,24 @@ public class GssPropertyManager {
     private String docString;
 
     public static enum TypeUnits {
-
       INTEGER {
         public Object parse(String str) {
           return Integer.parseInt(str);
         }
         public String getDocString() {
           return "An integer value.";
-        }}, PX {
+        }},
 
+      PX {
         public Object parse(String str) {
+          str = str.replace("px","");
           return Integer.parseInt(str);
         }
         public String getDocString() {
           return "An integer value in pixel units, with optional px suffix";
-        }}, FLOAT {
+        }},
+
+      FLOAT {
         public Object parse(String pval) {
           return Double.parseDouble(pval);
         }
@@ -143,29 +146,32 @@ public class GssPropertyManager {
           return "A floating point value";
         }
       },
+
       PT {
         public Object parse(String str) {
           return str;
         }
         public String getDocString() {
           return "A font point size, a number followed by the suffix 'pt'";
-        }}, URI {
+        }},
+
+      URI {
         public Object parse(String str) {
           return str;
         }
         public String getDocString() {
           return "A URL of the format url(http://host.domain/some/path)";
-        }}, COLOR {
+        }},
+
+      COLOR {
         public Object parse(String str) {
           return new Color(str);
         }
         public String getDocString() {
           return "A CSS color name, rgb triple rgb(r,g,b), hexadecimal triple "
               + "(e.g. #f0a2c9), an rgba quadruple rgba(r,g,b,a)";
+        }},
 
-
-        }
-      },
       BGIMAGE {
         public Object parse(String str) {
           return new Color(str);
@@ -175,7 +181,9 @@ public class GssPropertyManager {
               + "url(http://host.domain/some/image.png) or a gradient function "
               + "gradient(startx, starty, endx, endy, colorstop, "
               + "color, colorstop, color, ...)";
-        }}, STRING {
+        }},
+
+      STRING {
         public Object parse(String str) {
           return str;
         }
@@ -271,6 +279,7 @@ public class GssPropertyManager {
     }
   };
 
+  // NOTE "em" not supported, eg line-thickness:.1em; is invalid
   public static final GssPropertyType GSS_LINE_THICKNESS_PROPERTY
       = new GssPropertyType("line-thickness", "", GssPropertyType.TypeUnits.PX,
       "Specifies the thickness of lines drawn on the chart") {
@@ -334,7 +343,7 @@ public class GssPropertyManager {
     }
   };
 
-  public static final GssPropertyType GSS_VISBILITY_PROPERTY
+  public static final GssPropertyType GSS_VISIBILITY_PROPERTY
       = new GssPropertyType("visibility", "", GssPropertyType.TypeUnits.STRING,
       "CSS visibility property controls whether a chart component is drawn or not") {
     @Override
@@ -370,6 +379,8 @@ public class GssPropertyManager {
     }
   };
 
+  // NOTE "em" and "px" not supported, eg font-size:1em; or font-size:12px; are invalid
+  // TODO "px"
   public static final GssPropertyType GSS_FONT_SIZE_PROPERTY
       = new GssPropertyType("font-size", "", GssPropertyType.TypeUnits.PT,
       "Standard CSS Font Size property") {
@@ -420,7 +431,7 @@ public class GssPropertyManager {
       "series", new String[]{"selected", "disabled", "s#"},
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
-          GSS_COLOR_PROPERTY, GSS_VISBILITY_PROPERTY, GSS_GROUP_PROPERTY},
+          GSS_COLOR_PROPERTY, GSS_VISIBILITY_PROPERTY, GSS_GROUP_PROPERTY},
       "for each time series, there is a series element with class s#, for example, the first time series dataset is represented by series.s0, and the second by series.s1",
       "series.s1 line { color: green } /* Make the second times series line green */")
       ;
@@ -429,7 +440,7 @@ public class GssPropertyManager {
       "domainmarker", new String[0],
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
-        GSS_VISBILITY_PROPERTY, GSS_COLOR_PROPERTY, GSS_FONT_FAMILY_PROPERTY, GSS_FONT_WEIGHT_PROPERTY, GSS_FONT_SIZE_PROPERTY},
+        GSS_VISIBILITY_PROPERTY, GSS_COLOR_PROPERTY, GSS_FONT_FAMILY_PROPERTY, GSS_FONT_WEIGHT_PROPERTY, GSS_FONT_SIZE_PROPERTY},
       "A label controls chart elements which have associated text like markers, tick labels, legend labels, etc.",
       "label { color: blue; font-size: 12pt } /* Make all labels blue and 12pt */")
       ;
@@ -438,7 +449,7 @@ public class GssPropertyManager {
         "marker", new String[0],
         new GssElementType[] { GSS_LABEL_TYPE},
         new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
-          GSS_VISBILITY_PROPERTY},
+          GSS_VISIBILITY_PROPERTY},
         "A marker that represents a single point on the curve.",
         "marker { background-color: green; opacity: 0.3 } /* Make the marker green and 70% transparent */")
         ;
@@ -447,14 +458,14 @@ public class GssPropertyManager {
       "domainmarker", new String[0],
       new GssElementType[] { GSS_LABEL_TYPE},
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
-        GSS_VISBILITY_PROPERTY},
+        GSS_VISIBILITY_PROPERTY},
       "A highlighting marker that stretches along the X axis.",
       "domainmarker { background-color: green; opacity: 0.3 } /* Make the highlight green and 70% transparent */")
       ;
 
   public static final GssElementType GSS_GUIDELINE_TYPE = new GssElementType("guideline",
       new GssElementType[]{GSS_MARKER_TYPE},
-      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_VISBILITY_PROPERTY},
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_VISIBILITY_PROPERTY},
       "Visibility of guidelines on markers",
       "marker.foo guideline { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;

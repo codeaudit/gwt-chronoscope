@@ -395,6 +395,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    * the first datapoint of the dataset or the leftmost datapoint that's visible
    * in the plot). 
    */
+  @Export
   public void setCalcRangeAsPercent(boolean b) {
     this.calcRangeAsPercent = b;
     this.plot.damageAxes();
@@ -485,6 +486,19 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.visRangeMax = visRangeMax;
     ticks = null;
   }
+
+  @Export
+  public void setVisibleRangeMin(double visRangeMin) {
+    this.visRangeMin = visRangeMin;
+    ticks = null;
+  }
+
+  @Export
+  public void setVisibleRangeMax(double visRangeMax) {
+    this.visRangeMax = visRangeMax;
+    ticks = null;
+  }
+
   
   public double userToData(double userValue) {
     return adjustedRangeMin + 

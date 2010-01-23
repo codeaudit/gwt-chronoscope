@@ -106,11 +106,11 @@ public class LegendAxisPanel extends AxisPanel {
     zoomPanel.init();
 
     dateRangePanel = new DateRangePanel();
-    dateRangePanel.setGssProperties(labelProperties);
+    // dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.setStringSizer(stringSizer);
-    dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
     dateRangePanel.parent = this;
+    dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
     dateRangePanel.updateDomainInterval(domainExtrema);
   }
 
@@ -184,7 +184,7 @@ public class LegendAxisPanel extends AxisPanel {
    * Currently, this method naively lays out the ZoomPanel and DateRangePanel on
    * the X-axis. Ultimately, layout rules and heuristics will be split out into
    * a separate LayoutStrategy interface of some sort.
-   */
+   */ // TODO show/hide from GSS
   private void layoutPanels(Bounds parentBounds) {
     // The minimum distance allowed between the zoom panel and the dataset
     // legend panel.
@@ -248,7 +248,7 @@ public class LegendAxisPanel extends AxisPanel {
 
   /**
    * For debugging purposes
-   */
+   */ // TODO expose show/hide in GSS
   private static void hiliteBounds(Bounds b, Layer layer) {
     layer.save();
 

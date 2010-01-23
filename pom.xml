@@ -9,16 +9,7 @@
     <version>1.0</version>
     <name>Chronoscope Project</name>
     <url>http://timepedia.org/chronoscope</url>
-    <description>Chronoscope is Timepedia's charting and visualization platform
-        for GWT, used as the centerpiece of
-        Timepedia's
-        upcoming website. Timepedia is developing a collaborative time-oriented
-        search engine with analytic and
-        visualization
-        capabilities. Chronoscope is currently structured around our needs but
-        we hope that opening it up to the
-        community will help
-        it become a well-rounded charting framework.
+    <description>Chronoscope is a charting and visualization platform developed with GWT.
     </description>
     <issueManagement>
         <system>Google Code</system>
@@ -72,11 +63,11 @@
     <modules>
         <module>chronoscope-api</module>
         <module>chronoscope</module>
-        <module>bench</module>
-        <!--        <module>samples</module> -->
-        <module>gviz</module>
         <module>widget</module>
-        <module>chronoscope-java2d</module>
+        <module>samples</module>
+        <!-- module>bench</module -->
+        <!-- module>gviz</module -->
+        <!--module>chronoscope-java2d</module -->
     </modules>
 
     <distributionManagement>
@@ -228,8 +219,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
 
@@ -332,8 +323,8 @@
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
-                <gwt.localRepository>${user.home}/.m2/repository
-                </gwt.localRepository>
+                <gwt.localRepository>${user.home}/.m2/repository</gwt.localRepository>
+                <gwt.localRepository>${user.home}/.m2/repository</gwt.localRepository>
                 <!--		<maven.test.skip>true</maven.test.skip> -->
                 <gwt.inplace>false</gwt.inplace>
 

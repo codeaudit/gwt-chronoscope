@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 
 public class DaysTickFormatter extends DateTickFormatter {
 
@@ -79,9 +80,9 @@ public class DaysTickFormatter extends DateTickFormatter {
 
   /**
    * Increments the specified date to the first day of the following month.
-   * For example, if d represents the date 'April 19, 2005', then 
+   * For example, if d represents the date 'April 19, 2005', then
    * gotoFirstOfNextMonth(d) would modify d to be May 1, 2005.
-   * 
+   *
    * @return the number of days that were incremented in order to arrive at the
    * first day of the following month.
    */
@@ -92,5 +93,4 @@ public class DaysTickFormatter extends DateTickFormatter {
     //System.out.println("TESTING: day=" + d.getDay() + "; actualIncrement=" + actualIncrement);
     return actualIncrement;
   }
-  
 }

@@ -83,13 +83,10 @@ public class ChartDemo implements EntryPoint {
         }
       });
 
-
       RootPanel.get("chartdemo").add(chartPanel);
 
-      //currently, because of design issues in the initialization process,
-     
     } catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      e.printStackTrace();
     }
   }
 

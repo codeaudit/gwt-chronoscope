@@ -66,7 +66,7 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement
     ArgChecker.isNotNull(plot, "plot");
     
     CompositeAxisPanel parentAxisPanel = (CompositeAxisPanel)this.parent;
-    
+    // FIXME
     gssProperties = view.getGssProperties(this, "");
     labelProperties = view.getGssProperties(new GssElementImpl("label", this), "");
     textLayerName = parentAxisPanel.getName() + parentAxisPanel.indexOf(this);    
