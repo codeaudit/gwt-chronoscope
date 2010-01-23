@@ -14,7 +14,7 @@ import org.timepedia.exporter.client.Export;
  * depending on the {@link CompositeAxisPanel} it is placed into, and rendered on the
  * left/right or top/bottom depending on the AxisPanel position as well. 
  * <p> 
- * In GSS, an ValueAxis may be referred to using a CSS selector 'axis'. Each axis
+ * In GSS, a ValueAxis may be referred to using a CSS selector 'axis'. Each axis
  * is numbered, can have several CSS classes, depending on subtypes, like
  * "axis.range" or "axis.domain". See {@link AxisPanel} for more details.
  * 

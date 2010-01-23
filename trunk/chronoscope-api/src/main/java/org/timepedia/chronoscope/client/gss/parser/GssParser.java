@@ -10,17 +10,19 @@ import java.util.List;
  *
  * rule ::= selector ("," selector) "{" property (";" property)* "}"
  *
- * selector ::= simple_selector (combinator simple_selector)* simple_selector
- * ::= element_name ("." class_name)? | "*"? "." class_name element_name ::=
- * IDENTIFIER class_name ::= IDENTIFIER
+ * selector ::= simple_selector (combinator simple_selector)*
+ * simple_selector ::= element_name ("." class_name)? | "*"? "." class_name
+ * element_name ::= IDENTIFIER
+ * class_name ::= IDENTIFIER
  *
  * combinator ::= SPACE
  *
- * property ::= property-name ":" property-value property-name ::= IDENTIFIER
+ * property ::= property-name ":" property-value
+ * property-name ::= IDENTIFIER
  * property-value ::= IDENTIFIER
  *
  * IDENTIFIER = any ascii character except "{", ",", ">", SPACE, ";", "}".
- */
+ */ // TODO: /* comments in gss */
 public class GssParser {
 
   public static List<GssRule> parse(String stylesheet)

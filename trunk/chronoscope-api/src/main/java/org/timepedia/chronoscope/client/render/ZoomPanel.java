@@ -2,7 +2,9 @@ package org.timepedia.chronoscope.client.render;
 
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.util.MathUtil;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,9 @@ import java.util.List;
  * should register themselves via {link {@link #addListener(ZoomListener)}.
  * 
  * @author Chad Takahashi
- */
-public class ZoomPanel extends AbstractPanel implements SelfResizing {
+ */ // TODO GSS
+public class ZoomPanel extends AbstractPanel implements
+  SelfResizing, GssElement, Exportable {
   private static final int MAX_ZOOM_LINKS = 20;
   private static final String SPACE = "\u00A0";
   private static final String ZOOM_PREFIX = "Zoom:";
@@ -34,7 +37,19 @@ public class ZoomPanel extends AbstractPanel implements SelfResizing {
   public ZoomPanel() {
     this.listeners = new ArrayList<ZoomListener>();
   }
-  
+
+  public String getType() {
+    return "zoomlinks";  // TODO - rename?
+  }
+
+  public String getTypeClass() {
+    return null;
+  }
+
+  public final GssElement getParentGssElement() {
+    return (LegendAxisPanel)this.parent;
+  }
+
   public void init() {
     bounds.height = stringSizer.getHeight("X", gssProperties);
     

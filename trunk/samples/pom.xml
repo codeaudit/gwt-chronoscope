@@ -22,7 +22,7 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
+            <!-- plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -39,7 +39,6 @@
                                     <artifactId>gwt-dev</artifactId>
                                     <version>${gwtversion}</version>
                                     <classifier>${gwtplatform}-libs</classifier>
-                                    <type>zip</type>
                                     <outputDirectory>
                                         ${user.home}/.m2/repository/com/google/gwt/gwt-dev/${gwtversion}
                                     </outputDirectory>
@@ -48,8 +47,23 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
+
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- plugin>
                 <groupId>com.totsp.gwt</groupId>
                 <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
                 <version>2.0-beta24</version>
@@ -74,8 +88,10 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
+
         </plugins>
+
     </build>
 
 </project>

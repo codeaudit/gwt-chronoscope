@@ -22,7 +22,7 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
             <version>${gwtversion}</version>
-            <type>jar</type>
+            <!-- type>jar</type -->
         </dependency>
     </dependencies>
 

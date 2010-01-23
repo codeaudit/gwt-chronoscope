@@ -352,5 +352,9 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         .stringHeight(str, gssProperties.fontFamily, gssProperties.fontWeight,
             gssProperties.fontSize);
   }
+
+  public String toString() {
+    return "domainAxisPanel";
+  }
 }
   

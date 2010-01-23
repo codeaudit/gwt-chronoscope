@@ -8,7 +8,9 @@ import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 
@@ -18,7 +20,8 @@ import java.util.ArrayList;
  *
  * @author Chad Takahashi
  */
-public class DatasetLegendPanel extends AbstractPanel {
+public class DatasetLegendPanel extends AbstractPanel
+  implements GssElement, Exportable {
 
   // Dictates the X-padding between a given legend icon and its
   //associated dataset name
@@ -36,6 +39,18 @@ public class DatasetLegendPanel extends AbstractPanel {
   private XYPlot plot;
 
   private View view;
+
+  public String getType() {
+    return "legend";
+  }
+
+  public String getTypeClass() {
+    return null;  
+  }
+
+  public final GssElement getParentGssElement() {
+    return (LegendAxisPanel)this.parent;
+  }
 
   public void init() {
     ArgChecker.isNotNull(plot, "plot");

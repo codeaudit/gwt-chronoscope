@@ -13,7 +13,8 @@
     <name>Chronoscope Chart API</name>
     <url>http://timepedia.org/chronoscope</url>
     <dependencies>
-        <dependency>
+
+      <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
             <version>${gwtversion}</version>
@@ -70,33 +71,36 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<finalName>js</finalName>-->
-            <!--<doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet/doclet>-->
-            <!--<docletArtifact>-->
-            <!--<groupId>org.timepedia.chronoscope</groupId>-->
-            <!--<artifactId>chronoscope-api</artifactId>-->
-            <!--<version>1.0</version>-->
-            <!--</docletArtifact>-->
-            <!--&lt;!&ndash; Other dir than apidocs &ndash;&gt;-->
-            <!--<destDir>apidocs</destDir>-->
-            <!--</configuration>-->
+            
+	    <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+            <finalName>js</finalName>
+            <doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet</doclet>
+            <docletArtifact>
+            <groupId>org.timepedia.chronoscope</groupId>
+            <artifactId>chronoscope-api</artifactId>
+            <version>1.0</version>
+            </docletArtifact>
+            <!-- Other dir than apidocs -->
+            <destDir>apidocs</destDir>
+            </configuration>
 
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>attach-jsdocs</id>-->
-            <!--<goals>-->
-            <!--<goal>jar</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
+            <executions>
+            <execution>
+            <id>attach-jsdocs</id>
+            <goals>
+            <goal>jar</goal>
+            </goals>
+            </execution>
+            </executions>
+            </plugin>
 
         </plugins>
+
         <!--<finalName>chronoscope</finalName>-->
+
         <resources>
             <resource>
                 <directory>${basedir}/src/main/java</directory>

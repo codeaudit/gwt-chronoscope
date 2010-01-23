@@ -819,9 +819,20 @@ public class DefaultXYPlot<T extends Tuple2D>
     reloadStyles();
   }
 
+  @Export
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
     rangePanel.getRangeAxes()[dataset].setAutoZoomVisibleRange(autoZoom);
   }
+
+  @Export
+  public void setVisibleRangeMin(int dataset, double visRangeMin) {
+    rangePanel.getRangeAxes()[dataset].setVisibleRangeMin(visRangeMin);
+  }
+
+  @Export
+  public void setVisibleRangeMax(int dataset, double visRangeMax) {
+    rangePanel.getRangeAxes()[dataset].setVisibleRangeMax(visRangeMax);
+  }  
 
   public void setDatasetRenderer(int datasetIndex,
       DatasetRenderer<T> renderer) {
