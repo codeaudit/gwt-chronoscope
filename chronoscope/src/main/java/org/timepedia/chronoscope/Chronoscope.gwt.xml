@@ -71,4 +71,6 @@
   </replace-with>
 
 
+  <add-linker name="xs"/>
+
 </module>
