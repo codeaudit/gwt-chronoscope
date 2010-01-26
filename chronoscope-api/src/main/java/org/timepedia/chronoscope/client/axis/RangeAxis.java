@@ -3,8 +3,8 @@ package org.timepedia.chronoscope.client.axis;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -22,7 +22,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public static final int MAX_DIGITS = 5;
 
-  private class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
+  private class DefaultTickLabelNumberFormatter
+      implements TickLabelNumberFormatter {
+
     String labelFormat = null;
 
     public String format(double value) {
@@ -82,11 +84,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Billions)", "(Tens of Billions)", "(Hundreds of Billions)",
       "(Trillions)", "(Tens of Trillions)", "(Hundreds of Trillions)"};
 
-  private static final String negExponentLabels[] = {"", "(Tenths)", "(Hundredths)",
-      "(Thousandths)", "(Ten Thousandths)", "(Hundred Thousandths)",
-      "(Millionths)", "(Ten Millionths)", "(Hundred Millionths)",
-      "(Billionths)", "(Ten Billionths)", "(Hundred Billionths)",
-      "(Trillionths)", "(Ten Trillionths)", "(Hundred Trillionths)"};
+  private static final String negExponentLabels[] = {"", "(Tenths)",
+      "(Hundredths)", "(Thousandths)", "(Ten Thousandths)",
+      "(Hundred Thousandths)", "(Millionths)", "(Ten Millionths)",
+      "(Hundred Millionths)", "(Billionths)", "(Ten Billionths)",
+      "(Hundred Billionths)", "(Trillionths)", "(Ten Trillionths)",
+      "(Hundred Trillionths)"};
 
   private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
@@ -102,8 +105,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
         double rounded = Math.floor(lrangeHigh / exponent);
         lrangeHigh = (rounded + 1) * exponent;
         lrangeLow = (rounded - 1) * exponent;
-      }
-      else {
+      } else {
         lrangeHigh = 1.0;
         lrangeLow = -1.0;
       }
@@ -111,8 +113,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double range = lrangeHigh - lrangeLow;
 
-    final int maxNumLabels = 
-        (int) Math.floor(axisHeight / (2 * tickLabelHeight));
+    final int maxNumLabels = (int) Math
+        .floor(axisHeight / (2 * tickLabelHeight));
 
     final double roughInterval = range / maxNumLabels;
 
@@ -125,7 +127,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double smoothInterval = smoothSigDigits * exponent;
 
-    final double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
+    final double axisStart = lrangeLow - MathUtil
+        .mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
     if (axisStart + (smoothInterval * (numTicks - 1)) < lrangeHigh) {
@@ -143,7 +146,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     if (forceLastTick) {
       tickPositions[numTicks - 1] = lrangeHigh;
     }
-    
+
     return tickPositions;
   }
 
@@ -152,22 +155,25 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private boolean allowScientificNotation = false;
 
   private boolean autoZoom = false;
-  
+
   private int axisIndex;
 
   private boolean calcRangeAsPercent = false;
-  
+
   private TickLabelNumberFormatter defaultTickLabelNumberFormatter;
 
   private boolean forceScientificNotation = false;
 
   private XYPlot plot;
 
-  private double absRangeMin = Double.POSITIVE_INFINITY, absRangeMax = Double.NEGATIVE_INFINITY;
+  private double absRangeMin = Double.POSITIVE_INFINITY, absRangeMax
+      = Double.NEGATIVE_INFINITY;
 
-  private double visRangeMin = Double.POSITIVE_INFINITY, visRangeMax = Double.NEGATIVE_INFINITY;
-  
-  private double adjustedRangeMin = Double.POSITIVE_INFINITY, adjustedRangeMax = Double.NEGATIVE_INFINITY;
+  private double visRangeMin = Double.POSITIVE_INFINITY, visRangeMax
+      = Double.NEGATIVE_INFINITY;
+
+  private double adjustedRangeMin = Double.POSITIVE_INFINITY, adjustedRangeMax
+      = Double.NEGATIVE_INFINITY;
 
   private RangeAxisPanel axisPanel;
 
@@ -187,20 +193,20 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public RangeAxis(String rangeLabel, String axisId) {
     super(rangeLabel, axisId);
-    
+
     tickLabelNumberFormatter = defaultTickLabelNumberFormatter
         = new DefaultTickLabelNumberFormatter();
   }
 
   /**
-   * Increases the interval of this object's current range extrema 
-   * so that it's at least as wide as <tt>rangeExtrema(0)</tt> of the specified
-   * dataset object.
+   * Increases the interval of this object's current range extrema so that it's
+   * at least as wide as <tt>rangeExtrema(0)</tt> of the specified dataset
+   * object.
    */
   public void adjustAbsRange(Dataset ds) {
     if (!rangeOverridden) {
-      DatasetRenderer dr = plot.getDatasetRenderer(
-          plot.getDatasets().indexOf(ds));
+      DatasetRenderer dr = plot
+          .getDatasetRenderer(plot.getDatasets().indexOf(ds));
       Interval rangeExtrema = dr.getRangeExtrema(ds);
       double rangeMin = rangeExtrema.getStart();
       double rangeMax = rangeExtrema.getEnd();
@@ -209,49 +215,47 @@ public class RangeAxis extends ValueAxis implements Exportable {
         rangeMin = calcPrctDiff(refY, rangeMin);
         rangeMax = calcPrctDiff(refY, rangeMax);
       }
-      setAbsRange(
-          Math.min(absRangeMin, rangeMin), Math.max(absRangeMax, rangeMax));
+      setAbsRange(Math.min(absRangeMin, rangeMin),
+          Math.max(absRangeMax, rangeMax));
     }
   }
-  
+
   /**
-   * Increases the interval of this object's current visible range extrema 
-   * so that it's at least as wide as the specified <tt>visRange</tt> object.
+   * Increases the interval of this object's current visible range extrema so
+   * that it's at least as wide as the specified <tt>visRange</tt> object.
    */
   public void adjustVisibleRange(Interval visRange) {
-      setVisibleRange(
-          Math.min(visRangeMin, visRange.getStart()), 
-          Math.max(visRangeMax, visRange.getEnd()));
+    setVisibleRange(Math.min(visRangeMin, visRange.getStart()),
+        Math.max(visRangeMax, visRange.getEnd()));
   }
 
   public void resetVisibleRange() {
     visRangeMin = Double.POSITIVE_INFINITY;
     visRangeMax = Double.NEGATIVE_INFINITY;
   }
-  
+
   public double[] calcTickPositions() {
 
     if (ticks != null) {
       return ticks;
     }
-    
+
     final double rangeMin = autoZoom ? this.visRangeMin : this.absRangeMin;
     final double rangeMax = autoZoom ? this.visRangeMax : this.absRangeMax;
-    
-    ticks = computeLinearTickPositions(rangeMin, rangeMax, 
-        axisPanel.getBounds().height, axisPanel.getMaxLabelHeight(), 
+
+    ticks = computeLinearTickPositions(rangeMin, rangeMax,
+        axisPanel.getBounds().height, axisPanel.getMaxLabelHeight(),
         rangeOverridden);
 
     if (rangeOverridden) {
       adjustedRangeMin = rangeMin;
       adjustedRangeMax = rangeMax;
-    }
-    else {
+    } else {
       adjustedRangeMin = ticks[0];
       final double largestComputedTick = ticks[ticks.length - 1];
       adjustedRangeMax = Math.max(rangeMax, largestComputedTick);
     }
-    
+
     return ticks;
   }
 
@@ -332,7 +336,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public boolean isAutoZoomVisibleRange() {
     return autoZoom;
   }
-  
+
   /**
    * See {@link #setCalcRangeAsPercent(boolean)}
    */
@@ -376,7 +380,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setAxisIndex(int axisIndex) {
     this.axisIndex = axisIndex;
   }
-  
+
   public void setAxisPanel(RangeAxisPanel r) {
     this.axisPanel = r;
   }
@@ -388,12 +392,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     adjustAbsRanges();
     plot.reloadStyles();
   }
-  
+
   /**
-   * Setting to <tt>true</tt> will cause all of the range-Y values to be converted
-   * to a percentage increase/decrease from some reference range-Y value (either
-   * the first datapoint of the dataset or the leftmost datapoint that's visible
-   * in the plot). 
+   * Setting to <tt>true</tt> will cause all of the range-Y values to be
+   * converted to a percentage increase/decrease from some reference range-Y
+   * value (either the first datapoint of the dataset or the leftmost datapoint
+   * that's visible in the plot).
    */
   @Export
   public void setCalcRangeAsPercent(boolean b) {
@@ -401,7 +405,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.plot.damageAxes();
     adjustAbsRanges();
   }
-  
+
   /**
    * Force tick labels to always be rendered in scientific notation. (Default
    * false);
@@ -421,11 +425,34 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setPlot(XYPlot plot) {
     this.plot = plot;
   }
-  
+
+  /**
+   * Set the minimum and maximum visible axis range.
+   */
   @Export
   public void setRange(double rangeLow, double rangeHigh) {
     rangeOverridden = true;
     setAbsRange(rangeLow, rangeHigh);
+    this.plot.reloadStyles();
+  }
+
+  /**
+   * Set the minimum visible axis range.
+   */
+  @Export
+  public void setRangeMin(double rangeLow) {
+    rangeOverridden = true;
+    setAbsRange(rangeLow, absRangeMax);
+    this.plot.reloadStyles();
+  }
+
+  /**
+   * Set the maximum visible axis range.
+   */
+  @Export
+  public void setRangeMax(double rangeHigh) {
+    rangeOverridden = true;
+    setAbsRange(absRangeMin, rangeHigh);
     this.plot.reloadStyles();
   }
 
@@ -452,15 +479,15 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * Make this range axis the current focus. Has not effect the plot has
-   * multi-axis set to true. Otherwise, this axis becomes the primary left
-   * axis displayed.
+   * multi-axis set to true. Otherwise, this axis becomes the primary left axis
+   * displayed.
    */
   @Export
   public void focus() {
     getAxisPanel().setValueAxis(this);
     plot.damageAxes();
     getAxisPanel().getParent().layout();
-    ((DefaultXYPlot)plot).redraw(true);
+    ((DefaultXYPlot) plot).redraw(true);
   }
 
   /**
@@ -479,7 +506,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setView(View view) {
     this.view = view;
   }
-  
+
   @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
     this.visRangeMin = visRangeMin;
@@ -499,25 +526,25 @@ public class RangeAxis extends ValueAxis implements Exportable {
     ticks = null;
   }
 
-  
   public double userToData(double userValue) {
-    return adjustedRangeMin + 
-        ((adjustedRangeMax - adjustedRangeMin) * userValue);
+    return adjustedRangeMin + ((adjustedRangeMax - adjustedRangeMin)
+        * userValue);
   }
 
   /**
-   * Calculates the percentage difference from value v1 to value v2.  For example,
-   * if v1 = 10 and v2 = 15, then the % difference is 50% ( 15.0/10.0 - 1.0 )
+   * Calculates the percentage difference from value v1 to value v2.  For
+   * example, if v1 = 10 and v2 = 15, then the % difference is 50% ( 15.0/10.0 -
+   * 1.0 )
    */
   public static double calcPrctDiff(double v1, double v2) {
     ArgChecker.isNonNegative(v1, "v1");
     ArgChecker.isNonNegative(v2, "v2");
     return (v2 / v1) - 1.0;
   }
-  
+
   /**
-   * Adjusts {@link #absRangeMin} and {@link #absRangeMax} to the smallest interval
-   * that fully encompasses 
+   * Adjusts {@link #absRangeMin} and {@link #absRangeMax} to the smallest
+   * interval that fully encompasses
    */
   private void adjustAbsRanges() {
     this.setAbsRange(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -529,14 +556,14 @@ public class RangeAxis extends ValueAxis implements Exportable {
       }
     }
   }
-  
+
   /**
-   * Sets {@link #absRangeMin} and {@link #absRangeMax} to the specified values.
+   * Sets {@link #absRangeMin} and {@link #absRangeMax} to the specified
+   * values.
    */
   private void setAbsRange(double absRangeMin, double absRangeMax) {
     ticks = null;
     this.absRangeMin = absRangeMin;
     this.absRangeMax = absRangeMax;
   }
-
 }
