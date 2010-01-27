@@ -134,7 +134,7 @@ public class FlashCanvas extends Canvas {
     FlashResources flashResources = GWT.create(FlashResources.class);
 
     String swfUrl = Chronoscope
-        .getURL("flcanvas.swf");//flashResources.flashCanvas().getUrl());
+        .getURL(GWT.getModuleBaseURL()+"/flcanvas.swf");//flashResources.flashCanvas().getUrl());
 
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
