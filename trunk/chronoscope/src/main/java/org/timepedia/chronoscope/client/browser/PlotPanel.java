@@ -1,11 +1,13 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowResizeListener;
+//import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
@@ -34,7 +36,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class PlotPanel extends Widget implements ViewReadyCallback,
-    WindowResizeListener, SafariKeyboardConstants {
+  ResizeHandler, SafariKeyboardConstants {
 
   private ChartEventHandler chartEventHandler;
 
@@ -169,14 +171,15 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   /**
-   * Note: Window/Chart/View resizing doesn't work right now.
+   * FIXME - Window/Chart/View resizing doesn't work right now.
    */
-  public void onWindowResized(int width, int height) {
+  public void onResize(ResizeEvent resize) { // int width, int height) {
     if (view != null) {
       Element elem = ((DOMView) view).getElement();
       if (elem != null) {
-        view.resize(DOM.getElementPropertyInt(elem, "clientWidth"),
-            DOM.getElementPropertyInt(elem, "clientHeight"));
+        view.resize(resize.getWidth(), resize.getHeight());
+        // DOM.getElementPropertyInt(elem, "clientWidth"),
+        // DOM.getElementPropertyInt(elem, "clientHeight"));
       }
     }
   }
@@ -251,7 +254,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private void sinkEvents() {
     chartEventHandler.sinkEvents(this);
-    Window.addWindowResizeListener(this);
+    Window.addResizeHandler(this);
     disableContextMenu(getElement());
   }
 }
