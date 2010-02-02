@@ -29,7 +29,7 @@ public class ThemeStyleInjector  {
    * Resources used.
    */
   public interface Resources extends ClientBundle {
-//    Resources INSTANCE = GWT.create(Resources.class);
+    // Resources INSTANCE = GWT.create(Resources.class);
 
     @Source("corner.png")
     DataResource corner();
@@ -59,7 +59,7 @@ public class ThemeStyleInjector  {
       case STANDARD:
       case CHROME:
       default:
-//      StyleInjector.injectStylesheet(Resources.INSTANCE.css().getText());
+      // StyleInjector.injectStylesheet(Resources.INSTANCE.css().getText());
     }
   }
 }

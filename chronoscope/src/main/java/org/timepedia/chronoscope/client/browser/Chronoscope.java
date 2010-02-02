@@ -84,7 +84,7 @@ public class Chronoscope
         bind(ComponentFactory.class).to(ChronoscopeComponentFactory.class);
         bind(URLResolver.class).to(NopURLResolver.class);
       } catch (Exception e) {
-        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        e.printStackTrace();
       }
     }
   }
@@ -337,6 +337,7 @@ public class Chronoscope
     return "chart" + globalChartNumber++;
   }
 
+  /* TODO - deprecate */
   public static String getFontBookServiceEndpoint() {
     return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
         + "fr" : fontBookServiceEndpoint;

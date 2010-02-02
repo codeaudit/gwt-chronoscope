@@ -6,11 +6,11 @@
   <inherits name='com.google.gwt.i18n.I18N'/>
   <inherits name="com.google.gwt.inject.Inject"/>
   <inherits name="org.timepedia.chronoscope.ChronoscopeAPI"/>
-  <inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
+  <!-- inherits name="com.google.gwt.user.theme.chrome.Chrome"/ -->
    
  <inherits name='org.timepedia.exporter.Exporter'/>
- 
-   
+
+
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
     if(window.location.href.indexOf("_force_flash") != -1) return "force";      
@@ -49,6 +49,12 @@
     <when-property-is name="hasflash" value="yes"/>
   </replace-with>
 
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="ie8"/>
+    <when-property-is name="hasflash" value="yes"/>
+  </replace-with>       <!-- TODO - test in ie8 -->
 
   <replace-with
       class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
@@ -71,6 +77,6 @@
   </replace-with>
 
 
-  <add-linker name="xs"/>
 
+  <stylesheet src="theme/chrome/chrome.css" />
 </module>
