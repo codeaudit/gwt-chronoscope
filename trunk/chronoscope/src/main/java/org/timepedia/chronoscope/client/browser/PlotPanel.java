@@ -155,13 +155,14 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * other view-centric operations.
    */
   public void onViewReady(View view) {
-    plot.init(view);
-    
     // configure chart
     chart.setView(view);
+    chart.init();
+    plot.init(view);
+    
+  
     
     viewReady = true;
-    chart.init();
     HistoryManager.putChart(id, chart);
     chart.redraw();
 

@@ -1322,6 +1322,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
 
+    
     initAuxiliaryPanel(bottomPanel, view);
     rangePanel.setCreateNewAxesOnInit(forceNewRangeAxes);
     initAuxiliaryPanel(rangePanel, view);
