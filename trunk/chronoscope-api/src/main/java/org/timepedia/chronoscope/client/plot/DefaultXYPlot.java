@@ -366,6 +366,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     return dds.currMipMap.getTuple(pointIndex).getRange0();
   }
 
+  
+  public double getDataCoord(int datasetIndex, int pointIndex, int dim) {
+     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
+     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
+   }
+  
   @Export
   public Interval getDomain() {
     return this.visDomain;

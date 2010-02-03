@@ -168,7 +168,13 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * resolution level.
    */
   double getDataY(int datasetIndex, int pointIndex);
-
+  
+  /**
+    * Retrieve N'th coord value for a given dataset and point at current visible
+    * resolution level.
+    */
+   double getDataCoord(int datasetIndex, int pointIndex, int dim);
+  
   /**
    * Returns a line segment representing the portion of the dataset domain
    * that's currently visible within this plot.

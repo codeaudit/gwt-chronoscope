@@ -202,6 +202,7 @@ public class DatasetLegendPanel extends AbstractPanel
     return estMaxWidths;
   }
 
+  
   /**
    * Generates the dataset label for a given point on a dataset.  The point
    * index is needed in order to determine the range value to be displayed for
@@ -224,7 +225,9 @@ public class DatasetLegendPanel extends AbstractPanel
 
     final boolean doShowRangeValue = (pointIdx > -1);
     if (doShowRangeValue) {
-      double yData = plot.calcDisplayY(datasetIdx, pointIdx, dimension);
+      double yData = rangeAxis.isCalcRangeAsPercent() ? plot
+          .calcDisplayY(datasetIdx, pointIdx, dimension)
+          : plot.getDataCoord(datasetIdx, pointIdx, dimension);
       lbl += " (" + rangeAxis.getFormattedLabel(yData) + ")";
     }
     return lbl;
