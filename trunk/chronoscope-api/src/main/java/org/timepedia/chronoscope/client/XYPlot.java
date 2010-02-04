@@ -7,6 +7,7 @@ import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.event.PlotChangedHandler;
 import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
@@ -52,6 +53,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    */
   void addOverlay(Overlay overlay);
 
+  /**
+   * Add a callback for PlotChangedEvents.
+   */
+  @Export("addChangeHandler")
+  ExportableHandlerRegistration addPlotChangedHandler(PlotChangedHandler handler);
+  
   /**
    * Add a callback for PlotFocusEvents.
    */
