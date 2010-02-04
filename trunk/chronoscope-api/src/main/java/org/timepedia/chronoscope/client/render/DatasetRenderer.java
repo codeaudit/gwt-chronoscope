@@ -4,7 +4,6 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -51,7 +50,6 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * etc).
    */
   public abstract void beginPoints(Layer layer, RenderState renderState);
-
 
   /**
    * Calculates the pixel width of the legend icon.
@@ -154,10 +152,19 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     isGssInitialized = true;
   }
 
+  public GssProperties getLegendProperties(int dim, RenderState rs) {
+    if (plot.getFocus() != null
+        && plot.getFocus().getDatasetIndex() != this.datasetIndex) {
+      return gssDisabledLineProps;
+    } else {
+      return gssLineProps;
+    }
+  }
+
   public GssProperties getCurveProperties() {
     return gssLineProps;
   }
-  
+
   public int getNumPasses(Dataset dataset) {
     return 1;
   }
@@ -184,5 +191,9 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   public double getRangeValue(Tuple2D tuple, int dimension) {
     return tuple.getRange0();
+  }
+
+  public int[] getPassOrder(Dataset<T> dataSet) {
+    return new int[]{0};
   }
 }

@@ -64,6 +64,7 @@ public class GssStylesheetGssContext extends DefaultGssContext {
     });
     for (GssRuleMatch match : matched) {
       applyProperties(match.getProperties(), props);
+      props.gssSupplied = true;
     }
     return props;
   }

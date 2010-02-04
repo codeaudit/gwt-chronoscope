@@ -486,4 +486,11 @@ public class GssPropertyManager {
       "Visibility of guidelines on markers",
       "marker.foo guideline { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;
+  
+  public static final GssElementType GSS_AXISLEGEND_TYPE = new GssElementType("axislegend",
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
+      "Visibility of axis legend",
+      "axislegend { visibility: hidden }")
+      ;
 }
