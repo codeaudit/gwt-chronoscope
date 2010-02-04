@@ -25,6 +25,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.event.PlotChangedEvent;
+import org.timepedia.chronoscope.client.event.PlotChangedHandler;
 import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusEvent;
 import org.timepedia.chronoscope.client.event.PlotFocusHandler;
@@ -32,12 +34,14 @@ import org.timepedia.chronoscope.client.event.PlotHoverEvent;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
+import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
+import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.render.StringSizer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
@@ -70,12 +74,6 @@ import java.util.List;
 @ExportPackage("chronoscope")
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
-
-  private int hoverX;
-
-  private int hoverY;
-
-  private boolean multiaxis = ChronoscopeOptions.getDefaultMultiaxisMode();
 
   private class ExportableHandlerManager extends HandlerManager {
 
@@ -146,7 +144,19 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public Interval visDomain, lastVisDomain, widestDomain;
 
+  protected View view;
+
   int plotNumber = 0;
+
+  boolean firstDraw = true;
+
+  private int hoverX;
+
+  private int hoverY;
+
+  private boolean multiaxis = ChronoscopeOptions.getDefaultMultiaxisMode();
+
+  private GssProperties crosshairProperties;
 
   private PortableTimerTask animationContinuation;
 
@@ -189,12 +199,14 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private StringSizer stringSizer;
 
-  protected View view;
-
   private double visibleDomainMax;
 
   private ExportableHandlerManager handlerManager
       = new ExportableHandlerManager(this);
+
+  private String lastCrosshairDateFormat = null;
+
+  private DateFormatter crosshairFmt = null;
 
   public DefaultXYPlot() {
     overlays = new ArrayList<Overlay>();
@@ -217,6 +229,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     //TODO: should we really redraw here? Kinda expensive if you want to bulk
     // add hundreds of overlays
     redraw(true);
+  }
+  
+  @Export("addChangeHandler")
+  public ExportableHandlerRegistration addPlotChangedHandler(
+      PlotChangedHandler handler) {
+    return handlerManager.addExportableHandler(PlotChangedEvent.TYPE, handler);
   }
 
   @Export("addFocusHandler")
@@ -344,6 +362,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotRenderer.getDrawableDataset(datasetIndex).currMipMap.getLevel();
   }
 
+  
+  public double getDataCoord(int datasetIndex, int pointIndex, int dim) {
+     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
+     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
+   }
+
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
     return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
   }
@@ -365,12 +389,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
     return dds.currMipMap.getTuple(pointIndex).getRange0();
   }
-
-  
-  public double getDataCoord(int datasetIndex, int pointIndex, int dim) {
-     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
-     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
-   }
   
   @Export
   public Interval getDomain() {
@@ -464,6 +482,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public boolean isAnimating() {
     return isAnimating;
+  }
+
+  public boolean isMultiaxis() {
+    return multiaxis;
   }
 
   public boolean isOverviewEnabled() {
@@ -665,8 +687,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotBounds.y + rangeToScreenY(rangeY, datasetIndex);
   }
 
-  boolean firstDraw = true;
-
   @Export
   public void redraw() {
     redraw(firstDraw);
@@ -733,43 +753,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.flipCanvas();
   }
 
-  private String lastCrosshairDateFormat = null;
-
-  private DateFormatter crosshairFmt = null;
-
-  private void drawCrossHairs(Layer hoverLayer) {
-    if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
-      hoverLayer.save();
-      hoverLayer.setFillColor(Color.BLACK);
-      hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
-      if (ChronoscopeOptions.isCrosshairLabels()) {
-        if (ChronoscopeOptions.getCrossHairLabels()
-            != lastCrosshairDateFormat) {
-          lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
-          crosshairFmt = DateFormatterFactory.getInstance()
-              .getDateFormatter(lastCrosshairDateFormat);
-        }
-        hoverLayer.setStrokeColor(Color.BLACK);
-        int hx = hoverX;
-        double dx = windowXtoDomain(hoverX + plotBounds.x);
-        String label = crosshairFmt.format(dx);
-        hx += dx < getDomain().midpoint() ? 1.0
-            : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
-
-        hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
-            Cursor.DEFAULT);
-      }
-      hoverLayer.restore();
-    }
-
-    if (ChronoscopeOptions.isHorizontalCrosshairEnabled() && hoverY > -1) {
-      hoverLayer.save();
-      hoverLayer.setFillColor(Color.BLACK);
-      hoverLayer.fillRect(0, hoverY, hoverLayer.getBounds().width, 1);
-      hoverLayer.restore();
-    }
-  }
-
   @Export
   public void reloadStyles() {
     bottomPanel.clearDrawCaches();
@@ -780,6 +763,14 @@ public class DefaultXYPlot<T extends Tuple2D>
     visDomain = plotRenderer.calcWidestPlotDomain();
     tmpPlotDomain.copyTo(visDomain);
     overlays = oldOverlays;
+    crosshairProperties = view.getGssProperties(new GssElementImpl("crosshair", null), "");
+    if (crosshairProperties.visible) {
+      ChronoscopeOptions.setVerticalCrosshairEnabled(true);
+      if (crosshairProperties.dateFormat != null) {
+       ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
+       lastCrosshairDateFormat = null;
+      }
+    }
     redraw(true);
   }
 
@@ -797,6 +788,8 @@ public class DefaultXYPlot<T extends Tuple2D>
         continuation);
   }
 
+  PortableTimer changeTimer = null;
+
   @Export
   public void scrollPixels(int amt) {
     final double domainAmt = (double) amt / plotBounds.width * visDomain
@@ -812,6 +805,17 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     movePlotDomain(newDomainOrigin);
     fireMoveEvent(PlotMovedEvent.MoveType.DRAGGED);
+    if (changeTimer != null) {
+      changeTimer.cancelTimer();
+    }
+    changeTimer = view.createTimer(new PortableTimerTask() {
+      public void run(PortableTimer timer) {
+        changeTimer = null;
+        fireChangeEvent();
+      }
+    });
+    changeTimer.schedule(1000);
+
     redraw();
   }
 
@@ -820,24 +824,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   @Export
-  public void setMultiaxis(boolean enabled) {
-    this.multiaxis = enabled;
-    reloadStyles();
-  }
-
-  @Export
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
     rangePanel.getRangeAxes()[dataset].setAutoZoomVisibleRange(autoZoom);
-  }
-
-  @Export
-  public void setVisibleRangeMin(int dataset, double visRangeMin) {
-    rangePanel.getRangeAxes()[dataset].setVisibleRangeMin(visRangeMin);
-  }
-
-  @Export
-  public void setVisibleRangeMax(int dataset, double visRangeMax) {
-    rangePanel.getRangeAxes()[dataset].setVisibleRangeMax(visRangeMax);
   }  
 
   public void setDatasetRenderer(int datasetIndex,
@@ -959,6 +947,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   @Export
+  public void setMultiaxis(boolean enabled) {
+    this.multiaxis = enabled;
+    reloadStyles();
+  }
+
+  @Export
   public void setOverviewEnabled(boolean overviewEnabled) {
     bottomPanel.setOverviewEnabled(overviewEnabled);
   }
@@ -977,6 +971,21 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.setEnabled(enabled);
   }
 
+  @Export
+  public void setVisibleRangeMax(int dataset, double visRangeMax) {
+    rangePanel.getRangeAxes()[dataset].setVisibleRangeMax(visRangeMax);
+  }
+
+  @Export
+  public void setVisibleRangeMin(int dataset, double visRangeMin) {
+    rangePanel.getRangeAxes()[dataset].setVisibleRangeMin(visRangeMin);
+  }
+
+  public double windowXtoDomain(double x) {
+    return bottomPanel.getDomainAxisPanel().getValueAxis()
+        .userToData(windowXtoUser(x));
+  }
+
   public double windowXtoUser(double x) {
     return (x - plotBounds.x) / plotBounds.width;
   }
@@ -989,8 +998,17 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(newOrigin, newdomain, PlotMovedEvent.MoveType.ZOOMED);
   }
 
-  public boolean isMultiaxis() {
-    return multiaxis;
+  /**
+   * Methods which do not depend on any visual state of the chart being
+   * initialized first. Can be moved early in Plot initialization. Put stuff
+   * here that doesn't depend on the axes or layers being initialized.
+   */
+  protected void initViewIndependent(Datasets<T> datasets) {
+    maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
+        / datasets.size();
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+        datasets);
+    resetHoverPoints(datasets.size());
   }
 
   void drawPlot() {
@@ -1079,6 +1097,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           isAnimating = false;
           animationTimer = null;
           redraw(true);
+          fireChangeEvent();
         } else {
           lastFrame = true;
           plot.cancelHighlight();
@@ -1102,6 +1121,39 @@ public class DefaultXYPlot<T extends Tuple2D>
     bottomPanel.clearDrawCaches();
     topPanel.clearDrawCaches();
     rangePanel.clearDrawCaches();
+  }
+
+  private void drawCrossHairs(Layer hoverLayer) {
+    if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
+      hoverLayer.save();
+      hoverLayer.setFillColor(Color.BLACK);
+      hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
+      if (ChronoscopeOptions.isCrosshairLabels()) {
+        if (ChronoscopeOptions.getCrossHairLabels()
+            != lastCrosshairDateFormat) {
+          lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
+          crosshairFmt = DateFormatterFactory.getInstance()
+              .getDateFormatter(lastCrosshairDateFormat);
+        }
+        hoverLayer.setStrokeColor(Color.BLACK);
+        int hx = hoverX;
+        double dx = windowXtoDomain(hoverX + plotBounds.x);
+        String label = crosshairFmt.format(dx);
+        hx += dx < getDomain().midpoint() ? 1.0
+            : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
+
+        hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
+            Cursor.DEFAULT);
+      }
+      hoverLayer.restore();
+    }
+
+    if (ChronoscopeOptions.isHorizontalCrosshairEnabled() && hoverY > -1) {
+      hoverLayer.save();
+      hoverLayer.setFillColor(Color.BLACK);
+      hoverLayer.fillRect(0, hoverY, hoverLayer.getBounds().width, 1);
+      hoverLayer.restore();
+    }
   }
 
   /**
@@ -1271,6 +1323,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     np.pointIndex = nearestHoverPt;
   }
 
+  private void fireChangeEvent() {
+    handlerManager.fireEvent(new PlotChangedEvent(this, getDomain()));
+  }
+
   private void fireFocusEvent(int datasetIndex, int pointIndex) {
     handlerManager
         .fireEvent(new PlotFocusEvent(this, pointIndex, datasetIndex));
@@ -1380,19 +1436,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     topPanel.initLayer();
     rangePanel.initLayer();
     bottomPanel.initLayer();
-  }
-
-  /**
-   * Methods which do not depend on any visual state of the chart being
-   * initialized first. Can be moved early in Plot initialization. Put stuff
-   * here that doesn't depend on the axes or layers being initialized.
-   */
-  protected void initViewIndependent(Datasets<T> datasets) {
-    maxDrawableDatapoints = ChronoscopeOptions.getMaxDynamicDatapoints()
-        / datasets.size();
-    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
-        datasets);
-    resetHoverPoints(datasets.size());
   }
 
   /**
@@ -1619,11 +1662,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     ensureVisible(dataX, dataY, null);
     setFocusAndNotifyView(focusDatasetIdx, focusPointIdx, focusDim);
     redraw();
-  }
-
-  public double windowXtoDomain(double x) {
-    return bottomPanel.getDomainAxisPanel().getValueAxis()
-        .userToData(windowXtoUser(x));
   }
 
   private double windowYtoRange(int y, int datasetIndex) {

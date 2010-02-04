@@ -279,6 +279,16 @@ public class GssPropertyManager {
     }
   };
 
+  public static final GssPropertyType GSS_NUMBER_FORMAT_PROPERTY
+      = new GssPropertyType("number-format", "", GssPropertyType.TypeUnits.STRING,
+      "Specifies the number format for values displayed") {
+
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.dateFormat = pval;
+    }
+  };
+  
   // NOTE "em" not supported, eg line-thickness:.1em; is invalid
   public static final GssPropertyType GSS_LINE_THICKNESS_PROPERTY
       = new GssPropertyType("line-thickness", "", GssPropertyType.TypeUnits.PX,
@@ -462,8 +472,15 @@ public class GssPropertyManager {
       "A highlighting marker that stretches along the X axis.",
       "domainmarker { background-color: green; opacity: 0.3 } /* Make the highlight green and 70% transparent */")
       ;
+  
+   public static final GssElementType GSS_CROSSHAIR_TYPE = new GssElementType("guideline",
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_VISIBILITY_PROPERTY, GSS_NUMBER_FORMAT_PROPERTY, GSS_DATE_FORMAT_PROPERTY},
+      "Visibility of crosshair",
+      "crosshair { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
+      ;
 
-  public static final GssElementType GSS_GUIDELINE_TYPE = new GssElementType("guideline",
+  public static final GssElementType GSS_GUIDELINE_TYPE = new GssElementType("crosshair",
       new GssElementType[]{GSS_MARKER_TYPE},
       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_VISIBILITY_PROPERTY},
       "Visibility of guidelines on markers",
