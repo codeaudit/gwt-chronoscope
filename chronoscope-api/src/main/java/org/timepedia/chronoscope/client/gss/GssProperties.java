@@ -55,6 +55,8 @@ public class GssProperties {
 
   public String group = null;
   
+  public boolean gssSupplied = false;
+  
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;

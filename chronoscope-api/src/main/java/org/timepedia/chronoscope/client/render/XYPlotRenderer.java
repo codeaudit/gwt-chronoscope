@@ -150,14 +150,16 @@ public class XYPlotRenderer<T extends Tuple2D> {
     final double refY = calcReferenceY(rangeAxis, dds);
 
     int methodCallCount = 0;
-    for (int pass = 0; pass < renderer.getNumPasses(dds.dataset); pass++) {
+    int[] passOrder = renderer.getPassOrder(dataSet);
+    
+    for (int pass : passOrder) {
       renderState
               .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
-
+      renderState.setPassNumber(pass);
+     
       renderer.beginCurve(layer, renderState);
       
       Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
-      renderState.setPassNumber(pass);
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
         Tuple2D dataPt = tupleItr.next();
         renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);

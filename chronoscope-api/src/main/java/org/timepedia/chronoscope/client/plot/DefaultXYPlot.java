@@ -43,6 +43,7 @@ import org.timepedia.chronoscope.client.render.DrawableDataset;
 import org.timepedia.chronoscope.client.render.GssBackground;
 import org.timepedia.chronoscope.client.render.GssElementImpl;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+import org.timepedia.chronoscope.client.render.RenderState;
 import org.timepedia.chronoscope.client.render.StringSizer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
@@ -230,7 +231,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // add hundreds of overlays
     redraw(true);
   }
-  
+
   @Export("addChangeHandler")
   public ExportableHandlerRegistration addPlotChangedHandler(
       PlotChangedHandler handler) {
@@ -272,7 +273,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   public double calcDisplayY(int datasetIdx, int pointIdx, int dimension) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIdx);
     RangeAxis ra = getRangeAxis(datasetIdx);
-    double y = dds.getRenderer().getRangeValue(dds.currMipMap.getTuple(pointIdx), dimension);
+    double y = dds.getRenderer()
+        .getRangeValue(dds.currMipMap.getTuple(pointIdx), dimension);
 
     if (ra.isCalcRangeAsPercent()) {
       double refY = plotRenderer.calcReferenceY(ra, dds);
@@ -362,11 +364,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotRenderer.getDrawableDataset(datasetIndex).currMipMap.getLevel();
   }
 
-  
   public double getDataCoord(int datasetIndex, int pointIndex, int dim) {
-     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
-     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
-   }
+    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
+    return dds.currMipMap.getTuple(pointIndex).getRange(dim);
+  }
 
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
     return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
@@ -389,7 +390,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
     return dds.currMipMap.getTuple(pointIndex).getRange0();
   }
-  
+
   @Export
   public Interval getDomain() {
     return this.visDomain;
@@ -410,7 +411,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Layer getHoverLayer() {
-    return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
+//    return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
+    return hoverLayer;
   }
 
   public int[] getHoverPoints() {
@@ -716,6 +718,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (isAnimating) {
       hoverLayer.save();
       hoverLayer.clear();
+      hoverLayer.clearTextLayer("crosshair");
       hoverLayer.restore();
     } else {
       plotRenderer.drawHoverPoints(hoverLayer);
@@ -763,12 +766,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     visDomain = plotRenderer.calcWidestPlotDomain();
     tmpPlotDomain.copyTo(visDomain);
     overlays = oldOverlays;
-    crosshairProperties = view.getGssProperties(new GssElementImpl("crosshair", null), "");
+    crosshairProperties = view
+        .getGssProperties(new GssElementImpl("crosshair", null), "");
     if (crosshairProperties.visible) {
       ChronoscopeOptions.setVerticalCrosshairEnabled(true);
       if (crosshairProperties.dateFormat != null) {
-       ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
-       lastCrosshairDateFormat = null;
+        ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
+        lastCrosshairDateFormat = null;
       }
     }
     redraw(true);
@@ -826,7 +830,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void setAutoZoomVisibleRange(int dataset, boolean autoZoom) {
     rangePanel.getRangeAxes()[dataset].setAutoZoomVisibleRange(autoZoom);
-  }  
+  }
 
   public void setDatasetRenderer(int datasetIndex,
       DatasetRenderer<T> renderer) {
@@ -1126,24 +1130,54 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void drawCrossHairs(Layer hoverLayer) {
     if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
       hoverLayer.save();
-      hoverLayer.setFillColor(Color.BLACK);
-      hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
-      if (ChronoscopeOptions.isCrosshairLabels()) {
-        if (ChronoscopeOptions.getCrossHairLabels()
-            != lastCrosshairDateFormat) {
-          lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
-          crosshairFmt = DateFormatterFactory.getInstance()
-              .getDateFormatter(lastCrosshairDateFormat);
-        }
-        hoverLayer.setStrokeColor(Color.BLACK);
-        int hx = hoverX;
-        double dx = windowXtoDomain(hoverX + plotBounds.x);
-        String label = crosshairFmt.format(dx);
-        hx += dx < getDomain().midpoint() ? 1.0
-            : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
+      hoverLayer.clearTextLayer("crosshair");
+      hoverLayer.setFillColor(crosshairProperties.color);
+      if (hoverX > -1) {
+        hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
+        if (ChronoscopeOptions.isCrosshairLabels()) {
+          if (ChronoscopeOptions.getCrossHairLabels()
+              != lastCrosshairDateFormat) {
+            lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
+            crosshairFmt = DateFormatterFactory.getInstance()
+                .getDateFormatter(lastCrosshairDateFormat);
+          }
+          hoverLayer.setStrokeColor(Color.BLACK);
+          int hx = hoverX;
+          double dx = windowXtoDomain(hoverX + plotBounds.x);
+          String label = crosshairFmt.format(dx);
+          hx += dx < getDomain().midpoint() ? 1.0
+              : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
 
-        hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
-            Cursor.DEFAULT);
+          hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
+              Cursor.DEFAULT);
+          if (hoverPoints != null) {
+            for (int i = 0; i < hoverPoints.length; i++) {
+              int hoverPoint = hoverPoints[i];
+              if (hoverPoint > -1) {
+                Dataset d = getDatasets().get(i);
+                RangeAxis ra = getRangeAxis(i);
+                DatasetRenderer r = getDatasetRenderer(i);
+                for (int dim = 0; dim < r.getLegendEntries(d); dim++) {
+                  Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
+                  double realY = tuple.getRange(dim);
+                  double y = r.getRangeValue(tuple, dim);
+                  double dy = rangeToScreenY(y, i);
+                  String rLabel = ra.getFormattedLabel(realY);
+                  RenderState rs = new RenderState();
+                  rs.setPassNumber(dim);
+                  GssProperties props = r.getLegendProperties(dim, rs);
+                  hoverLayer.setStrokeColor(props.color);
+                  hx = hoverX + (int) (dx < getDomain().midpoint() ? 1.0
+                      : -1 - hoverLayer
+                          .stringWidth(rLabel, "Verdana", "", "9pt"));
+
+                  hoverLayer.drawText(hx, dy, rLabel, "Verdana", "", "9pt",
+                      "crosshair", Cursor.DEFAULT);
+                }
+              }
+            }
+          }
+        }
       }
       hoverLayer.restore();
     }
@@ -1364,6 +1398,22 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initViewIndependent(datasets);
 
+    GssProperties legendProps = view
+        .getGssProperties(new GssElementImpl("axislegend", null), "");
+    if (legendProps.gssSupplied) {
+      setLegendEnabled(legendProps.visible);
+    }
+
+    crosshairProperties = view
+        .getGssProperties(new GssElementImpl("crosshair", null), "");
+    if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
+      ChronoscopeOptions.setVerticalCrosshairEnabled(true);
+      if (crosshairProperties.dateFormat != null) {
+        ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
+        lastCrosshairDateFormat = null;
+      }
+    }
+
     if (stringSizer == null) {
       stringSizer = new StringSizer();
     }
@@ -1384,7 +1434,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
 
-    
     initAuxiliaryPanel(bottomPanel, view);
     rangePanel.setCreateNewAxesOnInit(forceNewRangeAxes);
     initAuxiliaryPanel(rangePanel, view);
