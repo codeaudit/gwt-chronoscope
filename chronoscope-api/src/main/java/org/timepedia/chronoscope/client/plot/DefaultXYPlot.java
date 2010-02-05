@@ -761,6 +761,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = visDomain.copy();
     init(view, false);
+    plotRenderer.sync();
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
     visDomain = plotRenderer.calcWidestPlotDomain();
