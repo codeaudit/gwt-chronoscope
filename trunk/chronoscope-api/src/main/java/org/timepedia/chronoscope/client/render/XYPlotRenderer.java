@@ -137,7 +137,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
       focusPoint = focus.getPointIndex();
     }
 
-    
     MipMap currMipMap = dds.currMipMap;
     final int domainStartIdx = dds.visDomainStartIndex;
     final int domainEndIdx = dds.visDomainEndIndex;
@@ -151,19 +150,19 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     int methodCallCount = 0;
     int[] passOrder = renderer.getPassOrder(dataSet);
-    
+
     for (int pass : passOrder) {
       renderState
-              .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
+          .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
       renderState.setPassNumber(pass);
-     
+
       renderer.beginCurve(layer, renderState);
-      
+
       Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
         Tuple2D dataPt = tupleItr.next();
         renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
-        
+
         if (calcRangeAsPercent) {
           LocalTuple tmpTuple = new LocalTuple();
           tmpTuple.setXY(dataPt.getDomain(),
@@ -182,8 +181,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
       tupleItr = currMipMap.getTupleIterator(domainStartIdx);
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
         Tuple2D dataPt = tupleItr.next();
-        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i &&
-        renderer.getFocusDimension(pass) == focus.getDatasetIndex());
+        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i
+            && renderer.getFocusDimension(pass) == focus.getDatasetIndex());
 
         if (calcRangeAsPercent) {
           LocalTuple tmpTuple = new LocalTuple();
@@ -302,7 +301,13 @@ public class XYPlotRenderer<T extends Tuple2D> {
     GssProperties seriesProp = view.getGssProperties(gssElem, "");
     DatasetRenderer<T> renderer = null;
 
-    if (!"auto".equals(seriesProp.display)) {
+    GssElement gssIdElem = new GssElementImpl("series", null,
+        dataset.getIdentifier());
+    GssProperties propsId = view.getGssProperties(gssIdElem, "");
+
+    if (propsId.gssSupplied && !"auto".equals(propsId.display)) {
+      renderer = this.datasetRendererMap.newDatasetRenderer(propsId.display);
+    } else if (seriesProp.gssSupplied && !"auto".equals(seriesProp.display)) {
       renderer = this.datasetRendererMap.newDatasetRenderer(seriesProp.display);
     } else {
       renderer = this.datasetRendererMap.get(dataset);
@@ -446,13 +451,19 @@ public class XYPlotRenderer<T extends Tuple2D> {
     for (DrawableDataset<T> dds : this.drawableDatasets) {
       if (!dds.getRenderer().isCustomInstalled()) {
 
+        GssElement gssIdElem = new GssElementImpl("series", null,
+            dds.dataset.getIdentifier());
         GssElement gssElem = new GssElementImpl("series", null, "s" + index);
         GssProperties props = view.getGssProperties(gssElem, "");
+        GssProperties propsId = view.getGssProperties(gssIdElem, "");
+
         String renderType = dds.dataset.getPreferredRenderer();
         if (renderType == null || renderType.equals("")) {
           renderType = "line";
         }
-        if (!"auto".equals(props.display)) {
+        if (!"auto".equals(propsId.display) && propsId.gssSupplied) {
+          renderType = propsId.display;
+        } else if (!"auto".equals(props.display) && props.gssSupplied) {
           renderType = props.display;
         }
         DatasetRenderer dr = datasetRendererMap.newDatasetRenderer(renderType);
@@ -469,6 +480,26 @@ public class XYPlotRenderer<T extends Tuple2D> {
     final int refYIndex = ra.isAutoZoomVisibleRange() ? dds.visDomainStartIndex
         : 0;
     return dds.getRenderer().getRange(dds.currMipMap.getTuple(refYIndex));
+  }
+
+  public void sync() {
+    Iterator<DrawableDataset<T>> dit = drawableDatasets.iterator();
+    ArrayList<Dataset> toRemove = new ArrayList<Dataset>();
+    while (dit.hasNext()) {
+      DrawableDataset dd = dit.next();
+      if (plot.getDatasets().indexOf(dd.dataset) < 0) {
+        toRemove.add(dd.dataset);
+      }
+    }
+    for (Dataset d : toRemove) {
+      removeDataset(d);
+    }
+    int where = drawableDatasets.size();
+    for (Dataset d : plot.getDatasets()) {
+      if (!drawableDatasets.contains(d)) {
+        addDataset(where++, d);
+      }
+    }
   }
 
   private static final class LocalTuple implements Tuple2D {
