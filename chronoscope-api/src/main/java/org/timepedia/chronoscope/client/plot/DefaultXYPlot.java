@@ -777,6 +777,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     redraw(true);
+    
   }
 
   @Export

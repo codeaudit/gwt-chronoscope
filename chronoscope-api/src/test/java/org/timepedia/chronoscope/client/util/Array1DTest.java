@@ -74,6 +74,9 @@ public class Array1DTest extends TestCase {
     public void exec(double[] data, int arrayLength) {
       result = 0;
       for (int i = 0; i < arrayLength; i++) {
+        if (Double.isNaN(data[i])) {
+          continue;
+        }
         result += data[i];
       }
     }
