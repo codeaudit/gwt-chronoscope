@@ -41,7 +41,7 @@ public class GssStyleElementGssContext extends BrowserGssContext
     for (int i = 0; i < nl.getLength(); i++) {
       Element e = (Element) nl.getItem(i);
       if ("text/gss".equals(e.getAttribute("type"))) {
-        gss.append(e.getInnerText());
+        gss.append(e.getInnerHTML());
       }
     }
 
