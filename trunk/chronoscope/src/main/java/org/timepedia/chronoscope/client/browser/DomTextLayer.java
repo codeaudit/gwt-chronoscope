@@ -87,7 +87,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       fontMetricsCache.put(metricsKey, rmt);
     }
     if (rmt.rfm == null) {
-      if (!Chronoscope.isFontBookRenderingEnabled()) {
+      if (true || !Chronoscope.isFontBookRenderingEnabled()) {
 
         double tx = x, ty = y;
         // needs better layout
@@ -130,7 +130,7 @@ public abstract class DomTextLayer extends AbstractLayer {
             // TODO: handle this error
           }
 
-          chart.reloadStyles();
+//          chart.reloadStyles();
 
           final Image img = new Image();
 

@@ -19,6 +19,9 @@ public class ExtremaArrayFunction implements ArrayFunction {
       
       for (int i = 0; i < arrayLength; i++) {
         double value = data[i];
+        if (Double.isNaN(value)) {
+          continue;
+        }
         min = Math.min(min, value);
         max = Math.max(max, value);
       }

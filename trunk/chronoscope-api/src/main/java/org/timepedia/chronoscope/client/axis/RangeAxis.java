@@ -51,7 +51,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
             .substring(Math.max(digStr.length() - intDigits, 0));
         int leftOver = Math.max(MAX_DIGITS - intDigits, 0);
         if (leftOver > 0) {
-          labelFormat += "." + "0#########".substring(leftOver);
+          labelFormat += "." + "0#########".substring(10-leftOver);
         }
         scientificNotationOn = false;
       } else {

@@ -21,6 +21,9 @@ public class MinIntervalArrayFunction implements ArrayFunction {
       double prevValue = data[0];
       for (int i = 1; i < arrayLength; i++) {
         double currValue = data[i];
+        if (Double.isNaN(currValue)) {
+          continue;
+        }
         min = Math.min(min, Math.abs(currValue - prevValue));
         prevValue = currValue;
       }
