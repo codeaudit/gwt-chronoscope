@@ -496,7 +496,14 @@ public class XYPlotRenderer<T extends Tuple2D> {
     }
     int where = drawableDatasets.size();
     for (Dataset d : plot.getDatasets()) {
-      if (!drawableDatasets.contains(d)) {
+      boolean found = false;
+      for (DrawableDataset dd : drawableDatasets) {
+        if (dd.dataset == d) {
+          found = true;
+          break;
+        }
+      }
+       if (!found) {
         addDataset(where++, d);
       }
     }
