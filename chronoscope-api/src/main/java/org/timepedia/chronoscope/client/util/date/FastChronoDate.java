@@ -176,7 +176,17 @@ public class FastChronoDate extends ChronoDate {
   public DayOfWeek getDayOfWeek() {
     return this.eraCalc.calcDayOfWeek(dateFields.year, dateFields.month, dateFields.day);
   }
-  
+
+  @Override
+  public int getDayOfYear() {
+    return this.eraCalc.calcDayOfYear(dateFields.year, dateFields.month, dateFields.day);
+  }
+
+  @Override
+  public int getWeekOfYear() {
+    return this.eraCalc.calcWeekOfYear(dateFields.year, dateFields.month, dateFields.day);
+  }
+
   @Override
   public int getDay() {
     return dateFields.day;
@@ -403,7 +413,12 @@ public class FastChronoDate extends ChronoDate {
       --df.year;
     }
   }
-  
+
+  @Override
+  public boolean isLeapYear() {
+    return eraCalc.isLeapYear(dateFields.year);
+  }
+
   private static final void log(Object msg) {
     System.out.println("FastChronoDate> " + msg);
   }

@@ -98,7 +98,8 @@ public class GregorianEraCalc extends EraCalc {
     int dayOfWeekIndex = MathUtil.mod(numDaysFromPeriodStart + 6, 7);
     return FastChronoDate.DAYS_OF_WEEK[dayOfWeekIndex];
   }
-  
+
+
   /**
    * Finds the largest year offset index whose asssociated  millisecond value is less
    * than or equal to <tt>ts</tt>.

@@ -68,9 +68,41 @@ public final class DefaultChronoDate extends ChronoDate {
   
   @Override
   public DayOfWeek getDayOfWeek() { // FIXME
-    throw new UnsupportedOperationException();
+    DayOfWeek dow = DayOfWeek.MONDAY;
+    switch(d.getDay()){
+      case 0: dow = DayOfWeek.SUNDAY; break;
+      case 1: dow = DayOfWeek.MONDAY; break;
+      case 2: dow = DayOfWeek.TUESDAY; break;
+      case 3: dow = DayOfWeek.WEDNESDAY; break;
+      case 4: dow = DayOfWeek.THURSDAY; break;
+      case 5: dow = DayOfWeek.FRIDAY; break;
+      case 6: dow = DayOfWeek.SATURDAY; break;
+    }
+    return dow;
   }
-  
+
+  @Override
+  public int getDayOfYear() {
+    int[] ordMonth = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    int[] ordMonthLeap = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+
+    int ordinal = isLeapYear() ? ordMonthLeap[this.getMonth()] : ordMonth[this.getMonth()];
+
+    return ordinal += this.getDay();
+  }
+
+  @Override
+  public int getWeekOfYear() {
+    int daysInYear = isLeapYear()? 366 : 365;
+    int ordinal = getDayOfYear();
+    int weekday = isoWeekday(getDayOfWeek());
+    int week =  (ordinal - isoWeekday(getDayOfWeek()) + 10)/7;
+    if (53 == week) { // check that it's not in W1 of year++
+      if ((daysInYear - ordinal) < (4 - weekday)) week = 1;
+    } else if (0 == week) week = 53;  // W0 => W53 of year--
+    return week;
+  }
+
   @Override
   public int getDay() {
     return d.getDate();
@@ -189,6 +221,12 @@ public final class DefaultChronoDate extends ChronoDate {
   @Override
   public String toString() {
     return this.d.toString();
+  }
+
+  @Override
+  public boolean isLeapYear() {
+    int year = this.getYear();
+    return  (0 == year % 4) && (0 != year % 100) || (0 == year % 400);
   }
 
 }

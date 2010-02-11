@@ -31,6 +31,23 @@ public abstract class ChronoDate {
     return get(new Date().getTime());
   }
 
+  public abstract boolean isLeapYear();
+
+  public static int isoWeekday(DayOfWeek weekday) { 
+    int dow = 0;
+    switch(weekday) {
+      case MONDAY: dow = 1; break;
+      case TUESDAY: dow = 2; break;
+      case WEDNESDAY: dow = 3; break;
+      case THURSDAY: dow = 4; break;
+      case FRIDAY: dow = 5; break;
+      case SATURDAY: dow = 6; break;
+      case SUNDAY: dow = 7; break;
+    }
+
+    return dow;
+  }
+
   /**
    * Adds the specified number of time units to this date. Implementations of
    * this method are expected to handle "rollover" scenarios, where adding
@@ -72,6 +89,8 @@ public abstract class ChronoDate {
         return getYear();
       case MONTH:
         return getMonth();
+      case WEEK:
+        return getWeekOfYear();
       case DAY:
         return getDay();
       case HOUR:
@@ -109,11 +128,18 @@ public abstract class ChronoDate {
   public abstract int getSecond();
 
   /**
-   * Analagous to <tt>java.util.Date.getTime()</tt>.
+   * Analogous to <tt>java.util.Date.getTime()</tt>.
    */
   public abstract double getTime();
 
   public abstract int getYear();
+
+  /**
+   *  @return ordinal day (1-366)
+   */
+  public abstract int getDayOfYear();
+
+  public abstract int getWeekOfYear();
 
   /**
    * Sets the constituent components of this date via method chaining. For
