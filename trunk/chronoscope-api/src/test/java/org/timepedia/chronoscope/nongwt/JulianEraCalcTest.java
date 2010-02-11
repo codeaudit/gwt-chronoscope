@@ -40,11 +40,17 @@ public final class JulianEraCalcTest extends EraCalcTest {
     testCalcDayOfWeek(eraCalc, -8000, -7950);
     testCalcDayOfWeek(eraCalc, -1000050, -999950);
   }
-  
+
+  public void testCalcWeekOfYear() {
+    EraCalc eraCalc = getEraCalc();
+
+    // TODO - test week of year for Julian 
+    // testCalcWeekOfYear(eraCalc);
+  }
+
   public void testCalcYearTimestamp() {
     EraCalc eraCalc = getEraCalc();
     testCalcYearTimestamp(eraCalc, -2000, 1581);
-    testCalcYearTimestamp(eraCalc, -10500, -9500);
     testCalcYearTimestamp(eraCalc, -10500, -9500);
     testCalcYearTimestamp(eraCalc, -100500, -99500);
     testCalcYearTimestamp(eraCalc, -300000, -299000);

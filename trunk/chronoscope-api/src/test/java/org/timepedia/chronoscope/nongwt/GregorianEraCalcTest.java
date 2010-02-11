@@ -33,7 +33,12 @@ public class GregorianEraCalcTest extends EraCalcTest {
     GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
     super.testCalcDayOfWeek(eraCalc, eraCalc.getMinYear(), eraCalc.getMaxYear());
   }
-  
+
+  public void testCalcWeekOfYear() {
+    GregorianEraCalc eraCalc = (GregorianEraCalc)getEraCalc();
+    super.testCalcWeekOfYear(eraCalc);
+  }
+
   // Traditional formula for calculating the day-of-week for an arbitary
   // Gregorian date:
   private static final int[] ZELLAR_MONTHS = {11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

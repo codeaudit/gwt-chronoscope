@@ -112,6 +112,15 @@ public final class DateFormatHelper {
   }
 
   /**
+   * Formats year and week as "yyyy-" (e.g. "Aug-23").
+   *
+   * @param d - The date to be formatted
+   */
+  public String yearAndWeek(ChronoDate d) {
+    return d.getYear() + "'" + d.getWeekOfYear();
+  }
+
+  /**
    * Returns a 0-padded 2-digit number from the specified integer (e.g. pad(6)
    * returns "06", pad(59) returns "59").
    */

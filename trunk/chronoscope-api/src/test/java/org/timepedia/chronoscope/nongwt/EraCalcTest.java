@@ -50,6 +50,28 @@ public abstract class EraCalcTest extends TestCase {
       }
     }
   }
+
+  static void testCalcWeekOfYear(EraCalc eraCalc) {
+    // TODO - switch from spot to exhaustive testing
+
+    assertEquals(53, eraCalc.calcWeekOfYear(2005,  0, 1));
+    assertEquals(53, eraCalc.calcWeekOfYear(2005,  0, 2));
+    assertEquals(52, eraCalc.calcWeekOfYear(2005, 11, 31));
+    assertEquals( 1, eraCalc.calcWeekOfYear(2007,  0, 1));
+    assertEquals( 1, eraCalc.calcWeekOfYear(2008, 11, 31));
+    assertEquals(53, eraCalc.calcWeekOfYear(2009, 11, 31));
+    assertEquals(53, eraCalc.calcWeekOfYear(2010,  0,  3));
+
+    assertEquals( 1, eraCalc.calcWeekOfYear(2010,  0,  4));
+    assertEquals(52, eraCalc.calcWeekOfYear(2008, 11, 28));
+    assertEquals( 1, eraCalc.calcWeekOfYear(2008, 11, 29));
+
+    assertEquals(31, eraCalc.calcWeekOfYear(1953, 7,  2));
+
+    assertEquals(6, eraCalc.calcWeekOfYear(2010,  1,  11));
+
+  }
+
   
   static void testAssignYearField(EraCalc eraCalc, int minYear, int maxYear) {
     DateFields dateFields = new DateFields();

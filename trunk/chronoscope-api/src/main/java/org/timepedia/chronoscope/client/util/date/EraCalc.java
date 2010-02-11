@@ -39,13 +39,12 @@ public abstract class EraCalc {
    * calculations for the specified timestamp.
    */
   public static final EraCalc getByTimestamp(double ts) {
-    // TODO: reorder this so that the most likely year range is checked first.
-    if (ts < TS_1582_JAN_01) {
-      return JULIAN_ERA_CALC;
-    } else if (ts < TS_1583_JAN_01) {
+    if (ts >= TS_1583_JAN_01) {
+      return GREGORIAN_ERA_CALC;
+    } else if (ts >= TS_1582_JAN_01) {
       return Y1582_ERA_CALC;
     } else {
-      return GREGORIAN_ERA_CALC;
+      return JULIAN_ERA_CALC;
     }
   }
 
@@ -54,13 +53,12 @@ public abstract class EraCalc {
    * calculations for the specified year.
    */
   public static final EraCalc getByYear(int year) {
-    // TODO: reorder this so that the most likely year range is checked first.
-    if (year < 1582) {
-      return JULIAN_ERA_CALC;
-    } else if (year < 1583) {
+    if (year >= 1583) {
+      return GREGORIAN_ERA_CALC;
+    } else if (year >= 1582) {
       return Y1582_ERA_CALC;
     } else {
-      return GREGORIAN_ERA_CALC;
+      return JULIAN_ERA_CALC;
     }
   }
 
@@ -141,12 +139,46 @@ public abstract class EraCalc {
     this.monthOffsetsInDays = calcMonthOffsetsInDays(DAYS_IN_MONTH_NON_LEAPYEAR);
     this.monthOffsetsInDaysLeapYear = calcMonthOffsetsInDays(DAYS_IN_MONTH_LEAPYEAR);
   }
-  
+
+  public int calcDayOfYear(int year, int month, int day) {
+    int ordinal = isLeapYear(year) ?
+      this.monthOffsetsInDaysLeapYear[month] : this.monthOffsetsInDays[month];
+    return ordinal += day;
+  }
+
+  public static int isoWeekday(DayOfWeek weekday) {
+    int dow = 0;
+    switch(weekday) {
+      case MONDAY: dow = 1; break;
+      case TUESDAY: dow = 2; break;
+      case WEDNESDAY: dow = 3; break;
+      case THURSDAY: dow = 4; break;
+      case FRIDAY: dow = 5; break;
+      case SATURDAY: dow = 6; break;
+      case SUNDAY: dow = 7; break;
+    }
+    return dow;
+  }
+
   /**
    * Determines the day of the week (Sun, Mon, Tue, etc.) from the specified
    * date.
    */
   public abstract DayOfWeek calcDayOfWeek(int year, int month, int day);
+
+  /**
+   * Determines the ISO week of the year (1-53) from the specified date.
+   */
+  public int calcWeekOfYear(int year, int month, int day) {
+    int daysInYear = isLeapYear(year)? 366 : 365;
+    int ordinal = calcDayOfYear(year, month, day);
+    int weekday = isoWeekday(calcDayOfWeek(year, month, day));
+    int week = (ordinal - weekday + 10)/7;
+    if (53 == week) { // check that it's not in W1 of year++ 
+      if ((daysInYear - ordinal) < (4 - weekday)) week = 1;
+    } else if (0 == week) week = 53;
+    return (0 == week) ? 53 : week; // W0 => W53 of year--    
+  }
 
   /**
    * Calculates and sets {@link DateFields#year} based on <tt>timeInMs</tt>.
