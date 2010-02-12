@@ -760,8 +760,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void reloadStyles() {
     bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = visDomain.copy();
-    init(view, false);
+    // hack, eval order dependency
+    initViewIndependent(datasets);
     plotRenderer.sync();
+    init(view, false);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
     visDomain = plotRenderer.calcWidestPlotDomain();
