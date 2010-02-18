@@ -23,6 +23,14 @@ public class GWTDateFormatter implements DateFormatter {
   }
 
   public double parse(String date) {
-    return fmt.parse(date).getTime();
+    Date d = new Date();
+    d.setMonth(0);
+    d.setDate(1);
+    d.setHours(0);
+    d.setMinutes(0);
+    d.setSeconds(0);
+    d.setTime((long)(d.getTime()/1000)*1000);
+    fmt.parse(date, 0, d);
+    return d.getTime();
   }
 }

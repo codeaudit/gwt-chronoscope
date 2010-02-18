@@ -51,8 +51,16 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
         .isNotNull(request.getRangeLabel(), "label");
     identifier = request.getIdentifier();
     preferredRenderer = request.getPreferredRenderer();
+    loadDataset(request);
+    preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
+  }
 
+  protected void loadDataset(DatasetRequest request) {
     mipMapChain = loadTupleData(request);
+    computeIntervals(request);
+  }
+
+  protected void computeIntervals(DatasetRequest request) {
     rawData = this.mipMapChain.getMipMap(0);
 
     axisIds = new String[mipMapChain.getRangeTupleSize()];
@@ -73,8 +81,6 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
       rangeVals.execFunction(extremaFn);
       rangeIntervals[i] = extremaFn.getExtrema();
     }
-
-    preferredRangeAxisInterval = request.getPreferredRangeAxisInterval();
   }
 
   @Export

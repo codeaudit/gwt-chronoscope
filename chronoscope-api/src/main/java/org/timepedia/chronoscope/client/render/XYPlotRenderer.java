@@ -489,7 +489,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       DrawableDataset dd = dit.next();
       if (plot.getDatasets().indexOf(dd.dataset) < 0) {
         toRemove.add(dd.dataset);
-      }
+      } 
     }
     for (Dataset d : toRemove) {
       removeDataset(d);
@@ -505,6 +505,15 @@ public class XYPlotRenderer<T extends Tuple2D> {
       }
        if (!found) {
         addDataset(where++, d);
+      }
+    }
+  }
+
+  public void invalidate(Dataset<T> dataset) {
+    for(DrawableDataset dd : drawableDatasets) {
+      if (dd.dataset == dataset) {
+        dd.setCurrMipLevel(0);
+        break;
       }
     }
   }

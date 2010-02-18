@@ -6,7 +6,7 @@ import org.timepedia.chronoscope.client.data.DatasetFactory;
 import org.timepedia.chronoscope.client.data.DatasetRequest;
 import org.timepedia.chronoscope.client.data.DatasetRequestMaker;
 import org.timepedia.chronoscope.client.data.ChronoscopeDatasetFactory;
-import org.timepedia.chronoscope.client.data.MutableDataset2D;
+import org.timepedia.chronoscope.client.data.MutableDatasetND;
 import org.timepedia.chronoscope.client.data.Mutation;
 import org.timepedia.chronoscope.client.util.Interval;
 
@@ -73,7 +73,7 @@ public class DatasetsTest extends TestCase {
     grp.add(ds1);
     grp.add(ds2);
     
-    MutableDataset2D removedDataset = (MutableDataset2D)grp.remove(1);
+    MutableDatasetND removedDataset = (MutableDatasetND)grp.remove(1);
     
     // verify the removed element corresponds to the index
     assertTrue(ds1 == removedDataset);

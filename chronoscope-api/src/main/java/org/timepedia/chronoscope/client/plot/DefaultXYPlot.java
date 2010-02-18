@@ -573,7 +573,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (datasetIndex == -1) {
       datasetIndex = 0;
     }
+    plotRenderer.invalidate(dataset);
+    fixDomainDisjoint();
     damageAxes();
+    getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
     if (domainEnd > visDomain.getEnd()) {
       animateTo(domainEnd - visDomain.length() / 2, visDomain.length(),
           PlotMovedEvent.MoveType.DRAGGED, new PortableTimerTask() {
@@ -762,7 +765,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     Interval tmpPlotDomain = visDomain.copy();
     // hack, eval order dependency
     initViewIndependent(datasets);
-    plotRenderer.sync();
+    fixDomainDisjoint();
     init(view, false);
     ArrayList<Overlay> oldOverlays = overlays;
     overlays = new ArrayList<Overlay>();
@@ -1388,6 +1391,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (!datasets.getDomainExtrema().intersects(getDomain())) {
       datasets.getDomainExtrema().copyTo(getDomain());
     }
+    calcDomainWidths();
   }
 
   private void init(View view, boolean forceNewRangeAxes) {
@@ -1426,12 +1430,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (!plotRenderer.isInitialized()) {
       plotRenderer.init();
     } else {
+      plotRenderer.sync();
       plotRenderer.resetMipMapLevels();
       plotRenderer.checkForGssChanges();
     }
 
-    widestDomain = plotRenderer.calcWidestPlotDomain();
-    visDomain = widestDomain.copy();
+    calcDomainWidths();
 
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
     ArgChecker
@@ -1466,6 +1470,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.canvasSetupDone();
     crosshairFmt = DateFormatterFactory.getInstance()
         .getDateFormatter("yy/MMM/dd HH:mm");
+  }
+
+  private void calcDomainWidths() {
+    widestDomain = plotRenderer.calcWidestPlotDomain();
+    visDomain = widestDomain.copy();
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
