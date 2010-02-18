@@ -324,7 +324,7 @@ public class Chronoscope
     Dataset ds[] = new Dataset[numDatasets];
     for (int i = 0; i < numDatasets; i++) {
       ds[i] = datasetReader
-          .createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)));
+          .createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)), true);
     }
     return ds;
   }
@@ -603,7 +603,7 @@ public class Chronoscope
     }-*/;
 
   private native void injectCss(String s) /*-{
-        var link = $doc.createElement("link");                                 trap
+        var link = $doc.createElement("link");                                 
         link.title = "Base Chronoscope Stylesheet";
         link.href = s;
         link.rel = "stylesheet";

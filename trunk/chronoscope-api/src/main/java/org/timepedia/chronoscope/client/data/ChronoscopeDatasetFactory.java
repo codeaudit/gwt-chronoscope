@@ -23,7 +23,7 @@ public class ChronoscopeDatasetFactory implements DatasetFactory {
 
   public MutableDataset createMutable(DatasetRequest request) {
     ArgChecker.isNotNull(request, "request");
-    MutableDataset ds = new MutableDataset2D(request);
+    MutableDataset ds = new MutableDatasetND(request);
     return ds;
   }
   
