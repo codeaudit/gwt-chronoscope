@@ -577,16 +577,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     fixDomainDisjoint();
     damageAxes();
     getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
-    if (domainEnd > visDomain.getEnd()) {
-      animateTo(domainEnd - visDomain.length() / 2, visDomain.length(),
-          PlotMovedEvent.MoveType.DRAGGED, new PortableTimerTask() {
-            public void run(PortableTimer timer) {
-              redraw(true);
-            }
-          }, false);
-    } else {
-      redraw(true);
-    }
+    redraw(true);
   }
 
   public void onDatasetRemoved(Dataset<T> dataset, int datasetIndex) {
@@ -1390,8 +1381,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   private void fixDomainDisjoint() {
     if (!datasets.getDomainExtrema().intersects(getDomain())) {
       datasets.getDomainExtrema().copyTo(getDomain());
+      calcDomainWidths();
     }
-    calcDomainWidths();
   }
 
   private void init(View view, boolean forceNewRangeAxes) {
