@@ -105,12 +105,14 @@ public class XYPlotRenderer<T extends Tuple2D> {
    */
   private Interval calcVisibleRange(MipMap mipMap, int domainStartIdx,
       int domainEndIdx, DatasetRenderer<T> renderer) {
-    double rangeMin = Double.POSITIVE_INFINITY;
-    double rangeMax = Double.NEGATIVE_INFINITY;
+    double rangeMin = Double.MAX_VALUE;
+    double rangeMax = Double.MIN_VALUE;
     Iterator<Tuple2D> tupleItr = mipMap.getTupleIterator(domainStartIdx);
     for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-      double y = renderer.getRange(tupleItr.next());
+      Tuple2D pt = tupleItr.next();
+      double y = renderer.getRange(pt);
       rangeMin = Math.min(rangeMin, y);
+      rangeMin = Math.min(rangeMin, pt.getRange0());
       rangeMax = Math.max(rangeMax, y);
     }
 
