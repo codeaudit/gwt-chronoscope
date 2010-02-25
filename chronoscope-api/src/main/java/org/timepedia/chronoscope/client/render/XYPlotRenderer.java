@@ -47,7 +47,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
   protected View view;
 
   private void calcVisibleDomainAndRange(List<DrawableDataset<T>> dds,
-      Interval plotDomain) {
+      Interval plotDomain, boolean overviewMode) {
 
     final int numDatasets = dds.size();
 
@@ -65,8 +65,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
       // Find the highest-resolution mipmap whose number of data points
       // that lie within the plot domain is <= maxDataPoints.
-      final int maxDrawableDataPoints = getMaxDrawableDataPoints(
-          drawableDataset);
+      final int maxDrawableDataPoints = overviewMode ? (int) plot.getPlotLayer()
+          .getWidth() 
+          : getMaxDrawableDataPoints(drawableDataset);
       MipMapRegion bestMipMapRegion = dataSet
           .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints);
 
@@ -119,7 +120,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
     return new Interval(rangeMin, rangeMax);
   }
 
-  private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot) {
+  private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot,
+      boolean overviewMode) {
     DrawableDataset dds = drawableDatasets.get(datasetIndex);
 
     Dataset<T> dataSet = dds.dataset;
@@ -177,25 +179,27 @@ public class XYPlotRenderer<T extends Tuple2D> {
       }
       renderer.endCurve(layer, renderState);
 
-      // Render the focus points on the curve
-      renderer.beginPoints(layer, renderState);
-      //startIdx = Math.max(0, domainStartIdx - 2);
-      tupleItr = currMipMap.getTupleIterator(domainStartIdx);
-      for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-        Tuple2D dataPt = tupleItr.next();
-        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i
-            && renderer.getFocusDimension(pass) == focus.getDatasetIndex());
+      if (!overviewMode) {
+        // Render the focus points on the curve
+        renderer.beginPoints(layer, renderState);
+        //startIdx = Math.max(0, domainStartIdx - 2);
+        tupleItr = currMipMap.getTupleIterator(domainStartIdx);
+        for (int i = domainStartIdx; i <= domainEndIdx; i++) {
+          Tuple2D dataPt = tupleItr.next();
+          renderState.setFocused(focusSeries == datasetIndex && focusPoint == i
+              && renderer.getFocusDimension(pass) == focus.getDatasetIndex());
 
-        if (calcRangeAsPercent) {
-          LocalTuple tmpTuple = new LocalTuple();
-          tmpTuple.setXY(dataPt.getDomain(),
-              RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
-          dataPt = tmpTuple;
+          if (calcRangeAsPercent) {
+            LocalTuple tmpTuple = new LocalTuple();
+            tmpTuple.setXY(dataPt.getDomain(),
+                RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+            dataPt = tmpTuple;
+          }
+          // FIXME: refactor to remove cast
+          renderer.drawPoint(layer, (T) dataPt, renderState);
         }
-        // FIXME: refactor to remove cast
-        renderer.drawPoint(layer, (T) dataPt, renderState);
+        renderer.endPoints(layer, renderState);
       }
-      renderer.endPoints(layer, renderState);
     }
   }
 
@@ -223,13 +227,13 @@ public class XYPlotRenderer<T extends Tuple2D> {
     return widestPlotDomain;
   }
 
-  public void drawDatasets() {
-    calcVisibleDomainAndRange(drawableDatasets, plot.getDomain());
+  public void drawDatasets(boolean overviewMode) {
+    calcVisibleDomainAndRange(drawableDatasets, plot.getDomain(), overviewMode);
 
     final int numDatasets = plot.getDatasets().size();
     Layer plotLayer = plot.getPlotLayer();
     for (int i = 0; i < numDatasets; i++) {
-      drawDataset(datasetRenderOrder[i], plotLayer, plot);
+      drawDataset(datasetRenderOrder[i], plotLayer, plot, overviewMode);
     }
   }
 
@@ -491,7 +495,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       DrawableDataset dd = dit.next();
       if (plot.getDatasets().indexOf(dd.dataset) < 0) {
         toRemove.add(dd.dataset);
-      } 
+      }
     }
     for (Dataset d : toRemove) {
       removeDataset(d);
@@ -505,19 +509,23 @@ public class XYPlotRenderer<T extends Tuple2D> {
           break;
         }
       }
-       if (!found) {
+      if (!found) {
         addDataset(where++, d);
       }
     }
   }
 
   public void invalidate(Dataset<T> dataset) {
-    for(DrawableDataset dd : drawableDatasets) {
+    for (DrawableDataset dd : drawableDatasets) {
       if (dd.dataset == dataset) {
         dd.setCurrMipLevel(0);
         break;
       }
     }
+  }
+
+  public void drawDatasets() {
+    drawDatasets(false);
   }
 
   private static final class LocalTuple implements Tuple2D {

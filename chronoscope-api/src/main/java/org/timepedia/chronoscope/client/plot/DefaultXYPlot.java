@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -150,6 +151,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   int plotNumber = 0;
 
   boolean firstDraw = true;
+
+  PortableTimer changeTimer = null;
 
   private int hoverX;
 
@@ -332,6 +335,30 @@ public class DefaultXYPlot<T extends Tuple2D>
     background.paint(this, plotLayer, visDomain.getStart(), visDomain.length());
   }
 
+  public void drawOverviewPlot(Layer overviewLayer) {
+    // save original endpoints so they can be restored later
+    Interval origVisPlotDomain = getDomain().copy();
+    getWidestDomain().copyTo(getDomain());
+    Canvas backingCanvas = view.getCanvas();
+    backingCanvas.beginFrame();
+    overviewLayer.save();
+    overviewLayer.clear();
+    overviewLayer.setFillColor(Color.TRANSPARENT);
+    overviewLayer.setVisibility(false);
+    overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    Bounds oldBounds = plotBounds;
+    Layer oldLayer = plotLayer;
+    plotBounds = new Bounds(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    plotLayer = overviewLayer;
+    plotRenderer.drawDatasets(true);
+    plotBounds = oldBounds;
+    plotLayer = oldLayer;
+    overviewLayer.restore();
+    backingCanvas.endFrame();
+    // restore original endpoints
+    origVisPlotDomain.copyTo(getDomain());
+  }
+
   @Export
   public boolean ensureVisible(final double domainX, final double rangeY,
       PortableTimerTask callback) {
@@ -450,7 +477,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Layer getPlotLayer() {
-    return initLayer(null, LAYER_PLOT, plotBounds);
+    return plotLayer;
   }
 
   @Export("getAxis")
@@ -718,7 +745,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotRenderer.drawHoverPoints(hoverLayer);
     }
 
-    drawCrossHairs(hoverLayer);
+    drawCrossHairs(hoverLayer);           
 
     if (plotDomainChanged || forceCenterPlotRedraw) {
       plotLayer.clear();
@@ -773,7 +800,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     redraw(true);
-    
   }
 
   @Export
@@ -789,8 +815,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(newOrigin, visDomain.length(), PlotMovedEvent.MoveType.CENTERED,
         continuation);
   }
-
-  PortableTimer changeTimer = null;
 
   @Export
   public void scrollPixels(int amt) {
@@ -1109,6 +1133,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     });
 
     animationTimer.schedule(10);
+  }
+
+  private void calcDomainWidths() {
+    widestDomain = plotRenderer.calcWidestPlotDomain();
+    visDomain = widestDomain.copy();
   }
 
   /**
@@ -1461,11 +1490,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.canvasSetupDone();
     crosshairFmt = DateFormatterFactory.getInstance()
         .getDateFormatter("yy/MMM/dd HH:mm");
-  }
-
-  private void calcDomainWidths() {
-    widestDomain = plotRenderer.calcWidestPlotDomain();
-    visDomain = widestDomain.copy();
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {

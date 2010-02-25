@@ -243,27 +243,8 @@ final class BottomPanel extends AuxiliaryPanel {
    * datasets managed by this plot.
    */
   private void drawDatasetOverview() {
-    // save original endpoints so they can be restored later
-    Interval origVisPlotDomain = plot.getDomain().copy();
-
-    plot.getWidestDomain().copyTo(plot.getDomain());
-
-    plot.drawPlot();
-    overviewLayer.save();
-    overviewLayer.setVisibility(false);
-    overviewLayer.clear();
-    overviewLayer.drawImage(plot.getPlotLayer(), 0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight());
-    overviewLayer.restore();
-
-    // restore original endpoints
-    origVisPlotDomain.copyTo(plot.getDomain());
-
-    // TODO: hack, to prevent double-drawn blended filled line areas
-    // replace with a drawPlot routine that can draw with a custom layer
-    // and plotBounds
-    plot.getPlotLayer().clear();
-    plot.drawBackground();
+   
+    plot.drawOverviewPlot(overviewLayer);
     overviewDrawn = true;
   }
 
