@@ -41,6 +41,11 @@ public abstract class AbstractLayer implements Layer {
     return canvas;
   }
 
+  @Override
+  public void rotate(double angle) {
+    
+  }
+
   public int rotatedStringHeight(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
     rotationAngle = Math.abs(rotationAngle);

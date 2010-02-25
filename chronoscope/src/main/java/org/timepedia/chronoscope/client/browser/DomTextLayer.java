@@ -3,23 +3,15 @@ package org.timepedia.chronoscope.client.browser;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.LoadListener;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.ClippedImageImpl;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasFontMetrics;
-import org.timepedia.chronoscope.client.browser.FontRendererService;
-import org.timepedia.chronoscope.client.browser.FontRendererServiceAsync;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
 
 import java.util.HashMap;
@@ -71,102 +63,33 @@ public abstract class DomTextLayer extends AbstractLayer {
   // overall, this routine needs to be more robust
   // and there probably should be a TextLayout class that can layout multiline text with wrapping in the presence
   // of rotations within an enclosed area
+
   public void drawRotatedText(final double x, final double y,
       final double angle, final String label, String fontFamily,
       String fontWeight, String fontSize, final String layerName,
       final Chart chart) {
-    String metricsKey = getStrokeColor() + fontFamily + fontWeight + fontSize
-        + angle;
-    CanvasFontMetrics rmt = (CanvasFontMetrics) fontMetricsCache
-        .get(metricsKey);
+    save();
+    int cx = canvasStringWidth(label, fontFamily, fontWeight, fontSize) / 2;
+    int cy = stringHeight(label, fontFamily, fontWeight, fontSize)/2;
+    translate(x + cx, y+cy);
+    rotate(angle);
+    setFillColor(new Color(getStrokeColor()));
+    
+    translate(-x - cx, -y+(cy*2)*Math.sin(angle));
+    fillText(label, x, y, fontFamily, fontSize);
 
-    if (rmt == null) {
-      rmt = new CanvasFontMetrics();
-      rmt.maxHeight = stringHeight("X", fontFamily, fontWeight, fontSize);
-      rmt.maxWidth = stringWidth("X", fontFamily, fontWeight, fontSize);
-      fontMetricsCache.put(metricsKey, rmt);
-    }
-    if (rmt.rfm == null) {
-      if (true || !Chronoscope.isFontBookRenderingEnabled()) {
-
-        double tx = x, ty = y;
-        // needs better layout
-        for (int i = 0; i < label.length(); i++) {
-          String letter = String.valueOf(label.charAt(i));
-          drawText(tx, ty, letter, fontFamily, fontWeight, fontSize, layerName,
-              Cursor.DEFAULT);
-          ty += rmt.maxHeight - 3;
-        }
-        return;
-      }
-
-      FontRendererServiceAsync fontRendererServiceAsync = FontRendererService
-          .FontRenderServiceUtil.getInstance();
-      final CanvasFontMetrics rmt1 = rmt;
-
-      String fs = fontSize;
-      if (fs.endsWith("pt")) {
-        fs = fs.substring(0, fs.length() - 2);
-      }
-      int ifs = (int) Double.parseDouble(fs);
-      ifs = ifs * 12 / 9;
-
-      fontRendererServiceAsync.getRenderedFontMetrics(fontFamily, fontWeight,
-          ifs + "pt", getStrokeColor(), (float) angle, new AsyncCallback() {
-        public void onFailure(Throwable caught) {
-          if (ChronoscopeOptions.isErrorReportingEnabled()) {
-            Window.alert("Failed to load fontbook " + caught);
-          }
-          Chronoscope.setFontBookRendering(false);
-        }
-
-        public void onSuccess(Object result) {
-          rmt1.rfm = (RenderedFontMetrics) result;
-          if (result == null) {
-            if (ChronoscopeOptions.isErrorReportingEnabled()) {
-              Window.alert("No rendered fontmetrics returned!");
-              Chronoscope.setFontBookRendering(false);
-            }
-            // TODO: handle this error
-          }
-
-//          chart.reloadStyles();
-
-          final Image img = new Image();
-
-          img.setVisible(false);
-
-          img.addLoadListener(new LoadListener() {
-            public void onError(Widget sender) {
-              if (ChronoscopeOptions.isErrorReportingEnabled()) {
-                Window.alert("Couldn't load image " + rmt1.rfm
-                    .url);
-                Chronoscope.setFontBookRendering(false);
-              }
-            }
-
-            public void onLoad(Widget sender) {
-              rmt1.fontBook = (Image) sender;
-              RootPanel.get().remove(img);
-            }
-          });
-          img.setUrl(rmt1.rfm.url);
-          RootPanel.get().add(img);
-          /*drawTextImage(
-                  x, y, label, layerName, angle, rmt1.rfm
-          );*/
-        }
-      });
-    } else {
-      if (rmt.rfm != null) {
-        drawTextImage(x, y, label, layerName, angle, rmt.rfm);
-      }
-    }
+    restore();
   }
 
- 
+  protected abstract int canvasStringWidth(String label, String fontFamily,
+      String fontWeight, String fontSize);
+
+  protected abstract void fillText(String label, double x, double y,
+      String fontFamily, String fontSize);
+
   public void drawText(double x, double y, String label, String fontFamily,
-      String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
+      String fontWeight, String fontSize, String layerName,
+      Cursor cursorStyle) {
     TextLayer layer = getTextLayer(layerName);
     Element layerElem = layer.layerElem;
     Element textDiv = createTextDiv();
@@ -177,11 +100,11 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.setStyleAttribute(textDiv, "fontWeight", fontWeight);
     DOM.setStyleAttribute(textDiv, "color", getStrokeColor());
     DOM.setStyleAttribute(textDiv, "opacity", getTransparency());
-    if(cursorStyle == Cursor.CLICKABLE) {
+    if (cursorStyle == Cursor.CLICKABLE) {
       DOM.setStyleAttribute(textDiv, "textDecoration", "underline");
       DOM.setStyleAttribute(textDiv, "cursor", "pointer");
     }
-    DOM.setInnerHTML(textDiv, "<nobr>"+label+"</nobr>");
+    DOM.setInnerHTML(textDiv, "<nobr>" + label + "</nobr>");
     DOM.appendChild(layerElem, textDiv);
   }
 
@@ -198,7 +121,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       DOM.setIntStyleAttribute(layerElem, "width", (int) getWidth());
       DOM.setIntStyleAttribute(layerElem, "height", (int) getHeight());
       DOM.setStyleAttribute(layerElem, "backgroundColor", "transparent");
-      DOM.setStyleAttribute(layerElem, "zIndex", ""+(getLayerOrder()+1));
+      DOM.setStyleAttribute(layerElem, "zIndex", "" + (getLayerOrder() + 1));
       DOM.setStyleAttribute(layerElem, "overflow", "visible");
       DOM.appendChild(DOM.getParent(getElement()), layerElem);
       layer = new TextLayer();
@@ -218,8 +141,9 @@ public abstract class DomTextLayer extends AbstractLayer {
     if (rmt != null && rmt.rfm != null) {
       return rmt.rfm.stringHeight(str.toCharArray());
     } else {
-      return super.rotatedStringHeight(str, rotationAngle, fontFamily,
-          fontWeight, fontSize);
+      return super
+          .rotatedStringHeight(str, rotationAngle, fontFamily, fontWeight,
+              fontSize);
     }
   }
 
@@ -232,8 +156,9 @@ public abstract class DomTextLayer extends AbstractLayer {
     if (rmt != null && rmt.rfm != null) {
       return rmt.rfm.stringWidth(str.toCharArray());
     } else {
-      return super.rotatedStringWidth(str, rotationAngle, fontFamily,
-          fontWeight, fontSize);
+      return super
+          .rotatedStringWidth(str, rotationAngle, fontFamily, fontWeight,
+              fontSize);
     }
   }
 
@@ -247,7 +172,7 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.setStyleAttribute(layerElem, "left", bounds.x + "px");
     DOM.setStyleAttribute(layerElem, "top", bounds.y + "px");
     DOM.setStyleAttribute(layerElem, "overflow", "visible");
-    DOM.setStyleAttribute(layerElem, "zIndex", ""+(getLayerOrder()+1));
+    DOM.setStyleAttribute(layerElem, "zIndex", "" + (getLayerOrder() + 1));
     DOM.setStyleAttribute(layerElem, "backgroundColor", "transparent");
     DOM.setStyleAttribute(layerElem, "visibility", "visible");
   }
@@ -296,8 +221,9 @@ public abstract class DomTextLayer extends AbstractLayer {
     for (int i = 0; i < label.length(); i++) {
       char c = label.charAt(i);
       rfm.getBounds(b, c);
-      Element elem = (Element)ci.createStructure(rfm.url, (int) b.x, (int) (b.y + 1),
-          (int) b.width, (int) b.height);
+      Element elem = (Element) ci
+          .createStructure(rfm.url, (int) b.x, (int) (b.y + 1), (int) b.width,
+              (int) b.height);
 
       DOM.setStyleAttribute(elem, "position", "absolute");
       DOM.setStyleAttribute(elem, "left", (x1 - layer.bounds.x) + "px");
