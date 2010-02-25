@@ -265,6 +265,16 @@ public class DefaultDisplayListImpl implements DisplayList {
     });
   }
 
+  @Override
+  public void rotate(final double angle) {
+    cmdBuffer.add(new Cmd() {
+      @Override
+      public void exec() {
+        layer.rotate(angle);
+      }
+    });
+  }
+
   public void restore() {
     cmdBuffer.add(new Cmd() {
       public void exec() {

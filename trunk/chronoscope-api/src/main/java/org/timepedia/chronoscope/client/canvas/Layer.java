@@ -163,6 +163,8 @@ public interface Layer {
 
   void rect(double x, double y, double width, double height);
 
+  void rotate(double angle);
+  
   void restore();
 
   /**

@@ -144,6 +144,29 @@ public class BrowserLayer extends DomTextLayer {
     return bounds;
   }
 
+  @Override
+  protected int canvasStringWidth(String label, String fontFamily,
+      String fontWeight, String fontSize) {
+    return csw(ctx, label, fontFamily+" "+fontSize);
+  }
+
+  private native int csw(JavaScriptObject ctx, String label, String font) /*-{
+    ctx.font = font;
+    return ctx.measureText(label).width;
+  }-*/;
+
+  @Override
+  protected void fillText(String label, double x, double y, String fontFamily,
+      String fontSize) {
+    fillText0(ctx, label, x,y, fontFamily+" "+fontSize);
+  }
+
+  private native void fillText0(JavaScriptObject ctx, String label, double x,
+      double y, String font) /*-{
+    ctx.font = font;
+    ctx.fillText(label, x, y);
+  }-*/;
+
   public Element getElement() {
     return canvas;
   }
@@ -200,6 +223,15 @@ public class BrowserLayer extends DomTextLayer {
   public void rect(double x, double y, double width, double height) {
     rect0(ctx, x, y, width, height);
   }
+
+  @Override
+  public void rotate(double angle) {
+    rotate0(ctx, angle);
+  }
+  
+  private native void rotate0(JavaScriptObject ctx, double angle) /*-{
+    ctx.rotate(angle);
+  }-*/;
 
   public void restore() {
     restore0(ctx);
