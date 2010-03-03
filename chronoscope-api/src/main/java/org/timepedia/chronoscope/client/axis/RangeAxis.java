@@ -93,7 +93,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
-      boolean forceLastTick) {
+      boolean forceFirstTick, boolean forceLastTick) {
 
     if (lrangeHigh == lrangeLow) {
       if (lrangeHigh != 0.0) {
@@ -127,14 +127,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double smoothInterval = smoothSigDigits * exponent;
 
-    final double axisStart = lrangeLow - MathUtil
+    double axisStart = lrangeLow - MathUtil
         .mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
     if (axisStart + (smoothInterval * (numTicks - 1)) < lrangeHigh) {
       numTicks++;
     }
-
+    if (forceFirstTick && axisStart < lrangeLow) {
+      numTicks--;
+      axisStart += smoothInterval;
+    }
+    
     double tickPositions[] = new double[numTicks];
     double tickValue = axisStart;
     for (int i = 0; i < tickPositions.length; i++) {
@@ -177,7 +181,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private RangeAxisPanel axisPanel;
 
-  private boolean rangeOverridden;
+  private boolean rangeOveriddenLow, rangeOveriddenHigh;
 
   private double scale = Double.NaN;
 
@@ -204,7 +208,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    * object.
    */
   public void adjustAbsRange(Dataset ds) {
-    if (!rangeOverridden) {
+    if (!rangeOveriddenLow || !rangeOveriddenHigh) {
       DatasetRenderer dr = plot
           .getDatasetRenderer(plot.getDatasets().indexOf(ds));
       Interval rangeExtrema = dr.getRangeExtrema(ds);
@@ -215,8 +219,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
         rangeMin = calcPrctDiff(refY, rangeMin);
         rangeMax = calcPrctDiff(refY, rangeMax);
       }
-      setAbsRange(Math.min(absRangeMin, rangeMin),
-          Math.max(absRangeMax, rangeMax));
+      setAbsRange(Math.min(absRangeMin, rangeOveriddenLow ? absRangeMin : rangeMin),
+          Math.max(absRangeMax, rangeOveriddenHigh ? absRangeMax : rangeMax));
     }
   }
 
@@ -245,13 +249,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     ticks = computeLinearTickPositions(rangeMin, rangeMax,
         axisPanel.getBounds().height, axisPanel.getMaxLabelHeight(),
-        rangeOverridden);
+        rangeOveriddenLow, rangeOveriddenHigh);
 
-    if (rangeOverridden) {
+    if (rangeOveriddenLow) {
       adjustedRangeMin = rangeMin;
-      adjustedRangeMax = rangeMax;
     } else {
       adjustedRangeMin = ticks[0];
+      
+    }
+    if(rangeOveriddenHigh) {
+      adjustedRangeMax = rangeMax;
+    }
+    else {
       final double largestComputedTick = ticks[ticks.length - 1];
       adjustedRangeMax = Math.max(rangeMax, largestComputedTick);
     }
@@ -431,7 +440,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   @Export
   public void setRange(double rangeLow, double rangeHigh) {
-    rangeOverridden = true;
+    rangeOveriddenLow = rangeOveriddenHigh = true;
     setAbsRange(rangeLow, rangeHigh);
     this.plot.reloadStyles();
   }
@@ -441,7 +450,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   @Export
   public void setRangeMin(double rangeLow) {
-    rangeOverridden = true;
+    rangeOveriddenLow = true;
     setAbsRange(rangeLow, absRangeMax);
     this.plot.reloadStyles();
   }
@@ -451,7 +460,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   @Export
   public void setRangeMax(double rangeHigh) {
-    rangeOverridden = true;
+    rangeOveriddenHigh = true;
     setAbsRange(absRangeMin, rangeHigh);
     this.plot.reloadStyles();
   }
@@ -507,20 +516,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.view = view;
   }
 
-  @Export
   public void setVisibleRange(double visRangeMin, double visRangeMax) {
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
     ticks = null;
   }
 
-  @Export
   public void setVisibleRangeMin(double visRangeMin) {
     this.visRangeMin = visRangeMin;
     ticks = null;
   }
 
-  @Export
   public void setVisibleRangeMax(double visRangeMax) {
     this.visRangeMax = visRangeMax;
     ticks = null;

@@ -71,7 +71,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
       MipMapRegion bestMipMapRegion = dataSet
           .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints);
 
+      
       MipMap bestMipMap = bestMipMapRegion.getMipMap();
+      if (overviewMode && bestMipMap.getLevel() == 0) {
+        bestMipMap = bestMipMap.next();
+      }
       if (drawableDataset.currMipMap.getLevel() != bestMipMap.getLevel()) {
         drawableDataset.currMipMap = bestMipMap;
         plot.getHoverPoints()[datasetIdx] = DefaultXYPlot.NO_SELECTION;
