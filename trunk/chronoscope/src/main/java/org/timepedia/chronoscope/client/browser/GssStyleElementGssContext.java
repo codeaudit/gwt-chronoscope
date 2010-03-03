@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.dom.client.Node;
@@ -54,7 +53,7 @@ public class GssStyleElementGssContext extends BrowserGssContext
         continue;
       }
       Element e = (Element) nl.getItem(i);
-      if ((StyleElement.is(e)|| LinkElement.is(e))
+      if ((StyleElement.is(e) || LinkElement.is(e))
           && "text/gss".equals(e.getAttribute("type")) && e
           .hasAttribute("href")) {
         toLoad.add(e.getAttribute("href"));
@@ -70,6 +69,7 @@ public class GssStyleElementGssContext extends BrowserGssContext
     }
 
     if (!toLoad.isEmpty()) {
+
       RequestBuilder rb = new RequestBuilder(RequestBuilder.GET,
           toLoad.remove(0));
       try {
@@ -87,9 +87,12 @@ public class GssStyleElementGssContext extends BrowserGssContext
             } else {
               try {
                 gssContext.parseStylesheet(gss.toString());
-                getView().getChart().reloadStyles();
+                if (getView().getChart() != null) {
+                  // TODO: should queue up reload request somehow
+                  getView().getChart().reloadStyles();
+                }
               } catch (GssParseException e) {
-                
+
               }
             }
           }
