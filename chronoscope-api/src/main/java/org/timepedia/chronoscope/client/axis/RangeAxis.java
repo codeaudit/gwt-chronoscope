@@ -20,8 +20,6 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("chronoscope")
 public class RangeAxis extends ValueAxis implements Exportable {
 
-  public static final int MAX_DIGITS = 5;
-
   private class DefaultTickLabelNumberFormatter
       implements TickLabelNumberFormatter {
 
@@ -78,6 +76,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
+  public static final int MAX_DIGITS = 5;
+
   private static final String posExponentLabels[] = {"", "(Tens)", "(Hundreds)",
       "(Thousands)", "(Tens of Thousands)", "(Hundreds of Thousands)",
       "(Millions)", "(Tens of Millions)", "(Hundreds of Millions)",
@@ -90,6 +90,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
       "(Hundred Millionths)", "(Billionths)", "(Ten Billionths)",
       "(Hundred Billionths)", "(Trillionths)", "(Ten Trillionths)",
       "(Hundred Trillionths)"};
+
+  /**
+   * Calculates the percentage difference from value v1 to value v2.  For
+   * example, if v1 = 10 and v2 = 15, then the % difference is 50% ( 15.0/10.0 -
+   * 1.0 )
+   */
+  public static double calcPrctDiff(double v1, double v2) {
+    ArgChecker.isNonNegative(v1, "v1");
+    ArgChecker.isNonNegative(v2, "v2");
+    return (v2 / v1) - 1.0;
+  }
 
   private static double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
@@ -233,11 +244,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
         Math.max(visRangeMax, visRange.getEnd()));
   }
 
-  public void resetVisibleRange() {
-    visRangeMin = Double.POSITIVE_INFINITY;
-    visRangeMax = Double.NEGATIVE_INFINITY;
-  }
-
   public double[] calcTickPositions() {
 
     if (ticks != null) {
@@ -277,12 +283,29 @@ public class RangeAxis extends ValueAxis implements Exportable {
         - adjustedRangeMin);
   }
 
+  /**
+   * Make this range axis the current focus. Has not effect the plot has
+   * multi-axis set to true. Otherwise, this axis becomes the primary left axis
+   * displayed.
+   */
+  @Export
+  public void focus() {
+    getAxisPanel().setValueAxis(this);
+    plot.damageAxes();
+    getAxisPanel().getParent().layout();
+    ((DefaultXYPlot) plot).redraw(true);
+  }
+
   public int getAxisIndex() {
     return axisIndex;
   }
 
   public RangeAxisPanel getAxisPanel() {
     return this.axisPanel;
+  }
+
+  public Interval getExtrema() {
+    return new Interval(adjustedRangeMin, adjustedRangeMax);
   }
 
   public String getFormattedLabel(double label) {
@@ -321,9 +344,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     return "";
   }
-
-  public Interval getExtrema() {
-    return new Interval(adjustedRangeMin, adjustedRangeMax);
+  
+  public Interval getRangeInterval() {
+    return new Interval(absRangeMin, absRangeMax);
   }
 
   public double getScale() {
@@ -365,6 +388,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return showExponents;
   }
 
+  public void resetVisibleRange() {
+    visRangeMin = Double.POSITIVE_INFINITY;
+    visRangeMax = Double.NEGATIVE_INFINITY;
+  }
+
   /**
    * If set to true, allow axis ticks to be scaled automatically by powers of
    * thousand if they exceeed maxDigits settings. For example, if max digits is
@@ -386,20 +414,20 @@ public class RangeAxis extends ValueAxis implements Exportable {
     allowScientificNotation = enable;
   }
 
-  public void setAxisIndex(int axisIndex) {
-    this.axisIndex = axisIndex;
-  }
-
-  public void setAxisPanel(RangeAxisPanel r) {
-    this.axisPanel = r;
-  }
-
   @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
     this.autoZoom = autoZoom;
     plot.damageAxes();
     adjustAbsRanges();
     plot.reloadStyles();
+  }
+
+  public void setAxisIndex(int axisIndex) {
+    this.axisIndex = axisIndex;
+  }
+
+  public void setAxisPanel(RangeAxisPanel r) {
+    this.axisPanel = r;
   }
 
   /**
@@ -446,22 +474,22 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   /**
-   * Set the minimum visible axis range.
-   */
-  @Export
-  public void setRangeMin(double rangeLow) {
-    rangeOveriddenLow = true;
-    setAbsRange(rangeLow, absRangeMax);
-    this.plot.reloadStyles();
-  }
-
-  /**
    * Set the maximum visible axis range.
    */
   @Export
   public void setRangeMax(double rangeHigh) {
     rangeOveriddenHigh = true;
     setAbsRange(absRangeMin, rangeHigh);
+    this.plot.reloadStyles();
+  }
+
+  /**
+   * Set the minimum visible axis range.
+   */
+  @Export
+  public void setRangeMin(double rangeLow) {
+    rangeOveriddenLow = true;
+    setAbsRange(rangeLow, absRangeMax);
     this.plot.reloadStyles();
   }
 
@@ -487,19 +515,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   /**
-   * Make this range axis the current focus. Has not effect the plot has
-   * multi-axis set to true. Otherwise, this axis becomes the primary left axis
-   * displayed.
-   */
-  @Export
-  public void focus() {
-    getAxisPanel().setValueAxis(this);
-    plot.damageAxes();
-    getAxisPanel().getParent().layout();
-    ((DefaultXYPlot) plot).redraw(true);
-  }
-
-  /**
    * Set the number format used to render ticks
    */
   @Export
@@ -522,30 +537,19 @@ public class RangeAxis extends ValueAxis implements Exportable {
     ticks = null;
   }
 
-  public void setVisibleRangeMin(double visRangeMin) {
-    this.visRangeMin = visRangeMin;
+  public void setVisibleRangeMax(double visRangeMax) {
+    this.visRangeMax = visRangeMax;
     ticks = null;
   }
 
-  public void setVisibleRangeMax(double visRangeMax) {
-    this.visRangeMax = visRangeMax;
+  public void setVisibleRangeMin(double visRangeMin) {
+    this.visRangeMin = visRangeMin;
     ticks = null;
   }
 
   public double userToData(double userValue) {
     return adjustedRangeMin + ((adjustedRangeMax - adjustedRangeMin)
         * userValue);
-  }
-
-  /**
-   * Calculates the percentage difference from value v1 to value v2.  For
-   * example, if v1 = 10 and v2 = 15, then the % difference is 50% ( 15.0/10.0 -
-   * 1.0 )
-   */
-  public static double calcPrctDiff(double v1, double v2) {
-    ArgChecker.isNonNegative(v1, "v1");
-    ArgChecker.isNonNegative(v2, "v2");
-    return (v2 / v1) - 1.0;
   }
 
   /**

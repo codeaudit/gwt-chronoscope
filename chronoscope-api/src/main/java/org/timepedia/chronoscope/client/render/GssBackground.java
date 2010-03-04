@@ -52,11 +52,11 @@ public class GssBackground implements Background, GssElement {
 //            layer.clearRect(0, 0, b.width, b.height);
       layer.setComposite(Layer.COPY);
       layer.setFillColor(gssPlotProperties.bgColor);
-      layer.beginPath();
-      layer.translate(0,0);
-      layer.scale(b.width, b.height);
-      layer.rect(0, 0, 1, 1);
-      layer.fill();
+//      layer.beginPath();
+//      layer.translate(0,0);
+//      layer.scale(b.width, b.height);
+      layer.fillRect(0, 0, b.width, b.height);
+//      layer.fill();
 //            layer.beginPath();
     //  layer.fillRect(0-1, 0-1, b.width, b.height);
 //            layer.fill();
