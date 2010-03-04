@@ -66,12 +66,10 @@ public class XYPlotRenderer<T extends Tuple2D> {
       // Find the highest-resolution mipmap whose number of data points
       // that lie within the plot domain is <= maxDataPoints.
       final int maxDrawableDataPoints = overviewMode ? (int) plot.getPlotLayer()
-          .getWidth() 
-          : getMaxDrawableDataPoints(drawableDataset);
+          .getWidth() : getMaxDrawableDataPoints(drawableDataset);
       MipMapRegion bestMipMapRegion = dataSet
           .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints);
 
-      
       MipMap bestMipMap = bestMipMapRegion.getMipMap();
       if (overviewMode && bestMipMap.getLevel() == 0) {
         bestMipMap = bestMipMap.next();
@@ -101,7 +99,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
             RangeAxis.calcPrctDiff(refY, maxY));
       }
 
-      rangeAxis.adjustVisibleRange(visRange);
+      rangeAxis.adjustVisibleRange(
+          overviewMode ? rangeAxis.getRangeInterval() : visRange);
     }
   }
 
@@ -157,7 +156,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
     final double refY = calcReferenceY(rangeAxis, dds);
 
     int[] passOrder = renderer.getPassOrder(dataSet);
-
     for (int pass : passOrder) {
       renderState
           .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));

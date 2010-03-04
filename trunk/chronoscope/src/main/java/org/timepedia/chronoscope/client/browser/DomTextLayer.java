@@ -65,19 +65,22 @@ public abstract class DomTextLayer extends AbstractLayer {
   // of rotations within an enclosed area
 
   public void drawRotatedText(final double x, final double y,
-      final double angle, final String label, String fontFamily,
+      final double angle, String label, String fontFamily,
       String fontWeight, String fontSize, final String layerName,
       final Chart chart) {
     save();
-    int cx = canvasStringWidth(label, fontFamily, fontWeight, fontSize) / 2;
-    int cy = stringHeight(label, fontFamily, fontWeight, fontSize)/2;
-    translate(x + cx, y+cy);
+    double cx = (double)canvasStringWidth(label, fontFamily, fontWeight, fontSize) / 2.0;
+    double cy = (stringHeight(label, fontFamily, fontWeight, fontSize))/2;
+   
+    translate(x, y);
     rotate(angle);
     setFillColor(new Color(getStrokeColor()));
     
-    translate(-x - cx, -y+(cy*2)*Math.sin(angle));
-    fillText(label, x, y, fontFamily, fontSize);
-
+   translate(angle > 0 ? 0 : -cx*2, angle < 0 ? 0 : -cy*2);
+    
+    fillText(label, 0, 0, fontFamily, fontSize, angle > 0 ? "top" : "top");
+    
+    
     restore();
   }
 
@@ -85,7 +88,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       String fontWeight, String fontSize);
 
   protected abstract void fillText(String label, double x, double y,
-      String fontFamily, String fontSize);
+      String fontFamily, String fontSize, String baseline);
 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName,
@@ -110,7 +113,7 @@ public abstract class DomTextLayer extends AbstractLayer {
 
   public abstract Element getElement();
 
-  public TextLayer getTextLayer(String layerName) {
+  public TextLayer getTextLayer(String layerName) {                            
     TextLayer layer = (TextLayer) layers.get(layerName);
     if (layer == null) {
       Element layerElem;

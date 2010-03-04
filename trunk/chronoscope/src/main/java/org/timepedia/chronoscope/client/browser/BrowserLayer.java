@@ -147,7 +147,7 @@ public class BrowserLayer extends DomTextLayer {
   @Override
   protected int canvasStringWidth(String label, String fontFamily,
       String fontWeight, String fontSize) {
-    return csw(ctx, label, fontFamily+" "+fontSize);
+    return csw(ctx, label, fontSize + " "+ fontFamily);
   }
 
   private native int csw(JavaScriptObject ctx, String label, String font) /*-{
@@ -157,13 +157,14 @@ public class BrowserLayer extends DomTextLayer {
 
   @Override
   protected void fillText(String label, double x, double y, String fontFamily,
-      String fontSize) {
-    fillText0(ctx, label, x,y, fontFamily+" "+fontSize);
+      String fontSize, String baseline) {
+    fillText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
   }
 
   private native void fillText0(JavaScriptObject ctx, String label, double x,
-      double y, String font) /*-{
+      double y, String font, String baseline) /*-{
     ctx.font = font;
+    ctx.textBaseline = baseline;
     ctx.fillText(label, x, y);
   }-*/;
 
@@ -245,8 +246,8 @@ public class BrowserLayer extends DomTextLayer {
       assert sx > 0.0 : "Scale X is zero";
       assert sy > 0.0 : "Scale Y is zero";
       scale0(sx, sy);
-
   }
+  
   public native void scale0(double sx, double sy) /*-{
         this.@org.timepedia.chronoscope.client.browser.BrowserLayer::ctx.scale(sx, sy);
     }-*/;
