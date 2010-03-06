@@ -56,7 +56,8 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * @return a MipMap and pair of start and end indices in the MipMap
    */
   @NoExport
-  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples);
+  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int
+      lodBias);
 
   /**
    * Returns an interval that contains the minimum and maximum domain values

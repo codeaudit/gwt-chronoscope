@@ -5,8 +5,8 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.Util;
-import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.NoExport;
 
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import java.util.Map;
  *
  * @author Chad Takahashi
  */
-public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
-    Exportable {
+public abstract class AbstractDataset<T extends Tuple2D>
+    implements Dataset<T>, Exportable {
 
   protected double minDomainInterval;
 
@@ -31,7 +31,8 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
 
   private Interval domainExtrema = new Interval(0.0, 0.0);
 
-  private Map<String, Object> userData = new HashMap<String, Object>(); 
+  private Map<String, Object> userData = new HashMap<String, Object>();
+
   @Export
   public final Interval getDomainExtrema() {
     this.domainExtrema.setEndpoints(getX(0), getX(getNumSamples() - 1));
@@ -48,7 +49,8 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
     return minDomainInterval;
   }
 
-  public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples) {
+  public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples,
+      int lodBias) {
     int domainStartIdx = 0;
     int domainEndIdx = 0;
     MipMapChain mipMapChain = getMipMapChain();
@@ -58,7 +60,11 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
       domainStartIdx = Util.binarySearch(domain, region.getStart());
       domainEndIdx = Util.binarySearch(domain, region.getEnd());
       if ((domainEndIdx - domainStartIdx) <= maxSamples) {
-        break;
+        if (lodBias == 0) {
+          break;
+        } else {
+          lodBias--;
+        }
       }
       bestMipMap = bestMipMap.next();
     }
@@ -81,7 +87,7 @@ public abstract class AbstractDataset<T extends Tuple2D> implements Dataset<T>,
 
   @NoExport
   public <T> T getUserData(String key) {
-    return (T)userData.get(key);
+    return (T) userData.get(key);
   }
 
   @NoExport
