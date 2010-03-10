@@ -178,7 +178,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     if (view != null) {
       Element elem = ((DOMView) view).getElement();
       if (elem != null) {
-        view.resize(resize.getWidth(), resize.getHeight());
+//        view.resize(resize.getWidth(), resize.getHeight());
         // DOM.getElementPropertyInt(elem, "clientWidth"),
         // DOM.getElementPropertyInt(elem, "clientHeight"));
       }

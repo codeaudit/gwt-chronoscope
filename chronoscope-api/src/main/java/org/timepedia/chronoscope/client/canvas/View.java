@@ -186,7 +186,9 @@ public abstract class View implements Exportable {
   /**
    * Resizing the chart once displayed currently unsupported
    */
+  @Export
   public void resize(int width, int height) {
+    chart.reloadStyles();
   }
 
   public void setChart(Chart chart) {
