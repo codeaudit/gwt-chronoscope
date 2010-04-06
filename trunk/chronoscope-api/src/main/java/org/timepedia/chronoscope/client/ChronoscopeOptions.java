@@ -26,6 +26,17 @@ public class ChronoscopeOptions {
   private static String crossHairLabels = null;
 
   private static boolean defaultMultiaxisMode = true;
+  
+  private static String defaultAggregateFunction = "mean";
+
+  public static String getDefaultAggregateFunction() {
+    return defaultAggregateFunction;
+  }
+
+  public static void setDefaultAggregateFunction(
+      String defaultAggregateFunction) {
+    ChronoscopeOptions.defaultAggregateFunction = defaultAggregateFunction;
+  }
 
   /**
    * A factory function to create a push-pin marker given a Date, then the

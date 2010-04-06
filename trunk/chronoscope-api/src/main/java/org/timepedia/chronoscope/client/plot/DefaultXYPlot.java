@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -26,6 +25,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.event.ChartClickEvent;
+import org.timepedia.chronoscope.client.event.ChartClickHandler;
 import org.timepedia.chronoscope.client.event.PlotChangedEvent;
 import org.timepedia.chronoscope.client.event.PlotChangedHandler;
 import org.timepedia.chronoscope.client.event.PlotContextMenuEvent;
@@ -38,6 +39,7 @@ import org.timepedia.chronoscope.client.event.PlotMovedHandler;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
+import org.timepedia.chronoscope.client.render.DatasetLegendPanel;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.DrawableDataset;
@@ -76,6 +78,8 @@ import java.util.List;
 @ExportPackage("chronoscope")
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
+
+  private boolean legendOverriden;
 
   private class ExportableHandlerManager extends HandlerManager {
 
@@ -235,6 +239,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw(true);
   }
 
+  @Export("addClickHandler")
+  public ExportableHandlerRegistration addChartClickHandler(
+      ChartClickHandler handler) {
+    return handlerManager.addExportableHandler(ChartClickEvent.TYPE, handler);
+  }
+
   @Export("addChangeHandler")
   public ExportableHandlerRegistration addPlotChangedHandler(
       PlotChangedHandler handler) {
@@ -312,6 +322,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         return true;
       }
     }
+    handlerManager.fireEvent(new ChartClickEvent(this, x, y));
     return false;
   }
 
@@ -345,10 +356,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     overviewLayer.clear();
     overviewLayer.setFillColor(Color.TRANSPARENT);
     overviewLayer.setVisibility(false);
-    overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    overviewLayer
+        .fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
     Bounds oldBounds = plotBounds;
     Layer oldLayer = plotLayer;
-    plotBounds = new Bounds(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    plotBounds = new Bounds(0, 0, overviewLayer.getWidth(),
+        overviewLayer.getHeight());
     plotLayer = overviewLayer;
     plotRenderer.drawDatasets(true);
     plotBounds = oldBounds;
@@ -745,7 +758,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotRenderer.drawHoverPoints(hoverLayer);
     }
 
-    drawCrossHairs(hoverLayer);           
+    drawCrossHairs(hoverLayer);
 
     if (plotDomainChanged || forceCenterPlotRedraw) {
       plotLayer.clear();
@@ -969,6 +982,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void setLegendEnabled(boolean b) {
+    legendOverriden = true;
     topPanel.setEnabled(b);
   }
 
@@ -1170,26 +1184,57 @@ public class DefaultXYPlot<T extends Tuple2D>
           }
           hoverLayer.setStrokeColor(Color.BLACK);
           int hx = hoverX;
+          int hy = hoverY;
           double dx = windowXtoDomain(hoverX + plotBounds.x);
+          double dy = windowYtoRange(hoverY + (int) plotBounds.y, 0);
           String label = crosshairFmt.format(dx);
           hx += dx < getDomain().midpoint() ? 1.0
               : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
 
           hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
               Cursor.DEFAULT);
+          int nearestPt = NO_SELECTION;
+          int nearestSer = 0;
+          int nearestDim = 0;
+
+          if ("nearest".equals(crosshairProperties.pointSelection)) {
+
+            double minNearestDist = MAX_FOCUS_DIST;
+
+            for (int i = 0; i < datasets.size(); i++) {
+              double domainX = windowXtoDomain(hoverX + plotBounds.x);
+              double rangeY = windowYtoRange((int) (hoverY + plotBounds.y), i);
+              NearestPoint nearest = this.nearestSingleton;
+              findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
+
+              if (nearest.dist < minNearestDist) {
+                nearestPt = nearest.pointIndex;
+                nearestSer = i;
+                minNearestDist = nearest.dist;
+                nearestDim = nearest.dim;
+              }
+            }
+          }
+
           if (hoverPoints != null) {
             for (int i = 0; i < hoverPoints.length; i++) {
               int hoverPoint = hoverPoints[i];
+              if (nearestPt != NO_SELECTION && i != nearestSer) {
+                continue;
+              }
               if (hoverPoint > -1) {
                 Dataset d = getDatasets().get(i);
                 RangeAxis ra = getRangeAxis(i);
                 DatasetRenderer r = getDatasetRenderer(i);
                 for (int dim = 0; dim < r.getLegendEntries(d); dim++) {
+                  if (nearestPt != NO_SELECTION && dim != nearestDim) {
+                    continue;
+                  }
                   Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
                   double realY = tuple.getRange(dim);
                   double y = r.getRangeValue(tuple, dim);
-                  double dy = rangeToScreenY(y, i);
-                  String rLabel = ra.getFormattedLabel(realY);
+                  dy = rangeToScreenY(y, i);
+                  String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim);
                   RenderState rs = new RenderState();
                   rs.setPassNumber(dim);
                   GssProperties props = r.getLegendProperties(dim, rs);
@@ -1369,11 +1414,11 @@ public class DefaultXYPlot<T extends Tuple2D>
             rangeToScreenY(tupleLeft.getRange(d), datasetIndex));
         rDist = df.dist(sx, sy, rx,
             rangeToScreenY(tupleRight.getRange(d), datasetIndex));
-        if (lDist <= rDist && lDist < np.dist) {
+        if (lDist <= rDist && lDist <= np.dist) {
           nearestHoverPt = closestPtToLeft;
           np.dist = lDist;
           np.dim = d;
-        } else {
+        } else if (rDist < lDist && rDist <= np.dist) {
           nearestHoverPt = closestPtToRight;
           np.dist = rDist;
           np.dim = d;
@@ -1428,8 +1473,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     GssProperties legendProps = view
         .getGssProperties(new GssElementImpl("axislegend", null), "");
-    if (legendProps.gssSupplied) {
-      setLegendEnabled(legendProps.visible);
+    if (legendProps.gssSupplied && !legendOverriden) {
+      topPanel.setEnabled(legendProps.visible);
     }
 
     crosshairProperties = view

@@ -208,7 +208,7 @@ public class DatasetLegendPanel extends AbstractPanel
    * index is needed in order to determine the range value to be displayed for
    * hovered data points. If pointIdx == -1, then the range value is omitted.
    */
-  private static String createDatasetLabel(XYPlot plot, int datasetIdx,
+  public static String createDatasetLabel(XYPlot plot, int datasetIdx,
       int pointIdx, int dimension) {
     Dataset ds = plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
