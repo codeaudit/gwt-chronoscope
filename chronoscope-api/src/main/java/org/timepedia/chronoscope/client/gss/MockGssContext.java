@@ -113,8 +113,9 @@ public class MockGssContext extends GssContext {
     p.color = new Color("rgba(200,200,200,255)");
     p.fontFamily = "Helvetica";
     p.fontSize = "9pt";
-    p.transparency = 1.0f;
-    p.lineThickness = 0;
+    p.transparency = 0.4f;
+    p.lineThickness = 1;
+    p.visible = false;
   }
   
   private void configMarkerProps(GssProperties p) {

@@ -57,6 +57,8 @@ public class GssProperties {
   
   public boolean gssSupplied = false;
   
+  public String pointSelection = "domain";
+  
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;

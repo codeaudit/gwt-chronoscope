@@ -187,7 +187,7 @@ public class Chronoscope
    * @gwt.export
    */
   @Export
-  public static DomainBarMarker createBarMarker(String startDate,
+  public static DomainBarMarker createBarMarkerWithClass(String startDate,
       String endDate, String label, String gssClass) {
     return new DomainBarMarker(startDate, endDate, label, gssClass);
   }
@@ -370,6 +370,15 @@ public class Chronoscope
     return microformatsEnabled;
   }
 
+  /**
+   * Set's the default aggregate function used to create zoomed out data.
+   * Default is "mean", other possible values are "min", "max", "extrema"
+   */
+  @Export
+  public static void setDefaultAggregateFunction(String name) {
+    ChronoscopeOptions.setDefaultAggregateFunction(name);
+  }
+  
   @Export
   public static void setShowCredits(boolean enabled) {
     ChronoscopeOptions.setShowCredits(enabled);

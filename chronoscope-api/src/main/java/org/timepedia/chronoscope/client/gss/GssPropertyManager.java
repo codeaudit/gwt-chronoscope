@@ -300,6 +300,19 @@ public class GssPropertyManager {
   };
 
 
+  // NOTE "em" not supported, eg line-thickness:.1em; is invalid
+   public static final GssPropertyType GSS_POINT_SELECTION_PROPERTY
+       = new GssPropertyType("point-selection", "", GssPropertyType.TypeUnits.STRING,
+       "Specifies 'nearest' or 'domain' for hover selection, nearest selects " 
+           + "the closest data point based on the (x,y) of the mouse, 'domain' " 
+           + "selects the data points to" 
+           + "the X position of the mouse.") {
+     @Override
+     public void setPropertyString(GssProperties props, String prop) {
+       props.pointSelection = prop;
+     }
+   };
+  
   public static final GssPropertyType GSS_OPACITY_PROPERTY
       = new GssPropertyType("opacity", "", GssPropertyType.TypeUnits.FLOAT,
       "Specifies the opacity value from 0 (transparent) to 1 (opaque)") {
@@ -422,12 +435,20 @@ public class GssPropertyManager {
     }
   };
 
-  public static final GssElementType GSS_FILL_TYPE = new GssElementType("fill",
+  public static final GssElementType GSS_GRID_TYPE = new GssElementType("grid",
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
           GSS_OPACITY_PROPERTY},
       "In a line plot, allows control of fill region beneath line.",
       "line fill { opacity: 0.5; background-color: lightblue; } /* draws a filled region below plotted line 50% transparent and light blue */")
+      ;
+  
+  public static final GssElementType GSS_FILL_TYPE = new GssElementType("fill",
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY,
+          GSS_OPACITY_PROPERTY, GSS_VISIBILITY_PROPERTY, GSS_POINT_SELECTION_PROPERTY},
+      "Allows styling of horizontal and vertical grid lines.",
+      "axis.domain grid { opacity: 0.5; visiblity: visible; }")
       ;
 
   public static final GssElementType GSS_LINE_TYPE = new GssElementType("line",
