@@ -1,14 +1,17 @@
-#summary Overall design philosophy for Chronoscope
+#summary About Chronoscope
 #labels Featured
 
-= Things to strive for =
+= Chronoscope = 
 
-  * Scalable representations. For example, if you're implementing a category plot with pie chart rendering, don't just imagine a dataset with 5 items, imagine one with 500, like say, a hierarchical/zoomable piechart of the entire US Budget.
+Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers.  
 
-  * Platform independence. Please try to keep any non-JRE emulation layer code out of major packages. Also, try to limit any usage of GWT User.jar classes to the client.browser package. This is to allow one to Chronoscope for GWT as well as build a Swing/Java2d version, and eventually, a J2ME version.
+== Philosophy ==
 
-  * Performance. Firebug profiler is your friend. 
+  * Scalable representations. For example, almost anything works if you're implementing a plot for a dataset with 5 items.  The aim of Chronoscope is to support hundred, thousands, and hundreds of thousands of items.
 
-  * GSS stylability (within limits)
+  * Platform independence.  Although compiled and most often used via the Javascript API, the core code happens to be written in Java and then compiled to Javascript using Google Web Toolkit.  That enabled server-side Java2D or mobile Android targets as well as Javascript clients.
 
-  * Javascript usage: GWT Exporter makes this easy.
+  * Performance.  
+
+  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([gss GSS])
+

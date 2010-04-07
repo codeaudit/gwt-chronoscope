@@ -1,0 +1,124 @@
+# Chronoscope GWT API Overview
+
+= Chronoscope GWT API Overview =
+
+== Hello Chart == 
+
+Assuming you have <a href="http://code.google.com/webtoolkit">Google Web Toolkit</a> installed
+already.  If not, <a href="get started">http://code.google.com/webtoolkit/gettingstarted.html</a>
+
+
+{{{applicationCreator -out HelloChart com.example.client.HelloChart}}}
+
+Edit src/com/example/HelloChart.gwt.xml and add a line to inherit Chronoscope.  You'll also need to add chronoscope and gwtexporter to your CLASSPATH.  For example, make a lib/ directory and put chronoscope.jar and gwtexporter.jar in it.  Then add them to the -cp argument in HelloChart-compile and HelloChart-shell.
+
+
+=== HelloChart-compile ===
+{{{
+#!/bin/sh                                                                                                                                                                 
+APPDIR=`dirname $0`;
+GWTDIR="$HOME/java/gwt";
+GWTPATH="$GWTDIR/gwt-user.jar:$GWTDIR/gwt-dev.jar"
+TIMEPATH="$APPDIR/lib/gwtexporter.jar:$APPDIR/lib/chronoscope.jar"
+
+java -XstartOnFirstThread -cp "$APPDIR/src:$APPDIR/bin:$GWTPATH:$TIMEPATH" \ 
+      com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" com.example.HelloChart;
+}}}
+
+=== HelloChart-shell ===
+{{{
+#!/bin/sh
+APPDIR=`dirname $0`;
+GWTDIR="$HOME/java/gwt";
+GWTPATH="$GWTDIR/gwt-user.jar:$GWTDIR/gwt-dev.jar"
+TIMEPATH="$APPDIR/lib/gwtexporter.jar:$APPDIR/lib/chronoscope.jar"
+
+java -XstartOnFirstThread -cp "$APPDIR/src:$APPDIR/bin:$GWTPATH:$TIMEPATH" \ 
+      com.google.gwt.dev.GWTShell -out "$APPDIR/www" "$@" com.example.HelloChart/HelloChart.html;
+}}}
+
+
+=== HelloChart.gwt.xml ===
+
+&lt;module&gt;
+    &lt;!-- Inherit the core Web Toolkit stuff.                  --&gt;
+    &lt;inherits name='com.google.gwt.user.User'/&gt;
+    &lt;!-- Inherit Chronoscope.                                 --&gt;
+    &lt;inherits name='org.timepedia.chronoscope.Chronoscope'/&gt;
+    &lt;!-- Specify the app entry point class.                   --&gt;
+    &lt;entry-point class='com.example.client.HelloChart'/&gt;
+&lt;/module&gt;
+
+
+
+We'll use a json file for the dataset, it should be in the format: 
+
+{{{
+=== dataset.js ===
+{{{
+dataset = {
+    Id: "unique id for this dataset",
+    domain: [ UTCTimeInMilliseconds_1, UTCtimeInMilliseconds_2, ... ],
+    range: [ Value_1, Value_2, ... ],
+    label: "default label for this dataset",
+    axis: "unit"  
+}
+}}}
+
+Datasets with the same <code>axis:</code> identifier will share the same range axis,
+which is useful if they're units like "hours", "km", "kbps", "$", etc.
+
+
+Modify the index.html applicationCreator made and add the <code>script</code> 
+tag to import dataset.js
+
+
+<code>&lt;script language='javascript' src='dataset.js'&gt;</script></code>
+
+
+=== HelloChart.java ==
+{{{
+package com.example.client;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import org.timepedia.chronoscope.client.browser.ChartPanel;
+import org.timepedia.chronoscope.client.browser.Chronoscope;
+import org.timepedia.chronoscope.client.XYDataset;
+
+
+public class HelloChart implements EntryPoint {
+
+    public void onModuleLoad() {
+        double GOLDEN_RATIO = 1.618;
+        int chartWidth = 600, chartHeight = (int) ( chartWidth / GOLDEN_RATIO );
+        Chronoscope.setFontBookRendering(true);
+
+        XYDataset[] dataset = new XYDataset[1];
+        dataset[0] = Chronoscope.createXYDataset(getJson("dataset"));
+        VerticalPanel vp=new VerticalPanel();
+        vp.add(new Label(dataset[0].getRangeLabel()));
+        ChartPanel chartPanel = Chronoscope.createTimeseriesChart(dataset, chartWidth, chartHeight);
+        vp.add(chartPanel);
+        RootPanel.get("slot1").add(vp);
+    }
+
+    private static native JavaScriptObject getJson(String varName) /*-{
+       return $wnd[varName];
+       }-*/;
+}
+}}}
+
+
+
+=== exporting the Javascript API from your GWT app ===
+{{{
+  Chronoscope chronoscope = new Chronoscope();
+  chronoscope.init();
+}}}
+
+

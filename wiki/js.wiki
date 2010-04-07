@@ -1,0 +1,30 @@
+#summary Chronoscope Javascript API Overview
+#sidebar Index
+
+<script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/widget.js"></script>
+= Chronsocope Javascript API =
+
+== Initialization == 
+ The function called "onChronoscopeLoaded" is called once the chart is initialized, and this is where you can customize this function to setup various charts in your page.
+
+{{{
+<html><head>
+<script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/widget.js"></script>
+<script type="text/javascript">
+function onChronoscopeLoaded(chrono)
+{
+   var data = [dataset];
+   chronoscope.Chronoscope.setFontBookRendering(true);
+   chronoscope.Chronoscope.setFontBookServiceEndpoint("http://api.timepedia.org/fr");
+   chronoscope.Chronoscope.setErrorReporting(true);
+   chronoscope.Chronoscope.createTimeseriesChartById("chartid", data, 650, 433, function(view)
+   {
+     view.getChart().redraw();
+     largeview = view;
+    });
+}
+</script>
+</head></html>
+}}}
+
+
