@@ -3,7 +3,7 @@
   * [dataset Datasets]
   * [gss Stylesheets]
   * [js Javascript API ]
-    * [js/reference Javascript API reference]
+    * [jsdoc Javascript API reference]
   * [microformats Microformat overview]
   * [widget widget overview]
     * [widget/intro  widget introduction]

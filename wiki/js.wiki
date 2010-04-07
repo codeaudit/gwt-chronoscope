@@ -1,11 +1,13 @@
 #summary Chronoscope Javascript API Overview
 #sidebar Index
 
-<script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/widget.js"></script>
-= Chronsocope Javascript API =
+= Chronoscope Javascript API =
+
+{{{<script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/widget.js"></script>}}}
 
 == Initialization == 
- The function called "onChronoscopeLoaded" is called once the chart is initialized, and this is where you can customize this function to setup various charts in your page.
+
+The function called "onChronoscopeLoaded" is called once the chart is initialized, and this is where you can customize this function to setup various charts in your page.
 
 {{{
 <html><head>
