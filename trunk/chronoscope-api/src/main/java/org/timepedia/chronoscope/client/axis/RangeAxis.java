@@ -535,6 +535,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     this.visRangeMin = visRangeMin;
     this.visRangeMax = visRangeMax;
     ticks = null;
+    calcTickPositions();
   }
 
   public void setVisibleRangeMax(double visRangeMax) {
