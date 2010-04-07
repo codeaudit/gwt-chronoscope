@@ -55,10 +55,19 @@ public abstract class AbstractDataset<T extends Tuple2D>
     int domainEndIdx = 0;
     MipMapChain mipMapChain = getMipMapChain();
     MipMap bestMipMap = mipMapChain.getMipMap(0);
+    MipMap prevBestMipMap = bestMipMap;
+    int prevStartIdx, prevEndIdx;
+    domainEndIdx = bestMipMap.size() - 1;
     while (true) {
       Array1D domain = bestMipMap.getDomain();
+      prevStartIdx = domainStartIdx;
+      prevEndIdx = domainEndIdx;
+      
       domainStartIdx = Util.binarySearch(domain, region.getStart());
       domainEndIdx = Util.binarySearch(domain, region.getEnd());
+      if(domainEndIdx - domainStartIdx < 2) {
+        return new MipMapRegion(prevBestMipMap, prevStartIdx, prevEndIdx);
+      }
       if ((domainEndIdx - domainStartIdx) <= maxSamples) {
         if (lodBias == 0) {
           break;
@@ -66,6 +75,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
           lodBias--;
         }
       }
+      prevBestMipMap = bestMipMap;
       bestMipMap = bestMipMap.next();
     }
     return new MipMapRegion(bestMipMap, domainStartIdx, domainEndIdx);
