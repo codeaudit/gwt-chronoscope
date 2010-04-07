@@ -135,10 +135,12 @@ public class FlashCanvas extends Canvas {
 
     String swfUrl = Chronoscope
         .getURL(GWT.getModuleBaseURL()+"flcanvas.swf");//flashResources.flashCanvas().getUrl());
-
+    String codeBasePref = GWT.getHostPageBaseURL().startsWith("https") ?
+        "https" : "http";
+    
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
-            + "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
+            + "codebase=\""+ codeBasePref + "://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
             + " width=\"" + width + "\" height=\"" + height + "\" \n" + "id=\""
             + canvasId + "\"> \n" + "<param name=\"movie\" value=\"" + swfUrl
             + "\"> \n" + "<param name=\"FlashVars\" value=\"readyFn=" + readyFn
@@ -154,7 +156,7 @@ public class FlashCanvas extends Canvas {
             + "FlashVars=\"readyFn=" + readyFn + "\" "
             + "wmode=\"transparent\" " + "MENU=\"false\""
             + "allowScriptAccess=\"always\" "
-            + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\"> \n"
+            + "pluginspage=\"" + codeBasePref + "://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");
     DOM.appendChild(canvasElement, glassPane);
     com.google.gwt.dom.client.Element oElement = canvasElement
