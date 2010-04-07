@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -714,6 +715,12 @@ public class DefaultXYPlot<T extends Tuple2D>
         PlotMovedEvent.MoveType.ZOOMED);
   }
 
+  public double rangeToScreenY(Tuple2D pt, int datasetIndex, int dim) {
+    DatasetRenderer dr = getDatasetRenderer(datasetIndex);
+    return plotBounds.height
+        - getRangeAxis(datasetIndex).dataToUser(dr.getRangeValue(pt, dim)) * plotBounds.height;
+  }
+  
   public double rangeToScreenY(double dataY, int datasetIndex) {
     return plotBounds.height
         - getRangeAxis(datasetIndex).dataToUser(dataY) * plotBounds.height;
@@ -1186,7 +1193,6 @@ public class DefaultXYPlot<T extends Tuple2D>
           int hx = hoverX;
           int hy = hoverY;
           double dx = windowXtoDomain(hoverX + plotBounds.x);
-          double dy = windowYtoRange(hoverY + (int) plotBounds.y, 0);
           String label = crosshairFmt.format(dx);
           hx += dx < getDomain().midpoint() ? 1.0
               : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
@@ -1196,15 +1202,15 @@ public class DefaultXYPlot<T extends Tuple2D>
           int nearestPt = NO_SELECTION;
           int nearestSer = 0;
           int nearestDim = 0;
-
+          NearestPoint nearest = this.nearestSingleton;
+          
           if ("nearest".equals(crosshairProperties.pointSelection)) {
 
             double minNearestDist = MAX_FOCUS_DIST;
-
+            
             for (int i = 0; i < datasets.size(); i++) {
               double domainX = windowXtoDomain(hoverX + plotBounds.x);
               double rangeY = windowYtoRange((int) (hoverY + plotBounds.y), i);
-              NearestPoint nearest = this.nearestSingleton;
               findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
 
               if (nearest.dist < minNearestDist) {
@@ -1215,7 +1221,6 @@ public class DefaultXYPlot<T extends Tuple2D>
               }
             }
           }
-
           if (hoverPoints != null) {
             for (int i = 0; i < hoverPoints.length; i++) {
               int hoverPoint = hoverPoints[i];
@@ -1233,7 +1238,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                   Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
                   double realY = tuple.getRange(dim);
                   double y = r.getRangeValue(tuple, dim);
-                  dy = rangeToScreenY(y, i);
+                  double dy = rangeToScreenY(y, i);
                   String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim);
                   RenderState rs = new RenderState();
                   rs.setPassNumber(dim);
@@ -1379,7 +1384,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     double sy = rangeToScreenY(dataY, datasetIndex);
     Tuple2D tupleRight = currMipMap.getTuple(closestPtToRight);
     double rx = domainToScreenX(tupleRight.getDomain(), datasetIndex);
-    double ry = rangeToScreenY(tupleRight.getRange0(), datasetIndex);
+    double ry = rangeToScreenY(tupleRight, datasetIndex, 0);
 
     int nearestHoverPt;
     if (closestPtToRight == 0) {
@@ -1388,7 +1393,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       np.dim = 0;
       for (int d = 1; d < currMipMap.getRangeTupleSize(); d++) {
         double dist2 = df.dist(sx, sy, rx,
-            rangeToScreenY(tupleRight.getRange(d), datasetIndex));
+            rangeToScreenY(tupleRight, datasetIndex, d));
         if (dist2 < np.dist) {
           np.dist = dist2;
           np.dim = d;
@@ -1398,7 +1403,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       int closestPtToLeft = closestPtToRight - 1;
       Tuple2D tupleLeft = currMipMap.getTuple(closestPtToLeft);
       double lx = domainToScreenX(tupleLeft.getDomain(), datasetIndex);
-      double ly = rangeToScreenY(tupleLeft.getRange0(), datasetIndex);
+      double ly = rangeToScreenY(tupleLeft, datasetIndex, 0);
       double lDist = df.dist(sx, sy, lx, ly);
       double rDist = df.dist(sx, sy, rx, ry);
       np.dim = 0;
@@ -1411,21 +1416,20 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
       for (int d = 1; d < currMipMap.getRangeTupleSize(); d++) {
         lDist = df.dist(sx, sy, lx,
-            rangeToScreenY(tupleLeft.getRange(d), datasetIndex));
+            rangeToScreenY(tupleLeft, datasetIndex, d));
         rDist = df.dist(sx, sy, rx,
-            rangeToScreenY(tupleRight.getRange(d), datasetIndex));
+            rangeToScreenY(tupleRight, datasetIndex, d));
         if (lDist <= rDist && lDist <= np.dist) {
           nearestHoverPt = closestPtToLeft;
           np.dist = lDist;
           np.dim = d;
-        } else if (rDist < lDist && rDist <= np.dist) {
+        } else if (rDist <= lDist && rDist <= np.dist) {
           nearestHoverPt = closestPtToRight;
           np.dist = rDist;
           np.dim = d;
         }
       }
     }
-
     np.pointIndex = nearestHoverPt;
   }
 
