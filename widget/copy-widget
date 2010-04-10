@@ -5,12 +5,17 @@ DEST_DIR=.
 echo "copying chronoscope widget"
 echo ""
 
+svn rm *.cache.js
+
 cp -r $SRC_DIR/* $DEST_DIR
 cp $DEST_DIR/chronoscope.js $DEST_DIR/widget.js 
 
 svn info $DIR | egrep Revision > $DEST_DIR/version.txt
 
 rm -rf $DEST_DIR/compile-report
+
+svn add *.cache.js
+
 
 
 
