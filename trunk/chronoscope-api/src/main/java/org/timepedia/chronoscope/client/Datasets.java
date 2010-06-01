@@ -103,7 +103,7 @@ public final class Datasets<T extends Tuple2D>
   }
 
   /**
-   * Disables mutation mode and fires all pending change events..
+   * Disables mutation mode and fires all pending change events.
    */
   @Export
   public void endMutation() {

@@ -134,7 +134,10 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     layer.beginPath();
     layer.moveTo(x, y);
-    layer.setLineWidth(alineProp.lineThickness);
+    // layer.setLineWidth(alineProp.lineThickness);
+    layer.setLineWidth(10);        // TODO - add it to GSS
+
+
     layer.setShadowBlur(alineProp.shadowBlur);
     layer.setShadowColor(alineProp.shadowColor);
     layer.setShadowOffsetX(alineProp.shadowOffsetX);
