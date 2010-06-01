@@ -50,7 +50,13 @@ public class MipMap {
     }
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
-  
+
+  public MipMap(Array1D domain, Array1D[] range, int mipLevel, MipMap next) {
+    this(domain, range);
+    this.mipLevel = mipLevel;
+    this.nextMipMap = next;
+  }
+
   /**
    * Returns the array of domain values within this {@link MipMap}.
    */

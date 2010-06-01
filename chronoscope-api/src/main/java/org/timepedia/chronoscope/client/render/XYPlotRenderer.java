@@ -69,7 +69,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
           .getWidth() : getMaxDrawableDataPoints(drawableDataset);
       MipMapRegion bestMipMapRegion = dataSet
           .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints, 
-              overviewMode ? 1 : 0);
+              overviewMode ? 1 : ((DefaultXYPlot)plot).isAnimating() ? -1 : 0);
 
       MipMap bestMipMap = bestMipMapRegion.getMipMap();
      
@@ -129,9 +129,10 @@ public class XYPlotRenderer<T extends Tuple2D> {
     Dataset<T> dataSet = dds.dataset;
     DatasetRenderer<T> renderer = dds.getRenderer();
 
-    if (dataSet.getNumSamples() < 2) {
-      return;
-    }
+    // TODO: add new method to detect non-drawable datasets
+//    if (dataSet.getNumSamples() < 2) {
+//      return;
+//    }
 
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;

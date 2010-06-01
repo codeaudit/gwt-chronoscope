@@ -32,6 +32,8 @@ import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.ArrayDataset2D;
+import org.timepedia.chronoscope.client.data.IncrementalDatasetResponseImpl;
+import org.timepedia.chronoscope.client.data.MutableDatasetND;
 import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -576,6 +578,12 @@ public class Chronoscope
     Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
     exporter9.export();
 
+    Exporter exporterInc = (Exporter) GWT.create(IncrementalDatasetResponseImpl.class);
+    exporterInc.export();
+    
+    Exporter exporterMut = (Exporter) GWT.create(MutableDatasetND.class);
+    exporterMut.export();
+    
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();
 //
