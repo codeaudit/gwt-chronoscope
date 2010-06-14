@@ -27,6 +27,13 @@ public final class DateFormatHelper {
 
   private static final String[] HOURS_OF_DAY = createHoursOfDayLabels();
 
+  private static boolean isDST;
+
+  static {
+    Date d = new Date();
+    d.setHours(2);
+    isDST = !getDateFormatter("H").format(d.getTime()).endsWith("2");
+  }
   public static DateFormatter getDateFormatter(String format) {
     return DateFormatterFactory.getInstance().getDateFormatter(format);
   }
@@ -38,8 +45,10 @@ public final class DateFormatHelper {
     DateFormatter fmt = getDateFormatter("H"); // h=hour, a=AM/PM
     String[] hourLabels = new String[24];
     for (int h = 0; h < hourLabels.length; h++) {
+      int hr = h + (isDST ? -1 : 0);
+      if (hr < 0) { hr = 23; }
       hourLabels[h] = fmt
-          .format(new Date(1970 - 1970, 0, 1, h, 0, 0).getTime());
+          .format(new Date(1990 - 1900, 0, 1, hr, 0, 0).getTime());
     }
     return hourLabels;
   }
@@ -89,7 +98,7 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String hourAndMinute(ChronoDate d) {
-    return pad(d.getHour()) + ":" + pad(d.getMinute());
+    return hour(d.getHour()) + ":" + pad(d.getMinute());
   }
 
   /**
@@ -98,7 +107,7 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String hourMinuteSecond(ChronoDate d) {
-    return pad(d.getHour()) + ":" + pad(d.getMinute()) + ":" + pad(
+    return hour(d.getHour()) + ":" + pad(d.getMinute()) + ":" + pad(
         d.getSecond());
   }
 
@@ -136,7 +145,7 @@ public final class DateFormatHelper {
    */
   public String tenthOfSecond(ChronoDate d) {
     int tenthSecond = MathUtil.mod((int) d.getTime() / 100, 10);
-    return pad(d.getHour()) + ":" + pad(d.getMinute()) + ":"
+    return hour(d.getHour()) + ":" + pad(d.getMinute()) + ":"
         + pad(d.getSecond()) + "." + pad(tenthSecond);
   }
 

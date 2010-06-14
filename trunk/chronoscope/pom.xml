@@ -38,8 +38,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>google-gin</artifactId>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>
@@ -67,28 +67,28 @@
                 </executions>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<finalName>js</finalName>-->
-                    <!--<doclet>org.timepedia.exporter.doclet.JsDoclet</doclet>-->
-                    <!--<docletArtifact>-->
-                        <!--<groupId>org.timepedia.exporter</groupId>-->
-                        <!--<artifactId>gwtexporter</artifactId>-->
-                        <!--<version>2.04</version>-->
-                    <!--</docletArtifact>-->
-                    <!--&lt;!&ndash; Other dir than apidocs &ndash;&gt;-->
-                    <!--<destDir>apidocs</destDir>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<finalName>js</finalName>-->
+            <!--<doclet>org.timepedia.exporter.doclet.JsDoclet</doclet>-->
+            <!--<docletArtifact>-->
+            <!--<groupId>org.timepedia.exporter</groupId>-->
+            <!--<artifactId>gwtexporter</artifactId>-->
+            <!--<version>2.04</version>-->
+            <!--</docletArtifact>-->
+            <!--&lt;!&ndash; Other dir than apidocs &ndash;&gt;-->
+            <!--<destDir>apidocs</destDir>-->
+            <!--</configuration>-->
 
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>attach-jsdocs</id>-->
-                        <!--<goals>-->
-                            <!--<goal>jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>attach-jsdocs</id>-->
+            <!--<goals>-->
+            <!--<goal>jar</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
         </plugins>

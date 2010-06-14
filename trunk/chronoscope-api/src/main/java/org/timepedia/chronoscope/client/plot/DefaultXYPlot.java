@@ -991,6 +991,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setLegendEnabled(boolean b) {
     legendOverriden = true;
     topPanel.setEnabled(b);
+    if (plotRenderer.isInitialized()) {
+      reloadStyles();
+    }
+    
   }
 
   @Export
