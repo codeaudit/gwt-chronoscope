@@ -86,7 +86,7 @@ public class GssParser {
     return new GssProperty(propertyName, propertyValue);
   }
 
-  private static List<GssSelector> parseSelectors(String selector) {
+  public static List<GssSelector> parseSelectors(String selector) {
     // split selector by comma
     String selectors[] = selector.split(",");
     ArrayList<GssSelector> gssSelectors = new ArrayList<GssSelector>();

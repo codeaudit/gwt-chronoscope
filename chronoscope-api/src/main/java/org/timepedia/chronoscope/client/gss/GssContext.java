@@ -29,4 +29,8 @@ public class GssContext {
   public void setView(View view) {
     this.view = view;
   }
+
+  public GssProperties getPropertiesBySelector(String gssSelector) {
+    return new GssProperties();
+  }
 }
