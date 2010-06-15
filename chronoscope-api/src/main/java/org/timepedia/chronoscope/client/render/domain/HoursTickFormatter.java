@@ -21,7 +21,7 @@ public class HoursTickFormatter extends DateTickFormatter {
       case 0:
         return dateFormat.dayAndMonth(currTick);
       default:
-        return dateFormat.hour(hourOfDay);
+        return dateFormat.slowHour(currTick);
     }
   }
 
