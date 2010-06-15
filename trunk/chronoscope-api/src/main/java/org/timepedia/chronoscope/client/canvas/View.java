@@ -250,4 +250,8 @@ public abstract class View implements Exportable {
   private ChronoscopeMenu getContextMenu() {
     return contextMenu;
   }
+
+  public GssProperties getGssPropertiesBySelector(String gssSelector) {
+    return gssContext.getPropertiesBySelector(gssSelector);
+  }
 }

@@ -414,6 +414,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
   }
 
+  @Override
+  @Export
+  public GssProperties getComputedStyle(String gssSelector) {
+    return view.getGssPropertiesBySelector(gssSelector);
+  }
+
   /**
    * Returns the datasets associated with this plot.
    */
@@ -990,6 +996,17 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void setLegendEnabled(boolean b) {
     legendOverriden = true;
+    for(int i = 0; i<hoverPoints.length; i++) {
+      hoverPoints[i] = -1;
+    }
+    for(Dataset d : datasets) {
+      if(plotRenderer.isInitialized()) {
+        plotRenderer.invalidate(d);
+      }
+    }
+    plotRenderer.resetMipMapLevels();;
+    plotRenderer.sync();
+    
     topPanel.setEnabled(b);
     if (plotRenderer.isInitialized()) {
       reloadStyles();

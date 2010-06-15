@@ -15,9 +15,12 @@ import com.google.gwt.user.client.Element;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.gss.parser.GssParseException;
+import org.timepedia.chronoscope.client.gss.parser.GssParser;
+import org.timepedia.chronoscope.client.gss.parser.GssSelector;
 import org.timepedia.chronoscope.client.gss.parser.GssStylesheetGssContext;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Retrieves styles from <STYLE type="text/gss"> elements
@@ -106,6 +109,12 @@ public class GssStyleElementGssContext extends BrowserGssContext
       }
     }
   }
+
+  @Override
+   public GssProperties getPropertiesBySelector(String gssSelector) {
+     return gssContext.getPropertiesBySelector(gssSelector);
+   }
+  
 
   @Override
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
