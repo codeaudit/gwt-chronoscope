@@ -27,16 +27,16 @@ public final class DateFormatHelper {
 
   private static final String[] HOURS_OF_DAY = createHoursOfDayLabels();
 
-  private static boolean isDST;
-
-  static {
-    Date d = new Date();
-    d.setHours(2);
-    isDST = !getDateFormatter("H").format(d.getTime()).endsWith("2");
-  }
+  
+  
   public static DateFormatter getDateFormatter(String format) {
     return DateFormatterFactory.getInstance().getDateFormatter(format);
   }
+
+  private static final DateFormatter hourFormatter = getDateFormatter("H");
+  private static final DateFormatter hourMinuteFormatter = getDateFormatter("H:mm");
+  private static final DateFormatter hourMinuteSecFormatter = getDateFormatter("H:mm:ss");
+  
 
   /**
    * Uses GWT DateTimeFormat class to obtain hour-of-day labels (e.g. "9am").
@@ -45,7 +45,7 @@ public final class DateFormatHelper {
     DateFormatter fmt = getDateFormatter("H"); // h=hour, a=AM/PM
     String[] hourLabels = new String[24];
     for (int h = 0; h < hourLabels.length; h++) {
-      int hr = h + (isDST ? -1 : 0);
+      int hr = h;
       if (hr < 0) { hr = 23; }
       hourLabels[h] = fmt
           .format(new Date(1990 - 1900, 0, 1, hr, 0, 0).getTime());
@@ -91,6 +91,15 @@ public final class DateFormatHelper {
     return HOURS_OF_DAY[hourOfDay];
     // return pad(hourOfDay) + ":00";
   }
+  
+  /**
+   * Formats the hour of the day.
+   *
+   * @param hourOfDay - a value in the range [0, 23]
+   */
+  public String slowHour(ChronoDate d) {
+    return hourFormatter.format(d.getTime());
+  }
 
   /**
    * Formats hour and minute as "hh:mm".
@@ -98,7 +107,7 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String hourAndMinute(ChronoDate d) {
-    return hour(d.getHour()) + ":" + pad(d.getMinute());
+    return hourMinuteFormatter.format(d.getTime());
   }
 
   /**
@@ -107,8 +116,7 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String hourMinuteSecond(ChronoDate d) {
-    return hour(d.getHour()) + ":" + pad(d.getMinute()) + ":" + pad(
-        d.getSecond());
+    return hourMinuteSecFormatter.format(d.getTime());
   }
 
   /**
@@ -145,8 +153,7 @@ public final class DateFormatHelper {
    */
   public String tenthOfSecond(ChronoDate d) {
     int tenthSecond = MathUtil.mod((int) d.getTime() / 100, 10);
-    return hour(d.getHour()) + ":" + pad(d.getMinute()) + ":"
-        + pad(d.getSecond()) + "." + pad(tenthSecond);
+    return hourMinuteSecond(d) + "." + pad(tenthSecond);
   }
 
   /**
