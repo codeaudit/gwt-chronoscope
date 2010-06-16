@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -29,6 +30,8 @@ public class LegendAxisPanel extends AxisPanel {
 
   private ZoomPanel zoomPanel;
 
+  private GssProperties legendLabelsProperties;
+
   public boolean click(int x, int y) {
     zoomPanel.setPosition(bounds.x, bounds.y);
     return zoomPanel.click(x, y);
@@ -49,7 +52,9 @@ public class LegendAxisPanel extends AxisPanel {
     // Draw the panels
     zoomPanel.draw();
     dateRangePanel.draw();
-    dsLegendPanel.draw();
+    if (legendLabelsProperties.visible) {
+      dsLegendPanel.draw();
+    }
   }
 
   public String getType() {
@@ -80,6 +85,10 @@ public class LegendAxisPanel extends AxisPanel {
     ArgChecker.isNotNull(plot, "plot");
     ArgChecker.isNotNull(zoomListener, "zoomListener");
 
+    legendLabelsProperties = view.getGssPropertiesBySelector("axislegend labels");
+    if (legendLabelsProperties == null) {
+        view.getGssProperties(new GssElementImpl("labels", this),"");
+    }
     ZoomIntervals zoomIntervals = createDefaultZoomIntervals(plot);
     final double minInterval = Math.max(0, plot.getDatasets().getMinInterval());
     Interval domainExtrema = plot.getDatasets().getDomainExtrema();
@@ -125,7 +134,9 @@ public class LegendAxisPanel extends AxisPanel {
     double totalHeight = 0;
     totalHeight += zoomPanel.getBounds().height;
     totalHeight += LEGEND_Y_TOP_PAD;
-    totalHeight += dsLegendPanel.getBounds().height;
+    if (legendLabelsProperties.visible) {
+      totalHeight += dsLegendPanel.getBounds().height;
+    }
     return totalHeight;
   }
 

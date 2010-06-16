@@ -476,6 +476,14 @@ public class GssPropertyManager {
       "label { color: blue; font-size: 12pt } /* Make all labels blue and 12pt */")
       ;
 
+  public static final GssElementType GSS_LABELS_TYPE = new GssElementType(
+      "labels", new String[0],
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY},
+      "Controls visible of legend labelsc.",
+      "axislegend labels { visibility: hidden }")
+      ;
+  
    public static final GssElementType GSS_MARKER_TYPE = new GssElementType(
         "marker", new String[0],
         new GssElementType[] { GSS_LABEL_TYPE},
