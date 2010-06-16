@@ -433,6 +433,22 @@ public class Chronoscope
     Chronoscope.microformatsEnabled = microformatsEnabled;
   }
 
+  /**
+   * Maximum number of datapoints to attempt to render when not moving, before dropping to lower resolution.
+   */
+  @Export
+  public static void setMaxStaticDatapoints(int max) {
+    ChronoscopeOptions.setMaxStaticDatapoints(max);
+  }
+  
+  /**
+   * Maximum number of datapoints to attempt to render when animating, before dropping to lower resolution.
+   */
+  @Export
+  public static void setMaxDynamicDatapoints(int max) {
+    ChronoscopeOptions.setMaxDynamicDatapoints(max);
+  }
+  
   @Inject
   public void setUrlResolver(URLResolver urlr) {
     urlResolver = urlr;
