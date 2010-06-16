@@ -490,6 +490,11 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setLegendEnabled(boolean enabled);
 
   /**
+   * Enables or disables the legend labels in the legend panel.
+   */
+  void setLegendLabelsVisible(boolean visible);
+  
+  /**
    * Enables or disables the mini-chart overview below the center plot
    * panel.
    */

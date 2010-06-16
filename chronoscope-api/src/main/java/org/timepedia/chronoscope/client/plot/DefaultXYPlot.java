@@ -1014,6 +1014,16 @@ public class DefaultXYPlot<T extends Tuple2D>
     
   }
 
+  @Override
+  @Export
+  public void setLegendLabelsVisible(boolean visible) {
+    GssProperties gss = getComputedStyle("axislegend labels");
+    if (gss != null) {
+      gss.setVisible(visible);
+      setLegendEnabled(true);
+    }
+  }
+
   @Export
   public void setMultiaxis(boolean enabled) {
     this.multiaxis = enabled;
