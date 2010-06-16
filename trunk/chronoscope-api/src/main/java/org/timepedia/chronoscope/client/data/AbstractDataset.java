@@ -160,6 +160,8 @@ public abstract class AbstractDataset<T extends Tuple2D>
         } else {
           lodBias--;
         }
+      } else {
+        lodBias = 0;
       }
       prevBestMipMap = bestMipMap;
       bestMipMap = bestMipMap.next();

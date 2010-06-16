@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.util.date;
 
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 /**
@@ -112,6 +113,10 @@ public class FastChronoDate extends ChronoDate {
           addRecursive(TimeUnit.DAY, (numUnits - numDaysToNextMonth));
         }        
         break;
+      case HALF_DAY:
+        numUnits *= 12;
+      case QUARTER_DAY:
+        numUnits *= 6;
       case HOUR:
         dateFields.hour += numUnits;
         if (dateFields.hour > 23) {
@@ -120,6 +125,10 @@ public class FastChronoDate extends ChronoDate {
           addRecursive(TimeUnit.DAY, numDays);
         }
         break;
+      case HALF_HOUR:
+        numUnits *= 30;
+      case QUARTER_HOUR:
+        numUnits *= 15;
       case MIN:
         dateFields.minute += numUnits;
         if (dateFields.minute > 59) {
@@ -128,6 +137,10 @@ public class FastChronoDate extends ChronoDate {
           addRecursive(TimeUnit.HOUR, numHours);
         }
         break;
+      case HALF_MIN:
+        numUnits = numUnits * 30;
+      case QUARTER_MIN:
+        numUnits = numUnits * 15;
       case SEC:
         dateFields.second += numUnits;
         if (dateFields.second > 59) {
@@ -332,7 +345,14 @@ public class FastChronoDate extends ChronoDate {
         dateFields.day = targetDay;
       }
       dateFields.clearStartingAfter(TimeUnit.DAY);
+    } else if (truncatePoint == TimeUnit.QUARTER_MIN || truncatePoint == TimeUnit.HALF_MIN) {
+      dateFields.second = MathUtil.quantize(dateFields.second, (int) (truncatePoint.ms() / TimeUnit.SEC.ms()));
+    } else if (truncatePoint == TimeUnit.QUARTER_HOUR || truncatePoint == TimeUnit.HALF_HOUR) {
+      dateFields.second = MathUtil.quantize(dateFields.second, (int) (truncatePoint.ms() / TimeUnit.MIN.ms()));
     }
+     else if (truncatePoint == TimeUnit.QUARTER_DAY || truncatePoint == TimeUnit.HALF_DAY) {
+      dateFields.second = MathUtil.quantize(dateFields.second, (int) (truncatePoint.ms() / TimeUnit.HOUR.ms()));
+    } 
     else {
       dateFields.clearStartingAfter(truncatePoint);
     }
