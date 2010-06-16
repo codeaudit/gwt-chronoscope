@@ -68,8 +68,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
       final int maxDrawableDataPoints = overviewMode ? (int) plot.getPlotLayer()
           .getWidth() : getMaxDrawableDataPoints(drawableDataset);
       MipMapRegion bestMipMapRegion = dataSet
-          .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints, 
-              overviewMode ? 1 : ((DefaultXYPlot)plot).isAnimating() ? -1 : 0);
+          .getBestMipMapForInterval(plotDomain, overviewMode ? 2000 : maxDrawableDataPoints, 
+              overviewMode ? 0 : ((DefaultXYPlot)plot).isAnimating() ? -1 : 0);
 
       MipMap bestMipMap = bestMipMapRegion.getMipMap();
      
