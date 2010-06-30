@@ -319,7 +319,7 @@
             </activation>
 
             <properties>
-                <gwtversion>2.0.0</gwtversion>
+                <gwtversion>2.0.3</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -371,7 +371,7 @@
             <properties>
                 <gwtplatform>mac</gwtplatform>
                 <!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
-                <google.webtoolkit.extrajvmargs>-Xmx512m
+                <google.webtoolkit.extrajvmargs> -server -Xmx1024m
                 </google.webtoolkit.extrajvmargs>
             </properties>
         </profile>
@@ -391,7 +391,7 @@
         <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>2.0.0</gwtversion>
+                <gwtversion>2.0.3</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
 		<gwt.xdisable>true</gwt.xdisable>

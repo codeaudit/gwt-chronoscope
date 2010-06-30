@@ -410,6 +410,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
   }
 
+  public Tuple2D getDataTuple(int datasetIndex, int pointIndex) {
+    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
+    return dds.currMipMap.getTuple(pointIndex);
+  }
+
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
     return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
   }
@@ -1266,9 +1271,9 @@ public class DefaultXYPlot<T extends Tuple2D>
                   if (nearestPt != NO_SELECTION && dim != nearestDim) {
                     continue;
                   }
-                  Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
-                  double realY = tuple.getRange(dim);
-                  double y = r.getRangeValue(tuple, dim);
+                  // Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
+                  double realY = getDataCoord(i, hoverPoints[i], dim);
+                  double y = r.getRangeValue(getDataTuple(i, hoverPoints[i]), dim);
                   double dy = rangeToScreenY(y, i);
                   String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim);
                   RenderState rs = new RenderState();

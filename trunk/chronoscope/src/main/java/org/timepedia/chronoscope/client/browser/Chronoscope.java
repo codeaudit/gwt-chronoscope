@@ -561,45 +561,31 @@ public class Chronoscope
 
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
-    exporter.export();
 
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
-    dexporter.export();
 
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
-    exporterMarker.export();
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
-    exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT
-        .create(DomainBarMarker.class);
-    exporterDomainMarker.export();
+    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
-    exporter2.export();
 
     Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
-    exporter5.export();
 
     Exporter exporter7 = (Exporter) GWT.create(DatasetRenderer.class);
-    exporter7.export();
 
     Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
-    exporter4.export();
 
     Exporter exporter8 = (Exporter) GWT.create(IntTickFormatterFactory.class);
-    exporter8.export();
 
     Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
-    exporter9.export();
 
     Exporter exporterInc = (Exporter) GWT.create(IncrementalDatasetResponseImpl.class);
-    exporterInc.export();
-    
+
     Exporter exporterMut = (Exporter) GWT.create(MutableDatasetND.class);
-    exporterMut.export();
-    
+
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();
 //

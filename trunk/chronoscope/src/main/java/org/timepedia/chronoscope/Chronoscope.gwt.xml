@@ -30,8 +30,8 @@
     ]]>
   </property-provider>
 
-  <servlet path="/fr"
-           class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+  <!-- servlet path="/fr"
+           class="org.timepedia.chronoscope.server.servlet.FontRenderer"/ -->
 
   <replace-with class="org.timepedia.chronoscope.client.browser.GssStyleElementGssContext">
     <when-type-is
