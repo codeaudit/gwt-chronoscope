@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.data;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 
 import org.timepedia.chronoscope.client.Dataset;
@@ -61,16 +62,20 @@ public abstract class AbstractDataset<T extends Tuple2D>
     return minDomainInterval;
   }
 
-  void setIncrementalData(JsArrayNumber domain, JsArrayNumber range) {
+  void setIncrementalData(JsArrayNumber domain, JsArray<JsArrayNumber> rangeArray) {
     double d[] = new double[domain.length()];
     for(int i=0; i<d.length; i++) {
       d[i] = domain.get(i);
     }
-    double r[] = new double[range.length()];
-    for(int i=0; i<r.length; i++) {
-      r[i] = range.get(i);
+      
+    Array1D[] ranges = new Array1DImpl[rangeArray.length()];
+    for (int dimension = 0; dimension < rangeArray.length(); dimension++) {
+        JsArrayNumber range = rangeArray.get(dimension);
+        ranges[dimension] = new Array1DImpl(d);
     }
-    this.incremental = new MipMap(new Array1DImpl(d), new Array1D[] { new Array1DImpl(r) }, -1, getMipMapChain().getMipMap(0));
+
+    this.incremental = new MipMap(new Array1DImpl(d), ranges, -1, getMipMapChain().getMipMap(0));
+
     Interval region = new Interval(d[0], d[d.length - 1]);
     incrementalInterval = region;
     outgoingRequest = -1;
@@ -114,7 +119,6 @@ public abstract class AbstractDataset<T extends Tuple2D>
 
     @Override
     public void execFunction(ArrayFunction f) {
-      //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

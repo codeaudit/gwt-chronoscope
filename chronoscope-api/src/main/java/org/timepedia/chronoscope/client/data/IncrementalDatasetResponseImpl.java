@@ -15,6 +15,7 @@
  */
 package org.timepedia.chronoscope.client.data;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 
 import org.timepedia.exporter.client.Export;
@@ -34,7 +35,7 @@ public class IncrementalDatasetResponseImpl implements IncrementalDataResponse, 
 
   @Override
   @Export
-  public void addData(JsArrayNumber domain, JsArrayNumber range) {
+  public void addData(JsArrayNumber domain, JsArray<JsArrayNumber> range) {
     dataset.setIncrementalData(domain, range);
   }
 }
