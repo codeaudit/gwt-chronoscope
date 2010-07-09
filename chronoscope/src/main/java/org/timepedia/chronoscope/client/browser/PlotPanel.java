@@ -122,16 +122,15 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click).  Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = (Event.KEYEVENTS & evt.getTypeInt())
-        == 0;
+    boolean screenCoordinatesRelevant = (Event.KEYEVENTS & evt.getTypeInt()) == 0;
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
     int originY = DOM.getAbsoluteTop(getElement()) - Window.getScrollTop();
 
     if (screenCoordinatesRelevant) {
-      x = DOM.eventGetClientX(evt);
-      y = DOM.eventGetClientY(evt);
+      x = evt.getClientX();
+      y = evt.getClientY();
     } else {
       x = -1;
       y = -1;

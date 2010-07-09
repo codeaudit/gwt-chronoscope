@@ -65,6 +65,8 @@ import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -1234,7 +1236,7 @@ public class DefaultXYPlot<T extends Tuple2D>
               : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
 
           hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
-              Cursor.DEFAULT);
+              Cursor.CONTRASTED);
           int nearestPt = NO_SELECTION;
           int nearestSer = 0;
           int nearestDim = 0;
@@ -1258,6 +1260,8 @@ public class DefaultXYPlot<T extends Tuple2D>
             }
           }
           if (hoverPoints != null) {
+              // allLablePoints to store label points prior
+              List<LabelLayoutPoint> labelPointList = new ArrayList<LabelLayoutPoint>();
             for (int i = 0; i < hoverPoints.length; i++) {
               int hoverPoint = hoverPoints[i];
               if (nearestPt != NO_SELECTION && i != nearestSer) {
@@ -1284,11 +1288,13 @@ public class DefaultXYPlot<T extends Tuple2D>
                       : -1 - hoverLayer
                           .stringWidth(rLabel, "Verdana", "", "9pt"));
 
-                  hoverLayer.drawText(hx, dy, rLabel, "Verdana", "", "9pt",
-                      "crosshair", Cursor.DEFAULT);
+                  // Add the orriginal label positions into a allLablePoints for layout and display below.
+                  labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, props, hoverLayer));
                 }
               }
             }
+            // Sort the labels in to groups and display them in horizontal rows if needed.
+            layoutAndDisplayLabels(labelPointList);
           }
         }
       }
@@ -1302,6 +1308,242 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.restore();
     }
   }
+
+  /**
+     * Create a Label Layout Point Comparator
+     * @return
+     */
+    private Comparator<LabelLayoutPoint> createLabelLayoutPointComparator() {
+        Comparator<LabelLayoutPoint> comparator = new Comparator<LabelLayoutPoint>() {
+
+            @Override
+            public int compare(LabelLayoutPoint point, LabelLayoutPoint compare) {
+                return (int) ((point.dy - compare.dy) * 100);
+            }
+        };
+        return comparator;
+    }
+
+    /**
+     * Group label List
+     * @param allLablePoints
+     * @return
+     */
+    private List<List<LabelLayoutPoint>> groupLabelList(List<LabelLayoutPoint> allLablePoints) {
+         List<List<LabelLayoutPoint>> labelGroups = new ArrayList<List<LabelLayoutPoint>>();
+        if (allLablePoints.size() > 1) {
+
+            // Sort the labels by height
+            Collections.sort(allLablePoints, createLabelLayoutPointComparator());
+
+            // create list of label groups
+            List<LabelLayoutPoint> currentGroup = new ArrayList<LabelLayoutPoint>();
+
+            double currentY = allLablePoints.get(0).dy;
+
+            currentGroup.add(allLablePoints.get(0));
+            labelGroups.add(currentGroup);
+
+            int labelSize = 10; // make this dynamic according to font size.
+
+            // loop through the labels and sort them a into groups.
+            for (int i = 1; i < allLablePoints.size(); i++) {
+
+                double nextY = allLablePoints.get(i).dy;
+                if (Math.abs(currentY - nextY) > labelSize) {
+                    // new group
+                    currentGroup = new ArrayList<LabelLayoutPoint>();
+                    labelGroups.add(currentGroup);
+
+                }
+                // add to current group
+                currentGroup.add(allLablePoints.get(i));
+                currentY = nextY;
+            }
+
+        }
+         return labelGroups;
+    }
+
+    /**
+     * Treating Layout which LabelLayoutPoint may overlap and show them
+     * @param allLablePoints
+     */
+    private void layoutAndDisplayLabels(List<LabelLayoutPoint> allLablePoints) {
+       List<List<LabelLayoutPoint>> labelGroups =groupLabelList(allLablePoints);
+        if (labelGroups.size() > 0) {
+            for (int i = 0; i < labelGroups.size(); i++) {
+                List<LabelLayoutPoint> overlapList = labelGroups.get(i);
+                if (overlapList.size() > 1) {
+                    if (hoverX < plotBounds.width * 0.25) {
+                        //All labels shows on the right between the region 0-0.25
+                        LabelLayoutPoint point = overlapList.get(overlapList.size() - 1);
+                        point.layer.setStrokeColor(point.gssProperties.color);
+                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        double beforePointHx = point.hx;
+                        int textLength = point.lableText.length() * 7;
+                        for (int j = overlapList.size() - 2; j >= 0; j--) {
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
+                            beforePointHx = infoList.get(0).doubleValue();
+                            textLength = infoList.get(1).intValue();
+                        }
+                    } else if (hoverX > plotBounds.width * 0.75) {
+                        //All labels shows on the left between the region 0.75-1
+                        LabelLayoutPoint point = overlapList.get(0);
+                        point.layer.setStrokeColor(point.gssProperties.color);
+                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        double beforePointHx = point.hx;
+                        for (int j = 1; j < overlapList.size(); j++) {
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
+                        }
+                    } else if (hoverX < plotBounds.width * 0.5) {
+                        // Shows label between the region 0.25-0.5
+                        int middle;
+                        if (overlapList.size() % 2 == 0) {
+                            middle = overlapList.size() / 2 - 1;
+                        } else {
+                            middle = overlapList.size() / 2;
+                        }
+                        LabelLayoutPoint point = overlapList.get(middle);
+                        double beforePointHx = point.hx;
+                        int textLength = 0;
+                        //show labels on the crossHair right
+                        for (int j = middle; j >= 0; j--) {
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
+                            beforePointHx = infoList.get(0).doubleValue();
+                            textLength = infoList.get(1).intValue();
+                        }
+                        beforePointHx = point.hx;
+                        for (int j = middle + 1; j < overlapList.size(); j++) {
+                            //show labels on the crossHair left
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
+                        }
+                    } else {
+                        // Shows label between the region 0.5-0.75
+                        int middle = overlapList.size() / 2;
+                        LabelLayoutPoint point = overlapList.get(middle);
+                        double beforePointHx = point.hx + point.lableText.length() * 7;
+                        //show labels on the crossHair left
+                        for (int j = middle; j < overlapList.size(); j++) {
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
+                        }
+                        beforePointHx = point.hx + point.lableText.length() * 7;
+                        int textLength = 0;
+                        //show labels on the crossHair right
+                        for (int j = middle - 1; j >= 0; j--) {
+                            LabelLayoutPoint nextPoint = overlapList.get(j);
+                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
+                            beforePointHx = infoList.get(0).doubleValue();
+                            textLength = infoList.get(1).intValue();
+                        }
+                    }
+                } else {
+                    //Only one point
+                    LabelLayoutPoint pendingPoint = overlapList.get(0);
+                    pendingPoint.layer.setStrokeColor(pendingPoint.gssProperties.color);
+                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                }
+            }
+        }
+    }
+
+    /**
+     * Draw a Label On CrossHair Left
+     * @param nextPoint
+     * @param beforePointHx
+     * @return
+     */
+    private double drawLabelOnCrossHairLeft(LabelLayoutPoint nextPoint, double beforePointHx) {
+        nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
+        beforePointHx -= nextPoint.lableText.length() * 7;
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        return beforePointHx;
+    }
+
+    /**
+     * Draw a Label On Cross Hair Right
+     * @param nextPoint
+     * @param beforePointHx
+     * @param textLength
+     * @return
+     */
+    private List<Number> drawLabelOnCrossHairRight(LabelLayoutPoint nextPoint, double beforePointHx, int textLength) {
+        nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
+        beforePointHx += textLength;
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        textLength = nextPoint.lableText.length() * 7;
+        List<Number> beforeInfor = new ArrayList<Number>();
+        beforeInfor.add(0, beforePointHx);
+        beforeInfor.add(1, textLength);
+        return beforeInfor;
+    }
+
+    /**
+     * Points need to display information,Location to be determined
+     */
+    private class LabelLayoutPoint {
+
+        private double hx;
+        private double dy;
+        private String lableText;
+        private GssProperties gssProperties;
+        private Layer layer;
+
+        LabelLayoutPoint(double hx, double dy, String lableText, GssProperties props, Layer layer) {
+            this.hx = hx;
+            this.dy = dy;
+            this.lableText = lableText;
+            this.gssProperties = props;
+            this.layer = layer;
+        }
+
+        public double getDy() {
+            return dy;
+        }
+
+        public void setDy(double dy) {
+            this.dy = dy;
+        }
+
+        public GssProperties getGssProperties() {
+            return gssProperties;
+        }
+
+        public void setGssProperties(GssProperties gssProperties) {
+            this.gssProperties = gssProperties;
+        }
+
+        public double getHx() {
+            return hx;
+        }
+
+        public void setHx(double hx) {
+            this.hx = hx;
+        }
+
+        public String getLableText() {
+            return lableText;
+        }
+
+        public void setLableText(String lableText) {
+            this.lableText = lableText;
+        }
+
+        public Layer getLayer() {
+            return layer;
+        }
+
+        public void setLayer(Layer layer) {
+            this.layer = layer;
+        }
+
+
+    }
 
   /**
    * Draws the overlays (e.g. markers) onto the center plot.

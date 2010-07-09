@@ -6,10 +6,7 @@ import com.google.gwt.core.client.JsArrayNumber;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.util.Array1D;
-import org.timepedia.chronoscope.client.util.ArrayFunction;
-import org.timepedia.chronoscope.client.util.Interval;
-import org.timepedia.chronoscope.client.util.Util;
+import org.timepedia.chronoscope.client.util.*;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.NoExport;
@@ -63,15 +60,19 @@ public abstract class AbstractDataset<T extends Tuple2D>
   }
 
   void setIncrementalData(JsArrayNumber domain, JsArray<JsArrayNumber> rangeArray) {
-    double d[] = new double[domain.length()];
+    int len = domain.length();  // using this length for both 
+    double d[] = new double[len];
     for(int i=0; i<d.length; i++) {
       d[i] = domain.get(i);
     }
-      
+    int rangeArrayLength = rangeArray.length();
     Array1D[] ranges = new Array1DImpl[rangeArray.length()];
-    for (int dimension = 0; dimension < rangeArray.length(); dimension++) {
-        JsArrayNumber range = rangeArray.get(dimension);
-        ranges[dimension] = new Array1DImpl(d);
+    for (int dimension = 0; dimension < rangeArrayLength; dimension++) {
+        double[] r = new double[len];
+        for(int j=0; j < r.length; j++) {
+            r[j] = rangeArray.get(dimension).get(j);
+        }
+        ranges[dimension] = new Array1DImpl(r);
     }
 
     this.incremental = new MipMap(new Array1DImpl(d), ranges, -1, getMipMapChain().getMipMap(0));
