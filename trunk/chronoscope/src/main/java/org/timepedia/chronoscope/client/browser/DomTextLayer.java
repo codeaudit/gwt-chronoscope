@@ -95,6 +95,12 @@ public abstract class DomTextLayer extends AbstractLayer {
       Cursor cursorStyle) {
     TextLayer layer = getTextLayer(layerName);
     Element layerElem = layer.layerElem;
+    if (cursorStyle == Cursor.CONTRASTED) {
+            double fontSizeValue = Double.valueOf(fontSize.substring(0, fontSize.length() - 2));
+            //y Move up 0.7*fontSizeValue to label the middle
+            y -= 0.7 * fontSizeValue;
+            addSemiTransparentBackground(x, y, label, fontFamily, fontWeight, fontSize, "0.3", layer, layerElem);
+    }
     Element textDiv = createTextDiv();
     DOM.setStyleAttribute(textDiv, "left", (x - layer.bounds.x) + "px");
     DOM.setStyleAttribute(textDiv, "top", (y - layer.bounds.y) + "px");
@@ -110,6 +116,66 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.setInnerHTML(textDiv, "<nobr>" + label + "</nobr>");
     DOM.appendChild(layerElem, textDiv);
   }
+
+  /**
+     * Add Semi Transparent Background
+     * @param opacity(between 0 and 1)
+     */
+    public void addSemiTransparentBackground(double x, double y, String label, String fontFamily,
+            String fontWeight, String fontSize, String opacity, TextLayer layer, Element layerElem) {
+        Element textDivBackground = createTextDiv();
+        DOM.setStyleAttribute(textDivBackground, "left", (x - layer.bounds.x) + "px");
+        DOM.setStyleAttribute(textDivBackground, "top", (y - layer.bounds.y) + "px");
+        DOM.setStyleAttribute(textDivBackground, "fontFamily", fontFamily);
+        DOM.setStyleAttribute(textDivBackground, "fontSize", fontSize);
+        DOM.setStyleAttribute(textDivBackground, "fontWeight", fontWeight);
+        DOM.setStyleAttribute(textDivBackground, "color", getStrokeColor());
+        DOM.setStyleAttribute(textDivBackground, "opacity", opacity);
+        DOM.setStyleAttribute(textDivBackground, "backgroundColor", chooseBackgroundColor(getStrokeColor()));
+        DOM.setStyleAttribute(textDivBackground, "textDecoration", "underline");
+        DOM.setStyleAttribute(textDivBackground, "cursor", "pointer");
+        DOM.setInnerHTML(textDivBackground, "<nobr>" + label + "</nobr>");
+        DOM.appendChild(layerElem, textDivBackground);
+    }
+
+    /**
+     * Select the background color is different from the font color
+     * @param fontColor
+     * @return
+     */
+    public String chooseBackgroundColor(String fontColor) {
+        StringBuffer backgroundColor = new StringBuffer();
+        if (fontColor.startsWith("rgba(")) {
+            //Formats such as rgba(255,255,255,255)
+            String[] backColor = fontColor.replace("rgba(", "").replace(")", "").split(",");
+            backgroundColor.append("rgba(");
+            for (int i = 0; i < backColor.length; i++) {
+                Short value = Short.valueOf(backColor[i]);
+                //Number of negation
+                Short v = new Short((short) (~value.shortValue()));
+                backgroundColor.append(Integer.toHexString(v).substring(6, 8));
+                if (i != backColor.length - 1) {
+                    backgroundColor.append(",");
+                } else {
+                    backgroundColor.append(")");
+                }
+            }
+        } else if (fontColor.startsWith("#")) {
+            //Formats such as #FFFFFF
+            backgroundColor.append("#");
+            for (int i = 1; i < fontColor.length() - 1; i = i + 2) {
+                StringBuffer sb = new StringBuffer();
+                sb.append(fontColor.charAt(i));
+                sb.append(fontColor.charAt(i + 1));
+                // 10 decimal converted to 16 hex
+                Short val = Short.parseShort(sb.toString(), 16);
+                //Number of negation, 16 hex converted to 10 decimal
+                Short v = new Short((short) (~val.shortValue()));
+                backgroundColor.append(Integer.toHexString(v).substring(6, 8));
+            }
+        }
+        return backgroundColor.toString();
+    }
 
   public abstract Element getElement();
 

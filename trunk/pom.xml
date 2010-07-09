@@ -101,7 +101,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>1.2-SNAPSHOT</version>
+                    <version>1.2</version>
                     <configuration>
                         <logLevel>${gwt.loglevel}</logLevel>
                         <style>${gwt.outputstyle}</style>
@@ -319,7 +319,7 @@
             </activation>
 
             <properties>
-                <gwtversion>2.0.3</gwtversion>
+                <gwtversion>2.0.4</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -389,9 +389,21 @@
         </profile>
 
         <profile>
+            <id>test</id>
+            <properties>
+                <gwt.loglevel>INFO</gwt.loglevel>
+                <gwt.outputstyle>PRETTY</gwt.outputstyle>
+                <gwt.draft>true</gwt.draft> 
+                <maven.test.skip>true</maven.test.skip>
+                <gwt.inplace>false</gwt.inplace>
+                <gwt.modulesuffix></gwt.modulesuffix>
+            </properties>
+        </profile>
+
+        <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>2.0.3</gwtversion>
+                <gwtversion>2.0.4</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
 		<gwt.xdisable>true</gwt.xdisable>

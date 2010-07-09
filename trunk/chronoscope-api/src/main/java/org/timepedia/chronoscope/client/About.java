@@ -4,7 +4,7 @@ public class About {
 
   public final static String REVISION = "$Revision$";
 
-  public final static String RELEASE = "0.86";
+  public final static String RELEASE = "1.86";
 
   /**
    * Get the current subversion revision number of the Chronoscope library, or

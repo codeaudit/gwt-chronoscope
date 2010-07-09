@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.data;
 
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayNumber;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -35,7 +37,7 @@ public class MipMap {
     this.rangeTuples = rangeTuples;
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
-  
+    
   MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
     ArgChecker.isNotNull(multiResDomain, "multiResDomain");
     ArgChecker.isNotNull(multiResRangeTuple, "multiResRangeTuple");
