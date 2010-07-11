@@ -81,7 +81,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       int domainStartIdx = bestMipMapRegion.getStartIndex();
       int domainEndIdx = bestMipMapRegion.getEndIndex();
       domainStartIdx = Math.max(0, domainStartIdx - 1);
-      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples() - 1);
+//      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples() - 1);
 
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
