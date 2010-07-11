@@ -79,7 +79,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
 
     Interval region = new Interval(d[0], d[d.length - 1]);
     incrementalInterval = region;
-    outgoingRequest = -1;
+    outgoingRequest = System.currentTimeMillis();
     firing = true;
     datasets.fireChanged(this, region);
     firing = false;
