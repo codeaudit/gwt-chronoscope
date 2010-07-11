@@ -619,11 +619,14 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.reloadStyles();
   }
 
-  public void onDatasetChanged(Dataset<T> dataset, double domainStart,
+  public void onDatasetChanged(final Dataset<T> dataset, double domainStart,
       double domainEnd) {
-    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+    view.createTimer(new PortableTimerTask() {
+      @Override
+      public void run(PortableTimer timer) {
+         visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
         datasets);
-    int datasetIndex = this.datasets.indexOf(dataset);
+    int datasetIndex = DefaultXYPlot.this.datasets.indexOf(dataset);
     if (datasetIndex == -1) {
       datasetIndex = 0;
     }
@@ -632,6 +635,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     damageAxes();
     getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
     redraw(true);
+      }
+    });
   }
 
   public void onDatasetRemoved(Dataset<T> dataset, int datasetIndex) {
