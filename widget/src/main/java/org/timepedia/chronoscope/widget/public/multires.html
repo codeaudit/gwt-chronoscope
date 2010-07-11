@@ -4,11 +4,12 @@
 
 axislegend line { line-thickness: 8px;}
 
-series.s0 line { color: #00f; }
-series.s1 line { color: #f00; }
-series.s2 line { color: #0f0; }
+series.s0 line { color: #00ff00; }
+series.s1 line { color: #ff0000; }
+series.s2 line { color: #00ff00; }
+series.s3 line { color: #aabbcc; }
 
-series.s0, series.s1, series.s2 { group: jenga; }        
+series.s0, series.s1, series.s2, series.s3 { group: jenga; }        
 series.jenga { display: stacked-line }
 
 crosshair { visibility: visible; date-format: MM/yyyy; }
@@ -90,7 +91,7 @@ function onChronoscopeLoaded(chrono) {
                 rangroup.push(ran2);
                 rangroup.push(ran3);
                 rangroup.push(ran4);
-                cb.addData(dom, ran);
+                cb.addData(dom, rangroup);
             }
         }
         d.setIncrementalHandler(incrementalHandler);
