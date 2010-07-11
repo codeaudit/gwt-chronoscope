@@ -76,15 +76,14 @@ function onChronoscopeLoaded(chrono) {
                 var start = (Math.floor(region.getStart() / 60000) * 60000);
                 var end = (Math.floor(region.getEnd() / 60000) * 60000);
                 var cdom = start;
-                while (cdom < end) {
+                while (cdom <= end) {
                     dom.push(cdom);
                     cdom += inc;
-                    ran.push(9 + Math.random() * 5);
-                    ran2.push(9 + Math.random() * 5);
-                    ran3.push(9 + Math.random() * 5);
-                    ran4.push(9 + Math.random() * 5);
-                }
-                __log('logstart', start);
+                    ran.push(test_data_hourly[0].range[1] + Math.random() * 100000);
+                    ran2.push(test_data_hourly[1].range[1] + Math.random() * 100000);
+                    ran3.push(test_data_hourly[2].range[1] + Math.random() * 100000);
+                    ran4.push(test_data_hourly[3].range[1] + Math.random() * 100000);
+                }                __log('logstart', start);
                 __log('logend', end);
                 var rangroup = new Array();
                 rangroup.push(ran);
