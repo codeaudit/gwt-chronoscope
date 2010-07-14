@@ -382,7 +382,7 @@ public class BrowserLayer extends DomTextLayer {
     DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "width", "" + b.width + "px");
     DOM.setStyleAttribute(canvas, "height", "" + b.height + "px");
-    DOM.setStyleAttribute(canvas, "position", "absolute");
+    DOM.setStyleAttribute(canvas, "position", "relative");
     DOM.setStyleAttribute(layerContainer, "visibility", "visible");
     DOM.setStyleAttribute(layerContainer, "position", "absolute");
 

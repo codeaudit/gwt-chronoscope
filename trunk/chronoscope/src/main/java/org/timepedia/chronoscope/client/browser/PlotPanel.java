@@ -6,6 +6,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import static com.google.gwt.user.client.Event.KEYEVENTS;
 import com.google.gwt.user.client.Window;
 //import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,6 +59,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private boolean viewReady;
 
+  private int KEYEVENTS = Event.KEYEVENTS;
   /**
    * Instantiates a chart widget using the given DOM element as a container,
    * creating a DefaultXYPlot using the given datasets, with a
@@ -85,6 +87,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   public void fireContextMenu(Event evt) {
+    if (evt.getType() == "undefined") { return; }
+    if (evt == null) { return; }
 
     int x = DOM.eventGetClientX(evt);
     int y = DOM.eventGetClientY(evt) + Window.getScrollTop();
@@ -122,7 +126,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click).  Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = (Event.KEYEVENTS & evt.getTypeInt()) == 0;
+    boolean screenCoordinatesRelevant = (KEYEVENTS & evt.getTypeInt()) == 0;
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
