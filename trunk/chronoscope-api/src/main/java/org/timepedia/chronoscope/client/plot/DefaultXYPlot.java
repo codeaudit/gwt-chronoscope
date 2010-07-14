@@ -235,8 +235,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void addOverlay(Overlay overlay) {
-    overlays.add(overlay);
-    overlay.setPlot(this);
+    if (overlay != null) {
+        overlays.add(overlay);
+        overlay.setPlot(this);
+    }
     //TODO: should we really redraw here? Kinda expensive if you want to bulk
     // add hundreds of overlays
     redraw(true);
@@ -488,13 +490,15 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Overlay getOverlayAt(int x, int y) {
-    for (Overlay o : overlays) {
-      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
-          .isHit(x, y);
+    if ((null != overlays) && overlays.size() > 0) {
+        for (Overlay o : overlays) {
+            boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
+                    .isHit(x, y);
 
-      if (wasOverlayHit) {
-        return o;
-      }
+            if (wasOverlayHit) {
+                return o;
+            }
+        }
     }
     return null;
   }
@@ -621,22 +625,22 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void onDatasetChanged(final Dataset<T> dataset, double domainStart,
       double domainEnd) {
-    view.createTimer(new PortableTimerTask() {
-      @Override
-      public void run(PortableTimer timer) {
-         visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
-        datasets);
-    int datasetIndex = DefaultXYPlot.this.datasets.indexOf(dataset);
-    if (datasetIndex == -1) {
-      datasetIndex = 0;
-    }
-    plotRenderer.invalidate(dataset);
-    fixDomainDisjoint();
-    damageAxes();
-    getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
-    redraw(true);
-      }
-    });
+      view.createTimer(new PortableTimerTask() {
+          @Override
+          public void run(PortableTimer timer) {
+              visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+                      datasets);
+              int datasetIndex = DefaultXYPlot.this.datasets.indexOf(dataset);
+              if (datasetIndex == -1) {
+                  datasetIndex = 0;
+              }
+              plotRenderer.invalidate(dataset);
+              fixDomainDisjoint();
+              damageAxes();
+              getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
+              redraw(true);
+          }
+      }).schedule(15);
   }
 
   public void onDatasetRemoved(Dataset<T> dataset, int datasetIndex) {
@@ -842,6 +846,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void removeOverlay(Overlay over) {
+    if (null == over) { return; }
     overlays.remove(over);
     over.setPlot(null);
   }
@@ -1560,7 +1565,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
 
     for (Overlay o : overlays) {
-      o.draw(layer, "overlays");
+      if (null != o) { o.draw(layer, "overlays"); }
     }
 
     layer.restore();

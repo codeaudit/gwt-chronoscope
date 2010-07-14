@@ -128,8 +128,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
     }
   }
   
-  public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples,
-      int lodBias) {
+  public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias) {
     int domainStartIdx = 0;
     int domainEndIdx = 0;
     if (lodBias == 0 && incrementalHandler != null && incremental != null && incrementalInterval != null && incrementalInterval.contains(region.getStart()) && 
