@@ -38,7 +38,7 @@ public class MipMap {
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
     
-  MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
+  public MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
     ArgChecker.isNotNull(multiResDomain, "multiResDomain");
     ArgChecker.isNotNull(multiResRangeTuple, "multiResRangeTuple");
     ArgChecker.isNonNegative(mipLevel, "mipLevel");
