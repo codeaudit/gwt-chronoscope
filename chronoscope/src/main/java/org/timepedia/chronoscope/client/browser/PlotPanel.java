@@ -87,7 +87,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   public void fireContextMenu(Event evt) {
-    if (evt.getType() == "undefined") { return; }
+    if (DOM.eventGetTypeString(evt) == "undefined") { return; }
     if (evt == null) { return; }
 
     int x = DOM.eventGetClientX(evt);

@@ -43,6 +43,8 @@ public final class Datasets<T extends Tuple2D>
 
   private int mutating = 0;
 
+  private List<Command> pending = new ArrayList<Command>();
+
   /**
    * Constructs an empty dataset container.
    */
@@ -254,8 +256,6 @@ public final class Datasets<T extends Tuple2D>
           "method call not valid for empty container");
     }
   }
-
-  private List<Command> pending = new ArrayList<Command>();
 
   public void fireChanged(Dataset dataset, Interval region) {
      myDatasetListener.onDatasetChanged(dataset, region.getStart(), region.getEnd());

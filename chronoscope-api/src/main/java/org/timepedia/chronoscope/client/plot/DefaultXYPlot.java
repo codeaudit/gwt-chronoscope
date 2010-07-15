@@ -308,8 +308,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     for (Overlay o : overlays) {
-      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
-          .isHit(x, y);
+      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o.isHit(x, y);
 
       if (wasOverlayHit) {
         o.click(x, y);
@@ -623,8 +622,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.reloadStyles();
   }
 
-  public void onDatasetChanged(final Dataset<T> dataset, double domainStart,
-      double domainEnd) {
+  public void onDatasetChanged(final Dataset<T> dataset, double domainStart, double domainEnd) {
       view.createTimer(new PortableTimerTask() {
           @Override
           public void run(PortableTimer timer) {
@@ -773,7 +771,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean canDrawFast = !(isAnimating() && ChronoscopeOptions
         .isLowPerformance());
 
-    final boolean plotDomainChanged = !visDomain.equals(lastVisDomain);
+    final boolean plotDomainChanged = !visDomain.approx(lastVisDomain);
 
     Layer hoverLayer = getHoverLayer();
 
@@ -1746,7 +1744,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   private void fixDomainDisjoint() {
     if (!datasets.getDomainExtrema().intersects(getDomain())) {
-      datasets.getDomainExtrema().copyTo(getDomain());
+      getDomain().expand(datasets.getDomainExtrema());
       calcDomainWidths();
     }
   }
