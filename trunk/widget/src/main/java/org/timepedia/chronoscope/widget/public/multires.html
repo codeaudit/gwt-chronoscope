@@ -66,30 +66,25 @@ var indexed = {
 
 var __datasets = test_data_hourly;
 
+function __log(entry) {
+  logarea = document.getElementById('logarea');
+  logarea.value = entry + "\n" + logarea.value;
+}
 
 function __push_dataset(d) {
   __datasets.push(d);
 }
 
-function __log(eid, msg) {
-    document.getElementById(eid).innerHTML = msg;
-}
-
 function incrementalHandler(region, ds, cb) {
-    logline = document.createElement('li');
-    logline.innerHTML = new Date().getTime() + ":  " + region.getStart() + " - " + region.getEnd();
-    document.getElementById('logcalls').appendChild(logline);
-
+    var inc=0;
     if (region.length() < 86400000) {
-        document.getElementById('logregion').innerHTML = " "+region.getStart() +", "+region.getEnd();
         var i = 0;
-        var inc = Math.floor((Math.floor(region.length() / 60000) * 60000) / 400);
-        document.getElementById('loginc').innerHTML = " "+inc;
+        inc = Math.floor((Math.floor(region.length() / 60000) * 60000) / 400);
         var dom = [];
         var ran = [];
         // var ran2 = [];
-        //var ran3 = [];
-        //var ran4 = [];
+        // var ran3 = [];
+        // var ran4 = [];
         var start = (Math.floor(region.getStart() / 60000) * 60000);
         var end = (Math.floor(region.getEnd() / 60000) * 60000);
         var cdom = start;
@@ -98,15 +93,15 @@ function incrementalHandler(region, ds, cb) {
             cdom += inc;
             ran.push(indexed[ds.getIdentifier()].range[1] + Math.random() * 100000);
         }
-        document.getElementById('logstart').innerHTML = " "+start;
-        document.getElementById('logend').innerHTML = " "+end;
         var rangroup = new Array();
         rangroup.push(ran);
-        //rangroup.push(ran2);
-        //rangroup.push(ran3);
-        //rangroup.push(ran4);
+        // rangroup.push(ran2);
+        // rangroup.push(ran3);
+        // rangroup.push(ran4);
         cb.addData(dom, rangroup);
     }
+    __log("region:" + Math.floor(region.getStart()) +"-"+ Math.floor(region.getEnd()) + "  length:" + Math.floor(region.length()) + "  inc:"+ inc);
+
 }
 
 var incremental = incrementalHandler;
@@ -136,12 +131,14 @@ function onChronoscopeLoaded(chrono) {
     <p>
       Zoom in past hourly data and you'll see (auto-generated, in this example) additional data points.
     </p>
-    <p>
+    <p><textarea id="logarea" rows="7" style="font-size:11px; width:480px;"></textarea></p>
+
+    <!--p>
       region: <b id="logregion">...</b><br/>
       inc: <b id="loginc">...</b><br/>
       start: <b id="logstart">...</b><br/>
       end: <b id="logend">...</b><br/>
-    </p>
+    </p -->
 
 
     <div id="chart">
@@ -149,10 +146,6 @@ function onChronoscopeLoaded(chrono) {
     </div>
   </div>
 
-  <p>
-    <ul id="logcalls">
-    </ul>
-  </p>
 
 
 

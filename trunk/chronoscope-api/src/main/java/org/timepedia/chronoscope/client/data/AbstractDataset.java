@@ -43,6 +43,9 @@ public abstract class AbstractDataset<T extends Tuple2D>
 
   private boolean firing;
 
+  MipMap incremental;
+  Interval incrementalInterval;
+
   @Export
   public final Interval getDomainExtrema() {
     this.domainExtrema.setEndpoints(getX(0), getX(getNumSamples() - 1));
@@ -75,7 +78,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
         ranges[dimension] = new Array1DImpl(r);
     }
 
-    this.incremental = new MipMap(new Array1DImpl(d), ranges, -1, getMipMapChain().getMipMap(0));
+    incremental = new MipMap(new Array1DImpl(d), ranges, -1, getMipMapChain().getMipMap(0));
 
     Interval region = new Interval(d[0], d[d.length - 1]);
     incrementalInterval = region;
@@ -131,13 +134,20 @@ public abstract class AbstractDataset<T extends Tuple2D>
   public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias) {
     int domainStartIdx = 0;
     int domainEndIdx = 0;
-    if (lodBias == 0 && incrementalHandler != null && incremental != null && incrementalInterval != null && incrementalInterval.contains(region.getStart()) && 
-        incrementalInterval.contains(region.getEnd())) {
+    if (lodBias == 0 && incrementalHandler != null && incremental != null && incrementalInterval != null
+            && incrementalInterval.contains(region.getStart()) 
+            && incrementalInterval.contains(region.getEnd())) {
       domainStartIdx = Util.binarySearch(incremental.getDomain(), region.getStart());
       domainEndIdx = Util.binarySearch(incremental.getDomain(), region.getEnd());
       return new MipMapRegion(incremental, domainStartIdx, domainEndIdx);
     }
-    if (!firing && lodBias == 0 && incrementalHandler != null && (outgoingRequest < 0 || System.currentTimeMillis() - outgoingRequest > 5000 )) {
+    if (!firing && lodBias == 0 && incrementalHandler != null
+            && (outgoingRequest < 0 || System.currentTimeMillis() - outgoingRequest > 5000 )) {
+      // widening region for redraw issue when slighlty under needed span
+       double delta = region.getEnd() - region.getStart();
+       double epsilon = delta * 0.01;
+       region.setEndpoints(Math.max(this.domainExtrema.getStart(), region.getStart()-epsilon),
+                           Math.min(this.domainExtrema.getEnd(), region.getEnd()+epsilon));
       incrementalHandler.onDataNeeded(region, this, new IncrementalDatasetResponseImpl(this));
       outgoingRequest = System.currentTimeMillis();
     }
@@ -173,9 +183,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
     return new MipMapRegion(bestMipMap, domainStartIdx, domainEndIdx);
   }
 
-  MipMap incremental;
-  Interval incrementalInterval;
-  
+
   @Export
   public final Interval getPreferredRangeAxisInterval() {
     return preferredRangeAxisInterval;

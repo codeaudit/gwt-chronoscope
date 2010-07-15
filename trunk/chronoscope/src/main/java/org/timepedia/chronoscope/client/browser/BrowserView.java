@@ -121,6 +121,7 @@ public class BrowserView extends GwtView
   /**
    * Overridden to disable double buffering
    */
+  @Override
   public void flipCanvas() {
   }
 
