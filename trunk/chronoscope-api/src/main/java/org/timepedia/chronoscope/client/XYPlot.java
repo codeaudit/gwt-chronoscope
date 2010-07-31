@@ -313,6 +313,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Returns true if mini-chart overview on x-axis is enabled.
    */
+  @Export
   boolean isOverviewEnabled();
 
   /**
@@ -487,17 +488,20 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Enables or disables the legend panel above the center plot panel.
    */
+  @Export
   void setLegendEnabled(boolean enabled);
 
   /**
    * Enables or disables the legend labels in the legend panel.
    */
+  @Export
   void setLegendLabelsVisible(boolean visible);
   
   /**
    * Enables or disables the mini-chart overview below the center plot
    * panel.
    */
+  @Export
   void setOverviewEnabled(boolean enabled);
 
   /**

@@ -87,7 +87,7 @@ public class LegendAxisPanel extends AxisPanel {
 
     legendLabelsProperties = view.getGssPropertiesBySelector("axislegend labels");
     if (legendLabelsProperties == null) {
-        view.getGssProperties(new GssElementImpl("labels", this),"");
+        legendLabelsProperties = view.getGssProperties(new GssElementImpl("labels", this),"");
     }
     ZoomIntervals zoomIntervals = createDefaultZoomIntervals(plot);
     final double minInterval = Math.max(0, plot.getDatasets().getMinInterval());

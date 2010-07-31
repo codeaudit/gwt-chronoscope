@@ -23,7 +23,7 @@ public abstract class AbstractPanel implements Panel, Exportable {
   protected String textLayerName;
   protected StringSizer stringSizer;
   protected Panel parent;
-  
+
   private double layerOffsetX, layerOffsetY;
 
   public final void setGssProperties(GssProperties gssProperties) {
@@ -95,8 +95,9 @@ public abstract class AbstractPanel implements Panel, Exportable {
   }
   
   public String toString() {
+    String layerBounds = (null==layer) ? "null" : layer.getBounds().toString();
     return "bounds=" + this.bounds +
         "; layerOffset=(" + layerOffsetX + ", " + layerOffsetY + ")" +
-        "; layerBounds=" + layer.getBounds();
+        "; layerBounds=" + layerBounds;
   }
 }

@@ -56,11 +56,12 @@ public class RangeAxisPanel extends AxisPanel {
 
     double tickPositions[] = rangeAxis.calcTickPositions();
     layer.save();
-
+      
     if (!GRID_ONLY) {
       clearAxis(layer, drawBounds);
       drawLine(layer, drawBounds);
     }
+
 
     layer.setTransparency(1.0f);
     layer.setFillColor(Color.WHITE);
@@ -150,7 +151,6 @@ public class RangeAxisPanel extends AxisPanel {
     }
 
     layer.clearTextLayer(textLayerName);
-
     layer.setFillColor(gssProperties.bgColor);
     layer.setShadowBlur(0);
     layer.setShadowOffsetX(0);
@@ -181,7 +181,6 @@ public class RangeAxisPanel extends AxisPanel {
 
   private void drawLabel(Layer layer, double y, Bounds bounds, double value) {
     String label = rangeAxis.getFormattedLabel(value);
-
     double labelWidth = layer
         .stringWidth(label, gssProperties.fontFamily, gssProperties.fontWeight,
             gssProperties.fontSize);
@@ -195,9 +194,8 @@ public class RangeAxisPanel extends AxisPanel {
     }
 
     layer.save();
-    layer.setStrokeColor(getTickProps(labelProperties).color);
-    layer.setFillColor(labelProperties.bgColor);
-    double alignAdjust = -labelHeight / 2;
+
+    double alignAdjust = Math.floor(-labelHeight / 2.0);
     if ("above".equals(labelProperties.tickAlign)) {
       alignAdjust = -labelHeight;
       dir = 1;
@@ -209,6 +207,14 @@ public class RangeAxisPanel extends AxisPanel {
             : (-labelWidth - axisLabelWidth - 10);
       }
     }
+
+    // layer.setTransparency(1);
+    layer.setStrokeColor(getTickProps(labelProperties).color);
+    layer.setFillColor(labelProperties.bgColor);      
+    // layer.fillRect(bounds.rightX()+dir, y + alignAdjust,
+    //               bounds.rightX()+dir+labelWidth, y+alignAdjust+labelHeight);
+
+
     if (MathUtil.isBounded(y, bounds.y, bounds.bottomY())) {
       layer.drawText(bounds.rightX() + dir, y + alignAdjust, label,
           gssProperties.fontFamily, gssProperties.fontWeight,

@@ -4,10 +4,8 @@ import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
-import org.timepedia.chronoscope.client.render.DomainAxisPanel;
-import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
-import org.timepedia.chronoscope.client.render.Panel;
+import org.timepedia.chronoscope.client.gss.GssProperties;
+import org.timepedia.chronoscope.client.render.*;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Interval;
@@ -38,10 +36,10 @@ final class BottomPanel extends AuxiliaryPanel {
   
   // The miniaturized fully-zoomed-out representation of the datasets
   private OverviewAxisPanel overviewAxisPanel;
-  
+
   private boolean overviewDrawn = false;
   
-  private boolean overviewEnabled = true;
+//  private boolean overviewEnabled = true;
   
   public BottomPanel() {
     myBounds = new Bounds(0, 0, 100, 20);
@@ -104,7 +102,7 @@ final class BottomPanel extends AuxiliaryPanel {
   }
   
   public boolean isOverviewEnabled() {
-    return this.overviewEnabled;
+    return overviewAxisPanel.visible;
   }
 
   @Override
@@ -157,17 +155,17 @@ final class BottomPanel extends AuxiliaryPanel {
   }
   
   public void setOverviewEnabled(boolean overviewEnabled) {
-    if (this.overviewEnabled == overviewEnabled) {
+    if (overviewAxisPanel.visible == overviewEnabled) {
       return;
     }
-    
+
     clearDrawCaches();
 
-    this.overviewEnabled = overviewEnabled;
+    overviewAxisPanel.visible = overviewEnabled;
     if (overviewEnabled) {
       this.enabled = true;
     }
-    
+
     if (!this.initialized) {
       return;
     }
@@ -189,7 +187,7 @@ final class BottomPanel extends AuxiliaryPanel {
   
   @Override
   protected void drawHook() {
-    if (overviewEnabled && !overviewDrawn) {
+    if (overviewAxisPanel.visible && !overviewDrawn) {
       drawDatasetOverview();
     }
 
@@ -201,7 +199,7 @@ final class BottomPanel extends AuxiliaryPanel {
     compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
         Position.BOTTOM, plot, view);
     compositePanel.setParent(this);
-    
+
     // Both DomainAxisPanel and OverviewAxisPanel must be initialized even 
     // if BottomPanel is not currently enabled, because other auxiliary panels 
     // still refer to them.  
@@ -210,14 +208,13 @@ final class BottomPanel extends AuxiliaryPanel {
 
     if (this.isEnabled()) {
       compositePanel.add(domainAxisPanel);
-      if (overviewEnabled) {
+      if (overviewAxisPanel.visible) {
         compositePanel.add(overviewAxisPanel);
       }
     }
   }
   
   protected void setEnabledHook(boolean enabled) {
-    overviewEnabled = enabled;
     clearDrawCaches();
     
     if (!isInitialized()) {
@@ -228,9 +225,12 @@ final class BottomPanel extends AuxiliaryPanel {
     initOverviewAxisPanel();
     compositePanel.clear();
 
+
     if (enabled) {
-      compositePanel.add(domainAxisPanel);
-      compositePanel.add(overviewAxisPanel);
+        compositePanel.add(domainAxisPanel);
+        if (overviewAxisPanel.visible) {
+          compositePanel.add(overviewAxisPanel);
+        }
     }
     
     if (isInitialized()) {
@@ -243,7 +243,6 @@ final class BottomPanel extends AuxiliaryPanel {
    * datasets managed by this plot.
    */
   private void drawDatasetOverview() {
-   
     plot.drawOverviewPlot(overviewLayer);
     overviewDrawn = true;
   }
@@ -251,25 +250,22 @@ final class BottomPanel extends AuxiliaryPanel {
   private void initDomainAxisPanel() {
     if (domainAxisPanel == null) {
       domainAxisPanel = new DomainAxisPanel();
-    }
-    else {
+    } else {
       compositePanel.remove(domainAxisPanel);
     }
-    
     domainAxisPanel.setValueAxis(new DomainAxis(plot));
   }
   
   private void initOverviewAxisPanel() {
     if (overviewAxisPanel == null) {
       overviewAxisPanel = new OverviewAxisPanel();
-      overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "Overview"));
-    }
-    else {
+    } else {
       compositePanel.remove(overviewAxisPanel);
     }
+    overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "overview"));              
+
   }
-  
-  
+
   private static void log(Object msg) {
     System.out.println("BottomPanel> " + msg);
   }
