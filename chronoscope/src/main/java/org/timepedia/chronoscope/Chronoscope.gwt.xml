@@ -30,11 +30,8 @@
     ]]>
   </property-provider>
 
-  <!-- servlet path="/fr" class="org.timepedia.chronoscope.server.servlet.FontRenderer"/ -->
-
   <replace-with class="org.timepedia.chronoscope.client.browser.GssStyleElementGssContext">
-    <when-type-is
-        class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
+    <when-type-is class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
   </replace-with>
   
   <replace-with class="org.timepedia.chronoscope.client.browser.BrowserView">
@@ -48,19 +45,16 @@
     <when-property-is name="hasflash" value="yes"/>
   </replace-with>
 
-  <replace-with
-      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="user.agent" value="ie8"/>
     <when-property-is name="hasflash" value="yes"/>
   </replace-with>       <!-- TODO - test in ie8 -->
 
-  <replace-with
-      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="hasflash" value="force"/>
   </replace-with>
-
  
   <set-property name="export" value="yes"/>
   <!--<set-property name="hasflash" value="yes"/>-->

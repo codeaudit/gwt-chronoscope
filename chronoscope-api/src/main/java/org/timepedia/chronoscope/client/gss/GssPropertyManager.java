@@ -169,7 +169,8 @@ public class GssPropertyManager {
         }
         public String getDocString() {
           return "A CSS color name, rgb triple rgb(r,g,b), hexadecimal triple "
-              + "(e.g. #f0a2c9), an rgba quadruple rgba(r,g,b,a)";
+              + "(e.g. #f0a2c9), an rgba quadruple rgba(r,g,b,a). Note: " 
+              + " Shorthand colors such as #fff; will work in most browsers but fail in IE.";
         }},
 
       BGIMAGE {
@@ -512,14 +513,22 @@ public class GssPropertyManager {
   public static final GssElementType GSS_GUIDELINE_TYPE = new GssElementType("guideline",
       new GssElementType[]{GSS_MARKER_TYPE},
       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_POINT_SELECTION_PROPERTY, GSS_VISIBILITY_PROPERTY},
-      "Visibility of guidelines on markers",
+      "Guidelines on markers",
       "marker.foo guideline { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;
   
   public static final GssElementType GSS_AXISLEGEND_TYPE = new GssElementType("axislegend",
       new GssElementType[0],
       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
-      "Visibility of axis legend",
+      "Legend",
       "axislegend { visibility: hidden }")
       ;
+
+//  public static final GssElementType GSS_OVERVIEW_TYPE = new GssElementType("overview",
+//       new GssElementType[0],
+//       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
+//       "Overview",
+//       "overview { visibility: hidden }")
+//       ;
+
 }

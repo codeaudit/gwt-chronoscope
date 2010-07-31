@@ -547,6 +547,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return multiaxis;
   }
 
+  @Export
   public boolean isOverviewEnabled() {
     return bottomPanel.isOverviewEnabled();
   }
@@ -622,7 +623,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.reloadStyles();
   }
 
-  public void onDatasetChanged(final Dataset<T> dataset, double domainStart, double domainEnd) {
+  public void onDatasetChanged(final Dataset<T> dataset, final double domainStart, final double domainEnd) {
       view.createTimer(new PortableTimerTask() {
           @Override
           public void run(PortableTimer timer) {
@@ -631,6 +632,10 @@ public class DefaultXYPlot<T extends Tuple2D>
               int datasetIndex = DefaultXYPlot.this.datasets.indexOf(dataset);
               if (datasetIndex == -1) {
                   datasetIndex = 0;
+              }
+              //Record start and end the current data
+              if(datasets.indexOf(dataset)==0){
+                  visDomain.setEndpoints(domainStart, domainEnd);
               }
               plotRenderer.invalidate(dataset);
               fixDomainDisjoint();

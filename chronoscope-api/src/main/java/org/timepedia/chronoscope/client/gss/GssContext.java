@@ -4,8 +4,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 
 /**
  * A GssContext is responsible for mapping GssElement/pseudoElt pairs into
- * GssProperties objects. In the browser, this is done by {@link
- * org.timepedia.chronoscope.client.browser.CssGssContext} for example.
+ * GssProperties objects. In the browser, for example, this is done by
+ * {@see org.timepedia.chronoscope.client.browser.GssStyleElementGssContext} 
  */
 public class GssContext {
 

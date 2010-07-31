@@ -111,8 +111,8 @@ function onChronoscopeLoaded(chrono) {
 
     chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
         plot = view.getChart().getPlot();
-        plot.setAutoZoomVisibleRange(0, true);
-        // plot.getAxis(0).setAutoZoomVisibleRange(true);
+        // plot.setAutoZoomVisibleRange(0, true);
+        plot.getAxis(0).setAutoZoomVisibleRange(true);
         view.getChart().redraw();
     });
 

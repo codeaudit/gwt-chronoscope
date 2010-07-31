@@ -99,7 +99,8 @@ public abstract class DomTextLayer extends AbstractLayer {
             double fontSizeValue = Double.valueOf(fontSize.substring(0, fontSize.length() - 2));
             //y Move up 0.7*fontSizeValue to label the middle
             y -= 0.7 * fontSizeValue;
-            addSemiTransparentBackground(x, y, label, fontFamily, fontWeight, fontSize, "0.3", layer, layerElem);
+            String backgroundOpacity="0.8";
+            addSemiTransparentBackground(x, y, label, fontFamily, fontWeight, fontSize, backgroundOpacity, layer, layerElem);
     }
     Element textDiv = createTextDiv();
     DOM.setStyleAttribute(textDiv, "left", (x - layer.bounds.x) + "px");
@@ -171,6 +172,10 @@ public abstract class DomTextLayer extends AbstractLayer {
                 Short val = Short.parseShort(sb.toString(), 16);
                 //Number of negation, 16 hex converted to 10 decimal
                 Short v = new Short((short) (~val.shortValue()));
+                //Background color to highlight
+                if(v<-100){
+                    v=Integer.valueOf(v+100).shortValue();
+                }
                 backgroundColor.append(Integer.toHexString(v).substring(6, 8));
             }
         }

@@ -121,7 +121,7 @@ public class DateRangePanel extends AbstractPanel implements
     doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
-    final String typicalDateChars = "0123456789-";
+    final String typicalDateChars = "0123456789-/";
     bounds.height = stringSizer.getHeight("X", labelProperties);
     typicalCharWidth = stringSizer.getWidth(typicalDateChars, labelProperties) /
         typicalDateChars.length();
@@ -172,10 +172,10 @@ public class DateRangePanel extends AbstractPanel implements
       if (isDateDomain) {
         String longStartDate = formatLongDate(domainInterval.getStart());
         String longEndDate = formatLongDate(domainInterval.getEnd());
-        dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate;
+        dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate + SPC;
         String shortStartDate = formatShortDate(domainInterval.getStart());
         String shortEndDate = formatShortDate(domainInterval.getEnd());
-        dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate;
+        dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate + SPC;
 
         dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
       } else {

@@ -137,7 +137,13 @@ public class FlashCanvas extends Canvas {
         .getURL(GWT.getModuleBaseURL()+"flcanvas.swf");//flashResources.flashCanvas().getUrl());
     String codeBasePref = GWT.getHostPageBaseURL().startsWith("https") ?
         "https" : "http";
-    
+
+    String noflash = "<div><h3>You should see a chart here</h3>\n"
+            + "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n"
+            + "<p><a href=\"http://www.adobe.com/go/getflashplayer\"><img src=\"http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif\" alt=\"Get Adobe Flash player\" /></a></p>\n"
+            + "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>"
+            + "</div>\n";
+      
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
             + "codebase=\""+ codeBasePref + "://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
@@ -593,10 +599,11 @@ public class FlashCanvas extends Canvas {
   public native int stringHeight(String canvasId, String string, String font,
       String bold, String size, float angle) /*-{
         var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
-        if(flashCanvas && flashCanvas.stringHeight) 
+        if(flashCanvas && flashCanvas.stringHeight) {
           return flashCanvas.stringHeight(string, font, bold, size, angle);
-        else
+        } else {
           return 10;
+        }
     }-*/;
 
   public int stringHeight(String string, String font, String bold, String size,
@@ -607,10 +614,11 @@ public class FlashCanvas extends Canvas {
   public native int stringWidth(String canvasId, String string, String font,
       String bold, String size, float angle) /*-{
         var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
-        if(flashCanvas && flashCanvas.stringWidth) 
+        if(flashCanvas && flashCanvas.stringWidth) {
           return flashCanvas.stringWidth(string, font, bold, size, angle);
-        else
+        } else {
           return 10 * string.length;
+        }
     }-*/;
 
   public int stringWidth(String string, String font, String bold, String size,
