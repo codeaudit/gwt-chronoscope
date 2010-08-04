@@ -2,16 +2,15 @@
 
 = Chronoscope GWT API Overview =
 
-== Hello Chart == 
 
 Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
 already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
 
-Create a new project using the webAppCreator command line tool:
+Create a new project using the `webAppCreator` command line tool:
 
 {{{webAppCreator -out HelloChart com.example.client.HelloChart}}}
 
-Edit src/com/example/HelloChart.gwt.xml and add a line to inherit Chronoscope. 
+Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit `Chronoscope`. 
 {{{
 <module>
     <inherits name='org.timepedia.chronoscope.Chronoscope' />
@@ -21,10 +20,10 @@ Edit src/com/example/HelloChart.gwt.xml and add a line to inherit Chronoscope.
 
 You'll also need to add chronoscope and gwtexporter to your project classpath. So simply put these libraries in the folder:
 {{{
-  war/WEB-INF/lib
+  cp path_to/gwtexporter.jar path_to/chronoacope.jar war/WEB-INF/lib
 }}}
 
-We'll use a json file for the dataset, it should be in the format: 
+We'll use a json file for the dataset, so put it in your `war/` foder and make sure it should be in the format: 
 {{{
 dataset = {
     Id: "unique id for this dataset",
@@ -36,9 +35,9 @@ dataset = {
 }}}
 
 Datasets with the same `axis:` identifier will share the same range axis,
-which is useful if they're units like "hours", "km", "kbps", "$", etc.
+which is useful if they're units like `hours`, `km`, `kbps`, `$`, etc.
 
-Modify the index.html webAppCreator made and add:
+Modify the index.html `webAppCreator` made and add:
 
 {{{
   <script language='javascript' src='dataset.js'></script>
