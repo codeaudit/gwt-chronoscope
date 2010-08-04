@@ -4,57 +4,27 @@
 
 == Hello Chart == 
 
-Assuming you have <a href="http://code.google.com/webtoolkit">Google Web Toolkit</a> installed
-already.  If not, <a href="get started">http://code.google.com/webtoolkit/gettingstarted.html</a>
+Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
+already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
 
+Create a new project using the webAppCreator command line tool:
 
-{{{applicationCreator -out HelloChart com.example.client.HelloChart}}}
+{{{webAppCreator -out HelloChart com.example.client.HelloChart}}}
 
-Edit src/com/example/HelloChart.gwt.xml and add a line to inherit Chronoscope.  You'll also need to add chronoscope and gwtexporter to your CLASSPATH.  For example, make a lib/ directory and put chronoscope.jar and gwtexporter.jar in it.  Then add them to the -cp argument in HelloChart-compile and HelloChart-shell.
-
-
-=== HelloChart-compile ===
+Edit src/com/example/HelloChart.gwt.xml and add a line to inherit Chronoscope. 
 {{{
-#!/bin/sh                                                                                                                                                                 
-APPDIR=`dirname $0`;
-GWTDIR="$HOME/java/gwt";
-GWTPATH="$GWTDIR/gwt-user.jar:$GWTDIR/gwt-dev.jar"
-TIMEPATH="$APPDIR/lib/gwtexporter.jar:$APPDIR/lib/chronoscope.jar"
-
-java -XstartOnFirstThread -cp "$APPDIR/src:$APPDIR/bin:$GWTPATH:$TIMEPATH" \ 
-      com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" com.example.HelloChart;
+<module>
+    <inherits name='org.timepedia.chronoscope.Chronoscope' />
+    <entry-point class='com.example.client.HelloChart' />;
+</module>
 }}}
 
-=== HelloChart-shell ===
+You'll also need to add chronoscope and gwtexporter to your project classpath. So simply put these libraries in the folder:
 {{{
-#!/bin/sh
-APPDIR=`dirname $0`;
-GWTDIR="$HOME/java/gwt";
-GWTPATH="$GWTDIR/gwt-user.jar:$GWTDIR/gwt-dev.jar"
-TIMEPATH="$APPDIR/lib/gwtexporter.jar:$APPDIR/lib/chronoscope.jar"
-
-java -XstartOnFirstThread -cp "$APPDIR/src:$APPDIR/bin:$GWTPATH:$TIMEPATH" \ 
-      com.google.gwt.dev.GWTShell -out "$APPDIR/www" "$@" com.example.HelloChart/HelloChart.html;
+  war/WEB-INF/lib
 }}}
-
-
-=== HelloChart.gwt.xml ===
-
-&lt;module&gt;
-    &lt;!-- Inherit the core Web Toolkit stuff.                  --&gt;
-    &lt;inherits name='com.google.gwt.user.User'/&gt;
-    &lt;!-- Inherit Chronoscope.                                 --&gt;
-    &lt;inherits name='org.timepedia.chronoscope.Chronoscope'/&gt;
-    &lt;!-- Specify the app entry point class.                   --&gt;
-    &lt;entry-point class='com.example.client.HelloChart'/&gt;
-&lt;/module&gt;
-
-
 
 We'll use a json file for the dataset, it should be in the format: 
-
-{{{
-=== dataset.js ===
 {{{
 dataset = {
     Id: "unique id for this dataset",
@@ -65,18 +35,16 @@ dataset = {
 }
 }}}
 
-Datasets with the same <code>axis:</code> identifier will share the same range axis,
+Datasets with the same `axis:` identifier will share the same range axis,
 which is useful if they're units like "hours", "km", "kbps", "$", etc.
 
+Modify the index.html webAppCreator made and add:
 
-Modify the index.html applicationCreator made and add the <code>script</code> 
-tag to import dataset.js
+{{{
+  <script language='javascript' src='dataset.js'></script>
+}}}
 
-
-<code>&lt;script language='javascript' src='dataset.js'&gt;</script></code>
-
-
-=== HelloChart.java ==
+Modify your javacode `HelloChart.java`:
 {{{
 package com.example.client;
 
@@ -109,16 +77,13 @@ public class HelloChart implements EntryPoint {
 
     private static native JavaScriptObject getJson(String varName) /*-{
        return $wnd[varName];
-       }-*/;
+    }-*/;
 }
 }}}
 
 
-
-=== exporting the Javascript API from your GWT app ===
+Exporting the Javascript API from your GWT app 
 {{{
   Chronoscope chronoscope = new Chronoscope();
   chronoscope.init();
 }}}
-
-
