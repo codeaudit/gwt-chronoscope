@@ -1,7 +1,6 @@
-# Chronoscope GWT API Overview
+#summary Using chronoscope in Gwt applications
 
 = Chronoscope GWT API Overview =
-
 
 Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
 already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
