@@ -1,0 +1,6 @@
+<project>
+<modelVersion>4.0.0</modelVersion>
+<groupId>com.google.gwt</groupId>
+<artifactId>gwt-incubator</artifactId>
+<version>march-02-2009</version>
+</project>
