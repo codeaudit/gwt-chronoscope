@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-project</artifactId>
+    <packaging>pom</packaging>
+    <version>0.7</version>
+    <name>Chronoscope Project</name>
+    <url>http://timepedia.org/chronoscope</url>
+    <modules>
+        <module>chronoscope</module>
+        <module>samples</module>
+        <module>widget</module>
+<!--        <module>chronoscope-java2d</module> -->
+    </modules>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gwt-maven</id>
+            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- just deploy maven artefacts in local folder so they can be uploaded in just one commit -->
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>local-folder</id>
+            <url>file:mavenrepo</url>
+        </repository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <jdk>1</jdk>
+            </activation>
+
+            <properties>
+                <gwtversion>1.6.4</gwtversion>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <gwtplatform>linux</gwtplatform>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <id>macosx</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <gwtplatform>osx</gwtplatform>
+                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs>
+            </properties>
+        </profile>
+
+    </profiles>
+</project>

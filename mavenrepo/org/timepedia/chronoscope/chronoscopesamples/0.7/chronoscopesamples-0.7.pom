@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.timepedia.chronoscope</groupId>
+        <artifactId>chronoscope-project</artifactId>
+        <version>0.7</version>
+    </parent>
+
+    <name>Chronoscope Chart Samples</name>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscopesamples</artifactId>
+    <packaging>war</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.timepedia.chronoscope</groupId>
+            <artifactId>chronoscope</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwtversion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-servlet</artifactId>
+          <version>${gwtversion}</version>
+          <scope>runtime</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-dev</artifactId>
+          <classifier>linux</classifier>
+          <version>${gwtversion}</version>
+          <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <webXml>target/web.xml</webXml>
+                </configuration>
+            </plugin>
+            <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+		    <gwtVersion>1.6.4</gwtVersion>
+                    <logLevel>INFO</logLevel>
+                    <runTarget>org.timepedia.chronoscopesamples.ChronoscopeSamples/index.html</runTarget>
+                    <compileTarget>
+                        <param>org.timepedia.chronoscopesamples.ChronoscopeSamples</param>
+                    </compileTarget>
+
+                    <style>OBF</style>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>mergewebxml</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
