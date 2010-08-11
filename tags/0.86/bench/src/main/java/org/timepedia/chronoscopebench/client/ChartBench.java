@@ -57,6 +57,7 @@ public class ChartBench implements EntryPoint {
       int chartWidth = 450;
       int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
       Chronoscope.setFontBookRendering(true);
+      Chronoscope.setFontBookServiceEndpoint("fr");
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(false);
       Chronoscope.initialize();

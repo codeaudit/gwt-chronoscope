@@ -9,7 +9,7 @@
   <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
   
   <inherits name='com.google.gwt.libideas.StyleInjector'/>
-  <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
+  <inherits name="com.google.gwt.libideas.VirtualEvent"/>
    
  <inherits name='org.timepedia.exporter.Exporter'/>
 

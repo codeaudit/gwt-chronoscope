@@ -46,6 +46,7 @@ public class ChartDemo implements EntryPoint {
 
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
+      Chronoscope.setFontBookServiceEndpoint("fr");
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(true);
       Chronoscope.initialize();

@@ -3,13 +3,12 @@
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
-    <version>0.86-SNAPSHOT</version>
+    <version>0.86</version>
   </parent>
 
   <groupId>org.timepedia.chronoscope</groupId>
   <artifactId>chronoscope-gviz-project</artifactId>
   <packaging>pom</packaging>
-  <version>0.86-SNAPSHOT</version>
   <name>Chronoscope GViz Project</name>
   <url>http://api.timepedia.org/chronoscope/gviz</url>
   <description>Timepedia's Chronoscope charting API repackaged with GViz API compliance, and a Google Gadget
