@@ -5,33 +5,24 @@
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.7</version>
     <name>Chronoscope Project</name>
     <url>http://timepedia.org/chronoscope</url>
     <modules>
         <module>chronoscope</module>
         <module>samples</module>
         <module>widget</module>
-<!--        <module>chronoscope-java2d</module> -->
+        <!-- <module>chronoscope-java2d</module> -->
     </modules>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>gwt-maven</id>
-            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
-    <repositories>
+    <!-- just deploy maven artefacts in local folder so they can be uploaded in just one commit -->
+    <distributionManagement>
         <repository>
-            <id>gwt-maven</id>
-            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+            <uniqueVersion>false</uniqueVersion>
+            <id>local-folder</id>
+            <url>file:mavenrepo</url>
         </repository>
-        <repository>
-            <id>timepedia</id>
-            <url>http://gwt-chronoscope.googlecode.com/svn/trunk/lib/mavenrepo/</url>
-        </repository>
-
-    </repositories>
+    </distributionManagement>
 
     <profiles>
         <profile>
@@ -39,13 +30,13 @@
             <activation>
                 <jdk>1</jdk>
             </activation>
-
             <properties>
-                <gwtversion>1.4.60</gwtversion>
+                <!-- it compiles with 1.5.x 1.6.x 1.7.x and 2.0.x -->
+                <gwtversion>1.5.3</gwtversion>
             </properties>
         </profile>
 
-
+        <!-- remove the following profiles if you are running gwt 2.0.x -->
         <profile>
             <id>linux</id>
             <activation>
@@ -56,9 +47,7 @@
             <properties>
                 <gwtplatform>linux</gwtplatform>
             </properties>
-
         </profile>
-
 
         <profile>
             <id>macosx</id>
@@ -68,7 +57,6 @@
                 </os>
             </activation>
             <properties>
-                <gwtversion>1.4.61</gwtversion>
                 <gwtplatform>osx</gwtplatform>
                 <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs>
             </properties>

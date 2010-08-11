@@ -286,7 +286,7 @@ public abstract class DomTextLayer extends AbstractLayer {
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
             rfm.getBounds(b, c);
-            Element elem = ci.createStructure(rfm.url, (int) b.x, (int) ( b.y + 1 ), (int) b.width, (int) b.height);
+            Element elem = ci.createStructure(rfm.url, (int) b.x, (int) ( b.y + 1 ), (int) b.width, (int) b.height).cast();
 
             DOM.setStyleAttribute(elem, "position", "absolute");
             DOM.setStyleAttribute(elem, "left", ( x1 - layer.bounds.x ) + "px");
