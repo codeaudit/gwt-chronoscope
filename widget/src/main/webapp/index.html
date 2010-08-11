@@ -1,0 +1,24 @@
+<html>
+<head>
+<link type="text/css" rel="widget/Chronoscope.css" href="kk.css">
+<script type="text/javascript" src="dataset.js"></script>
+<script type="text/javascript" src="widget/widget.nocache.js"></script>
+<script type="text/javascript">
+function onChronoscopeLoaded(chrono)
+{
+   var data = [dataset];
+   // Uncoment these two lines if you deploy the example in a servlet container
+   // chronoscope.Chronoscope.setFontBookRendering(true);
+   // chronoscope.Chronoscope.setFontBookServiceEndpoint("/widget/fr");
+   chronoscope.Chronoscope.setErrorReporting(true);
+   chronoscope.Chronoscope.createTimeseriesChartById("chartid", data, 650, 433, function(view)
+   {
+     view.getChart().redraw();
+     largeview = view;
+   });
+}
+</script>
+</head>
+<html>
+<div id="chartid"></div>
+</html>
