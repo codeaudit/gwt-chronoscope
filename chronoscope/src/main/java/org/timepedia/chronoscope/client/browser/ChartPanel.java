@@ -48,7 +48,7 @@ public class ChartPanel extends Composite implements Exportable {
   }
   
   public void setViewReadyCallback(ViewReadyCallback callback) {
-    setReadyListener(callback);
+    this.viewReadyCallback = callback;
   }
   
   protected XYPlot createPlot(Dataset[] datasetArray) {
@@ -85,12 +85,7 @@ public class ChartPanel extends Composite implements Exportable {
   }
 
   public void setReadyListener(ViewReadyCallback viewReadyCallback) {
-    if(plotPanel == null) {
-      this.viewReadyCallback = viewReadyCallback;
-    }
-    else {
-      plotPanel.setReadyListener(viewReadyCallback);
-    }
+    plotPanel.setReadyListener(viewReadyCallback);
   }
 
 }

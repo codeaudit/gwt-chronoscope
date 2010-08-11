@@ -3,6 +3,9 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='org.timepedia.chronoscope.Chronoscope'/>
 
+  <servlet path="/fr"
+             class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+
   <entry-point class='org.timepedia.chronoscopebench.client.ChartBench'/>
 </module>
 

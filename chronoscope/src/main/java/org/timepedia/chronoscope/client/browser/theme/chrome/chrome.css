@@ -18,9 +18,6 @@
 @url VBORDER vborder;
 @url CORNER corner;
 
-/** Commenting out over-reaching GWT theme
-    that often clobbers host page CSS.
-
 body, table td, a, div, .p, pre {
   font-family: Arial, sans-serif;
   font-size: small;
@@ -36,15 +33,12 @@ body {
 a, a:visited, a:hover {
   color: #0000AA;
 }
-
 iframe {
   border-top: 2px solid #666;
   border-left: 2px solid #666;
   border-right: 2px solid #bbb;
   border-bottom: 2px solid #bbb;
 }
-
-*/
 
 .gwt-Button {
   margin: 0;
@@ -350,8 +344,6 @@ html>body .gwt-DialogBox .dialogBottomRight {
   margin: 0px 0px 0px 3px;
   padding: 0px;
 }
-
-/* TODO - gwt-subMenuIcon? */
 
 .subMenuIcon {
   vertical-align: middle;    
@@ -866,49 +858,32 @@ html>body .gwt-SuggestBoxPopup .suggestPopupBottomRight {
 }
 
 .gwt-TabBar {
-  cursor: default;
-  background: #ebebeb HBORDER repeat-x 0px -2003px;
-  border: 1px solid #BBBBBB;
-
 }
 .gwt-TabBar .gwt-TabBarFirst {
-  /*width: 5px;  *//* first tab distance from the left */
+  width: 5px;  /* first tab distance from the left */
 }
 .gwt-TabBar .gwt-TabBarRest {
 }
 .gwt-TabBar .gwt-TabBarItem {
-  /*margin-left: 6px;*/
-  /*padding: 3px 6px 3px 6px;*/
-  /*cursor: pointer;*/
-  /*cursor: hand;*/
-  /*color: black;*/
-  /*font-weight: bold;*/
-  /*text-align: center;*/
-
-  cursor: default;
-  background: #e3e3e3;
-  padding: 0px 10px;
-  vertical-align: bottom;
-  color: #666666;
+  margin-left: 6px;
+  padding: 3px 6px 3px 6px;
+  cursor: pointer;
+  cursor: hand;
+  color: black;
   font-weight: bold;
-
+  text-align: center;
+  background: #e3e3e3;
 }
 .gwt-TabBar .gwt-TabBarItem-selected {
   cursor: default;
-  /*background: #bcbcbc;*/
-  background: #cdcdcd;
-
+  background: #bcbcbc;
 } 
 .gwt-TabPanel {
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 0px;
-  margin-bottom:0px;
 }
-
 .gwt-TabPanelBottom {
-  background: #ebebeb HBORDER repeat-x 0px -2003px;
-  border: 1px solid #BBBBBB;
+  border-color: #bcbcbc;
+  border-style: solid;
+  border-width: 3px 2px 2px;
   overflow: hidden;
   padding: 6px;
 }

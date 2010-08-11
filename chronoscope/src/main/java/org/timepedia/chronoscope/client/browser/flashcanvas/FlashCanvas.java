@@ -133,20 +133,11 @@ public class FlashCanvas extends Canvas {
 
     FlashResources flashResources = GWT.create(FlashResources.class);
 
-    String swfUrl = Chronoscope
-        .getURL(GWT.getModuleBaseURL()+"flcanvas.swf");//flashResources.flashCanvas().getUrl());
-    String codeBasePref = GWT.getHostPageBaseURL().startsWith("https") ?
-        "https" : "http";
+    String swfUrl = Chronoscope.getURL(flashResources.flashCanvas().getUrl());
 
-    String noflash = "<div><h3>You should see a chart here</h3>\n"
-            + "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n"
-            + "<p><a href=\"http://www.adobe.com/go/getflashplayer\"><img src=\"http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif\" alt=\"Get Adobe Flash player\" /></a></p>\n"
-            + "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>"
-            + "</div>\n";
-      
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
-            + "codebase=\""+ codeBasePref + "://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
+            + "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
             + " width=\"" + width + "\" height=\"" + height + "\" \n" + "id=\""
             + canvasId + "\"> \n" + "<param name=\"movie\" value=\"" + swfUrl
             + "\"> \n" + "<param name=\"FlashVars\" value=\"readyFn=" + readyFn
@@ -162,7 +153,7 @@ public class FlashCanvas extends Canvas {
             + "FlashVars=\"readyFn=" + readyFn + "\" "
             + "wmode=\"transparent\" " + "MENU=\"false\""
             + "allowScriptAccess=\"always\" "
-            + "pluginspage=\"" + codeBasePref + "://www.macromedia.com/go/getflashplayer\"> \n"
+            + "pluginspage=\"http://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");
     DOM.appendChild(canvasElement, glassPane);
     com.google.gwt.dom.client.Element oElement = canvasElement
@@ -306,10 +297,8 @@ public class FlashCanvas extends Canvas {
       id2Layer.put(layer.getLayerId(), layer);
       //    DOM.appendChild(canvasElement, ( (FlashLayer) layer ).getLayerElement());
 
-      layer.save();
       layer.setFillColor(Color.TRANSPARENT);
       layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
-      layer.restore();
     }
     return layer;
   }
@@ -353,15 +342,15 @@ public class FlashCanvas extends Canvas {
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    rootLayer
-        .drawRotatedText(x, y, angle, label, fontFamily, fontWeight, fontSize,
-            layerName, chart);
+    rootLayer.drawRotatedText(x, y, angle, label, fontFamily, fontWeight,
+        fontSize, layerName, chart);
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName) {
-    rootLayer.drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
-        Cursor.DEFAULT);
+    rootLayer
+        .drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
+            Cursor.DEFAULT);
   }
 
   public void endFrame() {
@@ -494,16 +483,14 @@ public class FlashCanvas extends Canvas {
 
   public int rotatedStringHeight(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
-    return rootLayer
-        .rotatedStringHeight(str, rotationAngle, fontFamily, fontWeight,
-            fontSize);
+    return rootLayer.rotatedStringHeight(str, rotationAngle, fontFamily,
+        fontWeight, fontSize);
   }
 
   public int rotatedStringWidth(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
-    return rootLayer
-        .rotatedStringWidth(str, rotationAngle, fontFamily, fontWeight,
-            fontSize);
+    return rootLayer.rotatedStringWidth(str, rotationAngle, fontFamily,
+        fontWeight, fontSize);
   }
 
   public void save() {
@@ -599,11 +586,10 @@ public class FlashCanvas extends Canvas {
   public native int stringHeight(String canvasId, String string, String font,
       String bold, String size, float angle) /*-{
         var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
-        if(flashCanvas && flashCanvas.stringHeight) {
+        if(flashCanvas && flashCanvas.stringHeight) 
           return flashCanvas.stringHeight(string, font, bold, size, angle);
-        } else {
+        else
           return 10;
-        }
     }-*/;
 
   public int stringHeight(String string, String font, String bold, String size,
@@ -614,11 +600,10 @@ public class FlashCanvas extends Canvas {
   public native int stringWidth(String canvasId, String string, String font,
       String bold, String size, float angle) /*-{
         var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
-        if(flashCanvas && flashCanvas.stringWidth) {
+        if(flashCanvas && flashCanvas.stringWidth) 
           return flashCanvas.stringWidth(string, font, bold, size, angle);
-        } else {
+        else
           return 10 * string.length;
-        }
     }-*/;
 
   public int stringWidth(String string, String font, String bold, String size,

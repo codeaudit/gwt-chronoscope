@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.java2d.canvas;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
-import org.timepedia.chronoscope.client.ChronoscopeClickListener;
+import org.timepedia.chronoscope.client.browser.ChronoscopeClickListener;
 
 /**
  * By default, do nothing, so as to support Servlet rendering

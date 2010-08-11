@@ -2,8 +2,8 @@ package org.timepedia.chronoscope.java2d;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.gss.parser.GssStylesheetGssContext;
 import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 
 import java.awt.Image;
@@ -21,7 +21,7 @@ public class ChronoscopeImageUtil {
   public static void main(String[] args) {
     JFrame jf = new JFrame();
     jf.setSize(800, 400);
-    Dataset dff = new MockDatasetFactory(ServerChronoscope.get().getComponentFactory().getDatasetFactory()).getBasicDataset();
+    Dataset dff = new MockDatasetFactory().getBasicDataset();
     Dataset ds[] = new Dataset[1];
     ds[0] = dff;
     double domainOrigin = 0;
@@ -36,8 +36,8 @@ public class ChronoscopeImageUtil {
   public static BufferedImage renderChronoscopeImage(Dataset[] ds, int width,
       int height, String css, boolean interactive, double domainOrigin,
       double currentDomain, boolean az) {
-    StaticImageChartPanel sicp = ServerChronoscope.get()
-        .createChart(new Datasets(ds), width, height, null);
+    StaticImageChartPanel sicp = new StaticImageChartPanel(ds, interactive,
+        width, height, new GssStylesheetGssContext(css == null ? "" : css));
 
     Chart c = sicp.getChart();
 

@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
-import org.timepedia.chronoscope.client.browser.AbstractXYDataSource;
+import org.timepedia.chronoscope.client.data.AbstractXYDataSource;
 import org.timepedia.chronoscope.client.data.DataSourceCallback;
 
 /**

@@ -1,14 +1,11 @@
 package org.timepedia.chronoscope.client.browser;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import static com.google.gwt.user.client.Event.KEYEVENTS;
 import com.google.gwt.user.client.Window;
-//import com.google.gwt.user.client.WindowResizeListener;
+import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.timepedia.chronoscope.client.Chart;
@@ -27,7 +24,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * subpackage to ensure the portability of the rest of Chronoscope to other
  * environments (Applet, Servlet, etc) <p/> ChartPanel at the moment only
  * handles XYPlots, but in the future will be extended to handle other chart
- * types. See the project wiki for more details. <p/> <p/> A simple way to
+ * types. See the project wiki for more details. <p/> <p/> AÊsimple way to
  * construct a chart looks like this: <p/>
  * <pre>
  * ChartPanel chartPanel = new ChartPanel(myDatasets);
@@ -37,7 +34,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class PlotPanel extends Widget implements ViewReadyCallback,
-  ResizeHandler, SafariKeyboardConstants {
+    WindowResizeListener, SafariKeyboardConstants {
 
   private ChartEventHandler chartEventHandler;
 
@@ -59,7 +56,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private boolean viewReady;
 
-  private int KEYEVENTS = Event.KEYEVENTS;
   /**
    * Instantiates a chart widget using the given DOM element as a container,
    * creating a DefaultXYPlot using the given datasets, with a
@@ -87,8 +83,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   public void fireContextMenu(Event evt) {
-    if (DOM.eventGetTypeString(evt) == "undefined") { return; }
-    if (evt == null) { return; }
 
     int x = DOM.eventGetClientX(evt);
     int y = DOM.eventGetClientY(evt) + Window.getScrollTop();
@@ -126,15 +120,16 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click).  Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = (KEYEVENTS & evt.getTypeInt()) == 0;
+    boolean screenCoordinatesRelevant = (Event.KEYEVENTS & evt.getTypeInt())
+        == 0;
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
     int originY = DOM.getAbsoluteTop(getElement()) - Window.getScrollTop();
 
     if (screenCoordinatesRelevant) {
-      x = evt.getClientX();
-      y = evt.getClientY();
+      x = DOM.eventGetClientX(evt);
+      y = DOM.eventGetClientY(evt);
     } else {
       x = -1;
       y = -1;
@@ -158,14 +153,13 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * other view-centric operations.
    */
   public void onViewReady(View view) {
-    // configure chart
-    chart.setView(view);
-    chart.init();
     plot.init(view);
     
-  
+    // configure chart
+    chart.setView(view);
     
     viewReady = true;
+    chart.init();
     HistoryManager.putChart(id, chart);
     chart.redraw();
 
@@ -175,15 +169,14 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
   }
 
   /**
-   * FIXME - Window/Chart/View resizing doesn't work right now.
+   * Note: Window/Chart/View resizing doesn't work right now.
    */
-  public void onResize(ResizeEvent resize) { // int width, int height) {
+  public void onWindowResized(int width, int height) {
     if (view != null) {
       Element elem = ((DOMView) view).getElement();
       if (elem != null) {
-//        view.resize(resize.getWidth(), resize.getHeight());
-        // DOM.getElementPropertyInt(elem, "clientWidth"),
-        // DOM.getElementPropertyInt(elem, "clientHeight"));
+        view.resize(DOM.getElementPropertyInt(elem, "clientWidth"),
+            DOM.getElementPropertyInt(elem, "clientHeight"));
       }
     }
   }
@@ -258,7 +251,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private void sinkEvents() {
     chartEventHandler.sinkEvents(this);
-    Window.addResizeHandler(this);
+    Window.addWindowResizeListener(this);
     disableContextMenu(getElement());
   }
 }

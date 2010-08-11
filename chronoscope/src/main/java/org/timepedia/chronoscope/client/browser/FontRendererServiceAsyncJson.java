@@ -4,7 +4,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.timepedia.chronoscope.client.browser.FontRendererServiceAsync;
+import org.timepedia.chronoscope.client.canvas.FontRendererServiceAsync;
 import org.timepedia.chronoscope.client.canvas.RenderedFontMetrics;
 
 /**

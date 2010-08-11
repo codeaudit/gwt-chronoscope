@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
-import org.timepedia.chronoscope.client.ChronoscopeClickListener;
 import org.timepedia.exporter.client.Export;
 
 /**

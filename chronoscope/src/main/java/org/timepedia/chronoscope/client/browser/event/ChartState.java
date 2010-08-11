@@ -4,7 +4,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.Event;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.gen2.event.shared.HandlerManager;
 
 import org.timepedia.chronoscope.client.Chart;
 

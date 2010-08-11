@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.gen2.event.dom.client.MouseOutHandler;
+import com.google.gwt.gen2.event.dom.client.MouseOutEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -23,6 +23,5 @@ public class ChartMouseOutHandler extends AbstractEventHandler<MouseOutHandler>
     chart.setHover(-1,-1);
     ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
-    chartInfo.getCompoundUIAction().setSource(null);
   }
 }

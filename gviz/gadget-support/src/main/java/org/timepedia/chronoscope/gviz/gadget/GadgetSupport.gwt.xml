@@ -4,6 +4,8 @@
   <inherits name='org.timepedia.chronoscope.Chronoscope'/>
   <inherits name="com.google.gwt.gadgets.Gadgets" />
   <inherits name="com.google.gwt.http.HTTP" />
+  <inherits name='com.google.gwt.libideas.StyleInjector'/>
+  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
   <inherits name="org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPI"/>
 </module>
     

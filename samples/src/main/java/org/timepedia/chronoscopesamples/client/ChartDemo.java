@@ -46,6 +46,7 @@ public class ChartDemo implements EntryPoint {
 
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
+      Chronoscope.setFontBookServiceEndpoint("fr");
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(true);
       Chronoscope.initialize();
@@ -53,12 +54,12 @@ public class ChartDemo implements EntryPoint {
       Chronoscope chronoscope = Chronoscope.getInstance();
 
       final Datasets<Tuple2D> datasets = new Datasets<Tuple2D>();
-      datasets.add(chronoscope.getDatasetReader().createDatasetFromJson(new GwtJsonDataset(getJson("interestRates01"))));
-      datasets.add(chronoscope.getDatasetReader().createDatasetFromJson(new GwtJsonDataset(getJson("interestRates02"))));
+      datasets.add(DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("interestRates01"))));
+      datasets.add(DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("interestRates02"))));
 
-//      MockDatasetFactory datasetFactory = new MockDatasetFactory();
-//      Dataset mockDataset = datasetFactory.getBasicDataset();
-//      datasets.add(mockDataset);
+      MockDatasetFactory datasetFactory = new MockDatasetFactory();
+      Dataset mockDataset = datasetFactory.getBasicDataset();
+      datasets.add(mockDataset);
 
       Dataset[] dsArray = datasets.toArray();
 
@@ -83,10 +84,13 @@ public class ChartDemo implements EntryPoint {
         }
       });
 
+
       RootPanel.get("chartdemo").add(chartPanel);
 
+      //currently, because of design issues in the initialization process,
+     
     } catch (Exception e) {
-      e.printStackTrace();
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
   }
 

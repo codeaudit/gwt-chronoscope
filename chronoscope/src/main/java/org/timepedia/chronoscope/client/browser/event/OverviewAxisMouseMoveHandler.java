@@ -1,7 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.gen2.event.dom.client.MouseMoveEvent;
+import com.google.gwt.gen2.event.dom.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
