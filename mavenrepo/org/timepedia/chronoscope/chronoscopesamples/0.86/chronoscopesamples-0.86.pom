@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-project</artifactId>
+    <version>0.86</version>
+  </parent>
+
+  <name>Chronoscope Chart Samples</name>
+  <groupId>org.timepedia.chronoscope</groupId>
+  <artifactId>chronoscopesamples</artifactId>
+  <packaging>war</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwtversion}</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webXml>target/web.xml</webXml>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <gwtVersion>${gwtversion}</gwtVersion>
+          <logLevel>${gwt.loglevel}</logLevel>
+          <runTarget>
+            org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}/index.html
+          </runTarget>
+          <compileTargets>
+            <value>
+              org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}
+            </value>
+          </compileTargets>
+          <style>${gwt.outputstyle}</style>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compilegwt</id>
+            <goals>
+              <goal>compile</goal>
+              <goal>mergewebxml</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
