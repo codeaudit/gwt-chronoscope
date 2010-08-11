@@ -9,8 +9,7 @@ import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
 public class BrowserChronoscopeMenuFactory implements ChronoscopeMenuFactory {
-
-  public ChronoscopeMenu createChronoscopeMenu(int x, int y) {
-    return new BrowserChronoscopeMenu(x, y);
-  }
+    public ChronoscopeMenu createChronoscopeMenu(int x, int y) {
+        return new BrowserChronoscopeMenu(x, y);
+    }
 }
