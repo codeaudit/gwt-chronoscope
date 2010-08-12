@@ -11,5 +11,4 @@ release.properties
 target
 data
 curate-data
-.git
-.gitignore
+

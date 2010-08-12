@@ -27,13 +27,13 @@ public class TimeUnitTest extends TestCase {
    * Test commonly-used time units manually.
    */
   public void testSanityCheck() {
-    assertEquals(TimeUnit.MIN, TimeUnit.QUARTER_HOUR.nextSmallest());
-    assertEquals(TimeUnit.HOUR, TimeUnit.QUARTER_DAY.nextSmallest());
+    assertEquals(TimeUnit.MIN, TimeUnit.HOUR.nextSmallest());
+    assertEquals(TimeUnit.HOUR, TimeUnit.DAY.nextSmallest());
     assertEquals(TimeUnit.DAY, TimeUnit.WEEK.nextSmallest());
     assertEquals(TimeUnit.MONTH, TimeUnit.YEAR.nextSmallest());
 
-    assertEquals(TimeUnit.QUARTER_HOUR, TimeUnit.MIN.nextLargest());
-    assertEquals(TimeUnit.QUARTER_DAY, TimeUnit.HOUR.nextLargest());
+    assertEquals(TimeUnit.HOUR, TimeUnit.MIN.nextLargest());
+    assertEquals(TimeUnit.DAY, TimeUnit.HOUR.nextLargest());
     assertEquals(TimeUnit.WEEK, TimeUnit.DAY.nextLargest());
     assertEquals(TimeUnit.MONTH, TimeUnit.WEEK.nextLargest());
 

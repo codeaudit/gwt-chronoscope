@@ -15,13 +15,9 @@ public class OverviewAxisPanel extends AxisPanel {
   private Bounds highlightBounds, highlightBoundsSingleton;
   
   private Layer overviewLayer;
-
-  private boolean initialized = false;
-
-  public boolean visible = true;
-
+  
   public OverviewAxisPanel() {
-    highlightBoundsSingleton = new Bounds();      
+    highlightBoundsSingleton = new Bounds();
   }
   
   /**
@@ -34,9 +30,8 @@ public class OverviewAxisPanel extends AxisPanel {
   
   public void draw() {
     layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
-    overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
-    bounds.height);
-
+        overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
+        bounds.height);
 
     highlightBounds = calcHighlightBounds(plot, bounds);
     
@@ -75,13 +70,9 @@ public class OverviewAxisPanel extends AxisPanel {
   
   @Override
   public void layout() {
-    if (visible) {
-      bounds.height = gssProperties.height;
-      if (bounds.height < MIN_OVERVIEW_HEIGHT) {
-        bounds.height = MIN_OVERVIEW_HEIGHT;
-      }
-    } else {
-        bounds.height = 0;
+    bounds.height = gssProperties.height;
+    if (bounds.height < MIN_OVERVIEW_HEIGHT) {
+      bounds.height = MIN_OVERVIEW_HEIGHT;
     }
     
     //bounds.width = view.getWidth();
@@ -93,10 +84,7 @@ public class OverviewAxisPanel extends AxisPanel {
 
   @Override
   protected void initHook() {
-    if (!initialized) { // guard visible from being reset back to initial gss value
-      visible = gssProperties.visible;
-      initialized = true;
-    }
+    // do nothing
   }
 
   /*

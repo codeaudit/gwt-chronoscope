@@ -264,8 +264,8 @@ public final class CompositeAxisPanel implements Panel, GssElement {
    * @param childPanel
    */
   public void remove(AxisPanel childPanel) {
+    subPanels.remove(childPanel);
     if (childPanel != null) {
-      subPanels.remove(childPanel);       
       if (childPanel.layer != null) {
         childPanel.layer.clearTextLayer(childPanel.getTextLayerName());
       }

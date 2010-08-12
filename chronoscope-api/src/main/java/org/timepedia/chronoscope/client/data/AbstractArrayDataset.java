@@ -130,7 +130,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
 
     if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
-      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq;
+      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq
+          ;
       Array2D mipMappedDomain = multiResReq.getMultiresDomain();
       List<Array2D> mipMappedRangeTuples = multiResReq.getMultiResRangeTuples();
       mipMapChain = createMipMapChain(mipMappedDomain, mipMappedRangeTuples);

@@ -32,8 +32,6 @@ import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.ArrayDataset2D;
-import org.timepedia.chronoscope.client.data.IncrementalDatasetResponseImpl;
-import org.timepedia.chronoscope.client.data.MutableDatasetND;
 import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -433,22 +431,6 @@ public class Chronoscope
     Chronoscope.microformatsEnabled = microformatsEnabled;
   }
 
-  /**
-   * Maximum number of datapoints to attempt to render when not moving, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxStaticDatapoints(int max) {
-    ChronoscopeOptions.setMaxStaticDatapoints(max);
-  }
-  
-  /**
-   * Maximum number of datapoints to attempt to render when animating, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxDynamicDatapoints(int max) {
-    ChronoscopeOptions.setMaxDynamicDatapoints(max);
-  }
-  
   @Inject
   public void setUrlResolver(URLResolver urlr) {
     urlResolver = urlr;
@@ -561,30 +543,38 @@ public class Chronoscope
 
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
+    exporter.export();
 
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
+    dexporter.export();
 
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
+    exporterMarker.export();
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
+    exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
+    Exporter exporterDomainMarker = (Exporter) GWT
+        .create(DomainBarMarker.class);
+    exporterDomainMarker.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
+    exporter2.export();
 
     Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
+    exporter5.export();
 
     Exporter exporter7 = (Exporter) GWT.create(DatasetRenderer.class);
+    exporter7.export();
 
     Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
+    exporter4.export();
 
     Exporter exporter8 = (Exporter) GWT.create(IntTickFormatterFactory.class);
+    exporter8.export();
 
     Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
-
-    Exporter exporterInc = (Exporter) GWT.create(IncrementalDatasetResponseImpl.class);
-
-    Exporter exporterMut = (Exporter) GWT.create(MutableDatasetND.class);
+    exporter9.export();
 
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();

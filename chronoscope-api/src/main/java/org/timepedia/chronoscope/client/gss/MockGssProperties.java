@@ -1,12 +1,11 @@
 package org.timepedia.chronoscope.client.gss;
 
 import org.timepedia.chronoscope.client.canvas.Color;
-import org.timepedia.exporter.client.Exportable;
 
 /**
  * Canned property object used for testing
  */
-public class MockGssProperties extends GssProperties implements Exportable {
+public class MockGssProperties extends GssProperties {
 
   public MockGssProperties() {
     this.bgColor = new Color("#404040");

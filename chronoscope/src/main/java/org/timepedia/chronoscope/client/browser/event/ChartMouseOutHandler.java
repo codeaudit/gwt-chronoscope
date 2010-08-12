@@ -23,6 +23,5 @@ public class ChartMouseOutHandler extends AbstractEventHandler<MouseOutHandler>
     chart.setHover(-1,-1);
     ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
-    chartInfo.getCompoundUIAction().setSource(null);
   }
 }

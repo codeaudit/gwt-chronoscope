@@ -6,7 +6,7 @@
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
     <packaging>pom</packaging>
-    <version>2.0</version>
+    <version>1.0</version>
     <name>Chronoscope Project</name>
     <url>http://timepedia.org/chronoscope</url>
     <description>Chronoscope is a charting and visualization platform developed with GWT.
@@ -74,7 +74,8 @@
         <repository>
             <uniqueVersion>false</uniqueVersion>
             <id>timepedia-deploy</id>
-            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url> 
+            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/
+            </url>
         </repository>
     </distributionManagement>
 
@@ -100,7 +101,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>1.2-SNAPSHOT</version>
                     <configuration>
                         <logLevel>${gwt.loglevel}</logLevel>
                         <style>${gwt.outputstyle}</style>
@@ -209,7 +210,7 @@
                     <dependency>
                         <groupId>org.timepedia.chronoscope</groupId>
                         <artifactId>buildtools</artifactId>
-                        <version>2.0</version>
+                        <version>1.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -297,13 +298,10 @@
             <id>gwt-maven</id>
             <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
         </repository>
-
-
         <repository>
             <id>timepedia</id>
             <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
         </repository>
-
 
         <repository>
             <id>timefire</id>
@@ -321,7 +319,7 @@
             </activation>
 
             <properties>
-                <gwtversion>2.0.4</gwtversion>
+                <gwtversion>2.0.0</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
@@ -373,7 +371,7 @@
             <properties>
                 <gwtplatform>mac</gwtplatform>
                 <!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
-                <google.webtoolkit.extrajvmargs> -server -Xmx1024m
+                <google.webtoolkit.extrajvmargs>-Xmx512m
                 </google.webtoolkit.extrajvmargs>
             </properties>
         </profile>
@@ -391,21 +389,9 @@
         </profile>
 
         <profile>
-            <id>test</id>
-            <properties>
-                <gwt.loglevel>INFO</gwt.loglevel>
-                <gwt.outputstyle>PRETTY</gwt.outputstyle>
-                <gwt.draft>true</gwt.draft> 
-                <maven.test.skip>true</maven.test.skip>
-                <gwt.inplace>false</gwt.inplace>
-                <gwt.modulesuffix></gwt.modulesuffix>
-            </properties>
-        </profile>
-
-        <profile>
             <id>prod</id>
             <properties>
-                <gwtversion>2.0.4</gwtversion>
+                <gwtversion>2.0.0</gwtversion>
                 <gwt.loglevel>ERROR</gwt.loglevel>
                 <gwt.outputstyle>OBF</gwt.outputstyle>
 		<gwt.xdisable>true</gwt.xdisable>

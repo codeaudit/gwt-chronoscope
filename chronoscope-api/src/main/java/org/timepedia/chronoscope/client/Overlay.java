@@ -9,7 +9,7 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
 
 /**
- * Interface implemented by Markers and other clases which overlay the plot
+ * Interface implemented by Markers and other clases which overlay the plot
  *
  * @gwt.exportPackage chronoscope
  */

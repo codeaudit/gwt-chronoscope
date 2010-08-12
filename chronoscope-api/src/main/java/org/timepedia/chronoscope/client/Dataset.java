@@ -1,10 +1,8 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.data.IncrementalHandler;
 import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.MipMapRegion;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.plot.ExportableHandlerRegistration;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -58,7 +56,8 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * @return a MipMap and pair of start and end indices in the MipMap
    */
   @NoExport
-  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias);
+  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int
+      lodBias);
 
   /**
    * Returns an interval that contains the minimum and maximum domain values
@@ -138,11 +137,4 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   @NoExport
   void setUserData(String key, Object val);
 
-  /**
-   * Enables a dataset to support on-the-fly incremental loading/reloading by invoking a callback when
-   * a given range of data is requested for display. The provided handler may request additional data from the
-   * server for this range and return new data.
-   */
-  @Export
-  void setIncrementalHandler(IncrementalHandler handler);
 }

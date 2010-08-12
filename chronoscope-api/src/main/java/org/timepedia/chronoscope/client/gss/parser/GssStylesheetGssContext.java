@@ -44,20 +44,6 @@ public class GssStylesheetGssContext extends DefaultGssContext {
   }
 
   @Override
-  public GssProperties getPropertiesBySelector(String gssSelector) {
-    List<GssSelector> selectors = GssParser.parseSelectors(gssSelector);
-    
-    for(GssElement elem : propertyMap.keySet()) {
-      for(GssSelector sel : selectors) {
-        if (sel.matches(elem, "")) {
-          return propertyMap.get(elem);
-        }
-      }
-    }
-    return null;
-  }
-
-  @Override
   public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
     boolean notPseudo = pseudoElt == null || "".equals(pseudoElt);
     GssProperties props = notPseudo

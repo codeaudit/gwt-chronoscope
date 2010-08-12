@@ -64,7 +64,7 @@ public abstract class AbstractContainer<S extends Component, T extends Container
       // if event is keyboard event
       // check which component has focus
       // invoke onEvent on focused component
-      // we may need to take some ideas from this:
+      //Êwe may need to take some ideas from this:
       //http://java.sun.com/j2se/1.5.0/docs/api/java/awt/doc-files/FocusSpec.html
       // to implement focus management
 //    }

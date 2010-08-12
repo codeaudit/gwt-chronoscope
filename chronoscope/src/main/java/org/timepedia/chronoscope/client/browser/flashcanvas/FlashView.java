@@ -23,7 +23,6 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.MockGssProperties;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Export;
@@ -119,8 +118,6 @@ public class FlashView extends GwtView
     exporter.export();
     Exporter exporter2 = (Exporter) GWT.create(BrowserInfoWindow.class);
     exporter2.export();
-     Exporter exporter3 = (Exporter) GWT.create(MockGssProperties.class);
-    exporter3.export();
   }
 
   /**

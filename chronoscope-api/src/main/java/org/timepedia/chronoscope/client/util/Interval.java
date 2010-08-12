@@ -67,20 +67,6 @@ public class Interval implements Exportable {
     Interval i = (Interval)obj;
     return this.start == i.start && this.end == i.end;
   }
-
-  /* approximately equal if start, end differ by small fraction of interval span */
-  public boolean approx(Object obj) {
-    if (!(obj instanceof Interval)) {
-      return false;
-    }
-    // TODO - use addressable pixel equivalent for approximation
-    double CLOSE_ENOUGH = 0.001; // a tenth of a percent
-    Interval i = (Interval)obj;
-    double delta = i.end - i.start;
-    double epsilon = delta * CLOSE_ENOUGH;
-    return (Math.abs(this.start - i.start) < epsilon) && (Math.abs(this.end - i.end) < epsilon);
-  }
-
   
   /**
    * Expands this interval so that the specified value is guaranteed fall within
