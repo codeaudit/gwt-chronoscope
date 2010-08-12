@@ -1,0 +1,16 @@
+<module rename-to="widget">
+
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="org.timepedia.chronoscope.Chronoscope"/>
+    
+    <entry-point class='org.timepedia.chronoscope.widget.client.ChronoscopeWidget'/>
+
+    <!-- duplicated from Chronoscope.gwt.xml because for some reason, the GWT mergewebxml task says 'no servlets found', it's not inheriting correctly -->
+    <servlet path="/fr"
+             class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+
+  <extend-property name="locale" values="en,en_DE,de_DE"/>
+
+  <add-linker name="xs"/>
+  <set-property name="export" value="yes"/>    
+</module>

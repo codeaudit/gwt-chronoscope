@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.timepedia.chronoscope</groupId>
+        <artifactId>chronoscope-project</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <name>Chronoscope GViz Gadget</name>
+    <artifactId>chronoscope-gviz-gadget</artifactId>
+    <packaging>war</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>chronoscope</artifactId>
+            <version>${version}</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-gadgets</artifactId>
+            <version>1.11-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.timepedia.chronoscope</groupId>
+            <artifactId>gviz-api</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.timepedia.chronoscope</groupId>
+            <artifactId>gadget-support</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <finalName>gadget</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>module</id>
+            <activation>
+                <jdk>1</jdk>
+            </activation>
+
+            <properties>
+                <gwt.module>
+                    org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}
+                </gwt.module>
+            </properties>
+        </profile>
+    </profiles>
+</project>

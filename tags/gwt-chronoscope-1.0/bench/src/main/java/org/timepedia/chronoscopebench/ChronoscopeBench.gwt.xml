@@ -1,0 +1,9 @@
+<module rename-to="benchmark">
+
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+
+  <entry-point class='org.timepedia.chronoscopebench.client.ChartBench'/>
+</module>
+
+        
