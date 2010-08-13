@@ -28,38 +28,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
       </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <configuration>
-          <gwtVersion>${gwtversion}</gwtVersion>
-          <logLevel>${gwt.loglevel}</logLevel>
-          <style>${gwt.outputstyle}</style>
-          <output>${project.build.directory}/benchmark</output>
-          <soyc>false</soyc>
-
-          <runTarget>
-            org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}/index.html
-          </runTarget>
-          <compileTargets>
-            <value>
-              org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}
-            </value>
-          </compileTargets>
-          <style>${gwt.outputstyle}</style>
-        </configuration>
-        <executions>
-          <execution>
-            <id>compilegwt</id>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
-
-
     </plugins>
   </build>
     <profiles>
