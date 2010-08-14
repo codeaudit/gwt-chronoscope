@@ -20,7 +20,6 @@ import org.timepedia.exporter.client.Exportable;
  * therefore, the proper use of a view is to postpone operations until
  * ViewReadyCallback is invoked.
  *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public abstract class View implements Exportable {
@@ -51,7 +50,6 @@ public abstract class View implements Exportable {
   public abstract ChronoscopeMenu createChronoscopeMenu(int x, int y);
 
   /**
-   * @gwt.export createMenu
    */
   @Export("createMenu")
   public ChronoscopeMenu createChronoscopeMenu() {
@@ -95,7 +93,6 @@ public abstract class View implements Exportable {
   }
 
   /**
-   * @gwt.export
    */
   @Export
   public Chart getChart() {
@@ -198,7 +195,6 @@ public abstract class View implements Exportable {
   /**
    * Attach a context menu to this View
    *
-   * @gwt.export
    */
   @Export
   public void setContextMenu(ChronoscopeMenu cm) {
@@ -241,8 +237,7 @@ public abstract class View implements Exportable {
   protected abstract Canvas createCanvas(int width, int height);
 
   /**
-   * Override to provide View-specific initialization (see {@link
-   * org.timepedia.chronoscope.client.browser.BrowserView} for more details)
+   * Override to provide View-specific initialization.
    */
   protected void init() {
   }

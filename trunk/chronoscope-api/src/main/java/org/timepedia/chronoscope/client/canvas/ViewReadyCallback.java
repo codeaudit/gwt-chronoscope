@@ -8,8 +8,6 @@ import org.timepedia.exporter.client.ExportClosure;
  * Interface used by View implements to notify clients when the View is ready
  * for use.
  *
- * @gwt.exportPackage chronoscope
- * @gwt.exportClosure
  */
 @ExportPackage("chronoscope")
 @ExportClosure

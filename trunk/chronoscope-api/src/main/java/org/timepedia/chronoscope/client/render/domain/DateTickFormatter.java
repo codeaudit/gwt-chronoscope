@@ -45,7 +45,7 @@ public abstract class DateTickFormatter extends TickFormatter {
   /**
    * Returns a positive value corresponding to a single tick for this formatter.
    * For example, if this is a day-of-month formatter, then this method would
-   * return {@link TimeUnit#DAY#ms()}.
+   * return {@link org.timepedia.chronoscope.client.util.TimeUnit#ms()}.
    */
   public final double getTickInterval() {
     return timeUnitTickInterval.ms();
@@ -77,7 +77,6 @@ public abstract class DateTickFormatter extends TickFormatter {
    * 
    * @param timeStamp -The point in time, specified in milliseconds, to be quantized
    * @param tickStep - The tick step to which the timeStamp will be quantized
-   * @return the quantized date
    */
   public void resetToQuantizedTick(double timeStamp, int tickStep) {
     currTick.setTime(timeStamp);

@@ -11,7 +11,7 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 public interface DatasetListener<T extends Tuple2D> {
 
   /**
-   * When an XYDataset is modified, this method is invoked with an interval
+   * When an Dataset is modified, this method is invoked with an interval
    * which bounds the span of domain encompassing all the changes that took
    * place.
    */

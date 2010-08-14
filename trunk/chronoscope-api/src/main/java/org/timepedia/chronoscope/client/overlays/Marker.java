@@ -27,7 +27,6 @@ import java.util.Date;
  * Created by IntelliJ IDEA. User: ray Date: Apr 20, 2007 Time: 4:03:02 PM To
  * change this template use File | Settings | File Templates.
  *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class Marker extends DraggableOverlay implements GssElement, Exportable {
@@ -115,7 +114,6 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   }
 
   /**
-   * @gwt.export
    */
   @Export
   public Marker(String date, int datasetIdx, String label) {
@@ -128,7 +126,6 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   }
 
   /**
-   * @gwt.export addOverlayListener
    */
   @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {
@@ -288,7 +285,6 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   }
 
   /**
-   * @gwt.export
    */
   @Export
   public InfoWindow openInfoWindow(String html) {

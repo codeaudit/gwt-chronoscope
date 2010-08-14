@@ -66,7 +66,7 @@ public class ZoomIntervals implements Iterable<ZoomInterval> {
   /**
    * Iterates over the filtered {@link ZoomInterval} elements in this container.
    * 
-   * @see #applyFilter(double, double, double)
+   * @see #applyFilter(Interval, double)
    */
   public Iterator<ZoomInterval> iterator() {
     ArrayList<ZoomInterval> l = new ArrayList<ZoomInterval>(intervals.size());

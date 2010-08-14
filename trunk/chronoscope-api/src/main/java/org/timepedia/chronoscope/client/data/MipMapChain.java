@@ -111,7 +111,7 @@ public class MipMapChain {
   }
   
   /**
-   * Returns the number of {@MipMap} objects in this chain.
+   * Returns the number of {@link MipMap} objects in this chain.
    */
   public int size() {
     return mipMaps.size();

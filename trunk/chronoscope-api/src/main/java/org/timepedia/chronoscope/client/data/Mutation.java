@@ -5,7 +5,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import java.util.Collection;
 
 /**
- * Represents some form of change to the stucture of an {@link XYDataset}.
+ * Represents some form of change to the stucture of an {@link org.timepedia.chronoscope.client.Dataset}.
  * Typical examples are:
  * <ul>
  * <li> Appending a new datapoint to the end of a dataset

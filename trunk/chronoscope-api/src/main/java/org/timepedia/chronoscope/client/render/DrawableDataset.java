@@ -32,7 +32,7 @@ public class DrawableDataset<T extends Tuple2D> {
   }
   
   /**
-   * Sets the most recent mip level used by {@link DefaultXYPlot} to draw
+   * Sets the most recent mip level used by {@link org.timepedia.chronoscope.client.plot.DefaultXYPlot} to draw
    * this dataset.
    */
   public void setCurrMipLevel(int mipLevel) {

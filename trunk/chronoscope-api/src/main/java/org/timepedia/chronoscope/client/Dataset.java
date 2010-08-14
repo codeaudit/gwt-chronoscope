@@ -17,8 +17,7 @@ import org.timepedia.exporter.client.NoExport;
  * A dataset allows arbitrary Tuples to be returned from each sample index. The
  * tuples returned are not guaranteed to be mutation free; that is, they should
  * be considered flyweight objects to be used and discarded before the next
- * invocation of {@link #getFlyweightTuple(int)}. Call {@link Tuple2D#copy()}
- * to obtain a persistent tuple.
+ * invocation of {@link #getFlyweightTuple(int)}. 
  * <p>
  * A multiresolution dataset is a dataset consisting of multiple levels, with
  * level 0 being the bottom most level containing the original datasets. Levels
@@ -36,8 +35,6 @@ import org.timepedia.exporter.client.NoExport;
  * of former levels, so that the height of the pyramid is
  * <tt>log_2(num_samples)</tt>.
  *
- * @gwt.exportPackage chronoscope
- * @gwt.export
  */
 @ExportPackage("chronoscope")
 @Export
@@ -84,7 +81,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   double getMinDomainInterval();
 
   /**
-   * Provides access to the ordered set of {@link MipMap} objects, which
+   * Provides access to the ordered set of {@link MipMapChain} objects, which
    * represent this dataset at decreasing levels of resolution.
    */
   @NoExport
@@ -96,7 +93,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   int getNumSamples();
 
   /**
-   * The min/max range values that {@link RangeAxis} will use as its bounds for computing
+   * The min/max range values that {@link  org.timepedia.chronoscope.client.axis.RangeAxis} will use as its bounds for computing
    * the range tick values.  If null, then the actual min/max range values of this dataset
    * will be used instead.
    */
@@ -104,7 +101,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   Interval getPreferredRangeAxisInterval();
 
   /**
-   * Returns a key representing the preferred {@link DatsetRenderer} to use when
+   * Returns a key representing the preferred {@link org.timepedia.chronoscope.client.render.DatasetRenderer} to use when
    * drawing this dataset.
    */
   @Deprecated

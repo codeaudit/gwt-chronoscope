@@ -15,8 +15,8 @@ import java.util.NoSuchElementException;
  * Represents a version of a {@link Dataset} at a decreased level
  * of resolution.
  * 
- * @see {@link MipMapChain}
- * @see {@link Dataset#getMipMapChain()}
+ * @see MipMapChain
+ * @see Dataset#getMipMapChain()
  * 
  * @author chad takahashi
  */
