@@ -7,7 +7,7 @@ import java.util.Date;
 
 
 /**
- * Utilities for formatting a {@Link ChronoDate} into different date
+ * Utilities for formatting a {@link ChronoDate} into different date
  * representations.
  *
  * @author chad takahashi
@@ -95,7 +95,7 @@ public final class DateFormatHelper {
   /**
    * Formats the hour of the day.
    *
-   * @param hourOfDay - a value in the range [0, 23]
+   * @param d - The date to be formatted
    */
   public String slowHour(ChronoDate d) {
     return hourFormatter.format(d.getTime());

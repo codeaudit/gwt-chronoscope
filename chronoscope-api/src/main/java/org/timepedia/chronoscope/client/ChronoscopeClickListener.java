@@ -7,8 +7,6 @@ import org.timepedia.exporter.client.ExportPackage;
 /**
  * Called whent he user clicks on a menu item
  *
- * @gwt.exportClosure
- * @gwt.exportPackage chronoscope
  */
 @ExportClosure
 @ExportPackage("chronoscope")

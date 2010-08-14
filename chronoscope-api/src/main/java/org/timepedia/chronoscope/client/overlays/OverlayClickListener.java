@@ -9,8 +9,6 @@ import org.timepedia.exporter.client.ExportClosure;
  * Implemented by classes which want to be notifed when the user clicks on an
  * overlay
  *
- * @gwt.exportPackage chronoscope
- * @gwt.exportClosure
  */
 @ExportPackage("chronoscope")
 @ExportClosure

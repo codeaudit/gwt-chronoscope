@@ -5,13 +5,12 @@
     <parent>
         <groupId>org.timepedia.chronoscope</groupId>
         <artifactId>chronoscope-project</artifactId>
-        <version>2.0</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>chronoscope-api</artifactId>
     <packaging>jar</packaging>
     <name>Chronoscope Chart API</name>
-    <url>http://timepedia.org/chronoscope</url>
     <dependencies>
 
       <dependency>
@@ -26,14 +25,12 @@
             <version>${gwtversion}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.timepedia.exporter</groupId>
             <artifactId>gwtexporter</artifactId>
@@ -41,7 +38,6 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -71,34 +67,29 @@
                     </execution>
                 </executions>
             </plugin>
-
-	    <!-- plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-            <finalName>js</finalName>
-            <doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet</doclet>
-            <docletArtifact>
-            <groupId>org.timepedia.chronoscope</groupId>
-            <artifactId>chronoscope-api</artifactId>
-            <version>2.0</version>
-            </docletArtifact>
-            <destDir>apidocs</destDir>
-            </configuration>
-
-            <executions>
-            <execution>
-            <id>attach-jsdocs</id>
-            <goals>
-            <goal>jar</goal>
-            </goals>
-            </execution>
-            </executions>
-            </plugin -->
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <finalName>js</finalName>
+                    <doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet</doclet>
+                    <docletArtifact>
+                        <groupId>org.timepedia.chronoscope</groupId>
+                        <artifactId>chronoscope-api</artifactId>
+                        <version>2.0</version>
+                    </docletArtifact>
+                    <destDir>apidocs</destDir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-jsdocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+             </plugin>
         </plugins>
-
-        <!--<finalName>chronoscope</finalName>-->
 
         <resources>
             <resource>
@@ -115,7 +106,6 @@
             <testResource>
                 <directory>${basedir}/src/test/resources</directory>
             </testResource>
-
         </testResources>
         <extensions>
             <extension>
@@ -124,10 +114,9 @@
                 <version>1.8</version>
             </extension>
         </extensions>
-
     </build>
     
-	  <profiles>
+	<profiles>
 	    <profile>
 	      <id>default-tools.jar</id>
 	      <activation>
@@ -146,6 +135,6 @@
 	        </dependency>
 	      </dependencies>
 	    </profile>
-	  </profiles>
+	</profiles>
 
 </project>

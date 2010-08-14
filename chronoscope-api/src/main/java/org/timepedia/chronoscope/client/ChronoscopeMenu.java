@@ -8,8 +8,6 @@ import org.timepedia.exporter.client.Exportable;
  * Implement this and ChronoscopeMenuFactory to create alternative popup menus
  * for Chronoscope.
  *
- * @gwt.export
- * @gwt.exportPackage chronoscope
  */
 @Export
 @ExportPackage("chronoscope")

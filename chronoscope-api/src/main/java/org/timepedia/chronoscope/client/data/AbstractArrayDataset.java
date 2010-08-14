@@ -26,8 +26,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
   protected MipMapChain mipMapChain;
 
   /**
-   * Stores the min/max range values for each tuple coordinate in {@link
-   * #mmRangeTuple}.
+   * Stores the min/max range values for each tuple coordinate in 
+   * {@link #rawData}.
    */
   protected Interval[] rangeIntervals;
 

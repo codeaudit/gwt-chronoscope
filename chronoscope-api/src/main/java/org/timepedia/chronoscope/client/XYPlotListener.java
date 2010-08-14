@@ -17,7 +17,7 @@ public interface XYPlotListener {
    * moves the focus
    * 
    * @param plot the plot for which the focus point changed
-   * @param datasetIndex the index of the dataset that changed
+   * @param focusSeries the index of the dataset that changed
    * @param focusPoint the point index within the dataset which changed
    */
   public void onFocusPointChanged(XYPlot plot, int focusSeries, int focusPoint);
