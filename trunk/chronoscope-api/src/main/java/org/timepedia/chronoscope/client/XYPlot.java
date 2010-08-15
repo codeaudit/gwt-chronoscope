@@ -20,6 +20,7 @@ import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.plot.ExportableHandlerRegistration;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
@@ -48,6 +49,7 @@ import org.timepedia.exporter.client.Export;
  * <li>Domain axis rendering enabled/disabled <li>Overview enabled/disabled
  * <li>Selection mode on/off </ul>
  */
+@ExportPackage("chronoscope")
 public interface XYPlot<T extends Tuple2D> extends Exportable {
 
   /**

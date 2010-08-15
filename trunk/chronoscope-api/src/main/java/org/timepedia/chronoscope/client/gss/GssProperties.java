@@ -3,12 +3,14 @@ package org.timepedia.chronoscope.client.gss;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 /**
  * A GSS analogue of CssProperties for a GssElement. Only a small subset of
  * properties are needed.
  */
+@ExportPackage("chronoscope")
 public class GssProperties implements Exportable {
 
   public PaintStyle bgColor = new Color("#000000");

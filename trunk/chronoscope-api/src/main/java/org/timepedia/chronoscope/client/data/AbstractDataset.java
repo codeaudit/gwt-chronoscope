@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.*;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.NoExport;
 
@@ -20,6 +21,7 @@ import java.util.Map;
  *
  * @author Chad Takahashi
  */
+@ExportPackage("chronoscope")
 public abstract class AbstractDataset<T extends Tuple2D>
     implements Dataset<T>, Exportable {
 

@@ -5,12 +5,14 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.GwtEvent;
 
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
 /**
  * A HandlerRegistration class that is exportable to Javascript.
  */
+@ExportPackage("chronoscope")
 public class ExportableHandlerRegistration implements HandlerRegistration
     ,Exportable {
 

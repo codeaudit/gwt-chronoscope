@@ -118,10 +118,9 @@ public abstract class DomTextLayer extends AbstractLayer {
     DOM.appendChild(layerElem, textDiv);
   }
 
-  /**
-     * Add Semi Transparent Background
-     * @param opacity(between 0 and 1)
-     */
+   /**
+    * Add Semi Transparent Background.
+    */
     public void addSemiTransparentBackground(double x, double y, String label, String fontFamily,
             String fontWeight, String fontSize, String opacity, TextLayer layer, Element layerElem) {
         Element textDivBackground = createTextDiv();
@@ -140,9 +139,7 @@ public abstract class DomTextLayer extends AbstractLayer {
     }
 
     /**
-     * Select the background color is different from the font color
-     * @param fontColor
-     * @return
+     * Select a background color different from the font color.
      */
     public String chooseBackgroundColor(String fontColor) {
         StringBuffer backgroundColor = new StringBuffer();

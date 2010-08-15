@@ -15,15 +15,17 @@
  */
 package org.timepedia.chronoscope.client.data;
 
+import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
+
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
-
-import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.Exportable;
 
 /**
 * Class for passing back incremental data from JS.
 */
+@ExportPackage("chronoscope")
 @Export
 public class IncrementalDatasetResponseImpl implements IncrementalDataResponse, Exportable {
 

@@ -54,7 +54,6 @@ import org.timepedia.exporter.client.ExporterUtil;
  * exports methods that can be used by both Java and JS to create and configure
  * charts, as well as being a global sink for History events.
  *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 @Singleton
@@ -174,7 +173,6 @@ public class Chronoscope
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
    *
-   * @gwt.export
    */
   @Export
   public static DomainBarMarker createBarMarker(String startDate,
@@ -186,7 +184,6 @@ public class Chronoscope
    * A factory function to create a vertical marker given start and end dates,
    * and a label with a gss class.
    *
-   * @gwt.export
    */
   @Export
   public static DomainBarMarker createBarMarkerWithClass(String startDate,
@@ -198,7 +195,6 @@ public class Chronoscope
    * A factory function to create a horizontal span marker between two range
    * values, with a given label.
    *
-   * @gwt.export
    */
   @Export
   public static RangeBarMarker createHorizontalBarMarker(double rangeLow,
@@ -213,7 +209,6 @@ public class Chronoscope
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
-   * @gwt.export createTimeseriesChartByElement
    */
   @Export("createTimeseriesChartByElement")
   public ChartPanel createTimeseriesChart(Element elem,
@@ -226,7 +221,7 @@ public class Chronoscope
    * Legacy method to support old API. Preferred method is to use instance
    * passed to onChronoscopeLoaded, which allows behavior to be overriden.
    *
-   * @Deprecated
+   * @deprecated
    */
   @Export
   public static ChartPanel createTimeseriesChartById(String id,
@@ -241,7 +236,6 @@ public class Chronoscope
    * Create a chart inside the DOM element with the given ID with the given JSON
    * datasets
    *
-   * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
   public ChartPanel createTimeseriesChart(String id,
@@ -287,10 +281,6 @@ public class Chronoscope
   }
 
   /**
-   * @param id
-   * @param datasets
-   * @param readyCallback
-   * @return
    */
   public static ChartPanel createTimeseriesChart(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyCallback) {
@@ -314,7 +304,7 @@ public class Chronoscope
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.GwtJsonDataset)}
+   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO)}
    * for details of the format.
    */
   public Dataset[] createDatasets(JsArray<JsonDatasetJSO> jsonDatasets) {
@@ -475,7 +465,6 @@ public class Chronoscope
   }
 
   /**
-   * @gwt.export createTimeseriesChartByIdSized
    */
   @Export("createTimeseriesChartByIdSized")
   public ChartPanel createChartPanel(String id, Dataset[] datasets,
@@ -490,7 +479,6 @@ public class Chronoscope
   }
 
   /**
-   * @gwt.export createTimeseriesChartWithElement
    */
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,

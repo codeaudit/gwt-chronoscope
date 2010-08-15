@@ -6,6 +6,7 @@ import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.Mutation;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -14,6 +15,7 @@ import org.timepedia.exporter.client.Exportable;
  * 
  * @author chad takahashi
  */
+@ExportPackage("chronoscope")
 public interface MutableDataset<T extends Tuple2D> extends Dataset<T>,
     Exportable {
 
