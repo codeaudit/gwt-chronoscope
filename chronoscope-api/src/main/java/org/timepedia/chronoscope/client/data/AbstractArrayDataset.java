@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MinIntervalArrayFunction;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
@@ -20,6 +21,7 @@ import java.util.List;
  *
  * @author Chad Takahashi
  */
+@ExportPackage("chronoscope")
 public abstract class AbstractArrayDataset<T extends Tuple2D>
     extends AbstractDataset<T> implements Exportable {
 

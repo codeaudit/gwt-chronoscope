@@ -37,7 +37,6 @@ import java.util.Date;
  * A realization of a View on the browser using a Flash helper based on
  * ASCanvas
  *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class FlashView extends GwtView

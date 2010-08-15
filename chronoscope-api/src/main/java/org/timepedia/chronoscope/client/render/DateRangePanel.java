@@ -12,6 +12,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -19,6 +20,7 @@ import org.timepedia.exporter.client.Exportable;
  *
  * @author Chad Takahashi
  */
+@ExportPackage("chronoscope")
 public class DateRangePanel extends AbstractPanel implements
   SelfResizing, GssElement, Exportable {
 

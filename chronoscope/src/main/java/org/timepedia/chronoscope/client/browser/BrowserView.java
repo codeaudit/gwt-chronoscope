@@ -32,7 +32,6 @@ import java.util.Date;
  * A realization of a View on the browser using Safari JavaScript CANVAS and DOM
  * Level 2 CSS
  *
- * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class BrowserView extends GwtView
