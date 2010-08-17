@@ -1,83 +1,58 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.timepedia.chronoscope</groupId>
-        <artifactId>chronoscope-project</artifactId>
-        <version>2.0</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-project</artifactId>
+    <version>2.0-SNAPSHOT</version>
+  </parent>
 
-    <name>Chronoscope Chart Widget</name>
-    <artifactId>widget</artifactId>
-    <packaging>war</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>chronoscope</artifactId>
-            <version>${version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-            <version>${gwtversion}</version>
-            <!-- type>jar</type -->
-        </dependency>
-    </dependencies>
+  <name>Chronoscope Chart Widget</name>
+  <artifactId>widget</artifactId>
+  <packaging>war</packaging>
 
-    <build>
-        <finalName>widget</finalName>
-        <plugins>
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+    </dependency>
+  </dependencies>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-            </plugin>
+  <properties>
+    <gwt.module>org.timepedia.chronoscope.widget.ChronoscopeWidget</gwt.module>
+    <gwt.name>widget</gwt.name>
+  </properties>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>cp-chronoscope-js</id>
-                        <phase>process-classes</phase>
-                        <configuration>
-                            <tasks>
-                                <echo message="about to copy"/>
-                                <copy
-                                        file="target/public/widget/widget.nocache.js"
-                                        tofile="target/public/widget/chronoscope.js"/>
-                                <copy
-                                        file="target/public/widget/widget.nocache.js"
-                                        tofile="target/public/widget/scope.js"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>module</id>
-            <activation>
-                <jdk>1</jdk>
-            </activation>
-
-            <properties>
-                <gwt.module>
-                    org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}
-                </gwt.module>
-            </properties>
-        </profile>
-    </profiles>
+  <build>
+    <finalName>${gwt.name}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>cp-chronoscope-js</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <echo message="about to copy" />
+                <copy file="target/widget/widget/widget.nocache.js" tofile="target/widget/widget/chronoscope.js" />
+                <copy file="target/widget/widget/widget.nocache.js" tofile="target/widget/widget/scope.js" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
