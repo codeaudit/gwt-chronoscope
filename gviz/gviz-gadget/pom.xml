@@ -1,73 +1,56 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.timepedia.chronoscope</groupId>
-        <artifactId>chronoscope-project</artifactId>
-        <version>1.0</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>Chronoscope GViz Gadget</name>
-    <artifactId>chronoscope-gviz-gadget</artifactId>
-    <packaging>war</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>chronoscope</artifactId>
-            <version>${version}</version>
-            <type>jar</type>
-        </dependency>
+  <parent>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-gviz-project</artifactId>
+    <version>2.0-SNAPSHOT</version>
+  </parent>
 
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-gadgets</artifactId>
-            <version>1.11-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
+  <name>Chronoscope GViz Gadget</name>
+  <artifactId>chronoscope-gviz-gadget</artifactId>
+  <packaging>war</packaging>
 
-        <dependency>
-            <groupId>org.timepedia.chronoscope</groupId>
-            <artifactId>gviz-api</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>org.timepedia.chronoscope</groupId>
-            <artifactId>gadget-support</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-gadgets</artifactId>
+      <version>1.11-SNAPSHOT</version>
+    </dependency>
 
-    </dependencies>
-    <build>
-        <finalName>gadget</finalName>
-        <plugins>
+    <dependency>
+      <groupId>org.timepedia.chronoscope</groupId>
+      <artifactId>gviz-api</artifactId>
+      <version>${version}</version>
+    </dependency>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-            </plugin>
+    <dependency>
+      <groupId>org.timepedia.chronoscope</groupId>
+      <artifactId>gadget-support</artifactId>
+      <version>${version}</version>
+    </dependency>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>module</id>
-            <activation>
-                <jdk>1</jdk>
-            </activation>
+  </dependencies>
 
-            <properties>
-                <gwt.module>
-                    org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}
-                </gwt.module>
-            </properties>
-        </profile>
-    </profiles>
+  <properties>
+    <gwt.module>org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget</gwt.module>
+    <gwt.name>gadget</gwt.name>
+  </properties>
+
+  <build>
+    <finalName>${gwt.name}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
