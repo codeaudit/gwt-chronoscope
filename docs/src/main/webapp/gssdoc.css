@@ -1,0 +1,68 @@
+body, table {
+  background-color: #f3ead8;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+h1,h2 {
+  font-family: Trebuchet MS;
+  color: navy;
+  font-size: 18pt;
+  border-bottom: double 3px;
+  padding-top: 20px;
+  padding-left: 20px;
+}
+
+table {
+  width: 100%;
+  border: 1px;
+}
+
+li,.propaname div {
+  list-style: none;
+  list-style-position: outside;
+  white-space: nowrap;
+}
+
+ul {
+  padding: 0;
+}
+
+td {
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+.elemdoc div {
+  min-width: 250px;
+}
+
+.elemexample {
+  font-size: 11px;
+  color: blue;
+}
+
+a {
+  color: #331166;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #666666;
+  text-decoration: underline;
+}
+
+th {
+  background: #e8f1f6;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.propaname,.elemname,.unitname {
+  color: #331166
+}
+
+.propdoc,.elemdoc,.unitdoc {
+  
+}
