@@ -1,17 +1,35 @@
 #summary Chronoscope Documentation Index
+#labels Featured
 
+= Chronoscope = 
+
+Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers.  
+
+== Philosophy ==
+
+  * Scalable representations. For example, almost anything works if you're implementing a plot for a dataset with 5 items.  The aim of Chronoscope is to support hundred, thousands, and hundreds of thousands of items.
+
+  * Platform independence.  Although compiled and most often used via the Javascript API, the core code happens to be written in Java and then compiled to Javascript using Google Web Toolkit.  That enabled server-side Java2D or mobile Android targets as well as Javascript clients.
+
+  * Performance.  
+
+  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([gss GSS])
+
+== Documentation Index ==
   * [dataset Datasets]
-  * [gss Stylesheets]
   * [js Javascript API ]
-    * [jsdoc Javascript API reference]
+    * [http://gwt-chronoscope.googlecode.com/svn/apidocs/jsdoc.html Javascript API reference]
+  * [gwt GWT API]
+    * [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html Javadoc reference]
+  * [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html Stylesheets]
+
   * [microformats Microformat overview]
   * [widget widget overview]
     * [widget/intro  widget introduction]
     * [widget/example widget example]
   * [gadget overview]
   * [gviz/index GViz]
-  * [gwt GWT overview]
-  * [javadoc Javadoc]
+
 
 
 

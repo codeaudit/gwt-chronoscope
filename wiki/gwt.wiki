@@ -1,15 +1,23 @@
 #summary Using chronoscope in Gwt applications
 
-= Chronoscope GWT API Overview =
+= Chronoscope GWT API =
+<wiki:toc max_depth="3" />
 
-Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
+== Introduction ==
+
+Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers and developed using Gwt. 
+It is packaged in a library ready to use in any Gwt application. This document describes how to setup your application and start using Chronoscope.
+
+== Creating a new project ==
+
+ * Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
 already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
 
-Create a new project using the `webAppCreator` command line tool:
+ * Create a new project using the `webAppCreator` command line tool:
 
 {{{webAppCreator -out HelloChart com.example.client.HelloChart}}}
 
-Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit `Chronoscope`. 
+ * Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit `Chronoscope`. 
 {{{
 <module>
     <inherits name='org.timepedia.chronoscope.Chronoscope' />
@@ -17,46 +25,61 @@ Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit `Chronoscope
 </module>
 }}}
 
-You'll also need to add chronoscope and gwtexporter to your project classpath. So simply put these libraries in the folder:
+ * You'll also need to add chronoscope and gwtexporter to your project classpath. So simply put these libraries in the folder:
 {{{
   cp path_to/gwtexporter.jar path_to/chronoacope.jar war/WEB-INF/lib
 }}}
 
-We'll use a json file for the dataset, so put it in your `war/` foder and make sure it should be in the format: 
+== Create a dataset file == 
+ * We'll use a json file for the dataset, so put it in your `war/` foder and make sure it should be in the format: 
 {{{
-dataset = {
-    Id: "unique id for this dataset",
-    domain: [ UTCTimeInMilliseconds_1, UTCtimeInMilliseconds_2, ... ],
-    range: [ Value_1, Value_2, ... ],
-    label: "default label for this dataset",
-    axis: "unit"  
-}
+  data set = {
+    id: "unrate",                                         // Unique id for this dataset
+    domainscale: 1000,                                    // Scale
+    domain: [-694306739,-691628339,-689122739,-686444339] // UTC time in milliseconds
+    range:  [3.4, 3.8, 4.0, 3.9,],                        // Values
+    label:  "Unemployment",                               // Dataset label
+    axis:   "percent"                                     // Chart unit
+  }
 }}}
 
-Datasets with the same `axis:` identifier will share the same range axis,
+ * Datasets with the same `axis:` identifier will share the same range axis,
 which is useful if they're units like `hours`, `km`, `kbps`, `$`, etc.
 
-Modify the index.html `webAppCreator` made and add:
-
+ * Modify the index.html `webAppCreator` made and add a tag to load the data:
 {{{
   <script language='javascript' src='dataset.js'></script>
 }}}
 
-Modify your javacode `HelloChart.java`:
+== Use chronoscope in your javacode == 
+ * Modify your javacode `HelloChart.java`:
 {{{
-package com.example.client;
+public class DevTest implements EntryPoint {
+  public void onModuleLoad() {
+      double GOLDEN_RATIO = 1.618;
+      int chartWidth = 600, chartHeight = (int) ( chartWidth / GOLDEN_RATIO );
+      Chronoscope.setFontBookRendering(true);
+      Chronoscope.initialize();
+      Chronoscope chronoscope = Chronoscope.getInstance();
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+      Dataset[] dataset = new Dataset[1];
+      dataset[0] = chronoscope.createDataset(getJson("dataset"));
+      VerticalPanel vp=new VerticalPanel();
+      vp.add(new Label(dataset[0].getRangeLabel()));
+      ChartPanel chartPanel = Chronoscope.createTimeseriesChart(dataset, chartWidth, chartHeight);
+      vp.add(chartPanel);
+      RootPanel.get().add(vp);
+  }
 
-import org.timepedia.chronoscope.client.browser.ChartPanel;
-import org.timepedia.chronoscope.client.browser.Chronoscope;
-import org.timepedia.chronoscope.client.XYDataset;
+  private static native JsonDatasetJSO getJson(String varName) /*-{
+     return $wnd[varName];
+  }-*/;
 
+}
+}}}
 
+ * Old versions of Chronoscope had a different API
+{{{
 public class HelloChart implements EntryPoint {
 
     public void onModuleLoad() {
@@ -70,7 +93,7 @@ public class HelloChart implements EntryPoint {
         vp.add(new Label(dataset[0].getRangeLabel()));
         ChartPanel chartPanel = Chronoscope.createTimeseriesChart(dataset, chartWidth, chartHeight);
         vp.add(chartPanel);
-        RootPanel.get("slot1").add(vp);
+        RootPanel.get().add(vp);
     }
 
     private static native JavaScriptObject getJson(String varName) /*-{
@@ -79,9 +102,13 @@ public class HelloChart implements EntryPoint {
 }
 }}}
 
-
-Exporting the Javascript API from your GWT app 
+== Exporting the Javascript API == 
+Exporting the Javascript API from your GWT app is as simple as: 
 {{{
   Chronoscope chronoscope = new Chronoscope();
   chronoscope.init();
 }}}
+
+== Gwt API Documentation ==
+
+Read the [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html Javadoc].
