@@ -13,3 +13,9 @@ data
 curate-data
 .git
 .gitignore
+.project
+.classpath
+.settings
+.checkstyle
+META-INF
+lib
