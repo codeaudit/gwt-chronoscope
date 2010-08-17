@@ -19,3 +19,6 @@ curate-data
 .checkstyle
 META-INF
 lib
+apidocs
+mavenrepo
+wiki
