@@ -1,0 +1,26 @@
+-classpath
+'/home/manolo/timefire/chronoscope-project/docs/target/classes:/home/manolo/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/home/manolo/.m2/repository/org/timepedia/exporter/gwtexporter/2.0.10/gwtexporter-2.0.10.jar:/home/manolo/.m2/repository/com/google/gwt/inject/gin/1.0/gin-1.0.jar:/home/manolo/.m2/repository/com/google/inject/guice/2.0/guice-2.0.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/../lib/tools.jar:/home/manolo/.m2/repository/com/google/gwt/gwt-user/2.0.4/gwt-user-2.0.4.jar'
+-doclet
+'org.timepedia.chronoscope.doclet.ChronoscopeDoclet'
+-docletpath
+'/home/manolo/.m2/repository/org/timepedia/chronoscope/chronoscope/2.0-SNAPSHOT/chronoscope-2.0-SNAPSHOT.jar:/home/manolo/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/home/manolo/.m2/repository/org/timepedia/exporter/gwtexporter/2.0.10/gwtexporter-2.0.10.jar:/home/manolo/.m2/repository/com/google/gwt/inject/gin/1.0/gin-1.0.jar:/home/manolo/timefire/chronoscope-project/chronoscope-api/target/chronoscope-api-2.0-SNAPSHOT.jar:/home/manolo/.m2/repository/com/google/inject/guice/2.0/guice-2.0.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/../lib/tools.jar:/home/manolo/.m2/repository/com/google/gwt/gwt-user/2.0.4/gwt-user-2.0.4.jar:/home/manolo/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:/home/manolo/.m2/repository/com/google/gwt/gwt-servlet/2.0.4/gwt-servlet-2.0.4.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/home/manolo/timefire/chronoscope-project/docs/target/javadoc-sources'
+-author
+-bottom
+'Copyright &#169; 2010. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/home/manolo/timefire/chronoscope-project/docs/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Chronoscope Documentation 2.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'Chronoscope Documentation 2.0-SNAPSHOT API'
