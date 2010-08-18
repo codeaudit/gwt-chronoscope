@@ -184,6 +184,15 @@ final class BottomPanel extends AuxiliaryPanel {
       plot.reloadStyles();
     }
   }
+
+   public void setOverviewVisible(boolean overviewVisible){
+      overviewAxisPanel.getGssProperties().visible=overviewVisible;
+      drawHook();
+  }
+
+  public boolean isOverviewVisible(){
+      return overviewAxisPanel.getGssProperties().visible;
+  }
   
   @Override
   protected void drawHook() {

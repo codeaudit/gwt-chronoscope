@@ -9,10 +9,10 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -20,7 +20,6 @@ import org.timepedia.exporter.client.Exportable;
  *
  * @author Chad Takahashi
  */
-@ExportPackage("chronoscope")
 public class DateRangePanel extends AbstractPanel implements
   SelfResizing, GssElement, Exportable {
 
@@ -57,6 +56,8 @@ public class DateRangePanel extends AbstractPanel implements
   private int typicalCharWidth;
 
   private boolean isDateDomain;
+
+  private double timeZoneOffsetInMilliseconds=0;
 
   public String getType() {
     return "daterange";
@@ -161,6 +162,9 @@ public class DateRangePanel extends AbstractPanel implements
   public void updateDomainInterval(Interval domainInterval) {
     ArgChecker.isNotNull(domainInterval, "domainInterval");
     
+    final boolean timeZoneChanged = ChronoDate.getTimeZoneOffsetInMilliseconds()!=this.timeZoneOffsetInMilliseconds;
+    this.timeZoneOffsetInMilliseconds=ChronoDate.getTimeZoneOffsetInMilliseconds();
+
     final boolean domainIntervalChanged = !domainInterval.equals(this.domainInterval);
     
     if (this.domainInterval == null) {
@@ -170,7 +174,7 @@ public class DateRangePanel extends AbstractPanel implements
       domainInterval.copyTo(this.domainInterval);
     }
 
-    if (domainIntervalChanged) {
+    if (domainIntervalChanged||timeZoneChanged) {
       if (isDateDomain) {
         String longStartDate = formatLongDate(domainInterval.getStart());
         String longEndDate = formatLongDate(domainInterval.getEnd());
@@ -225,11 +229,11 @@ public class DateRangePanel extends AbstractPanel implements
   }
 
   private String formatLongDate(double d) {
-    return dateFormatter.format(d);
+    return ChronoDate.formatDateByTimeZone(dateFormatter, d);
   }
 
   private String formatShortDate(double d) {
-    return compactDateFormatter.format(d);
+   return  ChronoDate.formatDateByTimeZone(compactDateFormatter, d);
   }
 
   private int estimateStringWidth(String s) {
