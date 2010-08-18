@@ -11,7 +11,7 @@
 
  * The data file should have the following format:
 {{{
-  data set = {
+  dataset = {
     id: "unrate",                                         // Unique id for this dataset
     domainscale: 1000,                                    // Scale
     domain: [-694306739,-691628339,-689122739,-686444339] // UTC time in milliseconds
@@ -19,4 +19,41 @@
     label:  "Unemployment",                               // Dataset label
     axis:   "percent"                                     // Chart unit
   }
+}}}
+
+
+
+* minimal dataset
+{{{
+ dataset = {
+    id: "id_unique_per_page",
+    domain: [ 1214277862000, 1214277862000, 1214277862000 ]
+    range: [ 42, 101.11, -33 ]
+    label: "label for the dataset",
+    axis: "units" 
+ }
+}}}
+ 
+some convenience
+{{{
+ dataset = {
+    id: "id_unique_per_page",
+    domainscale:1000,
+    domain: [ 1214277862, 1214277862, 1214277862 ]
+    range: [ 42, 101.11, -33 ]
+    label: "label for the dataset",
+    axis: "units" 
+ }
+}}}
+
+more convenience
+{{{
+ dataset = {
+    id: "id_unique_per_page",
+    dtformat: "yyyy-MM-dd",
+    domain: [ "2008-11-14", "2009-03-18", "2009-05-22" ]
+    range: [ 42, 101.11, -33 ]
+    label: "label for the dataset",
+    axis: "units" 
+ }
 }}}
