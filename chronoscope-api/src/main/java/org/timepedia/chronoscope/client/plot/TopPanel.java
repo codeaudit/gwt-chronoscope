@@ -140,4 +140,8 @@ final class TopPanel extends AuxiliaryPanel {
     compositePanel.add(legendAxisPanel);
   }
 
+  public CompositeAxisPanel getCompositePanel() {
+      return compositePanel;
+  }
+
 }

@@ -20,7 +20,6 @@ import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.plot.ExportableHandlerRegistration;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
@@ -49,7 +48,6 @@ import org.timepedia.exporter.client.Export;
  * <li>Domain axis rendering enabled/disabled <li>Overview enabled/disabled
  * <li>Selection mode on/off </ul>
  */
-@ExportPackage("chronoscope")
 public interface XYPlot<T extends Tuple2D> extends Exportable {
 
   /**
@@ -230,7 +228,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Returns an array of data point indices, which element k corresponds to the
    * data point being hovered on in dataset k. A value of -1 indicates that no
    * point in dataset [k] is currently being hovered. The length of the array is
-   * equal to the number of datasets in {@link #getDatasets}
+   * equal to the number of datasets in {@link #getdatasets
    */
   int[] getHoverPoints();
 
@@ -253,6 +251,9 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
 
   /**
    * Returns an overlay under the mouse coordinates at X,Y
+   * @param x
+   * @param y
+   * @return
    */
   Overlay getOverlayAt(int x, int y);
 
@@ -291,7 +292,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * The maximum <b>visible</b> domain value over all datasets taking into
    * account multiresolution representations.  This value will differ from
-   * {@link Datasets#getDomainExtrema()} end value, if the zoomed out view of the Plot forces
+   * {@link Datasets#getMaxDomain()} if the zoomed out view of the Plot forces
    * the renderer to use a coarser representation that may have different
    * values. This can happen if dataset values in higher levels use
    * interpolation rather than point sampling, for example.
@@ -504,6 +505,17 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setOverviewEnabled(boolean enabled);
 
   /**
+   * Visible or hidden the mini-chart overview below the center plot
+   * panel.
+   */
+  void setOverviewVisible(boolean overviewVisible);
+
+  /**
+   * Returns true if mini-chart overview on x-axis is visible.
+   */
+  boolean isOverviewVisible();
+
+  /**
    * Enables or disables all auxiliary panels (top legend, bottom domain
    * axis and overview axis, and left/right range axes).
    */
@@ -516,4 +528,12 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void zoomToHighlight();
 
   boolean isMultiaxis();
+
+  // TODO - timezone in dataset for per-dataset shifting of varied domain data on the way in
+  /**
+   * Set a chart-wide timezone offset that will override the client timezone
+   * -12 <= timeZoneOffset <= 13
+   */
+  @Export  
+  void setTimeZoneOffset(int offsetHours);
 }

@@ -1,6 +1,5 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -68,6 +67,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -272,6 +272,20 @@ public class DefaultXYPlot<T extends Tuple2D>
   public ExportableHandlerRegistration addPlotMovedHandler(
       PlotMovedHandler handler) {
     return handlerManager.addExportableHandler(PlotMovedEvent.TYPE, handler);
+  }
+
+  
+  @Export
+  public void setTimeZoneOffset(int offsetHours) {
+      if(offsetHours >= -12 && offsetHours <= 13){
+          ChronoDate.isTimeZoneOffset = true;
+          ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
+      }else{
+          ChronoDate.isTimeZoneOffset = false;
+          ChronoDate.setTimeZoneOffsetInMilliseconds(0);
+      }
+      topPanel.getCompositePanel().draw();
+      bottomPanel.draw();
   }
 
   public void animateTo(final double destDomainOrigin,
@@ -1055,6 +1069,16 @@ public class DefaultXYPlot<T extends Tuple2D>
     bottomPanel.setOverviewEnabled(overviewEnabled);
   }
 
+  @Export
+  public boolean isOverviewVisible() {
+      return bottomPanel.isOverviewVisible();
+  }
+
+  @Export
+  public void setOverviewVisible(boolean overviewVisible) {
+      bottomPanel.setOverviewVisible(overviewVisible);
+  }
+
   public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
     if (plotRenderer != null) {
       plotRenderer.setPlot(this);
@@ -1244,7 +1268,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           int hx = hoverX;
           int hy = hoverY;
           double dx = windowXtoDomain(hoverX + plotBounds.x);
-          String label = crosshairFmt.format(dx);
+          String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
           hx += dx < getDomain().midpoint() ? 1.0
               : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
 

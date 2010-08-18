@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.gss.GssProperties;
 
 /**
  * Renders the overview axis.
@@ -64,6 +65,11 @@ public class OverviewAxisPanel extends AxisPanel {
       //plot.getChart().setCursor(Cursor.DEFAULT);
     }
   }
+
+   public GssProperties getGssProperties(){
+      return gssProperties;
+  }
+
   
   public String getType() {
     return "overview";

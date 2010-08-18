@@ -1,9 +1,11 @@
 package org.timepedia.chronoscope.client.util.date;
 
+import com.google.gwt.i18n.client.TimeZone;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 import java.util.Date;
+import org.timepedia.chronoscope.client.util.DateFormatter;
 
 /**
  * A specialized date class for use with the Chronoscope framework.
@@ -11,6 +13,10 @@ import java.util.Date;
  * @author chad takahashi
  */
 public abstract class ChronoDate {
+
+  public static boolean isTimeZoneOffset=false;
+
+  private static double timeZoneOffsetInMilliseconds=0;
 
   /**
    * Factory method that creates a new date object for the specified timeStamp.
@@ -176,4 +182,39 @@ public abstract class ChronoDate {
    *                                       supported by a particular subclass.
    */
   public abstract ChronoDate truncate(TimeUnit timeUnit);
+
+  /**
+   * If you have to consider time zone,convert the current time zone to set time zone
+   * @return Local time zone and set the time zone difference between the value
+   */
+  public static double timeZoneConverter() {
+      Date date = new Date();
+      int localTimeZoneOffsetInMilliseconds = date.getTimezoneOffset() * 60 * 1000;
+      if (isTimeZoneOffset) {
+          return timeZoneOffsetInMilliseconds + localTimeZoneOffsetInMilliseconds;
+      }
+      return 0;
+  }
+
+  /**
+   * If you need a String date, and consider the set time zone or the local time zone 
+   * @param dateFormatter
+   * @param d
+   * @return String date about timezone
+   */
+  public static String formatDateByTimeZone(DateFormatter dateFormatter,double d){
+    if(isTimeZoneOffset){
+     TimeZone timeZone=TimeZone.createTimeZone((int)-timeZoneOffsetInMilliseconds/(60*1000));
+     return dateFormatter.format(d, timeZone);
+    }
+    return dateFormatter.format(d);
+  }
+
+  public static double getTimeZoneOffsetInMilliseconds() {
+      return timeZoneOffsetInMilliseconds;
+  }
+
+  public static void setTimeZoneOffsetInMilliseconds(double timeZoneOffsetInMilliseconds) {
+      ChronoDate.timeZoneOffsetInMilliseconds = timeZoneOffsetInMilliseconds;
+  }
 }

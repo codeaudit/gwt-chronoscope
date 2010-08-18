@@ -8,6 +8,8 @@ public interface JsonDataset extends JsonObject {
 
   String getDateTimeFormat();
 
+  // TODO - convenience constants, eg sidereal year in
+  // in microseconds is "domainscale": 31556925975 
   double getDomainScale();
 
   boolean isMipped();
