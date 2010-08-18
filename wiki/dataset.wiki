@@ -34,7 +34,7 @@
  }
 }}}
  
-some convenience
+* some convenience
 {{{
  dataset = {
     id: "id_unique_per_page",
@@ -46,7 +46,7 @@ some convenience
  }
 }}}
 
-more convenience
+* more convenience
 {{{
  dataset = {
     id: "id_unique_per_page",
