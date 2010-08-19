@@ -1,0 +1,42 @@
+#summary Customizable look and feel
+
+== Introduction ==
+
+Chronoscope uses a special css syntax to customize each element in the chart which is called GSS (Graph Stylesheets).
+ 
+
+== Example Code ==
+
+ * Create a file with the customization of the chart.
+{{{
+axes axis {
+  background-color: white
+  color:black;
+}
+
+plot {
+  background-color: white
+}
+
+axis.a0 label, axis.a0 {
+  color: rgb( 70, 118, 118 );
+}
+
+.s0 line, axis.a0 tick {
+  color: rgb( 70, 118, 118 );
+
+}
+
+axislegend daterange {
+  date-format:yyyy-MM-dd;
+}
+
+}}}
+
+ * Include the file in your page as a normal stylesheet link, but changing the type:
+{{{
+ <link rel="stylesheet" href="simple.css" type="text/gss">
+}}}
+
+== Gss Reference ==
+The [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html GSS reference], is generated automatically when the project is deployed. 

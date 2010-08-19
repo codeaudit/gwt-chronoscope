@@ -1,8 +1,8 @@
 #summary Using chronoscope from native javascript
 
-= Chronoscope Javascript API =
-
 <wiki:toc max_depth="3" />
+
+= Chronoscope Javascript API =
 
 == Introduction ==
 

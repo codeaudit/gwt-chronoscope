@@ -4,7 +4,7 @@
 We want non-programmers to be able to utilize Chronoscope functionality as well, and to do that, we use some (for the moment) non-standard microformats to describe the datasets and inject markers. 
 The microformat is simply an HTML table with class="cmf-chart", with the first row of the THEAD element specifying axis labels, and the rows of the TBODY element specifying the domain, and range axis values. The domain values are always in the first column, and one or more range values follow.
 
-Finally, you may give the table an ID, and target Anchor links at it using the fragment identifier. Any date appearing after the ID is interpreted to mean a point in time to place a pushpin marker. The marker's label comes from the "accesskey" attribute of the Anchor element, and the link must have a class of "cmf-marker". To see an info window display when the marker is clicked simply place a Span element inside the A element, with a class name of "cmf-infowindow". This span will be invisible but its contents will be displayed when the marker is clicked.
+Finally, you may give the table an ID, and target Anchor links (&lt;A>) at it using the fragment identifier (href=#id:date). Any date appearing after the ID is interpreted to mean a point in time to place a pushpin marker. The marker's label comes from the "accesskey" attribute of the A element, and the link must have a class of "cmf-marker". To see an info window display when the marker is clicked simply place a SPAN element inside the A element, with a class name of "cmf-infowindow". This span will be invisible but its contents will be displayed when the marker is clicked.
 
 == Example ==
 
@@ -61,4 +61,4 @@ Adding this code in your page, the table will be replaced by a chronoscope chart
 }}}
 
 == IE6 Note ==
-If the cmf-chart table is inside a paragraph or form tag it produces an error in IE6, the workaround is to not put the table inside <p> or in forms. 
+If the cmf-chart table is inside a paragraph or form tag it produces an error in IE6, the workaround is to not put the table inside paragraph tags or in forms (&lt;p> or &lt;form>). 

@@ -17,13 +17,13 @@
     domain: [-694306739,-691628339,-689122739,-686444339] // UTC time in milliseconds
     range:  [3.4, 3.8, 4.0, 3.9,],                        // Values
     label:  "Unemployment",                               // Dataset label, should be unique per page
-    axis:   "percent"                                     // Range axis unit/dimention, multiple datasets can share the same axis
+    axis:   "percent"                                     // Range axis unit/dimension, multiple datasets can share the same axis
   }
 }}}
 
 
 
-* minimal dataset
+  * minimal dataset
 {{{
  dataset = {
     id: "id_unique_per_page",
@@ -34,7 +34,7 @@
  }
 }}}
  
-* some convenience
+  * some convenience
 {{{
  dataset = {
     id: "id_unique_per_page",
@@ -46,7 +46,7 @@
  }
 }}}
 
-* more convenience
+  * more convenience
 {{{
  dataset = {
     id: "id_unique_per_page",

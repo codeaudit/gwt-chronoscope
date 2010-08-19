@@ -3,7 +3,8 @@
 
 = Chronoscope = 
 
-Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers.  
+Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers. 
+It is interactive and can be used in Gwt applications, as an embedded widget in any html page using normal javascript, a Google Gadget, or with the Google visualization API.
 
 == Philosophy ==
 
@@ -11,24 +12,23 @@ Chronoscope is a fast, scalable, charting toolkit designed to work well in most 
 
   * Platform independence.  Although compiled and most often used via the Javascript API, the core code happens to be written in Java and then compiled to Javascript using Google Web Toolkit.  That enabled server-side Java2D or mobile Android targets as well as Javascript clients.
 
-  * Performance.  
+  * Performance. It is one of the most important points considered during the development. Chronoscope is able to draw thousand of points and refresh the chart at 20-30 fps.
 
-  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([gss GSS])
+  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([Gss GSS])
 
 == Documentation Index ==
-  * [js Javascript API ]
+  * [JavaScript-API Javascript API ]
     * [http://gwt-chronoscope.googlecode.com/svn/apidocs/jsdoc.html Javascript API reference]
-  * [gwt GWT API]
+  * [Gwt-API GWT API]
     * [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html Javadoc reference]
-  * [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html Stylesheets]
-
-  * [dataset Datasets]
-  * [microformats Microformat overview]
-  * [widget widget overview]
-    * [widget/intro  widget introduction]
-    * [widget/example widget example]
-  * [gadget overview]
-  * [gviz/index GViz]
+  * [Gss Graph Stylesheets]
+    * [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html GSS API reference]
+  * Data series
+    * [Datasets Datasets]
+    * [Microformats Microformats]
+  * [Widget Widget overview]
+  * [Gadget Gadget overview]
+  * [GViz Google Visualization API]
 
 
 

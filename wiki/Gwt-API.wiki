@@ -1,7 +1,8 @@
 #summary Using chronoscope in Gwt applications
 
-= Chronoscope GWT API =
 <wiki:toc max_depth="3" />
+
+= Chronoscope GWT API =
 
 == Introduction ==
 
@@ -43,8 +44,7 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
   }
 }}}
 
- * Datasets with the same `axis:` identifier will share the same range axis,
-which is useful if they're units like `hours`, `km`, `kbps`, `$`, etc.
+ * Datasets with the same `axis:` identifier will share the same range axis, which is useful if they're units like `hours`, `km`, `kbps`, `$`, etc.
 
  * Modify the index.html `webAppCreator` made and add a tag to load the data:
 {{{
