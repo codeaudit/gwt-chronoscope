@@ -17,9 +17,9 @@ It is interactive and can be used in Gwt applications, as an embedded widget in 
   * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([Gss GSS])
 
 == Documentation Index ==
-  * [JavaScript-API Javascript API ]
+  * [JavaScriptAPI Javascript API ]
     * [http://gwt-chronoscope.googlecode.com/svn/apidocs/jsdoc.html Javascript API reference]
-  * [Gwt-API GWT API]
+  * [GwtAPI GWT API]
     * [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html Javadoc reference]
   * [Gss Graph Stylesheets]
     * [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html GSS API reference]
