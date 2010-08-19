@@ -74,7 +74,6 @@ Chronoscope is an interactive time series chart that can be used as an embedded 
 You can load the visualization using synchronous, or asynchronous techniques. Due to a shortcoming in Internet Explorer at the moment which breaks synchronous loads of our visualization, we recommend asynchronous loading. 
 
  * The following is an example of _synchronous_ loading.
-
 {{{
 <html>
  <head>
@@ -209,16 +208,14 @@ You can load the visualization using synchronous, or asynchronous techniques. Du
  * `pageRight(perc)`: Animated pan to the right by the designated percentage (0.0, 1.0) of the currently visible domain.
  * `zoomIn()`: Animated zoom-in of the currently visible domain by a fixed zoomfactor
  * `zoomOut()`: Animated zoom-out of the currently visible domain by a fixed zoomfactor
-
-
  * `getSelection()`: returns an array of the selected cells, i.e. an array in which each element is an object with properties row and column and these are indexes of rows and columns in the `DataTable`. If only row is specified, the selected element is a row. If only column is specified, the selected element is a column. 
+ 
 {{{
     selectedCells = chart.getSelection();
 }}}
 
-
-
  * `setSelection(selection)`: where selection is an array of cells to select
+
 {{{
     chart.setSelection([{col: 2, row: 3}, {col: 4, row:2}]);
 }}}

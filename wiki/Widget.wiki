@@ -10,8 +10,8 @@ Once this is done, you can use the JS API adding [microformats Microformat] or [
 
 If you wish to deploy your own instance of the widget, you have two options. 
  # The first option is to deploy a WAR file into a Java Servlet container, which includes the widget as well as the Font Service for rotated fonts. You can find a downloadable war file at the Chronoscope Project site.
-
  # The other option is to deploy a Javascript only library. Uncompress the content of the downloaded .war file (use unzip utility) into an HTTP accessible directory, remove the unneeded folder WEB-INF if you want, and Chronoscope will work, but without rotated fonts. Nevertheless you could enable them to use the Chronoscope FontService by adding the following line of code to your HTML. 
+ 
 {{{
  function onChronoscopeLoaded() { 
   chronoscope.Chronoscope.setFontBookRendering(true); 
