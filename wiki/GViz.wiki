@@ -1,12 +1,6 @@
 #summary Chronoscope for the Google Visualization API
 
-Example Code
-Loading your visualization
-Expected data formats and types
-Configuration options
-Methods
-Events
-Data Policy
+<wiki:toc max_depth="3" />
 
 = Google Visualization API ==
 
@@ -77,7 +71,9 @@ Chronoscope is an interactive time series chart that can be used as an embedded 
 
 == Loading your visualization ==
 
-You can load the visualization using synchronous, or asynchronous techniques. Due to a shortcoming in Internet Explorer at the moment which breaks synchronous loads of our visualization, we recommend asynchronous loading. The following is an example of synchronous loading.
+You can load the visualization using synchronous, or asynchronous techniques. Due to a shortcoming in Internet Explorer at the moment which breaks synchronous loads of our visualization, we recommend asynchronous loading. 
+
+ * The following is an example of _synchronous_ loading.
 
 {{{
 <html>
@@ -110,7 +106,7 @@ You can load the visualization using synchronous, or asynchronous techniques. Du
 </html>
 }}}
 
-But the example you see above uses asynchronous loading kicked off from an `onChronoscopeLoaded` function.
+ * But the example you see above uses _asynchronous_ loading kicked off from an `onChronoscopeLoaded` function.
 {{{
 <html>
  <head>
@@ -172,22 +168,22 @@ But the example you see above uses asynchronous loading kicked off from an `onCh
 == Configuration options ==
 
 
- * legend
+ * `legend`
     * `true`   show a legend on the chart (this is the default)
     * `false`   do not show a legend on the chart 
- * overview
+ * `overview`
     * `true`   show an overview below the chart (this is the default)
     * `false`   do not show a chart overview 
- * axisLabels
+ * `axisLabels`
     * `true`   show axis labels on the chart (this is the default)
     * `false`  do not show axis labels
- * style
+ * `style`
     * `clean`   clean style, simple colors, white background
     * `gfinance`   the style inspired by Google Finance
     * `bluegradient`   blue gradient style
- * zoomStartTime  defines the start point of the domain to chart
- * zoomEndTime    is the end point to chart
- * scaleType
+ * `zoomStartTime`  defines the start point of the domain to chart
+ * `zoomEndTime`    is the end point to chart
+ * `scaleType`
     * `maximum`
     
 
@@ -197,36 +193,32 @@ But the example you see above uses asynchronous loading kicked off from an `onCh
 
 
 == Methods & Events ==
- * microformatToDataTable(tableId): tableId is the ID attribute of an HTML table formatted according to the Chronoscope Microformat syntax. This static method parses an HTML table found in the current document and returns a GViz DataTable. If the table does not correctly adhere to the Chronoscope Microformat syntax, an exception will be thrown with details as to where parsing fails. 
+
+
+
+ * `microformatToDataTable(tableId)`: tableId is the ID attribute of an HTML table formatted according to the Chronoscope Microformat syntax. This static method parses an HTML table found in the current document and returns a GViz DataTable. If the table does not correctly adhere to the Chronoscope Microformat syntax, an exception will be thrown with details as to where parsing fails. 
 
 {{{
     var dataTable = chronoscope.ChronoscopeVisualization.microformatToDataTable("mydata");
 }}}
 
- * draw(dataTable, configOpts): draw the chart. 
- * highlight(from, to): highlight the interval delimited by `from` and `to`
- * InfoWindow openInfoWindow(selection, html): open an information window with the `html` content at the range defined by `selection`.
- * pageLeft(perc): Animated pan to the left by the designated percentage (0.0, 1.0) of the currently visible domain.
- * pageRight(perc): Animated pan to the right by the designated percentage (0.0, 1.0) of the currently visible domain.
- * zoomIn(): Animated zoom-in of the currently visible domain by a fixed zoomfactor
- * zoomOut(): Animated zoom-out of the currently visible domain by a fixed zoomfactor
+ * `draw(dataTable, configOpts)`: draw the chart. 
+ * `highlight(from, to)`: highlight the interval delimited by `from` and `to`
+ * `InfoWindow openInfoWindow(selection, html)`: open an information window with the `html` content at the range defined by `selection`.
+ * `pageLeft(perc)`: Animated pan to the left by the designated percentage (0.0, 1.0) of the currently visible domain.
+ * `pageRight(perc)`: Animated pan to the right by the designated percentage (0.0, 1.0) of the currently visible domain.
+ * `zoomIn()`: Animated zoom-in of the currently visible domain by a fixed zoomfactor
+ * `zoomOut()`: Animated zoom-out of the currently visible domain by a fixed zoomfactor
 
 
-The select event is the only event supported right now. As laid out in the Google Visualization API overview, the select event triggers when the user selects data within the chart as well as methods `getSelection` and `setSelection`.
-
- * getSelection: an array of the selected cells, i.e. an array in which each element is an object with properties row and column and these are indexes of rows and columns in the `DataTable`. If only row is specified, the selected element is a row. If only column is specified, the selected element is a column. 
+ * `getSelection()`: returns an array of the selected cells, i.e. an array in which each element is an object with properties row and column and these are indexes of rows and columns in the `DataTable`. If only row is specified, the selected element is a row. If only column is specified, the selected element is a column. 
 {{{
     selectedCells = chart.getSelection();
 }}}
 
-{{{
-  google.visualization.events.addListener(chrono, 'select', function() { 
-    var sel = chrono.getSelection(); 
-    alert("someone selected row=" + sel[0].row + ", col=" + sel[0].col); 
-  });
-}}}
 
- * setSelection:  an array of cells to select
+
+ * `setSelection(selection)`: where selection is an array of cells to select
 {{{
     chart.setSelection([{col: 2, row: 3}, {col: 4, row:2}]);
 }}}
@@ -235,6 +227,14 @@ The select event is the only event supported right now. As laid out in the Googl
   <input type="submit" onClick="chrono.setSelection([{col: 2, row: 3}])" value="Click Me">
 }}}
 
+ * The *select event* is the only event supported right now. As laid out in the Google Visualization API overview, the select event triggers when the user selects data within.
+
+{{{
+  google.visualization.events.addListener(chrono, 'select', function() { 
+    var sel = chrono.getSelection(); 
+    alert("someone selected row=" + sel[0].row + ", col=" + sel[0].col); 
+  });
+}}}
 
 == Timefire data policy ==
 We do not retain any data other than standard web traffic analytics data when you use our public site to get the Chronoscope Google Visualization API (http://api.timepedia.org/gviz/). 
