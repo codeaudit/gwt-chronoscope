@@ -47,9 +47,17 @@ public class ChronoscopeVisualization implements Exportable {
 
   private static int vizCount = 0;
 
+  /**
+   * This static method parses an HTML table found in the current document and returns a GViz DataTable. 
+   * If the table does not correctly adhere to the Chronoscope Microformat syntax, an exception will be 
+   * thrown with details as to where parsing fails.
+   * 
+   * <i>tableId</i> is the ID attribute of an HTML table formatted according to the Chronoscope Microformat syntax.
+   * 
+   */
   @Export
-  public static DataTable microformatToDataTable(String id) {
-    DataTable table = DataTableParser.parseMicroformatIntoDataTable(id);
+  public static DataTable microformatToDataTable(String tableId) {
+    DataTable table = DataTableParser.parseMicroformatIntoDataTable(tableId);
     return table;
   }
 

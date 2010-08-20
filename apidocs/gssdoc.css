@@ -19,15 +19,19 @@ table {
   border: 1px;
 }
 
-li,.propaname div {
+.elemchild ul, .elemprop ul {
+  padding: 0;
+}
+
+.elemchild li, .elemprop li {
   list-style: none;
   list-style-position: outside;
+}
+
+li, .propaname div {
   white-space: nowrap;
 }
 
-ul {
-  padding: 0;
-}
 
 td {
   padding-left: 5px;

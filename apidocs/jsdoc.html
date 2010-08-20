@@ -3,6 +3,217 @@
 <LINK rel='stylesheet' type='text/css' href='jsdoc.css'>
 </HEAD>
 <BODY BGCOLOR="white">
+<H1>
+Exported JavaScript-API: Index of Classes
+</H1>
+<UL>
+<LI><a href=#AbstractArrayDataset>AbstractArrayDataset</a>
+<LI><a href=#AbstractDataset>AbstractDataset</a>
+<LI><a href=#AxisPanel>AxisPanel</a>
+<LI><a href=#BrowserInfoWindow>BrowserInfoWindow</a>
+<LI><a href=#BrowserView>BrowserView</a>
+<LI><a href=#Chart>Chart</a>
+<LI><a href=#ChartClickEvent>ChartClickEvent</a>
+<LI><a href=#ChartPanel>ChartPanel</a>
+<LI><a href=#Chronoscope>Chronoscope</a>
+<LI><a href=#ChronoscopeMenu>ChronoscopeMenu</a>
+<LI><a href=#Dataset>Dataset</a>
+<LI><a href=#Datasets>Datasets</a>
+<LI><a href=#DateRangePanel>DateRangePanel</a>
+<LI><a href=#DateTickFormatterFactory>DateTickFormatterFactory</a>
+<LI><a href=#DefaultXYPlot>DefaultXYPlot</a>
+<LI><a href=#DomainAxisPanel>DomainAxisPanel</a>
+<LI><a href=#DomainBarMarker>DomainBarMarker</a>
+<LI><a href=#DraggableOverlay>DraggableOverlay</a>
+<LI><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a>
+<LI><a href=#FlashView>FlashView</a>
+<LI><a href=#GssProperties>GssProperties</a>
+<LI><a href=#IncrementalDataResponse>IncrementalDataResponse</a>
+<LI><a href=#IncrementalDatasetResponseImpl>IncrementalDatasetResponseImpl</a>
+<LI><a href=#InfoWindow>InfoWindow</a>
+<LI><a href=#Interval>Interval</a>
+<LI><a href=#IntTickFormatterFactory>IntTickFormatterFactory</a>
+<LI><a href=#Marker>Marker</a>
+<LI><a href=#MutableDataset>MutableDataset</a>
+<LI><a href=#MutableDatasetND>MutableDatasetND</a>
+<LI><a href=#Overlay>Overlay</a>
+<LI><a href=#OverlayChangeEvent>OverlayChangeEvent</a>
+<LI><a href=#PlotChangedEvent>PlotChangedEvent</a>
+<LI><a href=#PlotEvent>PlotEvent</a>
+<LI><a href=#PlotFocusEvent>PlotFocusEvent</a>
+<LI><a href=#PlotHoverEvent>PlotHoverEvent</a>
+<LI><a href=#PlotMovedEvent>PlotMovedEvent</a>
+<LI><a href=#RangeAxis>RangeAxis</a>
+<LI><a href=#RangeBarMarker>RangeBarMarker</a>
+<LI><a href=#ValueAxis>ValueAxis</a>
+<LI><a href=#View>View</a>
+<LI><a href=#XYPlot>XYPlot</a>
+</UL>
+<H2>
+<div id=AbstractArrayDataset>chronoscope.AbstractArrayDataset</div>
+</H2>
+<div class=jsdocText>Provides most of the implementation necessary for an N-tuple dataset backed
+ by <a href=#Array2D>Array2D</a> objects.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getAxisId</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeExtrema</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>tupleCoordinate</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getNumSamples</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getX</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=AbstractDataset>chronoscope.AbstractDataset</div>
+</H2>
+<div class=jsdocText>Provides skeletal implementation of an <a href=#Dataset>Dataset</a> to simplify
+ implementation of a concrete class.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getIdentifier</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getMinDomainInterval</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getPreferredRangeAxisInterval</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeLabel</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setIncrementalHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>, <span class=jsdocParameterType><a href=#IncrementalDataResponse>IncrementalDataResponse</a></span> <span class=jsdocParameterName>response</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=AxisPanel>chronoscope.AxisPanel</div>
+</H2>
+<div class=jsdocText>Base class for all axis panels, which are panels that surround the center plot panel.
+ 1 or more axis panels can be added to a <a href=#CompositeAxisPanel>CompositeAxisPanel</a>.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ValueAxis>ValueAxis</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getValueAxis</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=BrowserInfoWindow>chronoscope.BrowserInfoWindow</div>
+</H2>
+<div class=jsdocText></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>close</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPosition</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>y</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addCloseHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#InfoWindowEvent>InfoWindowEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>open</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=BrowserView>chronoscope.BrowserView</div>
+</H2>
+<div class=jsdocText>A realization of a View on the browser using Safari JavaScript CANVAS and DOM
+ Level 2 CSS</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
 <H2>
 <div id=Chart>chronoscope.Chart</div>
 </H2>
@@ -130,910 +341,6 @@
 <BR>
 <HR>
 <H2>
-<div id=Overlay>chronoscope.Overlay</div>
-</H2>
-<div class=jsdocText>Interface implemented by Markers and other clases which overlay the plot</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Allows a caller to register for click events on this Overlay</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainX</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeY</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=InfoWindow>chronoscope.InfoWindow</div>
-</H2>
-<div class=jsdocText>A handle to a Window opened via the View.openInfoWindow method.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>close</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPosition</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>y</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addCloseHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#InfoWindowEvent>InfoWindowEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>open</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=Datasets>chronoscope.Datasets</div>
-</H2>
-<div class=jsdocText>Container for <a href=#Dataset>Dataset</a> objects that provides indexed access to the
- datasets as well as maintaining aggregate information. <p> This container
- registers itself as a <a href=#DatasetListener>DatasetListener</a> to any added <a href=#MutableDatasetND>MutableDatasetND</a> objects in order to guarantee that aggregate information is
- kept up-to-date whenever constituent elements are modified.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>add</b>(<span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>)
-<BR>
-<span class=jsdocComment>Adds the specified dataset to the existing datasets in this container.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>beginMutation</b>()
-<BR>
-<span class=jsdocComment>Suspends all firing up dataset events until corresponding endMutation() as
- well as allows more efficient processing of multiple updates.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>endMutation</b>()
-<BR>
-<span class=jsdocComment>Disables mutation mode and fires all pending change events.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>get</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
-<BR>
-<span class=jsdocComment>Returns the dataset at the specified 0-based index within this container.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getById</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>id</span>)
-<BR>
-<span class=jsdocComment>Returns the dataset with the specified identifier.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
-<BR>
-<span class=jsdocComment>Returns an interval that contains the minimum and maximum domain value
- across all <a href=#Dataset>Dataset</a> elements within this container.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>remove</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
-<BR>
-<span class=jsdocComment>Removes the element at the specified index in this container. Shifts any
- subsequent elements to the left (subtracts one from their indices). Returns
- the element that was removed from the container. <p> Be aware that this
- container de-registers itself as an <a href=#DatasetListener>DatasetListener</a> to the dataset
- being removed.  In other words, mutations applied to a dataset that once
- belonged to this container will no longer signal this container, which in
- turn, will no longer forward the mutation event to its listeners.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>size</b>()
-<BR>
-<span class=jsdocComment>Returns the number of datasets in this container.</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=ChronoscopeMenu>chronoscope.ChronoscopeMenu</div>
-</H2>
-<div class=jsdocText>Implement this and ChronoscopeMenuFactory to create alternative popup menus
- for Chronoscope.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMenuBar</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType><a href=#ChronoscopeMenu>ChronoscopeMenu</a></span> <span class=jsdocParameterName>subMenu</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMenuItem</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeAllMenuItems</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>hide</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>show</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=Dataset>chronoscope.Dataset</div>
-</H2>
-<div class=jsdocText>Models a multiresolution dataset containing 0 or more <a href=#Tuple2D>Tuple2D</a> points.
- <p>
- A dataset allows arbitrary Tuples to be returned from each sample index. The
- tuples returned are not guaranteed to be mutation free; that is, they should
- be considered flyweight objects to be used and discarded before the next
- invocation of getFlyweightTuple(int). 
- <p>
- A multiresolution dataset is a dataset consisting of multiple levels, with
- level 0 being the bottom most level containing the original datasets. Levels
- 1 and above represent a 'zoomed out' view of the data, filtered,
- interpolated, scaled, or decimated as appropriate. The only requirement is
- that if M and N are two levels in the dataset, and M > N, then
- getNumSamples(M) < getNumSamples(N). In other words, the number of samples
- (the resolution) must strictly decrease as the level increases. A useful
- visualization is to imagine levels stacking on top of one another like a
- pyramid. There is no requirement that the pyramid contain a level Z such that
- getNumSamples(Z) == 1, but in practice, getNumSamples(Z) should be less than
- XYPlot.getMaxDrawablePoints().
- <p>
- It is recommended to use a method that makes successive levels half the size
- of former levels, so that the height of the pyramid is
- <tt>log_2(num_samples)</tt>.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getAxisId</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
-<BR>
-<span class=jsdocComment>Return an id used to identify the axis this dataset should be assigned to,
- typically the physical units (e.g. meters/second). Datasets with identical
- axis ids will, by default, be allocated on the same axis.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
-<BR>
-<span class=jsdocComment>Returns an interval that contains the minimum and maximum domain values
- of this dataset's domain.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getIdentifier</b>()
-<BR>
-<span class=jsdocComment>Return a unique identifier for this dataset.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getMinDomainInterval</b>()
-<BR>
-<span class=jsdocComment>Returns the smallest domain interval between any two consecutive points
- within the dataset.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getNumSamples</b>()
-<BR>
-<span class=jsdocComment>Returns the number of samples in this dataset.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getPreferredRenderer</b>()
-<BR>
-<span class=jsdocComment>Returns a key representing the preferred <a href=#DatasetRenderer>DatasetRenderer</a> to use when
- drawing this dataset.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeExtrema</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
-<BR>
-<span class=jsdocComment>Returns an interval representing the min and max values for the specified
- range tuple coordinate.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeLabel</b>()
-<BR>
-<span class=jsdocComment>Return a label that may be used in a chart legend for this dataset.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getTupleLength</b>()
-<BR>
-<span class=jsdocComment>Returns the fixed number of components that each tuple within this dataset
- can hold (e.g. a 2-tuple, 5-tuple, etc.).</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getX</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
-<BR>
-<span class=jsdocComment>Return the domain value for the given data point index on mip level 0.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setIncrementalHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>, <span class=jsdocParameterType><a href=#IncrementalDataResponse>IncrementalDataResponse</a></span> <span class=jsdocParameterName>response</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Enables a dataset to support on-the-fly incremental loading/reloading by invoking a callback when
- a given range of data is requested for display. The provided handler may request additional data from the
- server for this range and return new data.</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=XYPlot>chronoscope.XYPlot</div>
-</H2>
-<div class=jsdocText>An interface to be implemented by classes implementing XY plots of <a href=# Dataset> Dataset</a> objects. <p> Conceptually, an XYPlot is a class responsible for
- maintaining a collection of datasets, axes, and graph state, and mapping
- data-space values to screen-space values suitable for rendering on a <a href=# View> View</a>. More specifically, a plot converts data-space values to user-space
- values by delegating to an Axis implementation. <p> User-space values are in
- the interval [0,1] independent of the screen space size of the plot. For
- example, a ValueAxis with a visible range of 0.0 to 500.0, will map a
- data-value of 250.0 to a user-space value of 0.5. A renderer like
- XYLineRenderer or XYBarRenderer will convert user-space values to
- screen-space values before rendering. When Chronoscope has CategoryPlot
- support, then a CategoryAxis would map x-axis values like "Groceries", "Gas",
- "Utilities" to appropriate user-space values (say, 0, 0.5, 1.0) <p> An
- important feature of Chronoscope is support for large dataset scalability.
- This is achieved using datasets with multiresolution representation. At
- coarser levels of detail, a dataset may be decimated, interpolated, or
- filtered in a myriad of ways to compress its size, while hopefully preserving
- as much signal as possible. <p> A plot maintains some of the following
- important values: <ul> <li>Domain origin <li>Visible Domain <li>Focus point
- and dataset <li>Hover point and dataset <li>Current highlight/selection </ul>
- <p> ... as well as some stylistic overrides: <ul> <li>Legend enabled/disabled
- <li>Domain axis rendering enabled/disabled <li>Overview enabled/disabled
- <li>Selection mode on/off </ul></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addClickHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#ChartClickEvent>ChartClickEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Add a callback for ChartClickEvent.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotChangedEvent>PlotChangedEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Add a callback for PlotChangedEvents.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addFocusHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotFocusEvent>PlotFocusEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Add a callback for PlotFocusEvents.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addHoverHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotHoverEvent>PlotHoverEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Add a callback for PlotHoverEvents.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMoveHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotMovedEvent>PlotMovedEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Add a callback for PlotMovedEvents.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Datasets>Datasets</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDatasets</b>()
-<BR>
-<span class=jsdocComment>Returns the datasets associated with this plot.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#DomainAxisPanel>DomainAxisPanel</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainAxisPanel</b>()
-<BR>
-<span class=jsdocComment>Return the domain axis panel associated with X-axis.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>isOverviewEnabled</b>()
-<BR>
-<span class=jsdocComment>Returns true if mini-chart overview on x-axis is enabled.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#InfoWindow>InfoWindow</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>openInfoWindow</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>html</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>domainX</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeY</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIndex</span>)
-<BR>
-<span class=jsdocComment>Open an info window at the specified coordinates in data space</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setMultiaxis</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
-<BR>
-<span class=jsdocComment>Enables or disables multi-axis mode. True by default, if multi-axis
- is disabled, each chart effectively has a single RangeAxis which is
- toggled by which dataset is currently in focus.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendEnabled</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
-<BR>
-<span class=jsdocComment>Enables or disables the legend panel above the center plot panel.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsVisible</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
-<BR>
-<span class=jsdocComment>Enables or disables the legend labels in the legend panel.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setOverviewEnabled</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
-<BR>
-<span class=jsdocComment>Enables or disables the mini-chart overview below the center plot
- panel.</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=MutableDataset>chronoscope.MutableDataset</div>
-</H2>
-<div class=jsdocText>Dataset that permits certain types of mutations (e.g. appending new data
- points, modifying the state of existing data points).</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><a href=#DatasetListener>DatasetListener</a></span> <span class=jsdocParameterName>listener</span>)
-<BR>
-<span class=jsdocComment>Adds the specified listener to the collection of listeners to be notified
- when changes to this dataset occur.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeChangeHandler</b>(<span class=jsdocParameterType><a href=#DatasetListener>DatasetListener</a></span> <span class=jsdocParameterName>listener</span>)
-<BR>
-<span class=jsdocComment>Removes the specified listener from the collection of listeners to be
- notified when changes to this dataset occur.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>mutate</b>(<span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsRange</span>)
-<BR>
-<span class=jsdocComment>Integrates the specified timeseries fragment into the dataset.</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=GssProperties>chronoscope.GssProperties</div>
-</H2>
-<div class=jsdocText>A GSS analogue of CssProperties for a GssElement. Only a small subset of
- properties are needed.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateFormat</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontFamily</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontFamily</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontSize</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontSize</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontWeight</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontWeight</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGroup</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>group</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setHeight</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLineThickness</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>lineThickness</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLeft</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>left</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPointSelection</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>pointSelection</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPointShape</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>pointShape</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowBlur</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowBlur</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowOffsetX</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowOffsetX</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowColor</b>(<span class=jsdocParameterType><a href=#Color>Color</a></span> <span class=jsdocParameterName>shadowColor</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowOffsetY</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowOffsetY</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setSize</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>size</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickAlign</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>tickAlign</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickPosition</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>tickPosition</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTop</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>top</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setVisible</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setWidth</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=ValueAxis>chronoscope.ValueAxis</div>
-</H2>
-<div class=jsdocText>An ValueAxis is a class responsible for mapping points in data space to
- points in screen space, as well as maintaining state related to drawing axis
- ticks and labels. A given axis may be horizontal or vertical in orientation
- depending on the <a href=#CompositeAxisPanel>CompositeAxisPanel</a> it is placed into, and rendered on the
- left/right or top/bottom depending on the AxisPanel position as well. 
- <p> 
- In GSS, a ValueAxis may be referred to using a CSS selector 'axis'. Each axis
- is numbered, can have several CSS classes, depending on subtypes, like
- "axis.range" or "axis.domain". See <a href=#AxisPanel>AxisPanel</a> for more details.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAxisId</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>axisId</span>)
-<BR>
-<span class=jsdocComment>Sets the short label representing this axis ($, m/s, etc)</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=RangeAxis>chronoscope.RangeAxis</div>
-</H2>
-<div class=jsdocText>A RangeAxis is an ValueAxis that represents values, typically on the y-axis.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>focus</b>()
-<BR>
-<span class=jsdocComment>Make this range axis the current focus. Has not effect the plot has
- multi-axis set to true. Otherwise, this axis becomes the primary left axis
- displayed.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAllowAutoScale</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>allowAutoScale</span>)
-<BR>
-<span class=jsdocComment>If set to true, allow axis ticks to be scaled automatically by powers of
- thousand if they exceeed maxDigits settings. For example, if max digits is
- 4, then the number 25000 will be rendered as 25, and the axis label will be
- modified to include the word "Thousands". setAllowScientificNotation() will
- override this and take priority, as well as setScale().</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAllowScientificNotation</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enable</span>)
-<BR>
-<span class=jsdocComment>If enabled (true by default), when maxTickLabelDigits is exceeded, labels
- will be rendered in scientific notation.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAutoZoomVisibleRange</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>autoZoom</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCalcRangeAsPercent</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>b</span>)
-<BR>
-<span class=jsdocComment>Setting to <tt>true</tt> will cause all of the range-Y values to be
- converted to a percentage increase/decrease from some reference range-Y
- value (either the first datapoint of the dataset or the leftmost datapoint
- that's visible in the plot).</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setForceScientificNotation</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>force</span>)
-<BR>
-<span class=jsdocComment>Force tick labels to always be rendered in scientific notation. (Default
- false);</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLabel</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRange</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>)
-<BR>
-<span class=jsdocComment>Set the minimum and maximum visible axis range.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRangeMax</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>)
-<BR>
-<span class=jsdocComment>Set the maximum visible axis range.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRangeMin</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>)
-<BR>
-<span class=jsdocComment>Set the minimum visible axis range.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setScale</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>scale</span>)
-<BR>
-<span class=jsdocComment>Set a scale factor for displaying axis tick values</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickLabelNumberFormatter</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment>Set custom TickLabelNumberFormatter callbacks.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickNumberFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>format</span>)
-<BR>
-<span class=jsdocComment>Set the number format used to render ticks</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=Interval>chronoscope.Interval</div>
-</H2>
-<div class=jsdocText>A mathematical interval representing a connected portion of a real line. 
- An interval has 2 endpoints: getStart()} and <a href=##getEnd()>#getEnd()</a>.
- <p>
- {@link Interval can represent anything conforming to this general
- description, including a time interval on the domain axis, pixel bounds, or
- whatever.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>contains</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)
-<BR>
-<span class=jsdocComment>Returns true if <tt>value</tt> is a member of this interval,
- <b>including endpoints</b> (in other words, this method treats
- this interval as a <i>closed interval</i>).</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>copy</b>()
-<BR>
-<span class=jsdocComment>Returns a copy of this object.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>copyTo</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>target</span>)
-<BR>
-<span class=jsdocComment>Copies the state of this interval into the target interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>expand</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)
-<BR>
-<span class=jsdocComment>Expands this interval so that the specified value is guaranteed fall within
- it after this method call.  If this interval already contains <tt>value</tt>,
- then nothing changes.
- <p>
- For example, if i represents the interval [-5, 3], then i.expand(7) expands
- the interval to be [-5, 7].  Similarly, i.expand(-7) results in the interval
- [-7, 3].  i.expand(1), however, does not change the state of interval i, since
- 1 is already contained in the interval [-5, 3].</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>expandWithInterval</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>interval</span>)
-<BR>
-<span class=jsdocComment>Expands this interval so that the specified interval falls inside this interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getEnd</b>()
-<BR>
-<span class=jsdocComment>The value of the ending point of this interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getStart</b>()
-<BR>
-<span class=jsdocComment>The value of the starting point of this interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>intersects</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>i</span>)
-<BR>
-<span class=jsdocComment>Returns true if the specified interval intersects this interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>length</b>()
-<BR>
-<span class=jsdocComment>The length of this interval (i.e. <tt>end - start</tt>).</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>midpoint</b>()
-<BR>
-<span class=jsdocComment>The midpoint of this interval.</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>slide</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>amount</span>)
-<BR>
-<span class=jsdocComment>Slides this interval in either a positive or negative direction by the
- specified amount. For example, let S = interval [3, 7] (i.e. it starts
- at 3, ends at 7, and has a length of 4). Then S.slide(2) would change its
- state to [5, 9]. Similarly, S.shift(-5) would have changed its state to
- [-2, 2]. Note that length() is unaffected by this method
- invocation.</span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=PlotFocusEvent>chronoscope.PlotFocusEvent</div>
-</H2>
-<div class=jsdocText>Fired by plot implementations when focus point changes.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRange</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=PlotEvent>chronoscope.PlotEvent</div>
-</H2>
-<div class=jsdocText></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#XYPlot>XYPlot</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getPlot</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=OverlayChangeEvent>chronoscope.OverlayChangeEvent</div>
-</H2>
-<div class=jsdocText></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Overlay>Overlay</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getOverlay</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=PlotMovedEvent>chronoscope.PlotMovedEvent</div>
-</H2>
-<div class=jsdocText>Fired by plot implementations when the chart domain changes.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=PlotChangedEvent>chronoscope.PlotChangedEvent</div>
-</H2>
-<div class=jsdocText>Fired by plot implementations when the chart's state is modified and 
- stabilizes.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
 <div id=ChartClickEvent>chronoscope.ChartClickEvent</div>
 </H2>
 <div class=jsdocText>Fired by plot implementations when click occurs on chart which is not handled
@@ -1060,357 +367,6 @@
 <BR>
 <HR>
 <H2>
-<div id=PlotHoverEvent>chronoscope.PlotHoverEvent</div>
-</H2>
-<div class=jsdocText>Fired by plot implementations when the set of hovered points changes.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainPoints</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangePoints</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=IncrementalDatasetResponseImpl>chronoscope.IncrementalDatasetResponseImpl</div>
-</H2>
-<div class=jsdocText>Class for passing back incremental data from JS.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>IncrementalDatasetResponseImpl</span>(<span class=jsdocParameterType><a href=#AbstractDataset>AbstractDataset</a></span> <span class=jsdocParameterName>dataset</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addData</b>(<span class=jsdocParameterType><a href=#JsArrayNumber>JsArrayNumber</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>range</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=IncrementalDataResponse>chronoscope.IncrementalDataResponse</div>
-</H2>
-<div class=jsdocText>Called by client code with incremental data.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addData</b>(<span class=jsdocParameterType><a href=#JsArrayNumber>JsArrayNumber</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>range</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=MutableDatasetND>chronoscope.MutableDatasetND</div>
-</H2>
-<div class=jsdocText>Dataset that permits certain types of mutations (e.g. appending new data
- points, modifying Y-value of existing data points). <p></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>mutate</b>(<span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsDomain</span>, <span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsRange</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=AbstractDataset>chronoscope.AbstractDataset</div>
-</H2>
-<div class=jsdocText>Provides skeletal implementation of an <a href=#Dataset>Dataset</a> to simplify
- implementation of a concrete class.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getIdentifier</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getMinDomainInterval</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getPreferredRangeAxisInterval</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeLabel</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setIncrementalHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>, <span class=jsdocParameterType><a href=#IncrementalDataResponse>IncrementalDataResponse</a></span> <span class=jsdocParameterName>response</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=AbstractArrayDataset>chronoscope.AbstractArrayDataset</div>
-</H2>
-<div class=jsdocText>Provides most of the implementation necessary for an N-tuple dataset backed
- by <a href=#Array2D>Array2D</a> objects.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getAxisId</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeExtrema</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>tupleCoordinate</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getNumSamples</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getX</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=Marker>chronoscope.Marker</div>
-</H2>
-<div class=jsdocText></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>Marker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>date</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIdx</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>Marker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>date</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIdx</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>typeClass</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>isGuideLine</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGuideLine</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>guideLine</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGuideLineDateFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>guideLineDate</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainX</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeY</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#InfoWindow>InfoWindow</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>openInfoWindow</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>html</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=DraggableOverlay>chronoscope.DraggableOverlay</div>
-</H2>
-<div class=jsdocText></div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDraggable</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>draggable</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#OverlayChangeEvent>OverlayChangeEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addDragHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#ChartDragEvent>ChartDragEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=RangeBarMarker>chronoscope.RangeBarMarker</div>
-</H2>
-<div class=jsdocText>An overlay which renders highlighted regions spanning the entire X dimensions
- of the plot over a given range region.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>RangeBarMarker</span>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=DomainBarMarker>chronoscope.DomainBarMarker</div>
-</H2>
-<div class=jsdocText>An overlay which renders highlighted regions spanning the entire Y dimensions
- of the plot over a given domain region</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DomainBarMarker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>startDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>endDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DomainBarMarker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>startDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>endDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>gssLabel</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGssLabel</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>gssLabel</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
 <div id=ChartPanel>chronoscope.ChartPanel</div>
 </H2>
 <div class=jsdocText></div>
@@ -1422,26 +378,6 @@
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType"><a href=#Chart>Chart</a></TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getChart</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=BrowserView>chronoscope.BrowserView</div>
-</H2>
-<div class=jsdocText>A realization of a View on the browser using Safari JavaScript CANVAS and DOM
- Level 2 CSS</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
@@ -1603,9 +539,10 @@
 <BR>
 <HR>
 <H2>
-<div id=BrowserInfoWindow>chronoscope.BrowserInfoWindow</div>
+<div id=ChronoscopeMenu>chronoscope.ChronoscopeMenu</div>
 </H2>
-<div class=jsdocText></div>
+<div class=jsdocText>Implement this and ChronoscopeMenuFactory to create alternative popup menus
+ for Chronoscope.</div>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
 <TR>
@@ -1613,25 +550,31 @@
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>close</b>()
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMenuBar</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType><a href=#ChronoscopeMenu>ChronoscopeMenu</a></span> <span class=jsdocParameterName>subMenu</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPosition</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>y</span>)
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMenuItem</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)</span> <span class=jsdocParameterName>{}</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addCloseHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#InfoWindowEvent>InfoWindowEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeAllMenuItems</b>()
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>open</b>()
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>hide</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>show</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
@@ -1640,10 +583,114 @@
 <BR>
 <HR>
 <H2>
-<div id=FlashView>chronoscope.FlashView</div>
+<div id=Dataset>chronoscope.Dataset</div>
 </H2>
-<div class=jsdocText>A realization of a View on the browser using a Flash helper based on
- ASCanvas</div>
+<div class=jsdocText>Models a multiresolution dataset containing 0 or more <a href=#Tuple2D>Tuple2D</a> points.
+ <p>
+ A dataset allows arbitrary Tuples to be returned from each sample index. The
+ tuples returned are not guaranteed to be mutation free; that is, they should
+ be considered flyweight objects to be used and discarded before the next
+ invocation of getFlyweightTuple(int). 
+ <p>
+ A multiresolution dataset is a dataset consisting of multiple levels, with
+ level 0 being the bottom most level containing the original datasets. Levels
+ 1 and above represent a 'zoomed out' view of the data, filtered,
+ interpolated, scaled, or decimated as appropriate. The only requirement is
+ that if M and N are two levels in the dataset, and M > N, then
+ getNumSamples(M) < getNumSamples(N). In other words, the number of samples
+ (the resolution) must strictly decrease as the level increases. A useful
+ visualization is to imagine levels stacking on top of one another like a
+ pyramid. There is no requirement that the pyramid contain a level Z such that
+ getNumSamples(Z) == 1, but in practice, getNumSamples(Z) should be less than
+ XYPlot.getMaxDrawablePoints().
+ <p>
+ It is recommended to use a method that makes successive levels half the size
+ of former levels, so that the height of the pyramid is
+ <tt>log_2(num_samples)</tt>.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getAxisId</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
+<BR>
+<span class=jsdocComment>Return an id used to identify the axis this dataset should be assigned to,
+ typically the physical units (e.g. meters/second). Datasets with identical
+ axis ids will, by default, be allocated on the same axis.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
+<BR>
+<span class=jsdocComment>Returns an interval that contains the minimum and maximum domain values
+ of this dataset's domain.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getIdentifier</b>()
+<BR>
+<span class=jsdocComment>Return a unique identifier for this dataset.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getMinDomainInterval</b>()
+<BR>
+<span class=jsdocComment>Returns the smallest domain interval between any two consecutive points
+ within the dataset.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getNumSamples</b>()
+<BR>
+<span class=jsdocComment>Returns the number of samples in this dataset.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeExtrema</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>rangeTupleCoordinate</span>)
+<BR>
+<span class=jsdocComment>Returns an interval representing the min and max values for the specified
+ range tuple coordinate.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeLabel</b>()
+<BR>
+<span class=jsdocComment>Return a label that may be used in a chart legend for this dataset.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getTupleLength</b>()
+<BR>
+<span class=jsdocComment>Returns the fixed number of components that each tuple within this dataset
+ can hold (e.g. a 2-tuple, 5-tuple, etc.).</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getX</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
+<BR>
+<span class=jsdocComment>Return the domain value for the given data point index on mip level 0.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setIncrementalHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>, <span class=jsdocParameterType><a href=#IncrementalDataResponse>IncrementalDataResponse</a></span> <span class=jsdocParameterName>response</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Enables a dataset to support on-the-fly incremental loading/reloading by invoking a callback when
+ a given range of data is requested for display. The provided handler may request additional data from the
+ server for this range and return new data.</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=Datasets>chronoscope.Datasets</div>
+</H2>
+<div class=jsdocText>Container for <a href=#Dataset>Dataset</a> objects that provides indexed access to the
+ datasets as well as maintaining aggregate information. <p> This container
+ registers itself as a <a href=#DatasetListener>DatasetListener</a> to any added <a href=#MutableDatasetND>MutableDatasetND</a> objects in order to guarantee that aggregate information is
+ kept up-to-date whenever constituent elements are modified.</div>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
 <TR>
@@ -1651,7 +698,94 @@
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>add</b>(<span class=jsdocParameterType><a href=#Dataset>Dataset</a></span> <span class=jsdocParameterName>dataset</span>)
+<BR>
+<span class=jsdocComment>Adds the specified dataset to the existing datasets in this container.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>beginMutation</b>()
+<BR>
+<span class=jsdocComment>Suspends all firing up dataset events until corresponding endMutation() as
+ well as allows more efficient processing of multiple updates.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>endMutation</b>()
+<BR>
+<span class=jsdocComment>Disables mutation mode and fires all pending change events.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>get</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
+<BR>
+<span class=jsdocComment>Returns the dataset at the specified 0-based index within this container.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getById</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>id</span>)
+<BR>
+<span class=jsdocComment>Returns the dataset with the specified identifier.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainExtrema</b>()
+<BR>
+<span class=jsdocComment>Returns an interval that contains the minimum and maximum domain value
+ across all <a href=#Dataset>Dataset</a> elements within this container.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>remove</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>index</span>)
+<BR>
+<span class=jsdocComment>Removes the element at the specified index in this container. Shifts any
+ subsequent elements to the left (subtracts one from their indices). Returns
+ the element that was removed from the container. <p> Be aware that this
+ container de-registers itself as an <a href=#DatasetListener>DatasetListener</a> to the dataset
+ being removed.  In other words, mutations applied to a dataset that once
+ belonged to this container will no longer signal this container, which in
+ turn, will no longer forward the mutation event to its listeners.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">int</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>size</b>()
+<BR>
+<span class=jsdocComment>Returns the number of datasets in this container.</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=DateRangePanel>chronoscope.DateRangePanel</div>
+</H2>
+<div class=jsdocText>Draws a date range (e.g. "11/25/1995 - 02/17/2007").</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateRangeFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateFormat</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCompactDateRangeFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>compactDateFormat</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateDelim</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateDelim</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCompactDateDelim</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>compactDateDelim</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
@@ -1660,40 +794,20 @@
 <BR>
 <HR>
 <H2>
-<div id=View>chronoscope.View</div>
+<div id=DateTickFormatterFactory>chronoscope.DateTickFormatterFactory</div>
 </H2>
-<div class=jsdocText>View encapsulates platform specific behaviors, such as graphics rendering,
- timing, and CSS property retrieval. Views support asynchronous creation,
- therefore, the proper use of a view is to postpone operations until
- ViewReadyCallback is invoked.</div>
+<div class=jsdocText>Factory for obtaining <a href=#DateTickFormatter>DateTickFormatter</a> objects that provide 
+ calendar logic for rendering date/time domain ticks.</div>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
 <TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
 </TR>
 <TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ChronoscopeMenu>ChronoscopeMenu</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>createMenu</b>()
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DateTickFormatterFactory</span>()
 <BR>
 <span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Chart>Chart</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getChart</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
-<BR>
-<span class=jsdocComment>Resizing the chart once displayed currently unsupported</span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setContextMenu</b>(<span class=jsdocParameterType><a href=#ChronoscopeMenu>ChronoscopeMenu</a></span> <span class=jsdocParameterName>cm</span>)
-<BR>
-<span class=jsdocComment>Attach a context menu to this View</span></TD>
 </TR>
 </TABLE>
 
@@ -1939,82 +1053,6 @@
 <BR>
 <HR>
 <H2>
-<div id=ExportableHandlerRegistration>chronoscope.ExportableHandlerRegistration</div>
-</H2>
-<div class=jsdocText>A HandlerRegistration class that is exportable to Javascript.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeHandler</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=AxisPanel>chronoscope.AxisPanel</div>
-</H2>
-<div class=jsdocText>Base class for all axis panels, which are panels that surround the center plot panel.
- 1 or more axis panels can be added to a <a href=#CompositeAxisPanel>CompositeAxisPanel</a>.</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ValueAxis>ValueAxis</a></TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getValueAxis</b>()
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
-<div id=DateRangePanel>chronoscope.DateRangePanel</div>
-</H2>
-<div class=jsdocText>Draws a date range (e.g. "11/25/1995 - 02/17/2007").</div>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateRangeFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateFormat</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCompactDateRangeFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>compactDateFormat</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateDelim</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateDelim</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCompactDateDelim</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>compactDateDelim</span>)
-<BR>
-<span class=jsdocComment></span></TD>
-</TR>
-</TABLE>
-
-<BR>
-<HR>
-<H2>
 <div id=DomainAxisPanel>chronoscope.DomainAxisPanel</div>
 </H2>
 <div class=jsdocText>Renders zoomable dates on x-axis (domain axis).</div>
@@ -2046,10 +1084,10 @@
 <BR>
 <HR>
 <H2>
-<div id=DateTickFormatterFactory>chronoscope.DateTickFormatterFactory</div>
+<div id=DomainBarMarker>chronoscope.DomainBarMarker</div>
 </H2>
-<div class=jsdocText>Factory for obtaining <a href=#DateTickFormatter>DateTickFormatter</a> objects that provide 
- calendar logic for rendering date/time domain ticks.</div>
+<div class=jsdocText>An overlay which renders highlighted regions spanning the entire Y dimensions
+ of the plot over a given domain region</div>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
 <TR>
@@ -2057,9 +1095,416 @@
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
-<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DateTickFormatterFactory</span>()
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DomainBarMarker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>startDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>endDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
 <BR>
 <span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>DomainBarMarker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>startDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>endDate</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>gssLabel</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGssLabel</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>gssLabel</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=DraggableOverlay>chronoscope.DraggableOverlay</div>
+</H2>
+<div class=jsdocText></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDraggable</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>draggable</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#OverlayChangeEvent>OverlayChangeEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addDragHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#ChartDragEvent>ChartDragEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=ExportableHandlerRegistration>chronoscope.ExportableHandlerRegistration</div>
+</H2>
+<div class=jsdocText>A HandlerRegistration class that is exportable to Javascript.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeHandler</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=FlashView>chronoscope.FlashView</div>
+</H2>
+<div class=jsdocText>A realization of a View on the browser using a Flash helper based on
+ ASCanvas</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=GssProperties>chronoscope.GssProperties</div>
+</H2>
+<div class=jsdocText>A GSS analogue of CssProperties for a GssElement. Only a small subset of
+ properties are needed.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDateFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>dateFormat</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontFamily</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontFamily</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontSize</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontSize</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontWeight</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>fontWeight</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGroup</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>group</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setHeight</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLineThickness</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>lineThickness</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLeft</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>left</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPointSelection</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>pointSelection</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPointShape</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>pointShape</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowBlur</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowBlur</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowOffsetX</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowOffsetX</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowColor</b>(<span class=jsdocParameterType><a href=#Color>Color</a></span> <span class=jsdocParameterName>shadowColor</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setShadowOffsetY</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>shadowOffsetY</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setSize</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>size</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickAlign</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>tickAlign</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickPosition</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>tickPosition</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTop</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>top</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setVisible</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setWidth</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=IncrementalDataResponse>chronoscope.IncrementalDataResponse</div>
+</H2>
+<div class=jsdocText>Called by client code with incremental data.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addData</b>(<span class=jsdocParameterType><a href=#JsArrayNumber>JsArrayNumber</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>range</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=IncrementalDatasetResponseImpl>chronoscope.IncrementalDatasetResponseImpl</div>
+</H2>
+<div class=jsdocText>Class for passing back incremental data from JS.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>IncrementalDatasetResponseImpl</span>(<span class=jsdocParameterType><a href=#AbstractDataset>AbstractDataset</a></span> <span class=jsdocParameterName>dataset</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addData</b>(<span class=jsdocParameterType><a href=#JsArrayNumber>JsArrayNumber</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>range</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=InfoWindow>chronoscope.InfoWindow</div>
+</H2>
+<div class=jsdocText>A handle to a Window opened via the View.openInfoWindow method.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>close</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setPosition</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>y</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addCloseHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#InfoWindowEvent>InfoWindowEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>open</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=Interval>chronoscope.Interval</div>
+</H2>
+<div class=jsdocText>A mathematical interval representing a connected portion of a real line. 
+ An interval has 2 endpoints: getStart()} and <a href=##getEnd()>#getEnd()</a>.
+ <p>
+ {@link Interval can represent anything conforming to this general
+ description, including a time interval on the domain axis, pixel bounds, or
+ whatever.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>contains</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)
+<BR>
+<span class=jsdocComment>Returns true if <tt>value</tt> is a member of this interval,
+ <b>including endpoints</b> (in other words, this method treats
+ this interval as a <i>closed interval</i>).</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>copy</b>()
+<BR>
+<span class=jsdocComment>Returns a copy of this object.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>copyTo</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>target</span>)
+<BR>
+<span class=jsdocComment>Copies the state of this interval into the target interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>expand</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)
+<BR>
+<span class=jsdocComment>Expands this interval so that the specified value is guaranteed fall within
+ it after this method call.  If this interval already contains <tt>value</tt>,
+ then nothing changes.
+ <p>
+ For example, if i represents the interval [-5, 3], then i.expand(7) expands
+ the interval to be [-5, 7].  Similarly, i.expand(-7) results in the interval
+ [-7, 3].  i.expand(1), however, does not change the state of interval i, since
+ 1 is already contained in the interval [-5, 3].</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>expandWithInterval</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>interval</span>)
+<BR>
+<span class=jsdocComment>Expands this interval so that the specified interval falls inside this interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getEnd</b>()
+<BR>
+<span class=jsdocComment>The value of the ending point of this interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getStart</b>()
+<BR>
+<span class=jsdocComment>The value of the starting point of this interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>intersects</b>(<span class=jsdocParameterType><a href=#Interval>Interval</a></span> <span class=jsdocParameterName>i</span>)
+<BR>
+<span class=jsdocComment>Returns true if the specified interval intersects this interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>length</b>()
+<BR>
+<span class=jsdocComment>The length of this interval (i.e. <tt>end - start</tt>).</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>midpoint</b>()
+<BR>
+<span class=jsdocComment>The midpoint of this interval.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>slide</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>amount</span>)
+<BR>
+<span class=jsdocComment>Slides this interval in either a positive or negative direction by the
+ specified amount. For example, let S = interval [3, 7] (i.e. it starts
+ at 3, ends at 7, and has a length of 4). Then S.slide(2) would change its
+ state to [5, 9]. Similarly, S.shift(-5) would have changed its state to
+ [-2, 2]. Note that length() is unaffected by this method
+ invocation.</span></TD>
 </TR>
 </TABLE>
 
@@ -2079,6 +1524,600 @@
 <TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>IntTickFormatterFactory</span>()
 <BR>
 <span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=Marker>chronoscope.Marker</div>
+</H2>
+<div class=jsdocText></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>Marker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>date</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIdx</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>Marker</span>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>date</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIdx</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>typeClass</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>isGuideLine</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGuideLine</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>guideLine</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setGuideLineDateFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>guideLineDate</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainX</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeY</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#InfoWindow>InfoWindow</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>openInfoWindow</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>html</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=MutableDataset>chronoscope.MutableDataset</div>
+</H2>
+<div class=jsdocText>Dataset that permits certain types of mutations (e.g. appending new data
+ points, modifying the state of existing data points).</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><a href=#DatasetListener>DatasetListener</a></span> <span class=jsdocParameterName>listener</span>)
+<BR>
+<span class=jsdocComment>Adds the specified listener to the collection of listeners to be notified
+ when changes to this dataset occur.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>removeChangeHandler</b>(<span class=jsdocParameterType><a href=#DatasetListener>DatasetListener</a></span> <span class=jsdocParameterName>listener</span>)
+<BR>
+<span class=jsdocComment>Removes the specified listener from the collection of listeners to be
+ notified when changes to this dataset occur.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>mutate</b>(<span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>domain</span>, <span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsRange</span>)
+<BR>
+<span class=jsdocComment>Integrates the specified timeseries fragment into the dataset.</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=MutableDatasetND>chronoscope.MutableDatasetND</div>
+</H2>
+<div class=jsdocText>Dataset that permits certain types of mutations (e.g. appending new data
+ points, modifying Y-value of existing data points). <p></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>mutate</b>(<span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsDomain</span>, <span class=jsdocParameterType><a href=#JavaScriptObject>JavaScriptObject</a></span> <span class=jsdocParameterName>jsRange</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=Overlay>chronoscope.Overlay</div>
+</H2>
+<div class=jsdocText>Interface implemented by Markers and other clases which overlay the plot</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Allows a caller to register for click events on this Overlay</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainX</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangeY</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=OverlayChangeEvent>chronoscope.OverlayChangeEvent</div>
+</H2>
+<div class=jsdocText></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Overlay>Overlay</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getOverlay</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=PlotChangedEvent>chronoscope.PlotChangedEvent</div>
+</H2>
+<div class=jsdocText>Fired by plot implementations when the chart's state is modified and 
+ stabilizes.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=PlotEvent>chronoscope.PlotEvent</div>
+</H2>
+<div class=jsdocText></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#XYPlot>XYPlot</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getPlot</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=PlotFocusEvent>chronoscope.PlotFocusEvent</div>
+</H2>
+<div class=jsdocText>Fired by plot implementations when focus point changes.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRange</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=PlotHoverEvent>chronoscope.PlotHoverEvent</div>
+</H2>
+<div class=jsdocText>Fired by plot implementations when the set of hovered points changes.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainPoints</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">double</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getRangePoints</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=PlotMovedEvent>chronoscope.PlotMovedEvent</div>
+</H2>
+<div class=jsdocText>Fired by plot implementations when the chart domain changes.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Interval>Interval</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomain</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=RangeAxis>chronoscope.RangeAxis</div>
+</H2>
+<div class=jsdocText>A RangeAxis is an ValueAxis that represents values, typically on the y-axis.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>focus</b>()
+<BR>
+<span class=jsdocComment>Make this range axis the current focus. Has not effect the plot has
+ multi-axis set to true. Otherwise, this axis becomes the primary left axis
+ displayed.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAllowAutoScale</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>allowAutoScale</span>)
+<BR>
+<span class=jsdocComment>If set to true, allow axis ticks to be scaled automatically by powers of
+ thousand if they exceeed maxDigits settings. For example, if max digits is
+ 4, then the number 25000 will be rendered as 25, and the axis label will be
+ modified to include the word "Thousands". setAllowScientificNotation() will
+ override this and take priority, as well as setScale().</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAllowScientificNotation</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enable</span>)
+<BR>
+<span class=jsdocComment>If enabled (true by default), when maxTickLabelDigits is exceeded, labels
+ will be rendered in scientific notation.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAutoZoomVisibleRange</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>autoZoom</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setCalcRangeAsPercent</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>b</span>)
+<BR>
+<span class=jsdocComment>Setting to <tt>true</tt> will cause all of the range-Y values to be
+ converted to a percentage increase/decrease from some reference range-Y
+ value (either the first datapoint of the dataset or the leftmost datapoint
+ that's visible in the plot).</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setForceScientificNotation</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>force</span>)
+<BR>
+<span class=jsdocComment>Force tick labels to always be rendered in scientific notation. (Default
+ false);</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLabel</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRange</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>)
+<BR>
+<span class=jsdocComment>Set the minimum and maximum visible axis range.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRangeMax</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>)
+<BR>
+<span class=jsdocComment>Set the maximum visible axis range.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setRangeMin</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>)
+<BR>
+<span class=jsdocComment>Set the minimum visible axis range.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setScale</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>scale</span>)
+<BR>
+<span class=jsdocComment>Set a scale factor for displaying axis tick values</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickLabelNumberFormatter</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>value</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Set custom TickLabelNumberFormatter callbacks.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTickNumberFormat</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>format</span>)
+<BR>
+<span class=jsdocComment>Set the number format used to render ticks</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=RangeBarMarker>chronoscope.RangeBarMarker</div>
+</H2>
+<div class=jsdocText>An overlay which renders highlighted regions spanning the entire X dimensions
+ of the plot over a given range region.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Constructors</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><span class=jsdocMethodName>RangeBarMarker</span>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeLow</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeHigh</span>, <span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addOverlayListener</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#Overlay>Overlay</a></span> <span class=jsdocParameterName>overlay</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>x</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>y</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=ValueAxis>chronoscope.ValueAxis</div>
+</H2>
+<div class=jsdocText>An ValueAxis is a class responsible for mapping points in data space to
+ points in screen space, as well as maintaining state related to drawing axis
+ ticks and labels. A given axis may be horizontal or vertical in orientation
+ depending on the <a href=#CompositeAxisPanel>CompositeAxisPanel</a> it is placed into, and rendered on the
+ left/right or top/bottom depending on the AxisPanel position as well. 
+ <p> 
+ In GSS, a ValueAxis may be referred to using a CSS selector 'axis'. Each axis
+ is numbered, can have several CSS classes, depending on subtypes, like
+ "axis.range" or "axis.domain". See <a href=#AxisPanel>AxisPanel</a> for more details.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAxisId</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>axisId</span>)
+<BR>
+<span class=jsdocComment>Sets the short label representing this axis ($, m/s, etc)</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=View>chronoscope.View</div>
+</H2>
+<div class=jsdocText>View encapsulates platform specific behaviors, such as graphics rendering,
+ timing, and CSS property retrieval. Views support asynchronous creation,
+ therefore, the proper use of a view is to postpone operations until
+ ViewReadyCallback is invoked.</div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ChronoscopeMenu>ChronoscopeMenu</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>createMenu</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Chart>Chart</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getChart</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
+<BR>
+<span class=jsdocComment>Resizing the chart once displayed currently unsupported</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setContextMenu</b>(<span class=jsdocParameterType><a href=#ChronoscopeMenu>ChronoscopeMenu</a></span> <span class=jsdocParameterName>cm</span>)
+<BR>
+<span class=jsdocComment>Attach a context menu to this View</span></TD>
+</TR>
+</TABLE>
+
+<BR>
+<HR>
+<H2>
+<div id=XYPlot>chronoscope.XYPlot</div>
+</H2>
+<div class=jsdocText>An interface to be implemented by classes implementing XY plots of <a href=# Dataset> Dataset</a> objects. <p> Conceptually, an XYPlot is a class responsible for
+ maintaining a collection of datasets, axes, and graph state, and mapping
+ data-space values to screen-space values suitable for rendering on a <a href=# View> View</a>. More specifically, a plot converts data-space values to user-space
+ values by delegating to an Axis implementation. <p> User-space values are in
+ the interval [0,1] independent of the screen space size of the plot. For
+ example, a ValueAxis with a visible range of 0.0 to 500.0, will map a
+ data-value of 250.0 to a user-space value of 0.5. A renderer like
+ XYLineRenderer or XYBarRenderer will convert user-space values to
+ screen-space values before rendering. When Chronoscope has CategoryPlot
+ support, then a CategoryAxis would map x-axis values like "Groceries", "Gas",
+ "Utilities" to appropriate user-space values (say, 0, 0.5, 1.0) <p> An
+ important feature of Chronoscope is support for large dataset scalability.
+ This is achieved using datasets with multiresolution representation. At
+ coarser levels of detail, a dataset may be decimated, interpolated, or
+ filtered in a myriad of ways to compress its size, while hopefully preserving
+ as much signal as possible. <p> A plot maintains some of the following
+ important values: <ul> <li>Domain origin <li>Visible Domain <li>Focus point
+ and dataset <li>Hover point and dataset <li>Current highlight/selection </ul>
+ <p> ... as well as some stylistic overrides: <ul> <li>Legend enabled/disabled
+ <li>Domain axis rendering enabled/disabled <li>Overview enabled/disabled
+ <li>Selection mode on/off </ul></div>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addClickHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#ChartClickEvent>ChartClickEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Add a callback for ChartClickEvent.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addChangeHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotChangedEvent>PlotChangedEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Add a callback for PlotChangedEvents.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addFocusHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotFocusEvent>PlotFocusEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Add a callback for PlotFocusEvents.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addHoverHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotHoverEvent>PlotHoverEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Add a callback for PlotHoverEvents.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMoveHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotMovedEvent>PlotMovedEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment>Add a callback for PlotMovedEvents.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#Datasets>Datasets</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDatasets</b>()
+<BR>
+<span class=jsdocComment>Returns the datasets associated with this plot.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#DomainAxisPanel>DomainAxisPanel</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getDomainAxisPanel</b>()
+<BR>
+<span class=jsdocComment>Return the domain axis panel associated with X-axis.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>isOverviewEnabled</b>()
+<BR>
+<span class=jsdocComment>Returns true if mini-chart overview on x-axis is enabled.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#InfoWindow>InfoWindow</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>openInfoWindow</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>html</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>domainX</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>rangeY</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>datasetIndex</span>)
+<BR>
+<span class=jsdocComment>Open an info window at the specified coordinates in data space</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setMultiaxis</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment>Enables or disables multi-axis mode. True by default, if multi-axis
+ is disabled, each chart effectively has a single RangeAxis which is
+ toggled by which dataset is currently in focus.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendEnabled</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment>Enables or disables the legend panel above the center plot panel.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsVisible</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
+<BR>
+<span class=jsdocComment>Enables or disables the legend labels in the legend panel.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setOverviewEnabled</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment>Enables or disables the mini-chart overview below the center plot
+ panel.</span></TD>
 </TR>
 </TABLE>
 

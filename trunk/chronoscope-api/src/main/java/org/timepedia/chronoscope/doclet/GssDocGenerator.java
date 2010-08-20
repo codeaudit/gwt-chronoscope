@@ -16,8 +16,10 @@ public class GssDocGenerator {
 
   public void generateGssDocs() {
     p("<html><head><link rel='stylesheet' type='text/css' href='gssdoc.css' /></head><body>");
+    
+    p("<h1>GSS-API Reference</h1><ul class=index><li><a href=#Elements>Elements</a><li><a href=#Properties>Properties</a><li><a href=#Units>Units</a></ul>");
 
-    p("<h2>Elements</h2>");
+    p("<h2 id=Elements>Elements</h2>");
     p("<table class=\"gsselemdoc\" border=\"1\"cellspacing=0>\n" + "<tr>\n"
         + "    <th>\n" + "        Element \n" + "    </th>\n" + "    <th>\n"
         + "        Description\n" + "    </th>\n" + "    <th>\n"
@@ -51,7 +53,7 @@ public class GssDocGenerator {
 
     p("</table>");
 
-    p("<h2>Properties</h2>");
+    p("<h2 id=Properties>Properties</h2>");
     p("<table class=\"gsspropdoc\" border=\"1\"cellspacing=0>\n" + "<tr>\n"
         + "    <th>\n" + "Property Name \n" + "    </th>\n" + "    <th>\n"
         + "        Description\n" + "    </th>\n" + "    <th>\n"
@@ -73,7 +75,7 @@ public class GssDocGenerator {
     }
     p("</table>");
 
-    p("<h2>Units</h2>");
+    p("<h2 id=Units>Units</h2>");
     p("<table class=\"gssunitdoc\" border=1 cellspacing=0><tr><th>Unit Type</th><th>Description</th></tr>");
     for (GssPropertyManager.GssPropertyType.TypeUnits tu : GssPropertyManager
         .GssPropertyType.TypeUnits.values()) {

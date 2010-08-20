@@ -13,6 +13,14 @@
   <url>http://timepedia.org/chronoscope</url>
   <packaging>war</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <finalName>apidocs</finalName>
     <plugins>
