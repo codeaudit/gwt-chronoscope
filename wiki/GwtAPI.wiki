@@ -19,15 +19,18 @@ Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.
    * `gwt-user-2.0.x` and `gwt-servlet-2.0.x`
    * `chronoscope-api-2.0-SNAPSHOT.jar`
    * `gwtexporter-2.0.10.jar`
+   * `gin-1.0.jar`
 === Stable version ===
  * `chronoscope-1.0.jar` in gwt-2.0.x applications: 
    * `gwt-user-2.0.x` and `gwt-servlet-2.0.x`
    * `chronoscope-api-1.0.jar`
    * `gwtexporter-2.0.10.jar`
+   * `gin-1.0.jar`
  * `chronoscope-1.0.jar` in gwt-1.6.x applications: 
    * `gwt-user-1.6.x` and `gwt-servlet-1.6.x`
    * `chronoscope-api-1.0.jar`
    * `gwtexporter-2.06.jar`
+   * `gin-1.0.jar`
 === Legacy versions ===
  * `chronoscope-0.86.jar`
    * `gwt-user-1.6.x` and `gwt-servlet-1.6.x`
@@ -57,6 +60,51 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
  * You'll also need to add chronoscope, chronoscope-api, and gwtexporter to your project classpath. So select the needed libraries form the dependency list and simply put these libraries in the folder:
 {{{
   cp path_to/gwtexporter-x.x.x.jar path_to/chronoscope-api-x.x.x.jar path_to/chronoscope-x.x.x.jar war/WEB-INF/lib
+}}}
+
+== Adding dependencies to a maven repo ==
+If your application already uses maven, you have to add to your pom.xml the repositories where chronoscope and gwtexporter are deployed: 
+{{{
+  <repositories>
+    ...
+    <repository>
+      <id>timepedia</id>
+      <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
+    </repository>
+    <repository>
+      <id>timefire</id>
+      <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
+    </repository>
+  </repositories>
+}}}
+And the following dependencies
+{{{
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>org.timepedia.chronoscope</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.timepedia.exporter</groupId>
+      <artifactId>gwtexporter</artifactId>
+      <version>2.0.10</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-user</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt.inject</groupId>
+      <artifactId>gin</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 }}}
 
 == Create a dataset file == 
