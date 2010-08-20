@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser.event;
 
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -23,7 +24,7 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
     int keyCode = event.getNativeKeyCode();
-    boolean handled = false;
+    boolean handled = true;
 
     if (isPageUp(keyCode)) {
       chart.pageLeft(FULL_PAGE_SCROLL);
@@ -37,7 +38,7 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
       chart.nextZoom();
     } else if (isPrevZoom(keyCode)) {
       chart.prevZoom();
-    } else if (keyCode == KeyboardListener.KEY_BACKSPACE) {
+    } else if (keyCode == KeyCodes.KEY_BACKSPACE) {
       History.back();
     } else if (isMaxZoomOut(keyCode)) {
       chart.maxZoomOut();
@@ -50,41 +51,41 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
 
   
   private static boolean isNextZoom(int keyCode) {
-    return keyCode == KeyboardListener.KEY_UP 
+    return keyCode == KeyCodes.KEY_UP
     || keyCode == ChartKeyPressHandler.KEY_Z
     || keyCode == SafariKeyboardConstants.SAFARI_UP;
   }
   
   private static boolean isPrevZoom(int keyCode) {
-    return keyCode == KeyboardListener.KEY_DOWN
+    return keyCode == KeyCodes.KEY_DOWN
     || keyCode == SafariKeyboardConstants.SAFARI_DOWN
     || keyCode == ChartKeyPressHandler.KEY_X;   
   }
   
   private static boolean isMaxZoomOut(int keyCode) {
-    return keyCode == KeyboardListener.KEY_HOME
+    return keyCode == KeyCodes.KEY_HOME
     || keyCode == SafariKeyboardConstants.SAFARI_HOME;
   }
   
   private static boolean isKeyLeft(int keyCode) {
-    return keyCode == KeyboardListener.KEY_LEFT 
+    return keyCode == KeyCodes.KEY_LEFT
     || keyCode == SafariKeyboardConstants.SAFARI_LEFT 
     || keyCode == SafariKeyboardConstants.SAFARI_LEFT;
   }
 
   private static boolean isKeyRight(int keyCode) {
-    return keyCode == KeyboardListener.KEY_RIGHT
+    return keyCode == KeyCodes.KEY_RIGHT
     || keyCode == SafariKeyboardConstants.SAFARI_RIGHT 
     || keyCode == SafariKeyboardConstants.SAFARI_RIGHT;
   }
   
   private static boolean isPageUp(int keyCode) {
-    return keyCode == KeyboardListener.KEY_PAGEUP
+    return keyCode == KeyCodes.KEY_PAGEUP
       || keyCode == SafariKeyboardConstants.SAFARI_PGUP;    
   }
 
   private static boolean isPageDown(int keyCode) {
-    return keyCode == KeyboardListener.KEY_PAGEDOWN
+    return keyCode == KeyCodes.KEY_PAGEDOWN
       || keyCode == SafariKeyboardConstants.SAFARI_PDWN;    
   }
 }

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -18,7 +19,7 @@ import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
  */
 public abstract class AbstractEventHandler<T extends EventHandler> {
 
-  protected static final int KEY_TAB = 9;
+  // protected static final int KEY_TAB = 9;
 
   // May get reassigned based on browser type
   protected int tabKeyEventCode = Event.ONKEYDOWN;
@@ -44,7 +45,7 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
       return false;
     }
 
-    if (keyCode == KEY_TAB) {
+    if (keyCode == KeyCodes.KEY_TAB) {
       if (isShiftKeyDown) {
         chartInfo.chart.prevFocus();
       } else {

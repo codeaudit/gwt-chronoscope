@@ -1,6 +1,6 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -36,7 +36,7 @@ public class ChartKeyPressHandler
       chart.nextZoom();
     } else if (keyCode == KEY_X) {
       chart.prevZoom();
-    } else if (keyCode == KeyboardListener.KEY_ENTER) {
+    } else if (keyCode == KeyCodes.KEY_ENTER) {
       chart.maxZoomToFocus();
     } else {
       handled = false;
