@@ -2,16 +2,13 @@
 
 <wiki:toc max_depth="3" />
 
-= Chronoscope GWT API =
 
-== Introduction ==
+= Introduction =
 
 Chronoscope is a fast, scalable, charting toolkit designed to work well in most web browsers and developed using Gwt. 
 It is packaged in a library ready to use in any Gwt application. This document describes how to setup your application and start using Chronoscope.
 
-
-
-== Creating a new project ==
+= Creating a new project =
 
  * Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
 already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
@@ -34,7 +31,7 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
 }}}
 
 
-== Create a dataset file == 
+= Create a dataset file = 
  * We'll use a json file for the dataset, so put it in your `war/` foder and make sure it should be in the format: 
 {{{
   data set = {
@@ -54,7 +51,7 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
   <script language='javascript' src='dataset.js'></script>
 }}}
 
-== Use chronoscope in your javacode == 
+= Use chronoscope in your javacode = 
  * Modify your javacode `HelloChart.java`:
 {{{
 public class DevTest implements EntryPoint {
@@ -105,29 +102,29 @@ public class HelloChart implements EntryPoint {
 }
 }}}
 
-== Exporting the Javascript API == 
+= Exporting the Javascript API = 
 Exporting the Javascript API from your GWT app is as simple as: 
 {{{
   Chronoscope chronoscope = new Chronoscope();
   chronoscope.init();
 }}}
 
-== Gwt API Documentation ==
+= Gwt API Documentation =
 
-Read the [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html Javadoc].
+The Chronoscope Gwt API documentation is generated automatically using [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html javadoc].
 
-== Dependencies ==
+= Dependencies =
 
 Chronoscope has a bunch of dependencies you have to be aware of when selecting the version of Chronoscope and Gwt.
 Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.x.x.jar` which is the Gwt module to use via module inheritance and `chronoscope-api-xxx.jar` which is the stuff shared between other chronoscope modules
 
-=== Trunk version ===
+== Trunk version ==
  * `chronoscope-2.0-SNAPSHOT.jar` depends on:
    * `gwt-user-2.0.x` and `gwt-servlet-2.0.x`
    * `chronoscope-api-2.0-SNAPSHOT.jar`
    * `gwtexporter-2.0.10.jar`
    * `gin-1.0.jar`
-=== Stable version ===
+== Stable version ==
  * `chronoscope-1.0.jar` in gwt-2.0.x applications: 
    * `gwt-user-2.0.x` and `gwt-servlet-2.0.x`
    * `chronoscope-api-1.0.jar`
@@ -138,7 +135,7 @@ Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.
    * `chronoscope-api-1.0.jar`
    * `gwtexporter-2.06.jar`
    * `gin-1.0.jar`
-=== Legacy versions ===
+== Legacy versions ==
  * `chronoscope-0.86.jar`
    * `gwt-user-1.6.x` and `gwt-servlet-1.6.x`
    * `gwtexporter-2.06.jar`
@@ -147,7 +144,7 @@ Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.
    * It should work with any version of `gwt-user` and `gwt-servlet` from 1.5.x to 2.0.x
    * It has no external dependencies since it comes with `gwtexporter` embedded.
    
-=== Adding chronoscope dependencies to a maven project ===
+= Maven configuration = 
 If your application already uses maven, you have to add to your pom.xml the repositories where chronoscope and gwtexporter are deployed: 
 {{{
   <repositories>
