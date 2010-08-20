@@ -524,7 +524,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Causes chart to perform an animated zoom such that the current selection
    * becomes the currently visible domain.
-   */                                                   anim
+   */
   void zoomToHighlight();
 
   boolean isMultiaxis();
