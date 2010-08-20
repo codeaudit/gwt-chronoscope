@@ -228,7 +228,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Returns an array of data point indices, which element k corresponds to the
    * data point being hovered on in dataset k. A value of -1 indicates that no
    * point in dataset [k] is currently being hovered. The length of the array is
-   * equal to the number of datasets in {@link #getdatasets
+   * equal to the number of datasets in {@link #getDatasets}
    */
   int[] getHoverPoints();
 
@@ -253,7 +253,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Returns an overlay under the mouse coordinates at X,Y
    * @param x
    * @param y
-   * @return
+   * @return Overlay under the mouse pointer
    */
   Overlay getOverlayAt(int x, int y);
 
@@ -292,7 +292,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * The maximum <b>visible</b> domain value over all datasets taking into
    * account multiresolution representations.  This value will differ from
-   * {@link Datasets#getMaxDomain()} if the zoomed out view of the Plot forces
+   * {@link Dataset#getMaxDomain()} if the zoomed out view of the Plot forces
    * the renderer to use a coarser representation that may have different
    * values. This can happen if dataset values in higher levels use
    * interpolation rather than point sampling, for example.
