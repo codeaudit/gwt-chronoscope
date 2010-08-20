@@ -30,13 +30,13 @@ public class ChartKeyPressHandler
 
     int keyCode = event.getCharCode();
     boolean handled = true;
-    if (keyCode == KEY_TAB) {
+    if (keyCode == KeyCodes.KEY_TAB) {
       handled = handleTabKey((Event)event.getNativeEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     } else if (keyCode == KEY_Z) {
       chart.nextZoom();
     } else if (keyCode == KEY_X) {
       chart.prevZoom();
-    } else if (keyCode == KeyCodes.KEY_ENTER) {
+    } else if (keyCode == KeyCodes.KEY_cd ENTER) {
       chart.maxZoomToFocus();
     } else {
       handled = false;
