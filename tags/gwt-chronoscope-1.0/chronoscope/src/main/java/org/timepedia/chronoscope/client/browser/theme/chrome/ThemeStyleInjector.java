@@ -14,13 +14,6 @@
  * the License.
  */
 package org.timepedia.chronoscope.client.browser.theme.chrome;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.StyleInjector;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.DataResource;
-import com.google.gwt.user.client.ui.ImageBundle;
-
 import org.timepedia.chronoscope.client.browser.theme.Theme;
 
 public class ThemeStyleInjector  {
@@ -28,20 +21,20 @@ public class ThemeStyleInjector  {
   /**
    * Resources used.
    */
-  public interface Resources extends ClientBundle {
+  public interface Resources { //extends ClientBundle {
     // Resources INSTANCE = GWT.create(Resources.class);
 
-    @Source("corner.png")
-    DataResource corner();
-
-    @Source("hborder.png")
-    DataResource hborder();
-    
-    @Source("vborder.png")
-    DataResource vborder();
-    
-    @Source("chrome.css")
-    CssResource css();
+//    @Source("corner.png")
+//    DataResource corner();
+//
+//    @Source("hborder.png")
+//    DataResource hborder();
+//    
+//    @Source("vborder.png")
+//    DataResource vborder();
+//    
+//    @Source("chrome.css")
+//    CssResource css();
     
    
    

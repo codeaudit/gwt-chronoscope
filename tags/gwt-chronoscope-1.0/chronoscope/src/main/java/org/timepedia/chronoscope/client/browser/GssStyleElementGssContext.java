@@ -54,8 +54,9 @@ public class GssStyleElementGssContext extends BrowserGssContext
       }
       Element e = (Element) nl.getItem(i);
       if ((StyleElement.is(e) || LinkElement.is(e))
-          && "text/gss".equals(e.getAttribute("type")) && e
-          .hasAttribute("href")) {
+          && "text/gss".equals(e.getAttribute("type")) && 
+          e.getAttribute("href") != null && e.getAttribute("href").length() > 0
+          ) {
         toLoad.add(e.getAttribute("href"));
       }
     }
