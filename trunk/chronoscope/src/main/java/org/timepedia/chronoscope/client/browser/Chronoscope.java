@@ -329,7 +329,7 @@ public class Chronoscope
     return "chart" + globalChartNumber++;
   }
 
-  /* TODO - deprecate */
+  @Deprecated
   public static String getFontBookServiceEndpoint() {
     return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
         + "fr" : fontBookServiceEndpoint;
@@ -411,10 +411,16 @@ public class Chronoscope
     ChronoscopeOptions.setDefaultMultiaxisMode(mode);
   }
 
-  /**
-   * Defaults to GWT.getModuleBaseURL() + "fr"
-   */
   @Export
+  public static void setAnimationPreview(boolean enabled) {
+    ChronoscopeOptions.setAnimationPreview(enabled);
+  }
+
+  /**
+   * Used to default to GWT.getModuleBaseURL() + "fr"
+   * Deprecated once modern browsers supported text rotation
+   */
+  @Export @Deprecated
   public static void setFontBookServiceEndpoint(String endpoint) {
     fontBookServiceEndpoint = endpoint;
   }
