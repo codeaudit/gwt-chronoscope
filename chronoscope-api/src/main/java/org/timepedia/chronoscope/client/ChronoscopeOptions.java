@@ -6,6 +6,8 @@ import org.timepedia.chronoscope.client.overlays.Marker;
  * Global options for Chronoscope.
  */
 public class ChronoscopeOptions {
+  private static int DEFAULT_DYNAMIC_DATAPOINTS = 256;
+  private static int DEFAULT_STATIC_DATAPOINTS = 1024;
 
   public static boolean showCreditsEnabled = true;
 
@@ -13,9 +15,9 @@ public class ChronoscopeOptions {
 
   public static boolean historySupport = false;
 
-  private static int maxDynamicDatapoints = 100;
+  private static int maxDynamicDatapoints = DEFAULT_DYNAMIC_DATAPOINTS;
 
-  private static int maxStaticDatapoints = 1000;
+  private static int maxStaticDatapoints = DEFAULT_STATIC_DATAPOINTS;
 
   private static boolean lowPerformance = false;
 
@@ -28,6 +30,8 @@ public class ChronoscopeOptions {
   private static boolean defaultMultiaxisMode = true;
   
   private static String defaultAggregateFunction = "mean";
+
+  private static boolean animationPreview = true;
 
   public static String getDefaultAggregateFunction() {
     return defaultAggregateFunction;
@@ -138,4 +142,17 @@ public class ChronoscopeOptions {
     return defaultMultiaxisMode;
   }
 
+  public static void setAnimationPreview(boolean enabled) {
+    animationPreview = enabled;
+    if (animationPreview) {
+       setMaxDynamicDatapoints(DEFAULT_DYNAMIC_DATAPOINTS);
+    } else {
+       setMaxDynamicDatapoints(getMaxStaticDatapoints());
+    }
+  }
+
+  public static boolean getAnimationPreview() {
+    return animationPreview;
+  }
+    
 }
