@@ -11,41 +11,34 @@
   <name>Chronoscope Chart Bench</name>
   <artifactId>chronoscopebench</artifactId>
   <packaging>war</packaging>
+
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>chronoscope</artifactId>
       <version>${version}</version>
-      <type>jar</type>
     </dependency>
-
   </dependencies>
-  <build>
-    <finalName>benchmark</finalName>
-    <plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-      </plugin>
+  <properties>
+     <gwt.module>org.timepedia.chronoscopebench.ChronoscopeBench</gwt.module>
+     <gwt.name>benchmark</gwt.name>
+  </properties>
+
+  <build>
+    <finalName>${gwt.name}</finalName>
+    <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-    <profiles>
-        <profile>
-            <id>module</id>
-            <activation>
-                <jdk>1</jdk>
-            </activation>
-            <properties>
-                <gwt.module>
-              org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}
-                </gwt.module>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

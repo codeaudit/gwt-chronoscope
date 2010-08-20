@@ -26,7 +26,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
  * subpackage to ensure the portability of the rest of Chronoscope to other
  * environments (Applet, Servlet, etc) <p/> ChartPanel at the moment only
  * handles XYPlots, but in the future will be extended to handle other chart
- * types. See the project wiki for more details. <p/> <p/> AÊsimple way to
+ * types. See the project wiki for more details. <p/> <p/> A simple way to
  * construct a chart looks like this: <p/>
  * <pre>
  * ChartPanel chartPanel = new ChartPanel(myDatasets);

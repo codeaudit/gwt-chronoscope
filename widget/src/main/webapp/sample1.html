@@ -1,0 +1,27 @@
+<html>
+<head>
+   <script type="text/javascript" src="unratedata.js"></script>
+   <script type="text/javascript">
+
+        function onChronoscopeLoaded(chrono)
+        {
+            try {
+                var data = [unratedata];
+    		chronoscope.Chronoscope.setFontBookRendering(true);
+    		chronoscope.Chronoscope.setErrorReporting(true);
+    	        chronoscope.Chronoscope.createTimeseriesChartById("simpledemo", data, 650, 433, function(view) {
+                    view.getChart().redraw();
+                });
+            } catch (e) {
+                alert("onChronoscopeLoaded, Exception: " + e);
+            }
+         }  
+
+    </script>
+</head>
+<body>
+<div id="simpledemo" class="chronoscope">Loading Chronoscope Data...</div>
+<script type="text/javascript" src="widget/widget.nocache.js"></script>
+</body>
+</html>
+

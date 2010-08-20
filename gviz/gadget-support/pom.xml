@@ -1,48 +1,47 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.timepedia.chronoscope</groupId>
-        <artifactId>chronoscope-gviz-project</artifactId>
-        <version>1.0</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-gviz-project</artifactId>
+    <version>1.0</version>
+  </parent>
 
-    <name>Chronoscope GViz Gadget Helper classes</name>
-    <artifactId>gadget-support</artifactId>
-    <packaging>jar</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>chronoscope</artifactId>
-            <version>${version}</version>
-            <type>jar</type>
-        </dependency>
+  <name>Chronoscope GViz Gadget Helper classes</name>
+  <artifactId>gadget-support</artifactId>
+  <packaging>jar</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>chronoscope</artifactId>
+      <version>${version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>gviz-api</artifactId>
-            <version>${version}</version>
-            <type>jar</type>
-        </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>gviz-api</artifactId>
+      <version>${version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-gadgets</artifactId>
-            <version>1.11-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-gadgets</artifactId>
+      <version>1.11-SNAPSHOT</version>
+    </dependency>
 
-    </dependencies>
-    <build>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/java</directory>
-            </resource>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-            </resource>
-        </resources>
-    </build>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/java</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
 
 </project>

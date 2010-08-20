@@ -131,7 +131,7 @@ public class FlashCanvas extends Canvas {
     DOM.setStyleAttribute(glassPane, "zIndex", "0");
     //    addOnClick(glassPane);
 
-    FlashResources flashResources = GWT.create(FlashResources.class);
+//    FlashResources flashResources = GWT.create(FlashResources.class);
 
     String swfUrl = Chronoscope
         .getURL(GWT.getModuleBaseURL()+"flcanvas.swf");//flashResources.flashCanvas().getUrl());
