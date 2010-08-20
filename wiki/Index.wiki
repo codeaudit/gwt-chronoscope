@@ -14,7 +14,7 @@ It is interactive and can be used in Gwt applications, as an embedded widget in 
 
   * Performance. It is one of the most important points considered during the development. Chronoscope is able to draw thousand of points and refresh the chart at 20-30 fps.
 
-  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets ([Gss GSS])
+  * Stylish.  Customizable look and feel through CSS-inspired Graph Stylesheets.
 
 == Documentation Index ==
   * [JavaScriptAPI Javascript API ]
@@ -29,8 +29,6 @@ It is interactive and can be used in Gwt applications, as an embedded widget in 
   * [Widget Widget overview]
   * [Gadget Gadget overview]
   * [GViz Google Visualization API]
-
-
 
 
 
