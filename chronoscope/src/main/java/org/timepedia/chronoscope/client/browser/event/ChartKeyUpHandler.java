@@ -2,13 +2,12 @@ package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;
-
+    
 /**
  * Handles the event where the user releases a key
  * 
@@ -23,20 +22,21 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
   public void onKeyUp(KeyUpEvent event) {
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
+
     int keyCode = event.getNativeKeyCode();
     boolean handled = true;
 
     if (isPageUp(keyCode)) {
       chart.pageLeft(FULL_PAGE_SCROLL);
-    } else if (isKeyLeft(keyCode)) {
+    } else if (event.isLeftArrow() || isKeyLeft(keyCode)) {
       chart.pageLeft(HALF_PAGE_SCROLL);
     } else if (isPageDown(keyCode)) {
       chart.pageRight(FULL_PAGE_SCROLL);
-    } else if (isKeyRight(keyCode)) {
+    } else if (event.isRightArrow() || isKeyRight(keyCode)) {
       chart.pageRight(HALF_PAGE_SCROLL);
-    } else if (isNextZoom(keyCode)) {
+    } else if (event.isUpArrow() || isNextZoom(keyCode)) {
       chart.nextZoom();
-    } else if (isPrevZoom(keyCode)) {
+    } else if (event.isDownArrow() || isPrevZoom(keyCode)) {
       chart.prevZoom();
     } else if (keyCode == KeyCodes.KEY_BACKSPACE) {
       History.back();
@@ -47,6 +47,11 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
     }
     
     chartInfo.setHandled(handled);
+    if (handled) {
+       event.stopPropagation();
+       event.preventDefault();
+    }
+
   }
 
   
@@ -69,13 +74,11 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
   
   private static boolean isKeyLeft(int keyCode) {
     return keyCode == KeyCodes.KEY_LEFT
-    || keyCode == SafariKeyboardConstants.SAFARI_LEFT 
     || keyCode == SafariKeyboardConstants.SAFARI_LEFT;
   }
 
   private static boolean isKeyRight(int keyCode) {
     return keyCode == KeyCodes.KEY_RIGHT
-    || keyCode == SafariKeyboardConstants.SAFARI_RIGHT 
     || keyCode == SafariKeyboardConstants.SAFARI_RIGHT;
   }
   

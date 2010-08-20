@@ -55,30 +55,35 @@ public class ChartEventHandler implements HasHandlers {
     
     // Register client event handlers
     handlerLookup = new HandlerManager(this);
-    handlerLookup
-        .addHandler(MouseDownEvent.getType(), new ChartMouseDownHandler());
-    handlerLookup.addHandler(MouseUpEvent.getType(), new ChartMouseUpHandler());
-    handlerLookup
-        .addHandler(MouseOutEvent.getType(), new ChartMouseOutHandler());
-    handlerLookup
-        .addHandler(MouseOverEvent.getType(), new ChartMouseOverHandler());
-    handlerLookup
-        .addHandler(MouseMoveEvent.getType(), new ChartMouseMoveHandler());
-    handlerLookup
-        .addHandler(MouseMoveEvent.getType(), new OverviewAxisMouseMoveHandler());
-    handlerLookup
-        .addHandler(MouseWheelEvent.getType(), new ChartMouseWheelHandler());
-    handlerLookup.addHandler(ClickEvent.getType(), new ChartMouseClickHandler());
-    handlerLookup
-        .addHandler(DoubleClickEvent.getType(), new ChartDblClickHandler());
-    handlerLookup.addHandler(KeyDownEvent.getType(), new ChartKeyDownHandler());
-    handlerLookup.addHandler(KeyUpEvent.getType(), new ChartKeyUpHandler());
-    handlerLookup
-        .addHandler(KeyPressEvent.getType(), new ChartKeyPressHandler());
+    handlerLookup.addHandler(
+            MouseDownEvent.getType(), new ChartMouseDownHandler());
+    handlerLookup.addHandler(
+            MouseUpEvent.getType(), new ChartMouseUpHandler());
+    handlerLookup.addHandler(
+            MouseOutEvent.getType(), new ChartMouseOutHandler());
+    handlerLookup.addHandler(
+            MouseOverEvent.getType(), new ChartMouseOverHandler());
+    handlerLookup.addHandler(
+            MouseMoveEvent.getType(), new ChartMouseMoveHandler());
+    handlerLookup.addHandler(
+            MouseMoveEvent.getType(), new OverviewAxisMouseMoveHandler());
+    handlerLookup.addHandler(
+            MouseWheelEvent.getType(), new ChartMouseWheelHandler());
+    handlerLookup.addHandler(
+            ClickEvent.getType(), new ChartMouseClickHandler());
+    handlerLookup.addHandler(
+            DoubleClickEvent.getType(), new ChartDblClickHandler());
+    handlerLookup.addHandler(
+            KeyDownEvent.getType(), new ChartKeyDownHandler());
+    handlerLookup.addHandler(
+            KeyUpEvent.getType(), new ChartKeyUpHandler());
+    handlerLookup.addHandler(
+            KeyPressEvent.getType(), new ChartKeyPressHandler());
   }
 
-  public boolean handleChartEvent(Event event, Chart chart, int clientX,
-      int clientY, int originX, int originY) {
+  public boolean handleChartEvent(Event event, Chart chart,
+                   int clientX, int clientY, int originX, int originY) {
+
     chartInfo.chart = chart;
     chartInfo.setHandled(false);
     chartInfo.setClientX(clientX);

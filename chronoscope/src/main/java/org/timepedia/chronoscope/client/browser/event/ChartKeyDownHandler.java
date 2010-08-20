@@ -27,7 +27,9 @@ public class ChartKeyDownHandler extends AbstractEventHandler<KeyDownHandler>
           event.isShiftKeyDown());
     }
     chartInfo.setHandled(handled);
+    if (handled) {
+       event.stopPropagation();
+       event.preventDefault();
+    }
   }
-
-
 }

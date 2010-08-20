@@ -36,13 +36,17 @@ public class ChartKeyPressHandler
       chart.nextZoom();
     } else if (keyCode == KEY_X) {
       chart.prevZoom();
-    } else if (keyCode == KeyCodes.KEY_cd ENTER) {
+    } else if (keyCode == KeyCodes.KEY_ENTER) {
       chart.maxZoomToFocus();
     } else {
       handled = false;
     }
 
     chartInfo.setHandled(handled);
+    if (handled) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
   }
 
 }
