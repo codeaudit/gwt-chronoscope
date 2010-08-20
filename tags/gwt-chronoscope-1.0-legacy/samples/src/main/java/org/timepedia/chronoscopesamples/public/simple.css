@@ -1,0 +1,157 @@
+
+
+tick {
+  color: black;
+  border-width: 1;
+
+}
+
+grid {
+  color: transparent;
+  width: 0;
+  border-width: 0;
+  opacity: 0.05;
+  visibility: hidden !important;
+}
+
+axes axis {
+  background-color: white
+  color:black;
+}
+
+plot {
+  background-color: white
+}
+
+axis label {
+  font-size: 10pt;
+}
+
+line {
+  color: #000040
+}
+
+line.focus {
+  color: red;
+}
+
+fill.disabled {
+  background-color: rgba( 0, 0, 0, 0 );
+  opacity: 0;
+}
+
+bar {
+  color: #008000;
+  background-color: #00FF00;
+  width: 10;
+}
+
+bar.disabled {
+  background-image: none;
+}
+
+axis.a0 label, axis.a0 {
+  color: rgb( 70, 118, 118 );
+}
+
+.s0 line, axis.a0 tick {
+  color: rgb( 70, 118, 118 );
+
+}
+
+.s0 fill {
+  background-color: lightgray;
+  opacity: 0.4;
+}
+
+.s0 point {
+  color: #008000;
+  background-color: #004000
+}
+
+.s1 line, axis.a1 label, axis.a1, axis.a1 tick {
+  color: rgb( 245, 86, 95 );
+}
+
+.s1 fill {
+  background-color: rgb( 245, 86, 95 );
+  opacity: 0.4;
+}
+
+
+shadow {
+  width: 2;
+  top: 2;
+  left: 2;
+  color: gray
+}
+
+point {
+  width: 2;
+  border-width: 1;
+  visibility: hidden
+}
+
+point.hover {
+  color: red;
+  width: 3;
+  background-color: white;
+  visibility: visible;
+}
+
+point.focus {
+  color: gray;
+  width: 5;
+  border-style: solid;
+  border-width: 2;
+  visibility: visible;
+}
+
+point shadow {
+  width: 1;
+}
+
+series.disabled line {
+  opacity: 0.2
+}
+
+series.disabled bar {
+  opacity: 0.2
+}
+
+series.disabled point {
+  visibility:hidden
+}
+
+series.hover point {
+  visibility:visible
+}
+
+series.focus point {
+  visibility:visible
+}
+
+
+marker {
+  background-color: lightgray;
+  color: black;
+  font-family: Verdana;
+}
+
+overview {
+  background-color: #99CCFF;
+  color: #0099FF;
+  opacity: 0.4;
+  border-width:1;
+}
+
+axislegend daterange {
+  date-format:yyyy-MM-dd;
+}
+daterange {
+  date-format:yyyy-MM-dd;
+}
+
+daterange.compact {
+  date-format:MM.dd;
+}
