@@ -83,7 +83,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
 
   private boolean legendOverriden;
-
+  
   private class ExportableHandlerManager extends HandlerManager {
 
     public ExportableHandlerManager(DefaultXYPlot<T> xyPlot) {
@@ -277,10 +277,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   
   @Export
   public void setTimeZoneOffset(int offsetHours) {
-      if(offsetHours >= -12 && offsetHours <= 13){
+      if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
           ChronoDate.isTimeZoneOffset = true;
           ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
-      }else{
+      } else { // == 0
           ChronoDate.isTimeZoneOffset = false;
           ChronoDate.setTimeZoneOffsetInMilliseconds(0);
       }
@@ -1038,7 +1038,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         plotRenderer.invalidate(d);
       }
     }
-    plotRenderer.resetMipMapLevels();;
+    plotRenderer.resetMipMapLevels();
     plotRenderer.sync();
     
     topPanel.setEnabled(b);
@@ -2109,4 +2109,40 @@ public class DefaultXYPlot<T extends Tuple2D>
     double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
     return getRangeAxis(datasetIndex).userToData(userY);
   }
+
+    @Export
+    @Override
+    public void showLegendLabelsValues(boolean visible) {
+       topPanel.setlegendLabelGssProperty(visible, null, null, null, null, null);
+    }
+
+    @Export
+    @Override
+    public void setLegendLabelsFontSize(int pixels) {
+        topPanel.setlegendLabelGssProperty(null, pixels, null, null, null, null);
+    }
+
+    @Export
+    @Override
+    public void setLegendLabelsIconWidth(int pixels) {
+        topPanel.setlegendLabelGssProperty(null, null, pixels, null, null, null);
+    }
+
+    @Export
+    @Override
+    public void setLegendLabelsIconHeight(int pixels) {
+         topPanel.setlegendLabelGssProperty(null, null, null, pixels, null, null);
+    }
+
+    @Export
+    @Override
+    public void setLegendLabelsColumnWidth(int pixels) {
+         topPanel.setlegendLabelGssProperty(null, null, null, null, pixels, null);
+    }
+
+    @Export
+    @Override
+    public void setLegendLabelsColumnCount(int count) {
+       topPanel.setlegendLabelGssProperty(null, null, null, null, null, count);
+    }
 }

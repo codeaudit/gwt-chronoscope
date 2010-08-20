@@ -13,6 +13,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
+import org.timepedia.chronoscope.client.gss.GssProperties;
 
 /**
  * UI panel containing the dataset legend (a colored line followed by the
@@ -35,6 +36,12 @@ public class DatasetLegendPanel extends AbstractPanel
   private double lblHeight;
 
   private double[] maxLabelWidths;
+
+  private int colSpacing=20;
+
+  private boolean colAlignment=true;
+
+  private GssProperties legendLabelsProperties;
 
   private XYPlot plot;
 
@@ -76,8 +83,16 @@ public class DatasetLegendPanel extends AbstractPanel
     this.view = view;
   }
 
+  /**
+   * If colAlignment=true,the legend labels column alignment
+   * Otherwise the legend labels arranged one after another(Columns don't align)
+   */
   public void draw() {
-    draw(layer, plot.getDatasets().size(), null);
+    if(colAlignment){
+          drawColumnAlignment(layer);
+      }else{
+          draw(layer, plot.getDatasets().size(), null);
+      }
   }
 
   private Bounds calcBounds(Layer layer, int numDatasets) {
@@ -85,6 +100,87 @@ public class DatasetLegendPanel extends AbstractPanel
     draw(layer, numDatasets, b);
     return b;
   }
+
+  /**
+   * The legend labels column alignment
+   */
+  private void drawColumnAlignment(Layer layer){
+    double xCursor = bounds.x;
+    double yCursor = bounds.y;
+    setIconSize();
+    double maxLabelWidth=calcColumnWidth();
+    int columnCount=calcColumnCount(maxLabelWidth);
+    //Draw legend label
+    int col=0;
+    for(int i=0;i<plot.getDatasets().size();i++,col++){
+        if(col>columnCount){
+            col=0;
+            xCursor = bounds.x;
+            yCursor+=lblHeight;
+        }
+      DatasetRenderer renderer = plot.getDatasetRenderer(i);
+      renderer.drawLegendIcon(layer, xCursor, yCursor + lblHeight / 2, 0);
+      double iconWidth = renderer.calcLegendIconWidth(view);
+      layer.setStrokeColor(legendLabelsProperties.color);
+      int hoverPoint = plot.getHoverPoints()[i];
+      String seriesLabel = createDatasetLabel(plot, i, hoverPoint,0);
+      layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel,legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight,legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
+
+      xCursor +=maxLabelWidth;
+    }
+  }
+
+  /**
+   * Find the maximum column width
+   */
+  private double calcColumnWidth(){
+    double maxLabelWidth = 0,maxIconWidth=0;
+    if(legendLabelsProperties.columnWidth.equals("auto")){
+        for (int i = 0; i < maxLabelWidths.length; i++) {
+            if (maxLabelWidth < maxLabelWidths[i]) {
+                maxLabelWidth = maxLabelWidths[i];
+            }
+            DatasetRenderer renderer = plot.getDatasetRenderer(i);
+            double iconWidth = renderer.calcLegendIconWidth(view);
+            if (maxIconWidth < iconWidth) {
+                maxIconWidth = iconWidth;
+            }
+        }
+    maxLabelWidth+=maxIconWidth+colSpacing;
+    }else{
+        String width=legendLabelsProperties.columnWidth;
+        maxLabelWidth=Double.valueOf(width.substring(0, width.length()-2));
+    }
+    return maxLabelWidth;
+  }
+
+  /**
+   * Calculate the number of columns
+   */
+  private int calcColumnCount(double maxLabelWidth){
+      int colCount=0;
+      if(legendLabelsProperties.columnCount.equals("auto")){
+          colCount=(int) Math.floor(bounds.width / maxLabelWidth)-1;
+      }else{
+          colCount=Integer.valueOf(legendLabelsProperties.columnCount)-1;
+      }
+      return colCount;
+  }
+
+  private void setIconSize(){
+      RenderState rs = new RenderState();
+      for(int i=0;i<plot.getDatasets().size();i++){
+          rs.setPassNumber(i);
+          DatasetRenderer renderer = plot.getDatasetRenderer(i);
+          renderer.getLegendProperties(i, rs).iconWidth=legendLabelsProperties.iconWidth;
+          renderer.getLegendProperties(i, rs).iconHeight=legendLabelsProperties.iconHeight;
+      }
+  }
+
+   public static native void debug(String msg)/*-{
+      console.debug(msg);
+  }-*/;
+
 
   private void draw(Layer layer, int numDatasets, Bounds b) {
     final boolean onlyCalcSize = (b != null);
@@ -195,7 +291,11 @@ public class DatasetLegendPanel extends AbstractPanel
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
       for (int d = 0; d < renderer.getLegendEntries(ds); d++) {
         String lbl = createDatasetLabel(plot, i, medianIdx, d);
-        estMaxWidths[c++] = stringSizer.getWidth(lbl, gssProperties);
+        if(colAlignment){
+            estMaxWidths[c++] = stringSizer.getWidth(lbl, legendLabelsProperties);
+        }else{
+            estMaxWidths[c++] = stringSizer.getWidth(lbl, gssProperties);
+        }
       }
     }
 
@@ -232,4 +332,17 @@ public class DatasetLegendPanel extends AbstractPanel
     }
     return lbl;
   }
+
+    public void setColAlignment(boolean colAlignment) {
+        this.colAlignment = colAlignment;
+    }
+
+    public void setColSpacing(int colSpacing) {
+        this.colSpacing = colSpacing;
+    }
+
+    public void setLegendLabelsProperties(GssProperties legendLabelsProperties) {
+        this.legendLabelsProperties = legendLabelsProperties;
+    }
+    
 }

@@ -46,9 +46,14 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   @Override
   public double calcLegendIconWidth(View view) {
-    GssProperties apointProp = (plot.getFocus() != null) ? gssPointProps
-        : gssDisabledPointProps;
-    return apointProp.size + 10;
+    GssProperties alineProp = (plot.getFocus() != null) ? gssDisabledLineProps
+        : gssLineProps;
+    String width=alineProp.iconWidth;
+    if(width.equals("auto")){
+        return alineProp.size + 10;
+    }else{      
+        return Double.valueOf(width.substring(0, width.length()-2));
+    }
   }
 
   public void drawGuideLine(Layer layer, int x) {
@@ -135,7 +140,12 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.beginPath();
     layer.moveTo(x, y);
     // layer.setLineWidth(alineProp.lineThickness);
-    layer.setLineWidth(10);        // TODO - add it to GSS
+    String height= alineProp.iconHeight;
+    if(height.equals("auto")){
+        layer.setLineWidth(10);
+    }else{
+       layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
+    }
 
 
     layer.setShadowBlur(alineProp.shadowBlur);
@@ -144,7 +154,15 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.setShadowOffsetY(alineProp.shadowOffsetY);
     layer.setStrokeColor(alineProp.color);
     layer.setTransparency((float) alineProp.transparency);
-    layer.lineTo(x + 5 + apointProp.size + 5, y);
+
+    String width=alineProp.iconWidth;
+    if(width.equals("auto")){
+        layer.lineTo(x + 5 + apointProp.size + 5, y);
+    }else{
+        double widthValue=Double.valueOf(width.substring(0, width.length()-2));
+        layer.lineTo(x + widthValue, y);
+    }
+    
     layer.stroke();
 
     if (apointProp.visible) {

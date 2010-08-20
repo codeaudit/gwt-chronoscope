@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.render.Panel;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.timepedia.chronoscope.client.render.DatasetLegendPanel;
 
 /**
  * Represents the auxiliary panel on the top of the center dataset plot.
@@ -142,6 +143,10 @@ final class TopPanel extends AuxiliaryPanel {
 
   public CompositeAxisPanel getCompositePanel() {
       return compositePanel;
+  }
+
+  public void setlegendLabelGssProperty(Boolean visible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
+      legendAxisPanel.setlegendLabelGssProperty(visible, fontSize, iconWidth, iconHeight, columnWidth, columnCount);
   }
 
 }
