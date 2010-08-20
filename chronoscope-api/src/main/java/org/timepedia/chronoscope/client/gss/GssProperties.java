@@ -62,6 +62,14 @@ public class GssProperties implements Exportable {
   public boolean gssSupplied = false;
   
   public String pointSelection = "domain";
+
+  public String columnWidth = "auto";
+
+  public String columnCount = "auto";
+
+  public String iconWidth = "auto";
+
+  public String iconHeight = "auto";
   
   public GssProperties setColor(Color color) {
     this.color = color;

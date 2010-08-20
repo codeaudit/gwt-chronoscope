@@ -53,6 +53,7 @@ public class LegendAxisPanel extends AxisPanel {
     zoomPanel.draw();
     dateRangePanel.draw();
     if (legendLabelsProperties.visible) {
+      dsLegendPanel.setLegendLabelsProperties(legendLabelsProperties);
       dsLegendPanel.draw();
     }
   }
@@ -98,6 +99,7 @@ public class LegendAxisPanel extends AxisPanel {
 
     dsLegendPanel = new DatasetLegendPanel();
     dsLegendPanel.setGssProperties(labelProperties);
+    dsLegendPanel.setLegendLabelsProperties(legendLabelsProperties);
     dsLegendPanel.setPlot(plot);
     dsLegendPanel.setView(view);
     dsLegendPanel.setTextLayerName(textLayerName);
@@ -270,4 +272,26 @@ public class LegendAxisPanel extends AxisPanel {
 
     layer.restore();
   }
+
+   public void setlegendLabelGssProperty(Boolean visible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
+       if(visible!=null){
+           legendLabelsProperties.visible=visible;
+       }
+       if(fontSize!=null && fontSize > 0){
+           legendLabelsProperties.fontSize=fontSize+"pt";
+       }
+       if(iconWidth!=null && iconWidth > 0){
+           legendLabelsProperties.iconWidth=iconWidth+"px";
+       }
+       if(iconHeight!=null && iconHeight > 0){
+           legendLabelsProperties.iconHeight=iconHeight+"px";
+       }
+       if(columnWidth!=null && columnWidth > 0){
+           legendLabelsProperties.columnWidth=columnWidth+"px";
+       }
+       if(columnCount!=null && columnCount > 0){
+           legendLabelsProperties.columnCount=columnCount.toString();
+       }
+  }
+
 }

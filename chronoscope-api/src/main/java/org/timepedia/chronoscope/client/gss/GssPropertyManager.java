@@ -436,6 +436,46 @@ public class GssPropertyManager {
     }
   };
 
+   public static final GssPropertyType GSS_COLUMN_WIDTH_PROPERTY
+      = new GssPropertyType("column-width", "", GssPropertyType.TypeUnits.STRING,
+      "In the legend axis panel,set the column width of the legend labels"+
+      "Like this: column-width: 12pt or column-width:auto  ") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.columnWidth = pval;
+    }
+  };
+
+   public static final GssPropertyType GSS_COLUMN_COUNT_PROPERTY
+      = new GssPropertyType("column-count", "", GssPropertyType.TypeUnits.STRING,
+      "In the legend axis panel,set the column count of the legend labels in one line"+
+      "Like this: column-count: 3 or column-count:auto  ") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.columnCount = pval;
+    }
+  };
+
+  public static final GssPropertyType GSS_ICON_WIDTH_PROPERTY
+      = new GssPropertyType("icon-width", "", GssPropertyType.TypeUnits.STRING,
+      "In the legend axis panel,set the icon width of the legend labels"+
+      "Like this: icon-width: 12pt or icon-width:auto  ") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.iconWidth = pval;
+    }
+  };
+
+  public static final GssPropertyType GSS_ICON_HEIGHT_PROPERTY
+      = new GssPropertyType("icon-height", "", GssPropertyType.TypeUnits.STRING,
+      "In the legend axis panel,set the icon height of the legend labels"+
+      "Like this: icon-height: 12pt or icon-height:auto  ") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.iconHeight = pval;
+    }
+  };
+
   public static final GssElementType GSS_GRID_TYPE = new GssElementType("grid",
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
@@ -480,9 +520,9 @@ public class GssPropertyManager {
   public static final GssElementType GSS_LABELS_TYPE = new GssElementType(
       "labels", new String[0],
       new GssElementType[0],
-      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY},
+      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY,GSS_FONT_SIZE_PROPERTY, GSS_COLUMN_WIDTH_PROPERTY, GSS_COLUMN_COUNT_PROPERTY, GSS_ICON_WIDTH_PROPERTY, GSS_ICON_HEIGHT_PROPERTY},
       "Controls visible of legend labelsc.",
-      "axislegend labels { visibility: hidden }")
+      "axislegend labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px;}")
       ;
   
    public static final GssElementType GSS_MARKER_TYPE = new GssElementType(
@@ -521,7 +561,7 @@ public class GssPropertyManager {
       new GssElementType[0],
       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
       "Legend",
-      "axislegend { visibility: hidden }")
+      "axislegend { visibility: hidden}")
       ;
 
 //  public static final GssElementType GSS_OVERVIEW_TYPE = new GssElementType("overview",
