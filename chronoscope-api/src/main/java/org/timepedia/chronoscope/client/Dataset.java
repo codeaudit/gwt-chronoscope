@@ -105,6 +105,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * drawing this dataset.
    */
   @Deprecated
+  @NoExport
   String getPreferredRenderer();
 
   /**

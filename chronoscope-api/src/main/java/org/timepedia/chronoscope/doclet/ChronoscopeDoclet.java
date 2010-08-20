@@ -17,6 +17,7 @@ import com.sun.tools.doclets.internal.toolkit.util.PackageListWriter;
 import com.sun.tools.doclets.internal.toolkit.util.Util;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -83,32 +84,29 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     writer.link("rel='stylesheet' type='text/css' href='jsdoc.css'");
     writer.headEnd();
     writer.body("white", true);
-    for (ClassDoc clz : rootDoc.classes()) {
-      if (isExportable(clz)) {
-        int countExportedMethods = 0;
-        for (ConstructorDoc cd : clz.constructors()) {
-          if (isExportable(cd)) {
-            countExportedMethods++;
-          }
-        }
 
-        for (MethodDoc md : clz.methods()) {
-          if (isExportable(md)) {
-            countExportedMethods++;
-          }
-        }
-
-        if (countExportedMethods == 0 || isExportedClosure(clz.methods()[0])) {
-          continue;
-        }
-
+    writer.h1("Exported JavaScript-API: Index of Classes");
+    writer.ul();
+    
+    ClassDoc[] classes = rootDoc.classes();
+    Arrays.sort(classes);
+    for (ClassDoc clz : classes) {
+      if (isExportable(clz) && hasMethods(clz) && ! isExportedClosure(clz.methods()[0])) {
+        String className = getExportedName(clz, false);
+        writer.li();
+        writer.println("<a href=#" + className + ">" + className + "</a>");
+      }
+    }
+    writer.ulEnd();
+    
+    for (ClassDoc clz : classes) {
+      if (isExportable(clz) && hasMethods(clz) && ! isExportedClosure(clz.methods()[0])) {
         String className = getExportedName(clz, false);
         writer.h2("<div id=" + className + ">"+ getExportedPackage(clz) + "." + className + "</div>");
         writer.println("<div class=jsdocText>" + filter(clz.commentText()) + "</div>");
         writer.table(1, "100%", 0, 0);
 
         boolean firstcon = true;
-
         for (ConstructorDoc cd : clz.constructors()) {
           if (isExportable(cd)) {
             if (firstcon) {
@@ -137,7 +135,6 @@ public class ChronoscopeDoclet extends HtmlDoclet {
         }
         
         firstcon = true;
-
         for (MethodDoc cd : clz.methods()) {
           if (isExportable(cd)) {
             if (firstcon) {
@@ -178,6 +175,21 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     writer.close();
     generateGss(rootDoc, classTree);
     generateGssWiki(rootDoc, classTree);
+  }
+
+  private boolean hasMethods(ClassDoc clz) {
+    int countExportedMethods = 0;
+    for (ConstructorDoc cd : clz.constructors()) {
+      if (isExportable(cd)) {
+        countExportedMethods++;
+      }
+    }
+    for (MethodDoc md : clz.methods()) {
+      if (isExportable(md)) {
+        countExportedMethods++;
+      }
+    }
+    return countExportedMethods > 0;
   }
   
   private String getExportedName(MethodDoc cd) {
