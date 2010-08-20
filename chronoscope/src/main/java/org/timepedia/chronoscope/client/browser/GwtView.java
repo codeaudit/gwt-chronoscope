@@ -26,5 +26,4 @@ public abstract class GwtView extends View {
       });
     }
   }
-  
 }

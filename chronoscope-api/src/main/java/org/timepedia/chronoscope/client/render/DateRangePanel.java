@@ -9,7 +9,6 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
@@ -56,8 +55,6 @@ public class DateRangePanel extends AbstractPanel implements
   private int typicalCharWidth;
 
   private boolean isDateDomain;
-
-  private double timeZoneOffsetInMilliseconds=0;
 
   public String getType() {
     return "daterange";
@@ -124,7 +121,7 @@ public class DateRangePanel extends AbstractPanel implements
     doShowDayInDate = minDomainInterval < SHOW_DAY_THRESHOLD;
     doShowMonthInDate = minDomainInterval < SHOW_MONTH_THRESHOLD;
 
-    final String typicalDateChars = "0123456789-/";
+    final String typicalDateChars = "0123456789-";
     bounds.height = stringSizer.getHeight("X", labelProperties);
     typicalCharWidth = stringSizer.getWidth(typicalDateChars, labelProperties) /
         typicalDateChars.length();
@@ -162,9 +159,6 @@ public class DateRangePanel extends AbstractPanel implements
   public void updateDomainInterval(Interval domainInterval) {
     ArgChecker.isNotNull(domainInterval, "domainInterval");
     
-    final boolean timeZoneChanged = ChronoDate.getTimeZoneOffsetInMilliseconds()!=this.timeZoneOffsetInMilliseconds;
-    this.timeZoneOffsetInMilliseconds=ChronoDate.getTimeZoneOffsetInMilliseconds();
-
     final boolean domainIntervalChanged = !domainInterval.equals(this.domainInterval);
     
     if (this.domainInterval == null) {
@@ -174,14 +168,14 @@ public class DateRangePanel extends AbstractPanel implements
       domainInterval.copyTo(this.domainInterval);
     }
 
-    if (domainIntervalChanged||timeZoneChanged) {
+    if (domainIntervalChanged) {
       if (isDateDomain) {
         String longStartDate = formatLongDate(domainInterval.getStart());
         String longEndDate = formatLongDate(domainInterval.getEnd());
-        dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate + SPC;
+        dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate;
         String shortStartDate = formatShortDate(domainInterval.getStart());
         String shortEndDate = formatShortDate(domainInterval.getEnd());
-        dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate + SPC;
+        dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate;
 
         dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
       } else {
@@ -229,11 +223,11 @@ public class DateRangePanel extends AbstractPanel implements
   }
 
   private String formatLongDate(double d) {
-    return ChronoDate.formatDateByTimeZone(dateFormatter, d);
+    return dateFormatter.format(d);
   }
 
   private String formatShortDate(double d) {
-   return  ChronoDate.formatDateByTimeZone(compactDateFormatter, d);
+    return compactDateFormatter.format(d);
   }
 
   private int estimateStringWidth(String s) {

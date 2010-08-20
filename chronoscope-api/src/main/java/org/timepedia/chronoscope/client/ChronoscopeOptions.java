@@ -42,6 +42,7 @@ public class ChronoscopeOptions {
    * A factory function to create a push-pin marker given a Date, then the
    * dataset index to attach this marker to, and a label
    *
+   * @gwt.export
    */
   public static Marker createMarker(String date, int seriesNum, String label) {
     return new Marker(date, seriesNum, label);

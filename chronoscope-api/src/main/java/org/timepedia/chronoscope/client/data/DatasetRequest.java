@@ -179,7 +179,7 @@ public abstract class DatasetRequest {
   
   /**
    * The client can optionally specify its own range bottom and top, which will 
-   * be used by the {@link org.timepedia.chronoscope.client.axis.RangeAxis} to override the actual min/max range values 
+   * be used by the {@link RangeAxis} to override the actual min/max range values 
    * contained in the {@link Dataset}.  Should be set in conjunction with
    * {@link #getRangeTop()}.
    */
@@ -189,9 +189,9 @@ public abstract class DatasetRequest {
 
   /**
    * The client can optionally specify its own range bottom and top, which will 
-   * be used by the {@link org.timepedia.chronoscope.client.axis.RangeAxis} to override the actual min/max range values 
-   * contained in the {@link org.timepedia.chronoscope.client.Dataset}.  Should be set in conjunction with
-   * {@link #getRangeBottom()}.
+   * be used by the {@link RangeAxis} to override the actual min/max range values 
+   * contained in the {@link Dataset}.  Should be set in conjunction with
+   * {@link #getRangeBo(ttom)}.
    */
   public double getRangeTop() {
     return rangeTop;
@@ -206,7 +206,7 @@ public abstract class DatasetRequest {
    * Returns the preferred range axis interval, whose start value is 
    * {@link #getRangeBottom()} and whose end value is {@link #getRangeTop()}.
    * 
-   * @see Dataset#getPreferredRangeAxisInterval()
+   * @see {@link Dataset#getPreferredRangeAxisInterval()}
    */
   public Interval getPreferredRangeAxisInterval() {
     if (!(Double.isNaN(rangeBottom) || Double.isNaN(rangeTop))) {

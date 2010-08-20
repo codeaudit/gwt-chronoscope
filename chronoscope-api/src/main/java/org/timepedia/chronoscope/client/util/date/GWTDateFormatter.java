@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.util.date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import com.google.gwt.i18n.client.TimeZone;
 import org.timepedia.chronoscope.client.util.DateFormatter;
 
 import java.util.Date;
@@ -21,10 +20,6 @@ public class GWTDateFormatter implements DateFormatter {
 
   public String format(double timestamp) {
     return fmt.format(new Date((long) timestamp));
-  }
-
-  public String format(double timestamp, TimeZone timeZone) {
-    return fmt.format(new Date((long) timestamp), timeZone);
   }
 
   public double parse(String date) {

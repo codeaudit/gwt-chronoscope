@@ -14,7 +14,6 @@ import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -95,9 +94,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         .calcIdealTickStep(domainWidth, maxTicksForScreen);
     //log("dw=" + (long)domainWidth + "; maxTicks=" + maxTicksForScreen + 
     //    "; idealStep=" + idealTickStep);
-    double changeTimeZone=ChronoDate.timeZoneConverter();
     tickFormatter
-        .resetToQuantizedTick(plot.getDomain().getStart()+changeTimeZone, idealTickStep);
+        .resetToQuantizedTick(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;
@@ -114,7 +112,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     while (stillEnoughSpace) {
       double tickScreenPos = this
-          .domainToScreenX(tickFormatter.getTickDomainValue()-changeTimeZone, bounds);
+          .domainToScreenX(tickFormatter.getTickDomainValue(), bounds);
       stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
 
       /*

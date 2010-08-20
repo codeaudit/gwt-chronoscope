@@ -5,7 +5,7 @@ package org.timepedia.chronoscope.client.util;
  * within a {@link Array1D} object.  Implementing classes are responsible for
  * defining whatever return value is necessary as an accessor method.
  * 
- * @see Array1D#execFunction(ArrayFunction)
+ * @see {@link Array1D#execFunction(ArrayFunction)}
  * 
  * @author chad takahashi
  */

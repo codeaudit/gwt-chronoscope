@@ -136,7 +136,7 @@ public abstract class TickFormatter {
   /**
    * Returns a positive value corresponding to a single tick for this formatter.
    * For example, if this is a day-of-month formatter, then this method would
-   * return {@link org.timepedia.chronoscope.client.util.TimeUnit#ms()}.
+   * return {@link TimeUnit#DAY#ms()}.
    */
   public abstract double getTickInterval();
 

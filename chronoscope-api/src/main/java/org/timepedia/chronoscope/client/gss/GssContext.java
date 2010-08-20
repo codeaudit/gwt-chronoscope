@@ -4,7 +4,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 
 /**
  * A GssContext is responsible for mapping GssElement/pseudoElt pairs into
- * GssProperties objects. 
+ * GssProperties objects. In the browser, this is done by {@link
+ * org.timepedia.chronoscope.client.browser.CssGssContext} for example.
  */
 public class GssContext {
 
@@ -27,9 +28,5 @@ public class GssContext {
 
   public void setView(View view) {
     this.view = view;
-  }
-
-  public GssProperties getPropertiesBySelector(String gssSelector) {
-    return new GssProperties();
   }
 }

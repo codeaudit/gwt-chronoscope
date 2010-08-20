@@ -68,8 +68,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
       final int maxDrawableDataPoints = overviewMode ? (int) plot.getPlotLayer()
           .getWidth() : getMaxDrawableDataPoints(drawableDataset);
       MipMapRegion bestMipMapRegion = dataSet
-          .getBestMipMapForInterval(plotDomain, overviewMode ? 2000 : maxDrawableDataPoints, 
-              overviewMode ? 0 : ((DefaultXYPlot)plot).isAnimating() ? -1 : 0);
+          .getBestMipMapForInterval(plotDomain, maxDrawableDataPoints, 
+              overviewMode ? 1 : 0);
 
       MipMap bestMipMap = bestMipMapRegion.getMipMap();
      
@@ -81,7 +81,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       int domainStartIdx = bestMipMapRegion.getStartIndex();
       int domainEndIdx = bestMipMapRegion.getEndIndex();
       domainStartIdx = Math.max(0, domainStartIdx - 1);
-//      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples() - 1);
+      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples() - 1);
 
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
@@ -129,10 +129,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
     Dataset<T> dataSet = dds.dataset;
     DatasetRenderer<T> renderer = dds.getRenderer();
 
-    // TODO: add new method to detect non-drawable datasets
-//    if (dataSet.getNumSamples() < 2) {
-//      return;
-//    }
+    if (dataSet.getNumSamples() < 2) {
+      return;
+    }
 
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;

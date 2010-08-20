@@ -8,14 +8,12 @@ import com.google.gwt.user.client.DOM;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.InfoWindowEvent;
 import org.timepedia.chronoscope.client.InfoWindowClosedHandler;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
 /**
  *
  */
-@ExportPackage("chronoscope")
 public class BrowserInfoWindow implements InfoWindow, Exportable {
 
   HandlerManager manager;

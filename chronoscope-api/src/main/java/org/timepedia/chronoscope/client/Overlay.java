@@ -9,8 +9,9 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Export;
 
 /**
- * Interface implemented by Markers and other clases which overlay the plot
+ * Interface implemented by Markers and other clases which overlay the plot
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public interface Overlay extends Exportable {
@@ -18,6 +19,7 @@ public interface Overlay extends Exportable {
   /**
    * Allows a caller to register for click events on this Overlay
    *
+   * @gwt.export addOverlayListener
    */
   @Export("addOverlayListener")
   void addOverlayClickListener(OverlayClickListener cl);

@@ -1,408 +1,404 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.timepedia.chronoscope</groupId>
-  <artifactId>chronoscope-project</artifactId>
-  <packaging>pom</packaging>
-  <version>2.0-SNAPSHOT</version>
-  <name>Chronoscope Project</name>
-  <url>http://timepedia.org/chronoscope</url>
-  <description>Chronoscope is a charting and visualization platform developed with GWT.</description>
+    <groupId>org.timepedia.chronoscope</groupId>
+    <artifactId>chronoscope-project</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0</version>
+    <name>Chronoscope Project</name>
+    <url>http://timepedia.org/chronoscope</url>
+    <description>Chronoscope is a charting and visualization platform developed with GWT.
+    </description>
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/gwt-chronoscope/issues/list</url>
+    </issueManagement>
 
-  <issueManagement>
-    <system>Google Code</system>
-    <url>http://code.google.com/p/gwt-chronoscope/issues/list</url>
-  </issueManagement>
 
-  <developers>
-    <developer>
-      <id>ray</id>
-      <name>Ray Cromwell</name>
-      <email>ray@timepedia.org</email>
-      <roles>
-        <role>Project Manager</role>
-        <role>Architect</role>
-      </roles>
-      <organization>Timepedia.org</organization>
-      <timezone>-8</timezone>
-    </developer>
-    <developer>
-      <id>shawn</id>
-      <name>Shawn O'Connor</name>
-      <email>shawn@timepedia.org</email>
-      <roles>
-        <role>Senior Developer</role>
-      </roles>
-      <organization>Timepedia.org</organization>
-      <timezone>-8</timezone>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>ray</id>
+            <name>Ray Cromwell</name>
+            <email>ray@timepedia.org</email>
+            <roles>
+                <role>Project Manager</role>
+                <role>Architect</role>
+            </roles>
+            <organization>Timepedia.org</organization>
+            <timezone>-8</timezone>
+        </developer>
+        <developer>
+            <id>shawn</id>
+            <name>Shawn O'Connor</name>
+            <email>shawn@timepedia.org</email>
+            <roles>
+                <role>Senior Developer</role>
+            </roles>
+            <organization>Timepedia.org</organization>
+            <timezone>-8</timezone>
+        </developer>
+    </developers>
 
-  <mailingLists>
-    <mailingList>
-      <name>Chronoscope Project mailing list</name>
-      <subscribe>chronoscope-subscribe@googlegroups.com</subscribe>
-      <unsubscribe>chronoscope-unsubscribe@googlegroups.com</unsubscribe>
-      <post>chronoscope@googlegroups.com</post>
-      <archive>http://groups.google.com/group/chronoscope/topics</archive>
-    </mailingList>
-  </mailingLists>
+    <mailingLists>
+        <mailingList>
+            <name>Chronoscope Project mailing list</name>
+            <subscribe>chronoscope-subscribe@googlegroups.com</subscribe>
+            <unsubscribe>chronoscope-unsubscribe@googlegroups.com</unsubscribe>
+            <post>chronoscope@googlegroups.com</post>
+            <archive>http://groups.google.com/group/chronoscope/topics</archive>
+        </mailingList>
+    </mailingLists>
 
-  <scm>
-    <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/trunk</connection>
-    <developerConnection>scm:svn:https://gwt-chronoscope.googlecode.com/svn/trunk</developerConnection>
-    <url>http://code.google.com/p/gwt-chronoscope/source/browse/trunk</url>
-  </scm>
+    <scm>
+        <connection>scm:svn:http://gwt-chronoscope.googlecode.com/svn/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://gwt-chronoscope.googlecode.com/svn/trunk
+        </developerConnection>
+        <url>http://code.google.com/p/gwt-chronoscope/source/browse/trunk</url>
+    </scm>
 
-  <modules>
-    <module>chronoscope-api</module>
-    <module>chronoscope</module>
-    <module>docs</module>
-    <module>samples</module>
-    <module>widget</module>
-    <module>bench</module>
-    <module>buildtools</module>
-    <module>gviz</module>
-    <module>chronoscope-java2d</module> 
-  </modules>
+    <modules>
+        <module>chronoscope-api</module>
+        <module>chronoscope</module>
+        <module>widget</module>
+        <module>samples</module>
+        <!-- module>bench</module -->
+        <!-- module>gviz</module -->
+        <!--module>chronoscope-java2d</module -->
+    </modules>
 
-  <!-- 
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>timepedia-deploy</id>
-      <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </distributionManagement>
-  -->  
-  <!--
-    Deploy artifacts in a local folder and then I can do a commit so as there is only a svn log in the project
-  -->
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>local-folder</id>
-      <url>file:mavenrepo</url>
-    </repository>
-  </distributionManagement>
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>timepedia-deploy</id>
+            <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/
+            </url>
+        </repository>
+    </distributionManagement>
 
-  <build>
-    <!-- Common plugin configuration for all children -->
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <configuration>
-            <logLevel>${gwt.loglevel}</logLevel>
-            <style>${gwt.outputstyle}</style>
-            <runTarget>${gwt.module}${gwt.modulesuffix}/index.html</runTarget>
-            <hostedWebapp>${project.build.directory}/target/www</hostedWebapp>
-            <draftCompile>${gwt.draft}</draftCompile>
-            <disableCastChecking>${gwt.xdisable}</disableCastChecking>
-            <disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
-            <soyc>${gwt.soyc}</soyc>
-            <modules>
-              <module>${gwt.module}</module>
-            </modules>
-            <inplace>${gwt.inplace}</inplace>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>compile</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
 
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <configuration>
-            <filesets>
-              <fileset><directory>src/main/webapp/${gwt.module}</directory></fileset>
-              <fileset><directory>src/main/webapp/${gwt.module}Dev</directory></fileset>
-              <fileset><directory>src/main/webapp/${gwt.name}</directory></fileset>
-              <fileset><directory>src/main/webapp/WEB-INF/classes</directory></fileset>
-              <fileset><directory>tomcat</directory></fileset>
-              <fileset><directory>www-test</directory></fileset>
-              <fileset><directory>.gwt-tmp</directory></fileset>
-            </filesets>
-          </configuration>
-        </plugin>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                        <webResources>
+                            <resource>
+                                <directory>
+                                    ${project.build.directory}/public/${project.build.finalName}
+                                </directory>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <argLine>${google.webtoolkit.extrajvmargs}</argLine>
-            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-            <childDelegation>true</childDelegation>
-            <useSystemClassLoader>false</useSystemClassLoader>
-            <forkMode>always</forkMode>
-            <environmentVariables>
-              <DISPLAY>:0</DISPLAY>
-            </environmentVariables>
-            <testFailureIgnore>true</testFailureIgnore>
-            <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
-          </configuration>
-        </plugin>
-        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>${groupId}</groupId>
-              <artifactId>buildtools</artifactId>
-              <version>${version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>        
-      </plugins>
-    </pluginManagement>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>1.2-SNAPSHOT</version>
+                    <configuration>
+                        <logLevel>${gwt.loglevel}</logLevel>
+                        <style>${gwt.outputstyle}</style>
+                        <gwtVersion>${gwtversion}</gwtVersion>
+                        <webappDirectory>${project.build.directory}/public
+                        </webappDirectory>
+		<runTarget>${gwt.module}${gwt.modulesuffix}/index.html</runTarget>
+                <hostedWebapp>
+		  ${project.build.directory}/public/${project.build.finalName}
+		</hostedWebapp>
+		<draftCompile>${gwt.draft}</draftCompile>
+		<disableCastChecking>${gwt.xdisable}</disableCastChecking>
+		<disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
+                        <modules>
+                            <module>
+                                ${gwt.module}
+                            </module>
+                        </modules>
+                        <inplace>${gwt.inplace}</inplace>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
 
-    <plugins>
-      <!--
-        <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changes-plugin</artifactId>
-        <version>2.0-googlecode-SNAPSHOT</version> <inherited>false</inherited> <executions> <execution> <goals>
-        <goal>announcement-generate</goal> </goals> <id>announcement-generate</id> </execution> <execution> <goals>
-        <goal>announcement-mail</goal> </goals> <id>announcement-mail</id> </execution> </executions> <configuration>
-        <generateGoogleCodeAnnouncement>true</generateGoogleCodeAnnouncement>
-        <smtpHost>mx.pathbreaker.commail.yourhost.com</smtpHost> <smtpPort
-        implementation="java.lang.Integer">25</smtpPort> <toAddresses> <toAddress
-        implementation="java.lang.String">someones@email.com</toAddress> <toAddress
-        implementation="java.lang.String">anothersomeone@email.com</toAddress> </toAddresses> </configuration> </plugin>
-      -->
-      <!--
-        <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changes-plugin</artifactId>
-        <version>2.0-googlecode-SNAPSHOT</version> </plugin>
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <tagBase> https://gwt-chronoscope.googlecode.com/svn/tags </tagBase>
-          <preparationGoals>clean install</preparationGoals>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-    
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.8</version>
-      </extension>
-    </extensions>
-  </build>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-    </pluginRepository>
-  </pluginRepositories>
+            <!--
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+        <version>2.0-googlecode-SNAPSHOT</version>
+        <inherited>false</inherited>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>announcement-generate</goal>
+                </goals>
+                <id>announcement-generate</id>
+              </execution>
+              <execution>
+                <goals>
+                  <goal>announcement-mail</goal>
+                </goals>
+                <id>announcement-mail</id>
+              </execution>
+            </executions>
+            <configuration>
+          <generateGoogleCodeAnnouncement>true</generateGoogleCodeAnnouncement>
+              <smtpHost>mx.pathbreaker.commail.yourhost.com</smtpHost>
+              <smtpPort implementation="java.lang.Integer">25</smtpPort>
+              <toAddresses>
+                <toAddress implementation="java.lang.String">someones@email.com</toAddress>
+                <toAddress implementation="java.lang.String">anothersomeone@email.com</toAddress>
+              </toAddresses>
+            </configuration>
+          </plugin>
+            -->
+            <!--
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-changes-plugin</artifactId>
+                <version>2.0-googlecode-SNAPSHOT</version>
 
-  <repositories>
-    <repository>
-      <id>repo1</id>
-      <url>http://repo1.maven.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Repository for wagon svn</name>
-      <url>http://download.java.net/maven/2/</url>
-    </repository>
-    <repository>
-      <id>timepedia</id>
-      <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-    <repository>
-      <id>timefire</id>
-      <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </repositories>
+                  </plugin>
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        https://gwt-chronoscope.googlecode.com/svn/tags
+                    </tagBase>
+                    <preparationGoals>clean install</preparationGoals>
+                </configuration>
+            </plugin>
 
-  <properties>
-    <!-- <maven.compiler.source>1.5</maven.compiler.source> -->
-    <!-- <maven.compiler.target>1.5</maven.compiler.target> -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gwtversion>2.0.4</gwtversion>
-    <gwt.loglevel>ERROR</gwt.loglevel>
-    <gwt.outputstyle>OBF</gwt.outputstyle>
-    <gwt.modulesuffix />
-    <maven.test.skip>false</maven.test.skip> 
-    <gwt.inplace>false</gwt.inplace>
-    <gwt.soyc>false</gwt.soyc>
-    <gwt.xdisable>true</gwt.xdisable>
-    <gwt.draft>false</gwt.draft>
-  </properties>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4.2</version>
+                <configuration>
+                    <argLine>${google.webtoolkit.extrajvmargs}</argLine>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <childDelegation>true</childDelegation>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <forkMode>always</forkMode>
+                    <environmentVariables>
+                        <DISPLAY>:5</DISPLAY>
+                    </environmentVariables>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <forkedProcessTimeoutInSeconds>60
+                    </forkedProcessTimeoutInSeconds>
+                </configuration>
+            </plugin>
 
-  <profiles>
-    <profile>
-      <id>dev</id>
-      <properties>
-        <gwt.loglevel>WARN</gwt.loglevel>
-        <gwt.modulesuffix>Dev</gwt.modulesuffix>
-        <gwt.outputstyle>PRETTY</gwt.outputstyle>
-        <gwt.draft>true</gwt.draft>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-    <profile>
-      <id>test</id>
-      <properties>
-        <gwt.loglevel>INFO</gwt.loglevel>
-        <gwt.outputstyle>PRETTY</gwt.outputstyle>
-        <gwt.draft>true</gwt.draft>
-      </properties>
-    </profile>
-    <profile>
-      <id>prod</id>
-      <properties>
-        <gwtversion>2.0.4</gwtversion>
-        <gwt.loglevel>ERROR</gwt.loglevel>
-        <gwt.outputstyle>OBF</gwt.outputstyle>
-        <gwt.xdisable>true</gwt.xdisable>
-        <gwt.soyc>true</gwt.soyc>
-      </properties>
-    </profile>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.timepedia.chronoscope</groupId>
+                        <artifactId>buildtools</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-    <profile>
-      <id>tools.jar</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>Sun Microsystems Inc.</value>
-       </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>com.sun</groupId>
-          <artifactId>tools</artifactId>
-          <version>1.6</version>
-          <scope>system</scope>
-          <optional>true</optional>
-          <systemPath>${java.home}/../lib/tools.jar</systemPath>
-        </dependency>
-      </dependencies>
-    </profile>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
 
-  </profiles>
 
-  <!-- Common dependencies for all modules -->
-  <dependencies>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <version>${gwtversion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <version>${gwtversion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.timepedia.exporter</groupId>
-      <artifactId>gwtexporter</artifactId>
-      <version>[2.0.10,)</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.gwt</groupId>
-          <artifactId>gwt-user</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt.inject</groupId>
-      <artifactId>gin</artifactId>
-      <version>1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>tools</artifactId>
-      <version>1.4.2</version>
-      <systemPath>${java.home}/../lib/tools.jar</systemPath>
-      <scope>system</scope>
-    </dependency -->
-  </dependencies>
-  
-  <reporting>
-    <plugins>
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-changes-plugin</artifactId>-->
-<!--        <version>2.0-googlecode-SNAPSHOT</version>-->
-<!--        <configuration>-->
-<!--          <generateGoogleCodeAnnouncement>true</generateGoogleCodeAnnouncement>-->
-<!--        </configuration>-->
-<!--        <reportSets>-->
-<!--          <reportSet>-->
-<!--            <reports>-->
-<!--              <report>changes-report</report>-->
-<!--            </reports>-->
-<!--          </reportSet>-->
-<!--        </reportSets>-->
-<!--      </plugin>-->
+        </plugins>
 
-<!--      <plugin>-->
-<!--        <groupId>org.codehaus.mojo</groupId>-->
-<!--        <artifactId>changelog-maven-plugin</artifactId>-->
-<!--      </plugin>-->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>chronoscope-checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 
+    </build>
+
+    <reporting>
+
+        <plugins>
+            <!--
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-changes-plugin</artifactId>
+                <version>2.0-googlecode-SNAPSHOT</version>
+                <configuration>
+                  <generateGoogleCodeAnnouncement>true</generateGoogleCodeAnnouncement>
+                    </configuration>
+                    <reportSets>
+                      <reportSet>
+                        <reports>
+                          <report>changes-report</report>
+                        </reports>
+                      </reportSet>
+                    </reportSets>
+                  </plugin>
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>chronoscope-checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gwt-maven</id>
+            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codehaus-snapshots</id>
+            <url>http://snapshots.repository.codehaus.org/</url>
+        </pluginRepository>
+
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>gwt-maven</id>
+            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+        </repository>
+        <repository>
+            <id>timepedia</id>
+            <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
+        </repository>
+
+        <repository>
+            <id>timefire</id>
+            <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
+        </repository>
+
+    </repositories>
+
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <jdk>1</jdk>
+            </activation>
+
+            <properties>
+                <gwtversion>2.0.0</gwtversion>
+                <gwt.loglevel>ERROR</gwt.loglevel>
+                <gwt.outputstyle>PRETTY</gwt.outputstyle>
+                <gwt.modulesuffix></gwt.modulesuffix>
+                <gwt.localRepository>${user.home}/.m2/repository</gwt.localRepository>
+                <gwt.localRepository>${user.home}/.m2/repository</gwt.localRepository>
+                <!--		<maven.test.skip>true</maven.test.skip> -->
+                <gwt.inplace>false</gwt.inplace>
+
+            </properties>
+        </profile>
+
+
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <gwtplatform>linux</gwtplatform>
+                <google.webtoolkit.extrajvmargs>-Xmx512m
+                </google.webtoolkit.extrajvmargs>
+
+            </properties>
+        </profile>
+
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <gwtplatform>windows</gwtplatform>
+                <google.webtoolkit.extrajvmargs>-Xmx512m
+                </google.webtoolkit.extrajvmargs>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>macosx</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <gwtplatform>mac</gwtplatform>
+                <!--                <google.webtoolkit.extrajvmargs>-XstartOnFirstThread</google.webtoolkit.extrajvmargs> -->
+                <google.webtoolkit.extrajvmargs>-Xmx512m
+                </google.webtoolkit.extrajvmargs>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dev</id>
+            <properties>
+                <gwt.loglevel>WARN</gwt.loglevel>
+                <gwt.modulesuffix>Dev</gwt.modulesuffix>
+                <gwt.outputstyle>PRETTY</gwt.outputstyle>
+                <gwt.draft>true</gwt.draft> 
+                <maven.test.skip>true</maven.test.skip>
+                <gwt.inplace>false</gwt.inplace>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <gwtversion>2.0.0</gwtversion>
+                <gwt.loglevel>ERROR</gwt.loglevel>
+                <gwt.outputstyle>OBF</gwt.outputstyle>
+		<gwt.xdisable>true</gwt.xdisable>
+                <gwt.modulesuffix></gwt.modulesuffix>
+                <!--		<maven.test.skip>true</maven.test.skip> -->
+            </properties>
+        </profile>
+
+    </profiles>
 </project>

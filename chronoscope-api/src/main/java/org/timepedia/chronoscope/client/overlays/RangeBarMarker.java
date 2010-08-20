@@ -21,6 +21,7 @@ import java.util.ArrayList;
  * An overlay which renders highlighted regions spanning the entire X dimensions
  * of the plot over a given range region.
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class RangeBarMarker implements Exportable, Overlay, GssElement {
@@ -42,6 +43,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
   private int labelHeight;
 
   /**
+   * @gwt.export
    */
   @Export
   public RangeBarMarker(double rangeLow, double rangeHigh, String label) {
@@ -52,6 +54,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
   }
 
   /**
+   * @gwt.export addOverlayListener
    */
   @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {

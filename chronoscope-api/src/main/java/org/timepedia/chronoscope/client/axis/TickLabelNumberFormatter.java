@@ -5,6 +5,8 @@ import org.timepedia.exporter.client.ExportClosure;
 
 /**
  * Implement this class to override the look of RangeAxis tick labels.
+ * @gwt.exportPackage chronoscope
+ * @gwt.exportClosure
 */
 @ExportPackage("chronoscope")
 @ExportClosure

@@ -13,7 +13,6 @@ import org.timepedia.chronoscope.client.event.PlotFocusHandler;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
-import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.DomainAxisPanel;
 import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
@@ -167,11 +166,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   DatasetRenderer<T> getDatasetRenderer(int datasetIndex);
 
   /**
-   * Return the style properties object associated with a given dataset ID.
-   */
-  GssProperties getComputedStyle(String gssSelector);
-  
-  /**
    * Returns the datasets associated with this plot.
    */
   @Export
@@ -313,7 +307,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Returns true if mini-chart overview on x-axis is enabled.
    */
-  @Export
   boolean isOverviewEnabled();
 
   /**
@@ -488,32 +481,13 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Enables or disables the legend panel above the center plot panel.
    */
-  @Export
   void setLegendEnabled(boolean enabled);
 
-  /**
-   * Enables or disables the legend labels in the legend panel.
-   */
-  @Export
-  void setLegendLabelsVisible(boolean visible);
-  
   /**
    * Enables or disables the mini-chart overview below the center plot
    * panel.
    */
-  @Export
   void setOverviewEnabled(boolean enabled);
-
-  /**
-   * Visible or hidden the mini-chart overview below the center plot
-   * panel.
-   */
-  void setOverviewVisible(boolean overviewVisible);
-
-  /**
-   * Returns true if mini-chart overview on x-axis is visible.
-   */
-  boolean isOverviewVisible();
 
   /**
    * Enables or disables all auxiliary panels (top legend, bottom domain
@@ -528,12 +502,4 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void zoomToHighlight();
 
   boolean isMultiaxis();
-
-  // TODO - timezone in dataset for per-dataset shifting of varied domain data on the way in
-  /**
-   * Set a chart-wide timezone offset that will override the client timezone
-   * -12 <= timeZoneOffset <= 13
-   */
-  @Export  
-  void setTimeZoneOffset(int offsetHours);
 }

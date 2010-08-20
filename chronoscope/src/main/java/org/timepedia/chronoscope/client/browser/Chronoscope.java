@@ -32,8 +32,6 @@ import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.ArrayDataset2D;
-import org.timepedia.chronoscope.client.data.IncrementalDatasetResponseImpl;
-import org.timepedia.chronoscope.client.data.MutableDatasetND;
 import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -54,6 +52,7 @@ import org.timepedia.exporter.client.ExporterUtil;
  * exports methods that can be used by both Java and JS to create and configure
  * charts, as well as being a global sink for History events.
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 @Singleton
@@ -173,6 +172,7 @@ public class Chronoscope
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
    *
+   * @gwt.export
    */
   @Export
   public static DomainBarMarker createBarMarker(String startDate,
@@ -184,6 +184,7 @@ public class Chronoscope
    * A factory function to create a vertical marker given start and end dates,
    * and a label with a gss class.
    *
+   * @gwt.export
    */
   @Export
   public static DomainBarMarker createBarMarkerWithClass(String startDate,
@@ -195,6 +196,7 @@ public class Chronoscope
    * A factory function to create a horizontal span marker between two range
    * values, with a given label.
    *
+   * @gwt.export
    */
   @Export
   public static RangeBarMarker createHorizontalBarMarker(double rangeLow,
@@ -209,6 +211,7 @@ public class Chronoscope
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
+   * @gwt.export createTimeseriesChartByElement
    */
   @Export("createTimeseriesChartByElement")
   public ChartPanel createTimeseriesChart(Element elem,
@@ -221,7 +224,7 @@ public class Chronoscope
    * Legacy method to support old API. Preferred method is to use instance
    * passed to onChronoscopeLoaded, which allows behavior to be overriden.
    *
-   * @deprecated
+   * @Deprecated
    */
   @Export
   public static ChartPanel createTimeseriesChartById(String id,
@@ -236,6 +239,7 @@ public class Chronoscope
    * Create a chart inside the DOM element with the given ID with the given JSON
    * datasets
    *
+   * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
   public ChartPanel createTimeseriesChart(String id,
@@ -281,6 +285,10 @@ public class Chronoscope
   }
 
   /**
+   * @param id
+   * @param datasets
+   * @param readyCallback
+   * @return
    */
   public static ChartPanel createTimeseriesChart(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyCallback) {
@@ -304,7 +312,7 @@ public class Chronoscope
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO)}
+   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.GwtJsonDataset)}
    * for details of the format.
    */
   public Dataset[] createDatasets(JsArray<JsonDatasetJSO> jsonDatasets) {
@@ -423,22 +431,6 @@ public class Chronoscope
     Chronoscope.microformatsEnabled = microformatsEnabled;
   }
 
-  /**
-   * Maximum number of datapoints to attempt to render when not moving, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxStaticDatapoints(int max) {
-    ChronoscopeOptions.setMaxStaticDatapoints(max);
-  }
-  
-  /**
-   * Maximum number of datapoints to attempt to render when animating, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxDynamicDatapoints(int max) {
-    ChronoscopeOptions.setMaxDynamicDatapoints(max);
-  }
-  
   @Inject
   public void setUrlResolver(URLResolver urlr) {
     urlResolver = urlr;
@@ -465,6 +457,7 @@ public class Chronoscope
   }
 
   /**
+   * @gwt.export createTimeseriesChartByIdSized
    */
   @Export("createTimeseriesChartByIdSized")
   public ChartPanel createChartPanel(String id, Dataset[] datasets,
@@ -479,6 +472,7 @@ public class Chronoscope
   }
 
   /**
+   * @gwt.export createTimeseriesChartWithElement
    */
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
@@ -549,30 +543,38 @@ public class Chronoscope
 
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
+    exporter.export();
 
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
+    dexporter.export();
 
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
+    exporterMarker.export();
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
+    exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
+    Exporter exporterDomainMarker = (Exporter) GWT
+        .create(DomainBarMarker.class);
+    exporterDomainMarker.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
+    exporter2.export();
 
     Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
+    exporter5.export();
 
     Exporter exporter7 = (Exporter) GWT.create(DatasetRenderer.class);
+    exporter7.export();
 
     Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
+    exporter4.export();
 
     Exporter exporter8 = (Exporter) GWT.create(IntTickFormatterFactory.class);
+    exporter8.export();
 
     Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
-
-    Exporter exporterInc = (Exporter) GWT.create(IncrementalDatasetResponseImpl.class);
-
-    Exporter exporterMut = (Exporter) GWT.create(MutableDatasetND.class);
+    exporter9.export();
 
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();

@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -64,10 +65,7 @@ import org.timepedia.exporter.client.Exportable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -235,10 +233,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void addOverlay(Overlay overlay) {
-    if (overlay != null) {
-        overlays.add(overlay);
-        overlay.setPlot(this);
-    }
+    overlays.add(overlay);
+    overlay.setPlot(this);
     //TODO: should we really redraw here? Kinda expensive if you want to bulk
     // add hundreds of overlays
     redraw(true);
@@ -272,20 +268,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   public ExportableHandlerRegistration addPlotMovedHandler(
       PlotMovedHandler handler) {
     return handlerManager.addExportableHandler(PlotMovedEvent.TYPE, handler);
-  }
-
-  
-  @Export
-  public void setTimeZoneOffset(int offsetHours) {
-      if(offsetHours >= -12 && offsetHours <= 13){
-          ChronoDate.isTimeZoneOffset = true;
-          ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
-      }else{
-          ChronoDate.isTimeZoneOffset = false;
-          ChronoDate.setTimeZoneOffsetInMilliseconds(0);
-      }
-      topPanel.getCompositePanel().draw();
-      bottomPanel.draw();
   }
 
   public void animateTo(final double destDomainOrigin,
@@ -322,7 +304,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
     for (Overlay o : overlays) {
-      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o.isHit(x, y);
+      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
+          .isHit(x, y);
 
       if (wasOverlayHit) {
         o.click(x, y);
@@ -427,19 +410,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     return dds.currMipMap.getTuple(pointIndex).getRange(dim);
   }
 
-  public Tuple2D getDataTuple(int datasetIndex, int pointIndex) {
-    DrawableDataset<T> dds = plotRenderer.getDrawableDataset(datasetIndex);
-    return dds.currMipMap.getTuple(pointIndex);
-  }
-
   public DatasetRenderer<T> getDatasetRenderer(int datasetIndex) {
     return plotRenderer.getDrawableDataset(datasetIndex).getRenderer();
-  }
-
-  @Override
-  @Export
-  public GssProperties getComputedStyle(String gssSelector) {
-    return view.getGssPropertiesBySelector(gssSelector);
   }
 
   /**
@@ -503,15 +475,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Overlay getOverlayAt(int x, int y) {
-    if ((null != overlays) && overlays.size() > 0) {
-        for (Overlay o : overlays) {
-            boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
-                    .isHit(x, y);
+    for (Overlay o : overlays) {
+      boolean wasOverlayHit = visDomain.contains(o.getDomainX()) && o
+          .isHit(x, y);
 
-            if (wasOverlayHit) {
-                return o;
-            }
-        }
+      if (wasOverlayHit) {
+        return o;
+      }
     }
     return null;
   }
@@ -561,7 +531,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return multiaxis;
   }
 
-  @Export
   public boolean isOverviewEnabled() {
     return bottomPanel.isOverviewEnabled();
   }
@@ -637,27 +606,19 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.reloadStyles();
   }
 
-  public void onDatasetChanged(final Dataset<T> dataset, final double domainStart, final double domainEnd) {
-      view.createTimer(new PortableTimerTask() {
-          @Override
-          public void run(PortableTimer timer) {
-              visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
-                      datasets);
-              int datasetIndex = DefaultXYPlot.this.datasets.indexOf(dataset);
-              if (datasetIndex == -1) {
-                  datasetIndex = 0;
-              }
-              //Record start and end the current data
-              if(datasets.indexOf(dataset)==0){
-                  visDomain.setEndpoints(domainStart, domainEnd);
-              }
-              plotRenderer.invalidate(dataset);
-              fixDomainDisjoint();
-              damageAxes();
-              getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
-              redraw(true);
-          }
-      }).schedule(15);
+  public void onDatasetChanged(Dataset<T> dataset, double domainStart,
+      double domainEnd) {
+    visibleDomainMax = calcVisibleDomainMax(getMaxDrawableDataPoints(),
+        datasets);
+    int datasetIndex = this.datasets.indexOf(dataset);
+    if (datasetIndex == -1) {
+      datasetIndex = 0;
+    }
+    plotRenderer.invalidate(dataset);
+    fixDomainDisjoint();
+    damageAxes();
+    getRangeAxis(datasets.indexOf(dataset)).adjustAbsRange(dataset);
+    redraw(true);
   }
 
   public void onDatasetRemoved(Dataset<T> dataset, int datasetIndex) {
@@ -790,7 +751,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean canDrawFast = !(isAnimating() && ChronoscopeOptions
         .isLowPerformance());
 
-    final boolean plotDomainChanged = !visDomain.approx(lastVisDomain);
+    final boolean plotDomainChanged = !visDomain.equals(lastVisDomain);
 
     Layer hoverLayer = getHoverLayer();
 
@@ -863,7 +824,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void removeOverlay(Overlay over) {
-    if (null == over) { return; }
     overlays.remove(over);
     over.setPlot(null);
   }
@@ -1030,32 +990,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void setLegendEnabled(boolean b) {
     legendOverriden = true;
-    for(int i = 0; i<hoverPoints.length; i++) {
-      hoverPoints[i] = -1;
-    }
-    for(Dataset d : datasets) {
-      if(plotRenderer.isInitialized()) {
-        plotRenderer.invalidate(d);
-      }
-    }
-    plotRenderer.resetMipMapLevels();;
-    plotRenderer.sync();
-    
     topPanel.setEnabled(b);
-    if (plotRenderer.isInitialized()) {
-      reloadStyles();
-    }
-    
-  }
-
-  @Override
-  @Export
-  public void setLegendLabelsVisible(boolean visible) {
-    GssProperties gss = getComputedStyle("axislegend labels");
-    if (gss != null) {
-      gss.setVisible(visible);
-      setLegendEnabled(true);
-    }
   }
 
   @Export
@@ -1067,16 +1002,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void setOverviewEnabled(boolean overviewEnabled) {
     bottomPanel.setOverviewEnabled(overviewEnabled);
-  }
-
-  @Export
-  public boolean isOverviewVisible() {
-      return bottomPanel.isOverviewVisible();
-  }
-
-  @Export
-  public void setOverviewVisible(boolean overviewVisible) {
-      bottomPanel.setOverviewVisible(overviewVisible);
   }
 
   public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
@@ -1268,12 +1193,12 @@ public class DefaultXYPlot<T extends Tuple2D>
           int hx = hoverX;
           int hy = hoverY;
           double dx = windowXtoDomain(hoverX + plotBounds.x);
-          String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
+          String label = crosshairFmt.format(dx);
           hx += dx < getDomain().midpoint() ? 1.0
               : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
 
           hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
-              Cursor.CONTRASTED);
+              Cursor.DEFAULT);
           int nearestPt = NO_SELECTION;
           int nearestSer = 0;
           int nearestDim = 0;
@@ -1297,8 +1222,6 @@ public class DefaultXYPlot<T extends Tuple2D>
             }
           }
           if (hoverPoints != null) {
-              // allLablePoints to store label points prior
-              List<LabelLayoutPoint> labelPointList = new ArrayList<LabelLayoutPoint>();
             for (int i = 0; i < hoverPoints.length; i++) {
               int hoverPoint = hoverPoints[i];
               if (nearestPt != NO_SELECTION && i != nearestSer) {
@@ -1312,9 +1235,9 @@ public class DefaultXYPlot<T extends Tuple2D>
                   if (nearestPt != NO_SELECTION && dim != nearestDim) {
                     continue;
                   }
-                  // Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
-                  double realY = getDataCoord(i, hoverPoints[i], dim);
-                  double y = r.getRangeValue(getDataTuple(i, hoverPoints[i]), dim);
+                  Tuple2D tuple = d.getFlyweightTuple(hoverPoint);
+                  double realY = tuple.getRange(dim);
+                  double y = r.getRangeValue(tuple, dim);
                   double dy = rangeToScreenY(y, i);
                   String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim);
                   RenderState rs = new RenderState();
@@ -1325,13 +1248,11 @@ public class DefaultXYPlot<T extends Tuple2D>
                       : -1 - hoverLayer
                           .stringWidth(rLabel, "Verdana", "", "9pt"));
 
-                  // Add the orriginal label positions into a allLablePoints for layout and display below.
-                  labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, props, hoverLayer));
+                  hoverLayer.drawText(hx, dy, rLabel, "Verdana", "", "9pt",
+                      "crosshair", Cursor.DEFAULT);
                 }
               }
             }
-            // Sort the labels in to groups and display them in horizontal rows if needed.
-            layoutAndDisplayLabels(labelPointList);
           }
         }
       }
@@ -1347,242 +1268,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   /**
-     * Create a Label Layout Point Comparator
-     * @return
-     */
-    private Comparator<LabelLayoutPoint> createLabelLayoutPointComparator() {
-        Comparator<LabelLayoutPoint> comparator = new Comparator<LabelLayoutPoint>() {
-
-            @Override
-            public int compare(LabelLayoutPoint point, LabelLayoutPoint compare) {
-                return (int) ((point.dy - compare.dy) * 100);
-            }
-        };
-        return comparator;
-    }
-
-    /**
-     * Group label List
-     * @param allLablePoints
-     * @return
-     */
-    private List<List<LabelLayoutPoint>> groupLabelList(List<LabelLayoutPoint> allLablePoints) {
-         List<List<LabelLayoutPoint>> labelGroups = new ArrayList<List<LabelLayoutPoint>>();
-        if (allLablePoints.size() > 1) {
-
-            // Sort the labels by height
-            Collections.sort(allLablePoints, createLabelLayoutPointComparator());
-
-            // create list of label groups
-            List<LabelLayoutPoint> currentGroup = new ArrayList<LabelLayoutPoint>();
-
-            double currentY = allLablePoints.get(0).dy;
-
-            currentGroup.add(allLablePoints.get(0));
-            labelGroups.add(currentGroup);
-
-            int labelSize = 10; // make this dynamic according to font size.
-
-            // loop through the labels and sort them a into groups.
-            for (int i = 1; i < allLablePoints.size(); i++) {
-
-                double nextY = allLablePoints.get(i).dy;
-                if (Math.abs(currentY - nextY) > labelSize) {
-                    // new group
-                    currentGroup = new ArrayList<LabelLayoutPoint>();
-                    labelGroups.add(currentGroup);
-
-                }
-                // add to current group
-                currentGroup.add(allLablePoints.get(i));
-                currentY = nextY;
-            }
-
-        }
-         return labelGroups;
-    }
-
-    /**
-     * Treating Layout which LabelLayoutPoint may overlap and show them
-     * @param allLablePoints
-     */
-    private void layoutAndDisplayLabels(List<LabelLayoutPoint> allLablePoints) {
-       List<List<LabelLayoutPoint>> labelGroups =groupLabelList(allLablePoints);
-        if (labelGroups.size() > 0) {
-            for (int i = 0; i < labelGroups.size(); i++) {
-                List<LabelLayoutPoint> overlapList = labelGroups.get(i);
-                if (overlapList.size() > 1) {
-                    if (hoverX < plotBounds.width * 0.25) {
-                        //All labels shows on the right between the region 0-0.25
-                        LabelLayoutPoint point = overlapList.get(overlapList.size() - 1);
-                        point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-                        double beforePointHx = point.hx;
-                        int textLength = point.lableText.length() * 7;
-                        for (int j = overlapList.size() - 2; j >= 0; j--) {
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
-                            beforePointHx = infoList.get(0).doubleValue();
-                            textLength = infoList.get(1).intValue();
-                        }
-                    } else if (hoverX > plotBounds.width * 0.75) {
-                        //All labels shows on the left between the region 0.75-1
-                        LabelLayoutPoint point = overlapList.get(0);
-                        point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-                        double beforePointHx = point.hx;
-                        for (int j = 1; j < overlapList.size(); j++) {
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
-                        }
-                    } else if (hoverX < plotBounds.width * 0.5) {
-                        // Shows label between the region 0.25-0.5
-                        int middle;
-                        if (overlapList.size() % 2 == 0) {
-                            middle = overlapList.size() / 2 - 1;
-                        } else {
-                            middle = overlapList.size() / 2;
-                        }
-                        LabelLayoutPoint point = overlapList.get(middle);
-                        double beforePointHx = point.hx;
-                        int textLength = 0;
-                        //show labels on the crossHair right
-                        for (int j = middle; j >= 0; j--) {
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
-                            beforePointHx = infoList.get(0).doubleValue();
-                            textLength = infoList.get(1).intValue();
-                        }
-                        beforePointHx = point.hx;
-                        for (int j = middle + 1; j < overlapList.size(); j++) {
-                            //show labels on the crossHair left
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
-                        }
-                    } else {
-                        // Shows label between the region 0.5-0.75
-                        int middle = overlapList.size() / 2;
-                        LabelLayoutPoint point = overlapList.get(middle);
-                        double beforePointHx = point.hx + point.lableText.length() * 7;
-                        //show labels on the crossHair left
-                        for (int j = middle; j < overlapList.size(); j++) {
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
-                        }
-                        beforePointHx = point.hx + point.lableText.length() * 7;
-                        int textLength = 0;
-                        //show labels on the crossHair right
-                        for (int j = middle - 1; j >= 0; j--) {
-                            LabelLayoutPoint nextPoint = overlapList.get(j);
-                            List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
-                            beforePointHx = infoList.get(0).doubleValue();
-                            textLength = infoList.get(1).intValue();
-                        }
-                    }
-                } else {
-                    //Only one point
-                    LabelLayoutPoint pendingPoint = overlapList.get(0);
-                    pendingPoint.layer.setStrokeColor(pendingPoint.gssProperties.color);
-                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-                }
-            }
-        }
-    }
-
-    /**
-     * Draw a Label On CrossHair Left
-     * @param nextPoint
-     * @param beforePointHx
-     * @return
-     */
-    private double drawLabelOnCrossHairLeft(LabelLayoutPoint nextPoint, double beforePointHx) {
-        nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
-        beforePointHx -= nextPoint.lableText.length() * 7;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-        return beforePointHx;
-    }
-
-    /**
-     * Draw a Label On Cross Hair Right
-     * @param nextPoint
-     * @param beforePointHx
-     * @param textLength
-     * @return
-     */
-    private List<Number> drawLabelOnCrossHairRight(LabelLayoutPoint nextPoint, double beforePointHx, int textLength) {
-        nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
-        beforePointHx += textLength;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-        textLength = nextPoint.lableText.length() * 7;
-        List<Number> beforeInfor = new ArrayList<Number>();
-        beforeInfor.add(0, beforePointHx);
-        beforeInfor.add(1, textLength);
-        return beforeInfor;
-    }
-
-    /**
-     * Points need to display information,Location to be determined
-     */
-    private class LabelLayoutPoint {
-
-        private double hx;
-        private double dy;
-        private String lableText;
-        private GssProperties gssProperties;
-        private Layer layer;
-
-        LabelLayoutPoint(double hx, double dy, String lableText, GssProperties props, Layer layer) {
-            this.hx = hx;
-            this.dy = dy;
-            this.lableText = lableText;
-            this.gssProperties = props;
-            this.layer = layer;
-        }
-
-        public double getDy() {
-            return dy;
-        }
-
-        public void setDy(double dy) {
-            this.dy = dy;
-        }
-
-        public GssProperties getGssProperties() {
-            return gssProperties;
-        }
-
-        public void setGssProperties(GssProperties gssProperties) {
-            this.gssProperties = gssProperties;
-        }
-
-        public double getHx() {
-            return hx;
-        }
-
-        public void setHx(double hx) {
-            this.hx = hx;
-        }
-
-        public String getLableText() {
-            return lableText;
-        }
-
-        public void setLableText(String lableText) {
-            this.lableText = lableText;
-        }
-
-        public Layer getLayer() {
-            return layer;
-        }
-
-        public void setLayer(Layer layer) {
-            this.layer = layer;
-        }
-
-
-    }
-
-  /**
    * Draws the overlays (e.g. markers) onto the center plot.
    */
   private void drawOverlays(Layer layer) {
@@ -1592,7 +1277,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
 
     for (Overlay o : overlays) {
-      if (null != o) { o.draw(layer, "overlays"); }
+      o.draw(layer, "overlays");
     }
 
     layer.restore();
@@ -1773,7 +1458,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   private void fixDomainDisjoint() {
     if (!datasets.getDomainExtrema().intersects(getDomain())) {
-      getDomain().expand(datasets.getDomainExtrema());
+      datasets.getDomainExtrema().copyTo(getDomain());
       calcDomainWidths();
     }
   }

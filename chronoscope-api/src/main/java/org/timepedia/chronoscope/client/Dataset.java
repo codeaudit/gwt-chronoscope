@@ -1,10 +1,8 @@
 package org.timepedia.chronoscope.client;
 
-import org.timepedia.chronoscope.client.data.IncrementalHandler;
 import org.timepedia.chronoscope.client.data.MipMapChain;
 import org.timepedia.chronoscope.client.data.MipMapRegion;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.plot.ExportableHandlerRegistration;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -17,7 +15,8 @@ import org.timepedia.exporter.client.NoExport;
  * A dataset allows arbitrary Tuples to be returned from each sample index. The
  * tuples returned are not guaranteed to be mutation free; that is, they should
  * be considered flyweight objects to be used and discarded before the next
- * invocation of {@link #getFlyweightTuple(int)}. 
+ * invocation of {@link #getFlyweightTuple(int)}. Call {@link Tuple2D#copy()}
+ * to obtain a persistent tuple.
  * <p>
  * A multiresolution dataset is a dataset consisting of multiple levels, with
  * level 0 being the bottom most level containing the original datasets. Levels
@@ -35,6 +34,8 @@ import org.timepedia.exporter.client.NoExport;
  * of former levels, so that the height of the pyramid is
  * <tt>log_2(num_samples)</tt>.
  *
+ * @gwt.exportPackage chronoscope
+ * @gwt.export
  */
 @ExportPackage("chronoscope")
 @Export
@@ -55,7 +56,8 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    * @return a MipMap and pair of start and end indices in the MipMap
    */
   @NoExport
-  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias);
+  MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int
+      lodBias);
 
   /**
    * Returns an interval that contains the minimum and maximum domain values
@@ -81,7 +83,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   double getMinDomainInterval();
 
   /**
-   * Provides access to the ordered set of {@link MipMapChain} objects, which
+   * Provides access to the ordered set of {@link MipMap} objects, which
    * represent this dataset at decreasing levels of resolution.
    */
   @NoExport
@@ -93,7 +95,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   int getNumSamples();
 
   /**
-   * The min/max range values that {@link  org.timepedia.chronoscope.client.axis.RangeAxis} will use as its bounds for computing
+   * The min/max range values that {@link RangeAxis} will use as its bounds for computing
    * the range tick values.  If null, then the actual min/max range values of this dataset
    * will be used instead.
    */
@@ -101,7 +103,7 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   Interval getPreferredRangeAxisInterval();
 
   /**
-   * Returns a key representing the preferred {@link org.timepedia.chronoscope.client.render.DatasetRenderer} to use when
+   * Returns a key representing the preferred {@link DatsetRenderer} to use when
    * drawing this dataset.
    */
   @Deprecated
@@ -135,11 +137,4 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   @NoExport
   void setUserData(String key, Object val);
 
-  /**
-   * Enables a dataset to support on-the-fly incremental loading/reloading by invoking a callback when
-   * a given range of data is requested for display. The provided handler may request additional data from the
-   * server for this range and return new data.
-   */
-  @Export
-  void setIncrementalHandler(IncrementalHandler handler);
 }

@@ -1,47 +1,130 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>org.timepedia.chronoscope</groupId>
-    <artifactId>chronoscope-project</artifactId>
-    <version>2.0-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.timepedia.chronoscope</groupId>
+        <artifactId>chronoscope-project</artifactId>
+        <version>1.0</version>
+    </parent>
 
-  <artifactId>chronoscope-api</artifactId>
-  <packaging>jar</packaging>
-  <name>Chronoscope Chart API</name>
+    <artifactId>chronoscope-api</artifactId>
+    <packaging>jar</packaging>
+    <name>Chronoscope Chart API</name>
+    <url>http://timepedia.org/chronoscope</url>
+    <dependencies>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>2.0</version>
-    </dependency>
-  </dependencies>
+      <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <version>${gwtversion}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwtversion}</version>
+            <scope>provided</scope>
+        </dependency>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-    </plugins>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/java</directory>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>${basedir}/src/test/java</directory>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/src/test/resources</directory>
-      </testResource>
-    </testResources>
-  </build>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.timepedia.exporter</groupId>
+            <artifactId>gwtexporter</artifactId>
+            <version>[2.0.10,]</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>2.0</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+<!--            
+	    <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+            <finalName>js</finalName>
+            <doclet>org.timepedia.chronoscope.doclet.ChronoscopeDoclet</doclet>
+            <docletArtifact>
+            <groupId>org.timepedia.chronoscope</groupId>
+            <artifactId>chronoscope-api</artifactId>
+            <version>1.0</version>
+            </docletArtifact>
+            <destDir>apidocs</destDir>
+            </configuration>
+
+            <executions>
+            <execution>
+            <id>attach-jsdocs</id>
+            <goals>
+            <goal>jar</goal>
+            </goals>
+            </execution>
+            </executions>
+            </plugin>
+-->
+        </plugins>
+
+        <!--<finalName>chronoscope</finalName>-->
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/java</directory>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/java</directory>
+            </testResource>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+            </testResource>
+
+        </testResources>
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.8</version>
+            </extension>
+        </extensions>
+
+    </build>
+
 </project>

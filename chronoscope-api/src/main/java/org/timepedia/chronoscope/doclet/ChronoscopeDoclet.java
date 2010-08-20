@@ -79,9 +79,6 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     HtmlDocletWriter writer = new HtmlDocletWriter(configuration, "jsdoc.html");
 
     writer.html();
-    writer.head();
-    writer.link("rel='stylesheet' type='text/css' href='jsdoc.css'");
-    writer.headEnd();
     writer.body("white", true);
     for (ClassDoc clz : rootDoc.classes()) {
       if (isExportable(clz)) {
@@ -102,9 +99,12 @@ public class ChronoscopeDoclet extends HtmlDoclet {
           continue;
         }
 
-        String className = getExportedName(clz, false);
-        writer.h2("<div id=" + className + ">"+ getExportedPackage(clz) + "." + className + "</div>");
-        writer.println("<div class=jsdocText>" + filter(clz.commentText()) + "</div>");
+        writer.h3("Package: " + getExportedPackage(clz));
+        writer.h2("Class " + getExportedName(clz));
+        writer.println(filter(clz.commentText()));
+        writer.br();
+        writer.br();
+
         writer.table(1, "100%", 0, 0);
 
         boolean firstcon = true;
@@ -113,36 +113,33 @@ public class ChronoscopeDoclet extends HtmlDoclet {
           if (isExportable(cd)) {
             if (firstcon) {
               writer.tr();
-              writer.tdColspanBgcolorStyle(2, "", "jsdocHeader");
+              writer.tdColspanBgcolorStyle(2, "lightblue", "jsdocHeader");
               writer.print("Constructors");
               firstcon = false;
               writer.tdEnd();
               writer.trEnd();
             }
             writer.tr();
-            writer.tdVAlignClass("top", "jsdocRetType");
-            writer.print("&nbsp");
+            writer.td();
             writer.tdEnd();
             writer.tdVAlignClass("top", "jsdocMethod");
-            writer.print("<span class=jsdocMethodName>" + cd.name() + "</span>(");
+            writer.print("<b class=jsdocMethodName>" + cd.name() + "</b>(");
             writeParameters(writer, cd.parameters());
             writer.print(")");
             writer.br();
-            writer.print("<span class=jsdocComment>"
+            writer.print("&nbsp;&nbsp;&nbsp;&nbsp;<span class=jsdocComment>"
                 + filter(cd.commentText()) + "</span>");
 
             writer.tdEnd();
             writer.trEnd();
           }
         }
-        
-        firstcon = true;
 
         for (MethodDoc cd : clz.methods()) {
           if (isExportable(cd)) {
             if (firstcon) {
               writer.tr();
-              writer.tdColspanBgcolorStyle(2, "", "jsdocHeader");
+              writer.tdColspanBgcolorStyle(2, "lightblue", "jsdocHeader");
               writer.print("Methods");
               firstcon = false;
               writer.tdEnd();
@@ -150,8 +147,7 @@ public class ChronoscopeDoclet extends HtmlDoclet {
             }
             writer.tr();
             writer.tdVAlignClass("top", "jsdocRetType");
-            writer.print(getExportedName(cd.returnType(), true));
-
+            writer.print(getExportedName(cd.returnType()));
             writer.tdEnd();
             writer.tdVAlignClass("top", "jsdocMethod");
             writer.print(
@@ -160,7 +156,7 @@ public class ChronoscopeDoclet extends HtmlDoclet {
             writeParameters(writer, cd.parameters());
             writer.print(")");
             writer.br();
-            writer.print("<span class=jsdocComment>"
+            writer.print("&nbsp;&nbsp;&nbsp;&nbsp;<span class=jsdocComment>"
                 + filter(cd.commentText()) + "</span>");
             writer.tdEnd();
             writer.trEnd();
@@ -177,11 +173,12 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     writer.flush();
     writer.close();
     generateGss(rootDoc, classTree);
-    generateGssWiki(rootDoc, classTree);
   }
-  
+
   private String getExportedName(MethodDoc cd) {
+
     String ename = cd.name();
+
     for (AnnotationDesc a : cd.annotations()) {
       if (a.annotationType().name().equals("Export")) {
         for (AnnotationDesc.ElementValuePair p : a.elementValues()) {
@@ -193,22 +190,36 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     return ename.replaceAll("\"", "");
   }
 
-  protected String filter(String s) {
+  private String filter(String s) {
     if (s.startsWith("Created")) {
       return "";
     }
-    s = s.replaceAll("(?s)\\{@link\\s[^\\}]*?#(.+)\\}", "$1");
-    s = s.replaceAll("(?s)\\{@link\\s[^\\}]*?([^\\.\\}]+)\\}", "<a href=#$1>$1</a>");
     return s;
   }
 
-  private String getExportedName(Type clz, boolean link) {
-    return clz.isPrimitive() ? "void".equals(clz.typeName()) ? "&nbsp;" 
-        : clz.typeName() : getExportedName(clz.asClassDoc(), link);
+  private String getExportedName(Type clz) {
+    return clz.isPrimitive() ? clz.typeName()
+        : getExportedName(clz.asClassDoc());
   }
 
   private void writeParameters(HtmlDocletWriter writer, Parameter[] ps) {
     writer.print(getParameterString(ps));
+  }
+
+  private String getParameterString(Parameter[] ps) {
+    String result = "";
+    for (int i = 0; i < ps.length; i++) {
+      Type type = ps[i].type();
+      String ename = type.isPrimitive() ? type.typeName()
+          : getExportedName(type.asClassDoc());
+      result += "<span class=jsdocParameterType>" + ename
+          + "</span> <span class=jsdocParameterName>" + ps[i].name()
+          + "</span>";
+      if (i < ps.length - 1) {
+        result += ", ";
+      }
+    }
+    return result;
   }
 
   private boolean isExportable(ConstructorDoc cd) {
@@ -250,7 +261,9 @@ public class ChronoscopeDoclet extends HtmlDoclet {
   }
 
   private boolean isExported(ClassDoc clz) {
+
     for (AnnotationDesc a : clz.annotations()) {
+
       String aname = a.annotationType().name();
       if (aname.equals("Export") || aname.equals("ExportClosure")) {
         return true;
@@ -259,7 +272,7 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     return false;
   }
 
-  private String getExportedName(ClassDoc clz, boolean link) {
+  private String getExportedName(ClassDoc clz) {
     if (clz == null) {
       return "";
     }
@@ -267,8 +280,6 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     PackageDoc cpkg = clz.containingPackage();
     String pkg = cpkg == null ? "" : (cpkg.name() + ".");
     String name = clz.name();
-    
-    boolean isClosure = false;
 
     for (AnnotationDesc a : clz.annotations()) {
       if (a.annotationType().name().equals("ExportPackage")) {
@@ -284,7 +295,6 @@ public class ChronoscopeDoclet extends HtmlDoclet {
         }
       }
       if (a.annotationType().name().equals("ExportClosure")) {
-        isClosure = true;
         name = "<i class=jsdocClosureFunc>function</i>(";
         name += getParameterString(clz.methods()[0].parameters());
         name += ")";
@@ -292,26 +302,7 @@ public class ChronoscopeDoclet extends HtmlDoclet {
       }
     }
     pkg = pkg.replaceAll("\"", "");
-    if (link && !isClosure && !"String".equals(name)) {
-      name = "<a href=#" + name + ">" + name + "</a>";  
-    }
     return name;
-  }
-  
-  private String getParameterString(Parameter[] ps) {
-    String result = "";
-    for (int i = 0; i < ps.length; i++) {
-      Type type = ps[i].type();
-      String ename = getExportedName(type, true);
-      String pname =  ename.contains("function") ? "{}" : ps[i].name();
-      result += "<span class=jsdocParameterType>" + ename
-          + "</span> <span class=jsdocParameterName>" + pname
-          + "</span>";
-      if (i < ps.length - 1) {
-        result += ", ";
-      }
-    }
-    return result;
   }
 
   private String getExportedPackage(ClassDoc clz) {
@@ -332,6 +323,14 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     }
     pkg = pkg.replaceAll("\"", "");
     return pkg;
+  }
+
+  private static void printClass(ClassDoc clz) {
+    p(clz.name());
+  }
+
+  private static void p(String str) {
+    System.out.println(str);
   }
 
   private static boolean isExportable(ClassDoc clz) {
@@ -357,20 +356,4 @@ public class ChronoscopeDoclet extends HtmlDoclet {
     writer.flush();
     writer.close();
   }
-
-  protected void generateGssWiki(RootDoc rootDoc, ClassTree classTree)
-      throws Exception {
-    final HtmlDocletWriter writer = new HtmlDocletWriter(configuration,
-        "gssdoc.wiki");
-    GssWikiDocGenerator gss = new GssWikiDocGenerator() {
-      @Override
-      protected void p(String str) {
-        writer.write(str);
-      }
-    };
-    gss.generateGssDocs();
-    writer.flush();
-    writer.close();
-  }
-
 }

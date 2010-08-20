@@ -34,17 +34,11 @@ public class PlotFocusEvent extends PlotEvent<PlotFocusHandler> implements Expor
   
   @Export
   public double getDomain() {
-    if (focusDataset < 0 || focusPoint < 0) {
-        return Double.NaN;
-    }
     return getPlot().getDataX(focusDataset, focusPoint);
   }
       
   @Export
   public double getRange() {
-    if (focusDataset < 0 || focusPoint < 0) {
-        return Double.NaN;
-    }      
     return getPlot().getDataY(focusDataset, focusPoint);
   }
   

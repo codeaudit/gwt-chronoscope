@@ -98,7 +98,8 @@ public class ZoomInterval implements Comparable<ZoomInterval> {
   }
   
   /**
-   * Returns the width in pixels of the {@link #getName()} string.
+   * Returns the width of the {@link #getName()} string, whic
+   * @return
    */
   public int getPixelWidth() {
     return this.pixelWidth;

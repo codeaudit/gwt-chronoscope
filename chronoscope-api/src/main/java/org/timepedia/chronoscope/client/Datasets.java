@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client;
 
 import com.google.gwt.user.client.Command;
 
-import org.timepedia.chronoscope.client.data.AbstractDataset;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -43,8 +42,6 @@ public final class Datasets<T extends Tuple2D>
 
   private int mutating = 0;
 
-  private List<Command> pending = new ArrayList<Command>();
-
   /**
    * Constructs an empty dataset container.
    */
@@ -79,7 +76,6 @@ public final class Datasets<T extends Tuple2D>
   public void addPrivate(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
     datasets.add(dataset);
-    ((AbstractDataset)dataset).setDatasets(this);
     if (dataset instanceof MutableDataset) {
       ((MutableDataset) dataset).addListener(this.myDatasetListener);
     }
@@ -105,7 +101,7 @@ public final class Datasets<T extends Tuple2D>
   }
 
   /**
-   * Disables mutation mode and fires all pending change events.
+   * Disables mutation mode and fires all pending change events..
    */
   @Export
   public void endMutation() {
@@ -257,9 +253,7 @@ public final class Datasets<T extends Tuple2D>
     }
   }
 
-  public void fireChanged(Dataset dataset, Interval region) {
-     myDatasetListener.onDatasetChanged(dataset, region.getStart(), region.getEnd());
-  }
+  private List<Command> pending = new ArrayList<Command>();
 
   private final class PrivateDatasetListener<S extends Tuple2D>
       implements DatasetListener<S> {

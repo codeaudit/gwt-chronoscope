@@ -5,6 +5,7 @@ import org.timepedia.exporter.client.ExportClosure;
 /**
  * Interface used by tasks that want to be scheduled by a PortableTimer
  *
+ * @gwt.exportClosure
  */
 @ExportClosure
 public interface PortableTimerTask {

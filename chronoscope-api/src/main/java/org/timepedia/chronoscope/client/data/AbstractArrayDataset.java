@@ -8,7 +8,6 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MinIntervalArrayFunction;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
 
@@ -21,15 +20,14 @@ import java.util.List;
  *
  * @author Chad Takahashi
  */
-@ExportPackage("chronoscope")
 public abstract class AbstractArrayDataset<T extends Tuple2D>
     extends AbstractDataset<T> implements Exportable {
 
   protected MipMapChain mipMapChain;
 
   /**
-   * Stores the min/max range values for each tuple coordinate in 
-   * {@link #rawData}.
+   * Stores the min/max range values for each tuple coordinate in {@link
+   * #mmRangeTuple}.
    */
   protected Interval[] rangeIntervals;
 
@@ -132,7 +130,8 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
 
     if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.
-      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq;
+      DatasetRequest.MultiRes multiResReq = (DatasetRequest.MultiRes) datasetReq
+          ;
       Array2D mipMappedDomain = multiResReq.getMultiresDomain();
       List<Array2D> mipMappedRangeTuples = multiResReq.getMultiResRangeTuples();
       mipMapChain = createMipMapChain(mipMappedDomain, mipMappedRangeTuples);

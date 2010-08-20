@@ -5,7 +5,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
 /**
  * Facilitates setting of date fields via method chaining.
  * 
- * @see ChronoDate#set()
+ * @see {@link ChronoDate#set()}.
  * 
  * @author chad takahashi
  */

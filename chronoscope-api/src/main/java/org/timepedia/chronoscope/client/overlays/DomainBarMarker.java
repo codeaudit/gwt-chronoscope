@@ -23,6 +23,7 @@ import java.util.Date;
  * An overlay which renders highlighted regions spanning the entire Y dimensions
  * of the plot over a given domain region
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class DomainBarMarker implements Exportable, Overlay, GssElement {
@@ -52,6 +53,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   /**
+   * @gwt.export
    */
   @Export
   public DomainBarMarker(String startDate, String endDate, String label) {
@@ -63,6 +65,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   /**
+   * @gwt.export
    */
   @Export
   public DomainBarMarker(String startDate, String endDate, String label,
@@ -85,6 +88,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
   }
 
   /**
+   * @gwt.export addOverlayListener
    */
   @Export("addOverlayListener")
   public void addOverlayClickListener(OverlayClickListener ocl) {

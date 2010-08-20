@@ -132,7 +132,6 @@ public class MockGssContext extends GssContext {
     p.fontSize = "12pt";
     p.transparency = 0.4;
     p.lineThickness = 2;
-    p.visible = true;
   }
   
   private void configPointProps(GssProperties p, GssElement elt, String pseudoElt) {

@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayNumber;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -15,8 +13,8 @@ import java.util.NoSuchElementException;
  * Represents a version of a {@link Dataset} at a decreased level
  * of resolution.
  * 
- * @see MipMapChain
- * @see Dataset#getMipMapChain()
+ * @see {@link MipMapChain}
+ * @see {@link Dataset#getMipMapChain()}
  * 
  * @author chad takahashi
  */
@@ -37,8 +35,8 @@ public class MipMap {
     this.rangeTuples = rangeTuples;
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
-    
-  public MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
+  
+  MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
     ArgChecker.isNotNull(multiResDomain, "multiResDomain");
     ArgChecker.isNotNull(multiResRangeTuple, "multiResRangeTuple");
     ArgChecker.isNonNegative(mipLevel, "mipLevel");
@@ -52,13 +50,7 @@ public class MipMap {
     }
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
-
-  public MipMap(Array1D domain, Array1D[] range, int mipLevel, MipMap next) {
-    this(domain, range);
-    this.mipLevel = mipLevel;
-    this.nextMipMap = next;
-  }
-
+  
   /**
    * Returns the array of domain values within this {@link MipMap}.
    */
