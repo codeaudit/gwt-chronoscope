@@ -20,13 +20,10 @@ import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.browser.GwtView;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.MockGssProperties;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
-import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
@@ -37,6 +34,7 @@ import java.util.Date;
  * A realization of a View on the browser using a Flash helper based on
  * ASCanvas
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class FlashView extends GwtView
@@ -118,8 +116,6 @@ public class FlashView extends GwtView
     exporter.export();
     Exporter exporter2 = (Exporter) GWT.create(BrowserInfoWindow.class);
     exporter2.export();
-     Exporter exporter3 = (Exporter) GWT.create(MockGssProperties.class);
-    exporter3.export();
   }
 
   /**
@@ -220,20 +216,6 @@ public class FlashView extends GwtView
       return ((FlashCanvas) layer).getElement();
     }
     return null;
-  }
-
-  @Export
-  @Override
-  public void resize(int width, int height) {
-    super.resize(width, height);
-    initialize(element, width, height, true, gssContext,
-        new ViewReadyCallback() {
-          @Override
-          public void onViewReady(View view) {
-            view.getChart().reloadStyles();
-          }
-        });
-    onAttach();
   }
 
   protected void initContainer(Element element, int width, int height) {

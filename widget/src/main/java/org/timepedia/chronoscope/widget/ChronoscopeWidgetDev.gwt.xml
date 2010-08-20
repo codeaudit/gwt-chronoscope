@@ -1,24 +1,15 @@
-<!-- module rename-to="widget" -->
 <module>
+
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="org.timepedia.chronoscope.Chronoscope"/>
 
     <entry-point class='org.timepedia.chronoscope.widget.client.ChronoscopeWidget'/>
 
-    <!-- set-property name="user.agent" value="safari"/ -->
-    <!-- set-property name="hasflash" value="force"/ -->
+    <!-- duplicated from Chronoscope.gwt.xml because for some reason, the GWT mergewebxml task says 'no servlets found', it's not inheriting correctly -->
+    <servlet path="/fr"
+             class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+    <add-linker name="xs"/>
+    <set-property name="user.agent" value="safari"/>
     <set-property name="hasflash" value="yes"/>
     <set-property name="export" value="yes"/>
-
-    <!-- normal mac dev, safari, no flash -->
-    <!-- set-property name="user.agent" value="safari"/-->
-    <!-- set-property name="hasflash" value="no"/ -->
-    <!-- set-property name="export" value="no"/ -->
-
-    <!-- IE from mac, not safari, yes flash -->
-    <!-- comment out user.agent above -->
-    <!-- set-property name="hasflash" value="yes"/ -->
-    <!-- set-property name="export" value="yes"/ -->
-
-
 </module>

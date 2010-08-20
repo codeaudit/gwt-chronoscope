@@ -5,7 +5,6 @@
 
   <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemo'/>
 
-<!--
   <replace-with class="org.timepedia.chronoscopesamples.client.ShawnGssContext">
     <when-type-is
         class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
@@ -13,7 +12,6 @@
       <when-property-is name="user.agent" value="ie6"/>
     </none>
   </replace-with>
--->
 </module>
 
         

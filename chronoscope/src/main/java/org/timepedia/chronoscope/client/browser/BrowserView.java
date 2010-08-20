@@ -5,9 +5,9 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
@@ -15,13 +15,10 @@ import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.gss.MockGssProperties;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
-import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
@@ -32,6 +29,7 @@ import java.util.Date;
  * A realization of a View on the browser using Safari JavaScript CANVAS and DOM
  * Level 2 CSS
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
 public class BrowserView extends GwtView
@@ -113,14 +111,11 @@ public class BrowserView extends GwtView
     exporter.export();
     Exporter exporter2 = (Exporter) GWT.create(BrowserInfoWindow.class);
     exporter2.export();
-    Exporter exporter3 = (Exporter) GWT.create(MockGssProperties.class);
-    exporter3.export();
   }
 
   /**
    * Overridden to disable double buffering
    */
-  @Override
   public void flipCanvas() {
   }
 
@@ -216,20 +211,6 @@ public class BrowserView extends GwtView
       return ((BrowserCanvas) layer).getElement();
     }
     return null;
-  }
-
-  @Export
-  @Override
-  public void resize(int width, int height) {
-    super.resize(width, height);
-    initialize(element, width, height, true, gssContext,
-        new ViewReadyCallback() {
-          @Override
-          public void onViewReady(View view) {
-            view.getChart().reloadStyles();
-          }
-        });
-    onAttach();
   }
 
   protected void initContainer(Element element, int width, int height) {

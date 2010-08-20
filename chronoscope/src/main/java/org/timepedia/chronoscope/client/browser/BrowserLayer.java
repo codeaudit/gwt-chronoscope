@@ -144,30 +144,6 @@ public class BrowserLayer extends DomTextLayer {
     return bounds;
   }
 
-  @Override
-  protected int canvasStringWidth(String label, String fontFamily,
-      String fontWeight, String fontSize) {
-    return csw(ctx, label, fontSize + " "+ fontFamily);
-  }
-
-  private native int csw(JavaScriptObject ctx, String label, String font) /*-{
-    ctx.font = font;
-    return ctx.measureText(label).width;
-  }-*/;
-
-  @Override
-  protected void fillText(String label, double x, double y, String fontFamily,
-      String fontSize, String baseline) {
-    fillText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
-  }
-
-  private native void fillText0(JavaScriptObject ctx, String label, double x,
-      double y, String font, String baseline) /*-{
-    ctx.font = font;
-    ctx.textBaseline = baseline;
-    ctx.fillText(label, x, y);
-  }-*/;
-
   public Element getElement() {
     return canvas;
   }
@@ -225,15 +201,6 @@ public class BrowserLayer extends DomTextLayer {
     rect0(ctx, x, y, width, height);
   }
 
-  @Override
-  public void rotate(double angle) {
-    rotate0(ctx, angle);
-  }
-  
-  private native void rotate0(JavaScriptObject ctx, double angle) /*-{
-    ctx.rotate(angle);
-  }-*/;
-
   public void restore() {
     restore0(ctx);
   }
@@ -246,8 +213,8 @@ public class BrowserLayer extends DomTextLayer {
       assert sx > 0.0 : "Scale X is zero";
       assert sy > 0.0 : "Scale Y is zero";
       scale0(sx, sy);
+
   }
-  
   public native void scale0(double sx, double sy) /*-{
         this.@org.timepedia.chronoscope.client.browser.BrowserLayer::ctx.scale(sx, sy);
     }-*/;
@@ -382,7 +349,7 @@ public class BrowserLayer extends DomTextLayer {
     DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "width", "" + b.width + "px");
     DOM.setStyleAttribute(canvas, "height", "" + b.height + "px");
-    DOM.setStyleAttribute(canvas, "position", "relative");
+    DOM.setStyleAttribute(canvas, "position", "absolute");
     DOM.setStyleAttribute(layerContainer, "visibility", "visible");
     DOM.setStyleAttribute(layerContainer, "position", "absolute");
 

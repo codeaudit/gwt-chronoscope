@@ -159,7 +159,7 @@ public class CanvasJava2D extends Canvas {
     for (Layer l : layers) {
       Bounds b = l.getBounds();
 
-      if (l.isVisible() /* && !"rootLayer".equals(l.getLayerId()) && ("plotLayer".equals(l.getLayerId()) || "verticalAxis".equals(l.getLayerId()) ||
+      if (l.isVisible()  /* && !"rootLayer".equals(l.getLayerId()) && ("plotLayer".equals(l.getLayerId()) || "verticalAxis".equals(l.getLayerId()) ||
             "domainAxis".equals(l.getLayerId()) || "topLayer".equals(l.getLayerId())) */) {
         //    if(l.getLayerId().startsWith("highlight")) break;
 //                System.out.println("layer " + l.getLayerId());

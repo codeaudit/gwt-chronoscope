@@ -1,9 +1,10 @@
 package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.gen2.event.dom.client.KeyPressHandler;
+import com.google.gwt.gen2.event.dom.client.KeyPressEvent;
+import com.google.gwt.core.client.GWT;
 
 import org.timepedia.chronoscope.client.Chart;
 
@@ -31,7 +32,7 @@ public class ChartKeyPressHandler
     int keyCode = event.getCharCode();
     boolean handled = true;
     if (keyCode == KEY_TAB) {
-      handled = handleTabKey((Event)event.getNativeEvent(), chartInfo, keyCode, event.isShiftKeyDown());
+      handled = handleTabKey(event.getNativeEvent(), chartInfo, keyCode, event.isShiftKeyDown());
     } else if (keyCode == KEY_Z) {
       chart.nextZoom();
     } else if (keyCode == KEY_X) {

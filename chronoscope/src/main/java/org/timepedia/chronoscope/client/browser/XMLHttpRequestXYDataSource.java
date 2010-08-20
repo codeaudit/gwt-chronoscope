@@ -6,7 +6,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 
-import org.timepedia.chronoscope.client.browser.AbstractXYDataSource;
+import org.timepedia.chronoscope.client.data.AbstractXYDataSource;
 import org.timepedia.chronoscope.client.data.DataSourceCallback;
 
 /**

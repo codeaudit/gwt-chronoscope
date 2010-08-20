@@ -2,8 +2,8 @@ package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.gen2.event.dom.client.KeyUpHandler;
+import com.google.gwt.gen2.event.dom.client.KeyUpEvent;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;
@@ -22,7 +22,7 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
   public void onKeyUp(KeyUpEvent event) {
     ChartState chartInfo = getChartState(event);
     Chart chart = chartInfo.chart;
-    int keyCode = event.getNativeKeyCode();
+    int keyCode = event.getKeyCode();
     boolean handled = false;
 
     if (isPageUp(keyCode)) {

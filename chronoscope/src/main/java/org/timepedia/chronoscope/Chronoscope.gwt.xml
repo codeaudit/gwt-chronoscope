@@ -4,13 +4,16 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.gwt.http.HTTP'/>
   <inherits name='com.google.gwt.i18n.I18N'/>
-  <inherits name="com.google.gwt.inject.Inject"/>
-  <inherits name="org.timepedia.chronoscope.ChronoscopeAPI"/>
-  <!-- inherits name="com.google.gwt.user.theme.chrome.Chrome"/ -->
+  <!-- need immutable resource bundle for flash -->
+  <inherits name="com.google.gwt.gen2.event.Event"/>
+  <inherits name="com.google.gwt.widgetideas.WidgetIdeas"/>
+  
+  <inherits name='com.google.gwt.libideas.StyleInjector'/>
+  <!--<inherits name="com.google.gwt.libideas.VirtualEvent"/>-->
    
  <inherits name='org.timepedia.exporter.Exporter'/>
 
-
+   
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
     if(window.location.href.indexOf("_force_flash") != -1) return "force";      
@@ -30,8 +33,12 @@
     ]]>
   </property-provider>
 
+  <servlet path="/fr"
+           class="org.timepedia.chronoscope.server.servlet.FontRenderer"/>
+
   <replace-with class="org.timepedia.chronoscope.client.browser.GssStyleElementGssContext">
-    <when-type-is class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
+    <when-type-is
+        class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
   </replace-with>
   
   <replace-with class="org.timepedia.chronoscope.client.browser.BrowserView">
@@ -45,16 +52,13 @@
     <when-property-is name="hasflash" value="yes"/>
   </replace-with>
 
-  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
-    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
-    <when-property-is name="user.agent" value="ie8"/>
-    <when-property-is name="hasflash" value="yes"/>
-  </replace-with>       <!-- TODO - test in ie8 -->
 
-  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+  <replace-with
+      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="hasflash" value="force"/>
   </replace-with>
+
  
   <set-property name="export" value="yes"/>
   <!--<set-property name="hasflash" value="yes"/>-->
@@ -70,6 +74,4 @@
   </replace-with>
 
 
-
-  <stylesheet src="theme/chrome/chrome.css" />
 </module>

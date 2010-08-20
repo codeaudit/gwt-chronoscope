@@ -1,40 +1,79 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>0.86-SNAPSHOT</version>
   </parent>
 
   <name>Chronoscope Chart Samples</name>
   <artifactId>chronoscopesamples</artifactId>
-  <packaging>war</packaging>
-
+  <packaging>jar</packaging>
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>chronoscope</artifactId>
       <version>${version}</version>
+      <type>jar</type>
     </dependency>
+
   </dependencies>
-
-  <properties>
-    <gwt.module>org.timepedia.chronoscopesamples.ChronoscopeSamples</gwt.module>
-  </properties>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-dev</artifactId>
+                  <version>${gwtversion}</version>
+                  <classifier>${gwtplatform}-libs</classifier>
+                  <type>zip</type>
+                  <outputDirectory>
+                     ${user.home}/.m2/repository/com/google/gwt/gwt-dev/${gwtversion}
+                  </outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
+        <groupId>com.totsp.gwt</groupId>
+        <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+        <version>2.0-beta24</version>
         <configuration>
-          <skip>true</skip>
+          <gwtVersion>${gwtversion}</gwtVersion>
+          <logLevel>${gwt.loglevel}</logLevel>
+          <runTarget>
+            org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}/index.html
+          </runTarget>
+          <compileTargets>
+            <value>
+              org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}
+            </value>
+          </compileTargets>
+          <style>${gwt.outputstyle}</style>
         </configuration>
+        <executions>
+          <execution>
+            <id>compilegwt</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

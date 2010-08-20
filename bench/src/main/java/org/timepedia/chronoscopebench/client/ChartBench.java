@@ -44,7 +44,7 @@ public class ChartBench implements EntryPoint {
 
   private FlexTable benchTable;
   
-  private MockDatasetFactory mockDsFactory;
+  private MockDatasetFactory mockDsFactory = new MockDatasetFactory();
   
   private static native JsonDatasetJSO getJson(String varName) /*-{
        return $wnd[varName];   
@@ -60,9 +60,9 @@ public class ChartBench implements EntryPoint {
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(false);
       Chronoscope.initialize();
-      mockDsFactory = new MockDatasetFactory(Chronoscope.get().getComponentFactory().getDatasetFactory());
+
       final Dataset[] ds = new Dataset[2];
-      ds[0] = Chronoscope.get().getDatasetReader().createDatasetFromJson(new GwtJsonDataset(getJson("unratedata")));
+      ds[0] = DatasetReader.createDatasetFromJson(new GwtJsonDataset(getJson("unratedata")));
       ds[1] = mockDsFactory.getBasicDataset();
       final ChartPanel chartPanel = Chronoscope
           .createTimeseriesChart(ds, chartWidth, chartHeight);

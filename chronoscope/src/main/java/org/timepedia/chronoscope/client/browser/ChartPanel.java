@@ -15,10 +15,8 @@ import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
-@ExportPackage("chronoscope")
 public class ChartPanel extends Composite implements Exportable {
   private Element domElement;
   private PlotPanel plotPanel;
@@ -50,7 +48,7 @@ public class ChartPanel extends Composite implements Exportable {
   }
   
   public void setViewReadyCallback(ViewReadyCallback callback) {
-    setReadyListener(callback);
+    this.viewReadyCallback = callback;
   }
   
   protected XYPlot createPlot(Dataset[] datasetArray) {
@@ -67,6 +65,7 @@ public class ChartPanel extends Composite implements Exportable {
   }
 
   /**
+   * @gwt.export
    */
   @Export
   public Chart getChart() {
@@ -86,12 +85,7 @@ public class ChartPanel extends Composite implements Exportable {
   }
 
   public void setReadyListener(ViewReadyCallback viewReadyCallback) {
-    if(plotPanel == null) {
-      this.viewReadyCallback = viewReadyCallback;
-    }
-    else {
-      plotPanel.setReadyListener(viewReadyCallback);
-    }
+    plotPanel.setReadyListener(viewReadyCallback);
   }
 
 }

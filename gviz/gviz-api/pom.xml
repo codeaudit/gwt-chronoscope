@@ -1,25 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-gviz-project</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>0.86-SNAPSHOT</version>
   </parent>
 
   <name>Chronoscope GViz API</name>
   <artifactId>gviz-api</artifactId>
   <packaging>jar</packaging>
-
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>chronoscope</artifactId>
       <version>${version}</version>
+      <type>jar</type>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>

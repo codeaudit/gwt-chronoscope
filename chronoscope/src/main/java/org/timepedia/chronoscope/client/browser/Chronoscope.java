@@ -4,26 +4,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-
-import org.timepedia.chronoscope.client.ChronoscopeComponentFactory;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
-import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
-import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYDataSource;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
@@ -32,8 +20,6 @@ import org.timepedia.chronoscope.client.browser.theme.chrome.ThemeStyleInjector;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.ArrayDataset2D;
-import org.timepedia.chronoscope.client.data.IncrementalDatasetResponseImpl;
-import org.timepedia.chronoscope.client.data.MutableDatasetND;
 import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.overlays.DomainBarMarker;
 import org.timepedia.chronoscope.client.overlays.Marker;
@@ -41,8 +27,6 @@ import org.timepedia.chronoscope.client.overlays.RangeBarMarker;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.LineXYRenderer;
-import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
-import org.timepedia.chronoscope.client.render.domain.IntTickFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -54,108 +38,38 @@ import org.timepedia.exporter.client.ExporterUtil;
  * exports methods that can be used by both Java and JS to create and configure
  * charts, as well as being a global sink for History events.
  *
+ * @gwt.exportPackage chronoscope
  */
 @ExportPackage("chronoscope")
-@Singleton
-public class Chronoscope
-    extends org.timepedia.chronoscope.client.Chronoscope<ChartPanel>
-    implements Exportable {
-
-  private DatasetReader datasetReader;
-
-  protected static ChronoscopeBrowserInjector injector;
-
-  private static boolean alreadyRan;
-
-  @GinModules(ChronoscopeBrowserModule.class)
-  public interface ChronoscopeBrowserInjector extends Ginjector {
-
-    org.timepedia.chronoscope.client.Chronoscope<ChartPanel> get();
-
-    ComponentFactory getComponentFactory();
-  }
-
-  public static class ChronoscopeBrowserModule extends AbstractGinModule {
-
-    public void configure() {
-      try {
-        bind(
-            new TypeLiteral<org.timepedia.chronoscope.client.Chronoscope<ChartPanel>>() {
-            }).toProvider(ChronoscopeProvider.class).in(Singleton.class);
-        bind(ComponentFactory.class).to(ChronoscopeComponentFactory.class);
-        bind(URLResolver.class).to(NopURLResolver.class);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  public static class ChronoscopeProvider implements Provider<Chronoscope> {
-
-    private DatasetReader reader;
-
-    private URLResolver resolver;
-
-    @Inject
-    public ChronoscopeProvider(DatasetReader reader, URLResolver resolver) {
-      this.reader = reader;
-      this.resolver = resolver;
-    }
-
-    public Chronoscope get() {
-      Chronoscope c = new Chronoscope();
-      c.setDatasetReader(reader);
-      c.setUrlResolver(resolver);
-      c.init();
-      return c;
-    }
-  }
-
-  public static Chronoscope get() {
-    ChronoscopeInjector injector = getBrowserInjector();
-    return (Chronoscope) injector.get();
-  }
-
-  private static ChronoscopeInjector getBrowserInjector() {
-    if (injector == null) {
-      injector = GWT.create(ChronoscopeBrowserInjector.class);
-    }
-    return new ChronoscopeInjector() {
-      public org.timepedia.chronoscope.client.Chronoscope get() {
-        return injector.get();
-      }
-
-      public ComponentFactory getComponentFactory() {
-        return injector.getComponentFactory();
-      }
-    };
-  }
-
-  @Override
-  public ChartPanel createChart(Datasets datasets, int width, int height,
-      ViewReadyCallback callback) {
-    return createChartPanel((Element) null, datasets.toArray(), width, height,
-        callback);
-  }
-
-  @Override
-  protected org.timepedia.chronoscope.client.Chronoscope.ChronoscopeInjector<ChartPanel> getInjector() {
-    return getBrowserInjector();
-  }
+public class Chronoscope implements Exportable {
 
   public interface URLResolver {
 
     public String resolveURL(String url);
   }
 
-  public static class NopURLResolver implements URLResolver {
+  static class NopURLResolver implements URLResolver {
 
     public String resolveURL(String url) {
       return url;
     }
   }
 
-  URLResolver urlResolver;
+  /**
+   * @gwt.export
+   */
+  @Export
+  public static final int RENDERER_XYLINE = 0;
+
+  /**
+   * @gwt.export
+   */
+  @Export
+  public static final int RENDERER_XYBAR = 1;
+
+  public static final int IMMUTABLE = 0, APPENDABLE = 1, RANGEMUTABLE = 2;
+
+  static URLResolver urlResolver = new NopURLResolver();
 
   private static Theme currentTheme;
 
@@ -173,6 +87,7 @@ public class Chronoscope
    * A factory function to create a vertical marker given start and end dates,
    * and a label;
    *
+   * @gwt.export
    */
   @Export
   public static DomainBarMarker createBarMarker(String startDate,
@@ -181,20 +96,10 @@ public class Chronoscope
   }
 
   /**
-   * A factory function to create a vertical marker given start and end dates,
-   * and a label with a gss class.
-   *
-   */
-  @Export
-  public static DomainBarMarker createBarMarkerWithClass(String startDate,
-      String endDate, String label, String gssClass) {
-    return new DomainBarMarker(startDate, endDate, label, gssClass);
-  }
-
-  /**
    * A factory function to create a horizontal span marker between two range
    * values, with a given label.
    *
+   * @gwt.export
    */
   @Export
   public static RangeBarMarker createHorizontalBarMarker(double rangeLow,
@@ -209,6 +114,7 @@ public class Chronoscope
   /**
    * Create a chart inside the given DOM element with the given JSON datasets
    *
+   * @gwt.export createTimeseriesChartByElement
    */
   @Export("createTimeseriesChartByElement")
   public ChartPanel createTimeseriesChart(Element elem,
@@ -221,7 +127,7 @@ public class Chronoscope
    * Legacy method to support old API. Preferred method is to use instance
    * passed to onChronoscopeLoaded, which allows behavior to be overriden.
    *
-   * @deprecated
+   * @Deprecated
    */
   @Export
   public static ChartPanel createTimeseriesChartById(String id,
@@ -236,6 +142,7 @@ public class Chronoscope
    * Create a chart inside the DOM element with the given ID with the given JSON
    * datasets
    *
+   * @gwt.export createTimeseriesChartById
    */
   @Export("createTimeseriesChartById")
   public ChartPanel createTimeseriesChart(String id,
@@ -281,6 +188,10 @@ public class Chronoscope
   }
 
   /**
+   * @param id
+   * @param datasets
+   * @param readyCallback
+   * @return
    */
   public static ChartPanel createTimeseriesChart(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyCallback) {
@@ -288,23 +199,19 @@ public class Chronoscope
         chartHeight, readyCallback);
   }
 
-  public DatasetReader getDatasetReader() {
-    return datasetReader;
-  }
-
   @Export
   public Dataset createDataset(JsonDatasetJSO json) {
-    return datasetReader.createDatasetFromJson(new GwtJsonDataset(json));
+    return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json));
   }
 
   @Export
   public Dataset createMutableDataset(JsonDatasetJSO json) {
-    return datasetReader.createDatasetFromJson(new GwtJsonDataset(json), true);
+    return DatasetReader.createDatasetFromJson(new GwtJsonDataset(json), true);
   }
 
   /**
    * Parse a javascript array of JSON objects representing multiresolution
-   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO)}
+   * Datasets. <p> See {@link #createDataset(org.timepedia.chronoscope.client.browser.json.GwtJsonDataset)}
    * for details of the format.
    */
   public Dataset[] createDatasets(JsArray<JsonDatasetJSO> jsonDatasets) {
@@ -315,8 +222,8 @@ public class Chronoscope
     int numDatasets = jsonDatasets.length();
     Dataset ds[] = new Dataset[numDatasets];
     for (int i = 0; i < numDatasets; i++) {
-      ds[i] = datasetReader
-          .createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)), true);
+      ds[i] = DatasetReader
+          .createDatasetFromJson(new GwtJsonDataset(jsonDatasets.get(i)));
     }
     return ds;
   }
@@ -329,21 +236,21 @@ public class Chronoscope
     return "chart" + globalChartNumber++;
   }
 
-  /* TODO - deprecate */
   public static String getFontBookServiceEndpoint() {
     return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
         + "fr" : fontBookServiceEndpoint;
   }
 
   public static Chronoscope getInstance() {
-    if(instance == null) {
-      instance = get();
+    if (instance == null) {
+      instance = new Chronoscope();
+      instance.init();
     }
     return instance;
   }
 
   public static String getURL(String url) {
-    return Chronoscope.get().urlResolver.resolveURL(url);
+    return urlResolver.resolveURL(url);
   }
 
   public static void initialize() {
@@ -362,15 +269,6 @@ public class Chronoscope
     return microformatsEnabled;
   }
 
-  /**
-   * Set's the default aggregate function used to create zoomed out data.
-   * Default is "mean", other possible values are "min", "max", "extrema"
-   */
-  @Export
-  public static void setDefaultAggregateFunction(String name) {
-    ChronoscopeOptions.setDefaultAggregateFunction(name);
-  }
-  
   @Export
   public static void setShowCredits(boolean enabled) {
     ChronoscopeOptions.setShowCredits(enabled);
@@ -396,19 +294,16 @@ public class Chronoscope
     ChronoscopeOptions.setHorizontalCrosshairEnabled(enabled);
   }
 
+  
+
   @Export
   public static void setCrosshairLabelsFormat(String enabled) {
     ChronoscopeOptions.setCrosshairLabels(enabled);
   }
-
+  
   @Export
   public static void setFontBookRendering(boolean enabled) {
     fontBookRenderingEnabled = enabled;
-  }
-
-  @Export
-  public static void setDefaultMultiaxisMode(boolean mode) {
-    ChronoscopeOptions.setDefaultMultiaxisMode(mode);
   }
 
   /**
@@ -423,24 +318,7 @@ public class Chronoscope
     Chronoscope.microformatsEnabled = microformatsEnabled;
   }
 
-  /**
-   * Maximum number of datapoints to attempt to render when not moving, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxStaticDatapoints(int max) {
-    ChronoscopeOptions.setMaxStaticDatapoints(max);
-  }
-  
-  /**
-   * Maximum number of datapoints to attempt to render when animating, before dropping to lower resolution.
-   */
-  @Export
-  public static void setMaxDynamicDatapoints(int max) {
-    ChronoscopeOptions.setMaxDynamicDatapoints(max);
-  }
-  
-  @Inject
-  public void setUrlResolver(URLResolver urlr) {
+  public static void setUrlResolver(URLResolver urlr) {
     urlResolver = urlr;
   }
 
@@ -465,6 +343,7 @@ public class Chronoscope
   }
 
   /**
+   * @gwt.export createTimeseriesChartByIdSized
    */
   @Export("createTimeseriesChartByIdSized")
   public ChartPanel createChartPanel(String id, Dataset[] datasets,
@@ -473,12 +352,8 @@ public class Chronoscope
         chartHeight, readyListener);
   }
 
-  @Inject
-  public void setDatasetReader(DatasetReader datasetReader) {
-    this.datasetReader = datasetReader;
-  }
-
   /**
+   * @gwt.export createTimeseriesChartWithElement
    */
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
@@ -508,10 +383,6 @@ public class Chronoscope
 
   protected void init() {
     try {
-      if(alreadyRan) {
-        return;
-      }
-      alreadyRan = true;
       //TODO: hack, we need a more general purpose way of ensuring this
       //stuff is injected on a per platform basis (not GWT specific)
       // Force initialization of platform specific factories
@@ -521,7 +392,7 @@ public class Chronoscope
       }
 
 //      checkForChronoscopeCSS();
-//        tryInjectChronoscopeCSS(new Command() {                       c
+//        tryInjectChronoscopeCSS(new Command() {
 //            public void execute() {
       exportFunctions();
 
@@ -549,30 +420,32 @@ public class Chronoscope
 
   protected void exportFunctions() {
     Exporter exporter = (Exporter) GWT.create(Chronoscope.class);
+    exporter.export();
 
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
+    dexporter.export();
 
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
+    exporterMarker.export();
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
+    exporterRangeMarker.export();
 
-    Exporter exporterDomainMarker = (Exporter) GWT.create(DomainBarMarker.class);
+    Exporter exporterDomainMarker = (Exporter) GWT
+        .create(DomainBarMarker.class);
+    exporterDomainMarker.export();
 
     Exporter exporter2 = (Exporter) GWT.create(DefaultXYPlot.class);
+    exporter2.export();
 
     Exporter exporter5 = (Exporter) GWT.create(BrowserChronoscopeMenu.class);
+    exporter5.export();
 
     Exporter exporter7 = (Exporter) GWT.create(DatasetRenderer.class);
+    exporter7.export();
 
     Exporter exporter4 = (Exporter) GWT.create(LineXYRenderer.class);
-
-    Exporter exporter8 = (Exporter) GWT.create(IntTickFormatterFactory.class);
-
-    Exporter exporter9 = (Exporter) GWT.create(DateTickFormatterFactory.class);
-
-    Exporter exporterInc = (Exporter) GWT.create(IncrementalDatasetResponseImpl.class);
-
-    Exporter exporterMut = (Exporter) GWT.create(MutableDatasetND.class);
+    exporter4.export();
 
 //    Exporter exporter6 = (Exporter) GWT.create(BarChartXYRenderer.class);
 //    exporter6.export();
@@ -610,7 +483,7 @@ public class Chronoscope
     }-*/;
 
   private native void injectCss(String s) /*-{
-        var link = $doc.createElement("link");                                 
+        var link = $doc.createElement("link");
         link.title = "Base Chronoscope Stylesheet";
         link.href = s;
         link.rel = "stylesheet";
