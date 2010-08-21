@@ -89,6 +89,7 @@
   </distributionManagement>
 
   <build>
+    <outputDirectory>${project.build.directory}/www/WEB-INF/classes</outputDirectory>
     <!-- Common plugin configuration for all children -->
     <pluginManagement>
       <plugins>
@@ -99,7 +100,7 @@
             <logLevel>${gwt.loglevel}</logLevel>
             <style>${gwt.outputstyle}</style>
             <runTarget>${gwt.module}${gwt.modulesuffix}/index.html</runTarget>
-            <hostedWebapp>${project.build.directory}/target/www</hostedWebapp>
+            <hostedWebapp>${project.build.directory}/www</hostedWebapp>
             <draftCompile>${gwt.draft}</draftCompile>
             <disableCastChecking>${gwt.xdisable}</disableCastChecking>
             <disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
@@ -249,11 +250,11 @@
   </repositories>
 
   <properties>
-    <!-- <maven.compiler.source>1.5</maven.compiler.source> -->
-    <!-- <maven.compiler.target>1.5</maven.compiler.target> -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <gwtversion>2.0.4</gwtversion>
-    <gwt.loglevel>ERROR</gwt.loglevel>
+    <!-- Hack to have bindAddress working until it is supported in the gwt plugin -->
+    <!-- Maybe in windows you have to change single by double quotes -->
+    <gwt.loglevel>INFO' -bindAddress '0.0.0.0</gwt.loglevel>
     <gwt.outputstyle>OBF</gwt.outputstyle>
     <gwt.modulesuffix />
     <maven.test.skip>false</maven.test.skip> 
