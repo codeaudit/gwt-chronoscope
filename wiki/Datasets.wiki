@@ -15,9 +15,11 @@
     id: "unrate",                                         // Unique id for this dataset
     domainscale: 1000,                                    // Scale domain by domainscale to convert to native microseconds
     domain: [-694306739,-691628339,-689122739,-686444339] // UTC time in milliseconds
-    range:  [3.4, 3.8, 4.0, 3.9,],                        // Values
+    range:  [3.4, 3.8, 4.0, 3.9],                         // Values
     label:  "Unemployment",                               // Dataset label, should be unique per page
-    axis:   "percent"                                     // Range axis unit/dimension, multiple datasets can share the same axis
+    axis:   "percent"                                     // Range axis unit/dimension, multiple datasets can share 
+                                                          // the same axis when using the same unit, useful for
+                                                          // hours, km, kbps, $, etc.
   }
 }}}
 
@@ -38,7 +40,7 @@
 {{{
  dataset = {
     id: "id_unique_per_page",
-    domainscale:1000,
+    domainscale: 1000,
     domain: [ 1214277862, 1214277862, 1214277862 ]
     range: [ 42, 101.11, -33 ]
     label: "label for the dataset",

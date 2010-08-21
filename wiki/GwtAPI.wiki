@@ -10,14 +10,13 @@ It is packaged in a library ready to use in any Gwt application. This document d
 
 = Creating a new project =
 
- * Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed
-already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
+ * Assuming you have [http://code.google.com/webtoolkit Google Web Toolkit] installed already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get started]
 
  * Create a new project using the `webAppCreator` command line tool:
 
 {{{webAppCreator -out HelloChart com.example.client.HelloChart}}}
 
- * Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit `Chronoscope`. 
+ * Edit `src/com/example/HelloChart.gwt.xml` and add a line to inherit the `Chronoscope` module. 
 {{{
 <module>
     <inherits name='org.timepedia.chronoscope.Chronoscope' />
@@ -25,14 +24,16 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
 </module>
 }}}
 
- * You'll also need to add chronoscope, chronoscope-api, and gwtexporter to your project classpath. So select the needed libraries form the dependency list bellow and copy these libraries in the `lib` folder:
+ * You'll also need to add chronoscope, chronoscope-api, gwtexporter and gin libraries to your project classpath. So select the needed libraries form the [Dependencies dependency list] bellow and copy these libraries to the `lib` folder of the project:
 {{{
-  cp path_to/gwtexporter-x.x.x.jar path_to/chronoscope-api-x.x.x.jar path_to/chronoscope-x.x.x.jar war/WEB-INF/lib
+  cp path_to/gwtexporter-x.x.x.jar path_to/chronoscope-api-x.x.x.jar \
+     path_to/chronoscope-x.x.x.jar path_to/gin-x.x.x.jar \
+     war/WEB-INF/lib
 }}}
 
 
 = Create a dataset file = 
- * We'll use a json file for the dataset, so put it in your `war/` foder and make sure it should be in the format: 
+ * We'll use a json file for the [GwtAPI#Datasets dataset], so put it in your `war/` foder and make sure it should be in the format: 
 {{{
   data set = {
     id: "unrate",                                         // Unique id for this dataset
@@ -44,9 +45,7 @@ already.  If not, [http://code.google.com/webtoolkit/gettingstarted.html get sta
   }
 }}}
 
- * Datasets with the same `axis:` identifier will share the same range axis, which is useful if they're units like `hours`, `km`, `kbps`, `$`, etc.
-
- * Modify the index.html `webAppCreator` made and add a tag to load the data:
+ * Modify the index.html `webAppCreator` made, and add a script tag to load the data:
 {{{
   <script language='javascript' src='dataset.js'></script>
 }}}
@@ -59,11 +58,12 @@ public class DevTest implements EntryPoint {
       double GOLDEN_RATIO = 1.618;
       int chartWidth = 600, chartHeight = (int) ( chartWidth / GOLDEN_RATIO );
       Chronoscope.setFontBookRendering(true);
-      Chronoscope.initialize();
-      Chronoscope chronoscope = Chronoscope.getInstance();
 
       Dataset[] dataset = new Dataset[1];
+      Chronoscope.initialize();
+      Chronoscope chronoscope = Chronoscope.getInstance();
       dataset[0] = chronoscope.createDataset(getJson("dataset"));
+      
       VerticalPanel vp=new VerticalPanel();
       vp.add(new Label(dataset[0].getRangeLabel()));
       ChartPanel chartPanel = Chronoscope.createTimeseriesChart(dataset, chartWidth, chartHeight);
@@ -78,7 +78,7 @@ public class DevTest implements EntryPoint {
 }
 }}}
 
- * Old versions of Chronoscope had a different API
+ * Versions of Chronoscope older than 1.0 use a different API
 {{{
 public class HelloChart implements EntryPoint {
 
@@ -89,6 +89,7 @@ public class HelloChart implements EntryPoint {
 
         XYDataset[] dataset = new XYDataset[1];
         dataset[0] = Chronoscope.createXYDataset(getJson("dataset"));
+        
         VerticalPanel vp=new VerticalPanel();
         vp.add(new Label(dataset[0].getRangeLabel()));
         ChartPanel chartPanel = Chronoscope.createTimeseriesChart(dataset, chartWidth, chartHeight);
@@ -103,20 +104,27 @@ public class HelloChart implements EntryPoint {
 }}}
 
 = Exporting the Javascript API = 
-Exporting the Javascript API from your GWT app is as simple as: 
+You could use the Chronoscope API from native javascript in your pages simply exporting it during the compilation of your application.
+Add this code to your application entry-point:  
 {{{
   Chronoscope chronoscope = new Chronoscope();
   chronoscope.init();
 }}}
+Set the property export in your module file:
+{{{
+  <set-property name="export" value="yes"/>
+}}}
 
 = Gwt API Documentation =
 
-The Chronoscope Gwt API documentation is generated automatically using [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html javadoc].
+The Chronoscope Gwt API documentation is javadoc format, and it is deployed in [http://gwt-chronoscope.googlecode.com/svn/apidocs/index.html here].
+
+You should start reading the [http://gwt-chronoscope.googlecode.com/svn/apidocs/org/timepedia/chronoscope/client/browser/Chronoscope.html Chronoscope] class documentation
 
 = Dependencies =
 
-Chronoscope has a bunch of dependencies you have to be aware of when selecting the version of Chronoscope and Gwt.
-Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.x.x.jar` which is the Gwt module to use via module inheritance and `chronoscope-api-xxx.jar` which is the stuff shared between other chronoscope modules
+Chronoscope has a bunch of dependencies you have to know. These dependecies depends on the combination of Chronoscope and Gwt versions.
+*Note:* that lately, chronoscope has been splitted into two libraries: `chronoscope-x.x.x.jar` which is the Gwt module to use via module inheritance, and `chronoscope-api-xxx.jar` which is the stuff shared between other chronoscope modules
 
 == Trunk version ==
  * `chronoscope-2.0-SNAPSHOT.jar` depends on:
@@ -145,7 +153,7 @@ Note that lately chronoscope has been splitted in two libraries: `chronoscope-x.
    * It has no external dependencies since it comes with `gwtexporter` embedded.
    
 = Maven configuration = 
-If your application already uses maven, you have to add to your pom.xml the repositories where chronoscope and gwtexporter are deployed: 
+If you are already using maven in your application, you have to add to your pom.xml the repositories where `chronoscope` and `gwtexporter` are deployed, and the following dependencies:
 {{{
   <repositories>
     ...
@@ -158,9 +166,7 @@ If your application already uses maven, you have to add to your pom.xml the repo
       <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
     </repository>
   </repositories>
-}}}
-And the following dependencies
-{{{
+
   <dependencies>
     ...
     <dependency>
