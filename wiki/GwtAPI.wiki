@@ -25,7 +25,7 @@ It is packaged in a library ready to use in any Gwt application. This document d
 </module>
 }}}
 
- * You'll also need to add chronoscope, chronoscope-api, gwtexporter and gin libraries to your project classpath. So select the needed libraries form the [GwtAPI#Dependencies dependency list] bellow and copy these libraries to the `lib` folder of the project:
+ * You'll also need to add chronoscope, chronoscope-api, gwtexporter and gin libraries to your project classpath. So select the needed libraries form the [GwtAPI#Dependencies list] below and copy these libraries to the `lib` folder of the project:
 {{{
   cp path_to/gwtexporter-x.x.x.jar path_to/chronoscope-api-x.x.x.jar \
      path_to/chronoscope-x.x.x.jar path_to/gin-x.x.x.jar \
@@ -34,7 +34,7 @@ It is packaged in a library ready to use in any Gwt application. This document d
 
 
 = Create a dataset file = 
- * We'll use a json file for the [GwtAPI#Datasets dataset], so put it in your `war/` foder and make sure it should be in the format: 
+ * We'll use a json file for the [Datasets dataset], so put it in your `war/` foder and make sure it should be in the format: 
 {{{
   data set = {
     id: "unrate",                                         // Unique id for this dataset
