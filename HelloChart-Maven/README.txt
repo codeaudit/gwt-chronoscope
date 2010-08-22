@@ -1,52 +1,35 @@
 
--- HelloChart Sample application
+-- Chronoscope's HelloChart Sample application for maven
 
 -- Import your project into Eclipse  --
+ . Add the plugin m2eclipse to your eclipse installation.
+ . Then import the project 
+   File -> Import... -> Maven Projects,
+   Browse to the directory containing this file,
+   select "HelloChart-Maven",
+   Click Finish.
+ . You can now browse the project in Eclipse.
 
-If you use Eclipse, you can simply import the generated project into Eclipse.
-We've tested against Eclipse 3.4 and 3.5.  Later versions will likely also
-work, earlier versions may not.
-
-If the directory containing this file does not have a .classpath or .project
-file, generate them by running 'ant eclipse.generate'
-
-In Eclipse, go to the File menu and choose:
-
-  File -> Import... -> Existing Projects into Workspace
-
-  Browse to the directory containing this file,
-  select "HelloChart".
-  
-  Be sure to uncheck "Copy projects into workspace" if it is checked.
-  
-  Click Finish.
-  
-You can now browse the project in Eclipse.
-
-To launch your web app in GWT development mode, go to the Run menu and choose:
-
-  Run -> Open Debug Dialog...
-
-  Under Java Application, you should find a launch configuration
-  named "HelloChart".  Select and click "Debug".
-
-  You can now use the built-in debugger to debug your web app in development mode.
-
-If you supplied the junit path when invoking webAppCreator, you should see
-launch configurations for running your tests in development and production
-mode.
+-- Running your project in Eclipse
+ . Add the plugin google-eclipse
+ . Use Google Web Toolkit
+   Project -> Properties -> Web Toolkit -> Use Google Web Toolkit
+ . Configure as a google web application
+   Project -> Properties -> Web Application -> This project has a WAR directory ->
+   -> WAR Directory: src/main/webapp
+ . You and now run the project in Eclipse.
+   Project -> Run as... -> Web Application
 
 -- Run/Compile the application using Maven --
 
-If you have generated your project with the option '-maven', you have a 'pom.xml'
-file ready to use. Assuming you have 'maven2' installed in your system, 'mvn' is 
-in your path, and you have access to maven repositories, you should be able to run:
+ . Assuming you have 'maven2' installed in your system, 'mvn' is 
+   in your path, and you have access to maven repositories, you should be able to run:
 
-mvn clean         # delete temporary stuff
-mvn test          # run all the tests (gwt and junit)
-mvn gwt:run       # run development mode
-mvn gwt:compile   # compile to javascript
-mvn package       # generate a .war package ready to deploy
+   $ mvn clean         # delete temporary stuff
+   $ mvn test          # run all the tests (gwt and junit)
+   $ mvn gwt:run       # run development mode
+   $ mvn gwt:compile   # compile to javascript
+   $ mvn package       # generate a .war package ready to deploy
 
-For more information about other available goals, read maven and gwt-maven-plugin 
-documentation (http://maven.apache.org, http://mojo.codehaus.org/gwt-maven-plugin)  
+ . For more information about other available goals, read maven and gwt-maven-plugin 
+   documentation (http://maven.apache.org, http://mojo.codehaus.org/gwt-maven-plugin)  

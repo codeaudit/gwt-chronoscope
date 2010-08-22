@@ -1,4 +1,4 @@
-package com.example.client.client;
+package com.example.client;
 
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.browser.ChartPanel;

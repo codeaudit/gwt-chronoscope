@@ -1,5 +1,7 @@
 package com.example.client;
 
+import com.google.gwt.junit.client.GWTTestCase;
+
 /**
  * GWT JUnit tests must extend GWTTestCase.
  */

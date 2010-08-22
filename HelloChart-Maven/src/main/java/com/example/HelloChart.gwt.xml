@@ -3,6 +3,6 @@
 
   <inherits name='org.timepedia.chronoscope.Chronoscope'/>
 
-  <entry-point class='com.example.client.client.HelloChart'/>
+  <entry-point class='com.example.client.HelloChart'/>
 
 </module>
