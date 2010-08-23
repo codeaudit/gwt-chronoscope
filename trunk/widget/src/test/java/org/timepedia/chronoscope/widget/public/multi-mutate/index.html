@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>test single mutate</title>
+<script type="text/javascript" src="arielSearchProgressChart4.js"></script>
+
+<style type="text/gss">
+.chrono, plot, axes, axis { background-image: none; background-color: transparent; }
+axislegend { background-color: transparent;}
+axis.domain label { visibility: hidden }
+
+series.s0 line { color: #BBEA8A; }
+series.s0 fill { background-color:#BBEA8A; opacity:1.0; }
+crosshair { visibility: visible; date-format: MM/dd/yy HH:mm; }
+</style> 
+
+<script type="text/javascript">
+var largeview;
+var time_length = 0;
+var curr_start = 0;
+var ORIENTATION = "DEFAULT";
+var chronocopy;
+var plot;
+
+function onChronoscopeLoaded(chrono) {
+    chronoscope.Chronoscope.setErrorReporting(true);
+    if(typeof(dffdata) == "undefined") { alert ("data not loaded"); }
+
+    var data = [dffdata];
+
+    chronoscope.Chronoscope.createTimeseriesChartById("largedatasetdemo", data, 468, 250, function(view) {
+        largeview = view;
+	plot = view.getChart().getPlot(); 
+	time_length = plot.getDomain().length();
+	curr_start = plot.getDomain().getStart();
+
+        plot.addMoveHandler(function(event) {
+            var domain_length = event.getDomain().length();
+	    var start_mills = event.getDomain().getStart(); 
+	    if(time_length < domain_length){
+	        //zoomed out
+		ORIENTATION = "OUT";
+		displayZoom("["+ORIENTATION+"]"+start_mills+":"+domain_length+"<br/>");
+            } else if(time_length > domain_length){
+		//zoomed in
+		ORIENTATION = "IN";
+		displayZoom("["+ORIENTATION+"]"+start_mills+":"+domain_length+"<br/>");
+            } else if(curr_start != start_mills){
+		ORIENTATION = "SIDE SHIFT";
+		displayZoom("["+ORIENTATION+"]"+start_mills+":"+domain_length+"<br/>");
+            } else {
+		//same
+		ORIENTATION = "NO CHANGE";
+		displayZoom("["+ORIENTATION+"]"+start_mills+":"+domain_length+"<br/>");
+            }
+            time_length = domain_length;
+            curr_start = start_mills;
+	});
+
+	var hmarker = new chronoscope.RangeBarMarker(23, 25, "John Test");
+        plot.addOverlay(hmarker);				
+        view.getChart().redraw();
+    });
+}
+
+function displayZoom(message){
+    document.getElementById("chronobreakdown").innerHTML += message;
+}
+		
+function zoomin(){
+    largeview.getChart().setDomain(1271088804000,1271089236000);
+    // plot.setOverviewEnabled(false); /*hides the overivew chart*/
+    largeview.getChart().redraw();
+}
+
+var size = 250;
+function resize(){
+    largeview.resize(size, size);
+    largeview.getChart().redraw();
+    size += 25;
+}
+
+var tCount = 1271081280000;
+function addMutation(){
+    tCount = tCount-60000;
+    datasets = plot.getDatasets();
+    datasets.beginMutation();
+    dataset = datasets.get(0);
+    rVal = Math.floor(Math.random()*50);
+    dataset.mutate([tCount, tCount-60000], [[rVal,rVal-2]]);
+    datasets.endMutation();
+}
+
+
+function beginMutation(){
+    addMutation();
+    // setInterval("addMutation()", 3000);
+}
+</script>
+		
+</head>
+<body>
+<input type="button" value="zoomed" onclick="zoomin();"><input type="button" value="resize" onclick="resize();"><input type="button" value="beginMutate" onclick="addMutation();">
+<div>
+					<div id="largedatasetdemo" class="chronoscope">Loading Chronoscope Data...</div>
+	<div>
+		<table>
+		<tbody>
+		<tr>
+			<td>
+				<div>
+
+				</div>
+			</td>
+		</tr>
+		</tbody>
+		</table>
+	</div>
+</div>
+<div id="chronobreakdown"></div>
+<script type="text/javascript" src="/org.timepedia.chronoscope.widget.ChronoscopeWidgetDev/org.timepedia.chronoscope.widget.ChronoscopeWidgetDev.nocache.js" ></script>
+</body>
+</html>
