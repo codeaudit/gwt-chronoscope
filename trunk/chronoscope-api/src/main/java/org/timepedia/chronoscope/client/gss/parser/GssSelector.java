@@ -46,6 +46,18 @@ public class GssSelector {
     }
     return lspecificity;
   }
+  
+  public String toString() {
+    String ret = "";
+    for (GssSimpleSelector sel : simpleSelectors) {
+      ret += sel.toString() + ",";
+    }
+    return ret;
+  }
+  
+  public List<GssSimpleSelector> getSimpleSelectors() {
+    return simpleSelectors;
+  }
 
   public boolean matches(GssElement gssElem, String pseudoElt) {
     int endIdx = simpleSelectors.size() - 1;
@@ -64,7 +76,7 @@ public class GssSelector {
     return true;
   }
 
-  private class GssSimpleSelector {
+  protected class GssSimpleSelector {
 
     private String elementName;
 
@@ -104,6 +116,10 @@ public class GssSelector {
         }
       }
       return false;
+    }
+    
+    public String toString() {
+      return "elementName=" + elementName + " combinator=" + combinator + " " + " className=" + className; 
     }
   }
 }

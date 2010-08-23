@@ -31,7 +31,7 @@ public class GssParser {
       return new ArrayList<GssRule>();
     }
     // first separate rules by splitting on "}"
-    String rules[] = stylesheet.split("}");
+    String rules[] = removeComments(stylesheet).split("}\\s*;*\\s*");
     ArrayList<GssRule> gssRules = new ArrayList<GssRule>();
     for (String rule : rules) {
       if("".equals(rule.trim())) continue;
@@ -40,8 +40,17 @@ public class GssParser {
     }
     return gssRules;
   }
+  
+  public static String removeComments(String s) {
+    // Remove c style comments
+    return s.replaceAll("(?s)\\s*/\\*.*?\\*/\\s*", "").
+    // Remove c++ style comments
+             replaceAll("//.*\n", "\n");
+  }
+
 
   public static GssRule parseRule(String rule) throws GssParseException {
+    System.out.println("Parsing: " + rule);
     // split selector off by splitting on "{"
     int lbrace = rule.indexOf("{");
     int rbrace = rule.indexOf("}");
@@ -58,7 +67,7 @@ public class GssParser {
     try {
       gssproperties = parseProperties(propertySet);
     } catch (GssParseException e) {
-      throw new GssParseException(e.getMessage() + ", for rule '" + rule + "'");
+      throw new GssParseException(e.getMessage() + ", for rule '" + rule + "'" , e);
     }
     return new GssRule(selectors, gssproperties);
   }
@@ -66,7 +75,7 @@ public class GssParser {
   private static List<GssProperty> parseProperties(String propertySet)
       throws GssParseException {
     // split by ";"
-    String properties[] = propertySet.trim().split(";");
+    String properties[] = propertySet.trim().split("\\s*[\r\n;\\}]+\\s*");
     ArrayList<GssProperty> gssProperties = new ArrayList<GssProperty>();
     for (String property : properties) {
       gssProperties.add(parseProperty(property.trim()));
@@ -88,7 +97,7 @@ public class GssParser {
 
   public static List<GssSelector> parseSelectors(String selector) {
     // split selector by comma
-    String selectors[] = selector.split(",");
+    String selectors[] = selector.split("\\s*,\\s*");
     ArrayList<GssSelector> gssSelectors = new ArrayList<GssSelector>();
     for (String sel : selectors) {
       gssSelectors.add(parseSelector(sel.trim()));
