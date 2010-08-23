@@ -24,4 +24,15 @@ public class GssRule {
   public List<GssProperty> getProperties() {
     return gssproperties;
   }
+  
+  public String toString() {
+    String ret = "";
+    for (GssSelector s : getSelectors()) {
+      ret += s.toString() + "\n";
+    }
+    for (GssProperty p : getProperties() ) {
+      ret += " " + p.toString();
+    }
+    return ret;
+  }
 }
