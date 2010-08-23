@@ -1,0 +1,64 @@
+<html>
+<head>
+<style type="text/gss">
+
+    overview { visibility: hidden; }
+    
+    point { line-thickness: 2px;  radius: 2px; }
+
+    axislegend line { line-thickness: 8px;}
+
+    series.s0 line { color: #0000ff; }
+    series.s0 point { background-color:#0000ff; color: #0000cc; }
+
+    crosshair { visibility: visible; }
+
+</style>
+<script type="text/javascript">
+
+var overflow = { "id": "overflow",
+	"domain":[1270090800,1270094400,1270098000,1270101600,1270105200,1270108800,1270112400,1270116000,1270119600,1270123200,1270126800,1270130400,1270134000,1270137600,1270141200,1270144800,1270148400,1270152000,1270155600,1270159200,1270162800,1270166400,1270170000,1270173600,1270177200],
+	"axis":"events",
+	"label":"Overflow",
+	"range":[0,826812,832068,825194,827204,831530,825191,806892,831075,825261,828605,830044,825528,829321,828866,825996,830064,827387,826739,830833,825886,827552,831510,825809,825863],
+	"domainscale":1000 };
+
+var __datasets = [overflow];
+
+var theplot;
+var chr;
+
+function onChronoscopeLoaded(chrono) {
+    chronoscope.Chronoscope.setErrorReporting(true);    
+    chr = chrono;
+
+    chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
+        theplot = view.getChart().getPlot();
+        // theplot.getAxis(0).setAutoZoomVisibleRange(true);
+        view.getChart().redraw();
+    });
+}
+
+function toggle_overview() {
+   theplot.setOverviewEnabled(!theplot.isOverviewEnabled());
+}
+    
+</script>
+</head>
+<body>
+
+  <div>
+      <h2>overviewing</h2>
+      <p>
+            <input type="button" name="Toggle Overview" id="toggle_overview" value="Toggle Overview" onclick="toggle_overview();" />
+      </p>
+
+      <div id="chart">
+        loading...
+      </div>
+     
+<script type="text/javascript" src="org.timepedia.chronoscope.widget.ChronoscopeWidgetDev.nocache.js"> </script>
+
+</body>
+</html>
+
