@@ -1,0 +1,127 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="gwt:property" content="locale=de_DE">
+
+<style type="text/gss">
+
+point.hover {visibility: hidden;} 
+
+axislegend daterange {
+  date-format:yyyy.MM.dd;
+}
+
+marker guideline {
+  color: red;
+  date-format: HH:mm;
+  visibility: visible;
+}
+
+point.focus guideline {
+  color: navy;
+  date-format: HH:mm;
+  visibility: visible;
+  line-thickness: 2;
+}
+
+crosshair {
+  visibility:visible;
+  date-format: HH:mm;
+}
+   
+
+</style>
+
+
+<script type="text/javascript" src="testdata.js"> </script>
+<script type="text/javascript">
+
+var chart, plot, hoverMarker, selectionMarker, markers, data;
+
+markers=[];
+data=[];
+
+function barmarker(date1, date2, label) {
+  return new chronoscope.DomainBarMarker(date1, date2, label);
+}
+
+function marker(t) {
+  d1=new Date(t); 
+  d2=new Date(t+60000);
+  return barmarker(d1, d2, '');
+}
+
+function onChronoscopeLoaded(chrono) {
+   //  chronoscope.Chronoscope.setErrorReporting(true);
+
+    loadData();  // from testdata.js
+
+    var chart = chrono.createTimeseriesChartById("chart", data, 800, 400,
+            function(view) {
+
+                plot = view.getChart().getPlot();
+
+                for (i = 0; i < markers.length; i++) {
+                    plot.addOverlay(markers[i]);
+                }
+
+                if (selectionMarker) {
+                    plot.addOverlay(selectionMarker);
+                }
+
+                plot.addFocusHandler(function(event) {
+                    if (selectionMarker) {
+                        plot.removeOverlay(selectionMarker);
+                        selectionMarker = null;
+                    }
+
+                    var s = event.getDomain();
+                    selectionMarker = new chronoscope.DomainBarMarker(event.getDomain(), event.getDomain()+6000, label);
+                    plot.addOverlay(selectionMarker);
+
+                    document.dateSelectForm.selectedDate.value = new Date(s);
+                });
+
+                var axisMarker = new timescope.DomainAxisMarker(1214293608000, 'S', 0);
+                axisMarker.setDraggable(true);
+                plot.addOverlay(axisMarker);
+
+                var calloutMarker = new timescope.CalloutMarker(1214293608000, 'Callout', 0);
+                calloutMarker.setDraggable(true);
+                plot.addOverlay(calloutMarker);
+
+		// var Marker = new timescope.ImageMarker(1214293608000, 'A', 0);
+                // imageMarker.setDraggable(true);
+		//plot.addOverlay(imageMarker);
+
+                axisMarker.addChangeHandler(function(event) {
+                    alert("You dropped it on " + new Date(axisMarker.getDomainX()));
+                });
+
+
+                axisMarker.addDragHandler(function(event) {
+                    alert("You dragged it on " + new Date(axisMarker.getDomainX()));
+                });
+
+                plot.redraw();
+            }
+    );
+    
+    // document.dateSelectForm.selectedDate.value=new Date(1214293608000);
+}
+</script>
+
+</head>
+<body>
+
+  <h2>hover</h2>
+
+    <form name="dateSelectForm">
+        <input type="text" name="selectedDate">
+    </form>
+
+    <div id="chart" style="width: 800px; height: 400px"></div>
+
+<script type="text/javascript" src="org.timepedia.chronoscopesamples.ChronoscopeWidgetDev.nocache.js"> </script>    
+</body>
+</html>
