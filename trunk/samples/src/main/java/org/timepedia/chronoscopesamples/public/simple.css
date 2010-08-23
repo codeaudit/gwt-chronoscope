@@ -133,7 +133,7 @@ series.focus point {
 
 
 marker {
-  background-color: lightgray;
+  background-color: rgb( 245, 86, 95 );
   color: black;
   font-family: Verdana;
 }

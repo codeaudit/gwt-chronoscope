@@ -50,7 +50,6 @@ public class GssParser {
 
 
   public static GssRule parseRule(String rule) throws GssParseException {
-    System.out.println("Parsing: " + rule);
     // split selector off by splitting on "{"
     int lbrace = rule.indexOf("{");
     int rbrace = rule.indexOf("}");
