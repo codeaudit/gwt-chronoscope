@@ -1,0 +1,115 @@
+<html>
+<head> 
+
+<style type="text/gss">
+
+axislegend { line-thickness: 1em;}
+
+series.s0 line { color: #00f; }
+series.s1 line { color: #f00; }
+series.s2 line { color: #0f0; }
+
+series.s0, series.s1, series.s2 { group: jenga; }        
+series.jenga { display: stacked-line }
+
+crosshair { visibility: visible; date-format: MM/yyyy; }
+
+</style>
+
+<script type="text/javascript">
+
+test_data_hourly = [{
+	"domain":[1270090800,1270094400,1270098000,1270101600,1270105200,1270108800,1270112400,1270116000,1270119600,1270123200,1270126800,1270130400,1270134000,1270137600,1270141200,1270144800,1270148400,1270152000,1270155600,1270159200,1270162800,1270166400,1270170000,1270173600,1270177200],
+	"axis":"events",
+	"label":"Buffer Overflow",
+	"range":[0,826812,832068,825194,827204,831530,825191,806892,831075,825261,828605,830044,825528,829321,828866,825996,830064,827387,826739,830833,825886,827552,831510,825809,825863],
+	"domainscale":1000
+},{
+	"domain":[1270090800,1270094400,1270098000,1270101600,1270105200,1270108800,1270112400,1270116000,1270119600,1270123200,1270126800,1270130400,1270134000,1270137600,1270141200,1270144800,1270148400,1270152000,1270155600,1270159200,1270162800,1270166400,1270170000,1270173600,1270177200],
+	"axis":"events",
+	"label":"Firewall Permit",
+	"range":[0,738770,735543,738866,738554,735512,738137,716598,737866,740302,740936,738383,740597,739411,738256,740444,739166,738810,740741,737026,739799,741394,737247,739439,738366],
+	"domainscale":1000
+},{
+	"domain":[1270090800,1270094400,1270098000,1270101600,1270105200,1270108800,1270112400,1270116000,1270119600,1270123200,1270126800,1270130400,1270134000,1270137600,1270141200,1270144800,1270148400,1270152000,1270155600,1270159200,1270162800,1270166400,1270170000,1270173600,1270177200],
+	"axis":"events",
+	"label":"ACL Deny",
+	"range":[0,659159,655761,659506,658835,655981,658768,637963,658186,661029,661015,658725,661126,659588,658789,660967,659203,659429,661133,657134,660503,661485,657432,660139,659062],
+	"domainscale":1000
+},{
+	"domain":[1270090800,1270094400,1270098000,1270101600,1270105200,1270108800,1270112400,1270116000,1270119600,1270123200,1270126800,1270130400,1270134000,1270137600,1270141200,1270144800,1270148400,1270152000,1270155600,1270159200,1270162800,1270166400,1270170000,1270173600,1270177200],
+	"axis":"events",
+	"label":"Firewall Deny",
+	"range":[0,369921,370257,368458,370824,369920,368351,360994,369485,368794,370680,369587,368994,370816,369227,368886,370909,368817,369672,370518,368473,370614,370152,368741,368481],
+	"domainscale":1000
+}]
+
+var __datasets = [];
+function __push_dataset(d) {
+  __datasets.push(d);
+}
+
+var first = {"id":"first","label":"first","partitionStrategy":"calendar",
+    "dtformat": "yy","domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+    "axis":"$","range": [100, 200, 300, 250, 150, 345, 275, 200] };
+
+__push_dataset(first);
+
+var second = {"id":"second","label":"second","partitionStrategy":"calendar",
+    "dtformat": "yy","domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+    "axis":"$","range": [120, 130, 340, 275, 250, 375, 245, 230] };
+__push_dataset(second);
+
+var third = {"id":"third","label":"third","partitionStrategy":"calendar","axis":"$","dtformat": "yy",
+    "domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+     "range": [  80,   40,   90,  110,  222,   74,   24,  42] };
+
+__push_dataset(third);
+
+
+var theplot;
+
+function mutate() {
+    var datasets = theplot.getDatasets();
+    datasets.beginMutation();
+    var dataset = datasets.getById("jenga");
+    dataset.mutate([new Date(1991, 0, 1).getTime(), new Date(1992, 0, 1).getTime()],
+            [[200, 240], [150, 190], [400, 500]]);
+    datasets.endMutation();
+}
+
+function onChronoscopeLoaded(chrono) {  
+  chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
+    view.getChart().redraw();
+    theplot = view.getChart().getPlot();
+  });
+}
+</script>
+</head>
+<body>
+<!--# include file="/static/h/header.html" -->
+
+<div class="colmask leftmenu">
+  <div class="colleft">
+    <div class="col1">
+	<h2>Incremental Example</h2>
+	<a href="javascript:mutate();">mutate</a>
+	<div id="chart">
+	  loading... 
+	</div>
+    </div>
+    <div class="col2">
+      <!--# include file="/dist/q1labs/sidebar.html" -->
+      <!--# include file="/dist/q1labs/examples/sidebar.html" -->
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="org.timepedia.chronoscopesamples.ChronoscopeWidgetDev"> </script>
+
+</body>
+</html>
+
+
+
+
