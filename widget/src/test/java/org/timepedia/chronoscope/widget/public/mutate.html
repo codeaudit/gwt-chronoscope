@@ -1,0 +1,60 @@
+<html>
+<head> 
+<title>mutate</title> 
+<style type="text/gss">
+series.s0 line { color: #0000ff; }
+crosshair { visibility: visible; date-format: MM/yyyy; }
+overview { line-thickness:1px; }
+</style>
+
+<script type="text/javascript">
+
+
+var __datasets = [];
+
+function __push_dataset(d) {
+  __datasets.push(d);
+}
+
+var first = {"id":"first","label":"first",
+    "dtformat": "yy","domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+    "axis":"$","range": [100, 200, 300, 250, 150, 345, 275, 200] };
+
+__push_dataset(first);
+
+var theplot;
+
+function onChronoscopeLoaded(chrono) {
+  chronoscope.Chronoscope.setErrorReporting(true);
+  chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
+    view.getChart().redraw();
+    theplot = view.getChart().getPlot();
+  });
+}
+
+function mutate() {
+  var datasets = theplot.getDatasets();
+  datasets.beginMutation();
+  var dataset = datasets.getById("first");
+  dataset.mutate([new Date(1991, 0, 1).getTime(), new Date(1992, 0, 1).getTime()], [[432, 123]])
+  datasets.endMutation();
+}
+
+
+</script>
+</head>
+<body>
+  <h2>mutate example</h2>
+	<a href="javascript:mutate();">mutate</a>
+	<div id="chart">
+	  loading... 
+	</div>
+
+<script type="text/javascript" src="/org.timepedia.chronoscope.widget.ChronoscopeWidgetDev/org.timepedia.chronoscope.widget.ChronoscopeWidgetDev.nocache.js"> </script>
+
+</body>
+</html>
+
+
+
+
