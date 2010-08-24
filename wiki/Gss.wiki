@@ -10,12 +10,12 @@ Chronoscope uses a special css syntax to customize each element in the chart whi
  * Create a file with the customization of the chart.
 {{{
 axes axis {
-  background-color: white
+  background-color: #ffffff;
   color:black;
 }
 
 plot {
-  background-color: white
+  background-color: #ffffff;
 }
 
 axis.a0 label, axis.a0 {
