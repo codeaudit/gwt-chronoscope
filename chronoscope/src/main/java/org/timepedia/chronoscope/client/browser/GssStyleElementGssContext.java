@@ -170,6 +170,8 @@ public class GssStyleElementGssContext extends BrowserGssContext implements
     // load asynchronously external gss links
     if (!toLoad.isEmpty()) {
       new GssLoader(toLoad, mcallback);
+    } else {
+      mcallback.run();
     }
   }
   
