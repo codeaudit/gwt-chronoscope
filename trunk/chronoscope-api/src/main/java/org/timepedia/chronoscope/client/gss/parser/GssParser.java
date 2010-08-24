@@ -31,7 +31,7 @@ public class GssParser {
       return new ArrayList<GssRule>();
     }
     // first separate rules by splitting on "}"
-    String rules[] = removeComments(stylesheet).split("}\\s*;*\\s*");
+    String rules[] = stylesheet.split("}\\s*;*\\s*");
     ArrayList<GssRule> gssRules = new ArrayList<GssRule>();
     for (String rule : rules) {
       if("".equals(rule.trim())) continue;
