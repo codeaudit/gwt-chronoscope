@@ -649,10 +649,10 @@ public class DefaultXYPlot<T extends Tuple2D>
               if (datasetIndex == -1) {
                   datasetIndex = 0;
               }
-              //Record start and end the current data
-              if(datasets.indexOf(dataset)==0){
-                  visDomain.setEndpoints(domainStart, domainEnd);
-              }
+//              //Record start and end the current data
+//              if(datasets.indexOf(dataset)==0){
+//                  visDomain.setEndpoints(domainStart, domainEnd);
+//              }
               plotRenderer.invalidate(dataset);
               fixDomainDisjoint();
               damageAxes();
