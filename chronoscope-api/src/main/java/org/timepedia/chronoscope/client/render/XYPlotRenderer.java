@@ -305,7 +305,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     DrawableDataset<T> drawableDataset = new DrawableDataset<T>();
     drawableDataset.dataset = dataset;
-    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
+    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex + " " + dataset.getIdentifier());
     GssProperties seriesProp = view.getGssProperties(gssElem, "");
     DatasetRenderer<T> renderer = null;
 
@@ -388,7 +388,8 @@ public class XYPlotRenderer<T extends Tuple2D> {
   public void setDatasetRenderer(int datasetIndex,
       DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
-    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex);
+    GssElement gssElem = new GssElementImpl("series", null, "s" + datasetIndex + " " + 
+        getDrawableDataset(datasetIndex).dataset.getIdentifier());
     configRenderer(renderer, datasetIndex, gssElem);
     DrawableDataset<T> dds = this.getDrawableDataset(datasetIndex);
     dds.currMipMap = dds.dataset.getMipMapChain().getMipMap(0);
@@ -461,7 +462,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
         GssElement gssIdElem = new GssElementImpl("series", null,
             dds.dataset.getIdentifier());
-        GssElement gssElem = new GssElementImpl("series", null, "s" + index);
+        GssElement gssElem = new GssElementImpl("series", null, "s" + index + " " + dds.dataset.getIdentifier());
         GssProperties props = view.getGssProperties(gssElem, "");
         GssProperties propsId = view.getGssProperties(gssIdElem, "");
 
