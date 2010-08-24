@@ -208,7 +208,7 @@ Exported JavaScript-API: Index of Classes
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
 <BR>
-<span class=jsdocComment></span></TD>
+<span class=jsdocComment>Resizing the chart once displayed currently unsupported</span></TD>
 </TR>
 </TABLE>
 
@@ -506,9 +506,16 @@ Exported JavaScript-API: Index of Classes
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAnimationPreview</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setFontBookServiceEndpoint</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>endpoint</span>)
 <BR>
-<span class=jsdocComment>Defaults to GWT.getModuleBaseURL() + "fr"</span></TD>
+<span class=jsdocComment>Used to default to GWT.getModuleBaseURL() + "fr"
+ Deprecated once modern browsers supported text rotation</span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
@@ -757,7 +764,7 @@ Exported JavaScript-API: Index of Classes
 <BR>
 <HR>
 <H2>
-<div id=DateRangePanel>chronoscope.DateRangePanel</div>
+<div id=DateRangePanel>org.timepedia.chronoscope.client.render.DateRangePanel</div>
 </H2>
 <div class=jsdocText>Draws a date range (e.g. "11/25/1995 - 02/17/2007").</div>
 
@@ -859,6 +866,12 @@ Exported JavaScript-API: Index of Classes
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType"><a href=#ExportableHandlerRegistration>ExportableHandlerRegistration</a></TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>addMoveHandler</b>(<span class=jsdocParameterType><i class=jsdocClosureFunc>function</i>(<span class=jsdocParameterType><a href=#PlotMovedEvent>PlotMovedEvent</a></span> <span class=jsdocParameterName>event</span>)</span> <span class=jsdocParameterName>{}</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTimeZoneOffset</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>offsetHours</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
@@ -990,6 +1003,12 @@ Exported JavaScript-API: Index of Classes
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAnimationPreview</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAutoZoomVisibleRange</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>dataset</span>, <span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>autoZoom</span>)
 <BR>
 <span class=jsdocComment></span></TD>
@@ -1025,6 +1044,18 @@ Exported JavaScript-API: Index of Classes
 <span class=jsdocComment></span></TD>
 </TR>
 <TR>
+<TD VALIGN="top" CLASS="jsdocRetType">boolean</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>isOverviewVisible</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setOverviewVisible</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>overviewVisible</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setSubPanelsEnabled</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
 <BR>
@@ -1045,6 +1076,42 @@ Exported JavaScript-API: Index of Classes
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>zoomToHighlight</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>showLegendLabelsValues</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsFontSize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>pixels</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsIconWidth</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>pixels</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsIconHeight</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>pixels</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsColumnWidth</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>pixels</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLegendLabelsColumnCount</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>count</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
@@ -1188,7 +1255,7 @@ Exported JavaScript-API: Index of Classes
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>resize</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>width</span>, <span class=jsdocParameterType>int</span> <span class=jsdocParameterName>height</span>)
 <BR>
-<span class=jsdocComment></span></TD>
+<span class=jsdocComment>Resizing the chart once displayed currently unsupported</span></TD>
 </TR>
 </TABLE>
 
@@ -1871,7 +1938,8 @@ Exported JavaScript-API: Index of Classes
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setLabel</b>(<span class=jsdocParameterType>String</span> <span class=jsdocParameterName>label</span>)
 <BR>
-<span class=jsdocComment></span></TD>
+<span class=jsdocComment>Sets the long descriptive label used for this axis (Billions of Dollars,
+ Barrels of Oil)</span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
@@ -2010,7 +2078,7 @@ Exported JavaScript-API: Index of Classes
 <BR>
 <HR>
 <H2>
-<div id=XYPlot>chronoscope.XYPlot</div>
+<div id=XYPlot>org.timepedia.chronoscope.client.XYPlot</div>
 </H2>
 <div class=jsdocText>An interface to be implemented by classes implementing XY plots of <a href=# Dataset> Dataset</a> objects. <p> Conceptually, an XYPlot is a class responsible for
  maintaining a collection of datasets, axes, and graph state, and mapping
@@ -2094,6 +2162,12 @@ Exported JavaScript-API: Index of Classes
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setAnimationPreview</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
+<BR>
+<span class=jsdocComment>Turn on/off low-res preview when animating.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setMultiaxis</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>enabled</span>)
 <BR>
 <span class=jsdocComment>Enables or disables multi-axis mode. True by default, if multi-axis
@@ -2118,6 +2192,13 @@ Exported JavaScript-API: Index of Classes
 <BR>
 <span class=jsdocComment>Enables or disables the mini-chart overview below the center plot
  panel.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setTimeZoneOffset</b>(<span class=jsdocParameterType>int</span> <span class=jsdocParameterName>offsetHours</span>)
+<BR>
+<span class=jsdocComment>Set a chart-wide timezone offset that will override the client timezone
+ -12 <= timeZoneOffset <= 13</span></TD>
 </TR>
 </TABLE>
 
