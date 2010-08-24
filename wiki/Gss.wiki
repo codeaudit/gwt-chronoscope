@@ -38,5 +38,8 @@ axislegend daterange {
  <link rel="stylesheet" href="simple.css" type="text/gss">
 }}}
 
+
+ * note: {{{ color: white; }}} doesn't work in the IE flash canvas fallback, so you might want to use #rrggbb; or rgb(rrr,ggg,bbb); color values instead.
+
 == Gss Reference ==
 The [http://gwt-chronoscope.googlecode.com/svn/apidocs/gssdoc.html GSS reference], is generated automatically when the project is deployed. 
