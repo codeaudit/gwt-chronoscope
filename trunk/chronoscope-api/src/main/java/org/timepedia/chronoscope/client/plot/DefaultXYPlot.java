@@ -84,6 +84,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private boolean legendOverriden;
   
+  private boolean animationPreview = true;
+
   private class ExportableHandlerManager extends HandlerManager {
 
     public ExportableHandlerManager(DefaultXYPlot<T> xyPlot) {
@@ -493,7 +495,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getMaxDrawableDataPoints() {
-    return (int) (isAnimating ? maxDrawableDatapoints
+    return (int) (isAnimating && animationPreview ? maxDrawableDatapoints
         : ChronoscopeOptions.getMaxStaticDatapoints());
   }
 
@@ -787,7 +789,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     plotLayer.save();
     // if on a low performance device, don't re-render axes or legend
     // when animating
-    final boolean canDrawFast = !(isAnimating() && ChronoscopeOptions
+    final boolean canDrawFast = !(isAnimating() && animationPreview && ChronoscopeOptions
         .isLowPerformance());
 
     final boolean plotDomainChanged = !visDomain.approx(lastVisDomain);
@@ -907,6 +909,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void setAnimating(boolean animating) {
     this.isAnimating = animating;
+  }
+
+  @Override
+  @Export
+  public void setAnimationPreview(boolean enabled) {
+    this.animationPreview = enabled;
   }
 
   @Export
