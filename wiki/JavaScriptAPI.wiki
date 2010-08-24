@@ -44,7 +44,7 @@ The data file is a json properties file with the following format:
 {{{
   dataset = {
     "id": "unrate",                                         // Unique id for this dataset
-    "domainscale": 1000,                                    // Scale
+    "domainscale": 1000,                                    // Scale factor to convert domain values to microseconds (optional)
     "domain": [-694306739,-691628339,-689122739,-686444339],// UTC time in milliseconds
     "range":  [3.4, 3.8, 4.0, 3.9,],                        // Values
     "label":  "Unemployment",                               // Dataset label
