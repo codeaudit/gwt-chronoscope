@@ -24,8 +24,6 @@ Previously you have to load the chart data.
   <script type="text/javascript">
     function onChronoscopeLoaded(chrono) {
      var data = [dataset];
-     chronoscope.Chronoscope.setFontBookRendering(true);
-     chronoscope.Chronoscope.setFontBookServiceEndpoint("http://api.timepedia.org/fr");
      chronoscope.Chronoscope.setErrorReporting(true);
      chronoscope.Chronoscope.createTimeseriesChartById("chartid", data, 650, 433, function(view) {
        view.getChart().redraw();
@@ -58,4 +56,3 @@ The data file is a json properties file with the following format:
 
 The [http://gwt-chronoscope.googlecode.com/svn/apidocs/jsdoc.html Javascript API documentation], is generated automatically when the project is deployed. 
 If you find any mistake please report the [http://code.google.com/p/gwt-chronoscope/issues issue].
-
