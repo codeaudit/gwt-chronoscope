@@ -166,18 +166,22 @@ public class XYPlotRenderer<T extends Tuple2D> {
       Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
       int methodCallCount = 0;
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
-        Tuple2D dataPt = tupleItr.next();
-        renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+         if (tupleItr.hasNext()){
+            Tuple2D dataPt = tupleItr.next();
+            renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
 
-        if (calcRangeAsPercent) {
-          LocalTuple tmpTuple = new LocalTuple();
-          tmpTuple.setXY(dataPt.getDomain(),
-              RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
-          dataPt = tmpTuple;
-        }
-        // FIXME: refactor to remove cast
-        renderer
-            .drawCurvePart(layer, (T) dataPt, methodCallCount++, renderState);
+            if (calcRangeAsPercent) {
+              LocalTuple tmpTuple = new LocalTuple();
+              tmpTuple.setXY(dataPt.getDomain(),
+                  RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+              dataPt = tmpTuple;
+            }
+            // FIXME: refactor to remove cast
+            renderer
+                .drawCurvePart(layer, (T) dataPt, methodCallCount++, renderState);
+         } else {
+             break;
+         }
       }
       renderer.endCurve(layer, renderState);
 

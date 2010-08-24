@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
  * Represents a dataset along with all the associated information needed to 
@@ -38,8 +39,8 @@ public class DrawableDataset<T extends Tuple2D> {
   public void setCurrMipLevel(int mipLevel) {
     if (mipLevel != this.currMipLevel) {
       this.currMipLevel = mipLevel;
-      this.currMipMap = this.dataset.getMipMapChain().getMipMap(mipLevel);
     }
+    this.currMipMap = this.dataset.getMipMapChain().getMipMap(mipLevel);
   }
   
   void setRenderer(DatasetRenderer<T> renderer) {

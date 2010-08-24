@@ -115,6 +115,7 @@ public final class Datasets<T extends Tuple2D>
     }
   }
 
+
   private void firePendingEvents() {
     for (Command c : pending) {
       c.execute();
@@ -261,6 +262,35 @@ public final class Datasets<T extends Tuple2D>
      myDatasetListener.onDatasetChanged(dataset, region.getStart(), region.getEnd());
   }
 
+  private abstract class ListenerCommand implements Command {
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+
+            if ( ((ListenerCommand)obj).getName() == null || !((ListenerCommand)obj).getName().equals(getName())) {
+                return false;
+            }
+            return true;
+        }
+
+        protected abstract String getName();
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+            return hash;
+        }
+
+  }
+
+  private static final String ON_DATASET_ADDED = "onDatasetAdded";
+  private static final String ON_DATASET_CHANGED = "onDatasetChanged";
+  private static final String ON_DATASET_REMOVED = "onDatasetRemoved";
+
   private final class PrivateDatasetListener<S extends Tuple2D>
       implements DatasetListener<S> {
 
@@ -273,19 +303,33 @@ public final class Datasets<T extends Tuple2D>
     public void onDatasetAdded(final Dataset<S> dataset) {
       // forward event to external listeners
       for (final DatasetListener<S> l : this.datasets.listeners) {
-        Command c = new Command() {
+        Command c = new ListenerCommand() {
+
+          protected String getName() {
+             return ON_DATASET_ADDED;
+          }
+
           @Override
           public void execute() {
             l.onDatasetAdded(dataset);
           }
+
+
         };
         if (mutating == 0) {
           c.execute();
         } else {
-          pending.add(c);
+            replaceCommand(pending,c);
         }
       }
     }
+
+   private void replaceCommand(List<Command> pending, Command cmd ){
+        if (pending.contains(cmd)){
+           pending.remove(cmd);
+       }
+       pending.add(cmd);
+   }
 
     public void onDatasetChanged(final Dataset<S> dataset,
         final double domainStart, final double domainEnd) {
@@ -295,7 +339,12 @@ public final class Datasets<T extends Tuple2D>
 
       // forward event to external listeners
       for (final DatasetListener<S> l : this.datasets.listeners) {
-        Command c = new Command() {
+        Command c = new ListenerCommand() {
+
+          protected String getName(){
+             return ON_DATASET_CHANGED;
+          }
+
           @Override
           public void execute() {
             l.onDatasetChanged(dataset, domainStart, domainEnd);
@@ -304,7 +353,7 @@ public final class Datasets<T extends Tuple2D>
         if (mutating == 0) {
           c.execute();
         } else {
-          pending.add(c);
+            replaceCommand(pending,c);
         }
       }
     }
@@ -313,7 +362,12 @@ public final class Datasets<T extends Tuple2D>
         final int datasetIndex) {
       // forward event to external listeners
       for (final DatasetListener<S> l : this.datasets.listeners) {
-        Command c = new Command() {
+        Command c = new ListenerCommand() {
+
+          protected String getName(){
+             return ON_DATASET_REMOVED;
+          }
+          
           @Override
           public void execute() {
             l.onDatasetRemoved(dataset, datasetIndex);
@@ -322,7 +376,7 @@ public final class Datasets<T extends Tuple2D>
         if (mutating == 0) {
           c.execute();
         } else {
-          pending.add(c);
+           replaceCommand(pending,c);
         }
       }
     }
