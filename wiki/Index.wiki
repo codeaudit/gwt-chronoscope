@@ -29,6 +29,5 @@ It is interactive and can be used in Gwt applications, as an embedded widget in 
   * [Widget Widget overview]
   * [Gadget Gadget overview]
   * [GViz Google Visualization API]
-
-
+  * [Integration Integration with 3 party libs and tools]
 
