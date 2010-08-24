@@ -24,6 +24,6 @@ public class GssProperty {
   }
   
   public String toString() {
-    return "propertyName=" + propertyName + " propertyValue=" + propertyValue + ","; 
+    return  propertyName + ":" + propertyValue + ";"; 
   }
 }

@@ -1,24 +1,23 @@
 package org.timepedia.chronoscope.client.browser;
 
+import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.HistoryManager;
+import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.browser.BrowserGssContext.OnGssInitializedCallback;
+import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
+import org.timepedia.chronoscope.client.gss.GssContext;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+import org.timepedia.chronoscope.client.util.ArgChecker;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import static com.google.gwt.user.client.Event.KEYEVENTS;
 import com.google.gwt.user.client.Window;
-//import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.HistoryManager;
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.canvas.View;
-import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.gss.GssContext;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
  * ChartPanel is a GWT Widget that intercepts events and translates them to the
@@ -71,10 +70,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     ArgChecker.isNotNull(plot, "plot");
     
     view = (View) GWT.create(DOMView.class);
-    if (gssContext == null) {
-      gssContext = (BrowserGssContext) GWT
-          .create(BrowserGssContext.class);
-    }
+
     this.chartWidth = chartWidth;
     this.chartHeight = chartHeight;
     this.readyListener = readyListener;
@@ -163,8 +159,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     chart.init();
     plot.init(view);
     
-  
-    
     viewReady = true;
     HistoryManager.putChart(id, chart);
     chart.redraw();
@@ -209,40 +203,50 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
     chartEventHandler = GWT.create(ChartEventHandler.class);
     sinkEvents();
-     
+
     Element cssgss = null;
     cssgss = DOM.createDiv();
     DOM.setStyleAttribute(cssgss, "width", "0px");
     DOM.setStyleAttribute(cssgss, "height", "0px");
-    DOM.setElementAttribute(cssgss, "id",
-        DOM.getElementAttribute(getElement(), "id") + "style");
+    DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(),
+        "id")
+        + "style");
     DOM.setElementAttribute(cssgss, "class", "chrono");
     appendBody(cssgss);
     super.onAttach();
 
-    ((BrowserGssContext) gssContext).initialize(cssgss);
-
-    ((DOMView) view)
-        .initialize(getElement(), chartWidth, chartHeight, true, gssContext,
-            this);
+    if (gssContext == null) {
+      gssContext = GWT.create(BrowserGssContext.class);
+      ((BrowserGssContext)gssContext).initialize(cssgss, new OnGssInitializedCallback() {
+        public void run() {
+          initView();
+        }
+      });
+    } else {
+      initView();
+    }
+  }
+  
+  private void initView() {
+    ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true,
+        gssContext, PlotPanel.this);
     view.onAttach();
   }
 
   private native void appendBody(Element cssgss) /*-{
-        $doc.body.appendChild(cssgss);
-    }-*/;
+    $doc.body.appendChild(cssgss);
+  }-*/;
 
   /**
    * Take over right-mouse button menu on browsers that support it.
    */
   private native void disableContextMenu(Element elem) /*-{
-           var _this = this;
-           elem.oncontextmenu=function(a,b) {
-             _this.@org.timepedia.chronoscope.client.browser.PlotPanel::fireContextMenu(Lcom/google/gwt/user/client/Event;)(a);
-               return false;
-           };
-
-   }-*/;
+    var _this = this;
+    elem.oncontextmenu=function(a,b) {
+      _this.@org.timepedia.chronoscope.client.browser.PlotPanel::fireContextMenu(Lcom/google/gwt/user/client/Event;)(a);
+      return false;
+    };
+  }-*/;
 
   private void initElement(Element container) {
     setElement(container);

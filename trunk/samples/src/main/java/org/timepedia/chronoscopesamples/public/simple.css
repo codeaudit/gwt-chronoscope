@@ -131,13 +131,6 @@ series.focus point {
   visibility:visible
 }
 
-
-marker {
-  background-color: rgb( 245, 86, 95 );
-  color: black;
-  font-family: Verdana;
-}
-
 overview {
   background-color: #99CCFF;
   color: #0099FF;

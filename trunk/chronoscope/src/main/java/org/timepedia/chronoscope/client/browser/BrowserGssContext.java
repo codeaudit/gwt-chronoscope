@@ -15,7 +15,12 @@ public class BrowserGssContext extends GssContext {
     return cssgss;
   }
 
-  public void initialize(Element cssgss) {
+  public void initialize(Element cssgss, OnGssInitializedCallback callback) {
     this.cssgss = cssgss;
   }
+  
+  public interface OnGssInitializedCallback {
+    void run(); 
+  }
+  
 }
