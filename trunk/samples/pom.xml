@@ -25,6 +25,7 @@
   </properties>
 
   <build>
+    <outputDirectory>${project.build.directory}/www/WEB-INF/classes</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

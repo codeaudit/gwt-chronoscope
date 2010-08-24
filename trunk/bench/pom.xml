@@ -26,6 +26,7 @@
   </properties>
 
   <build>
+    <outputDirectory>${project.build.directory}/www/WEB-INF/classes</outputDirectory>
     <finalName>${gwt.name}</finalName>
     <plugins>
       <plugin>
