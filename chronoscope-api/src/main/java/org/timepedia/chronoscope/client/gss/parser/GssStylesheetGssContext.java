@@ -139,6 +139,14 @@ public class GssStylesheetGssContext extends DefaultGssContext {
       this.properties = properties;
     }
   }
+  
+  public String toString() {
+    String ret = "";
+    for (GssRule r : rules) {
+      ret += r.toString() + "\n";
+    }
+    return ret;
+  }
 
   public static void main(String[] args) {
     GssStylesheetGssContext gss=new GssStylesheetGssContext("point.focus {color: red}");
