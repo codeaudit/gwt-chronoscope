@@ -548,13 +548,28 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    */
   void showLegendLabelsValues(boolean visible);
 
+  /**
+   * Set the font size in pixels of the legend labels
+   */
   void setLegendLabelsFontSize(int pixels);
   
+  /**
+   * Set the width of the legend icons
+   */
   void setLegendLabelsIconWidth(int pixels);
   
+  /**
+   * Set the height of the legend icons
+   */
   void setLegendLabelsIconHeight(int pixels);
 
+  /**
+   * Set the column width of legends (0 = auto)
+   */
   void setLegendLabelsColumnWidth(int pixels);
 
+  /**
+   * Set the number of columns for legends (0 = auto)
+   */
   void setLegendLabelsColumnCount(int count);
 }
