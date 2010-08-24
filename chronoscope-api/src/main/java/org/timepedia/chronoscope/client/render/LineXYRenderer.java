@@ -111,7 +111,10 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   @Override
   public void drawHoverPoint(Layer layer, T point, int datasetIndex) {
     GssProperties layerProps = this.gssHoverProps;
-
+    if (!layerProps.visible) {
+      return;
+    }
+    
     if (layerProps.size < 1) {
       layerProps.size = 1;
     }
