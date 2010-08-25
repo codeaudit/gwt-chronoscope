@@ -133,23 +133,27 @@ public class DatasetLegendPanel extends AbstractPanel
   /**
    * Find the maximum column width
    */
-  private double calcColumnWidth(){
-    double maxLabelWidth = 0,maxIconWidth=0;
-    if(legendLabelsProperties.columnWidth.equals("auto")){
-        for (int i = 0; i < maxLabelWidths.length; i++) {
-            if (maxLabelWidth < maxLabelWidths[i]) {
-                maxLabelWidth = maxLabelWidths[i];
-            }
-            DatasetRenderer renderer = plot.getDatasetRenderer(i);
-            double iconWidth = renderer.calcLegendIconWidth(view);
-            if (maxIconWidth < iconWidth) {
-                maxIconWidth = iconWidth;
-            }
+  private double calcColumnWidth() {
+    double maxLabelWidth = 0, maxIconWidth = 0;
+    if (legendLabelsProperties.columnWidth.equals("auto")) {
+      int count = 0;
+      for (int i = 0; i < plot.getDatasets().size(); i++) {
+        Dataset ds = plot.getDatasets().get(i);
+        for (int d = 0; d < plot.getDatasetRenderer(i).getLegendEntries(ds); d++) {
+          if (maxLabelWidth < maxLabelWidths[count]) {
+            maxLabelWidth = maxLabelWidths[count];
+          }
+          double iconWidth = plot.getDatasetRenderer(i).calcLegendIconWidth(view);
+          if (maxIconWidth < iconWidth) {
+            maxIconWidth = iconWidth;
+          }
+          count++;
         }
-    maxLabelWidth+=maxIconWidth+colSpacing;
-    }else{
-        String width=legendLabelsProperties.columnWidth;
-        maxLabelWidth=Double.valueOf(width.substring(0, width.length()-2));
+      }   
+      maxLabelWidth += maxIconWidth + colSpacing;
+    } else {
+      String width = legendLabelsProperties.columnWidth;
+      maxLabelWidth = Double.valueOf(width.substring(0, width.length() - 2));
     }
     return maxLabelWidth;
   }
