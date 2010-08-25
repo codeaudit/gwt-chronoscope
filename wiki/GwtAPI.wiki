@@ -107,6 +107,7 @@ public class HelloChart implements EntryPoint {
 = Configuring the !FontRendered servlet =
 Chronoscope cames with a servlet able to serve rotated fonts to be displayed in your chart Y axis.
 To enable it you have to put these lines in your `web.xml` file:
+Note: this method is obsolete and deprecated in current browsers (most now support text rotation).
 {{{
 <web-app>
   <servlet>
