@@ -104,29 +104,33 @@ public class DatasetLegendPanel extends AbstractPanel
   /**
    * The legend labels column alignment
    */
-  private void drawColumnAlignment(Layer layer){
+  private void drawColumnAlignment(Layer layer) {
     double xCursor = bounds.x;
     double yCursor = bounds.y;
     setIconSize();
-    double maxLabelWidth=calcColumnWidth();
-    int columnCount=calcColumnCount(maxLabelWidth);
+    double maxLabelWidth = calcColumnWidth();
+    int columnCount = calcColumnCount(maxLabelWidth);
     //Draw legend label
-    int col=0;
-    for(int i=0;i<plot.getDatasets().size();i++,col++){
-        if(col>columnCount){
-            col=0;
-            xCursor = bounds.x;
-            yCursor+=lblHeight;
-        }
+    int col = 0;
+    for (int i = 0; i < plot.getDatasets().size(); i++, col++) {
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
-      renderer.drawLegendIcon(layer, xCursor, yCursor + lblHeight / 2, 0);
-      double iconWidth = renderer.calcLegendIconWidth(view);
-      layer.setStrokeColor(legendLabelsProperties.color);
-      int hoverPoint = plot.getHoverPoints()[i];
-      String seriesLabel = createDatasetLabel(plot, i, hoverPoint,0);
-      layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel,legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight,legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
+      for (int d = 0; d < renderer.getLegendEntries(plot.getDatasets().get(i)); d++) {
+        if (col > columnCount) {
+          col = 0;
+          xCursor = bounds.x;
+          yCursor += lblHeight;
+        }
+        renderer.drawLegendIcon(layer, xCursor, yCursor + lblHeight / 2, d);
+        double iconWidth = renderer.calcLegendIconWidth(view);
+        layer.setStrokeColor(legendLabelsProperties.color);
+        int hoverPoint = plot.getHoverPoints()[i];
+        String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d);
+        layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel, legendLabelsProperties.fontFamily,
+            legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
 
-      xCursor +=maxLabelWidth;
+        xCursor += maxLabelWidth;
+        col++;
+      }
     }
   }
 
