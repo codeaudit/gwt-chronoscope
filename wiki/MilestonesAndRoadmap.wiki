@@ -1,38 +1,27 @@
 #summary upcoming release milestones and roadmap
-#labels Featured
+#labels Phase-Requirements
 
 = Roadmap =
 
-== 2.0 M2 == 
-  * improved GSS element, property names and docs
-  * interpolation options issue 1 
-  * shared domain charts (two plots sharing X axis, eg price/vol)  issue 10
-  * improved TupleDataset support
-
 == 2.0 ==
-  * improved docs, more examples
+  * improved docs, examples
+  * improved GSS element, property, microformat naming conventions
 
 == 2.1 == 
+  * interpolation options issue 1 
+  * SharedDomainPlot (two plots sharing X axis, eg price+vol)  issue 10
+  * improved TupleDataset support
   * Sparklines issue 7
   * Dataset2D: indices are 2D, values can be scalar or tuple, e.g. d2d.getValue(i,j)
-    * LatLongDataset2D: lookup values by latitude/longitude, e.g. ll2d.getValue(lat, long)
-  * Category Dataset: XYDataset with X values as Strings issue 12
-  * TimelinePlot
-  * TimelinePlot: 3 dimensional plot with third axis being a time slider
+  * LatLongDataset2D: lookup values by latitude/longitude, e.g. ll2d.getValue(lat, long)
+  * Category Dataset: XYDataset with X values as Strings issue 12 
+  * LogAxis
 
-=== New Renderer Types ===
-  * SharedDomainPlot
-  * CategoryRenderer
-  * CandleStickRenderer (TuplePlot)
-  * PieRenderer
+== 2.2++ == 
+  * CategoryRenderer,  CategoryAxis
+  * TimelineRenderer, TimelineAxis: third axis as a time slider
   * HeatMapRenderer: used by Plot2D
   * CountourRenderer: used by Plot2D
   * TimelineRenderer
   * Error Bars
   * Scatter Plot
-
-=== New Axis Types ===
-  * LogAxis
-  * CategoryAxis
-  * TimelineAxis
-
