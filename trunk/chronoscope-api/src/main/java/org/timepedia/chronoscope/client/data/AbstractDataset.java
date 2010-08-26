@@ -132,25 +132,25 @@ public abstract class AbstractDataset<T extends Tuple2D>
       return backingArray();
     }
   }
-  
+
   public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias) {
     int domainStartIdx = 0;
     int domainEndIdx = 0;
     if (lodBias == 0 && incrementalHandler != null && incremental != null && incrementalInterval != null
-            && incrementalInterval.contains(region.getStart()) 
+            && incrementalInterval.contains(region.getStart())
             && incrementalInterval.contains(region.getEnd())) {
       domainStartIdx = Util.binarySearch(incremental.getDomain(), region.getStart());
       domainEndIdx = Util.binarySearch(incremental.getDomain(), region.getEnd());
       return new MipMapRegion(incremental, domainStartIdx, domainEndIdx);
     }
     if (!firing && lodBias == 0 && incrementalHandler != null
-            && (outgoingRequest < 0 || System.currentTimeMillis() - outgoingRequest > 5000 )) {
+            && (outgoingRequest < 0 || System.currentTimeMillis() - outgoingRequest > 1000 )) {
       // widening region for redraw issue when slighlty under needed span
        double delta = region.getEnd() - region.getStart();
        double epsilon = delta * 0.01;
-       region.setEndpoints(Math.max(this.domainExtrema.getStart(), region.getStart()-epsilon),
+       Interval datasetRegion = new Interval(Math.max(this.domainExtrema.getStart(), region.getStart()-epsilon),
                            Math.min(this.domainExtrema.getEnd(), region.getEnd()+epsilon));
-      incrementalHandler.onDataNeeded(region, this, new IncrementalDatasetResponseImpl(this));
+      incrementalHandler.onDataNeeded(datasetRegion, this, new IncrementalDatasetResponseImpl(this));
       outgoingRequest = System.currentTimeMillis();
     }
     if (lodBias < 0) { lodBias = 0; }
