@@ -279,7 +279,7 @@
                 </os>
             </activation>
             <properties>
-                <gwtplatform></gwtplatform>
+                <gwtplatform>linux</gwtplatform>
               <google.webtoolkit.extrajvmargs>-Xmx512m</google.webtoolkit.extrajvmargs>
               
             </properties>
