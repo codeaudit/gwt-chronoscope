@@ -31,7 +31,7 @@
           <logLevel>${gwt.loglevel}</logLevel>
           <style>${gwt.outputstyle}</style>
           <output>${project.build.directory}/benchmark</output>
-
+          <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
           <runTarget>
             org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}/index.html
           </runTarget>
