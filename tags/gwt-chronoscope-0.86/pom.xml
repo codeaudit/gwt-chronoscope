@@ -267,6 +267,7 @@
                 <gwt.outputstyle>PRETTY</gwt.outputstyle>
                 <gwt.modulesuffix></gwt.modulesuffix>
 		<incubatorVersion>march-02-2009</incubatorVersion>
+                <extraJvmArgs>-Xmx512m -Xss1024k</extraJvmArgs>
             </properties>
         </profile>
 
