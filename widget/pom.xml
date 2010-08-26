@@ -51,9 +51,8 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <logLevel>${gwt.loglevel}</logLevel>
-          <!-- logLevel>ERROR</logLevel -->
           <style>${gwt.outputstyle}</style>
-          <!-- style>OBF</style -->
+          <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
           <output>${project.build.directory}/widget</output>
           <gwtVersion>${gwtversion}</gwtVersion>
           <runTarget>
