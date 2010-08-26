@@ -621,6 +621,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void nextZoom() {
     pushHistory();
     double nDomain = visDomain.length() / ZOOM_FACTOR;
+    nDomain = Math.max(nDomain, 2.0 * getDatasets().getMinInterval());
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
@@ -752,6 +753,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void prevZoom() {
     pushHistory();
     double nDomain = visDomain.length() * ZOOM_FACTOR;
+    nDomain = Math.min(nDomain, 1.1 * getDatasets().getDomainExtrema().length());
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
