@@ -55,6 +55,7 @@
           <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
           <output>${project.build.directory}/widget</output>
           <gwtVersion>${gwtversion}</gwtVersion>
+          <localWorkers>${localWorkers}</localWorkers>
           <runTarget>
             org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/index.html
           </runTarget>

@@ -51,6 +51,7 @@
           <gwtVersion>${gwtversion}</gwtVersion>
           <logLevel>${gwt.loglevel}</logLevel>
           <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
+          <localWorkers>${localWorkers}</localWorkers>
           <modules>
             <module>
               org.timepedia.chronoscope.gviz.gadget.GVizChronoscopeGadget${gwt.modulesuffix}

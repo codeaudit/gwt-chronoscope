@@ -32,6 +32,7 @@
           <style>${gwt.outputstyle}</style>
           <output>${project.build.directory}/benchmark</output>
           <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
+          <localWorkers>${localWorkers}</localWorkers>
           <runTarget>
             org.timepedia.chronoscopebench.ChronoscopeBench${gwt.modulesuffix}/index.html
           </runTarget>

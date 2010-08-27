@@ -42,6 +42,7 @@
           <gwtVersion>${gwtversion}</gwtVersion>
           <logLevel>${gwt.loglevel}</logLevel>
           <extraJvmArgs>${extraJvmArgs}</extraJvmArgs>
+          <localWorkers>${localWorkers}</localWorkers>
           <runTarget>
             org.timepedia.chronoscopesamples.ChronoscopeSamples${gwt.modulesuffix}/index.html
           </runTarget>
