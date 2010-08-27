@@ -58,11 +58,11 @@
           <runTarget>
             org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}/index.html
           </runTarget>
-          <compileTargets>
-            <value>
+          <modules>
+            <module>
               org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}
-            </value>
-          </compileTargets>
+            </module>
+          </modules>
         </configuration>
         <executions>
           <execution>

@@ -253,24 +253,18 @@
             <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
         </repository>
     </repositories>
+
+    <properties>
+        <gwtversion>1.6.4</gwtversion>
+        <gwt.loglevel>INFO</gwt.loglevel>
+        <gwt.outputstyle>PRETTY</gwt.outputstyle>
+        <gwt.modulesuffix></gwt.modulesuffix>
+        <incubatorVersion>march-02-2009</incubatorVersion>
+        <extraJvmArgs>-Xmx256m -Xss2048k</extraJvmArgs>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
   
     <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <jdk>1</jdk>
-            </activation>
-
-            <properties>
-                <gwtversion>1.6.4</gwtversion>
-                <gwt.loglevel>INFO</gwt.loglevel>
-                <gwt.outputstyle>PRETTY</gwt.outputstyle>
-                <gwt.modulesuffix></gwt.modulesuffix>
-		<incubatorVersion>march-02-2009</incubatorVersion>
-                <extraJvmArgs>-Xmx300m -Xss1024k</extraJvmArgs>
-            </properties>
-        </profile>
-
 
         <profile>
             <id>linux</id>
