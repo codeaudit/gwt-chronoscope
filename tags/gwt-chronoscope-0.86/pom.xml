@@ -261,6 +261,7 @@
         <gwt.modulesuffix></gwt.modulesuffix>
         <incubatorVersion>march-02-2009</incubatorVersion>
         <extraJvmArgs>-Xmx256m -Xss2048k</extraJvmArgs>
+        <localWorkers>2</localWorkers>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
   

@@ -80,6 +80,7 @@
           <gwtVersion>${gwtversion}</gwtVersion>
           <logLevel>${gwt.loglevel}</logLevel>
 	  <extraTestArgs>-Xmx512m</extraTestArgs>
+          <localWorkers>${localWorkers}</localWorkers>
           <runTarget>
             dummyvalue
           </runTarget>
