@@ -230,13 +230,6 @@
     </extensions>
   </build>
   
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <repositories>
     <repository>
       <id>repo1</id>
