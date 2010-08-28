@@ -60,12 +60,14 @@
     <module>chronoscope-api</module>
     <module>chronoscope</module>
     <module>docs</module>
+<!--
     <module>samples</module>
     <module>widget</module>
     <module>bench</module>
     <module>buildtools</module>
     <module>gviz</module>
     <module>chronoscope-java2d</module> 
+-->
   </modules>
 
   <!-- 
@@ -206,13 +208,6 @@
     </extensions>
   </build>
   
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <repositories>
     <repository>
       <id>repo1</id>
@@ -236,7 +231,7 @@
   <properties>
     <gwtversion>2.0.4</gwtversion>
     <gwtexporterversion>2.0.10</gwtexporterversion>
-    <gwt.loglevel>WARN</gwt.loglevel>
+    <gwt.loglevel>INFO</gwt.loglevel>
     <gwt.outputstyle>OBF</gwt.outputstyle>
     <gwt.modulesuffix />
     <maven.test.skip>false</maven.test.skip> 

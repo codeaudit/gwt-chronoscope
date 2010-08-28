@@ -26,9 +26,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>com.google.gwt.google-apis</groupId>
       <artifactId>gwt-gadgets</artifactId>
-      <version>1.11-SNAPSHOT</version>
+      <version>1.0.3</version>
     </dependency>
 
   </dependencies>
