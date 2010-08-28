@@ -60,14 +60,12 @@
     <module>chronoscope-api</module>
     <module>chronoscope</module>
     <module>docs</module>
-<!--
     <module>samples</module>
     <module>widget</module>
     <module>bench</module>
     <module>buildtools</module>
     <module>gviz</module>
     <module>chronoscope-java2d</module> 
--->
   </modules>
 
   <!-- 
