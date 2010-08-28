@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -174,6 +175,10 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   }
 
   public Interval getRangeExtrema(Dataset ds) {
+    return ds.getRangeExtrema(0);
+  }
+
+  public Interval getRangeExtrema(MipMap ds) {
     return ds.getRangeExtrema(0);
   }
 

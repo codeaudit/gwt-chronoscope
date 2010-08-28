@@ -7,6 +7,8 @@ import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Array2D;
+import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
+import org.timepedia.chronoscope.client.util.Interval;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -21,23 +23,43 @@ import java.util.NoSuchElementException;
  * @author chad takahashi
  */
 public class MipMap {
+
+  private static Interval[] computeExtrema(Array1D[] rangeTuples) {
+    Interval[] extrema = new Interval[rangeTuples.length];
+    // Assign min/max range-Y values
+    ExtremaArrayFunction extremaFn = new ExtremaArrayFunction();
+    for (int i = 0; i < extrema.length; i++) {
+      Array1D rangeVals = rangeTuples[i];
+      rangeVals.execFunction(extremaFn);
+      extrema[i] = extremaFn.getExtrema();
+    }
+    return extrema;
+  }
+  
+  MipMap nextMipMap;
   private Array1D domain;
   private FlyweightTuple flyweightTuple;
   private int mipLevel;
   private Array1D[] rangeTuples;
-  
-  MipMap nextMipMap;
-  
-  public MipMap(Array1D domain, Array1D[] rangeTuples) {
+
+  private Interval[] rangeExtrema;
+
+  public MipMap(Array1D domain, Array1D[] rangeTuples, Interval[] extrema) {
+    assert rangeTuples.length == extrema.length;
     ArgChecker.isNotNull(domain, "domain");
     ArgChecker.isNotNull(rangeTuples, "rangeTuples");
-    
+
     this.mipLevel = 0;
     this.domain = domain;
     this.rangeTuples = rangeTuples;
+    this.rangeExtrema = extrema;
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
   }
-    
+
+  public MipMap(Array1D domain, Array1D[] rangeTuples) {
+    this(domain, rangeTuples, computeExtrema(rangeTuples));
+  }
+
   public MipMap(Array2D multiResDomain, Array2D[] multiResRangeTuple, int mipLevel) {
     ArgChecker.isNotNull(multiResDomain, "multiResDomain");
     ArgChecker.isNotNull(multiResRangeTuple, "multiResRangeTuple");
@@ -51,6 +73,7 @@ public class MipMap {
       this.rangeTuples[i] = multiResRangeTuple[i].getRow(mipLevel);
     }
     this.flyweightTuple = new FlyweightTuple(this.domain, this.rangeTuples);
+    this.rangeExtrema = computeExtrema(this.rangeTuples);
   }
 
   public MipMap(Array1D domain, Array1D[] range, int mipLevel, MipMap next) {
@@ -75,23 +98,21 @@ public class MipMap {
   }
   
   /**
-   * Returns the datapoint tuple at the specified index within this {@link MipMap}.
-   */
-  public Tuple2D getTuple(int dataPointIndex) {
-    ArgChecker.isLTE(dataPointIndex, this.size() - 1, "dataPointIndex");
-    this.flyweightTuple.setDomainAndRange(domain, rangeTuples);
-    this.flyweightTuple.setDataPointIndex(dataPointIndex);
-    return this.flyweightTuple;
-  }
-  
-  /**
    * Returns the array of range values for a specific tuple element
    *  within this {@link MipMap}.
    */
   public Array1D getRange(int tupleIndex) {
     return this.rangeTuples[tupleIndex];
   }
-  
+
+  /**
+   * Return the range extreme for this mipmap
+
+   */
+  public Interval getRangeExtrema(int coordinate) {
+    return this.rangeExtrema[coordinate];
+  }
+
   /**
    * Returns the number of elements in each range tuple within this mipmap. 
    */
@@ -99,22 +120,14 @@ public class MipMap {
     return this.rangeTuples.length;
   }
   
-  public boolean isEmpty() {
-    return this.domain.isEmpty();
-  }
-  
   /**
-   * Returns the next {@link MipMap} in this chain.
+   * Returns the datapoint tuple at the specified index within this {@link MipMap}.
    */
-  public MipMap next() {
-    return this.nextMipMap;
-  }
-  
-  /**
-   * The number of data points in this mipmap.
-   */
-  public int size() {
-    return this.domain.size();
+  public Tuple2D getTuple(int dataPointIndex) {
+    ArgChecker.isLTE(dataPointIndex, this.size() - 1, "dataPointIndex");
+    this.flyweightTuple.setDomainAndRange(domain, rangeTuples);
+    this.flyweightTuple.setDataPointIndex(dataPointIndex);
+    return this.flyweightTuple;
   }
   
   /**
@@ -146,6 +159,24 @@ public class MipMap {
         throw new UnsupportedOperationException();
       }
     };
+  }
+  
+  public boolean isEmpty() {
+    return this.domain.isEmpty();
+  }
+  
+  /**
+   * Returns the next {@link MipMap} in this chain.
+   */
+  public MipMap next() {
+    return this.nextMipMap;
+  }
+  
+  /**
+   * The number of data points in this mipmap.
+   */
+  public int size() {
+    return this.domain.size();
   }
   
 }
