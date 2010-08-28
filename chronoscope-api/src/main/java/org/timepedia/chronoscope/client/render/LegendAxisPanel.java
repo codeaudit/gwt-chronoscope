@@ -273,9 +273,12 @@ public class LegendAxisPanel extends AxisPanel {
     layer.restore();
   }
 
-   public void setlegendLabelGssProperty(Boolean visible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
+   public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
        if(visible!=null){
            legendLabelsProperties.visible=visible;
+       }
+       if(valueVisible!=null){
+           legendLabelsProperties.valueVisible=valueVisible;
        }
        if(fontSize!=null && fontSize > 0){
            legendLabelsProperties.fontSize=fontSize+"pt";

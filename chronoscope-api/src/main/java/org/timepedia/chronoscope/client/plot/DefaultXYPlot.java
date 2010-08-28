@@ -650,10 +650,6 @@ public class DefaultXYPlot<T extends Tuple2D>
               if (datasetIndex == -1) {
                   datasetIndex = 0;
               }
-//              //Record start and end the current data
-//              if(datasets.indexOf(dataset)==0){
-//                  visDomain.setEndpoints(domainStart, domainEnd);
-//              }
               plotRenderer.invalidate(dataset);
               fixDomainDisjoint();
               damageAxes();
@@ -1326,7 +1322,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                   double realY = getDataCoord(i, hoverPoints[i], dim);
                   double y = r.getRangeValue(getDataTuple(i, hoverPoints[i]), dim);
                   double dy = rangeToScreenY(y, i);
-                  String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim);
+                  String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim,true);
                   RenderState rs = new RenderState();
                   rs.setPassNumber(dim);
                   GssProperties props = r.getLegendProperties(dim, rs);
@@ -2119,40 +2115,45 @@ public class DefaultXYPlot<T extends Tuple2D>
     double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
     return getRangeAxis(datasetIndex).userToData(userY);
   }
+    @Export
+    @Override
+    public void showLegendLabels(boolean visible) {
+        topPanel.setlegendLabelGssProperty(visible, null, null, null, null, null, null);
+    }
 
     @Export
     @Override
     public void showLegendLabelsValues(boolean visible) {
-       topPanel.setlegendLabelGssProperty(visible, null, null, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, visible, null, null, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsFontSize(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, pixels, null, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, pixels, null, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsIconWidth(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, null, pixels, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, pixels, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsIconHeight(int pixels) {
-         topPanel.setlegendLabelGssProperty(null, null, null, pixels, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, pixels, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsColumnWidth(int pixels) {
-         topPanel.setlegendLabelGssProperty(null, null, null, null, pixels, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, null, pixels, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsColumnCount(int count) {
-       topPanel.setlegendLabelGssProperty(null, null, null, null, null, count);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, null, null, count);
     }
 }

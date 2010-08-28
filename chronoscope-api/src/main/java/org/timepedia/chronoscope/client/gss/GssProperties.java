@@ -70,6 +70,8 @@ public class GssProperties implements Exportable {
   public String iconWidth = "auto";
 
   public String iconHeight = "auto";
+
+  public boolean valueVisible = false;
   
   public GssProperties setColor(Color color) {
     this.color = color;
