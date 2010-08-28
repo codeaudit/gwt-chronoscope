@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.DatasetRenderer;
 import org.timepedia.chronoscope.client.render.RangeAxisPanel;
@@ -222,16 +223,21 @@ public class RangeAxis extends ValueAxis implements Exportable {
     if (!rangeOveriddenLow || !rangeOveriddenHigh) {
       DatasetRenderer dr = plot
           .getDatasetRenderer(plot.getDatasets().indexOf(ds));
-      Interval rangeExtrema = dr.getRangeExtrema(ds);
-      double rangeMin = rangeExtrema.getStart();
-      double rangeMax = rangeExtrema.getEnd();
-      if (calcRangeAsPercent) {
-        final double refY = dr.getRange(ds.getFlyweightTuple(0));
-        rangeMin = calcPrctDiff(refY, rangeMin);
-        rangeMax = calcPrctDiff(refY, rangeMax);
+      MipMap m = ds.getMipMapChain().getMipMap(0);
+      while (m != null) {
+        Interval rangeExtrema = dr.getRangeExtrema(m);
+        double rangeMin = rangeExtrema.getStart();
+        double rangeMax = rangeExtrema.getEnd();
+        if (calcRangeAsPercent) {
+          final double refY = dr.getRange(ds.getFlyweightTuple(0));
+          rangeMin = calcPrctDiff(refY, rangeMin);
+          rangeMax = calcPrctDiff(refY, rangeMax);
+        }
+        setAbsRange(
+            Math.min(absRangeMin, rangeOveriddenLow ? absRangeMin : rangeMin),
+            Math.max(absRangeMax, rangeOveriddenHigh ? absRangeMax : rangeMax));
+        m = m.next();
       }
-      setAbsRange(Math.min(absRangeMin, rangeOveriddenLow ? absRangeMin : rangeMin),
-          Math.max(absRangeMax, rangeOveriddenHigh ? absRangeMax : rangeMax));
     }
   }
 
