@@ -546,6 +546,11 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   /**
    * Show dataset legend labels ( false = hidden; true = visible )
    */
+  void showLegendLabels(boolean visible);
+
+  /**
+   * Show dataset legend value labels ( false = hidden; true = visible )
+   */
   void showLegendLabelsValues(boolean visible);
 
   /**

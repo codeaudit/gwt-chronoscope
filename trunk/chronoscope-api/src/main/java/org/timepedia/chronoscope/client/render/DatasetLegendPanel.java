@@ -124,10 +124,8 @@ public class DatasetLegendPanel extends AbstractPanel
         double iconWidth = renderer.calcLegendIconWidth(view);
         layer.setStrokeColor(legendLabelsProperties.color);
         int hoverPoint = plot.getHoverPoints()[i];
-        String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d);
-        layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel, legendLabelsProperties.fontFamily,
-            legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
-
+	String seriesLabel = createDatasetLabel(plot, i, hoverPoint,0,legendLabelsProperties.valueVisible);
+        layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel, legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
         xCursor += maxLabelWidth;
         col++;
       }
@@ -144,14 +142,16 @@ public class DatasetLegendPanel extends AbstractPanel
       for (int i = 0; i < plot.getDatasets().size(); i++) {
         Dataset ds = plot.getDatasets().get(i);
         for (int d = 0; d < plot.getDatasetRenderer(i).getLegendEntries(ds); d++) {
-          if (maxLabelWidth < maxLabelWidths[count]) {
-            maxLabelWidth = maxLabelWidths[count];
+          for (int l = 0; l < maxLabelWidths.length; l++) {
+            if (maxLabelWidth < maxLabelWidths[count]) {
+              maxLabelWidth = maxLabelWidths[count];
+            }
+            double iconWidth = plot.getDatasetRenderer(i).calcLegendIconWidth(view);
+            if (maxIconWidth < iconWidth) {
+              maxIconWidth = iconWidth;
+            }
+            count++;
           }
-          double iconWidth = plot.getDatasetRenderer(i).calcLegendIconWidth(view);
-          if (maxIconWidth < iconWidth) {
-            maxIconWidth = iconWidth;
-          }
-          count++;
         }
       }   
       maxLabelWidth += maxIconWidth + colSpacing;
@@ -244,7 +244,7 @@ public class DatasetLegendPanel extends AbstractPanel
 
     int hoverPoint = plot.getHoverPoints()[datasetIdx];
     String seriesLabel = createDatasetLabel(plot, datasetIdx, hoverPoint,
-        dimension);
+        dimension,legendLabelsProperties.valueVisible);
 
     // Compute the width of the dataset text label, taking into account historical
     // widths of this label.
@@ -271,9 +271,9 @@ public class DatasetLegendPanel extends AbstractPanel
       renderer.drawLegendIcon(layer, lblX, lblY + lblHeight / 2, dimension);
 
       layer.setStrokeColor(gssProperties.color);
-      layer.drawText(lblX + iconWidth + LEGEND_ICON_PAD, lblY, seriesLabel,
-          gssProperties.fontFamily, gssProperties.fontWeight,
-          gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+      layer.drawText(lblX + iconWidth + LEGEND_ICON_PAD, lblY, seriesLabel, legendLabelsProperties.fontFamily,
+            legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
+
     }
 
     return totalWidth;
@@ -298,7 +298,7 @@ public class DatasetLegendPanel extends AbstractPanel
       int medianIdx = ds.getNumSamples() >> 1;
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
       for (int d = 0; d < renderer.getLegendEntries(ds); d++) {
-        String lbl = createDatasetLabel(plot, i, medianIdx, d);
+        String lbl = createDatasetLabel(plot, i, medianIdx, d,legendLabelsProperties.valueVisible);
         if(colAlignment){
             estMaxWidths[c++] = stringSizer.getWidth(lbl, legendLabelsProperties);
         }else{
@@ -317,7 +317,7 @@ public class DatasetLegendPanel extends AbstractPanel
    * hovered data points. If pointIdx == -1, then the range value is omitted.
    */
   public static String createDatasetLabel(XYPlot plot, int datasetIdx,
-      int pointIdx, int dimension) {
+      int pointIdx, int dimension,boolean valueVisible) {
     Dataset ds = plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
     ArrayList<Dataset> sdatasets = (ArrayList<Dataset>) ds
@@ -332,7 +332,7 @@ public class DatasetLegendPanel extends AbstractPanel
     String lbl = rlabel + rangeAxis.getLabelSuffix();
 
     final boolean doShowRangeValue = (pointIdx > -1);
-    if (doShowRangeValue) {
+    if (doShowRangeValue && valueVisible) {
       double yData = rangeAxis.isCalcRangeAsPercent() ? plot
           .calcDisplayY(datasetIdx, pointIdx, dimension)
           : plot.getDataCoord(datasetIdx, pointIdx, dimension);

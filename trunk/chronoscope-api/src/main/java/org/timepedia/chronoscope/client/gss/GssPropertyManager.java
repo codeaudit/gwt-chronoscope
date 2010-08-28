@@ -476,6 +476,15 @@ public class GssPropertyManager {
     }
   };
 
+  public static final GssPropertyType GSS_VALUE_VISIBILITY_PROPERTY
+      = new GssPropertyType("value-visibility", "", GssPropertyType.TypeUnits.STRING,
+      "CSS value-visibility property controls whether value lables are drawn or not") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.valueVisible = !"hidden".equals(pval);
+    }
+  };
+
   public static final GssElementType GSS_GRID_TYPE = new GssElementType("grid",
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_BGIMAGE_PROPERTY,
@@ -520,9 +529,9 @@ public class GssPropertyManager {
   public static final GssElementType GSS_LABELS_TYPE = new GssElementType(
       "labels", new String[0],
       new GssElementType[0],
-      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY,GSS_FONT_SIZE_PROPERTY, GSS_COLUMN_WIDTH_PROPERTY, GSS_COLUMN_COUNT_PROPERTY, GSS_ICON_WIDTH_PROPERTY, GSS_ICON_HEIGHT_PROPERTY},
+      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY,GSS_FONT_SIZE_PROPERTY, GSS_COLUMN_WIDTH_PROPERTY, GSS_COLUMN_COUNT_PROPERTY, GSS_ICON_WIDTH_PROPERTY, GSS_ICON_HEIGHT_PROPERTY, GSS_VALUE_VISIBILITY_PROPERTY},
       "Controls visible of legend labelsc.",
-      "axislegend labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px;}")
+      "axislegend labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px; value-visibility:hidden }")
       ;
   
    public static final GssElementType GSS_MARKER_TYPE = new GssElementType(
@@ -561,7 +570,7 @@ public class GssPropertyManager {
       new GssElementType[0],
       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
       "Legend",
-      "axislegend { visibility: hidden}")
+      "axislegend { visibility: hidden }")
       ;
 
 //  public static final GssElementType GSS_OVERVIEW_TYPE = new GssElementType("overview",
