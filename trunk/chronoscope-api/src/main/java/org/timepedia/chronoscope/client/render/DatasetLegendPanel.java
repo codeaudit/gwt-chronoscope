@@ -88,11 +88,22 @@ public class DatasetLegendPanel extends AbstractPanel
    * Otherwise the legend labels arranged one after another(Columns don't align)
    */
   public void draw() {
+    checkForChanges();
     if(colAlignment){
           drawColumnAlignment(layer);
       }else{
           draw(layer, plot.getDatasets().size(), null);
       }
+  }
+
+  private void checkForChanges() {
+    int numLabels = 0;
+    for(int i=0; i<plot.getDatasets().size(); i++) {
+      numLabels += plot.getDatasetRenderer(i).getLegendEntries(plot.getDatasets().get(i));
+    }
+    if (numLabels != maxLabelWidths.length) {
+      this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
+    }
   }
 
   private Bounds calcBounds(Layer layer, int numDatasets) {
@@ -124,7 +135,7 @@ public class DatasetLegendPanel extends AbstractPanel
         double iconWidth = renderer.calcLegendIconWidth(view);
         layer.setStrokeColor(legendLabelsProperties.color);
         int hoverPoint = plot.getHoverPoints()[i];
-	String seriesLabel = createDatasetLabel(plot, i, hoverPoint,0,legendLabelsProperties.valueVisible);
+	String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d,legendLabelsProperties.valueVisible);
         layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel, legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
         xCursor += maxLabelWidth;
         col++;
@@ -143,14 +154,13 @@ public class DatasetLegendPanel extends AbstractPanel
         Dataset ds = plot.getDatasets().get(i);
         for (int d = 0; d < plot.getDatasetRenderer(i).getLegendEntries(ds); d++) {
           for (int l = 0; l < maxLabelWidths.length; l++) {
-            if (maxLabelWidth < maxLabelWidths[count]) {
-              maxLabelWidth = maxLabelWidths[count];
+            if (maxLabelWidth < maxLabelWidths[l]) {
+              maxLabelWidth = maxLabelWidths[l];
             }
             double iconWidth = plot.getDatasetRenderer(i).calcLegendIconWidth(view);
             if (maxIconWidth < iconWidth) {
               maxIconWidth = iconWidth;
             }
-            count++;
           }
         }
       }   
