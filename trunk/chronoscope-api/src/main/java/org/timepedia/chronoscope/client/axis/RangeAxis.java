@@ -224,7 +224,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
       DatasetRenderer dr = plot
           .getDatasetRenderer(plot.getDatasets().indexOf(ds));
       MipMap m = ds.getMipMapChain().getMipMap(0);
+
       while (m != null) {
+        if (m.getLevel() > 1 && m.size() < plot.getMaxDrawableDataPoints()) {
+          break;
+        }
         Interval rangeExtrema = dr.getRangeExtrema(m);
         double rangeMin = rangeExtrema.getStart();
         double rangeMax = rangeExtrema.getEnd();
