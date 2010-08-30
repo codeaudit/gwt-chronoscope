@@ -1314,7 +1314,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                 Dataset d = getDatasets().get(i);
                 RangeAxis ra = getRangeAxis(i);
                 DatasetRenderer r = getDatasetRenderer(i);
-                for (int dim = 0; dim < r.getLegendEntries(d); dim++) {
+                for (int dim  : r.getLegendEntries(d)) {
                   if (nearestPt != NO_SELECTION && dim != nearestDim) {
                     continue;
                   }

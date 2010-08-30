@@ -186,8 +186,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return 0;
   }
 
-  public int getLegendEntries(Dataset dataset) {
-    return 1;
+  public int[] getLegendEntries(Dataset dataset) {
+    return getPassOrder(dataset);
   }
 
   public void drawLegendIcon(Layer layer, double lblX, double v) {
