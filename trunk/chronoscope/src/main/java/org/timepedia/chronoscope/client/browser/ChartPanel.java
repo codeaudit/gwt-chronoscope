@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -66,6 +67,17 @@ public class ChartPanel extends Composite implements Exportable {
     RootPanel.detachOnWindowClose(this);
   }
 
+  @Export
+  public void detach() {
+    onDetach();
+    if (getElement() != null) {
+      try {
+        getElement().getParentElement().removeChild(getElement());
+      } catch (Exception e) {
+        GWT.log("Can't detach " + e, e);
+      }
+    }
+  }
   /**
    */
   @Export
