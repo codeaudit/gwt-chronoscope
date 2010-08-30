@@ -99,7 +99,7 @@ public class DatasetLegendPanel extends AbstractPanel
   private void checkForChanges() {
     int numLabels = 0;
     for(int i=0; i<plot.getDatasets().size(); i++) {
-      numLabels += plot.getDatasetRenderer(i).getLegendEntries(plot.getDatasets().get(i));
+      numLabels += plot.getDatasetRenderer(i).getLegendEntries(plot.getDatasets().get(i)).length;
     }
     if (numLabels != maxLabelWidths.length) {
       this.maxLabelWidths = calcInitialLabelWidths(plot, layer);
@@ -125,7 +125,7 @@ public class DatasetLegendPanel extends AbstractPanel
     int col = 0;
     for (int i = 0; i < plot.getDatasets().size(); i++, col++) {
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
-      for (int d = 0; d < renderer.getLegendEntries(plot.getDatasets().get(i)); d++) {
+      for (int d : renderer.getLegendEntries(plot.getDatasets().get(i))) {
         if (col > columnCount) {
           col = 0;
           xCursor = bounds.x;
@@ -152,7 +152,7 @@ public class DatasetLegendPanel extends AbstractPanel
       int count = 0;
       for (int i = 0; i < plot.getDatasets().size(); i++) {
         Dataset ds = plot.getDatasets().get(i);
-        for (int d = 0; d < plot.getDatasetRenderer(i).getLegendEntries(ds); d++) {
+        for (int d  : plot.getDatasetRenderer(i).getLegendEntries(ds)) {
           for (int l = 0; l < maxLabelWidths.length; l++) {
             if (maxLabelWidth < maxLabelWidths[l]) {
               maxLabelWidth = maxLabelWidths[l];
@@ -206,8 +206,7 @@ public class DatasetLegendPanel extends AbstractPanel
     double yCursor = bounds.y;
     for (int i = 0; i < numDatasets; i++) {
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
-      for (int d = 0; d < renderer.getLegendEntries(plot.getDatasets().get(i));
-          d++) {
+      for (int d : renderer.getLegendEntries(plot.getDatasets().get(i))) {
         double lblWidth = drawLegendLabel(xCursor, yCursor, layer, i,
             onlyCalcSize, d);
         boolean enoughRoomInCurrentRow = (lblWidth >= 0);
@@ -261,7 +260,7 @@ public class DatasetLegendPanel extends AbstractPanel
     double txtWidth = stringSizer.getWidth(seriesLabel, gssProperties);
     int count = 0;
     for(int i=0; i<datasetIdx; i++) {
-      count += plot.getDatasetRenderer(i).getLegendEntries(plot.getDatasets().get(i));
+      count += plot.getDatasetRenderer(i).getLegendEntries(plot.getDatasets().get(i)).length;
     }
     
     if (txtWidth > maxLabelWidths[datasetIdx]) {
@@ -299,7 +298,7 @@ public class DatasetLegendPanel extends AbstractPanel
     for (int i = 0; i < datasets.size(); i++) {
       Dataset ds = datasets.get(i);
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
-      numEntries += renderer.getLegendEntries(ds);
+      numEntries += renderer.getLegendEntries(ds).length;
     }
     double[] estMaxWidths = new double[numEntries];
     int c = 0;
@@ -307,8 +306,8 @@ public class DatasetLegendPanel extends AbstractPanel
       Dataset ds = datasets.get(i);
       int medianIdx = ds.getNumSamples() >> 1;
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
-      for (int d = 0; d < renderer.getLegendEntries(ds); d++) {
-        String lbl = createDatasetLabel(plot, i, medianIdx, d,legendLabelsProperties.valueVisible);
+      for (int d : renderer.getLegendEntries(ds)) {
+        String lbl = createDatasetLabel(plot, i, medianIdx, d ,legendLabelsProperties.valueVisible);
         if(colAlignment){
             estMaxWidths[c++] = stringSizer.getWidth(lbl, legendLabelsProperties);
         }else{
