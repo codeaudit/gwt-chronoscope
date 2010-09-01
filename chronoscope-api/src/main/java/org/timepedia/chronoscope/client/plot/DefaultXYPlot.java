@@ -82,6 +82,9 @@ import org.timepedia.chronoscope.client.util.date.ChronoDate;
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
 
+  protected static double MIN_WIDTH_FACTOR = 2.0;
+  protected static double MAX_WIDTH_FACTOR = 1.1;
+
   private boolean legendOverriden;
   
   private boolean animationPreview = true;
@@ -620,8 +623,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   public void nextZoom() {
     pushHistory();
-    double nDomain = visDomain.length() / ZOOM_FACTOR;
-    nDomain = Math.max(nDomain, 2.0 * getDatasets().getMinInterval());
+    double nDomain = fixDomainWidth(visDomain.length() / ZOOM_FACTOR);
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
@@ -748,8 +750,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void prevZoom() {
     pushHistory();
-    double nDomain = visDomain.length() * ZOOM_FACTOR;
-    nDomain = Math.min(nDomain, 1.1 * getDatasets().getDomainExtrema().length());
+    double nDomain = fixDomainWidth(visDomain.length() * ZOOM_FACTOR);
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
@@ -1242,6 +1243,15 @@ public class DefaultXYPlot<T extends Tuple2D>
     visDomain = widestDomain.copy();
   }
 
+  protected double fixDomainWidth(double span) {
+    double max = Math.min(span, MAX_WIDTH_FACTOR * getDatasets().getDomainExtrema().length());
+    double min = Math.max(span, MIN_WIDTH_FACTOR * getDatasets().getMinInterval());
+    span = Math.min(max, span);
+    span = Math.max(min, span);
+    return span;
+  }
+
+    
   /**
    * Turns off an existing plot highlight.
    */
