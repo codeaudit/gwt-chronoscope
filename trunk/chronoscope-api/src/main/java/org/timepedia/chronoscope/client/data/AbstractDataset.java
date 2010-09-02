@@ -216,6 +216,7 @@ public abstract class AbstractDataset<T extends Tuple2D>
     incrementalHandler = handler;
   }
 
+  @Export
   public void setDatasets(Datasets<T> datasets) {
     this.datasets = datasets;
   }
