@@ -929,6 +929,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.reloadStyles();
   }
 
+  @Export
   public void setDatasets(Datasets<T> datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     ArgChecker.isGT(datasets.size(), 0, "datasets.size");
