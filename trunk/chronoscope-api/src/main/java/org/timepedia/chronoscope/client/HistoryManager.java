@@ -13,8 +13,7 @@ import java.util.Map;
  */
 public class HistoryManager {
 
-  public static final Map<String, Chart> id2chart = new HashMap<String, Chart>()
-      ;
+  public static final Map<String, Chart> id2chart = new HashMap<String, Chart>();
 
   public static void setHistoryManagerImpl(
       HistoryManagerImpl historyManagerImpl) {
@@ -95,7 +94,8 @@ public class HistoryManager {
   }
 
   public static void putChart(String id, Chart chart) {
-    id2chart.put(id, chart);
+  // memory leak possiblity, commenting out for now
+  //  id2chart.put(id, chart);
     chart.setChartId(id);
   }
 
