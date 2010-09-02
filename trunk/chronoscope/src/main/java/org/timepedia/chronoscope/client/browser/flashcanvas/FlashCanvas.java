@@ -147,20 +147,19 @@ public class FlashCanvas extends Canvas {
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
             + "codebase=\""+ codeBasePref + "://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
-            + " width=\"" + width + "\" height=\"" + height + "\" \n" + "id=\""
+            + " width=\"100%\" height=\"100%\" \n" + "id=\""
             + canvasId + "\"> \n" + "<param name=\"movie\" value=\"" + swfUrl
             + "\"> \n" + "<param name=\"FlashVars\" value=\"readyFn=" + readyFn
             + "\">" + "<param name=\"quality\" value=\"high\"> \n"
             + "<param name=\"bgcolor\" value=\"#FFFFFF\"> \n"
-            + "<param name=\"wmode\" value=\"transparent\">\n"
+            + "<param name=\"wmode\" value=\"opaque\">\n"
             + "<param name=\"MENU\" value=\"false\">\n"
             + "<param name=\"allowScriptAccess\" value=\"always\">\n"
             + "<embed style=\"position:absolute;top:0px;left:0px;z-index: 0\" src=\""
-            + swfUrl + "\" quality=\"high\" bgcolor=\"#FFFFFF\"\n" + "width=\""
-            + width + "\" height=\"" + height + "\" \n" + "name=\"" + canvasId
+            + swfUrl + "\" quality=\"high\" bgcolor=\"#FFFFFF\"\n" + "width=\"100%\" height=\"100%\" \n" + "name=\"" + canvasId
             + "\" align=\"\" type=\"application/x-shockwave-flash\" \n"
             + "FlashVars=\"readyFn=" + readyFn + "\" "
-            + "wmode=\"transparent\" " + "MENU=\"false\""
+            + "wmode=\"opaque\" " + "MENU=\"false\""
             + "allowScriptAccess=\"always\" "
             + "pluginspage=\"" + codeBasePref + "://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");

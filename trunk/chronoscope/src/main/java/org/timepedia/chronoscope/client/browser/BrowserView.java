@@ -147,6 +147,8 @@ public class BrowserView extends GwtView
       final int height, final boolean interactive, GssContext gssContext,
       final ViewReadyCallback callback) {
     super.initialize(width, height, false, gssContext, callback);
+    DOM.setStyleAttribute(element, "height", height + "px");
+    DOM.setStyleAttribute(element, "width", width + "px");
     this.element = element;
     id = DOM.getElementAttribute(element, "id");
     menuFactory = new BrowserChronoscopeMenuFactory();
