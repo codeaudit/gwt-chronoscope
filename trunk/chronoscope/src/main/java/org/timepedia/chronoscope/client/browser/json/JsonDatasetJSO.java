@@ -38,7 +38,7 @@ public class JsonDatasetJSO extends JavaScriptObject {
 }-*/;
 
   public final native String getId() /*-{
-   return this.id;
+   return String(this.id);
 }-*/;
 
   public final native String getLabel() /*-{
@@ -46,7 +46,7 @@ public class JsonDatasetJSO extends JavaScriptObject {
 }-*/;
 
   public final native String getAxisId() /*-{
-   return this.axis;
+   return String(this.axis);
 }-*/;
 
   public final native JsArrayNumber getDomain() /*-{
