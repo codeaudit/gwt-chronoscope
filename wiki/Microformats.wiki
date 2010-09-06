@@ -56,7 +56,7 @@ Adding this code in your page, the table will be replaced by a chronoscope chart
 {{{
 <script type="text/javascript" src="http://api.timepedia.org/widget/"></script>
 <script type="text/javascript">
- function onChronoscopeLoaded(chrono) { chronoscope.Chronoscope.setErrorReporting(true);}
+ function onChronoscopeLoaded(chrono) { chrono.Chronoscope.setErrorReporting(true);}
 </script>
 }}}
 
