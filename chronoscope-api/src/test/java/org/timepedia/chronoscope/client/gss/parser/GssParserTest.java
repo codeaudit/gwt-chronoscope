@@ -47,7 +47,7 @@ public class GssParserTest extends GWTTestCase {
     assertEquals("Verdana", l.get(0).getProperties().get(2).getPropertyValue());
   }
 
-  public void skip_testParserWithComments() throws Exception {
+  public void testParserWithComments() throws Exception {
     List<GssRule> l =  GssParser.parse("/* multiline \n comment */ marker {\n" +
             "background-color: yellow\n" + 
             "color: black // a comment \n" + 
@@ -72,6 +72,5 @@ public class GssParserTest extends GWTTestCase {
     assertEquals("attribute", l.get(1).getProperties().get(0).getPropertyName());
     assertEquals("value", l.get(1).getProperties().get(0).getPropertyValue());
   }
-
 
 }

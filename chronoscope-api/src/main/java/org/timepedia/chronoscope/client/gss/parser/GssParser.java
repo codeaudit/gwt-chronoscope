@@ -22,7 +22,7 @@ import java.util.List;
  * property-value ::= IDENTIFIER
  *
  * IDENTIFIER = any ascii character except "{", ",", ">", SPACE, ";", "}".
- */ // TODO: /* comments in gss */
+ */
 public class GssParser {
 
   public static List<GssRule> parse(String stylesheet)
@@ -30,6 +30,8 @@ public class GssParser {
     if (stylesheet == null || "".equals(stylesheet.trim())) {
       return new ArrayList<GssRule>();
     }
+    stylesheet = removeComments(stylesheet);
+    
     // first separate rules by splitting on "}"
     String rules[] = stylesheet.split("}\\s*;*\\s*");
     ArrayList<GssRule> gssRules = new ArrayList<GssRule>();
@@ -42,12 +44,17 @@ public class GssParser {
   }
   
   public static String removeComments(String s) {
-    // Remove c style comments
-    return s.replaceAll("(?s)\\s*/\\*.*?\\*/\\s*", "").
+    return s
+    // Remove unix style comments
+    .replaceAll("^\\s*#.*\n$", "\n")
     // Remove c++ style comments
-             replaceAll("//.*\n", "\n");
+    .replaceAll("//.*\n", "\n")
+    // Replace c style comments
+    // Note: using '\s\S' instead of '.' because gwt String emulation does 
+    // not support java embedded flag expressions (?s) and javascript does
+    // not have multidot flag.
+    .replaceAll("\\s*/\\*[\\s\\S]*?\\*/\\s*", "");
   }
-
 
   public static GssRule parseRule(String rule) throws GssParseException {
     // split selector off by splitting on "{"
