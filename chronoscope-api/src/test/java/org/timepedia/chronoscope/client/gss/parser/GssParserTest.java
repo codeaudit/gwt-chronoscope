@@ -72,5 +72,10 @@ public class GssParserTest extends GWTTestCase {
     assertEquals("attribute", l.get(1).getProperties().get(0).getPropertyName());
     assertEquals("value", l.get(1).getProperties().get(0).getPropertyValue());
   }
+  
+  public void testEmptyBlock() throws Exception {
+    List<GssRule> l =  GssParser.parse("marker {\n} ; selector{}"); 
+    assertEquals(0, l.size());
+  }
 
 }
