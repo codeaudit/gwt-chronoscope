@@ -194,12 +194,7 @@ public class DatasetLegendPanel extends AbstractPanel
           renderer.getLegendProperties(i, rs).iconHeight=legendLabelsProperties.iconHeight;
       }
   }
-
-   public static native void debug(String msg)/*-{
-      console.debug(msg);
-  }-*/;
-
-
+  
   private void draw(Layer layer, int numDatasets, Bounds b) {
     final boolean onlyCalcSize = (b != null);
     double xCursor = bounds.x;
