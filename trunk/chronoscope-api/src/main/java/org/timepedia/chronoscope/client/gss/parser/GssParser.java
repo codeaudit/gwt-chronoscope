@@ -38,7 +38,9 @@ public class GssParser {
     for (String rule : rules) {
       if("".equals(rule.trim())) continue;
       GssRule gssRule = parseRule(rule + "}");
-      gssRules.add(gssRule);
+      if (gssRule != null) {
+        gssRules.add(gssRule);        
+      }
     }
     return gssRules;
   }
@@ -68,12 +70,15 @@ public class GssParser {
     }
     String selector = rule.substring(0, lbrace).trim();
     String propertySet = rule.substring(lbrace + 1, rbrace).trim();
+    if (propertySet.length() == 0) {
+      return null;
+    }
     List<GssSelector> selectors = parseSelectors(selector);
-    List<GssProperty> gssproperties = null;
+    List<GssProperty> gssproperties = new ArrayList<GssProperty>();
     try {
       gssproperties = parseProperties(propertySet);
     } catch (GssParseException e) {
-      throw new GssParseException(e.getMessage() + ", for rule '" + rule + "'" , e);
+      throw new GssParseException(e.getMessage() + " :" + propertySet+ ", for rule '" + rule + "'" , e);
     }
     return new GssRule(selectors, gssproperties);
   }

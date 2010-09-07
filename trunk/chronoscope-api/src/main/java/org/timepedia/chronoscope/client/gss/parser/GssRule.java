@@ -26,13 +26,13 @@ public class GssRule {
   }
   
   public String toString() {
-    String ret = "";
+    String ret = "\n-- Rule --\n";
     for (GssSelector s : getSelectors()) {
       ret += s.toString() + "\n";
     }
     for (GssProperty p : getProperties() ) {
       ret += " " + p.toString();
     }
-    return ret;
+    return ret + "\n";
   }
 }
