@@ -227,7 +227,7 @@ public final class JavaArray2D implements Array2D {
     
     public double get(int index) {
       assert (index < parentArray.columnCounts[row]) 
-          : "index out of bounds: " + index;
+          : "index out of bounds: " + index + " (limit of row " + row + " is " + parentArray.columnCounts[row] + ")";
       
       return this.parentArray.a[this.row][index];
     }
