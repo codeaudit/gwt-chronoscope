@@ -16,7 +16,7 @@ import org.timepedia.chronoscope.client.browser.SafariKeyboardConstants;
 public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> implements
     KeyUpHandler {
   
-  private static final double FULL_PAGE_SCROLL = 1.0;
+  public static final double FULL_PAGE_SCROLL = 1.0;
   private static final double HALF_PAGE_SCROLL = 0.5;
   
   public void onKeyUp(KeyUpEvent event) {
@@ -29,15 +29,17 @@ public final class ChartKeyUpHandler extends AbstractEventHandler<KeyUpHandler> 
     if (isPageUp(keyCode)) {
       chart.pageLeft(FULL_PAGE_SCROLL);
     } else if (event.isLeftArrow() || isKeyLeft(keyCode)) {
-      chart.pageLeft(HALF_PAGE_SCROLL);
+      chart.pageLeft(HALF_PAGE_SCROLL);     
     } else if (isPageDown(keyCode)) {
       chart.pageRight(FULL_PAGE_SCROLL);
     } else if (event.isRightArrow() || isKeyRight(keyCode)) {
       chart.pageRight(HALF_PAGE_SCROLL);
     } else if (event.isUpArrow() || isNextZoom(keyCode)) {
       chart.nextZoom();
+      ChartKeyDownHandler.UP_NUM = 0;
     } else if (event.isDownArrow() || isPrevZoom(keyCode)) {
       chart.prevZoom();
+      ChartKeyDownHandler.DOWN_NUM = 0;
     } else if (keyCode == KeyCodes.KEY_BACKSPACE) {
       History.back();
     } else if (isMaxZoomOut(keyCode)) {

@@ -57,7 +57,7 @@
   </replace-with>
  
   <set-property name="export" value="no"/>
-  <!--<set-property name="hasflash" value="yes"/>-->
+  <!-- set-property name="hasflash" value="yes" / -->
   
    <replace-with class="org.timepedia.chronoscope.client.browser.ChartEventHandler">
     <when-type-is class="org.timepedia.chronoscope.client.browser.ChartEventHandler"/>
