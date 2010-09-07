@@ -1,0 +1,14 @@
+
+
+NOTE: you need sun-jdk 1.6 installed in your computer, do not use any other jvm nor the sun-jre. 
+
+- To compile gwt-chronoscope library for gwt just run:
+mvn clean package
+
+- To install the generated .jar files in your local repository execute:
+mvn clean install
+
+- To compile all the modules including documentation, widget, gadget, etc. run:
+mvn -P prod -f pom-all.xml clean package
+
+

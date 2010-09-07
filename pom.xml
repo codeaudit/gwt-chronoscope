@@ -59,13 +59,6 @@
   <modules>
     <module>chronoscope-api</module>
     <module>chronoscope</module>
-    <module>widget</module>
-    <module>docs</module>
-    <module>samples</module>
-    <module>bench</module>
-    <module>buildtools</module>
-    <module>gviz</module>
-    <module>chronoscope-java2d</module> 
   </modules>
 
   <!-- 
@@ -111,7 +104,7 @@
             <disableCastChecking>${gwt.xdisable}</disableCastChecking>
             <disableClassMetadata>${gwt.xdisable}</disableClassMetadata>
             <soyc>${gwt.soyc}</soyc>
-            <localWorkers>1</localWorkers>
+            <localWorkers>${gwt.workers}</localWorkers>
             <extraJvmArgs>-Xmx256m</extraJvmArgs>
             <modules>
               <module>${gwt.module}</module>
@@ -261,6 +254,7 @@
     <gwt.soyc>false</gwt.soyc>
     <gwt.xdisable>true</gwt.xdisable>
     <gwt.draft>false</gwt.draft>
+    <gwt.workers></gwt.workers>
   </properties>
 
   <profiles>
