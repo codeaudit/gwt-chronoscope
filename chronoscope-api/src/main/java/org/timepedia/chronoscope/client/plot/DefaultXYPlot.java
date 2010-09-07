@@ -1975,7 +1975,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final int zoomOffset = 10;
     final double newOrigin = dataset.getX(Math.max(0, pointIndex - zoomOffset));
     final double newdomain =
-        dataset.getX(Math.min(dataset.getNumSamples(), pointIndex + zoomOffset))
+        dataset.getX(Math.min(dataset.getNumSamples() - 1, pointIndex + zoomOffset))
             - newOrigin;
 
     animateTo(newOrigin, newdomain, PlotMovedEvent.MoveType.ZOOMED);
