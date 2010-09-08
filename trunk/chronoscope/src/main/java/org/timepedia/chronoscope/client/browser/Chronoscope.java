@@ -497,7 +497,7 @@ public class Chronoscope
     }
 
     ChartPanel cpanel = newChartPanel();
-    cpanel.setDatasets(datasets);
+    cpanel.replaceDatasets(datasets);
     cpanel.setDomElement(elem);
     cpanel.setViewReadyCallback(readyListener);
     cpanel.setDimensions(chartWidth, chartHeight);
@@ -544,6 +544,7 @@ public class Chronoscope
     } catch (Exception e) {
       if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert(e.getMessage());
+        e.printStackTrace();
       }
       throw new RuntimeException(e);
     }

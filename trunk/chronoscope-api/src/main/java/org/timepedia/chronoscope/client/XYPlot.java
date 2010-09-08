@@ -309,6 +309,11 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Initialize or re-initialize the plot using the given view
    */
   void init(View view);
+  
+  /**
+   * Re-initialize the plot using the old view
+   */
+  void init();
 
   /**
    * Returns true if mini-chart overview on x-axis is enabled.

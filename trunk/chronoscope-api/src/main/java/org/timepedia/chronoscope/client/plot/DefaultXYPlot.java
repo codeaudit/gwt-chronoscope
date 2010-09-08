@@ -1,9 +1,10 @@
 package org.timepedia.chronoscope.client.plot;
 
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HandlerRegistration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -57,17 +58,16 @@ import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.PortableTimer;
 import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -554,10 +554,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return this.widestDomain;
   }
 
-  public void init(View view) {
-    init(view, true);
-  }
-
   public boolean isAnimating() {
     return isAnimating;
   }
@@ -570,12 +566,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   public boolean isOverviewEnabled() {
     return bottomPanel.isOverviewEnabled();
   }
-
+  
   @Export
   public void maxZoomOut() {
     pushHistory();
     animateTo(widestDomain.getStart(), widestDomain.length(),
-        PlotMovedEvent.MoveType.ZOOMED);
+      PlotMovedEvent.MoveType.ZOOMED);
   }
 
   public boolean maxZoomTo(int x, int y) {
@@ -626,6 +622,10 @@ public class DefaultXYPlot<T extends Tuple2D>
     double nDomain = fixDomainWidth(visDomain.length() / ZOOM_FACTOR);
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
+  }
+  
+  public void onDatasetsReplaced(Datasets<T> datasets){
+    this.plotRenderer.init();
   }
 
   public void onDatasetAdded(Dataset<T> dataset) {
@@ -791,7 +791,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean canDrawFast = !(isAnimating() && animationPreview && ChronoscopeOptions
         .isLowPerformance());
 
-    final boolean plotDomainChanged = !visDomain.approx(lastVisDomain);
+    final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain);
 
     Layer hoverLayer = getHoverLayer();
 
@@ -807,7 +807,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     drawCrossHairs(hoverLayer);
 
-    if (plotDomainChanged || forceCenterPlotRedraw) {
+    if (plotDomainChanged) {
       plotLayer.clear();
       drawBackground();
 
@@ -839,6 +839,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void reloadStyles() {
+
     bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = visDomain.copy();
     // hack, eval order dependency
@@ -859,6 +860,8 @@ public class DefaultXYPlot<T extends Tuple2D>
         lastCrosshairDateFormat = null;
       }
     }
+    visDomain.setEndpoints(widestDomain.getStart(), widestDomain.getStart() + widestDomain.length());
+
     redraw(true);
   }
 
@@ -1795,6 +1798,17 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
+  
+  public void init() {
+    plotRenderer.reset();
+    init(view, true);
+    redraw(true);
+  }
+
+  public void init(View view) {
+    init(view, true);
+  }  
+  
   private void init(View view, boolean forceNewRangeAxes) {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(datasets, "datasets");
@@ -1806,12 +1820,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     plotRenderer.setView(view);
 
     initViewIndependent(datasets);
-
-    GssProperties legendProps = view
-        .getGssProperties(new GssElementImpl("axislegend", null), "");
-    if (legendProps.gssSupplied && !legendOverriden) {
-      topPanel.setEnabled(legendProps.visible);
-    }
 
     crosshairProperties = view
         .getGssProperties(new GssElementImpl("crosshair", null), "");
@@ -1846,6 +1854,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     initAuxiliaryPanel(bottomPanel, view);
     rangePanel.setCreateNewAxesOnInit(forceNewRangeAxes);
     initAuxiliaryPanel(rangePanel, view);
+    
+    GssProperties legendProps = view.getGssProperties(new GssElementImpl("axislegend", null), "");
+    if (legendProps.gssSupplied && !legendOverriden) {
+      topPanel.setEnabled(legendProps.visible);
+    }
+
     /*
     if (!rangePanel.isInitialized()) {
       initAuxiliaryPanel(rangePanel, view);
