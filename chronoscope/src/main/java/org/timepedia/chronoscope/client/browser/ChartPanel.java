@@ -1,23 +1,23 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RootPanel;
-
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.RootPanel;
 
 @ExportPackage("chronoscope")
 public class ChartPanel extends Composite implements Exportable {
@@ -26,12 +26,14 @@ public class ChartPanel extends Composite implements Exportable {
   private Dataset[] datasets;
   private ViewReadyCallback viewReadyCallback;
   private int width = 400, height = 250;
+  private DefaultXYPlot plot;
+  private XYPlotRenderer plotRenderer;
   
   public final void init() {
     ArgChecker.isNotNull(this.datasets, "this.datasets");
     ArgChecker.isNotNull(this.domElement, "this.domElement");
     
-    XYPlot plot = createPlot(datasets);
+    createPlot(datasets);
     plotPanel = new PlotPanel(domElement, plot, width, height, viewReadyCallback);
 
     initWidget(plotPanel);
@@ -42,8 +44,24 @@ public class ChartPanel extends Composite implements Exportable {
     this.height = height;
   }
   
-  public void setDatasets(Dataset[] datasets) {
+  /**
+   * Replace the datasets and redraw all the elements in the chart.
+   * It is similar to re-create the graph but the performance is better especially 
+   * with flash canvas.
+   *  
+   * @param datasets 
+   *         array of the new datasets
+   */
+  @Export
+  public void replaceDatasets(Dataset[] datasets) {
     this.datasets = datasets;
+  }
+  
+  public void changeDatasets(Dataset[] datasets) {
+    this.datasets = datasets;
+    plot.setDatasets(new Datasets<Tuple2D>(datasets));
+    plot.init();
+    plot.redraw();
   }
   
   public void setDomElement(Element element) {
@@ -54,12 +72,11 @@ public class ChartPanel extends Composite implements Exportable {
     setReadyListener(callback);
   }
   
-  protected XYPlot createPlot(Dataset[] datasetArray) {
-    DefaultXYPlot plot = new DefaultXYPlot();
+  protected void createPlot(Dataset[] datasetArray) {
+    plot = new DefaultXYPlot();
+    plotRenderer = new XYPlotRenderer<Tuple2D>();
     plot.setDatasets(new Datasets<Tuple2D>(datasetArray));
-    plot.setPlotRenderer(new XYPlotRenderer());
-    
-    return plot;
+    plot.setPlotRenderer(plotRenderer);
   }
   
   public void attach() {

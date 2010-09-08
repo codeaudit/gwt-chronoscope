@@ -45,6 +45,10 @@ public class XYPlotRenderer<T extends Tuple2D> {
   protected XYPlot<T> plot;
 
   protected View view;
+  
+  public void reset() {
+   initialized = false; 
+  }
 
   private void calcVisibleDomainAndRange(List<DrawableDataset<T>> dds,
       Interval plotDomain, boolean overviewMode) {
@@ -295,7 +299,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     initialized = true;
   }
-
+  
   public boolean isInitialized() {
     return initialized;
   }
@@ -351,7 +355,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     ArgChecker.isNotNull(dataset, "dataset");
 
     boolean wasDatasetFound = false;
-    for (int i = 0; i < drawableDatasets.size(); i++) {
+    for (int i = 0; drawableDatasets != null && i < drawableDatasets.size(); i++) {
       DrawableDataset<T> drawableDataset = this.drawableDatasets.get(i);
       if (dataset == drawableDataset.dataset) {
         drawableDatasets.remove(i);
