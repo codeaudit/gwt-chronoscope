@@ -68,10 +68,12 @@ public class Microformats {
     }
 
     public void onViewReady(View view) {
-      Chart chart = HistoryManager.getChartById(id);
+      Chart chart = view.getChart();
+      if (chart == null) {
+        return;
+      }
 
-      for (int j = 0; j < links
-          .length; j++) {
+      for (int j = 0; j < links.length; j++) {
         String href = DOM.getElementAttribute(links[j], "href");
         int hash = href != null ? href.indexOf("#") : -1;
         if (hash != -1) {
