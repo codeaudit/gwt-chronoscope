@@ -28,8 +28,7 @@ public class ChartPanel extends Composite implements Exportable {
   private ViewReadyCallback viewReadyCallback;
   private int width = 400, height = 250;
   private DefaultXYPlot plot;
-  private XYPlotRenderer plotRenderer;
-  
+
   public final void init() {
     ArgChecker.isNotNull(this.datasets, "this.datasets");
     ArgChecker.isNotNull(this.domElement, "this.domElement");
@@ -78,10 +77,9 @@ public class ChartPanel extends Composite implements Exportable {
   }
   
   protected XYPlot createPlot(Dataset[] datasetArray) {
-    DefaultXYPlot plot = new DefaultXYPlot();
+    plot = new DefaultXYPlot();
     plot.setDatasets(new Datasets<Tuple2D>(datasetArray));
     plot.setPlotRenderer(new XYPlotRenderer());
-
     return plot;
   }
 
@@ -101,8 +99,7 @@ public class ChartPanel extends Composite implements Exportable {
       }
     }
   }
-  /**
-   */
+
   @Export
   public Chart getChart() {
     return plotPanel.getChart();
