@@ -8,6 +8,8 @@ import org.timepedia.chronoscope.client.overlays.Marker;
 public class ChronoscopeOptions {
   private static int DEFAULT_DYNAMIC_DATAPOINTS = 256;
   private static int DEFAULT_STATIC_DATAPOINTS = 1024;
+  
+  public static int maxChartsInHistory = 4;
 
   public static boolean showCreditsEnabled = true;
 

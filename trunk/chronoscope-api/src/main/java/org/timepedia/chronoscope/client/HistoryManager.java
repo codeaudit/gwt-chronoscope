@@ -94,13 +94,18 @@ public class HistoryManager {
   }
 
   public static void putChart(String id, Chart chart) {
-  // memory leak possiblity, commenting out for now
-  //  id2chart.put(id, chart);
-    chart.setChartId(id);
+    if (false || ChronoscopeOptions.isHistorySupportEnabled()) {
+      // Limit the size of the history chart array to avoid memory leaks
+      if (id2chart.size() == ChronoscopeOptions.maxChartsInHistory ) {
+        // remove the oldest
+        id2chart.remove(id2chart.get(0));
+      }
+      id2chart.put(id, chart);
+      chart.setChartId(id);
+    }
   }
 
   public interface HistoryManagerImpl {
-
     void push(String historyToken);
   }
 }
