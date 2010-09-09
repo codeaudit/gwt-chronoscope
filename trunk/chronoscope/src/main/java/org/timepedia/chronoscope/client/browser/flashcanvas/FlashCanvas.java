@@ -27,10 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * An implementation of Canvas that creates a CANVAS tag per Layer, as well as
- * using DIVs and images to render text on the CANVAS
- */
 public class FlashCanvas extends Canvas {
 
   public static final String CMDSEP = "%";
@@ -279,8 +275,7 @@ public class FlashCanvas extends Canvas {
                    fontWeight, fontSize, layerName);
     }-*/;
 
-  public native void cmd(String cmd, String layerName, double x, double y,
-      double width, double height) /*-{
+  public final native void cmd(String cmd, String layerName, double x, double y, double width, double height) /*-{
            this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 5, layerName, x, y,
                    width, height);
     }-*/;
@@ -291,6 +286,14 @@ public class FlashCanvas extends Canvas {
            this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8, x, y, a, label, fontFamily,
                    fontWeight, fontSize, layerName);
     }-*/;
+
+  public final native void cmd(String cmd, double x, double y,
+      String label, String fontFamily, String fontWeight, String fontSize,
+      String layerName, String cursorStyle) /*-{
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8, x, y, label, fontFamily,
+                   fontWeight, fontSize, layerName, cursorStyle);
+    }-*/;
+
 
   public DisplayList createDisplayList(String id) {
     return rootLayer.createDisplayList(id);
@@ -313,8 +316,7 @@ public class FlashCanvas extends Canvas {
     return layer;
   }
 
-  public LinearGradient createLinearGradient(double x, double y, double w,
-      double h) {
+  public LinearGradient createLinearGradient(double x, double y, double w, double h) {
     return rootLayer.createLinearGradient(x, y, w, h);
   }
 
@@ -338,29 +340,25 @@ public class FlashCanvas extends Canvas {
     id2Layer.remove(layerId);
   }
 
-  public void drawImage(Layer layer, double x, double y, double width,
-      double height) {
+  public void drawImage(Layer layer, double x, double y, double width, double height) {
     rootLayer.drawImage(layer, x, y, width, height);
   }
 
   public void drawImage(Layer layer, double sx, double sy, double swidth,
       double sheight, double dx, double dy, double dwidth, double dheight) {
-    rootLayer
-        .drawImage(layer, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
+    rootLayer.drawImage(layer, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
   }
 
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    rootLayer
-        .drawRotatedText(x, y, angle, label, fontFamily, fontWeight, fontSize,
+    rootLayer.drawRotatedText(x, y, angle, label, fontFamily, fontWeight, fontSize,
             layerName, chart);
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName) {
-    rootLayer.drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName,
-        Cursor.DEFAULT);
+    rootLayer.drawText(x, y, label, fontFamily, fontWeight, fontSize, layerName, Cursor.DEFAULT);
   }
 
   public void endFrame() {
