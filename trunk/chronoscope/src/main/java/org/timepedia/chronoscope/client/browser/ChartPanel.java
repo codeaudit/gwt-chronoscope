@@ -4,18 +4,19 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -52,7 +53,6 @@ public class ChartPanel extends Composite implements Exportable {
    * @param datasets 
    *         array of the new datasets
    */
-  @Export
   public void replaceDatasets(Dataset[] datasets) {
     this.datasets = datasets;
     plot.setDatasets(new Datasets<Tuple2D>(datasets));

@@ -245,7 +245,19 @@ public class Chronoscope
         createDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
     return chart;
   }
-
+ 
+  /**
+  * Replace the datasets on a chart and redraw all the elements in the chart.
+  * It is like doing a detach and a create of a graph but the performance is better specially 
+  * with flash canvas.
+  *  
+  */
+  @Export
+  public ChartPanel replaceDatasets(ChartPanel chartPanel, JsArray<JsonDatasetJSO> jsonDatasets) {
+    chartPanel.replaceDatasets(createDatasets(jsonDatasets));
+    return chartPanel;
+  }
+  
   public static ChartPanel createTimeseriesChart(Dataset[] datasets,
       int chartWidth, int chartHeight) {
     return getInstance()
@@ -496,6 +508,7 @@ public class Chronoscope
       elem = DOM.createDiv();
     }
 
+    System.out.println(datasets[0].getIdentifier());
     ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);
