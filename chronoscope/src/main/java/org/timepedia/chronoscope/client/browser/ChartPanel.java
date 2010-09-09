@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.browser;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -76,13 +77,14 @@ public class ChartPanel extends Composite implements Exportable {
     setReadyListener(callback);
   }
   
-  protected void createPlot(Dataset[] datasetArray) {
-    plot = new DefaultXYPlot();
-    plotRenderer = new XYPlotRenderer<Tuple2D>();
+  protected XYPlot createPlot(Dataset[] datasetArray) {
+    DefaultXYPlot plot = new DefaultXYPlot();
     plot.setDatasets(new Datasets<Tuple2D>(datasetArray));
-    plot.setPlotRenderer(plotRenderer);
+    plot.setPlotRenderer(new XYPlotRenderer());
+
+    return plot;
   }
-  
+
   public void attach() {
     onAttach();
     RootPanel.detachOnWindowClose(this);
