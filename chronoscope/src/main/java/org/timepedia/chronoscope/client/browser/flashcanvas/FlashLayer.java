@@ -4,9 +4,11 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 
+import com.google.gwt.user.client.ui.Image;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
+import org.timepedia.chronoscope.client.browser.BrowserCanvasImage;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
@@ -126,8 +128,7 @@ public class FlashLayer extends AbstractLayer {
     return new FlashRadialGradient(this, x0, y0, r0, x1, y1, r1);
   }
 
-  public void drawImage(Layer layer, double x, double y, double width,
-      double height) {
+  public void drawImage(Layer layer, double x, double y, double width, double height) {
     if (layer instanceof FlashCanvas) {
       //   drawImage0(ctx, ( (BrowserCanvas) layer )
       //          .getRootLayer().getElement(), x, y, width, height);
@@ -158,23 +159,28 @@ public class FlashLayer extends AbstractLayer {
     }
   }
 
-  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
-      double dheight) {
-    //TODO: not implemented
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth, double dheight) {
+      if (image instanceof BrowserCanvasImage) {
+      pushNCmd("DE", 5);
+      push(((BrowserCanvasImage)image).getNative().getElement().getId());
+      push(dx);
+      push(dy);
+      push(dwidth);
+      push(dheight);
+    }
   }
 
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
     selectLayer();
-    cmd("RT", x, y, angle / Math.PI * 180, label, fontFamily, fontWeight,
-        fontSize, layerName);
+    cmd("RT", x, y, angle / Math.PI * 180, label, fontFamily, fontWeight, fontSize, layerName);
   }
 
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
     selectLayer();
-    cmd("DT", x, y, label, fontFamily, fontWeight, fontSize, layerName);
+    cmd("DT", x, y, label, fontFamily, fontWeight, fontSize, layerName, cursorStyle);
   }
 
   public void fill() {
@@ -493,6 +499,12 @@ public class FlashLayer extends AbstractLayer {
     selectLayer();
     fc.cmd(s, x, y, a, label, fontFamily, fontWeight, fontSize, layerName);
   }
+
+    private void cmd(String s, double x, double y, String label,
+        String fontFamily, String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
+      selectLayer();
+      fc.cmd(s, x, y, label, fontFamily, fontWeight, fontSize, layerName, cursorStyle.name());        
+    }
 
   private void cmd(String s, String layerName, double x, double y, double width,
       double height) {
