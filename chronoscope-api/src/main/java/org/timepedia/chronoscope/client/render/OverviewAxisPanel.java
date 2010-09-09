@@ -119,7 +119,7 @@ public class OverviewAxisPanel extends AxisPanel {
     
     Bounds b;
     
-    if (globalDomainWidth <= visibleDomainWidth) {
+    if (!visible || (globalDomainWidth - .01*visibleDomainWidth <= visibleDomainWidth)) { // TODO - withi 1px rather than 1%
       // The viewport (i.e. the portion of the domain that is visible within the
       // plot area) is at least as wide as the global domain, so don't highlight.
       b = null;
