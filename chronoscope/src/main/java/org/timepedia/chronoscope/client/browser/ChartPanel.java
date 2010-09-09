@@ -60,6 +60,10 @@ public class ChartPanel extends Composite implements Exportable {
     plot.redraw();
   }
   
+  public void setDatasets(Dataset[] datasets) {
+    this.datasets = datasets;
+  }
+  
   public void setDomElement(Element element) {
     this.domElement = element;
   }

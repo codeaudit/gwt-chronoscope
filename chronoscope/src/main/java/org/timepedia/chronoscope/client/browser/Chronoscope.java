@@ -497,7 +497,7 @@ public class Chronoscope
     }
 
     ChartPanel cpanel = newChartPanel();
-    cpanel.replaceDatasets(datasets);
+    cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);
     cpanel.setViewReadyCallback(readyListener);
     cpanel.setDimensions(chartWidth, chartHeight);
