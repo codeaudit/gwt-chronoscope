@@ -138,6 +138,10 @@ public class GssStylesheetGssContext extends DefaultGssContext {
       this.bestSpecificity = bestSpecificity;
       this.properties = properties;
     }
+    
+    public String toString(){
+      return "bestSpecifity: " + bestSpecificity + " " + properties.toString(); 
+    }
   }
   
   public String toString() {

@@ -35,14 +35,12 @@ public class GssSelector {
     int lspecificity = 0;
     //specificity is (classAttributes * 256, numElementNames)
     for (GssSimpleSelector sel : simpleSelectors) {
-      //
       if (sel.getClassName() != null) {
-        lspecificity += 256;
+        lspecificity += sel.getClassName().startsWith("#") ? 258 : 256;
       }
       if (!"*".equals(sel.getElementName())) {
         lspecificity += 1;
       }
-      ;
     }
     return lspecificity;
   }
