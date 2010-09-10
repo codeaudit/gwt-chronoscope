@@ -27,7 +27,7 @@ public class DatasetLegendPanel extends AbstractPanel
   // Dictates the X-padding between a given legend icon and its
   //associated dataset name
 
-  private static final double LEGEND_ICON_PAD = 2;
+  private static final double LEGEND_ICON_PAD = 4;
 
   // Dictates the X-padding between each dataset legend item
 
@@ -35,7 +35,7 @@ public class DatasetLegendPanel extends AbstractPanel
 
   private double lblHeight;
 
-  private double[] maxLabelWidths;
+  private double[]  maxLabelWidths;
 
   private int colSpacing=20;
 
@@ -123,7 +123,7 @@ public class DatasetLegendPanel extends AbstractPanel
     int columnCount = calcColumnCount(maxLabelWidth);
     //Draw legend label
     int col = 0;
-    for (int i = 0; i < plot.getDatasets().size(); i++, col++) {
+    for (int i = 0; i < plot.getDatasets().size(); i++) {
       DatasetRenderer renderer = plot.getDatasetRenderer(i);
       for (int d : renderer.getLegendEntries(plot.getDatasets().get(i))) {
         if (col > columnCount) {
@@ -135,9 +135,10 @@ public class DatasetLegendPanel extends AbstractPanel
         double iconWidth = renderer.calcLegendIconWidth(view);
         layer.setStrokeColor(legendLabelsProperties.color);
         int hoverPoint = plot.getHoverPoints()[i];
-	String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d,legendLabelsProperties.valueVisible);
-        layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, seriesLabel, legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
-        xCursor += maxLabelWidth;
+	      String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d,legendLabelsProperties.valueVisible);
+	      String s = stringSizer.wrapText(seriesLabel, gssProperties, maxLabelWidth - iconWidth - LEGEND_ICON_PAD);
+        layer.drawText(xCursor + iconWidth + LEGEND_ICON_PAD, yCursor, s, legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight, legendLabelsProperties.fontSize, textLayerName, Cursor.DEFAULT);
+        xCursor += maxLabelWidth + LEGEND_ICON_PAD;
         col++;
       }
     }
@@ -176,13 +177,13 @@ public class DatasetLegendPanel extends AbstractPanel
    * Calculate the number of columns
    */
   private int calcColumnCount(double maxLabelWidth){
-      int colCount=0;
+      int colCount = 1;
       if(legendLabelsProperties.columnCount.equals("auto")){
-          colCount=(int) Math.floor(bounds.width / maxLabelWidth)-1;
+          colCount = (int) Math.floor(bounds.width / maxLabelWidth);
       }else{
-          colCount=Integer.valueOf(legendLabelsProperties.columnCount)-1;
+          colCount = Integer.valueOf(legendLabelsProperties.columnCount);
       }
-      return colCount;
+      return colCount - 1;
   }
 
   private void setIconSize(){

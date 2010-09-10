@@ -64,6 +64,7 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -939,7 +940,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     datasets.addListener(this);
     this.datasets = datasets;
   }
-
+  
   public void setDomainAxisPanel(DomainAxisPanel domainAxisPanel) {
     bottomPanel.setDomainAxisPanel(domainAxisPanel);
   }

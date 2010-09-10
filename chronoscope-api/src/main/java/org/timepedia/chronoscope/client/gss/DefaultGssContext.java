@@ -13,20 +13,10 @@ public class DefaultGssContext extends MockGssContext {
 
     public GssProperties getProperties(GssElement gssElem, String pseudoElt) {
         GssProperties p = super.getProperties(gssElem, pseudoElt);
-        if ("label".equals(gssElem.getType())) {
-          configLabelProps(p, gssElem.getParentGssElement());
-        }
-        else if("crosshair".equals(gssElem.getType()) || "guideline".equals(gssElem.getType())) {
-          p.visible=false;
+        if ("label".equals(gssElem.getType()) && "axis".equals(gssElem.getParentGssElement().getType())) {
+          p.visible = this.showAxisLabels;
         }
         return p;
     }
-    
-    private void configLabelProps(GssProperties p, GssElement gssElem) {
-      p.tickAlign = "above";
-      p.fontSize="9pt";
-      if ("axis".equals(gssElem.getType())) {
-          p.visible = this.showAxisLabels;
-      }
-    }
+
 }
