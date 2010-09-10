@@ -48,16 +48,30 @@ public class ChartPanel extends Composite implements Exportable {
   /**
    * Replace the datasets and redraw all the elements in the chart.
    * It is similar to re-create the graph but the performance is better especially 
-   * with flash canvas.
+   * when using flash canvas.
    *  
    * @param datasets 
-   *         array of the new datasets
+   *         json array of the new datasets
    */
   public void replaceDatasets(Dataset[] datasets) {
     this.datasets = datasets;
-    plot.setDatasets(new Datasets<Tuple2D>(datasets));
+    Datasets<Tuple2D> d = new Datasets<Tuple2D>(datasets);
+    plot.setDatasets(d);
     plot.init();
     plot.redraw();
+  }
+  
+  /**
+   * Replace the datasets and redraw all the elements in the chart.
+   * It is similar to re-create the graph but the performance is better especially 
+   * when using  flash canvas.
+   *  
+   * @param jsonDatasets 
+   *         json array of the new datasets
+   */
+  @Export
+  public void replaceDatasets(JsArray<JsonDatasetJSO> jsonDatasets) {
+    replaceDatasets(Chronoscope.getInstance().createDatasets(jsonDatasets));
   }
   
   public void setDatasets(Dataset[] datasets) {
