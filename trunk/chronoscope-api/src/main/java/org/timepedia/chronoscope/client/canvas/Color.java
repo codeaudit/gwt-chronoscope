@@ -13,7 +13,7 @@ public class Color implements PaintStyle {
    * The list has been taken from: 
    * http://www.w3schools.com/html/html_colornames.asp
    */
-  private static HashMap<String, String> colors = new HashMap<String, String>() {
+  public static HashMap<String, String> colors = new HashMap<String, String>() {
     private static final long serialVersionUID = 1L;
     {
       put("aliceblue", "f0f8ff");
@@ -164,9 +164,9 @@ public class Color implements PaintStyle {
   private boolean rgbaSet = false;
 
   public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
-  public static final Color WHITE = new Color(255, 255, 255);
-  public static final Color BLACK = new Color(0, 0, 0);
-  public static final Color GREEN = new Color(0, 255, 0);
+  public static final Color WHITE = new Color("white");
+  public static final Color BLACK = new Color("black");
+  public static final Color GREEN = new Color("green");
 
   private int rgba = 0;
 

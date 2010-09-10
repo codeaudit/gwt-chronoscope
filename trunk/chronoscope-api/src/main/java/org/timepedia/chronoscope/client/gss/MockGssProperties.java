@@ -9,17 +9,17 @@ import org.timepedia.exporter.client.Exportable;
 public class MockGssProperties extends GssProperties implements Exportable {
 
   public MockGssProperties() {
-    this.bgColor = new Color("#404040");
-    this.color = new Color("#000000");
+    this.bgColor = new Color("lightblue");
+    this.color = new Color("black");
     this.width = 1;
-    this.fontFamily = "Verdana";
+    this.fontFamily = "Helvetica";
     this.fontSize = "10pt";
     this.fontWeight = "normal";
     this.lineThickness = 1;
     this.left = 0;
     this.top = 0;
     this.shadowBlur = 0;
-    this.shadowColor = new Color("#000000");
+    this.shadowColor = new Color("lightgrey");
     this.shadowOffsetX = 0;
     this.shadowOffsetY = 0;
     this.size = 1;

@@ -2,9 +2,6 @@ package org.timepedia.chronoscope.client.gss;
 
 import org.timepedia.chronoscope.client.canvas.Color;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MockGssContext extends GssContext {
   
   // Determines the dataset color for a given GSS class.
@@ -29,7 +26,7 @@ public class MockGssContext extends GssContext {
       configPlotProps(gssProps);
     }
     else if ("fill".equals(elementType)) {
-      configFillProps(gssProps);
+      configFillProps(gssProps, gssElem.getParentGssElement());
     }
     else if ("marker".equals(elementType)) {
       configMarkerProps(gssProps);
@@ -59,7 +56,12 @@ public class MockGssContext extends GssContext {
     else if ("shadow".equals(elementType)) {
       // do nothing for now...
     }
-
+    else if ("label".equals(gssElem.getType())) {
+      configLabelProps(gssProps);
+    }
+    else if("crosshair".equals(gssElem.getType()) || "guideline".equals(gssElem.getType())) {
+      configCrosshairProps(gssProps);
+    }
     return gssProps;
   }
 
@@ -75,9 +77,12 @@ public class MockGssContext extends GssContext {
     return "focus".equals(pseudoElt);
   }
   
+  private void configCrosshairProps(GssProperties p) {
+    p.visible = false;
+  }
+  
   private void configBarProps(GssProperties p, GssElement elt, String pseudoElt) {
     configLineProps(p, elt, pseudoElt);
-    
     // width represents the percentage of maximum bar width.  E.g. a value of 
     // 100 means each bar will be drawn at maximum width (i.e. all bars will 
     // be touching each other).
@@ -89,50 +94,45 @@ public class MockGssContext extends GssContext {
     p.shadowBlur = 0;
     p.shadowOffsetX = 0;
     p.shadowOffsetY = 0;
-
+    
     p.color = datasetColorMap.get(elt);
+    
     if (isDisabled(pseudoElt)) {
-      p.transparency = 0.3;
+      p.transparency = 0.3f;
     }
   }
 
   private void configDomainMarkerProps(GssProperties p) {
     p.bgColor = new Color("#10f410");
     p.color = Color.BLACK;
-    p.transparency = 0.3;
+    p.transparency = 0.1f;
     p.lineThickness = 5;
+    p.visible  =true;
   }
   
-  private void configFillProps(GssProperties p) {
-    p.visible = true;
-    p.bgColor = Color.BLACK;
+  private void configFillProps(GssProperties p, GssElement elt) {
+    // TODO: p.visible=false does not work, it seems the way to hide the fill is with transparency
+    p.bgColor = datasetColorMap.get(elt);
     p.transparency = 0.0f;
   }
   
   private void configGridProps(GssProperties p) {
-    p.color = new Color("rgba(200,200,200,255)");
-    p.fontFamily = "Helvetica";
-    p.fontSize = "9pt";
-    p.transparency = 0.4f;
-    p.lineThickness = 1;
+    p.color = new Color("gainsboro");
     p.visible = false;
   }
   
   private void configMarkerProps(GssProperties p) {
-    p.bgColor = new Color("#D0D0D0");
-    p.color = Color.BLACK;
-    p.lineThickness = 1;
-    p.fontFamily = "Verdana";
+    p.bgColor = new Color("peachpuff");
+    p.color = new Color("navy");
+    p.lineThickness = 0.5;
+    p.fontSize = "8pt";
   }
   
   private void configOverviewProps(GssProperties p) {
     p.bgColor = new Color("#99CCFF");
     p.color = new Color("#0099FF");
-    p.fontFamily = "Verdana";
-    p.fontSize = "12pt";
     p.transparency = 0.4;
     p.lineThickness = 2;
-    p.visible = true;
   }
   
   private void configPointProps(GssProperties p, GssElement elt, String pseudoElt) {
@@ -144,70 +144,65 @@ public class MockGssContext extends GssContext {
     p.lineThickness = 2;
     
     // Determines the color of the point's outer ring
-    p.color = isFocus ? Color.BLACK : Color.WHITE;
+    p.color = isFocus ? new Color("khaki") : new Color("olive");
     // Determines the color of the point's center area
-    p.bgColor = isHover ? new Color(50,0,255) : new Color(0,0,255);
+    p.bgColor = isHover ? new Color("lightgreen") : new Color("lightblue");
   }
 
   private void configPlotProps(GssProperties p) {
-    p.bgColor = new Color("transparent");
-    p.fontFamily = "Helvetica";
-    p.fontSize = "9pt";
+    p.bgColor = Color.TRANSPARENT;
   }
-  
+
   private void configRangeAxesProps(GssProperties p) {
     p.bgColor = Color.WHITE;
   }
 
   private void configRangeAxisProps(GssProperties p) {
     p.tickPosition = "inside";
-    p.bgColor = Color.WHITE;
-    p.fontFamily = "Helvetica";
-    p.fontWeight = "normal";
-    p.fontSize = "9pt";
-    p.color = Color.BLACK;
+    p.bgColor = Color.TRANSPARENT;
+    p.fontSize = "8pt";
   }
 
   private void configRangeMarkerProps(GssProperties p) {
-    p.bgColor = new Color("#f41010");
-    p.color = Color.BLACK;
-    p.transparency = 0.5;
-    p.lineThickness = 5;
+    p.bgColor = new Color("powderblue");
   }
   
   private void configTickProps(GssProperties p) {
-    p.bgColor = new Color("transparent");
-    p.fontFamily = "Helvetica";
-    p.fontSize = "9pt";
-    p.color = Color.BLACK;
+  }
+  
+  private void configLabelProps(GssProperties p) {
+    p.tickAlign = "above";
+    p.fontSize="9pt";
   }
 
   /**
    * Maps a GSS class (presumably referring to some dataset) to a color.
    */
   protected static final class DatasetColorMap {
-    // Use this color if the dataset color cannot be determined from the
-    // provided GSS class string.
-    private static final Color DEFAULT_COLOR = new Color("#FF00FF");
-    
-    private Map<String,Color> gssClass2color = new HashMap<String,Color>();
-    
-    public DatasetColorMap() {
-      gssClass2color.put("s0", new Color("#2E43DF"));
-      gssClass2color.put("s1", new Color("#2CAA1B"));
-      gssClass2color.put("s2", new Color("#C21C1C"));
-      gssClass2color.put("s3", new Color("#E98419"));
-      gssClass2color.put("s4", new Color("#F8DD0D"));
-      gssClass2color.put("s5", new Color("#A72AA2"));
-    }
-    
+    private static Color[] defaultSerieColors = {
+        new Color("red"),
+        new Color("blue"),
+        new Color("brown"),
+        new Color("gold"),
+        new Color("burlywood"),
+        new Color("cadetblue"),
+        new Color("chartreuse"),
+        new Color("chocolate"),
+        new Color("aqua"),
+        new Color("darkgoldenrod"),
+        new Color("darkgreen"),
+        new Color("darkmagenta"),
+        new Color("darkred"),
+        new Color("forestgreen"),
+        new Color("lightgreen"),
+        new Color("blueviolet"),
+        new Color("crimson"),
+        new Color("black")
+    };
+
     public Color get(GssElement gssElement) {
-      if (gssElement == null) {
-        return DEFAULT_COLOR;
-      }
-      
-      Color c = gssClass2color.get(gssElement.getTypeClass());
-      return (c != null) ? c : DEFAULT_COLOR;
+      int n = gssElement == null ? 0 : Integer.parseInt(gssElement.getTypeClass().replaceFirst("^[^\\d]*(\\d*).*$", "0$1"));
+      return defaultSerieColors[n % defaultSerieColors.length];
     }
   }
 }

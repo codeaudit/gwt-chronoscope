@@ -40,4 +40,15 @@ public class StringSizer {
   public void setCanvas(Canvas canvas) {
     this.dummyLayer = canvas.getRootLayer();
   }
+  
+  /**
+   * Remove characters at the end of the string which overflow the given width.
+   */
+  public String wrapText(String s, GssProperties gss, double maxWidth) {
+    String r = "";
+    for (int i = 0; i <= s.length() && getWidth(r, gss) < maxWidth; i++) {
+      r = s.substring(0, i);
+    }
+    return r;
+  }
 }

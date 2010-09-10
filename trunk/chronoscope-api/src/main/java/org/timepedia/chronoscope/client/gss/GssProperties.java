@@ -84,12 +84,14 @@ public class GssProperties implements Exportable {
   }
 
   public String toString() {
-    return "visible: " + visible + "\ncolor: " + color + "\nbgColor:" + bgColor
-        + "\nlineThickness:" + lineThickness + "\nshadowBlur: " + shadowBlur
+    return "visible:" + visible + "\ncolor:" + color + "\nbgColor:" + bgColor
+        + "\nlineThickness:" + lineThickness + "\nshadowBlur:" + shadowBlur
         + "\nshadowOffsetX:" + shadowOffsetX + "\nshadowOffsetY:"
         + shadowOffsetY + "\nshadowColor:" + shadowColor + "\nwidth:" + width
-        + "\ntransparency: " + transparency + "\nsize:" + size + "\nleft:"
-        + left + "\ntop:" + top;
+        + "\ntransparency:" + transparency + "\nsize:" + size + "\nleft:"
+        + left + "\ntop:" + top
+        + "\niconWidth:" + iconWidth + "\niconHeight:" + iconHeight
+        + "\ncolumnWidth:" + columnWidth + "\ncolumnCount:" + columnCount;
   }
 
   public String getDateFormat() {
