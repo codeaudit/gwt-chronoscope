@@ -124,5 +124,9 @@ public class UtilTest extends TestCase {
     public MipMapChain getMipMapChain() {
       throw new UnsupportedOperationException();
     }
+
+    public String toJson() {
+      return null;
+    }
   }
 }

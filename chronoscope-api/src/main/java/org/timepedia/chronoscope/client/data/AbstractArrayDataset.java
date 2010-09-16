@@ -8,6 +8,7 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MinIntervalArrayFunction;
+import org.timepedia.chronoscope.client.util.Util;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Export;
@@ -43,6 +44,41 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
    */
   private MipMap rawData;
 
+  public String toString() {
+    String ret = "";
+    ret += "\n label:" + rangeLabel;
+    ret += "\n axisIds:" + Util.arrayToString(axisIds);
+    ret += "\n rawData: " + rawData.toString();
+    ret += "\n mipMapChain: " + mipMapChain.toString();
+    if (preferredRangeAxisInterval != null) 
+      ret += "\n preferredRange: " + preferredRangeAxisInterval.getStart() + "," + preferredRangeAxisInterval.getEnd();
+    ret += "\ndomainExtrema: " + getDomainExtrema().getStart() + "," + getDomainExtrema().getEnd();
+    ret += "\n mipMapChain: " + mipMapChain.toString();
+    return ret;
+  }
+  
+  public String toJson() {
+    String ret = "{\nid:'" + identifier + "'\n,label: '" + rangeLabel;
+    ret += "',\naxis: '" + axisIds[0];
+    ret += "',\nmipped: true,\n";
+    String domains = "";
+    String ranges = "";
+    for (int i = 0; i < mipMapChain.size(); i++) {
+      if (i>0) {
+        domains += ",\n";
+        ranges += ",\n";
+      }
+      MipMap m = mipMapChain.getMipMap(i);
+      domains += Util.arrayToString(m.getDomain().toArray());
+      ranges += Util.arrayToString(m.getRange(0).toArray());
+
+    }
+    ret += "domain: [" + domains + "],\nrange: [" + ranges + "],\n";
+    Interval i = preferredRangeAxisInterval != null ? preferredRangeAxisInterval : getDomainExtrema();
+    ret += "rangeTop: " + i.getEnd() +  ",\nrangeBottom: " + i.getStart() + "\n}";
+    return ret;
+  }
+  
   /**
    * Constructs an {@link Dataset} from the specified request object.
    */
@@ -162,4 +198,6 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
       List<Array2D> mipMappedRangeTuples) {
     return new MipMapChain(mipMappedDomain, mipMappedRangeTuples);
   }
+  
+
 }

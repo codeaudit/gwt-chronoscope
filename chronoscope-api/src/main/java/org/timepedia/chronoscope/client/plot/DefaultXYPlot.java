@@ -861,8 +861,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         lastCrosshairDateFormat = null;
       }
     }
-    visDomain.setEndpoints(widestDomain.getStart(), widestDomain.getStart() + widestDomain.length());
-
+    
     redraw(true);
   }
 

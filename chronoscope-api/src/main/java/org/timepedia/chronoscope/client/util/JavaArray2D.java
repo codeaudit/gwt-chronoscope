@@ -23,6 +23,21 @@ public final class JavaArray2D implements Array2D {
   private int rowCount;
   private Array1D[] rows;
   
+  public String toString() {
+    String ret ="";
+    ret += " rowCount:" + rowCount;
+    ret += ", columnCounts: " + Util.arrayToString(columnCounts);
+    ret += ", rows:" ;
+    for (Array1D d : rows) {
+      ret += Util.arrayToString(d.toArray());
+    }
+    ret += ", a:";
+    for (double[] d: a) {
+      ret += Util.arrayToString(d);
+    }
+    return ret;
+  }
+  
   public JavaArray2D() {
     final int initialRowCapacity = 10;
     columnCounts = new int[initialRowCapacity];

@@ -2,6 +2,7 @@ package org.timepedia.chronoscope.client.data;
 
 import org.timepedia.chronoscope.client.data.tuple.Tuple5D;
 import org.timepedia.chronoscope.client.util.Array1D;
+import org.timepedia.chronoscope.client.util.Util;
 
 /**
  * @author chad takahashi
@@ -11,6 +12,19 @@ public final class FlyweightTuple implements Tuple5D {
   private double[] domainData;
   private double[][] rangeTupleData;
   private int tupleLength;
+  
+  public String toString() {
+    String ret = "";
+    ret += " tupleLength:" + tupleLength;
+    ret += ", dataPointIndex:" + dataPointIndex;
+    ret += ", domainData:" + Util.arrayToString(domainData);
+    ret += ", rangeTupleData: [" ;
+    for (double[] d: rangeTupleData) {
+      ret += Util.arrayToString(d) + ",";
+    }
+    ret += "]";
+    return ret;
+  }
   
   public FlyweightTuple(Array1D domain, Array1D[] rangeTuples) {
     this.tupleLength = 1 + rangeTuples.length;
