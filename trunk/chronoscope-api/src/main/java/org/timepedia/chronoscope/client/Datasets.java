@@ -381,4 +381,22 @@ public final class Datasets<T extends Tuple2D>
       }
     }
   }
+
+  public String toJson() {
+    String ret = "";
+    for (int i = 0; i < datasets.size(); i++) {
+      if (i>0) ret += ",";
+      ret += datasets.get(i).toJson();
+    }
+    return "[" + ret + "]";
+  }
+  
+  public String toString() {
+    String ret = "";
+    for (int i = 0; i < datasets.size(); i++) {
+      if (i>0) ret += ",";
+      ret += datasets.get(i).toString();
+    }
+    return ret;
+  }
 }

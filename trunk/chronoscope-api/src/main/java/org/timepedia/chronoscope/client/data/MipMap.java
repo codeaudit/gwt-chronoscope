@@ -9,6 +9,7 @@ import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
+import org.timepedia.chronoscope.client.util.Util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -43,6 +44,20 @@ public class MipMap {
   private Array1D[] rangeTuples;
 
   private Interval[] rangeExtrema;
+  
+  public String toString() {
+    String ret = "";
+    ret += " mipLevel:" + mipLevel;
+    ret += " domain: " + Util.arrayToString(domain.toArray());
+    for (Interval i : rangeExtrema) {
+      ret += ", start:" + i.getStart() + ", end:" + i.getEnd();
+    }
+    for (Array1D a : rangeTuples) {
+      ret += ", tuples: " + Util.arrayToString(a.toArray());
+    }
+    ret += ", flyweightTuple: {" + flyweightTuple + "}";
+    return ret; 
+  }
 
   public MipMap(Array1D domain, Array1D[] rangeTuples, Interval[] extrema) {
     assert rangeTuples.length == extrema.length;

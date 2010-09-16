@@ -22,6 +22,24 @@ public class MipMapChain {
   
   private Array2D mipMappedDomain;
   private Array2D[] mipMappedRangeTuples;
+  
+  public String toString() {
+    String ret = "{";
+    ret += " rangeTupleSize: " + rangeTupleSize;
+    ret += ", mipMaps: [";
+    for (MipMap m : mipMaps) {
+      ret += "\n"  + m.toString() + ",";
+    }
+    ret += "]";
+    ret += ",\n miMappedDomain: " + mipMappedDomain.toString();
+    ret += ",\n miMappedTuples: ";
+    for (Array2D d: mipMappedRangeTuples) {
+      ret += d.toString();
+    }
+    ret += "}\n";
+
+    return ret;
+  }
 
   public MipMapChain(Array2D mipMappedDomain, List<Array2D> mipMappedRangeTuples) {
     this(mipMappedDomain, mipMappedRangeTuples, null);

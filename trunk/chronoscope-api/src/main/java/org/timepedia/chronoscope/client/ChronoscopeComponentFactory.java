@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.data.ChronoscopeDatasetFactory;
 public class ChronoscopeComponentFactory extends ComponentFactory {
   private DatasetFactory datasetFactory;
   
-  protected ChronoscopeComponentFactory() {
+  public ChronoscopeComponentFactory() {
     datasetFactory = new ChronoscopeDatasetFactory();
     
     name2mipmapStrategy.clear();
