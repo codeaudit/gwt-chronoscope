@@ -1,9 +1,5 @@
 package org.timepedia.chronoscope.client.util;
 
-import java.util.Arrays;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 
 /**
