@@ -59,6 +59,7 @@
   <modules>
     <module>chronoscope-api</module>
     <module>chronoscope</module>
+    <module>chronoscope-utils</module>
   </modules>
 
   <!-- 
