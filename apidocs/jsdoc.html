@@ -133,6 +133,12 @@ Exported JavaScript-API: Index of Classes
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDatasets</b>(<span class=jsdocParameterType><a href=#Datasets>Datasets</a></span> <span class=jsdocParameterName>datasets</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
 </TABLE>
 
 <BR>
@@ -376,6 +382,20 @@ Exported JavaScript-API: Index of Classes
 <TD COLSPAN=2 BGCOLOR="" CLASS="jsdocHeader">Methods</TD>
 </TR>
 <TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>replaceDatasets</b>(<span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>jsonDatasets</span>)
+<BR>
+<span class=jsdocComment>Replace the datasets and redraw all the elements in the chart.
+ It is similar to re-create the graph but the performance is better especially 
+ when using  flash canvas.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>detach</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
 <TD VALIGN="top" CLASS="jsdocRetType"><a href=#Chart>Chart</a></TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>getChart</b>()
 <BR>
@@ -436,6 +456,14 @@ Exported JavaScript-API: Index of Classes
 <BR>
 <span class=jsdocComment>Create a chart inside the DOM element with the given ID with the given JSON
  datasets</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType"><a href=#ChartPanel>ChartPanel</a></TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>replaceDatasets</b>(<span class=jsdocParameterType><a href=#ChartPanel>ChartPanel</a></span> <span class=jsdocParameterName>chartPanel</span>, <span class=jsdocParameterType><a href=#JsArray>JsArray</a></span> <span class=jsdocParameterName>jsonDatasets</span>)
+<BR>
+<span class=jsdocComment>Replace the datasets on a chart and redraw all the elements in the chart.
+ It is like doing a detach and a create of a graph but the performance is better specially 
+ with flash canvas.</span></TD>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType"><a href=#Dataset>Dataset</a></TD>
@@ -686,6 +714,12 @@ Exported JavaScript-API: Index of Classes
 <span class=jsdocComment>Enables a dataset to support on-the-fly incremental loading/reloading by invoking a callback when
  a given range of data is requested for display. The provided handler may request additional data from the
  server for this range and return new data.</span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">String</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>toJson</b>()
+<BR>
+<span class=jsdocComment></span></TD>
 </TR>
 </TABLE>
 
@@ -1015,6 +1049,12 @@ Exported JavaScript-API: Index of Classes
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setDatasets</b>(<span class=jsdocParameterType><a href=#Datasets>Datasets</a></span> <span class=jsdocParameterName>datasets</span>)
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>setHighlight</b>(<span class=jsdocParameterType>double</span> <span class=jsdocParameterName>startDomainX</span>, <span class=jsdocParameterType>double</span> <span class=jsdocParameterName>endDomainX</span>)
 <BR>
 <span class=jsdocComment></span></TD>
@@ -1076,6 +1116,12 @@ Exported JavaScript-API: Index of Classes
 <TR>
 <TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
 <TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>zoomToHighlight</b>()
+<BR>
+<span class=jsdocComment></span></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="jsdocRetType">&nbsp;</TD>
+<TD VALIGN="top" CLASS="jsdocMethod"><b class=jsdocMethodName>showLegendLabels</b>(<span class=jsdocParameterType>boolean</span> <span class=jsdocParameterName>visible</span>)
 <BR>
 <span class=jsdocComment></span></TD>
 </TR>
