@@ -130,8 +130,9 @@ public class FlashLayer extends AbstractLayer {
 
   public void drawImage(Layer layer, double x, double y, double width, double height) {
     if (layer instanceof FlashCanvas) {
-      //   drawImage0(ctx, ( (BrowserCanvas) layer )
-      //          .getRootLayer().getElement(), x, y, width, height);
+      // drawImage(((FlashCanvas) layer).getRootLayer(), x, y, width, height);
+      // drawImage0(ctx, ( (BrowserCanvas) layer )
+       //       .getRootLayer().getElement(), x, y, width, height);
     } else {
       pushNCmd("DI", 5);
       push(layer.getLayerId());
@@ -139,6 +140,7 @@ public class FlashLayer extends AbstractLayer {
       push(y);
       push(width);
       push(height);
+      // drawImage(((FlashCanvas) layer).getRootLayer(), x, y, width, height);
       //  drawImage0(ctx, ( (BrowserLayer) layer ).getElement(), x, y, width, height);
     }
   }
@@ -163,6 +165,22 @@ public class FlashLayer extends AbstractLayer {
       if (image instanceof BrowserCanvasImage) {
       pushNCmd("DE", 5);
       push(((BrowserCanvasImage)image).getNative().getElement().getId());
+      push(dx);
+      push(dy);
+      push(dwidth);
+      push(dheight);
+    }
+  }
+
+  public void drawImage(CanvasImage image, double sx, double sy, double swidth,
+      double sheight, double dx, double dy, double dwidth, double dheight) {
+    if (image instanceof BrowserCanvasImage) {
+      pushNCmd("DR", 9);
+      push(((BrowserCanvasImage)image).getNative().getElement().getId());
+      push(sx);
+      push(sy);
+      push(swidth);
+      push(sheight);
       push(dx);
       push(dy);
       push(dwidth);
@@ -506,8 +524,7 @@ public class FlashLayer extends AbstractLayer {
       fc.cmd(s, x, y, label, fontFamily, fontWeight, fontSize, layerName, cursorStyle.name());        
     }
 
-  private void cmd(String s, String layerName, double x, double y, double width,
-      double height) {
+  private void cmd(String s, String layerName, double x, double y, double width, double height) {
     selectLayer();
     fc.cmd(s, layerName, x, y, width, height);
   }

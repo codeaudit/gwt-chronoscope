@@ -290,7 +290,7 @@ public class FlashCanvas extends Canvas {
   public final native void cmd(String cmd, double x, double y,
       String label, String fontFamily, String fontWeight, String fontSize,
       String layerName, String cursorStyle) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8, x, y, label, fontFamily,
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 9, x, y, label, fontFamily,
                    fontWeight, fontSize, layerName, cursorStyle);
     }-*/;
 
@@ -489,18 +489,17 @@ public class FlashCanvas extends Canvas {
     rootLayer.restore();
   }
 
+    // TODO - switch the angles to type Radians or Degrees, too much ambiguity
   public int rotatedStringHeight(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
     return rootLayer
-        .rotatedStringHeight(str, rotationAngle, fontFamily, fontWeight,
-            fontSize);
+        .rotatedStringHeight(str, rotationAngle, fontFamily, fontWeight, fontSize);
   }
 
   public int rotatedStringWidth(String str, double rotationAngle,
       String fontFamily, String fontWeight, String fontSize) {
     return rootLayer
-        .rotatedStringWidth(str, rotationAngle, fontFamily, fontWeight,
-            fontSize);
+        .rotatedStringWidth(str, rotationAngle, fontFamily, fontWeight, fontSize);
   }
 
   public void save() {
