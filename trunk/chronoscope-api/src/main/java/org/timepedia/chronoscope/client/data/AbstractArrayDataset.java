@@ -1,5 +1,8 @@
 package org.timepedia.chronoscope.client.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -9,12 +12,9 @@ import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MinIntervalArrayFunction;
 import org.timepedia.chronoscope.client.util.Util;
+import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.Export;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides most of the implementation necessary for an N-tuple dataset backed
@@ -58,8 +58,14 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
   }
   
   public String toJson() {
-    String ret = "{\nid:'" + identifier + "'\n,label: '" + rangeLabel;
-    ret += "',\naxis: '" + axisIds[0];
+    String ret = "{"; 
+    if (identifier != null) {
+      ret += "\nid: '" + identifier + "',\n";
+    }
+    if (rangeLabel != null) {
+      ret += "label: '" + rangeLabel + "',\n"; 
+    }
+    ret += "axis: '" + axisIds[0];
     ret += "',\nmipped: true,\n";
     String domains = "";
     String ranges = "";
