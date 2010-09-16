@@ -177,11 +177,27 @@ public final class Util {
   }
   
   public static String arrayToString(double...a) {
-    return arrayToString(ArrayUtils.toObject(a));
+    StringBuffer result = new StringBuffer();
+    if (a.length > 0) {
+        result.append(a[0]);
+        for (int i=1; i<a.length; i++) {
+            result.append(",");
+            result.append(a[i]);
+        }
+    }
+    return "[" + result.toString() + "]";    
   }
   
   public static String arrayToString(int...a) {
-    return arrayToString(ArrayUtils.toObject(a));
+    StringBuffer result = new StringBuffer();
+    if (a.length > 0) {
+        result.append(a[0]);
+        for (int i=1; i<a.length; i++) {
+            result.append(",");
+            result.append(a[i]);
+        }
+    }
+    return "[" + result.toString() + "]";    
   }
 
   public static String arrayToString(Object...a) {
