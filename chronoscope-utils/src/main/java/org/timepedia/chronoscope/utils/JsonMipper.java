@@ -27,7 +27,7 @@ import com.google.gwt.i18n.client.TimeZone;
 /**
  * Utility class to pre-mip a json data string.
  * 
- * @author manolo carrasco moñino
+ * @author manolo carrasco monino
  */
 public class JsonMipper {
   
