@@ -257,8 +257,8 @@ public class FlashCanvas extends Canvas {
 
   public final native void cmd(String cmd, double arg1, double arg2,
       double arg3, double arg4, double arg5, double arg6) /*-{
-                this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 6, arg1, arg2,
-                     arg3, arg4, arg5, arg6);
+                this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 6,
+                        arg1, arg2, arg3, arg4, arg5, arg6);
       }-*/;
 
   public final native void cmd(String cmd) /*-{
@@ -271,27 +271,27 @@ public class FlashCanvas extends Canvas {
 
   public final native void cmd(String cmd, double x, double y, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 7, x, y, label, fontFamily,
-                   fontWeight, fontSize, layerName);
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 7,
+                   x, y, label, fontFamily, fontWeight, fontSize, layerName);
     }-*/;
 
   public final native void cmd(String cmd, String layerName, double x, double y, double width, double height) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 5, layerName, x, y,
-                   width, height);
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 5,
+                   layerName, x, y, width, height);
     }-*/;
 
   public final native void cmd(String cmd, double x, double y, double a,
       String label, String fontFamily, String fontWeight, String fontSize,
       String layerName) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8, x, y, a, label, fontFamily,
-                   fontWeight, fontSize, layerName);
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8,
+                   x, y, a, label, fontFamily, fontWeight, fontSize, layerName);
     }-*/;
 
   public final native void cmd(String cmd, double x, double y,
       String label, String fontFamily, String fontWeight, String fontSize,
       String layerName, String cursorStyle) /*-{
-           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 9, x, y, label, fontFamily,
-                   fontWeight, fontSize, layerName, cursorStyle);
+           this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::ctx.push(cmd, 8,
+                   x, y, label, fontFamily, fontWeight, fontSize, layerName, cursorStyle);
     }-*/;
 
 
