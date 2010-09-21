@@ -8,7 +8,7 @@ import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 public class DaysTickFormatter extends DateTickFormatter {
 
   public DaysTickFormatter(DateTickFormatter superFormatter) {
-    super("00-Xxx"); // e.g. "22-Aug"
+    super("00/Xxx"); // e.g. "22-Aug"
     this.superFormatter = superFormatter;
     this.subFormatter = new HoursTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 2, 7, 14};

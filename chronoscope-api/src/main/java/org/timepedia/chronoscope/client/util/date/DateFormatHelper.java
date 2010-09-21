@@ -164,4 +164,9 @@ public final class DateFormatHelper {
     String yr = String.valueOf(d.getYear());
     return yr.substring(yr.length() - 2);
   }
+
+  public static DateFormatter getHourFormatter(){
+    return hourFormatter;
+  }
+
 }

@@ -38,13 +38,13 @@ axes, axis, plot, label, line, point, series, axislegend, bar, barmarker, domain
   padding: 8px;
   -moz-border-radius: 0;
   border: 1px solid #cccccc;
-  font-family: Verdana;
+  font-family: Helvetica;
   font-size: 90%;
 }
 
 .chrono-MenuBar .chrono-MenuItem {
   padding: 1px 4px 1px 4px;
-  font-size: smaller;
+  font-size: 9pt;
   cursor: default;
 }
 
@@ -64,7 +64,7 @@ grid {
 
 axes axis {
   background-color: white;
-  font-family: Verdana;
+  font-family: Helvetica;
   font-size: 9pt;
   color: black;
 }
@@ -214,7 +214,7 @@ marker {
   background-color: #229922;
   color: #33cc33;
   border-left-width: 1px;
-  font-family: Verdana;
+  font-family: Helvetica;
   font-size: 9pt;
 }
 

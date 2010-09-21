@@ -282,16 +282,26 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   
   @Export
-  public void setTimeZoneOffset(int offsetHours) {
-      if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
-          ChronoDate.isTimeZoneOffset = true;
-          ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
-      } else { // == 0
-          ChronoDate.isTimeZoneOffset = false;
-          ChronoDate.setTimeZoneOffsetInMilliseconds(0);
-      }
+  public void setTimeZoneOffsetUTC(int offsetHours) {
+      // if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
+      if ((offsetHours > -14) && (offsetHours < 14)) {
+        ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
+      }// else { // == 0
+          // now 0 should really set to 0 offset from UTC, if you want local use OffsetBrowserLocal
+          // ChronoDate.setTimeZoneOffsetInMilliseconds(ChronoDate.getLocalTimeZoneOffsetInMilliseconds());
+      // }
       topPanel.getCompositePanel().draw();
       bottomPanel.draw();
+  }
+
+  @Export
+  public void setTimeZoneOffsetBrowserLocal(int offsetHours) {
+    // if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
+     if ((offsetHours > -14) && (offsetHours < 14)) {
+        ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000 + ChronoDate.getLocalTimeZoneOffsetInMilliseconds());
+     }
+     topPanel.getCompositePanel().draw();
+     bottomPanel.draw();
   }
 
   public void animateTo(final double destDomainOrigin,
@@ -375,23 +385,21 @@ public class DefaultXYPlot<T extends Tuple2D>
     Interval origVisPlotDomain = getDomain().copy();
     getWidestDomain().copyTo(getDomain());
     Canvas backingCanvas = view.getCanvas();
-//    backingCanvas.beginFrame();
+    backingCanvas.beginFrame();
     overviewLayer.save();
     overviewLayer.clear();
     overviewLayer.setFillColor(Color.TRANSPARENT);
     overviewLayer.setVisibility(false);
-    overviewLayer
-        .fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
     Bounds oldBounds = plotBounds;
     Layer oldLayer = plotLayer;
-    plotBounds = new Bounds(0, 0, overviewLayer.getWidth(),
-        overviewLayer.getHeight());
+    plotBounds = new Bounds(0, 0, overviewLayer.getBounds().width, overviewLayer.getBounds().height);
     plotLayer = overviewLayer;
     plotRenderer.drawDatasets(true);
     plotBounds = oldBounds;
     plotLayer = oldLayer;
     overviewLayer.restore();
-//    backingCanvas.endFrame();
+    backingCanvas.endFrame();
     // restore original endpoints
     origVisPlotDomain.copyTo(getDomain());
   }

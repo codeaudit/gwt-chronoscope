@@ -542,11 +542,21 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
 
   // TODO - timezone in dataset for per-dataset shifting of varied domain data on the way in
   /**
-   * Set a chart-wide timezone offset that will override the client timezone
-   * -12 <= timeZoneOffset <= 13
+   * Set a chart-wide timezone offset relative to UTC that will override the client timezone
+   * -12 <= offsetHours <= 13
+   * setTimeZoneOffsetUTC(-8) should look like a browser viewing it in UTC-8  timezone
    */
   @Export  
-  void setTimeZoneOffset(int offsetHours);
+  void setTimeZoneOffsetUTC(int offsetHours);
+
+  /**
+   * Set a chart-wide timezone offset relative to the browser's local timezone
+   * -12 <= offsetHours <= 13
+   * setTimeZoneOffsetBrowserLocal(-4) from a browser that thinks it's in UTC-4 should
+   * look like a browser viewing it in UTC-8 timezone
+   */
+  @Export
+  void setTimeZoneOffsetBrowserLocal(int offsetHours);
 
   /**
    * Show dataset legend labels ( false = hidden; true = visible )

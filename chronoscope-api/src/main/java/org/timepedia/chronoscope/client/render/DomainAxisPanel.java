@@ -202,7 +202,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   @Export
   public void setCreditsLabel(String label) {
     creditsLabel = new Label(label, this.textLayerName,
-        view.getCanvas().getRootLayer(), "Veranda", "normal", "9pt");
+        view.getCanvas().getRootLayer(), "Helvetica", "normal", "9pt");
   }
 
   @Export
@@ -229,7 +229,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     if (creditsLabel == null) {
       creditsLabel = new Label(CREDITS, this.textLayerName, rootLayer,
-          "Veranda", "normal", "9pt");
+          "Helvetica", "normal", "9pt");
     }
   }
 
@@ -316,6 +316,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   private void drawHorizontalLine(Layer layer, Bounds bounds) {
     layer.setStrokeColor(tickProperties.color);
     layer.setLineWidth(tickProperties.lineThickness);
+    layer.setTransparency(0.0f);      
     layer.moveTo(bounds.x, bounds.y);
     layer.lineTo(bounds.rightX(), bounds.y);
     layer.stroke();
@@ -344,9 +345,18 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
       String tickLabel, double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
-    layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
-        gssProperties.fontFamily, gssProperties.fontWeight,
-        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+    // TODO - consider how to pass more semantics about label, eg DAY vs HOUR
+    // right now check for '/' to bold days, generalize to bold every other level later
+    if (tickLabel.contains("/")) {
+        layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
+            gssProperties.fontFamily, "bold",
+            gssProperties.fontSize + 1, textLayerName, Cursor.DEFAULT);
+
+    } else {
+        layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
+            gssProperties.fontFamily, gssProperties.fontWeight,
+            gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+      }
   }
 
   private int getLabelHeight(Layer layer, String str) {

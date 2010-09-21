@@ -10,7 +10,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  */
 public class OverviewAxisPanel extends AxisPanel {
 
-  private static final int MIN_OVERVIEW_HEIGHT = 60;
+  private static final int MIN_OVERVIEW_HEIGHT = 50;
   
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
@@ -34,10 +34,11 @@ public class OverviewAxisPanel extends AxisPanel {
   }
   
   public void draw() {
-    layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
-    overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
-    bounds.height);
+    // layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
+    // overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
+    // bounds.height);
 
+    layer.drawImage(overviewLayer, bounds.x, bounds.y, bounds.width, bounds.height);
 
     highlightBounds = calcHighlightBounds(plot, bounds);
     
@@ -45,17 +46,29 @@ public class OverviewAxisPanel extends AxisPanel {
       layer.save();
       layer.setFillColor(gssProperties.bgColor);
       layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
-      layer.fillRect(highlightBounds.x, highlightBounds.y,
-          highlightBounds.width, highlightBounds.height);
+
+      // the old way - dimming the highlight
+      //  layer.fillRect(highlightBounds.x, highlightBounds.y,
+      //      highlightBounds.width, highlightBounds.height);
+
+      // left side
+      layer.fillRect(0, 0, highlightBounds.x, highlightBounds.height);
+
+      // right side
+      layer.fillRect(highlightBounds.x, highlightBounds.y, (layer.getWidth()-highlightBounds.width-highlightBounds.x), highlightBounds.height);
+
       layer.setStrokeColor(gssProperties.color);
       layer.setTransparency(1.0f);
       layer.setLineWidth(gssProperties.lineThickness);
       layer.beginPath();
       final double halfLineWidth = gssProperties.lineThickness / 2;
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
-      layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);  
-      layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
-          highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+
+      layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
+
+      // layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
+         //  highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+
       layer.stroke();
       layer.restore();
       
@@ -118,8 +131,9 @@ public class OverviewAxisPanel extends AxisPanel {
     double visibleDomainWidth = plot.getDomain().length();
     
     Bounds b;
-    
-    if (!visible || (globalDomainWidth - .01*visibleDomainWidth <= visibleDomainWidth)) { // TODO - withi 1px rather than 1%
+    // TODO - use same calc as limiting zoom out, rather than just x%
+    // TODO - global bounds should allow edge point +max radii for max(hover,focus,etc)
+    if (!visible || ((globalDomainWidth - .05*visibleDomainWidth) <= visibleDomainWidth)) {
       // The viewport (i.e. the portion of the domain that is visible within the
       // plot area) is at least as wide as the global domain, so don't highlight.
       b = null;

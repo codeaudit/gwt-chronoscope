@@ -143,8 +143,7 @@ public class ZoomPanel extends AbstractPanel implements
     }
   }
 
-  private void drawZoomLink(Layer layer, double x, double y, String label,
-      boolean clickable) {
+  private void drawZoomLink(Layer layer, double x, double y, String label, boolean clickable) {
     layer.drawText(x, y, label, gssProperties.fontFamily,
         gssProperties.fontWeight, gssProperties.fontSize, textLayerName,
         clickable ? Cursor.CLICKABLE : Cursor.DEFAULT);
