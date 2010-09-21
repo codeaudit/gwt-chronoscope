@@ -194,7 +194,6 @@ public class FlashView extends GwtView
 
   public void setCursor(Cursor cursor) {
     switch (cursor) {
-
       case CLICKABLE:
         setCursorImpl("pointer");
         break;
@@ -202,9 +201,13 @@ public class FlashView extends GwtView
         setCursorImpl("text");
         break;
       case DRAGGABLE:
-      case DRAGGING:
-      default:
         setCursorImpl("move");
+        break;
+      case DRAGGING:
+        setCursorImpl("move");
+        break;
+      default:
+        setCursorImpl("default");
         break;
     }
   }

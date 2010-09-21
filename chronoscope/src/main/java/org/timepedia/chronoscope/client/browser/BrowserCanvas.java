@@ -128,8 +128,7 @@ public class BrowserCanvas extends Canvas {
 
   public void drawImage(Layer layer, double sx, double sy, double swidth,
       double sheight, double dx, double dy, double dwidth, double dheight) {
-    rootLayer
-        .drawImage(layer, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
+    rootLayer.drawImage(layer, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
   }
 
   public void drawRotatedText(double x, double y, double angle, String label,

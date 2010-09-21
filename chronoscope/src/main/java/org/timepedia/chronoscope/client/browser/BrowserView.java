@@ -189,7 +189,6 @@ public class BrowserView extends GwtView
 
   public void setCursor(Cursor cursor) {
     switch (cursor) {
-
       case CLICKABLE:
         setCursorImpl("pointer");
         break;
@@ -197,6 +196,8 @@ public class BrowserView extends GwtView
         setCursorImpl("text");
         break;
       case DRAGGABLE:
+        setCursorImpl("move");
+        break;
       case DRAGGING:
         setCursorImpl("move");
         break;
