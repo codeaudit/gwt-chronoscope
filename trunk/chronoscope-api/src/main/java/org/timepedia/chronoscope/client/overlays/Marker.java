@@ -23,11 +23,6 @@ import org.timepedia.exporter.client.Exportable;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by IntelliJ IDEA. User: ray Date: Apr 20, 2007 Time: 4:03:02 PM To
- * change this template use File | Settings | File Templates.
- *
- */
 @ExportPackage("chronoscope")
 public class Marker extends DraggableOverlay implements GssElement, Exportable {
 
@@ -255,9 +250,8 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
       String label = guideLineDateFmt.format(dx);
       hx += dx < plot.getDomain().midpoint() ? 1.0
           : -1 - layer.stringWidth(label, "Verdana", "", "9pt");
-
-      layer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "overlays",
-          Cursor.DEFAULT);
+      // TODO - factor hard-coded font out 
+      layer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "overlays", Cursor.DEFAULT);
     }
     layer.restore();
   }

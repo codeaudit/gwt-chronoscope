@@ -1,6 +1,8 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.DateFormatter;
+import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * @author chad takahashi
@@ -15,8 +17,11 @@ public class HoursTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.HOUR;
   }
 
+  @Override    
   public String formatTick() {
-    int hourOfDay = currTick.getHour();
+    DateFormatter hourFormat = DateFormatHelper.getHourFormatter();
+    int hourOfDay = Integer.valueOf(hourFormat.format(currTick.getTime()));
+      
     switch (hourOfDay) {
       case 0:
         return dateFormat.dayAndMonth(currTick);

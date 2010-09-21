@@ -14,15 +14,15 @@ import org.timepedia.chronoscope.client.util.DateFormatter;
  */
 public abstract class ChronoDate {
 
-  public static boolean isTimeZoneOffset=false;
+  private static double localTimeZoneOffsetInMilliseconds=(new Date()).getTimezoneOffset() * 60 * 1000;
 
-  private static double timeZoneOffsetInMilliseconds=0;
-
+  private static double timeZoneOffsetInMilliseconds=localTimeZoneOffsetInMilliseconds;
+        
   /**
    * Factory method that creates a new date object for the specified timeStamp.
    */
   public static final ChronoDate get(double timeStamp) {
-//    return new DefaultChronoDate(timeStamp);
+    // return new DefaultChronoDate(timeStamp);
     return new FastChronoDate(timeStamp);
   }
 
@@ -188,12 +188,7 @@ public abstract class ChronoDate {
    * @return Local time zone and set the time zone difference between the value
    */
   public static double timeZoneConverter() {
-      Date date = new Date();
-      int localTimeZoneOffsetInMilliseconds = date.getTimezoneOffset() * 60 * 1000;
-      if (isTimeZoneOffset) {
-          return timeZoneOffsetInMilliseconds + localTimeZoneOffsetInMilliseconds;
-      }
-      return 0;
+      return timeZoneOffsetInMilliseconds;
   }
 
   /**
@@ -203,8 +198,10 @@ public abstract class ChronoDate {
    * @return String date about timezone
    */
   public static String formatDateByTimeZone(DateFormatter dateFormatter,double d){
-    if(isTimeZoneOffset){
-     TimeZone timeZone=TimeZone.createTimeZone((int)-timeZoneOffsetInMilliseconds/(60*1000));
+
+      // 100ms ~ equal
+    if((Math.abs(timeZoneOffsetInMilliseconds-localTimeZoneOffsetInMilliseconds)>100)){
+     TimeZone timeZone=TimeZone.createTimeZone((int)timeZoneOffsetInMilliseconds/(60*1000));
      return dateFormatter.format(d, timeZone);
     }
     return dateFormatter.format(d);
@@ -212,6 +209,10 @@ public abstract class ChronoDate {
 
   public static double getTimeZoneOffsetInMilliseconds() {
       return timeZoneOffsetInMilliseconds;
+  }
+
+  public static double getLocalTimeZoneOffsetInMilliseconds() {
+      return localTimeZoneOffsetInMilliseconds;
   }
 
   public static void setTimeZoneOffsetInMilliseconds(double timeZoneOffsetInMilliseconds) {

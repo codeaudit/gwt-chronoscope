@@ -160,7 +160,7 @@ public class MockGssContext extends GssContext {
   private void configRangeAxisProps(GssProperties p) {
     p.tickPosition = "inside";
     p.bgColor = Color.TRANSPARENT;
-    p.fontSize = "8pt";
+    p.fontSize = "9pt";
   }
 
   private void configRangeMarkerProps(GssProperties p) {
