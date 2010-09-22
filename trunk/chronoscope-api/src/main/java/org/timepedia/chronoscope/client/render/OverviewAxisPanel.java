@@ -11,7 +11,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  */
 public class OverviewAxisPanel extends AxisPanel {
 
-  public static final int MIN_OVERVIEW_HEIGHT = 50;
+  public static final int OVERVIEW_HEIGHT = 48;
   
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
@@ -39,26 +39,77 @@ public class OverviewAxisPanel extends AxisPanel {
     //  overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
     // bounds.height);
 
-    layer.drawImage(overviewLayer,0, 0, overviewLayer.getWidth(), overviewLayer.getHeight(),
-            bounds.x, bounds.y, bounds.width, bounds.height);
+    layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(), overviewLayer.getHeight(),
+                    bounds.x, bounds.y, bounds.width, bounds.height);
 
     highlightBounds = calcHighlightBounds(plot, bounds);
     
-    if (highlightBounds != null) {
+if (highlightBounds != null) {
       layer.save();
       layer.setFillColor(gssProperties.bgColor);
       layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
+      layer.fillRect(highlightBounds.x, highlightBounds.y,
+          highlightBounds.width, highlightBounds.height);
+      layer.setStrokeColor(gssProperties.color);
+      layer.setTransparency(1.0f);
+      layer.setLineWidth(gssProperties.lineThickness);
+      layer.beginPath();
+      final double halfLineWidth = gssProperties.lineThickness / 2;
+      // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
+      layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
+      layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
+          highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+
+      // layer.stroke();
+
+     //  layer.restore();
+
+
+    
+
+      //plot.getChart().setCursor(Cursor.SELECTING);
+
+      // layer.setFillColor(gssProperties.bgColor);
+      // layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
 
       // the old way - dimming the highlight
       //  layer.fillRect(highlightBounds.x, highlightBounds.y,
       //      highlightBounds.width, highlightBounds.height);
 
       // left side
-      layer.fillRect(0, highlightBounds.y, highlightBounds.x, highlightBounds.height);
+      // this would fill left side up to focus
+      // layer.fillRect(0, highlightBounds.y, highlightBounds.x, highlightBounds.height);
+
+      // this 'fills' a small handlebar instead
+      // layer.setFillColor(gssProperties.bgColor);
+
+      // layer.fillRect(highlightBounds.x-gssProperties.getLineThickness() , highlightBounds.y, gssProperties.getLineThickness(), highlightBounds.height);
+
+      // layer.clip(0, highlightBounds.y, highlightBounds.x, highlightBounds.height);
 
 
       // right side
-      layer.fillRect(highlightBounds.x + highlightBounds.width, highlightBounds.y, overviewLayer.getWidth()-(highlightBounds.x + highlightBounds.width), highlightBounds.height);
+      // layer.fillRect(highlightBounds.x + highlightBounds.width, highlightBounds.y, overviewLayer.getWidth()-(highlightBounds.x + highlightBounds.width), highlightBounds.height);
+
+      // this 'fills' a small handlebar instead
+      // layer.fillRect(highlightBounds.x + highlightBounds.width, highlightBounds.y, gssProperties.getLineThickness(), highlightBounds.height);
+
+      // layer.clip(highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height);        
+      // layer.clip(highlightBounds.x + highlightBounds.width, highlightBounds.y, overviewLayer.getWidth()-(highlightBounds.x + highlightBounds.width), highlightBounds.height);
+
+      // layer.setLayerAlpha(1.0f);
+
+
+      // clip the focus
+
+
+      // layer.drawImage(overviewLayer, 0, overviewLayer.getHeight()-OverviewAxisPanel.OVERVIEW_HEIGHT,
+          //              overviewLayer.getWidth(), OverviewAxisPanel.OVERVIEW_HEIGHT,
+            //            bounds.x, bounds.y, bounds.width, bounds.height);
+
+      // layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(), overviewLayer.getHeight(),
+        //        bounds.x, bounds.y, bounds.width, bounds.height);
+
 
       // vertical line
 //      layer.setStrokeColor(gssProperties.color);
@@ -80,6 +131,9 @@ public class OverviewAxisPanel extends AxisPanel {
       // layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
          //  highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
         //  layer.stroke();
+
+       //  layer.moveTo(highlightBounds.x, highlightBounds.y);
+
 
 
         plot.getChart().setCursor(Cursor.SELECTING);
@@ -108,10 +162,10 @@ public class OverviewAxisPanel extends AxisPanel {
   @Override
   public void layout() {
     if (visible) {
-      bounds.height = MIN_OVERVIEW_HEIGHT; // TODO - fix top of bottom layer vs top of overview issue
-      if (bounds.height < MIN_OVERVIEW_HEIGHT) {
-        bounds.height = MIN_OVERVIEW_HEIGHT;
-      }
+      bounds.height = OVERVIEW_HEIGHT; // TODO - fix top of bottom layer vs top of overview issue
+      // if (bounds.height < OVERVIEW_HEIGHT) {
+      //   bounds.height = OVERVIEW_HEIGHT;
+      // }
     } else {
         bounds.height = 0;
     }

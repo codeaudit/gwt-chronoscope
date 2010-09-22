@@ -389,12 +389,15 @@ public class DefaultXYPlot<T extends Tuple2D>
     overviewLayer.save();
     overviewLayer.clear();
     overviewLayer.setFillColor(Color.TRANSPARENT);
-    // overviewLayer.setVisibility(false);
-    overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+    overviewLayer.setVisibility(false);
+
+    overviewLayer.moveTo(0, overviewLayer.getHeight()-OverviewAxisPanel.OVERVIEW_HEIGHT);
+
+    overviewLayer.fillRect(0, overviewLayer.getBounds().height-OverviewAxisPanel.OVERVIEW_HEIGHT, overviewLayer.getBounds().width, OverviewAxisPanel.OVERVIEW_HEIGHT);
     Bounds oldBounds = plotBounds;
     Layer oldLayer = plotLayer;
-    Bounds overbound = overviewLayer.getBounds();
-    plotBounds = new Bounds(overbound.x, overbound.y, overbound.width, overbound.height);
+    plotBounds = new Bounds(0, overviewLayer.getHeight()-OverviewAxisPanel.OVERVIEW_HEIGHT,
+                               overviewLayer.getBounds().width, OverviewAxisPanel.OVERVIEW_HEIGHT);
       // overviewLayer.getBounds().width, overviewLayer.getBounds().height);
     plotLayer = overviewLayer;
     plotRenderer.drawDatasets(true);

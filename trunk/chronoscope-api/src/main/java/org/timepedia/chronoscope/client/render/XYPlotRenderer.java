@@ -157,10 +157,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     // Render the curve
 
     double refY = calcReferenceY(rangeAxis, dds);
-    if (overviewMode) {
-      refY = Math.max(OverviewAxisPanel.MIN_OVERVIEW_HEIGHT, refY);
-      // FIXME - this is a hack to set the bounds to same as highlight region             
-    }
+
     int[] passOrder = renderer.getPassOrder(dataSet);
     for (int pass : passOrder) {
       renderState
