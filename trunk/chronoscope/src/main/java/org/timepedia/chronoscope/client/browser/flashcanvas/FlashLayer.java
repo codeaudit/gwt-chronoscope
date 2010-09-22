@@ -481,13 +481,13 @@ public class FlashLayer extends AbstractLayer {
 
   private void cmd(String cmd, double arg1, double arg2) {
     selectLayer();
-    fc.cmd(cmd, Math.round(arg1), Math.round(arg2));
+    fc.cmd(cmd, arg1, arg2);
   }
 
   private void cmd(String cmd, double arg1, double arg2, double arg3,
       double arg4) {
     selectLayer();
-    fc.cmd(cmd, Math.round(arg1), Math.round(arg2), arg3, arg4);
+    fc.cmd(cmd, arg1, arg2, arg3, arg4);
   }
 
   private void cmd(String cmd, double arg1, double arg2, double arg3,
@@ -515,13 +515,13 @@ public class FlashLayer extends AbstractLayer {
   private void cmd(String s, double x, double y, double a, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName) {
     selectLayer();
-    fc.cmd(s, Math.round(x), Math.round(y), a, label, fontFamily, fontWeight, fontSize, layerName);
+    fc.cmd(s, x, y, a, label, fontFamily, fontWeight, fontSize, layerName);
   }
 
     private void cmd(String s, double x, double y, String label,
         String fontFamily, String fontWeight, String fontSize, String layerName, Cursor cursorStyle) {
       selectLayer();
-      fc.cmd(s, Math.round(x), Math.round(y), label, fontFamily, fontWeight, fontSize, layerName, cursorStyle.name());        
+      fc.cmd(s, x, y, label, fontFamily, fontWeight, fontSize, layerName, cursorStyle.name());
     }
 
   private void cmd(String s, String layerName, double x, double y, double width, double height) {
@@ -542,7 +542,7 @@ public class FlashLayer extends AbstractLayer {
   }
 
   private void push(double s) {   
-    fc.push(Math.round(s));
+    fc.push(s);
   }
 
   private void pushNCmd(String cmd, int i) {
