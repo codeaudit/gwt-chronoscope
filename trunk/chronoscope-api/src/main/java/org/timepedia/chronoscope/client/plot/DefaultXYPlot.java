@@ -385,21 +385,23 @@ public class DefaultXYPlot<T extends Tuple2D>
     Interval origVisPlotDomain = getDomain().copy();
     getWidestDomain().copyTo(getDomain());
     Canvas backingCanvas = view.getCanvas();
-    backingCanvas.beginFrame();
+//    backingCanvas.beginFrame();
     overviewLayer.save();
     overviewLayer.clear();
     overviewLayer.setFillColor(Color.TRANSPARENT);
-    overviewLayer.setVisibility(false);
+    // overviewLayer.setVisibility(false);
     overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
     Bounds oldBounds = plotBounds;
     Layer oldLayer = plotLayer;
-    plotBounds = new Bounds(0, 0, overviewLayer.getBounds().width, overviewLayer.getBounds().height);
+    Bounds overbound = overviewLayer.getBounds();
+    plotBounds = new Bounds(overbound.x, overbound.y, overbound.width, overbound.height);
+      // overviewLayer.getBounds().width, overviewLayer.getBounds().height);
     plotLayer = overviewLayer;
     plotRenderer.drawDatasets(true);
     plotBounds = oldBounds;
     plotLayer = oldLayer;
     overviewLayer.restore();
-    backingCanvas.endFrame();
+//    backingCanvas.endFrame();
     // restore original endpoints
     origVisPlotDomain.copyTo(getDomain());
   }

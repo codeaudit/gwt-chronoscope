@@ -243,7 +243,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     // Needed to round screen width due to tiny variances that were causing the 
     // result of this method to fluctuate by +/- 1.
-    double screenWidth = Math.round(domainToScreenWidth(domainWidth, bounds));
+    double screenWidth = domainToScreenWidth(domainWidth, bounds);
 
     double maxLabelWidth = 15 + tickFormatter
         .getMaxTickLabelWidth(layer, gssProperties);
@@ -316,7 +316,6 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   private void drawHorizontalLine(Layer layer, Bounds bounds) {
     layer.setStrokeColor(tickProperties.color);
     layer.setLineWidth(tickProperties.lineThickness);
-    layer.setTransparency(0.0f);      
     layer.moveTo(bounds.x, bounds.y);
     layer.lineTo(bounds.rightX(), bounds.y);
     layer.stroke();
