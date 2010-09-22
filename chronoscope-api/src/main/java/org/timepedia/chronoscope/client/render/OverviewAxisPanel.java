@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render;
 
+import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
@@ -10,7 +11,7 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
  */
 public class OverviewAxisPanel extends AxisPanel {
 
-  private static final int MIN_OVERVIEW_HEIGHT = 50;
+  public static final int MIN_OVERVIEW_HEIGHT = 50;
   
   // The singleton avoids excess creation of Bounds objects
   private Bounds highlightBounds, highlightBoundsSingleton;
@@ -35,10 +36,11 @@ public class OverviewAxisPanel extends AxisPanel {
   
   public void draw() {
     // layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(),
-    // overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
+    //  overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
     // bounds.height);
 
-    layer.drawImage(overviewLayer, bounds.x, bounds.y, bounds.width, bounds.height);
+    layer.drawImage(overviewLayer,0, 0, overviewLayer.getWidth(), overviewLayer.getHeight(),
+            bounds.x, bounds.y, bounds.width, bounds.height);
 
     highlightBounds = calcHighlightBounds(plot, bounds);
     
@@ -52,30 +54,41 @@ public class OverviewAxisPanel extends AxisPanel {
       //      highlightBounds.width, highlightBounds.height);
 
       // left side
-      layer.fillRect(0, 0, highlightBounds.x, highlightBounds.height);
+      layer.fillRect(0, highlightBounds.y, highlightBounds.x, highlightBounds.height);
+
 
       // right side
-      layer.fillRect(highlightBounds.x, highlightBounds.y, (layer.getWidth()-highlightBounds.width-highlightBounds.x), highlightBounds.height);
+      layer.fillRect(highlightBounds.x + highlightBounds.width, highlightBounds.y, overviewLayer.getWidth()-(highlightBounds.x + highlightBounds.width), highlightBounds.height);
 
-      layer.setStrokeColor(gssProperties.color);
-      layer.setTransparency(1.0f);
-      layer.setLineWidth(gssProperties.lineThickness);
-      layer.beginPath();
-      final double halfLineWidth = gssProperties.lineThickness / 2;
+      // vertical line
+//      layer.setStrokeColor(gssProperties.color);
+//      layer.setLineWidth(gssProperties.lineThickness);
+//      layer.moveTo(highlightBounds.x, highlightBounds.y);
+//      layer.lineTo(highlightBounds.x, overviewLayer.getHeight());
+//      layer.stroke();
+//
+//      layer.moveTo(highlightBounds.x + highlightBounds.width, highlightBounds.y);
+//      layer.lineTo(highlightBounds.x + highlightBounds.width, overviewLayer.getHeight());
+//      layer.stroke();
+
+      // layer.beginPath();
+      // final double halfLineWidth = gssProperties.lineThickness / 2;
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
 
-      layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
+      // layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
 
       // layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
          //  highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+        //  layer.stroke();
 
-      layer.stroke();
-      layer.restore();
+
+        plot.getChart().setCursor(Cursor.SELECTING);
+
+        layer.restore();
       
-      //plot.getChart().setCursor(Cursor.SELECTING);
     }
     else {
-      //plot.getChart().setCursor(Cursor.DEFAULT);
+      plot.getChart().setCursor(Cursor.DEFAULT);
     }
   }
 
@@ -95,7 +108,7 @@ public class OverviewAxisPanel extends AxisPanel {
   @Override
   public void layout() {
     if (visible) {
-      bounds.height = gssProperties.height;
+      bounds.height = MIN_OVERVIEW_HEIGHT; // TODO - fix top of bottom layer vs top of overview issue
       if (bounds.height < MIN_OVERVIEW_HEIGHT) {
         bounds.height = MIN_OVERVIEW_HEIGHT;
       }

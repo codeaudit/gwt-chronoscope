@@ -126,8 +126,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
     return new Interval(rangeMin, rangeMax);
   }
 
-  private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot,
-      boolean overviewMode) {
+  private void drawDataset(int datasetIndex, Layer layer, XYPlot<T> plot, boolean overviewMode) {
     DrawableDataset dds = drawableDatasets.get(datasetIndex);
 
     Dataset<T> dataSet = dds.dataset;
@@ -157,8 +156,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     // Render the curve
 
-    final double refY = calcReferenceY(rangeAxis, dds);
-
+    double refY = calcReferenceY(rangeAxis, dds);
+    if (overviewMode) {
+      refY = Math.max(OverviewAxisPanel.MIN_OVERVIEW_HEIGHT, refY);
+      // FIXME - this is a hack to set the bounds to same as highlight region             
+    }
     int[] passOrder = renderer.getPassOrder(dataSet);
     for (int pass : passOrder) {
       renderState
