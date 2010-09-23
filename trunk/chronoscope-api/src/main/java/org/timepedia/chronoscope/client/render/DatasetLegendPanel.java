@@ -26,12 +26,13 @@ public class DatasetLegendPanel extends AbstractPanel
 
   // Dictates the X-padding between a given legend icon and its
   //associated dataset name
-
-  private static final double LEGEND_ICON_PAD = 4;
+  private static final double LEGEND_ICON_PAD = 3;
 
   // Dictates the X-padding between each dataset legend item
+  static final int DATASET_LEGEND_PAD = 12;
 
-  static final int DATASET_LEGEND_PAD = 22;
+  // Dictates the Y-padding between legend labels and plot
+  static final int LEGEND_PLOT_PAD = 12;
 
   private double lblHeight;
 
@@ -233,7 +234,7 @@ public class DatasetLegendPanel extends AbstractPanel
       // Note: since the (x,y) coordinate refers to the upper-left corner of the
       // bounds, we need to add 'lblHeight' to the final yCursor value to obtain
       // the total height of all legend item rows.
-      b.height = yCursor - b.y + lblHeight;
+      b.height = yCursor - b.y + 2*lblHeight;
     }
   }
 

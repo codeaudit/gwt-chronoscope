@@ -149,7 +149,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     // layer.setLineWidth(alineProp.lineThickness);
     String height= alegendProp.iconHeight;
     if(height.equals("auto")){
-        layer.setLineWidth(8);
+        layer.setLineWidth(7);
     }else{
        layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
     }
@@ -163,7 +163,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     String width=alegendProp.iconWidth;
     if(width.equals("auto")){
-        layer.lineTo(x+8, y);
+        layer.lineTo(x+5, y);
     }else{
         double widthValue=Double.valueOf(width.substring(0, width.length()-2));
         layer.lineTo(x + widthValue, y);

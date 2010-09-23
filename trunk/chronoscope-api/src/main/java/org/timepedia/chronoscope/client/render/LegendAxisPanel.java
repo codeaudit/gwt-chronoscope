@@ -22,6 +22,13 @@ public class LegendAxisPanel extends AxisPanel {
    */
   private static final int LEGEND_Y_TOP_PAD = 3;
 
+  /**
+   * Dictates the Y-padding between the bottom of the legend item bounds and the
+   * top of the plot panel.
+   */
+
+  private static final int LEGEND_Y_BOTTOM_PAD = 9;
+
   private DateRangePanel dateRangePanel;
 
   private DatasetLegendPanel dsLegendPanel;
@@ -46,8 +53,7 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.updateDomainInterval(plot.getDomain());
     topRightJustify(dateRangePanel, bounds);
     layoutPanels(bounds);
-    dsLegendPanel.setPosition(bounds.x, bounds.y + labelHeight
-        + LEGEND_Y_TOP_PAD);
+    dsLegendPanel.setPosition(bounds.x, bounds.y + labelHeight + LEGEND_Y_TOP_PAD);
 
     // Draw the panels
     zoomPanel.draw();
@@ -135,7 +141,7 @@ public class LegendAxisPanel extends AxisPanel {
   private double calcHeight() {
     double totalHeight = 0;
     totalHeight += zoomPanel.getBounds().height;
-    totalHeight += LEGEND_Y_TOP_PAD;
+    totalHeight += LEGEND_Y_TOP_PAD + LEGEND_Y_BOTTOM_PAD;
     if (legendLabelsProperties.visible) {
       totalHeight += dsLegendPanel.getBounds().height;
     }
