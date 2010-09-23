@@ -39,12 +39,18 @@ public class OverviewAxisPanel extends AxisPanel {
     //  overviewLayer.getHeight(), bounds.x, bounds.y, bounds.width,
     // bounds.height);
 
-    layer.drawImage(overviewLayer, 0, 0, overviewLayer.getWidth(), overviewLayer.getHeight(),
-                    bounds.x, bounds.y, bounds.width, bounds.height);
+      // works in flash, but not browsers
+//    layer.drawImage(overviewLayer,
+//            0, overviewLayer.getHeight()-bounds.height, overviewLayer.getWidth(), bounds.height,
+//            bounds.x, bounds.y, bounds.width, bounds.height);
+
+      layer.drawImage(overviewLayer,
+              0, 0, overviewLayer.getWidth(), bounds.height,
+              bounds.x, bounds.y, bounds.width, bounds.height);
 
     highlightBounds = calcHighlightBounds(plot, bounds);
     
-if (highlightBounds != null) {
+    if (highlightBounds != null) {
       layer.save();
       layer.setFillColor(gssProperties.bgColor);
       layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
@@ -55,6 +61,7 @@ if (highlightBounds != null) {
       layer.setLineWidth(gssProperties.lineThickness);
       layer.beginPath();
       final double halfLineWidth = gssProperties.lineThickness / 2;
+
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
       layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
       layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
