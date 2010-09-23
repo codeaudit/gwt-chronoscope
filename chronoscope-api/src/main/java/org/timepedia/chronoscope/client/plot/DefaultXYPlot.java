@@ -385,26 +385,25 @@ public class DefaultXYPlot<T extends Tuple2D>
     Interval origVisPlotDomain = getDomain().copy();
     getWidestDomain().copyTo(getDomain());
     Canvas backingCanvas = view.getCanvas();
-//    backingCanvas.beginFrame();
+    // backingCanvas.beginFrame();
     overviewLayer.save();
     overviewLayer.clear();
-    overviewLayer.setFillColor(Color.TRANSPARENT);
     overviewLayer.setVisibility(false);
+      
+    overviewLayer.setFillColor(Color.TRANSPARENT);
 
-    overviewLayer.moveTo(0, overviewLayer.getHeight()-OverviewAxisPanel.OVERVIEW_HEIGHT);
 
-    overviewLayer.fillRect(0, overviewLayer.getBounds().height-OverviewAxisPanel.OVERVIEW_HEIGHT, overviewLayer.getBounds().width, OverviewAxisPanel.OVERVIEW_HEIGHT);
+    overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
+
     Bounds oldBounds = plotBounds;
     Layer oldLayer = plotLayer;
-    plotBounds = new Bounds(0, overviewLayer.getHeight()-OverviewAxisPanel.OVERVIEW_HEIGHT,
-                               overviewLayer.getBounds().width, OverviewAxisPanel.OVERVIEW_HEIGHT);
-      // overviewLayer.getBounds().width, overviewLayer.getBounds().height);
+    plotBounds = new Bounds(0, overviewLayer.getHeight() - OverviewAxisPanel.OVERVIEW_HEIGHT, overviewLayer.getWidth(), OverviewAxisPanel.OVERVIEW_HEIGHT);
     plotLayer = overviewLayer;
     plotRenderer.drawDatasets(true);
     plotBounds = oldBounds;
     plotLayer = oldLayer;
     overviewLayer.restore();
-//    backingCanvas.endFrame();
+    // backingCanvas.endFrame();
     // restore original endpoints
     origVisPlotDomain.copyTo(getDomain());
   }

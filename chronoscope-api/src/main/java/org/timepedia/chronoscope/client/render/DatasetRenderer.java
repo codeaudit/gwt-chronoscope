@@ -32,7 +32,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   protected GssProperties gssDisabledFillProps, gssDisabledLineProps,
       gssDisabledPointProps, gssFillProps, gssFocusProps, gssHoverProps,
-      gssLineProps, gssPointProps, gssFocusGuidelineProps;
+      gssLineProps, gssPointProps, gssFocusGuidelineProps, gssLegendProps;
 
   protected int datasetIndex;
 
@@ -149,6 +149,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     gssHoverProps = view.getGssProperties(pointElement, "hover");
     gssLineProps = view.getGssProperties(this, "");
     gssPointProps = view.getGssProperties(pointElement, "");
+
+    gssLegendProps = view.getGssProperties(new GssElementImpl("axislegend" , parentGssElement), "");
 
     isGssInitialized = true;
   }

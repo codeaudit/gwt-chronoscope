@@ -165,7 +165,14 @@ public class DatasetLegendPanel extends AbstractPanel
           }
         }
       }   
-      maxLabelWidth += maxIconWidth + colSpacing;
+      //
+      if ("auto".equals(gssProperties.iconWidth)) {
+        maxLabelWidth += maxIconWidth + colSpacing;
+      } else {
+        int iwidth = Math.min(Integer.valueOf(gssProperties.iconWidth).intValue(), (int)maxLabelWidth);
+        maxLabelWidth +=  iwidth + colSpacing;
+      }
+
     } else {
       String width = legendLabelsProperties.columnWidth;
       maxLabelWidth = Double.valueOf(width.substring(0, width.length() - 2));

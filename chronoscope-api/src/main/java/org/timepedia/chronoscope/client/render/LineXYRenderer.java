@@ -19,7 +19,7 @@ import org.timepedia.exporter.client.Exportable;
 public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     implements GssElement, Exportable {
 
-  protected GssProperties activeGssLineProps, activeGssPointProps;
+  protected GssProperties activeGssLineProps, activeGssPointProps, activeGssLegendProps;
 
   protected double lx = -1, ly = -1;
 
@@ -48,9 +48,10 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public double calcLegendIconWidth(View view) {
     GssProperties alineProp = (plot.getFocus() != null) ? gssDisabledLineProps
         : gssLineProps;
-    String width=alineProp.iconWidth;
+    GssProperties legendProp = gssLegendProps;
+    String width=legendProp.iconWidth;
     if(width.equals("auto")){
-        return alineProp.size + 10;
+        return 8;
     }else{      
         return Double.valueOf(width.substring(0, width.length()-2));
     }
@@ -130,7 +131,10 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void drawLegendIcon(Layer layer, double x, double y, int dim) {
     layer.save();
 
-    GssProperties alineProp, apointProp;
+    GssProperties alineProp, apointProp, alegendProp;
+
+    alegendProp = gssLegendProps;
+
     if (plot.getFocus() != null
         && plot.getFocus().getDatasetIndex() != this.datasetIndex) {
       alineProp = gssDisabledLineProps;
@@ -143,13 +147,12 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.beginPath();
     layer.moveTo(x, y);
     // layer.setLineWidth(alineProp.lineThickness);
-    String height= alineProp.iconHeight;
+    String height= alegendProp.iconHeight;
     if(height.equals("auto")){
-        layer.setLineWidth(10);
+        layer.setLineWidth(8);
     }else{
        layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
     }
-
 
     layer.setShadowBlur(alineProp.shadowBlur);
     layer.setShadowColor(alineProp.shadowColor);
@@ -158,9 +161,9 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.setStrokeColor(alineProp.color);
     layer.setTransparency((float) alineProp.transparency);
 
-    String width=alineProp.iconWidth;
+    String width=alegendProp.iconWidth;
     if(width.equals("auto")){
-        layer.lineTo(x + 5 + apointProp.size + 5, y);
+        layer.lineTo(x+8, y);
     }else{
         double widthValue=Double.valueOf(width.substring(0, width.length()-2));
         layer.lineTo(x + widthValue, y);
