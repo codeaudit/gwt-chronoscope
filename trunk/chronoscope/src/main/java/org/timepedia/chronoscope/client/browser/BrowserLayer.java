@@ -104,10 +104,11 @@ public class BrowserLayer extends DomTextLayer {
   public void drawImage(Layer layer, double x, double y, double width,
       double height) {
     if (layer instanceof BrowserCanvas) {
-      drawImage0(ctx, ((BrowserLayer) ((BrowserCanvas) layer)
-          .getRootLayer()).getElement(), x, y, width, height);
+      drawImage0(ctx, ((BrowserLayer) ((BrowserCanvas) layer).getRootLayer()).getElement(),
+              x, y, width, height);
     } else {
-      drawImage0(ctx, ((BrowserLayer) layer).getElement(), x, y, width, height);
+      drawImage0(ctx, ((BrowserLayer) layer).getElement(),
+              x, y, width, height);
     }
   }
 
@@ -115,21 +116,21 @@ public class BrowserLayer extends DomTextLayer {
       double sheight, double dx, double dy, double dwidth, double dheight) {
 
     if (layer instanceof BrowserCanvas) {
-      drawImageSrcDest0(ctx, ((BrowserLayer) ((BrowserCanvas) layer)
-          .getRootLayer()).getElement(), sx, sy, swidth, sheight, dx, dy,
-          dwidth, dheight);
+      drawImageSrcDest0(ctx, ((BrowserLayer) ((BrowserCanvas) layer).getRootLayer()).getElement(),
+              sx, sy, swidth, sheight,
+              dx, dy, dwidth, dheight);
     } else {
-      drawImageSrcDest0(ctx, ((BrowserLayer) layer).getElement(), sx, sy,
-          swidth, sheight, dx, dy, dwidth, dheight);
+      drawImageSrcDest0(ctx, ((BrowserLayer) layer).getElement(),
+              sx, sy, swidth, sheight,
+              dx, dy, dwidth, dheight);
     }
   }
 
-  public void drawImage(CanvasImage image, double dx, double dy, double dwidth,
-      double dheight) {
+  public void drawImage(CanvasImage image, double dx, double dy, double dwidth, double dheight) {
     Image im = ((BrowserCanvasImage)image).getNative();
-    drawImageSrcDest0(ctx, im.getElement(), im.getOriginLeft(),
-        im.getOriginTop(), im.getWidth(), im.getHeight(), dx, dy,
-        dwidth, dheight);
+    drawImageSrcDest0(ctx, im.getElement(),
+            im.getOriginLeft(), im.getOriginTop(), im.getWidth(), im.getHeight(),
+            dx, dy, dwidth, dheight);
   }
 
   public void fill() {
@@ -414,8 +415,8 @@ public class BrowserLayer extends DomTextLayer {
     }-*/;
 
   private native void drawImageSrcDest0(JavaScriptObject ctx, Element canvas,
-      double sx, double sy, double swidth, double sheight, double dx, double dy,
-      double dwidth, double dheight) /*-{
+      double sx, double sy, double swidth, double sheight,
+      double dx, double dy, double dwidth, double dheight) /*-{
          ctx.drawImage(canvas, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
 
     }-*/;
