@@ -613,7 +613,7 @@ public class FlashCanvas extends Canvas {
         if(flashCanvas && flashCanvas.stringWidth) {
           return flashCanvas.stringWidth(string, font, bold, size, angle);
         } else {
-          return 10 * string.length;
+          return 8 * string.length;
         }
     }-*/;
 
