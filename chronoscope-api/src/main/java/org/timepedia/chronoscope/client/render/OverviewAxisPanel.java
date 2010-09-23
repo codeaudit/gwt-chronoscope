@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 
@@ -54,22 +55,33 @@ public class OverviewAxisPanel extends AxisPanel {
       layer.save();
       layer.setFillColor(gssProperties.bgColor);
       layer.setTransparency((float) Math.max(0.5f, gssProperties.transparency));
-      layer.fillRect(highlightBounds.x, highlightBounds.y,
-          highlightBounds.width, highlightBounds.height);
+      layer.fillRect(highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height);
       layer.setStrokeColor(gssProperties.color);
       layer.setTransparency(1.0f);
       layer.setLineWidth(gssProperties.lineThickness);
-      layer.beginPath();
+
+
       final double halfLineWidth = gssProperties.lineThickness / 2;
+
+      layer.beginPath();
 
       // fix for Opera, on Firefox/Safari, rect() has implicit moveTo
       layer.moveTo(highlightBounds.x, highlightBounds.y + halfLineWidth);
       layer.rect(highlightBounds.x, highlightBounds.y + halfLineWidth,
-          highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+           highlightBounds.width, highlightBounds.height - gssProperties.lineThickness);
+      
+      layer.stroke();
 
-      // layer.stroke();
+      // layer.setStrokeColor(new Color(88,88,88,128));
+      /// layer.setFillColor(new Color(88,88,88,128));
 
-     //  layer.restore();
+      // layer.clearTextLayer("bracket");
+      // layer.drawText(highlightBounds.x-3, highlightBounds.y-5, "[", "Helvetica", "bold", highlightBounds.height + "px", "bracket", Cursor.DRAGGABLE);
+      // layer.drawText(highlightBounds.x+highlightBounds.width-10, highlightBounds.y-5, "]", "Helvetica", "bold", highlightBounds.height + "px", "bracket", Cursor.DRAGGABLE);
+
+      //
+
+      //  layer.restore();
 
 
     
