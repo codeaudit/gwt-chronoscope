@@ -506,7 +506,6 @@ public class Chronoscope
       elem = DOM.createDiv();
     }
 
-    System.out.println(datasets[0].getIdentifier());
     ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);

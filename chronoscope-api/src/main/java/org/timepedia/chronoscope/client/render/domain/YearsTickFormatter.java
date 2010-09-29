@@ -54,4 +54,9 @@ public class YearsTickFormatter extends DateTickFormatter {
     }
   }
   
+  @Override
+  public boolean isBoundary() {
+    return currTick.getYear() % 10 == 0;
+  }
+  
 }

@@ -26,7 +26,7 @@ public class HoursTickFormatter extends DateTickFormatter {
       case 0:
         return dateFormat.dayAndMonth(currTick);
       default:
-        return dateFormat.slowHour(currTick);
+        return dateFormat.hourAndMinute(currTick);
     }
   }
 
@@ -40,6 +40,11 @@ public class HoursTickFormatter extends DateTickFormatter {
       default:
         return super.getSubTickStep(primaryTickStep);
     }
+  }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getHour() == 0;
   }
 
 }

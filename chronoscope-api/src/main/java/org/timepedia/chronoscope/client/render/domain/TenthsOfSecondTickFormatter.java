@@ -22,4 +22,8 @@ public class TenthsOfSecondTickFormatter extends DateTickFormatter {
     currTick.truncate(TimeUnit.SEC);
   }
 
+  @Override
+  public boolean isBoundary() {
+    return currTick.getSecond() % 10 == 0;
+  }
 }

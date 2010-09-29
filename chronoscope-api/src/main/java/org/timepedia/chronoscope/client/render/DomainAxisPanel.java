@@ -128,8 +128,9 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         // against this case.
         if (tickScreenPos > bounds.x) {
           String tickLabel = tickFormatter.formatTick();
-          drawTick(layer, plot, bounds, tickScreenPos, TICK_HEIGHT);
-          drawTickLabel(layer, bounds, tickScreenPos, tickLabel, labelWidth);
+          boolean bold = tickFormatter.isBoundary();
+          drawTick(layer, plot, bounds, tickScreenPos, TICK_HEIGHT, bold);
+          drawTickLabel(layer, bounds, tickScreenPos, tickLabel, bold, labelWidth);
         }
       }
 
@@ -142,7 +143,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
           double auxTickPos = prevTickScreenPos + auxTickWidth;
           for (int i = 0; i < subTickStep - 1; i++) {
             if (MathUtil.isBounded(auxTickPos, bounds.x, boundsRightX)) {
-              drawTick(layer, plot, bounds, auxTickPos, SUB_TICK_HEIGHT);
+              drawTick(layer, plot, bounds, auxTickPos, SUB_TICK_HEIGHT, false);
             }
             auxTickPos += auxTickWidth;
           }
@@ -322,18 +323,19 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   }
 
   private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux,
-      int tickLength) {
+      int tickLength, boolean bold) {
+    
+    double tickWidth = bold ? tickProperties.lineThickness + 1 : tickProperties.lineThickness;
     layer.save();
     layer.setFillColor(tickProperties.color);
-    layer.fillRect(ux, bounds.y, tickProperties.lineThickness, tickLength);
+    layer.fillRect(ux, bounds.y, tickWidth, tickLength);
 
     if (gridProperties.visible) {
       Layer plotLayer = plot.getPlotLayer();
       plotLayer.save();
       plotLayer.setFillColor(gridProperties.color);
       plotLayer.setTransparency((float) gridProperties.transparency);
-      plotLayer.fillRect(ux - bounds.x, 0, gridProperties.lineThickness,
-          plot.getInnerBounds().height);
+      plotLayer.fillRect(ux - bounds.x, 0, tickWidth, plot.getInnerBounds().height);
       plotLayer.restore();
     }
 
@@ -341,21 +343,12 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   }
 
   private void drawTickLabel(Layer layer, Bounds bounds, double ux,
-      String tickLabel, double tickLabelWidth) {
+      String tickLabel, boolean bold, double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.bgColor);
-    // TODO - consider how to pass more semantics about label, eg DAY vs HOUR
-    // right now check for '/' to bold days, generalize to bold every other level later
-    if (tickLabel.contains("/")) {
-        layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
-            gssProperties.fontFamily, "bold",
-            gssProperties.fontSize + 1, textLayerName, Cursor.DEFAULT);
-
-    } else {
-        layer.drawText(ux - tickLabelWidth / 2, bounds.y + 5, tickLabel,
-            gssProperties.fontFamily, gssProperties.fontWeight,
-            gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
-      }
+    layer.drawText(3 + ux - tickLabelWidth / 2, 5 + bounds.y, tickLabel,
+        gssProperties.fontFamily, bold ? "bold" : gssProperties.fontWeight,
+        gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
   private int getLabelHeight(Layer layer, String str) {

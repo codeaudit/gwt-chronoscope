@@ -206,4 +206,8 @@ public abstract class TickFormatter {
   public TickFormatter getSuperFormatter() {
     return superFormatter;
   }
+  
+  public boolean isBoundary() {
+    return false;
+  }
 }
