@@ -26,5 +26,10 @@ public class MonthsTickFormatter extends DateTickFormatter {
       return primaryTickStep;
     }
   }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getMonth() == 0;
+  }
 
 }

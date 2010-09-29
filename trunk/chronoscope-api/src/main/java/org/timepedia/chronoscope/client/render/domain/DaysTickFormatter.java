@@ -93,4 +93,9 @@ public class DaysTickFormatter extends DateTickFormatter {
     //System.out.println("TESTING: day=" + d.getDay() + "; actualIncrement=" + actualIncrement);
     return actualIncrement;
   }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getDay() == 1;
+  }
 }

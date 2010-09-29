@@ -39,5 +39,10 @@ public class MinutesTickFormatter extends DateTickFormatter {
         return super.getSubTickStep(primaryTickStep);
     }
   }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getMinute() == 0;
+  }
 
 }

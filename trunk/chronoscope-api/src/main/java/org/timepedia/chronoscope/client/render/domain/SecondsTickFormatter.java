@@ -41,5 +41,10 @@ public class SecondsTickFormatter extends DateTickFormatter {
         return super.getSubTickStep(primaryTickStep);
     }
   }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getSecond() == 0;
+  }
 
 }

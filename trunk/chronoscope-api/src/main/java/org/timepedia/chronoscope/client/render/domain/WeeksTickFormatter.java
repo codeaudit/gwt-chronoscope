@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 
 public class WeeksTickFormatter extends DateTickFormatter {
 
@@ -26,6 +27,11 @@ public class WeeksTickFormatter extends DateTickFormatter {
         // subticks at 1 day intervals.
         return primaryTickStep;
     }
+  }
+  
+  @Override
+  public boolean isBoundary() {
+    return currTick.getDayOfWeek() == DayOfWeek.SUNDAY;
   }
 
 }
