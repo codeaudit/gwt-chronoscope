@@ -21,6 +21,7 @@ public class GWTDateFormatter implements DateFormatter {
 
   public String format(double timestamp) {
     return fmt.format(new Date((long) timestamp));
+
   }
 
   public String format(double timestamp, TimeZone timeZone) {
@@ -38,4 +39,6 @@ public class GWTDateFormatter implements DateFormatter {
     fmt.parse(date, 0, d);
     return d.getTime();
   }
+
+
 }

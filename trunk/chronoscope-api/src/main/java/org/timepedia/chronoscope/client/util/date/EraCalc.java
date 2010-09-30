@@ -107,7 +107,7 @@ public abstract class EraCalc {
     final double numMillisIn4centuries = 
           gregorianConstants.msIn4centuryPeriod;
     double y2k_timestamp = new Date(2000 - 1900, 0, 1).getTime();
-    
+
     final int numLeapCenturies = (year - 2000) / 400;
     final int nearestLeapCentury = 2000 + (numLeapCenturies * 400);
     final int leapCenturyOffset = year - nearestLeapCentury;

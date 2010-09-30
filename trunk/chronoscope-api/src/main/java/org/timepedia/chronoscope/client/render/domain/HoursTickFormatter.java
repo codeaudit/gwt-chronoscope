@@ -17,7 +17,7 @@ public class HoursTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.HOUR;
   }
 
-  @Override    
+  @Override
   public String formatTick() {
     DateFormatter hourFormat = DateFormatHelper.getHourFormatter();
     int hourOfDay = Integer.valueOf(hourFormat.format(currTick.getTime()));
