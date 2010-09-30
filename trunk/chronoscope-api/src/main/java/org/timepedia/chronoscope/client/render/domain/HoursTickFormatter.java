@@ -1,33 +1,27 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
-import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * @author chad takahashi
  */
 public class HoursTickFormatter extends DateTickFormatter {
-
+  
   public HoursTickFormatter(DateTickFormatter superFormatter) {
-    super("00xx"); // e.g. "12pm"
+    super("00:00"); // e.g. "01:00"
     this.superFormatter = superFormatter;
     this.subFormatter = new MinutesTickFormatter(this);
     this.possibleTickSteps = new int[] {1, 3, 6, 12};
     this.timeUnitTickInterval = TimeUnit.HOUR;
   }
-
+  
   @Override
   public String formatTick() {
-    DateFormatter hourFormat = DateFormatHelper.getHourFormatter();
-    int hourOfDay = Integer.valueOf(hourFormat.format(currTick.getTime()));
-      
-    switch (hourOfDay) {
-      case 0:
+    if (0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()))) {
         return dateFormat.dayAndMonth(currTick);
-      default:
-        return dateFormat.hourAndMinute(currTick);
     }
+    return dateFormat.hourAndMinute(currTick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
@@ -44,7 +38,7 @@ public class HoursTickFormatter extends DateTickFormatter {
   
   @Override
   public boolean isBoundary() {
-    return currTick.getHour() == 0;
+    return 0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()));
   }
 
 }
