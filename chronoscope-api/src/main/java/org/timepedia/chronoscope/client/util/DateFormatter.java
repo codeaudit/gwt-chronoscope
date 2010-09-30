@@ -8,7 +8,7 @@ import com.google.gwt.i18n.client.TimeZone;
 public interface DateFormatter {
 
   String format(double timestamp);
-
+  
   String format(double timestamp, TimeZone timeZone);
 
   double parse(String date);
