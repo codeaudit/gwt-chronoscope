@@ -114,7 +114,8 @@ public class DateRangePanel extends AbstractPanel implements
   }
 
 
-  public void init(Layer layer, double minDomainInterval, DomainAxisPanel domainAxisPanel) {
+  public void init(Layer layer, Interval domainInterval, double minDomainInterval, DomainAxisPanel domainAxisPanel) {
+    this.domainInterval = domainInterval;
     initGssProperties(domainAxisPanel.view.getGssProperties(this, ""));
     initCompactProperties(domainAxisPanel.view.getGssProperties(this, "compact"));
 
@@ -132,19 +133,9 @@ public class DateRangePanel extends AbstractPanel implements
     isDateDomain = domainAxisPanel.getTickFormatterFactory() instanceof DateTickFormatterFactory;
 
     if (isDateDomain) {
-      if (compactMode) {
-        final String typicalShortDateRange =
-          compactDateFormatter.format(-2000000000) + DATE_DELIM_SHORT +
-          compactDateFormatter.format(2000000000);
-        bounds.width = stringSizer.getWidth(typicalShortDateRange, labelProperties);
-        //resizeToMinimalWidth();
-      } else {
-        final String typicalLongDateRange =
-          dateFormatter.format(-2000000000) + DATE_DELIM_LONG +
-          dateFormatter.format(2000000000);
-        bounds.width = stringSizer.getWidth(typicalLongDateRange, labelProperties);
-        //resizeToIdealWidth();
-      }
+      dateRangeActive = dateRange(domainInterval);
+      bounds.width = stringSizer.getWidth(dateRangeActive, labelProperties);
+        // resizeToMinimalWidth();
     } else {
       final String typicalIntRange = "00000 - 00000";
       bounds.width = stringSizer.getWidth(typicalIntRange, labelProperties);
@@ -155,8 +146,7 @@ public class DateRangePanel extends AbstractPanel implements
     layer.setStrokeColor(labelProperties.color);
 
     layer.drawText(bounds.x, bounds.y, dateRangeActive, labelProperties.fontFamily,
-        labelProperties.fontWeight, labelProperties.fontSize, textLayerName,
-        Cursor.DEFAULT);
+        labelProperties.fontWeight, labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
 
   public void updateDomainInterval(Interval domainInterval) {
@@ -176,19 +166,12 @@ public class DateRangePanel extends AbstractPanel implements
 
     if (domainIntervalChanged||timeZoneChanged) {
       if (isDateDomain) {
-        String longStartDate = formatLongDate(domainInterval.getStart());
-        String longEndDate = formatLongDate(domainInterval.getEnd());
-        dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate + SPC;
-        String shortStartDate = formatShortDate(domainInterval.getStart());
-        String shortEndDate = formatShortDate(domainInterval.getEnd());
-        dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate + SPC;
-
-        dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
+        dateRangeActive = dateRange(domainInterval);
       } else {
         dateRangeActive = dateRangeLong = dateRangeShort =
-            formatInt(domainInterval.getStart()) + DATE_DELIM_LONG + 
-                formatInt(domainInterval.getEnd());
+          formatInt(domainInterval.getStart()) + DATE_DELIM_LONG + formatInt(domainInterval.getEnd());
       }
+      resizeToIdealWidth(); // match position from layoutPanels dRP.rTIW
     }
   }
 
@@ -202,6 +185,18 @@ public class DateRangePanel extends AbstractPanel implements
     compactMode = false;
     dateRangeActive = dateRangeLong;
     bounds.width = estimateStringWidth(dateRangeActive);
+  }
+
+  private String dateRange(Interval interval) {
+      String longStartDate = formatLongDate(domainInterval.getStart());
+      String longEndDate = formatLongDate(domainInterval.getEnd());
+      dateRangeLong = longStartDate + DATE_DELIM_LONG + longEndDate;
+      String shortStartDate = formatShortDate(domainInterval.getStart());
+      String shortEndDate = formatShortDate(domainInterval.getEnd());
+      dateRangeShort = shortStartDate + DATE_DELIM_SHORT + shortEndDate;
+
+      dateRangeActive = compactMode ? dateRangeShort : dateRangeLong;
+      return dateRangeActive;
   }
 
   @Export

@@ -34,9 +34,9 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
   private OverlayClickListener clickHandler;
 
-  private static final void log(Object msg) {
-    System.out.println("TESTING DomainAxisPanel: " + msg);
-  }
+// private static final void log(Object msg) {
+//    System.out.println("TESTING DomainAxisPanel: " + msg);
+//  }
 
   private boolean boundsSet = false;
 
@@ -188,7 +188,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT
         + creditsLabel.getBounds().height + 1;
 
-    //bounds.width = view.getWidth(); // default width for now
+    bounds.width = view.getWidth(); // default width for now
   }
 
   @Export
@@ -279,8 +279,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
    * width.
    */
   private double domainToScreenWidth(double domainWidth, Bounds bounds) {
-    return bounds.width * (valueAxis.dataToUser(domainWidth) - valueAxis
-        .dataToUser(0.0));
+    return bounds.width * (valueAxis.dataToUser(domainWidth) - valueAxis.dataToUser(0.0));
   }
 
   private double domainToScreenX(double dataX, Bounds bounds) {
@@ -298,8 +297,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     domainAxisLabel.draw(layer);
 
     // only show if enabled and a collision with the axis label is avoided
-    creditsLabel.setLocation(bounds.rightX() - creditsLabel.getBounds().width,
-        textRowY);
+    // TODO - better PAD
+    creditsLabel.setLocation(bounds.rightX() - creditsLabel.getBounds().width - 20, textRowY);
     final boolean collision = domainAxisLabel.getBounds().rightX()
         >= creditsLabel.getBounds().x;
     if (ChronoscopeOptions.isShowCreditsEnabled() && !collision) {

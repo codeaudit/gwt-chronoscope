@@ -300,6 +300,42 @@ public class GssPropertyManager {
     }
   };
 
+  public static final GssPropertyType GSS_BORDER_TOP_PROPERTY
+      = new GssPropertyType("border-top", "", GssPropertyType.TypeUnits.PX,
+      "Specifies the top thickness of lines drawn on the chart") {
+    @Override
+    protected void setPropertyInt(GssProperties props, int num) {
+      props.borderTop = num;
+    }
+  };
+
+   public static final GssPropertyType GSS_BORDER_BOTTOM_PROPERTY
+      = new GssPropertyType("border-bottom", "", GssPropertyType.TypeUnits.PX,
+      "Specifies the bottom thickness of lines drawn on the chart") {
+    @Override
+    protected void setPropertyInt(GssProperties props, int num) {
+      props.borderBottom = num;
+    }
+  };
+
+  public static final GssPropertyType GSS_BORDER_LEFT_PROPERTY
+      = new GssPropertyType("border-left", "", GssPropertyType.TypeUnits.PX,
+      "Specifies the left thickness of lines drawn on the chart") {
+    @Override
+    protected void setPropertyInt(GssProperties props, int num) {
+      props.borderLeft = num;
+    }
+  };
+
+   public static final GssPropertyType GSS_BORDER_RIGHT_PROPERTY
+      = new GssPropertyType("border-right", "", GssPropertyType.TypeUnits.PX,
+      "Specifies the right thickness of lines drawn on the chart") {
+    @Override
+    protected void setPropertyInt(GssProperties props, int num) {
+      props.borderRight = num;
+    }
+  };
+
 
   // NOTE "em" not supported, eg line-thickness:.1em; is invalid
    public static final GssPropertyType GSS_POINT_SELECTION_PROPERTY
@@ -554,7 +590,7 @@ public class GssPropertyManager {
   
    public static final GssElementType GSS_CROSSHAIR_TYPE = new GssElementType("crosshair",
       new GssElementType[0],
-      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_DATE_FORMAT_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_NUMBER_FORMAT_PROPERTY, GSS_POINT_SELECTION_PROPERTY, GSS_VISIBILITY_PROPERTY},
+      new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_DATE_FORMAT_PROPERTY, GSS_LINE_THICKNESS_PROPERTY, GSS_NUMBER_FORMAT_PROPERTY, GSS_POINT_SELECTION_PROPERTY, GSS_VISIBILITY_PROPERTY ,GSS_VALUE_VISIBILITY_PROPERTY},
       "Visibility of crosshair",
       "crosshair { visibility: visible; line-thickness: 2px; color: red} /* draws a red line 2 pixels thick */")
       ;
@@ -573,11 +609,18 @@ public class GssPropertyManager {
       "axislegend { visibility: hidden }")
       ;
 
-//  public static final GssElementType GSS_OVERVIEW_TYPE = new GssElementType("overview",
-//       new GssElementType[0],
-//       new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
-//       "Overview",
-//       "overview { visibility: hidden }")
-//       ;
+  public static final GssElementType GSS_OVERVIEW_TYPE = new GssElementType("overview",
+            new GssElementType[0],
+            new GssPropertyType[]{GSS_COLOR_PROPERTY, GSS_BGCOLOR_PROPERTY, GSS_VISIBILITY_PROPERTY},
+            "Overview",
+            "overview { visibility: hidden ;}")
+       ;
+
+  public static final GssElementType GSS_LENS_TYPE = new GssElementType("lens",
+      new GssElementType[0],
+      new GssPropertyType[]{GSS_LINE_THICKNESS_PROPERTY, GSS_BORDER_TOP_PROPERTY, GSS_BORDER_BOTTOM_PROPERTY, GSS_BORDER_LEFT_PROPERTY, GSS_BORDER_RIGHT_PROPERTY},
+      "Controls border of overviewc.",
+      "overview lens { border-top: 0px; border-bottom: 0px;border-left: 3px; border-right: 3px; }")
+      ;
 
 }

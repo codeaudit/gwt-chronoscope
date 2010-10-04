@@ -1,15 +1,10 @@
 package org.timepedia.chronoscope.client.render;
 
-import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
-import org.timepedia.chronoscope.client.util.DateFormatter;
-import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Exportable;
 
 /**
@@ -19,18 +14,13 @@ import org.timepedia.exporter.client.Exportable;
 public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     implements GssElement, Exportable {
 
-  protected GssProperties activeGssLineProps, activeGssPointProps, activeGssLegendProps;
-
   protected double lx = -1, ly = -1;
 
   protected double fx = -1;
 
-  private DateFormatter guideLineDateFmt;
-
   @Override
   public void beginCurve(Layer layer, RenderState renderState) {
-    activeGssLineProps = renderState.isDisabled() ? gssDisabledLineProps
-        : gssLineProps;
+    gssActiveLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
     layer.save();
     layer.beginPath();
 
@@ -44,51 +34,17 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     layer.save();
   }
 
-  @Override
-  public double calcLegendIconWidth(View view) {
-    GssProperties alineProp = (plot.getFocus() != null) ? gssDisabledLineProps
-        : gssLineProps;
-    GssProperties legendProp = gssLegendProps;
-    String width=legendProp.iconWidth;
-    if(width.equals("auto")){
-        return 8;
-    }else{      
-        return Double.valueOf(width.substring(0, width.length()-2));
-    }
-  }
-
-  public void drawGuideLine(Layer layer, int x) {
-    layer.save();
-    String textLayer = "plotTextLayer";
-    layer.setFillColor(gssFocusGuidelineProps.color);
-    double lt = Math.max(gssFocusGuidelineProps.lineThickness, 1);
-    int coffset = (int) Math.floor(lt / 2.0);
-
-    layer.fillRect(x - coffset, 0, lt, layer.getBounds().height);
-    if (gssFocusGuidelineProps.dateFormat != null) {
-      layer.setStrokeColor(Color.BLACK);
-      int hx = x;
-      double dx = ((DefaultXYPlot) plot)
-          .windowXtoDomain(hx + ((DefaultXYPlot) plot).getBounds().x);
-      String label = guideLineDateFmt.format(dx);
-      hx += dx < plot.getDomain().midpoint() ? 1.0
-          : -1 - layer.stringWidth(label, "Verdana", "", "9pt");
-
-      layer.drawText(hx, 5.0, label, "Verdana", "", "9pt", textLayer,
-          Cursor.DEFAULT);
-    }
-    layer.restore();
-  }
 
   @Override
-  public void drawCurvePart(Layer layer, T point, int methodCallCount,
-      RenderState renderState) {
+  public void drawCurvePart(Layer layer, T point, int methodCallCount, RenderState renderState) {
+    // gssActiveLineProps = (plot.getFocus() != null) ? gssDisabledLineProps : gssLineProps;
+    gssActiveLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
 
     double ux = plot.domainToScreenX(point.getDomain(), datasetIndex);
     double uy = plot.rangeToScreenY(point.getRange0(), datasetIndex);
 
     // guard webkit bug, coredump if draw two identical lineTo in a row
-    if (activeGssLineProps.visible) {
+    if (gssActiveLineProps.visible) {
       if (methodCallCount == 0) {
         // This is the first point to be rendered, so just store the coordinates.
         fx = lx = ux;
@@ -127,72 +83,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
     drawPoint(ux, uy, layer, layerProps);
   }
 
-  @Override
-  public void drawLegendIcon(Layer layer, double x, double y, int dim) {
-    layer.save();
-
-    GssProperties alineProp, apointProp, alegendProp;
-
-    alegendProp = gssLegendProps;
-
-    if (plot.getFocus() != null
-        && plot.getFocus().getDatasetIndex() != this.datasetIndex) {
-      alineProp = gssDisabledLineProps;
-      apointProp = gssDisabledPointProps;
-    } else {
-      alineProp = gssLineProps;
-      apointProp = gssPointProps;
-    }
-
-    layer.beginPath();
-    layer.moveTo(x, y);
-    // layer.setLineWidth(alineProp.lineThickness);
-    String height= alegendProp.iconHeight;
-    if(height.equals("auto")){
-        layer.setLineWidth(7);
-    }else{
-       layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
-    }
-
-    layer.setShadowBlur(alineProp.shadowBlur);
-    layer.setShadowColor(alineProp.shadowColor);
-    layer.setShadowOffsetX(alineProp.shadowOffsetX);
-    layer.setShadowOffsetY(alineProp.shadowOffsetY);
-    layer.setStrokeColor(alineProp.color);
-    layer.setTransparency((float) alineProp.transparency);
-
-    String width=alegendProp.iconWidth;
-    if(width.equals("auto")){
-        layer.lineTo(x+5, y);
-    }else{
-        double widthValue=Double.valueOf(width.substring(0, width.length()-2));
-        layer.lineTo(x + widthValue, y);
-    }
-    
-    layer.stroke();
-
-    if (apointProp.visible) {
-      layer.translate(x, y - apointProp.size / 2 + 1);
-      layer.beginPath();
-      layer.setFillColor(apointProp.bgColor);
-      layer.setTransparency((float) apointProp.transparency);
-      layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
-      layer.setShadowBlur(0);
-      layer.fill();
-      layer.beginPath();
-      layer.setLineWidth(apointProp.lineThickness);
-      if (apointProp.size < 1) {
-        apointProp.size = 1;
-      }
-      layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
-      layer.setLineWidth(apointProp.lineThickness);
-      layer.setShadowBlur(apointProp.shadowBlur);
-      layer.setStrokeColor(apointProp.color);
-      layer.stroke();
-    }
-
-    layer.restore();
-  }
 
   @Override
   public void drawPoint(Layer layer, T point, RenderState renderState) {
@@ -202,7 +92,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
     GssProperties gssProps;
     if (isFocused) {
-      gssProps = this.gssFocusProps;
+      gssProps = this.gssFocusPointProps;
     } else if (renderState.isDisabled()) {
       gssProps = this.gssDisabledPointProps;
     } else {
@@ -234,24 +124,24 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   @Override
   public void endCurve(Layer layer, RenderState renderState) {
-    GssProperties fillProp = renderState.isDisabled() ? gssDisabledFillProps
-        : gssFillProps;
+    gssActiveLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
+    gssActiveFillProps = renderState.isDisabled() ? gssDisabledFillProps : gssFillProps;
 
-    layer.setFillColor(activeGssLineProps.bgColor);
-    layer.setLineWidth(activeGssLineProps.lineThickness);
-    layer.setShadowBlur(activeGssLineProps.shadowBlur);
-    layer.setShadowColor(activeGssLineProps.shadowColor);
-    layer.setShadowOffsetX(activeGssLineProps.shadowOffsetX);
-    layer.setShadowOffsetY(activeGssLineProps.shadowOffsetY);
-    layer.setStrokeColor(activeGssLineProps.color);
-    layer.setTransparency((float) activeGssLineProps.transparency);
+    layer.setFillColor(gssActiveLineProps.bgColor);
+    layer.setLineWidth(gssActiveLineProps.lineThickness);
+    layer.setShadowBlur(gssActiveLineProps.shadowBlur);
+    layer.setShadowColor(gssActiveLineProps.shadowColor);
+    layer.setShadowOffsetX(gssActiveLineProps.shadowOffsetX);
+    layer.setShadowOffsetY(gssActiveLineProps.shadowOffsetY);
+    layer.setStrokeColor(gssActiveLineProps.color);
+    layer.setTransparency((float) gssActiveLineProps.transparency);
 
     layer.stroke();
     layer.lineTo(lx, layer.getHeight());
     layer.lineTo(fx, layer.getHeight());
 
-    layer.setFillColor(fillProp.bgColor);
-    layer.setTransparency((float) fillProp.transparency);
+    layer.setFillColor(gssActiveFillProps.bgColor);
+    layer.setTransparency((float) gssActiveFillProps.transparency);
 
     layer.fill();
     layer.restore();
@@ -265,10 +155,6 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   @Override
   public void initGss(View view) {
     super.initGss(view);
-    if (gssFocusGuidelineProps.dateFormat != null) {
-      this.guideLineDateFmt = DateFormatterFactory.getInstance()
-          .getDateFormatter(gssFocusGuidelineProps.dateFormat);
-    }
   }
 
   public String getType() {

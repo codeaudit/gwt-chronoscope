@@ -101,7 +101,10 @@ public abstract class EraCalc {
    */
   static double getTimestampForYear(int year) {
     if (year < 2000) {
+        Date.UTC(1,2,3,4,5,6);
+
       return new Date(year - 1900, 0, 1).getTime();
+
     }
     
     final double numMillisIn4centuries = 

@@ -125,8 +125,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     final double range = lrangeHigh - lrangeLow;
 
-    final int maxNumLabels = (int) Math
-        .floor(axisHeight / (2 * tickLabelHeight));
+    final int maxNumLabels = (int) Math.floor((axisHeight - tickLabelHeight) / (2.5 * tickLabelHeight));
 
     final double roughInterval = range / maxNumLabels;
 
@@ -134,13 +133,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     final double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits + 5;
-    smoothSigDigits = smoothSigDigits - (int) MathUtil
-        .mod(smoothSigDigits, 5.0);
+    smoothSigDigits = smoothSigDigits - (int) MathUtil.mod(smoothSigDigits, 5.0);
 
     final double smoothInterval = smoothSigDigits * exponent;
 
-    double axisStart = lrangeLow - MathUtil
-        .mod(lrangeLow, smoothInterval);
+    double axisStart = lrangeLow - MathUtil.mod(lrangeLow, smoothInterval);
     int numTicks = (int) (Math.ceil((lrangeHigh - axisStart) / smoothInterval));
 
     if (axisStart + (smoothInterval * (numTicks - 1)) < lrangeHigh) {
@@ -221,8 +218,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
    */
   public void adjustAbsRange(Dataset ds) {
     if (!rangeOveriddenLow || !rangeOveriddenHigh) {
-      DatasetRenderer dr = plot
-          .getDatasetRenderer(plot.getDatasets().indexOf(ds));
+      DatasetRenderer dr = plot.getDatasetRenderer(plot.getDatasets().indexOf(ds));
       MipMap m = ds.getMipMapChain().getMipMap(0);
 
       while (m != null) {
@@ -263,9 +259,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     final double rangeMin = autoZoom ? this.visRangeMin : this.absRangeMin;
     final double rangeMax = autoZoom ? this.visRangeMax : this.absRangeMax;
 
+    double labelLineHeight = Math.min(axisPanel.getMaxLabelHeight(), 15.0);
+    double rangeAxisHeight = axisPanel.getBounds().height;
+
     ticks = computeLinearTickPositions(rangeMin, rangeMax,
-        axisPanel.getBounds().height, axisPanel.getMaxLabelHeight(),
-        rangeOveriddenLow, rangeOveriddenHigh);
+            rangeAxisHeight, labelLineHeight,
+            rangeOveriddenLow, rangeOveriddenHigh);
 
     if (rangeOveriddenLow) {
       adjustedRangeMin = rangeMin;
@@ -289,8 +288,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double dataToUser(double dataValue) {
-    return (dataValue - adjustedRangeMin) / (adjustedRangeMax
-        - adjustedRangeMin);
+    return (dataValue - adjustedRangeMin) / (adjustedRangeMax - adjustedRangeMin);
   }
 
   /**

@@ -74,6 +74,8 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
    */
   String getIdentifier();
 
+  void setIdentifier(String id);
+
   /**
    * Returns the smallest domain interval between any two consecutive points
    * within the dataset.

@@ -100,7 +100,8 @@ public class HistoryManager {
         // remove the oldest
         id2chart.remove(id2chart.get(0));
       }
-      id2chart.put(id, chart);
+      // possible leak - FIXME
+      // id2chart.put(id, chart);
       chart.setChartId(id);
     }
   }

@@ -60,6 +60,12 @@ public abstract class AbstractDataset<T extends Tuple2D>
   }
 
   @Export
+  public final void setIdentifier(String id) {
+    this.identifier = id;
+  }
+
+
+  @Export
   public final double getMinDomainInterval() {
     return minDomainInterval;
   }
@@ -219,5 +225,13 @@ public abstract class AbstractDataset<T extends Tuple2D>
   @Export
   public void setDatasets(Datasets<T> datasets) {
     this.datasets = datasets;
+  }
+
+  public void setIncremental(MipMap incremental) {
+      this.incremental = incremental;
+  }
+
+  public void setIncrementalInterval(Interval incrementalInterval) {
+      this.incrementalInterval = incrementalInterval;
   }
 }
