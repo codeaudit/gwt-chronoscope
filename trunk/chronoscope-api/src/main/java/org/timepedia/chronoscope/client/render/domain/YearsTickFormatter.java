@@ -55,8 +55,15 @@ public class YearsTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
-    return currTick.getYear() % 10 == 0;
+  public boolean isBoundary(int tickStep) {
+    if (tickStep < 10) {
+      return currTick.getYear() % 10 == 0;  
+    } else if (tickStep < 100 ) {
+      return currTick.getYear() % 100 == 0;  
+    } else if (tickStep < 1000 ) {
+      return currTick.getYear() % 1000 == 0;  
+    } 
+    return false;
   }
   
 }

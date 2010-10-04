@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
@@ -90,4 +91,16 @@ public abstract class DateTickFormatter extends TickFormatter {
   public void setTick(double timestamp) {
     currTick.setTime(timestamp);
   }
+  
+  @Override
+  public String getIntervalLabel(Interval interval) {
+    String ret = "";
+    setTick(interval.getStart());
+    ret += formatTick();
+    ret += " - ";
+    setTick(interval.getEnd());
+    ret += formatTick();
+    return ret;
+  }
+
 }

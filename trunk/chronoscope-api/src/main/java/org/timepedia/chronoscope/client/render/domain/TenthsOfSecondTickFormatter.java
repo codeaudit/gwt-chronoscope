@@ -23,7 +23,7 @@ public class TenthsOfSecondTickFormatter extends DateTickFormatter {
   }
 
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return currTick.getSecond() % 10 == 0;
   }
 }

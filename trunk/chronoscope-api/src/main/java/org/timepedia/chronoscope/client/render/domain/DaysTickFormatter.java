@@ -95,7 +95,7 @@ public class DaysTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return currTick.getDay() == 1;
   }
 }
