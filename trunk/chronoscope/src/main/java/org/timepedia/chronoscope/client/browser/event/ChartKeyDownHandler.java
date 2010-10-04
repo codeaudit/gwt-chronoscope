@@ -52,9 +52,5 @@ public class ChartKeyDownHandler extends AbstractEventHandler<KeyDownHandler>
        event.preventDefault();
     }
   }
-
-  public static native void debug(String msg)/*-{
-      console.debug(msg);
-  }-*/;
-
+  
 }

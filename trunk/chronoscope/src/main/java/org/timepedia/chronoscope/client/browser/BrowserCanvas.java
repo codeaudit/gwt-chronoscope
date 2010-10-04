@@ -150,7 +150,8 @@ public class BrowserCanvas extends Canvas {
   }
 
   public void fillRect(double x, double y, double w, double h) {
-    rootLayer.fillRect(x, y, w, h);
+    // pixel alignment
+    rootLayer.fillRect(Math.floor(x), Math.floor(y), Math.ceil(w), Math.floor(h));
   }
 
   public void fillRect() {

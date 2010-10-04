@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.BrowserCanvasImage;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -28,6 +29,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class FlashCanvas extends Canvas {
+
+  public String FLASH_ALTERNATIVES =
+          "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>\n";
+
+  public String FLASH_ADVICE =
+        "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n" +
+        "<p><a href=\"http://www.adobe.com/go/getflashplayer\"><img src=\"http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif\" alt=\"Get Adobe Flash player\" /></a></p>\n" +
+                FLASH_ALTERNATIVES;
+
+
+
 
   public static final String CMDSEP = "%";
 
@@ -86,8 +98,13 @@ public class FlashCanvas extends Canvas {
     rootLayer.arc(x, y, radius, startAngle, endAngle, clockwise);
   }
 
-  public void attach(final View view,
-      final CanvasReadyCallback canvasReadyCallback) {
+  public void attach(final View view, final CanvasReadyCallback canvasReadyCallback) {
+    if (!ChronoscopeOptions.isFlashFallbackEnabled()) {
+        DOM.setInnerHTML(canvasElement, FLASH_ALTERNATIVES);
+    } else {
+        DOM.setInnerHTML(canvasElement, FLASH_ADVICE);
+    }
+
     final FlashView bv = (FlashView) view;
     exportReadyFn(readyFn, view, new CanvasReadyCallback() {
       boolean initalized = false;
@@ -134,12 +151,6 @@ public class FlashCanvas extends Canvas {
     String codeBasePref = GWT.getHostPageBaseURL().startsWith("https") ?
         "https" : "http";
 
-    String noflash = "<div><h3>You should see a chart here</h3>\n"
-            + "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n"
-            + "<p><a href=\"http://www.adobe.com/go/getflashplayer\"><img src=\"http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif\" alt=\"Get Adobe Flash player\" /></a></p>\n"
-            + "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>"
-            + "</div>\n";
-      
     DOM.setInnerHTML(canvasElement,
         "<object style=\"position:absolute;top: 0px;left:0px; z-index: 0\" classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n"
             + "codebase=\""+ codeBasePref + "://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0\" \n"
@@ -371,7 +382,7 @@ public class FlashCanvas extends Canvas {
   }
 
   public void fillRect(double x, double y, double w, double h) {
-    rootLayer.fillRect(x, y, w, h);
+    rootLayer.fillRect(Math.floor(x), Math.floor(y), Math.ceil(w), Math.floor(h));
   }
 
   public void fillRect() {

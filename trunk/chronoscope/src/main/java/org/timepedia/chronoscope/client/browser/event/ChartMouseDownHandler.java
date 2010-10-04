@@ -2,7 +2,6 @@ package org.timepedia.chronoscope.client.browser.event;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.Event;
 
 import org.timepedia.chronoscope.client.Chart;
@@ -50,6 +49,7 @@ public final class ChartMouseDownHandler
     }
 
     chartInfo.setHandled(handled);
+    OverviewAxisMouseMoveHandler.hiliteRelativeGrabX(chart.getPlot(), x);
   }
 }
 

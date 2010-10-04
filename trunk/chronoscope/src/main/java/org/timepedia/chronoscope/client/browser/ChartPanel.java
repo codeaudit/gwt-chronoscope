@@ -20,6 +20,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.timepedia.chronoscope.client.canvas.View;
 
 @ExportPackage("chronoscope")
 public class ChartPanel extends Composite implements Exportable {
@@ -135,5 +136,17 @@ public class ChartPanel extends Composite implements Exportable {
       plotPanel.setReadyListener(viewReadyCallback);
     }
   }
+
+   public XYPlot getPlot() {
+      return plotPanel.getChart().getPlot();
+  }
+
+  public View getView() {
+      return plotPanel.getView();
+  }
+
+    public PlotPanel getPlotPanel() {
+        return plotPanel;
+    }
 
 }

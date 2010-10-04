@@ -160,7 +160,8 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     plot.init(view);
     
     viewReady = true;
-    HistoryManager.putChart(id, chart);
+    // possible leak source - FIXME
+    // HistoryManager.putChart(id, chart);
     chart.redraw();
 
     if (readyListener != null) {
