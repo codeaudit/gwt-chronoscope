@@ -35,6 +35,9 @@ public class ChronoscopeOptions {
 
   private static boolean animationPreview = true;
 
+  private static boolean flashFallbackEnabled = true;
+
+
   public static String getDefaultAggregateFunction() {
     return defaultAggregateFunction;
   }
@@ -153,8 +156,17 @@ public class ChronoscopeOptions {
     }
   }
 
-  public static boolean getAnimationPreview() {
+  public static boolean isAnimationPreview() {
     return animationPreview;
   }
-    
+
+
+  public static boolean isFlashFallbackEnabled() {
+    return flashFallbackEnabled;
+  }
+
+  public static void setFlashFallbackEnabled(boolean enabled) {
+    flashFallbackEnabled = enabled;
+  }
+
 }

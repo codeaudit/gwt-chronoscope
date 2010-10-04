@@ -64,7 +64,6 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
@@ -86,9 +85,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   protected static double MIN_WIDTH_FACTOR = 2.0;
   protected static double MAX_WIDTH_FACTOR = 1.1;
 
-  private boolean legendOverriden;
-  
-  private boolean animationPreview = true;
+  private boolean legendOverridden;
 
   private class ExportableHandlerManager extends HandlerManager {
 
@@ -392,7 +389,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       
     overviewLayer.setFillColor(Color.TRANSPARENT);
 
-
     overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
 
     Bounds oldBounds = plotBounds;
@@ -511,7 +507,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public int getMaxDrawableDataPoints() {
-    return (int) (isAnimating && animationPreview ? maxDrawableDatapoints
+    return (int) (isAnimating && ChronoscopeOptions.isAnimationPreview() ? maxDrawableDatapoints
         : ChronoscopeOptions.getMaxStaticDatapoints());
   }
 
@@ -575,11 +571,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     return multiaxis;
   }
 
-  @Export
-  public boolean isOverviewEnabled() {
-    return bottomPanel.isOverviewEnabled();
-  }
-  
   @Export
   public void maxZoomOut() {
     pushHistory();
@@ -649,7 +640,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // and respond accordingly, rather than forcing this class to manage
     // everything.
     //this.initAuxiliaryPanel(this.rangePanel, this.view);
-    this.plotRenderer.addDataset(this.datasets.size() - 1, dataset);
+    this.plotRenderer.addDataset(this.datasets.size()-1, dataset);
     //this.rangePanel = new RangePanel();
     fixDomainDisjoint();
     this.reloadStyles();
@@ -801,8 +792,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     plotLayer.save();
     // if on a low performance device, don't re-render axes or legend
     // when animating
-    final boolean canDrawFast = !(isAnimating() && animationPreview && ChronoscopeOptions
-        .isLowPerformance());
+    final boolean canDrawFast = !(isAnimating() &&
+            ChronoscopeOptions.isAnimationPreview() && ChronoscopeOptions.isLowPerformance());
 
     final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain);
 
@@ -855,6 +846,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     bottomPanel.clearDrawCaches();
     Interval tmpPlotDomain = visDomain.copy();
+
     // hack, eval order dependency
     initViewIndependent(datasets);
     fixDomainDisjoint();
@@ -928,7 +920,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Override
   @Export
   public void setAnimationPreview(boolean enabled) {
-    this.animationPreview = enabled;
+    ChronoscopeOptions.setAnimationPreview(enabled);
   }
 
   @Export
@@ -1052,7 +1044,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void setLegendEnabled(boolean b) {
-    legendOverriden = true;
+    legendOverridden = true;
     for(int i = 0; i<hoverPoints.length; i++) {
       hoverPoints[i] = -1;
     }
@@ -1088,18 +1080,25 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   @Export
-  public void setOverviewEnabled(boolean overviewEnabled) {
-    bottomPanel.setOverviewEnabled(overviewEnabled);
-  }
-
-  @Export
   public boolean isOverviewVisible() {
-      return bottomPanel.isOverviewVisible();
+    return bottomPanel.isOverviewVisible();
   }
 
   @Export
   public void setOverviewVisible(boolean overviewVisible) {
-      bottomPanel.setOverviewVisible(overviewVisible);
+    bottomPanel.setOverviewVisible(overviewVisible);
+  }
+
+  // Deprecated, use setOverviewVisible instead.
+  @Export @Deprecated
+  public void setOverviewEnabled(boolean overviewEnabled) {
+    // bottomPanel.setOverviewEnabled(overviewEnabled);
+    setOverviewVisible(overviewEnabled);
+  }
+
+  @Export @Deprecated
+  public boolean isOverviewEnabled() {
+    return isOverviewVisible();
   }
 
   public void setPlotRenderer(XYPlotRenderer<T> plotRenderer) {
@@ -1241,6 +1240,8 @@ public class DefaultXYPlot<T extends Tuple2D>
           }
           isAnimating = false;
           animationTimer = null;
+          //Enlarged load to new data
+          plotRenderer.cleanIncrementalData();
           redraw(true);
           fireChangeEvent();
         } else {
@@ -1302,9 +1303,9 @@ public class DefaultXYPlot<T extends Tuple2D>
           double dx = windowXtoDomain(hoverX + plotBounds.x);
           String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
           hx += dx < getDomain().midpoint() ? 1.0
-              : -1 - hoverLayer.stringWidth(label, "Verdana", "", "9pt");
+              : -1 - hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
 
-          hoverLayer.drawText(hx, 5.0, label, "Verdana", "", "9pt", "crosshair",
+          hoverLayer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "crosshair",
               Cursor.CONTRASTED);
           int nearestPt = NO_SELECTION;
           int nearestSer = 0;
@@ -1348,14 +1349,17 @@ public class DefaultXYPlot<T extends Tuple2D>
                   double realY = getDataCoord(i, hoverPoints[i], dim);
                   double y = r.getRangeValue(getDataTuple(i, hoverPoints[i]), dim);
                   double dy = rangeToScreenY(y, i);
-                  String rLabel = ra.getFormattedLabel(realY) + " "+DatasetLegendPanel.createDatasetLabel(this, i, -1, dim,true);
+                  String rLabel =  DatasetLegendPanel.createDatasetLabel(this, i, -1, dim, true);
+                  if (crosshairProperties.valueVisible) {
+                      rLabel = ra.getFormattedLabel(realY) + " " + rLabel;
+                  }
                   RenderState rs = new RenderState();
                   rs.setPassNumber(dim);
                   GssProperties props = r.getLegendProperties(dim, rs);
                   hoverLayer.setStrokeColor(props.color);
                   hx = hoverX + (int) (dx < getDomain().midpoint() ? 1.0
                       : -1 - hoverLayer
-                          .stringWidth(rLabel, "Verdana", "", "9pt"));
+                          .stringWidth(rLabel, "Helvetica", "", "9pt"));
 
                   // Add the orriginal label positions into a allLablePoints for layout and display below.
                   labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, props, hoverLayer));
@@ -1448,9 +1452,9 @@ public class DefaultXYPlot<T extends Tuple2D>
                         //All labels shows on the right between the region 0-0.25
                         LabelLayoutPoint point = overlapList.get(overlapList.size() - 1);
                         point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
                         double beforePointHx = point.hx;
-                        int textLength = point.lableText.length() * 7;
+                        int textLength = point.labelText.length() * 7;
                         for (int j = overlapList.size() - 2; j >= 0; j--) {
                             LabelLayoutPoint nextPoint = overlapList.get(j);
                             List<Number> infoList = drawLabelOnCrossHairRight(nextPoint, beforePointHx, textLength);
@@ -1461,7 +1465,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                         //All labels shows on the left between the region 0.75-1
                         LabelLayoutPoint point = overlapList.get(0);
                         point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
                         double beforePointHx = point.hx;
                         for (int j = 1; j < overlapList.size(); j++) {
                             LabelLayoutPoint nextPoint = overlapList.get(j);
@@ -1495,13 +1499,13 @@ public class DefaultXYPlot<T extends Tuple2D>
                         // Shows label between the region 0.5-0.75
                         int middle = overlapList.size() / 2;
                         LabelLayoutPoint point = overlapList.get(middle);
-                        double beforePointHx = point.hx + point.lableText.length() * 7;
+                        double beforePointHx = point.hx + point.labelText.length() * 7;
                         //show labels on the crossHair left
                         for (int j = middle; j < overlapList.size(); j++) {
                             LabelLayoutPoint nextPoint = overlapList.get(j);
                             beforePointHx = drawLabelOnCrossHairLeft(nextPoint, beforePointHx);
                         }
-                        beforePointHx = point.hx + point.lableText.length() * 7;
+                        beforePointHx = point.hx + point.labelText.length() * 7;
                         int textLength = 0;
                         //show labels on the crossHair right
                         for (int j = middle - 1; j >= 0; j--) {
@@ -1515,7 +1519,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                     //Only one point
                     LabelLayoutPoint pendingPoint = overlapList.get(0);
                     pendingPoint.layer.setStrokeColor(pendingPoint.gssProperties.color);
-                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
                 }
             }
         }
@@ -1529,8 +1533,8 @@ public class DefaultXYPlot<T extends Tuple2D>
      */
     private double drawLabelOnCrossHairLeft(LabelLayoutPoint nextPoint, double beforePointHx) {
         nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
-        beforePointHx -= nextPoint.lableText.length() * 7;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        beforePointHx -= nextPoint.labelText.length() * 7;
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
         return beforePointHx;
     }
 
@@ -1544,8 +1548,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     private List<Number> drawLabelOnCrossHairRight(LabelLayoutPoint nextPoint, double beforePointHx, int textLength) {
         nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
         beforePointHx += textLength;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.lableText, "Verdana", "", "9pt", "crosshair", Cursor.CONTRASTED);
-        textLength = nextPoint.lableText.length() * 7;
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        textLength = nextPoint.labelText.length() * 7;
         List<Number> beforeInfor = new ArrayList<Number>();
         beforeInfor.add(0, beforePointHx);
         beforeInfor.add(1, textLength);
@@ -1559,14 +1563,14 @@ public class DefaultXYPlot<T extends Tuple2D>
 
         private double hx;
         private double dy;
-        private String lableText;
+        private String labelText;
         private GssProperties gssProperties;
         private Layer layer;
 
         LabelLayoutPoint(double hx, double dy, String lableText, GssProperties props, Layer layer) {
             this.hx = hx;
             this.dy = dy;
-            this.lableText = lableText;
+            this.labelText = lableText;
             this.gssProperties = props;
             this.layer = layer;
         }
@@ -1595,12 +1599,12 @@ public class DefaultXYPlot<T extends Tuple2D>
             this.hx = hx;
         }
 
-        public String getLableText() {
-            return lableText;
+        public String getLabelText() {
+            return labelText;
         }
 
-        public void setLableText(String lableText) {
-            this.lableText = lableText;
+        public void setLabelText(String labelText) {
+            this.labelText = labelText;
         }
 
         public Layer getLayer() {
@@ -1833,8 +1837,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initViewIndependent(datasets);
 
-    crosshairProperties = view
-        .getGssProperties(new GssElementImpl("crosshair", null), "");
+    if (stringSizer == null) {
+      stringSizer = new StringSizer();
+    }
+    stringSizer.setCanvas(view.getCanvas());
+
+    crosshairProperties = view.getGssProperties(new GssElementImpl("crosshair", null), "");
     if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
       ChronoscopeOptions.setVerticalCrosshairEnabled(true);
       if (crosshairProperties.dateFormat != null) {
@@ -1842,11 +1850,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         lastCrosshairDateFormat = null;
       }
     }
-
-    if (stringSizer == null) {
-      stringSizer = new StringSizer();
-    }
-    stringSizer.setCanvas(view.getCanvas());
 
     if (!plotRenderer.isInitialized()) {
       plotRenderer.init();
@@ -1859,8 +1862,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     calcDomainWidths();
 
     ArgChecker.isNotNull(view.getCanvas(), "view.canvas");
-    ArgChecker
-        .isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
+    ArgChecker.isNotNull(view.getCanvas().getRootLayer(), "view.canvas.rootLayer");
     view.getCanvas().getRootLayer().setVisibility(true);
 
     initAuxiliaryPanel(bottomPanel, view);
@@ -1868,7 +1870,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     initAuxiliaryPanel(rangePanel, view);
     
     GssProperties legendProps = view.getGssProperties(new GssElementImpl("axislegend", null), "");
-    if (legendProps.gssSupplied && !legendOverriden) {
+    if (legendProps.gssSupplied && !legendOverridden) {
       topPanel.setEnabled(legendProps.visible);
     }
 
@@ -1880,7 +1882,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     */
 
-    // TODO: the top panel's initialization currently depends on the initialization
+    // FIXME: the top panel's initialization currently depends on the initialization
     // of the bottomPanel.  Remove this dependency if possible.
     initAuxiliaryPanel(topPanel, view);
 
@@ -1895,8 +1897,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     background = new GssBackground(view);
     view.canvasSetupDone();
-    crosshairFmt = DateFormatterFactory.getInstance()
-        .getDateFormatter("yy/MMM/dd HH:mm");
+    crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter("yy/MMM/dd HH:mm");
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {
@@ -1946,13 +1947,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     Bounds plotBounds = new Bounds();
 
-    double centerPlotHeight = viewHeight - topPanel.getBounds().height
-        - bottomPanel.getBounds().height;
+    double centerPlotHeight = viewHeight - topPanel.getBounds().height - bottomPanel.getBounds().height;
 
     // If center plot too squished, remove the overview axis
     if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-      if (bottomPanel.isOverviewEnabled()) {
-        bottomPanel.setOverviewEnabled(false);
+      if (bottomPanel.isOverviewVisible()) {
+        bottomPanel.setOverviewVisible(false);
         centerPlotHeight = viewHeight - topPanel.getBounds().height
             - bottomPanel.getBounds().height;
       }

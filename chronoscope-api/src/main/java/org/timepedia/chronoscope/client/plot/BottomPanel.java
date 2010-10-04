@@ -38,11 +38,9 @@ final class BottomPanel extends AuxiliaryPanel {
   private OverviewAxisPanel overviewAxisPanel;
 
   private boolean overviewDrawn = false;
-  
-//  private boolean overviewEnabled = true;
-  
+
   public BottomPanel() {
-    myBounds = new Bounds(0, 0, 100, 20);
+    myBounds = new Bounds(0, 0, 480, 64);
   }
   
   @Override
@@ -100,10 +98,6 @@ final class BottomPanel extends AuxiliaryPanel {
 
     compositePanel.setLayer(domainAxisLayer);
   }
-  
-  public boolean isOverviewEnabled() {
-    return overviewAxisPanel.visible;
-  }
 
   @Override
   public void layout() {
@@ -153,49 +147,54 @@ final class BottomPanel extends AuxiliaryPanel {
       initLayer();
     }
   }
-  
+
+  @Deprecated
+  public boolean isOverviewEnabled() {
+    return isOverviewVisible();
+  }
+
+  @Deprecated
   public void setOverviewEnabled(boolean overviewEnabled) {
-    if (overviewAxisPanel.visible == overviewEnabled) {
-      return;
-    }
-
-    clearDrawCaches();
-
-    overviewAxisPanel.visible = overviewEnabled;
-    if (overviewEnabled) {
-      this.enabled = true;
-    }
-
-    if (!this.initialized) {
-      return;
-    }
-    
-    if (overviewEnabled) {
-      compositePanel.clear();
-      initDomainAxisPanel();
-      compositePanel.add(domainAxisPanel);
-      initOverviewAxisPanel();
-      compositePanel.add(overviewAxisPanel);
-    } else {
-      compositePanel.remove(overviewAxisPanel);
-    }
-    
-    if (isInitialized()) {
-      plot.reloadStyles();
-    }
+    setOverviewVisible(overviewEnabled);
   }
 
    public void setOverviewVisible(boolean overviewVisible){
-      overviewAxisPanel.getGssProperties().visible=overviewVisible;
-      drawHook();
+     overviewAxisPanel.visible = overviewVisible;
+     if (overviewVisible && !this.enabled) {
+        this.enabled = true;
+     }
+
+     clearDrawCaches();
+
+     if (!this.initialized) {
+       return;
+     }
+
+     compositePanel.clear();
+     initDomainAxisPanel();
+     compositePanel.add(domainAxisPanel);
+     initOverviewAxisPanel();
+     if (overviewVisible) {
+        compositePanel.add(overviewAxisPanel);
+     } else {
+        // don't add it
+     }
+
+     plot.reloadStyles();
+
+     // drawHook();
   }
 
   public boolean isOverviewVisible(){
-      return overviewAxisPanel.getGssProperties().visible;
+      return overviewAxisPanel.visible;
   }
   
   @Override
   protected void drawHook() {
+    if (!isInitialized()) {
+      return;
+    }
+
     if (overviewAxisPanel.visible && !overviewDrawn) {
       drawDatasetOverview();
     }
@@ -205,9 +204,9 @@ final class BottomPanel extends AuxiliaryPanel {
   
   @Override
   protected void initHook() {
-    compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber,
-        Position.BOTTOM, plot, view);
+    compositePanel = new CompositeAxisPanel("domainAxisLayer" + plot.plotNumber, Position.BOTTOM, plot, view);
     compositePanel.setParent(this);
+    compositePanel.setStringSizer(stringSizer);
 
     // Both DomainAxisPanel and OverviewAxisPanel must be initialized even 
     // if BottomPanel is not currently enabled, because other auxiliary panels 
@@ -234,11 +233,13 @@ final class BottomPanel extends AuxiliaryPanel {
     initOverviewAxisPanel();
     compositePanel.clear();
 
-
     if (enabled) {
         compositePanel.add(domainAxisPanel);
         if (overviewAxisPanel.visible) {
           compositePanel.add(overviewAxisPanel);
+        } else {
+          // no need, just cleared it
+          // compositePanel.remove(overviewAxisPanel);
         }
     }
     
@@ -269,8 +270,12 @@ final class BottomPanel extends AuxiliaryPanel {
     if (overviewAxisPanel == null) {
       overviewAxisPanel = new OverviewAxisPanel();
     } else {
-      compositePanel.remove(overviewAxisPanel);
+        // overviewAxisPanel.init();
+        compositePanel.remove(overviewAxisPanel);
     }
+    // else {
+    //  compositePanel.remove(overviewAxisPanel);
+    // }
     overviewAxisPanel.setValueAxis(new OverviewAxis(plot, "overview"));              
 
   }
