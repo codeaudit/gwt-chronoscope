@@ -316,12 +316,6 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void init();
 
   /**
-   * Returns true if mini-chart overview on x-axis is enabled.
-   */
-  @Export
-  boolean isOverviewEnabled();
-
-  /**
    * Animated zoom out so that the entire domain of the dataset fits precisely
    * in the Plot
    */
@@ -465,7 +459,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer);
   
   /**
-   * Overrides the default domin axis panel (Date formatted labels)
+   * Overrides the default domain axis panel (Date formatted labels)
    */
   void setDomainAxisPanel(DomainAxisPanel domainAxisPanel);
 
@@ -507,12 +501,19 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    */
   @Export
   void setLegendLabelsVisible(boolean visible);
-  
+
+  /**
+   * Returns true if mini-chart overview on x-axis is enabled.
+   * Use isOverviewVisible instead
+   */
+  @Export @Deprecated
+  boolean isOverviewEnabled();
+
   /**
    * Enables or disables the mini-chart overview below the center plot
-   * panel.
+   * panel.  Deprecated in favor of setOverviewVisible.
    */
-  @Export
+  @Export @Deprecated
   void setOverviewEnabled(boolean enabled);
 
   /**

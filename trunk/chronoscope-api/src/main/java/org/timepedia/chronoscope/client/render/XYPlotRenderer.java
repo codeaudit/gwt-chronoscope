@@ -19,6 +19,7 @@ import org.timepedia.chronoscope.client.util.Interval;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.timepedia.chronoscope.client.data.AbstractDataset;
 
 /**
  * Responsible for iterating over {@link Dataset}s in a defined drawing order,
@@ -48,6 +49,20 @@ public class XYPlotRenderer<T extends Tuple2D> {
   
   public void reset() {
    initialized = false; 
+  }
+
+  /**
+   * Clean Incremental Data
+   * IncrementalHandler can get new datas
+   */
+  public void cleanIncrementalData(){
+      final int numDatasets=drawableDatasets.size();
+       for (int datasetIdx = 0; datasetIdx < numDatasets; datasetIdx++) {
+           DrawableDataset<T> drawableDataset = drawableDatasets.get(datasetIdx);
+           Dataset<T> dataSet = drawableDataset.dataset;
+           ((AbstractDataset)dataSet).setIncremental(null);
+           ((AbstractDataset)dataSet).setIncrementalInterval(null);
+       }
   }
 
   private void calcVisibleDomainAndRange(List<DrawableDataset<T>> dds,
@@ -330,8 +345,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     configRenderer(renderer, datasetIndex, gssElem);
     drawableDataset.setRenderer(renderer);
-    drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain()
-        .getMipMap(0);
+    drawableDataset.currMipMap = drawableDataset.dataset.getMipMapChain().getMipMap(0);
     drawableDataset.maxDrawablePoints = renderer.getMaxDrawableDatapoints();
 
     drawableDatasets.add(drawableDataset);
@@ -526,8 +540,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
   }
 
   public void invalidate(Dataset<T> dataset) {
+    String datasetId=dataset.getIdentifier();
     for (DrawableDataset dd : drawableDatasets) {
-      if (dd.dataset == dataset) {
+      if (dd.dataset == dataset
+      || ((!(null == datasetId)) && (!("" == datasetId)) && dd.dataset.getIdentifier().equals(datasetId))) {
+
         dd.setCurrMipLevel(0);
         break;
       }
