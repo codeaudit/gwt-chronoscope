@@ -34,8 +34,7 @@ import org.timepedia.exporter.client.Exporter;
 import java.util.Date;
 
 /**
- * A realization of a View on the browser using a Flash helper based on
- * ASCanvas
+ * A realization of a View on the browser using a Flash implementation of the HTML Canvas API.
  *
  */
 @ExportPackage("chronoscope")
@@ -47,6 +46,7 @@ public class FlashView extends GwtView
   }
 
   static final FocusImpl focusImpl = FocusImpl.getFocusImplForPanel();
+
 
   private static int getClientHeightRecursive(Element element) {
     int height = DOM.getElementPropertyInt(element, "clientHeight");

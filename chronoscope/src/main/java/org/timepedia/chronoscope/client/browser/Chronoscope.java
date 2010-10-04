@@ -215,20 +215,6 @@ public class Chronoscope
         chartHeight);
   }
 
-  /**
-   * Legacy method to support old API. Preferred method is to use instance
-   * passed to onChronoscopeLoaded, which allows behavior to be overriden.
-   *
-   * @deprecated
-   */
-  @Export
-  public static ChartPanel createTimeseriesChartById(String id,
-      JsArray<JsonDatasetJSO> jsonDatasets, int chartWidth, int chartHeight,
-      ViewReadyCallback readyListener) {
-    return getInstance()
-        .createTimeseriesChart(id, jsonDatasets, chartWidth, chartHeight,
-            readyListener);
-  }
 
   /**
    * Create a chart inside the DOM element with the given ID with the given JSON
@@ -339,12 +325,6 @@ public class Chronoscope
     return "chart" + globalChartNumber++;
   }
 
-  @Deprecated
-  public static String getFontBookServiceEndpoint() {
-    return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
-        + "fr" : fontBookServiceEndpoint;
-  }
-
   public static Chronoscope getInstance() {
     if(instance == null) {
       instance = get();
@@ -411,10 +391,6 @@ public class Chronoscope
     ChronoscopeOptions.setCrosshairLabels(enabled);
   }
 
-  @Export
-  public static void setFontBookRendering(boolean enabled) {
-    fontBookRenderingEnabled = enabled;
-  }
 
   @Export
   public static void setDefaultMultiaxisMode(boolean mode) {
@@ -426,13 +402,9 @@ public class Chronoscope
     ChronoscopeOptions.setAnimationPreview(enabled);
   }
 
-  /**
-   * Used to default to GWT.getModuleBaseURL() + "fr"
-   * Deprecated once modern browsers supported text rotation
-   */
-  @Export @Deprecated
-  public static void setFontBookServiceEndpoint(String endpoint) {
-    fontBookServiceEndpoint = endpoint;
+  @Export
+  public static void isAnimationPreview(boolean enabled) {
+    ChronoscopeOptions.isAnimationPreview();
   }
 
   public static void setMicroformatsEnabled(boolean microformatsEnabled) {
@@ -454,7 +426,57 @@ public class Chronoscope
   public static void setMaxDynamicDatapoints(int max) {
     ChronoscopeOptions.setMaxDynamicDatapoints(max);
   }
-  
+
+  /**
+   * The default is to fall back to a Flash canvas implementation when there isn't an HTML5 canvas available.
+   */
+  @Export
+  public static boolean isFlashFallbackEnabled() {
+    return ChronoscopeOptions.isFlashFallbackEnabled();
+  }
+
+  @Export
+  public static void setFlashFallbackEnabled(boolean enabled) {
+    ChronoscopeOptions.setFlashFallbackEnabled(enabled);
+  }
+
+
+
+
+  /**
+   * Legacy method to support old API. Preferred method is to use instance
+   * passed to onChronoscopeLoaded, which allows behavior to be overriden.
+   *
+   * @deprecated
+   */
+  @Export @Deprecated
+  public static ChartPanel createTimeseriesChartById(String id,
+    JsArray<JsonDatasetJSO> jsonDatasets, int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
+    return getInstance().createTimeseriesChart(id, jsonDatasets, chartWidth, chartHeight, readyListener);
+  }
+
+  /**
+   * Used to default to GWT.getModuleBaseURL() + "fr"
+   * Deprecated once modern browsers supported text rotation
+   */
+  @Export @Deprecated
+  public static void setFontBookServiceEndpoint(String endpoint) {
+    fontBookServiceEndpoint = endpoint;
+  }
+
+  @Export @Deprecated
+  public static void setFontBookRendering(boolean enabled) {
+    fontBookRenderingEnabled = enabled;
+  }
+
+  @Deprecated
+  public static String getFontBookServiceEndpoint() {
+    return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
+        + "fr" : fontBookServiceEndpoint;
+  }
+
+
+
   @Inject
   public void setUrlResolver(URLResolver urlr) {
     urlResolver = urlr;
@@ -537,7 +559,7 @@ public class Chronoscope
       }
 
 //      checkForChronoscopeCSS();
-//        tryInjectChronoscopeCSS(new Command() {                       c
+//        tryInjectChronoscopeCSS(new Command() {
 //            public void execute() {
       exportFunctions();
 
