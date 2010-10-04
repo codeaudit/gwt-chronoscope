@@ -167,6 +167,8 @@ public class Color implements PaintStyle {
   public static final Color WHITE = new Color("white");
   public static final Color BLACK = new Color("black");
   public static final Color GREEN = new Color("green");
+  public static final Color LIGHTGREY = new Color("lightgrey");
+  public static final Color GRAY = new Color("gray");
 
   private int rgba = 0;
 

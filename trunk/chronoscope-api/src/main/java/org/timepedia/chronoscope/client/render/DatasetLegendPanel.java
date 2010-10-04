@@ -29,10 +29,10 @@ public class DatasetLegendPanel extends AbstractPanel
   private static final double LEGEND_ICON_PAD = 3;
 
   // Dictates the X-padding between each dataset legend item
-  static final int DATASET_LEGEND_PAD = 12;
+  static final int DATASET_LEGEND_PAD = 8;
 
   // Dictates the Y-padding between legend labels and plot
-  static final int LEGEND_PLOT_PAD = 12;
+  static final int LEGEND_PLOT_PAD = 2;
 
   private double lblHeight;
 
@@ -234,7 +234,7 @@ public class DatasetLegendPanel extends AbstractPanel
       // Note: since the (x,y) coordinate refers to the upper-left corner of the
       // bounds, we need to add 'lblHeight' to the final yCursor value to obtain
       // the total height of all legend item rows.
-      b.height = yCursor - b.y + 2*lblHeight;
+      b.height = yCursor - b.y + lblHeight;
     }
   }
 
@@ -333,8 +333,7 @@ public class DatasetLegendPanel extends AbstractPanel
       int pointIdx, int dimension,boolean valueVisible) {
     Dataset ds = plot.getDatasets().get(datasetIdx);
     RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
-    ArrayList<Dataset> sdatasets = (ArrayList<Dataset>) ds
-        .getUserData("datasets");
+    ArrayList<Dataset> sdatasets = (ArrayList<Dataset>) ds.getUserData("datasets");
     String rlabel = ds.getRangeLabel();
     if (sdatasets != null && dimension < sdatasets.size()) {
       Dataset dataset = sdatasets.get(dimension);

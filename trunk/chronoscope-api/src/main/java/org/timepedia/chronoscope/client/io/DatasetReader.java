@@ -49,8 +49,7 @@ public class DatasetReader {
     return createDatasetFromJson(json, false);
   }
 
-  public Dataset createDatasetFromJson(JsonDataset json,
-      boolean mutable) {
+  public Dataset createDatasetFromJson(JsonDataset json, boolean mutable) {
     DatasetRequest request = createDatasetRequestFromJson(json);
     return mutable ? compFactory.getDatasetFactory()
         .createMutable(request)

@@ -13,11 +13,11 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("chronoscope")
 public class GssProperties implements Exportable {
 
-  public PaintStyle bgColor = new Color("#000000");
+  public PaintStyle bgColor = Color.WHITE;
 
-  public Color color = new Color("#FFFFFF");
+  public Color color = Color.BLACK;
 
-  public String fontFamily = "Verdana";
+  public String fontFamily = "Helvetica";
 
   public String fontSize = "9pt";
 
@@ -29,9 +29,17 @@ public class GssProperties implements Exportable {
 
   public double lineThickness = 1;
 
+  public double borderTop = -1;
+
+  public double borderBottom = -1;
+
+  public double borderLeft = -1;
+
+  public double borderRight = -1;
+
   public double shadowBlur = 0;
 
-  public Color shadowColor = new Color("#000000");
+  public Color shadowColor = Color.LIGHTGREY;
 
   public double shadowOffsetX = 0;
 

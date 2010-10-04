@@ -40,7 +40,7 @@ public class GregorianEraCalc extends EraCalc {
     final double normalizedMs = timeInMs - maxLeapCenturyTimestamp;
     final int fourCenturyIndex = (int)Math.floor(normalizedMs / constants.msIn4centuryPeriod);
     final int yearStart = maxLeapCentury + (fourCenturyIndex * 400);
-    final double fourCenturyPeriodStart = 
+    final double fourCenturyPeriodStart =
         maxLeapCenturyTimestamp + (fourCenturyIndex * constants.msIn4centuryPeriod);
 
     // Calculate 1) year and 2) year offset in milliseconds

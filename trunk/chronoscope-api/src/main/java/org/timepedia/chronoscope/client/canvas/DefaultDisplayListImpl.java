@@ -179,8 +179,7 @@ public class DefaultDisplayListImpl implements DisplayList {
     });
   }
 
-  public void fillRect(double startx, double starty, double width,
-      double height) {
+  public void fillRect(double startx, double starty, double width, double height) {
     cmdBuffer.add(new Cmd() {
       public void exec() {
         layer.fillRect();

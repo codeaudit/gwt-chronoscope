@@ -58,8 +58,16 @@ public final class Datasets<T extends Tuple2D>
   public Datasets(Dataset<T>[] datasets) {
     ArgChecker.isNotNull(datasets, "datasets");
     this.myDatasetListener = new PrivateDatasetListener<T>(this);
+    // FIXME - setIdentifier is probably a mistake that shouldn't exist, if the IDs need to be added
+      // they should be done upstream before "undefined" shows up as ID (right now, a real id of "undefined"
+      // might be a problem.
+    int count = 0; // Hack for now until setIdentifier question resolved
     for (Dataset<T> dataset : datasets) {
+      if(null == dataset.getIdentifier() || dataset.getIdentifier().equals("undefined")) {
+        dataset.setIdentifier(Integer.toString(count));
+      }
       add(dataset);
+      count++;
     }
   }
 
@@ -128,8 +136,11 @@ public final class Datasets<T extends Tuple2D>
    */
   public int indexOf(Dataset<T> dataset) {
     ArgChecker.isNotNull(dataset, "dataset");
+    String datasetId=dataset.getIdentifier();
     for (int i = 0; i < datasets.size(); i++) {
       if (datasets.get(i) == dataset) {
+        return i;
+      } else if((!(null == datasetId)) && (!("" == datasetId)) && (datasets.get(i).getIdentifier().equals(datasetId))){
         return i;
       }
     }

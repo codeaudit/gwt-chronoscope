@@ -4,6 +4,8 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.Dataset;
+import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.gss.GssContext;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -108,8 +110,21 @@ public abstract class View implements Exportable {
    * a GssProperties object for this GssElement
    */
   public GssProperties getGssProperties(GssElement gssElem, String pseudoElt) {
+    // return shimGssProperties(gssContext.getProperties(gssElem, pseudoElt));
     return gssContext.getProperties(gssElem, pseudoElt);
   }
+
+  /**
+   * shim for UI binder
+   */
+  private GssProperties shimGssProperties(GssProperties gssProperties){
+      Datasets datasets = getChart().getPlot().getDatasets();
+      Dataset shim = datasets.getById("shim__");
+      // if ((datasets.size() > 0) && (simulationLoaded != null)) {
+      //     gssProperties.setTransparency(0.0);
+      // }
+      return gssProperties;
+   }
 
   public int getHeight() {
     return viewHeight;

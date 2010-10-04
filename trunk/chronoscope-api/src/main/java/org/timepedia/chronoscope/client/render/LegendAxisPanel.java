@@ -20,14 +20,14 @@ public class LegendAxisPanel extends AxisPanel {
    * Dictates the Y-padding between the top of the legend item bounds and the
    * bottom of the zoom and date range panels.
    */
-  private static final int LEGEND_Y_TOP_PAD = 3;
+  private static final int LEGEND_Y_TOP_PAD = 2;
 
   /**
    * Dictates the Y-padding between the bottom of the legend item bounds and the
    * top of the plot panel.
    */
 
-  private static final int LEGEND_Y_BOTTOM_PAD = 9;
+  private static final int LEGEND_Y_BOTTOM_PAD = 2;
 
   private DateRangePanel dateRangePanel;
 
@@ -127,8 +127,7 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.setStringSizer(stringSizer);
     dateRangePanel.parent = this;
-    dateRangePanel.init(rootLayer, minInterval, plot.getDomainAxisPanel());
-    dateRangePanel.updateDomainInterval(domainExtrema);
+    dateRangePanel.init(rootLayer, domainExtrema, minInterval, plot.getDomainAxisPanel());
   }
 
   public void setZoomListener(ZoomListener l) {
@@ -218,8 +217,7 @@ public class LegendAxisPanel extends AxisPanel {
 
     // First, see if the panels in their prettiest form will
     // fit within the container's bounds
-    double cushion = parentWidth - zoomPanel.getBounds().width
-        - dateRangePanel.getBounds().width;
+    double cushion = parentWidth - zoomPanel.getBounds().width - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -261,8 +259,7 @@ public class LegendAxisPanel extends AxisPanel {
    * bounds.
    */
   private void topRightJustify(Panel panel, Bounds parentBounds) {
-    panel.setPosition(parentBounds.rightX() - panel.getBounds().width - 2,
-        parentBounds.y);
+    panel.setPosition(parentBounds.rightX() - panel.getBounds().width, parentBounds.y);
   }
 
   /**

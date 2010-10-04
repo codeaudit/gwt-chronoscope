@@ -12,8 +12,7 @@ public class MockGssContext extends GssContext {
     
     GssProperties gssProps = new MockGssProperties();
     
-    if ("line".equals(elementType) || "step".equals(elementType)
-        || "candlestick".equals(elementType)) {
+    if ("line".equals(elementType) || "step".equals(elementType) || "candlestick".equals(elementType)) {
       configLineProps(gssProps, gssElem.getParentGssElement(), pseudoElt);
     }
     else if ("bar".equals(elementType)) {
@@ -37,9 +36,11 @@ public class MockGssContext extends GssContext {
     else if ("rangemarker".equals(elementType)) {
       configRangeMarkerProps(gssProps);
     }
-    else if ("axis".equals(elementType) || "axislegend"
-        .equals(elementType)) {
+    else if ("axis".equals(elementType)) {
       configRangeAxisProps(gssProps);
+    }
+    else if ("axislegend".equals(elementType)) {
+        configLegendProps(gssProps);
     }
     else if ("axes".equals(elementType)) {
       configRangeAxesProps(gssProps);
@@ -49,6 +50,9 @@ public class MockGssContext extends GssContext {
     }
     else if ("overview".equals(elementType)) {
       configOverviewProps(gssProps);
+    }
+    else if ("lens".equals(elementType)) {
+      configOverviewLensProps(gssProps);
     }
     else if ("tick".equals(elementType)) {
       configTickProps(gssProps);
@@ -79,6 +83,7 @@ public class MockGssContext extends GssContext {
   
   private void configCrosshairProps(GssProperties p) {
     p.visible = false;
+    p.valueVisible = false;
   }
   
   private void configBarProps(GssProperties p, GssElement elt, String pseudoElt) {
@@ -107,7 +112,7 @@ public class MockGssContext extends GssContext {
     p.color = Color.BLACK;
     p.transparency = 0.1f;
     p.lineThickness = 5;
-    p.visible  =true;
+    p.visible = true;
   }
   
   private void configFillProps(GssProperties p, GssElement elt) {
@@ -129,24 +134,49 @@ public class MockGssContext extends GssContext {
   }
   
   private void configOverviewProps(GssProperties p) {
-    p.bgColor = new Color("#99CCFF");
-    p.color = new Color("#0099FF");
-    p.transparency = 0.4;
-    p.lineThickness = 2;
+    p.bgColor = Color.WHITE;
+    p.color = Color.TRANSPARENT;
+    p.transparency = 0.2;
+    p.lineThickness = 0;
   }
+
+  private void configOverviewLensProps(GssProperties p) {
+    p.color = Color.LIGHTGREY;
+    p.transparency = 0.5;
+    p.lineThickness = 1;
+    p.borderBottom=0;
+    p.borderTop=0;
+    p.borderLeft=1;
+    p.borderRight=1;
+  }
+
   
   private void configPointProps(GssProperties p, GssElement elt, String pseudoElt) {
     boolean isHover = isHover(pseudoElt);
     boolean isFocus = isFocus(pseudoElt);
-    
-    p.size = isHover ? 5 : 4;
+    boolean isDisabled = isDisabled(pseudoElt);
+
     p.visible = (isHover || isFocus);
-    p.lineThickness = 2;
-    
+
+    p.size = isFocus ? 2 : 4;
+
+    p.lineThickness = isFocus ? 3 : 2;
+
+    p.color = datasetColorMap.get(elt);
+    p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
+
+    p.transparency = isFocus ? 0.5 : 0.25;
+    p.transparency *= isDisabled ? 0.5 : 1.0; // NOT: multiplication factor, not actual value
+
     // Determines the color of the point's outer ring
-    p.color = isFocus ? new Color("khaki") : new Color("olive");
+    // p.color = isFocus ? new Color("khaki") : new Color("olive");
     // Determines the color of the point's center area
-    p.bgColor = isHover ? new Color("lightgreen") : new Color("lightblue");
+    // p.bgColor = Color.TRANSPARENT; // let the underlying line show through.
+    // .bgColor = isHover ? new Color("lightgreen") : new Color("lightblue");
+
+    p.shadowBlur = 0;
+    p.shadowOffsetX = 0;
+    p.shadowOffsetY = 0;
   }
 
   private void configPlotProps(GssProperties p) {
@@ -157,7 +187,14 @@ public class MockGssContext extends GssContext {
     p.bgColor = Color.WHITE;
   }
 
+  private void configLegendProps(GssProperties p) {
+    p.visible = true;
+    p.valueVisible = false;
+    p.bgColor = Color.TRANSPARENT;
+  }
+
   private void configRangeAxisProps(GssProperties p) {
+    p.color = Color.BLACK;
     p.tickPosition = "inside";
     p.bgColor = Color.TRANSPARENT;
     p.fontSize = "9pt";
@@ -168,6 +205,8 @@ public class MockGssContext extends GssContext {
   }
   
   private void configTickProps(GssProperties p) {
+    p.lineThickness = 1;
+    p.color = Color.BLACK;
   }
   
   private void configLabelProps(GssProperties p) {
@@ -179,9 +218,10 @@ public class MockGssContext extends GssContext {
    * Maps a GSS class (presumably referring to some dataset) to a color.
    */
   protected static final class DatasetColorMap {
-    private static Color[] defaultSerieColors = {
-        new Color("red"),
+    private static Color[] defaultSeriesColors = {
         new Color("blue"),
+        new Color("green"),
+        new Color("red"),
         new Color("brown"),
         new Color("gold"),
         new Color("burlywood"),
@@ -202,7 +242,7 @@ public class MockGssContext extends GssContext {
 
     public Color get(GssElement gssElement) {
       int n = gssElement == null ? 0 : Integer.parseInt(gssElement.getTypeClass().replaceFirst("^[^\\d]*(\\d*).*$", "0$1"));
-      return defaultSerieColors[n % defaultSerieColors.length];
+      return defaultSeriesColors[n % defaultSeriesColors.length];
     }
   }
 }
