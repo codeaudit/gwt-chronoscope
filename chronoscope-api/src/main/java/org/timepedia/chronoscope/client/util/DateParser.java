@@ -11,7 +11,7 @@ public class DateParser {
   public static double parse(String fmt, String dateString) {
     if(fmt == null) return Date.parse(dateString);
     DateTimeFormat dtf = DateTimeFormat.getFormat(fmt);
-    Date date = new Date(70, 0, 1, 0, 0 ,0); 
+    Date date = new Date(0); 
     dtf.parse(dateString, 0, date);
     return date.getTime();
   }

@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.util.ArgChecker;
+import org.timepedia.chronoscope.client.util.Interval;
 
 /**
  * Provides functionality for rendering the domain axis ticks in a
@@ -207,7 +208,9 @@ public abstract class TickFormatter {
     return superFormatter;
   }
   
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return false;
   }
+  
+  public abstract String getIntervalLabel(Interval interval);
 }

@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import java.util.Date;
+
 import org.timepedia.chronoscope.client.util.TimeUnit;
 
 public class MonthsTickFormatter extends DateTickFormatter {
@@ -28,8 +30,16 @@ public class MonthsTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return currTick.getMonth() == 0;
   }
 
+  
+  @SuppressWarnings("deprecation")
+  @Override
+  public void resetToQuantizedTick(double timeStamp, int tickStep) {
+    Date d = new Date ((long)(timeStamp));
+    d.setMonth(0);
+    currTick.setTime(d.getTime());
+  }
 }

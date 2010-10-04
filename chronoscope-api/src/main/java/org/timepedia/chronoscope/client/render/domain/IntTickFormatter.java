@@ -1,5 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import org.timepedia.chronoscope.client.util.Interval;
+
 
 
 /**
@@ -70,5 +72,10 @@ public class IntTickFormatter extends TickFormatter {
   @Override
   public String toString() {
     return "tick:interval=" + (long)tickInterval;
+  }
+
+  @Override
+  public String getIntervalLabel(Interval interval) {
+    return interval.getStart() + " - " + interval.getEnd();
   }
 }

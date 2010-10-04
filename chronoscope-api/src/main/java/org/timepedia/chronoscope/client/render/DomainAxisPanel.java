@@ -14,7 +14,6 @@ import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.MathUtil;
-import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -51,8 +50,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
   private double minTickSize = -1;
 
-  private TickFormatterFactory tickFormatterFactory
-      = new DateTickFormatterFactory();
+  private static TickFormatterFactory tickFormatterFactory = new DateTickFormatterFactory();
 
   public DomainAxisPanel() {
     gridGssElement = new GssElementImpl("grid", this);
@@ -95,40 +93,38 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         .calcIdealTickStep(domainWidth, maxTicksForScreen);
     //log("dw=" + (long)domainWidth + "; maxTicks=" + maxTicksForScreen + 
     //    "; idealStep=" + idealTickStep);
-    double changeTimeZone=ChronoDate.timeZoneConverter();
+    
     tickFormatter
-        .resetToQuantizedTick(plot.getDomain().getStart()+changeTimeZone, idealTickStep);
+        .resetToQuantizedTick(plot.getDomain().getStart(), idealTickStep);
 
     boolean stillEnoughSpace = true; // enough space to draw another tick+label?
     boolean isFirstTick = true;
     double prevTickScreenPos = 0.0;
     int actualTickStep = 0;
 
-    /*
-    log("idealTickStep=" + idealTickStep +
-        "; maxTicks=" + maxTicksForScreen +
-        "; domainStart=" + (long)plot.getDomain().getStart() +
-        "; domainLen=" + (long)plot.getDomain().length() +
-        "; quantizedDomainValue=" + (long)tickFormatter.getTickDomainValue());
-    */
+//    log("idealTickStep=" + idealTickStep +
+//        "; maxTicks=" + maxTicksForScreen +
+//        "; domainStart=" + (long)plot.getDomain().getStart() +
+//        "; domainLen=" + (long)plot.getDomain().length() +
+//        "; quantizedDomainValue=" + (long)tickFormatter.getTickDomainValue() + 
+//        "; idealTickStep=" + idealTickStep
+//        );
 
     while (stillEnoughSpace) {
       double tickScreenPos = this
-          .domainToScreenX(tickFormatter.getTickDomainValue()-changeTimeZone, bounds);
+          .domainToScreenX(tickFormatter.getTickDomainValue(), bounds);
       stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
 
-      /*
-      log("tickScreenPos=" + tickScreenPos + 
-          "; tickDomainValue=" + (long)tickFormatter.getTickDomainValue() +
-          "; boundsRightX=" + boundsRightX);
-      */
+//      log("tickScreenPos=" + tickScreenPos + 
+//          "; tickDomainValue=" + (long)tickFormatter.getTickDomainValue() +
+//          "; boundsRightX=" + boundsRightX);
 
       if (stillEnoughSpace) {
         // Quantized tick date may have gone off the left edge; need to guard
         // against this case.
-        if (tickScreenPos > bounds.x) {
+        if (tickScreenPos >= bounds.x) {
           String tickLabel = tickFormatter.formatTick();
-          boolean bold = tickFormatter.isBoundary();
+          boolean bold = tickFormatter.isBoundary(idealTickStep);
           drawTick(layer, plot, bounds, tickScreenPos, TICK_HEIGHT, bold);
           drawTickLabel(layer, bounds, tickScreenPos, tickLabel, bold, labelWidth);
         }

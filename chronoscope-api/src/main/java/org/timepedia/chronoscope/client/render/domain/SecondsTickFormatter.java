@@ -43,7 +43,7 @@ public class SecondsTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return currTick.getSecond() == 0;
   }
 

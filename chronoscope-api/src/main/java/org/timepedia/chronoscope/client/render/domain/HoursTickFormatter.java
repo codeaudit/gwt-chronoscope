@@ -1,5 +1,8 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import java.util.Date;
+
+import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
@@ -37,8 +40,19 @@ public class HoursTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return 0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()));
   }
+ 
+  @SuppressWarnings("deprecation")
+  @Override
+  public void resetToQuantizedTick(double timeStamp, int tickStep) {
+    Date d = new Date ((long)(timeStamp));
+    int normalizedValue = MathUtil.quantize(d.getHours(), tickStep);
+    d.setHours(normalizedValue);
+    currTick.setTime(d.getTime());
+    currTick.truncate(this.timeUnitTickInterval);
+  }
+
 
 }

@@ -30,7 +30,7 @@ public class WeeksTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public boolean isBoundary() {
+  public boolean isBoundary(int tickStep) {
     return currTick.getDayOfWeek() == DayOfWeek.SUNDAY;
   }
 
