@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
@@ -30,6 +31,8 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
+
+import org.timepedia.chronoscope.client.browser.nullcanvas.NullCanvas;
 
 import java.util.Date;
 
@@ -217,7 +220,11 @@ public class FlashView extends GwtView
    * support Flash, Silverlight, SVG, and Applet canvases for the Browser.
    */
   protected Canvas createCanvas(int width, int height) {
-    return new FlashCanvas(this, width, height);
+    if (ChronoscopeOptions.isFlashFallbackEnabled()) {
+      return new FlashCanvas(this, width, height);
+    } else {
+      return new NullCanvas(this);
+    }
   }
 
   protected Element getElement(Layer layer) {
@@ -230,6 +237,8 @@ public class FlashView extends GwtView
   @Export
   @Override
   public void resize(int width, int height) {
+    if (ChronoscopeOptions.isFlashFallbackEnabled()) {
+
     super.resize(width, height);
     initialize(element, width, height, true, gssContext,
         new ViewReadyCallback() {
@@ -238,11 +247,20 @@ public class FlashView extends GwtView
             view.getChart().reloadStyles();
           }
         });
+    } else {
+       initialize(element, width, height, true, gssContext,
+        new ViewReadyCallback() {
+           @Override
+           public void onViewReady(View view) {} });
+    }
+
     onAttach();
   }
 
   protected void initContainer(Element element, int width, int height) {
     this.rootElem = element;
+    if (ChronoscopeOptions.isFlashFallbackEnabled()) {
+
     this.containerDiv = focusImpl.createFocusable();
     DOM.setInnerHTML(rootElem, "");
     DOM.setElementAttribute(containerDiv, "id",
@@ -254,7 +272,13 @@ public class FlashView extends GwtView
     DOM.appendChild(rootElem, containerDiv);
     DOM.setStyleAttribute(containerDiv, "height", height + "px");
     DOM.setStyleAttribute(containerDiv, "width", width + "px");
+  } else {
+    DOM.setInnerHTML(rootElem, FlashCanvas.FLASH_ALTERNATIVES);
   }
+
+  }
+
+
 
   private void setCursorImpl(String cssCursor) {
     getElement().getStyle().setProperty("cursor", cssCursor);

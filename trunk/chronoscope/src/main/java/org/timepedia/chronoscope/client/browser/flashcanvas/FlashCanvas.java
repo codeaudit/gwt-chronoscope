@@ -7,7 +7,6 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.browser.BrowserCanvasImage;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
@@ -30,10 +29,10 @@ import java.util.Iterator;
 
 public class FlashCanvas extends Canvas {
 
-  public String FLASH_ALTERNATIVES =
+  public static String FLASH_ALTERNATIVES =
           "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>\n";
 
-  public String FLASH_ADVICE =
+  public static String FLASH_ADVICE =
         "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n" +
         "<p><a href=\"http://www.adobe.com/go/getflashplayer\"><img src=\"http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif\" alt=\"Get Adobe Flash player\" /></a></p>\n" +
                 FLASH_ALTERNATIVES;
@@ -99,12 +98,6 @@ public class FlashCanvas extends Canvas {
   }
 
   public void attach(final View view, final CanvasReadyCallback canvasReadyCallback) {
-    if (!ChronoscopeOptions.isFlashFallbackEnabled()) {
-        DOM.setInnerHTML(canvasElement, FLASH_ALTERNATIVES);
-    } else {
-        DOM.setInnerHTML(canvasElement, FLASH_ADVICE);
-    }
-
     final FlashView bv = (FlashView) view;
     exportReadyFn(readyFn, view, new CanvasReadyCallback() {
       boolean initalized = false;
@@ -665,8 +658,7 @@ public class FlashCanvas extends Canvas {
         }
     }-*/;
 
-  private void flashCanvasReady(final View view,
-      final CanvasReadyCallback canvasReadyCallback) {
+  private void flashCanvasReady(final View view, final CanvasReadyCallback canvasReadyCallback) {
     Timer t = new Timer() {
       public void run() {
         rootLayer = (FlashLayer) createLayer("rootLayer",
