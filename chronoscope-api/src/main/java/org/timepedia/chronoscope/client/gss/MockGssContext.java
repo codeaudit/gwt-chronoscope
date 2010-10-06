@@ -180,14 +180,14 @@ public class MockGssContext extends GssContext {
 
     p.visible = (isHover || isFocus);
 
-    p.size = isFocus ? 2 : 4;
+    p.size = isFocus ? 2 : 3;
 
-    p.lineThickness = isFocus ? 3 : 2;
+    p.lineThickness = isFocus ? 2 : 1;
 
     p.color = datasetColorMap.get(elt);
     p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
 
-    p.transparency = isFocus ? 0.4 : 0.2;
+    p.transparency = isFocus ? 0.75 : 0.5;
     p.transparency = isDisabled ? 0.0 : p.transparency;
 
     // Determines the color of the point's outer ring
