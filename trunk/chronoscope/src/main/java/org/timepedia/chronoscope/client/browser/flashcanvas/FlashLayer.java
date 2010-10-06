@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.browser.flashcanvas;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 
