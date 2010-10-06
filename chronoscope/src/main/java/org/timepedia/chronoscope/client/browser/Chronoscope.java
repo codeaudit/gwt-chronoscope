@@ -388,7 +388,7 @@ public class Chronoscope
 
   @Export
   public static void setCrosshairLabelsFormat(String enabled) {
-    ChronoscopeOptions.setCrosshairLabels(enabled);
+    ChronoscopeOptions.setCrosshairDateTimeFormat(enabled);
   }
 
 
@@ -439,6 +439,11 @@ public class Chronoscope
   public static void setFlashFallbackEnabled(boolean enabled) {
     ChronoscopeOptions.setFlashFallbackEnabled(enabled);
   }
+
+//  @Export
+//  public static void setOverviewVisible(boolean visible) {
+//    ChronoscopeOptions.setOverviewVisibile(visible);
+//  }
 
 
 
