@@ -37,7 +37,7 @@ public class MockGssContext extends GssContext {
       configRangeMarkerProps(gssProps);
     }
     else if ("axis".equals(elementType)) {
-      configRangeAxisProps(gssProps);
+      configAxisProps(gssProps);
     }
     else if ("axislegend".equals(elementType)) {
         configLegendProps(gssProps);
@@ -60,10 +60,13 @@ public class MockGssContext extends GssContext {
     else if ("shadow".equals(elementType)) {
       // do nothing for now...
     }
-    else if ("label".equals(gssElem.getType())) {
+    else if ("label".equals(elementType)) {
       configLabelProps(gssProps);
     }
-    else if("crosshair".equals(gssElem.getType()) || "guideline".equals(gssElem.getType())) {
+    else if ("labels".equals(elementType)) {
+      configLabelsProps(gssProps, gssElem.getParentGssElement());
+    }
+    else if("crosshair".equals(elementType) || "guideline".equals(elementType)) {
       configCrosshairProps(gssProps);
     }
     return gssProps;
@@ -82,10 +85,27 @@ public class MockGssContext extends GssContext {
   }
   
   private void configCrosshairProps(GssProperties p) {
+    p.color = Color.GRAY;
     p.visible = false;
-    p.valueVisible = false;
+    p.valueVisible = true;
+    p.labelVisible = false;
+    p.transparency = 0.75f;
+    p.dateFormat = "MM/dd:HH:mm";
   }
-  
+
+  private void configLabelsProps(GssProperties p, GssElement elt) {
+      String parentType = elt.getType();
+
+      p.labelVisible = "axislegend".equals(parentType) ? true : false;
+      p.valueVisible = "crosshair".equals(parentType) ? true : false;
+
+      p.lineThickness = 1;
+
+      p.color = Color.BLACK; // datasetColorMap.get(elt);
+      p.bgColor = Color.BLACK; // ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
+
+  }
+
   private void configBarProps(GssProperties p, GssElement elt, String pseudoElt) {
     configLineProps(p, elt, pseudoElt);
     // width represents the percentage of maximum bar width.  E.g. a value of 
@@ -109,9 +129,9 @@ public class MockGssContext extends GssContext {
 
   private void configDomainMarkerProps(GssProperties p) {
     p.bgColor = new Color("#10f410");
-    p.color = Color.BLACK;
+    p.color = Color.LIGHTGREY;
     p.transparency = 0.1f;
-    p.lineThickness = 5;
+    p.lineThickness = 2;
     p.visible = true;
   }
   
@@ -132,7 +152,9 @@ public class MockGssContext extends GssContext {
     p.lineThickness = 0.5;
     p.fontSize = "8pt";
   }
-  
+
+  // TODO - might make sense to rename color and bgColor to strokeColor and fillColor
+
   private void configOverviewProps(GssProperties p) {
     p.bgColor = Color.WHITE;
     p.color = Color.TRANSPARENT;
@@ -165,8 +187,8 @@ public class MockGssContext extends GssContext {
     p.color = datasetColorMap.get(elt);
     p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
 
-    p.transparency = isFocus ? 0.5 : 0.25;
-    p.transparency *= isDisabled ? 0.5 : 1.0; // NOT: multiplication factor, not actual value
+    p.transparency = isFocus ? 0.4 : 0.2;
+    p.transparency = isDisabled ? 0.0 : p.transparency;
 
     // Determines the color of the point's outer ring
     // p.color = isFocus ? new Color("khaki") : new Color("olive");
@@ -184,17 +206,18 @@ public class MockGssContext extends GssContext {
   }
 
   private void configRangeAxesProps(GssProperties p) {
-    p.bgColor = Color.WHITE;
+    p.bgColor = Color.TRANSPARENT;
   }
 
   private void configLegendProps(GssProperties p) {
     p.visible = true;
     p.valueVisible = false;
+    p.labelVisible = true;
     p.bgColor = Color.TRANSPARENT;
   }
 
-  private void configRangeAxisProps(GssProperties p) {
-    p.color = Color.BLACK;
+  private void configAxisProps(GssProperties p) {
+    p.color = Color.GRAY;
     p.tickPosition = "inside";
     p.bgColor = Color.TRANSPARENT;
     p.fontSize = "9pt";
@@ -202,11 +225,15 @@ public class MockGssContext extends GssContext {
 
   private void configRangeMarkerProps(GssProperties p) {
     p.bgColor = new Color("powderblue");
+    p.color = Color.LIGHTGREY;
+    p.transparency = 0.1f;
+    p.lineThickness = 5;
+    p.visible = true;
   }
   
   private void configTickProps(GssProperties p) {
     p.lineThickness = 1;
-    p.color = Color.BLACK;
+    p.color = Color.GRAY;
   }
   
   private void configLabelProps(GssProperties p) {

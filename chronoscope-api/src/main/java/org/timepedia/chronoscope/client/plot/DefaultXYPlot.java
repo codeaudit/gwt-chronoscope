@@ -1,10 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -37,6 +33,7 @@ import org.timepedia.chronoscope.client.event.PlotHoverEvent;
 import org.timepedia.chronoscope.client.event.PlotHoverHandler;
 import org.timepedia.chronoscope.client.event.PlotMovedEvent;
 import org.timepedia.chronoscope.client.event.PlotMovedHandler;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.render.Background;
@@ -170,7 +167,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private boolean multiaxis = ChronoscopeOptions.getDefaultMultiaxisMode();
 
-  private GssProperties crosshairProperties;
+  private GssProperties crosshairProperties, crosshairLabelsProperties;
 
   private PortableTimerTask animationContinuation;
 
@@ -215,10 +212,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private double visibleDomainMax;
 
-  private ExportableHandlerManager handlerManager
-      = new ExportableHandlerManager(this);
-
-  private String lastCrosshairDateFormat = null;
+  private ExportableHandlerManager handlerManager = new ExportableHandlerManager(this);
 
   private DateFormatter crosshairFmt = null;
 
@@ -856,18 +850,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     visDomain = plotRenderer.calcWidestPlotDomain();
     tmpPlotDomain.copyTo(visDomain);
     overlays = oldOverlays;
-    crosshairProperties = view
-        .getGssProperties(new GssElementImpl("crosshair", null), "");
-    if (crosshairProperties.visible) {
-      ChronoscopeOptions.setVerticalCrosshairEnabled(true);
-      if (crosshairProperties.dateFormat != null) {
-        ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
-        lastCrosshairDateFormat = null;
-      }
-    }
-    
+
+    initCrosshairs();
+
     redraw(true);
   }
+
 
   @Export
   public void removeOverlay(Overlay over) {
@@ -1026,8 +1014,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         isDirty = true;
       }
 
-      hoverPoints[i] = pointExists(nearestPointIdx) ? nearestPointIdx
-          : NO_SELECTION;
+      hoverPoints[i] = pointExists(nearestPointIdx) ? nearestPointIdx : NO_SELECTION;
 
       if (nearestHoverPt.dist <= closenessThreshold) {
         isCloseToCurve = true;
@@ -1288,25 +1275,24 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.save();
       hoverLayer.clearTextLayer("crosshair");
       hoverLayer.setFillColor(crosshairProperties.color);
+      hoverLayer.setTransparency((float)crosshairProperties.transparency);
+
       if (hoverX > -1) {
         hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
-        if (ChronoscopeOptions.isCrosshairLabels()) {
-          if (ChronoscopeOptions.getCrossHairLabels()
-              != lastCrosshairDateFormat) {
-            lastCrosshairDateFormat = ChronoscopeOptions.getCrossHairLabels();
-            crosshairFmt = DateFormatterFactory.getInstance()
-                .getDateFormatter(lastCrosshairDateFormat);
-          }
-          hoverLayer.setStrokeColor(Color.BLACK);
-          int hx = hoverX;
-          int hy = hoverY;
-          double dx = windowXtoDomain(hoverX + plotBounds.x);
+        int hx = hoverX;
+        int hy = hoverY;
+        double dx = windowXtoDomain(hoverX + plotBounds.x);
+
+        if (null != ChronoscopeOptions.getCrosshairDateTimeFormat()) {
+          crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(ChronoscopeOptions.getCrosshairDateTimeFormat());
+          hoverLayer.setStrokeColor(crosshairProperties.color);
           String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
           hx += dx < getDomain().midpoint() ? 1.0
               : -1 - hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
 
-          hoverLayer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "crosshair",
-              Cursor.CONTRASTED);
+          hoverLayer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        }
+
           int nearestPt = NO_SELECTION;
           int nearestSer = 0;
           int nearestDim = 0;
@@ -1330,8 +1316,7 @@ public class DefaultXYPlot<T extends Tuple2D>
             }
           }
           if (hoverPoints != null) {
-              // allLablePoints to store label points prior
-              List<LabelLayoutPoint> labelPointList = new ArrayList<LabelLayoutPoint>();
+            List<LabelLayoutPoint> labelPointList = new ArrayList<LabelLayoutPoint>();
             for (int i = 0; i < hoverPoints.length; i++) {
               int hoverPoint = hoverPoints[i];
               if (nearestPt != NO_SELECTION && i != nearestSer) {
@@ -1349,20 +1334,24 @@ public class DefaultXYPlot<T extends Tuple2D>
                   double realY = getDataCoord(i, hoverPoints[i], dim);
                   double y = r.getRangeValue(getDataTuple(i, hoverPoints[i]), dim);
                   double dy = rangeToScreenY(y, i);
-                  String rLabel =  DatasetLegendPanel.createDatasetLabel(this, i, -1, dim, true);
-                  if (crosshairProperties.valueVisible) {
+                  String rLabel = "";
+                  if (crosshairLabelsProperties.labelVisible) {
+                      rLabel = DatasetLegendPanel.createDatasetLabel(this, i, -1, dim, true);
+                  }
+                  if (crosshairLabelsProperties.valueVisible) {
                       rLabel = ra.getFormattedLabel(realY) + " " + rLabel;
                   }
                   RenderState rs = new RenderState();
                   rs.setPassNumber(dim);
-                  GssProperties props = r.getLegendProperties(dim, rs);
-                  hoverLayer.setStrokeColor(props.color);
+                  // GssProperties props = r.getLegendProperties(dim, rs);
+
+                  hoverLayer.setStrokeColor(Color.BLACK);
                   hx = hoverX + (int) (dx < getDomain().midpoint() ? 1.0
                       : -1 - hoverLayer
                           .stringWidth(rLabel, "Helvetica", "", "9pt"));
 
-                  // Add the orriginal label positions into a allLablePoints for layout and display below.
-                  labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, props, hoverLayer));
+                  // Add the label positions for layout and display later
+                  labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, crosshairLabelsProperties, hoverLayer));
                 }
               }
             }
@@ -1370,13 +1359,13 @@ public class DefaultXYPlot<T extends Tuple2D>
             layoutAndDisplayLabels(labelPointList);
           }
         }
-      }
+
       hoverLayer.restore();
     }
 
     if (ChronoscopeOptions.isHorizontalCrosshairEnabled() && hoverY > -1) {
       hoverLayer.save();
-      hoverLayer.setFillColor(Color.BLACK);
+      hoverLayer.setFillColor(crosshairProperties.color);
       hoverLayer.fillRect(0, hoverY, hoverLayer.getBounds().width, 1);
       hoverLayer.restore();
     }
@@ -1397,32 +1386,28 @@ public class DefaultXYPlot<T extends Tuple2D>
         return comparator;
     }
 
-    /**
-     * Group label List
-     * @param allLablePoints
-     * @return
-     */
-    private List<List<LabelLayoutPoint>> groupLabelList(List<LabelLayoutPoint> allLablePoints) {
+
+    private List<List<LabelLayoutPoint>> groupLabelList(List<LabelLayoutPoint> allLabelPoints) {
          List<List<LabelLayoutPoint>> labelGroups = new ArrayList<List<LabelLayoutPoint>>();
-        if (allLablePoints.size() > 1) {
+        if (allLabelPoints.size() > 1) {
 
             // Sort the labels by height
-            Collections.sort(allLablePoints, createLabelLayoutPointComparator());
+            Collections.sort(allLabelPoints, createLabelLayoutPointComparator());
 
             // create list of label groups
             List<LabelLayoutPoint> currentGroup = new ArrayList<LabelLayoutPoint>();
 
-            double currentY = allLablePoints.get(0).dy;
+            double currentY = allLabelPoints.get(0).dy;
 
-            currentGroup.add(allLablePoints.get(0));
+            currentGroup.add(allLabelPoints.get(0));
             labelGroups.add(currentGroup);
 
             int labelSize = 10; // make this dynamic according to font size.
 
             // loop through the labels and sort them a into groups.
-            for (int i = 1; i < allLablePoints.size(); i++) {
+            for (int i = 1; i < allLabelPoints.size(); i++) {
 
-                double nextY = allLablePoints.get(i).dy;
+                double nextY = allLabelPoints.get(i).dy;
                 if (Math.abs(currentY - nextY) > labelSize) {
                     // new group
                     currentGroup = new ArrayList<LabelLayoutPoint>();
@@ -1430,7 +1415,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
                 }
                 // add to current group
-                currentGroup.add(allLablePoints.get(i));
+                currentGroup.add(allLabelPoints.get(i));
                 currentY = nextY;
             }
 
@@ -1440,10 +1425,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     /**
      * Treating Layout which LabelLayoutPoint may overlap and show them
-     * @param allLablePoints
+     * @param allLabelPoints
      */
-    private void layoutAndDisplayLabels(List<LabelLayoutPoint> allLablePoints) {
-       List<List<LabelLayoutPoint>> labelGroups =groupLabelList(allLablePoints);
+    private void layoutAndDisplayLabels(List<LabelLayoutPoint> allLabelPoints) {
+       List<List<LabelLayoutPoint>> labelGroups =groupLabelList(allLabelPoints);
         if (labelGroups.size() > 0) {
             for (int i = 0; i < labelGroups.size(); i++) {
                 List<LabelLayoutPoint> overlapList = labelGroups.get(i);
@@ -1567,10 +1552,10 @@ public class DefaultXYPlot<T extends Tuple2D>
         private GssProperties gssProperties;
         private Layer layer;
 
-        LabelLayoutPoint(double hx, double dy, String lableText, GssProperties props, Layer layer) {
+        LabelLayoutPoint(double hx, double dy, String labelText, GssProperties props, Layer layer) {
             this.hx = hx;
             this.dy = dy;
-            this.labelText = lableText;
+            this.labelText = labelText;
             this.gssProperties = props;
             this.layer = layer;
         }
@@ -1842,14 +1827,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
     stringSizer.setCanvas(view.getCanvas());
 
-    crosshairProperties = view.getGssProperties(new GssElementImpl("crosshair", null), "");
-    if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
-      ChronoscopeOptions.setVerticalCrosshairEnabled(true);
-      if (crosshairProperties.dateFormat != null) {
-        ChronoscopeOptions.setCrosshairLabels(crosshairProperties.dateFormat);
-        lastCrosshairDateFormat = null;
-      }
-    }
+    initCrosshairs();
 
     if (!plotRenderer.isInitialized()) {
       plotRenderer.init();
@@ -1898,6 +1876,23 @@ public class DefaultXYPlot<T extends Tuple2D>
     background = new GssBackground(view);
     view.canvasSetupDone();
     crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter("yy/MMM/dd HH:mm");
+  }
+
+  private void initCrosshairs() {
+      GssElement crosshairElement = new GssElementImpl("crosshair", null);
+      crosshairProperties = view.getGssProperties(crosshairElement, "");
+      if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
+        ChronoscopeOptions.setVerticalCrosshairEnabled(true);
+        if (crosshairProperties.dateFormat != null) {
+          ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
+        }
+      }
+
+      crosshairLabelsProperties = view.getGssPropertiesBySelector("crosshair labels");
+      if (null == crosshairLabelsProperties) {
+        crosshairLabelsProperties = view.getGssProperties(new GssElementImpl("labels", crosshairElement),"");
+      }
+
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {

@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -289,6 +290,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   private void drawAxisLabels(Layer layer, Bounds bounds) {
     layer.setFillColor(labelProperties.bgColor);
     layer.setStrokeColor(labelProperties.color);
+    layer.setTransparency((float)gssProperties.transparency);
 
     final double textRowY = bounds.bottomY() - creditsLabel.getBounds().height;
     final double halfLabelWidth = domainAxisLabel.getBounds().width / 2;
@@ -303,7 +305,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         >= creditsLabel.getBounds().x;
     if (ChronoscopeOptions.isShowCreditsEnabled() && !collision) {
       layer.save();
-      layer.setTransparency(0.2f);
+      layer.setFillColor(Color.LIGHTGREY);
       creditsLabel.draw(layer);
       layer.restore();
     }

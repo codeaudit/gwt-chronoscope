@@ -25,7 +25,7 @@ abstract class AuxiliaryPanel implements Panel {
   protected abstract void initHook();
   
   protected abstract void setEnabledHook(boolean enabled);
-  
+
   /**
    * Calling this method will cause the next invocation of {@link #draw()}
    * to force a fresh rendering onto the layer in cases where subclasses

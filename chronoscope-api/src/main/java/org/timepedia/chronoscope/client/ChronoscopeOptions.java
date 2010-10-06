@@ -27,7 +27,9 @@ public class ChronoscopeOptions {
 
   private static boolean horizontalCrosshair = false;
 
-  private static String crossHairLabels = null;
+  private static String crosshairDateTimeFormat = null;
+
+  private static String crosshairNumberFormat = null;
 
   private static boolean defaultMultiaxisMode = true;
   
@@ -128,15 +130,15 @@ public class ChronoscopeOptions {
   }
 
   public static boolean isCrosshairLabels() {
-    return crossHairLabels != null;
+    return crosshairDateTimeFormat != null;
   }
 
-  public static String getCrossHairLabels() {
-    return crossHairLabels;
+  public static String getCrosshairDateTimeFormat() {
+    return crosshairDateTimeFormat;
   }
 
-  public static void setCrosshairLabels(String fmt) {
-    ChronoscopeOptions.crossHairLabels = fmt;
+  public static void setCrosshairDateTimeFormat(String fmt) {
+    ChronoscopeOptions.crosshairDateTimeFormat = fmt;
   }
 
   public static void setDefaultMultiaxisMode(boolean mode) {

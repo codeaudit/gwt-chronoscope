@@ -15,7 +15,6 @@ public class GssElementImpl implements GssElement {
 
   public GssElementImpl(String type, GssElement parent) {
     this.type = type;
-
     this.parent = parent;
   }
 

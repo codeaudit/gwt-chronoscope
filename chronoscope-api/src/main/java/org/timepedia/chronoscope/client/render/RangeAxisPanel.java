@@ -56,16 +56,16 @@ public class RangeAxisPanel extends AxisPanel {
 
     double tickPositions[] = rangeAxis.calcTickPositions();
     layer.save();
-      
+
     if (!GRID_ONLY) {
       clearAxis(layer, drawBounds);
       drawLine(layer, drawBounds);
+      drawAxisLabel(layer, drawBounds, plot.getChart());
     }
 
-
-    layer.setTransparency(1.0f);
-    layer.setFillColor(Color.WHITE);
-    layer.setStrokeColor(Color.GREEN);
+    layer.setTransparency((float)gssProperties.transparency);
+    layer.setFillColor(gssProperties.bgColor);
+    layer.setStrokeColor(gssProperties.color);
 
     final double axisInterval = valueAxis.getExtrema().length();
     final double tickPosition0 = tickPositions[0];
@@ -74,9 +74,6 @@ public class RangeAxisPanel extends AxisPanel {
           GRID_ONLY);
     }
 
-    if (!GRID_ONLY) {
-      drawAxisLabel(layer, drawBounds, plot.getChart());
-    }
 
     layer.restore();
   }
@@ -210,7 +207,8 @@ public class RangeAxisPanel extends AxisPanel {
 
     // layer.setTransparency(1);
     layer.setStrokeColor(getTickProps(labelProperties).color);
-    layer.setFillColor(labelProperties.bgColor);      
+    layer.setFillColor(labelProperties.bgColor);
+
     // layer.fillRect(bounds.rightX()+dir, y + alignAdjust,
     //               bounds.rightX()+dir+labelWidth, y+alignAdjust+labelHeight);
 
@@ -218,7 +216,7 @@ public class RangeAxisPanel extends AxisPanel {
     if (MathUtil.isBounded(y, bounds.y, bounds.bottomY())) {
       layer.drawText(bounds.rightX() + dir, y + alignAdjust, label,
           gssProperties.fontFamily, gssProperties.fontWeight,
-          gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
+          gssProperties.fontSize, textLayerName, Cursor.CONTRASTED);
     }
     layer.restore();
   }

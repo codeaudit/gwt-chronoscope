@@ -514,12 +514,22 @@ public class GssPropertyManager {
 
   public static final GssPropertyType GSS_VALUE_VISIBILITY_PROPERTY
       = new GssPropertyType("value-visibility", "", GssPropertyType.TypeUnits.STRING,
-      "CSS value-visibility property controls whether value lables are drawn or not") {
+      "CSS value-visibility property controls whether (numeric) value labels are drawn or not") {
     @Override
     public void setPropertyString(GssProperties props, String pval) {
       props.valueVisible = !"hidden".equals(pval);
     }
   };
+
+  public static final GssPropertyType GSS_LABEL_VISIBILITY_PROPERTY
+      = new GssPropertyType("label-visibility", "", GssPropertyType.TypeUnits.STRING,
+      "CSS label-visibility property controls whether (text) labels are drawn or not") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.labelVisible = !"hidden".equals(pval);
+    }
+  };
+
 
   public static final GssElementType GSS_GRID_TYPE = new GssElementType("grid",
       new GssElementType[0],
@@ -558,17 +568,22 @@ public class GssPropertyManager {
       new GssElementType[0],
       new GssPropertyType[]{GSS_BGCOLOR_PROPERTY, GSS_OPACITY_PROPERTY,
         GSS_VISIBILITY_PROPERTY, GSS_COLOR_PROPERTY, GSS_FONT_FAMILY_PROPERTY, GSS_FONT_WEIGHT_PROPERTY, GSS_FONT_SIZE_PROPERTY},
-      "A label controls chart elements which have associated text like markers, tick labels, legend labels, etc.",
+      "A label controls chart elements which have associated text like markers, tick label, etc.",
       "label { color: blue; font-size: 12pt } /* Make all labels blue and 12pt */")
       ;
 
+  // TODO - consider folding this into 'label' rather than crosshair and axislegend 'labels' being plural and different
+  // TODO - consider moving label concerns into point:hover, but hover would really then be crosshair intersect or hover
+  //   "inspect" or "highlight" or "pick" vs hover?  Is "focus" understood to mean "select" rather than "inspect"?
   public static final GssElementType GSS_LABELS_TYPE = new GssElementType(
       "labels", new String[0],
       new GssElementType[0],
-      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY,GSS_FONT_SIZE_PROPERTY, GSS_COLUMN_WIDTH_PROPERTY, GSS_COLUMN_COUNT_PROPERTY, GSS_ICON_WIDTH_PROPERTY, GSS_ICON_HEIGHT_PROPERTY, GSS_VALUE_VISIBILITY_PROPERTY},
-      "Controls visible of legend labelsc.",
-      "axislegend labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px; value-visibility:hidden }")
+      new GssPropertyType[]{GSS_VISIBILITY_PROPERTY, GSS_FONT_SIZE_PROPERTY, GSS_COLUMN_WIDTH_PROPERTY, GSS_COLUMN_COUNT_PROPERTY, GSS_ICON_WIDTH_PROPERTY, GSS_ICON_HEIGHT_PROPERTY, GSS_VALUE_VISIBILITY_PROPERTY, GSS_LABEL_VISIBILITY_PROPERTY},
+      "Controls legend, crosshair labels.",
+      "axislegend labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px; value-visibility:hidden; label-visibility:visible;}" +
+      "crosshair labels { visibility: hidden; font-size:9pt; column-width: 45px; column-count: 6; icon-width: 10px; icon-height: 10px; value-visibility:visible; label-visibility:hidden;}")
       ;
+
   
    public static final GssElementType GSS_MARKER_TYPE = new GssElementType(
         "marker", new String[0],
