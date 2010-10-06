@@ -7,10 +7,6 @@ import org.timepedia.chronoscope.client.util.DateFormatter;
 
 import java.util.Date;
 
-/**
- * Created by IntelliJ IDEA. User: ray Date: Oct 24, 2008 Time: 12:41:00 AM To
-* change this template use File | Settings | File Templates.
-*/
 public class GWTDateFormatter implements DateFormatter {
 
   private DateTimeFormat fmt;
@@ -21,7 +17,6 @@ public class GWTDateFormatter implements DateFormatter {
 
   public String format(double timestamp) {
     return fmt.format(new Date((long) timestamp));
-
   }
 
   public String format(double timestamp, TimeZone timeZone) {

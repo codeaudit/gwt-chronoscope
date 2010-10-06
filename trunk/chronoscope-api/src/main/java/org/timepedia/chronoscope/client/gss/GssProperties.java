@@ -80,7 +80,9 @@ public class GssProperties implements Exportable {
   public String iconHeight = "auto";
 
   public boolean valueVisible = false;
-  
+
+  public boolean labelVisible = true;
+
   public GssProperties setColor(Color color) {
     this.color = color;
     return this;

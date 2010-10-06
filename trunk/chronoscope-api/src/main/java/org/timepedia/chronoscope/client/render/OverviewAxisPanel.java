@@ -44,7 +44,7 @@ public class OverviewAxisPanel extends AxisPanel {
             0, 0, overviewLayer.getWidth(), bounds.height,
             bounds.x, bounds.y, bounds.width, bounds.height);
 
-    highlightBounds = calcHighlightBounds(plot, bounds);
+    if (visible) { highlightBounds = calcHighlightBounds(plot, bounds); }
 
     if (highlightBounds != null) {
       layer.save();

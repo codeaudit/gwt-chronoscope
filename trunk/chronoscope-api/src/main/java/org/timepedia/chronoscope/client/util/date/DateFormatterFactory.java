@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.util.DateFormatter;
 /**
 */
 public abstract class DateFormatterFactory {
+  static DateFormatter memo = null; // TODO > 1
 
   static DateFormatterFactory dateFormatterFactory;
 
