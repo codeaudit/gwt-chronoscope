@@ -60,8 +60,8 @@ public class RangeAxisPanel extends AxisPanel {
     if (!GRID_ONLY) {
       clearAxis(layer, drawBounds);
       drawLine(layer, drawBounds);
-      drawAxisLabel(layer, drawBounds, plot.getChart());
     }
+    drawAxisLabel(layer, drawBounds, plot.getChart());
 
     layer.setTransparency((float)gssProperties.transparency);
     layer.setFillColor(gssProperties.bgColor);

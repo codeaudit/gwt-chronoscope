@@ -99,10 +99,6 @@ public abstract class DomTextLayer extends AbstractLayer {
     if (cursorStyle == Cursor.CONTRASTED) {
         DOM.setStyleAttribute(textDiv, "textShadow", "-1px 0 white, 0 1px white, 1px 0 white, 0 -1px white");
         double fontSizeValue = Double.valueOf(fontSize.substring(0, fontSize.length() - 2));
-        //y Move up 0.7*fontSizeValue to label the middle
-        y -= 0.7 * fontSizeValue;
-        // String backgroundOpacity="0.8";
-        // addSemiTransparentBackground(x, y, label, fontFamily, fontWeight, fontSize, backgroundOpacity, layer, layerElem);
     }
 
     DOM.setStyleAttribute(textDiv, "left", (x - layer.bounds.x) + "px");
