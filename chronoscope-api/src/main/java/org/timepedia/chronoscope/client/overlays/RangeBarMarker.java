@@ -108,15 +108,15 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     if (labelHeight + 4 < Math.abs(y1 - y2)) {
       backingCanvas.drawText(textStartX, y1 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
-          layer, Cursor.DEFAULT);
+          layer, Cursor.CONTRASTED);
     } else if (y1 - labelHeight - 4 < plot.getInnerBounds().y) {
       backingCanvas.drawText(textStartX, y2 + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
-          layer, Cursor.DEFAULT);
+          layer, Cursor.CONTRASTED);
     } else {
       backingCanvas.drawText(textStartX, y1 - labelHeight - 2, label,
           markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
-          markerLabelProperties.fontSize, layer, Cursor.DEFAULT);
+          markerLabelProperties.fontSize, layer, Cursor.CONTRASTED);
     }
     backingCanvas.restore();
   }
