@@ -395,7 +395,8 @@ public class GssPropertyManager {
    public static final GssPropertyType GSS_DISPLAY_PROPERTY
       = new GssPropertyType("display", "",
       GssPropertyType.TypeUnits.STRING,
-      "override display type for series, e.g. line, bar, step") {
+      "set display type for series, e.g. 'line', 'bar', 'step';  " +
+      "set display type for axis, e.g. 'rounded' for rounded range axis label bounds, 'framed' for range min, max axis label bounds. ") {
     @Override
     public void setPropertyString(GssProperties props,
        String str) {
