@@ -15,17 +15,16 @@ public abstract class GwtView extends View {
 
   public GwtView() {
     if (GWT.isClient()) {
-      DateFormatterFactory
-          .setDateFormatterFactory(new DateFormatterFactory() {
+      DateFormatterFactory.setDateFormatterFactory(new DateFormatterFactory() {
             private HashMap<String,DateFormatter> memo = new HashMap<String,DateFormatter>();
             public DateFormatter getDateFormatter(String format) {
-              if (null == format) { return new GWTDateFormatter(null); }
-              else {
-                if (!memo.containsKey(format)) {
-                  memo.put(format, new GWTDateFormatter(format));
-                }
-                return memo.get(format);
+              if (null == format || "undefined".equals(format) || "null".equals(format) || "".equals(format)) {
+                format = "";
               }
+              if (!memo.containsKey(format)) {
+                memo.put(format, new GWTDateFormatter(format));
+                }
+              return memo.get(format);
             }
           });
       HistoryManager.setHistoryManagerImpl(new HistoryManager.HistoryManagerImpl() {
