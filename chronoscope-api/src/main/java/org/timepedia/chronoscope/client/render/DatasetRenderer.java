@@ -17,6 +17,9 @@ import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Exportable;
 
+import static org.timepedia.chronoscope.client.render.DatasetLegendPanel.LEGEND_ICON_PAD;
+import static org.timepedia.chronoscope.client.render.DatasetLegendPanel.LEGEND_ICON_SIZE;
+
 /**
  * Responsible for visually rendering a {@link Dataset} onto a {@link Layer}.
  */
@@ -28,8 +31,6 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   private boolean customInstalled = false;
 
   private DateFormatter guideLineDateFmt;
-
-  public int DEFAULT_ICON_SIZE = 7;  // 7x7px
 
   public boolean isCustomInstalled() {
     return customInstalled;
@@ -132,7 +133,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
       // layer.setLineWidth(alineProp.lineThickness);
       String height = gssLegendProps.iconHeight;
       if(height.equals("auto")){
-          layer.setLineWidth(DEFAULT_ICON_SIZE);
+          layer.setLineWidth(LEGEND_ICON_SIZE);
       }else{
          layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
       }
@@ -146,7 +147,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
       String width = gssLegendProps.iconWidth;
       if(width.equals("auto")){
-          layer.lineTo(x + DEFAULT_ICON_SIZE, y);
+          layer.lineTo(x + LEGEND_ICON_SIZE, y);
       }else{
           double widthValue=Double.valueOf(width.substring(0, width.length()-2));
           layer.lineTo(x + widthValue, y);

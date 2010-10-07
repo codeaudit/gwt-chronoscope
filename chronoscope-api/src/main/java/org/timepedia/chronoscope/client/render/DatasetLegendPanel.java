@@ -24,9 +24,9 @@ import org.timepedia.chronoscope.client.gss.GssProperties;
 public class DatasetLegendPanel extends AbstractPanel
   implements GssElement, Exportable {
 
-  // Dictates the X-padding between a given legend icon and its
-  //associated dataset name
-  private static final double LEGEND_ICON_PAD = 3;
+  // Dictates the X-padding between a legend icon and dataset label
+  public static final double LEGEND_ICON_PAD = 2;
+  public static final double LEGEND_ICON_SIZE = 6;
 
   // Dictates the X-padding between each dataset legend item
   static final int DATASET_LEGEND_PAD = 8;
