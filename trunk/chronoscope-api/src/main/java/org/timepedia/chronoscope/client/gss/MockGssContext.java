@@ -129,7 +129,7 @@ public class MockGssContext extends GssContext {
 
   private void configDomainMarkerProps(GssProperties p) {
     p.bgColor = new Color("#10f410");
-    p.color = Color.LIGHTGREY;
+    p.color = Color.GRAY;
     p.transparency = 0.1f;
     p.lineThickness = 2;
     p.visible = true;
@@ -180,14 +180,16 @@ public class MockGssContext extends GssContext {
 
     p.visible = (isHover || isFocus);
 
-    p.size = isFocus ? 2 : 3;
+    // p.size = isFocus ? 2 : 2;
+    p.size = 2;
 
-    p.lineThickness = isFocus ? 2 : 1;
+    // p.lineThickness = isFocus ? 2 : 1;
+    p.lineThickness = 2;
 
     p.color = datasetColorMap.get(elt);
     p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
 
-    p.transparency = isFocus ? 0.75 : 0.5;
+    p.transparency = isFocus ? 0.75 : 0.25;
     p.transparency = isDisabled ? 0.0 : p.transparency;
 
     // Determines the color of the point's outer ring
@@ -221,11 +223,12 @@ public class MockGssContext extends GssContext {
     p.tickPosition = "inside";
     p.bgColor = Color.TRANSPARENT;
     p.fontSize = "9pt";
+    p.display = "framed"; // use actual min, max to denote range axis frame
   }
 
   private void configRangeMarkerProps(GssProperties p) {
     p.bgColor = new Color("powderblue");
-    p.color = Color.LIGHTGREY;
+    p.color = Color.GRAY;
     p.transparency = 0.1f;
     p.lineThickness = 5;
     p.visible = true;
