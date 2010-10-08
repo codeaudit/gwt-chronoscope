@@ -387,8 +387,8 @@ public class Chronoscope
   }
 
   @Export
-  public static void setCrosshairLabelsFormat(String enabled) {
-    ChronoscopeOptions.setCrosshairDateTimeFormat(enabled);
+  public static void setCrosshairLabelsFormat(String format) {
+    ChronoscopeOptions.setCrosshairDateTimeFormat(format);
   }
 
 
