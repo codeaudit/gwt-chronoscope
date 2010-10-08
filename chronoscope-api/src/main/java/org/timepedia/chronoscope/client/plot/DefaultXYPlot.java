@@ -1283,7 +1283,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         int hy = hoverY;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
 
-        if (null != ChronoscopeOptions.getCrosshairDateTimeFormat()) {
+        if (ChronoscopeOptions.isCrosshairDateTimeFormat()) {
           crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(ChronoscopeOptions.getCrosshairDateTimeFormat());
           hoverLayer.setStrokeColor(crosshairProperties.color);
           String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
@@ -1822,12 +1822,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     initViewIndependent(datasets);
 
+    initCrosshairs();
+
     if (stringSizer == null) {
       stringSizer = new StringSizer();
     }
     stringSizer.setCanvas(view.getCanvas());
-
-    initCrosshairs();
 
     if (!plotRenderer.isInitialized()) {
       plotRenderer.init();
@@ -1875,7 +1875,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     background = new GssBackground(view);
     view.canvasSetupDone();
-    crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter("yy/MMM/dd HH:mm");
   }
 
   private void initCrosshairs() {
@@ -1885,6 +1884,8 @@ public class DefaultXYPlot<T extends Tuple2D>
         ChronoscopeOptions.setVerticalCrosshairEnabled(true);
         if (crosshairProperties.dateFormat != null) {
           ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
+        } else {
+          ChronoscopeOptions.setCrosshairDateTimeFormat("yy/MMM/dd HH:mm");
         }
       }
 
@@ -1892,7 +1893,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       if (null == crosshairLabelsProperties) {
         crosshairLabelsProperties = view.getGssProperties(new GssElementImpl("labels", crosshairElement),"");
       }
-
   }
 
   private void initAuxiliaryPanel(AuxiliaryPanel panel, View view) {

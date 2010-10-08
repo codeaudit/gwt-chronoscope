@@ -129,7 +129,7 @@ public class ChronoscopeOptions {
     ChronoscopeOptions.verticalCrosshair = verticalCrosshair;
   }
 
-  public static boolean isCrosshairLabels() {
+  public static boolean isCrosshairDateTimeFormat() {
     return crosshairDateTimeFormat != null;
   }
 
