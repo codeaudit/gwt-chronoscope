@@ -79,7 +79,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 public class DefaultXYPlot<T extends Tuple2D>
     implements XYPlot<T>, Exportable, DatasetListener<T>, ZoomListener {
 
-  protected static double MIN_WIDTH_FACTOR = 2.0;
+  protected static double MIN_WIDTH_FACTOR = 1.5;
   protected static double MAX_WIDTH_FACTOR = 1.1;
 
   private boolean legendOverridden;
@@ -618,8 +618,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void nextZoom() {
     pushHistory();
     double nDomain = fixDomainWidth(visDomain.length() / ZOOM_FACTOR);
-    animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
-        PlotMovedEvent.MoveType.ZOOMED);
+    animateTo(visDomain.midpoint() - nDomain / 2, nDomain, PlotMovedEvent.MoveType.ZOOMED);
   }
   
   public void onDatasetsReplaced(Datasets<T> datasets){
@@ -2147,6 +2146,9 @@ public class DefaultXYPlot<T extends Tuple2D>
     double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
     return getRangeAxis(datasetIndex).userToData(userY);
   }
+
+    // TODO - these can probably all be eliminated
+
     @Export
     @Override
     public void showLegendLabels(boolean visible) {
