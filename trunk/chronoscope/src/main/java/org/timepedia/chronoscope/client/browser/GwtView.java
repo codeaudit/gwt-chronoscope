@@ -13,10 +13,20 @@ public abstract class GwtView extends View {
 
   public GwtView() {
     if (GWT.isClient()) {
-      DateFormatterFactory
-          .setDateFormatterFactory(new DateFormatterFactory() {
+      DateFormatterFactory.setDateFormatterFactory(new DateFormatterFactory() {
+            private DateFormatter blankFormatter = new GWTDateFormatter("");
+            private DateFormatter previousFormatter;
+            private String previous = ""; // look back at last one
+
             public DateFormatter getDateFormatter(String format) {
-              return new GWTDateFormatter(format);
+              if (null == format || "".equals(format) || "undefined".equals(format) || "null".equals(format)) {
+                return blankFormatter;
+              }
+              if (!previous.equals(format)) {
+                previous = format;
+                previousFormatter = new GWTDateFormatter(format);
+              }
+              return previousFormatter;
             }
           });
       HistoryManager.setHistoryManagerImpl(new HistoryManager.HistoryManagerImpl() {
