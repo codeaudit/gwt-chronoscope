@@ -1,6 +1,10 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -532,6 +536,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotLayer;
   }
 
+  /**
+   * Return the axis-y referenced by datasetIndex.
+   * It could cause an outOfBoundException if the index is greater
+   * to the number of axis-y in the plot.
+   */
   @Export("getAxis")
   public RangeAxis getRangeAxis(int datasetIndex) {
     return rangePanel.getRangeAxes()[datasetIndex];

@@ -68,12 +68,10 @@ public class RangeAxisPanel extends AxisPanel {
     layer.setStrokeColor(gssProperties.color);
 
     final double axisInterval = valueAxis.getExtrema().length();
-    final double tickPosition0 = tickPositions[0];
     for (int i = 0; i < tickPositions.length; i++) {
-      drawTick(layer, tickPositions[i], tickPosition0, axisInterval, drawBounds,
+      drawTick(layer, tickPositions[i], tickPositions[0], axisInterval, drawBounds,
           GRID_ONLY);
     }
-
 
     layer.restore();
   }
