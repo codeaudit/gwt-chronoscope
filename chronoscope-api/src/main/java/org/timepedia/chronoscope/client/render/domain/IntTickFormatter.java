@@ -9,7 +9,7 @@ import org.timepedia.chronoscope.client.util.Interval;
  * 
  * @author chad takahashi
  */
-public class IntTickFormatter extends TickFormatter {
+public class IntTickFormatter extends TickFormatter<Long> {
   private double tickValue;
   private double tickInterval;
   
@@ -21,8 +21,13 @@ public class IntTickFormatter extends TickFormatter {
   }
 
   @Override
-  public String formatTick() {
-    return Long.toString((long)tickValue);
+  public String format() {
+    return format((long)tickValue);
+  }
+  
+  @Override
+  public String format(Long tick) {
+    return tick.toString();
   }
 
   @Override
@@ -75,7 +80,13 @@ public class IntTickFormatter extends TickFormatter {
   }
 
   @Override
-  public String getIntervalLabel(Interval interval) {
+  public String getRangeLabel(Interval interval) {
     return interval.getStart() + " - " + interval.getEnd();
   }
+  
+  @Override
+  public String getRangeLabelCompact(Interval interval) {
+    return getRangeLabel(interval);
+  }
+
 }

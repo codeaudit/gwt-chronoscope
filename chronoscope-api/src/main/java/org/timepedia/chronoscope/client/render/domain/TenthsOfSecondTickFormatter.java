@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 public class TenthsOfSecondTickFormatter extends DateTickFormatter {
 
@@ -12,8 +13,8 @@ public class TenthsOfSecondTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.TENTH_SEC;
   }
 
-  public String formatTick() {
-    return dateFormat.tenthOfSecond(currTick);
+  public String format(ChronoDate tick) {
+    return dateFormat.tenthOfSecond(tick);
   }
 
   @Override

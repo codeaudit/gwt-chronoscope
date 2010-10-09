@@ -10,19 +10,19 @@ import org.timepedia.exporter.client.ExportPackage;
  * @author chad takahashi
  */
 @ExportPackage("chronoscope")
-public abstract class TickFormatterFactory implements Exportable {
+public abstract class TickFormatterFactory<T> implements Exportable {
 
   private double affinityFactor;
-  private TickFormatter rootFormatter;
+  private TickFormatter<T> rootFormatter;
   private double cachedDomainWidth = Double.NEGATIVE_INFINITY;
-  private TickFormatter cachedFormatter = null;
+  private TickFormatter<T> cachedFormatter = null;
   
   public TickFormatterFactory() {
     this.affinityFactor = getAffinityFactor();
     this.rootFormatter = createRootTickFormatter();    
   }
   
-  protected abstract TickFormatter createRootTickFormatter();
+  protected abstract TickFormatter<T> createRootTickFormatter();
   
   /**
    * A value in the range (0.0, 1.0], which determines how readily the
@@ -38,12 +38,12 @@ public abstract class TickFormatterFactory implements Exportable {
    * Finds the smallest-scale {@link TickFormatter} that engulfs the 
    * specified domain interval.
    */
-  public final TickFormatter findBestFormatter(double domainWidth) {
+  public final TickFormatter<T> findBestFormatter(double domainWidth) {
     if (domainWidth == cachedDomainWidth) {
       return cachedFormatter;
     }
 
-    TickFormatter tlf = rootFormatter;
+    TickFormatter<T> tlf = rootFormatter;
 
     while (!tlf.isLeafFormatter()) {
       if (tlf.inInterval(domainWidth * affinityFactor)) {
@@ -57,15 +57,15 @@ public abstract class TickFormatterFactory implements Exportable {
     return tlf;
   }
   
-  public final TickFormatter getLeafFormatter() {
-    TickFormatter formatter = rootFormatter;
+  public final TickFormatter<T> getLeafFormatter() {
+    TickFormatter<T> formatter = rootFormatter;
     while (!formatter.isLeafFormatter()) {
       formatter = formatter.subFormatter;
     }
     return formatter;
   }
 
-  public final TickFormatter getRootFormatter() {
+  public final TickFormatter<T> getRootFormatter() {
     return rootFormatter;
   }
 

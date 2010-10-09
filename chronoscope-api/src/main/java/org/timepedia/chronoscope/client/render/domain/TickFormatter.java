@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.util.Interval;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @author Chad Takahashi &lt;chad@timepedia.org&gt;
  */
-public abstract class TickFormatter {
+public abstract class TickFormatter<T> {
 
   /**
    * Stores the possible "tick steps" that are relevant for a given formatter.
@@ -26,12 +26,12 @@ public abstract class TickFormatter {
    * A pointer to the next formatter to use when the domain interval to format
    * is too small for this formatter to handle.
    */
-  protected TickFormatter subFormatter;
+  protected TickFormatter<T> subFormatter;
 
   /**
    * A pointer to this formatter's parent.
    */
-  protected TickFormatter superFormatter;
+  protected TickFormatter<T> superFormatter;
 
   private final String longestPossibleLabel;
 
@@ -103,7 +103,19 @@ public abstract class TickFormatter {
    * Formats the current tick as a String to be displayed on the domain axis
    * panel.
    */
-  public abstract String formatTick();
+  public String formatTick() {
+    return format();
+  }
+  
+  /**
+   * Formats the parameter timestamp as a String.
+   */
+  public abstract String format(T tick);
+  
+  /**
+   * Formats the current tick as a String.
+   */
+  public abstract String format();
 
   /**
    * Returns the domain value of the current tick.
@@ -200,11 +212,11 @@ public abstract class TickFormatter {
    */
   public abstract void resetToQuantizedTick(double domainX, int tickStep);
 
-  public TickFormatter getSubFormatter() {
+  public TickFormatter<T> getSubFormatter() {
     return subFormatter;
   }
 
-  public TickFormatter getSuperFormatter() {
+  public TickFormatter<T> getSuperFormatter() {
     return superFormatter;
   }
   
@@ -212,5 +224,7 @@ public abstract class TickFormatter {
     return false;
   }
   
-  public abstract String getIntervalLabel(Interval interval);
+  public abstract String getRangeLabel(Interval interval);
+  
+  public abstract String getRangeLabelCompact(Interval interval);
 }

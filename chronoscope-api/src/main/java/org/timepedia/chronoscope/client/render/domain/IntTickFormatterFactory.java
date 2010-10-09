@@ -10,7 +10,7 @@ import org.timepedia.exporter.client.Export;
  * @author chad takahashi
  */
 @ExportPackage("chronoscope")
-public final class IntTickFormatterFactory extends TickFormatterFactory
+public final class IntTickFormatterFactory extends TickFormatterFactory<Long>
     implements Exportable {
 
   @Export
@@ -22,7 +22,7 @@ public final class IntTickFormatterFactory extends TickFormatterFactory
       "00000000000", "000000000000"};
 
   @Override
-  protected TickFormatter createRootTickFormatter() {
+  protected TickFormatter<Long> createRootTickFormatter() {
     int[] domainLengths = {1, 10, 20, 50, 100, 200, 400, 500, 1000, 10000,
         100000, 1000000, 10000000, 100000000, 1000000000};
 

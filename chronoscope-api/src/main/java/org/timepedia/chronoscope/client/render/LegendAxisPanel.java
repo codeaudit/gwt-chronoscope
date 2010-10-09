@@ -50,9 +50,8 @@ public class LegendAxisPanel extends AxisPanel {
 
     // Position and size the panels
     zoomPanel.setPosition(bounds.x, bounds.y);
-    dateRangePanel.updateDomainInterval(plot.getDomain());
-    topRightJustify(dateRangePanel, bounds);
     layoutPanels(bounds);
+    topRightJustify(dateRangePanel, bounds);
     dsLegendPanel.setPosition(bounds.x, bounds.y + labelHeight + LEGEND_Y_TOP_PAD);
 
     // Draw the panels
@@ -127,7 +126,7 @@ public class LegendAxisPanel extends AxisPanel {
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.setStringSizer(stringSizer);
     dateRangePanel.parent = this;
-    dateRangePanel.init(rootLayer, domainExtrema, minInterval, plot.getDomainAxisPanel());
+    dateRangePanel.init(rootLayer, plot.getDomainAxisPanel());
   }
 
   public void setZoomListener(ZoomListener l) {
@@ -199,7 +198,7 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   /**
-   * Currently, this method naively lays out the ZoomPanel and DateRangePanel on
+   * Currently, this method natively lays out the ZoomPanel and DateRangePanel on
    * the X-axis. Ultimately, layout rules and heuristics will be split out into
    * a separate LayoutStrategy interface of some sort.
    */ // TODO show/hide from GSS

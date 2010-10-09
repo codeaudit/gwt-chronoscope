@@ -99,7 +99,7 @@ final public class RangePanel extends AuxiliaryPanel {
   }
 
   public RangeAxis[] getRangeAxes() {
-    return this.rangeAxes;
+    return rangeAxes == null ? new RangeAxis[]{}: rangeAxes;
   }
 
   public CompositeAxisPanel getRightSubPanel() {

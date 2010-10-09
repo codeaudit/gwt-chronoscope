@@ -15,16 +15,17 @@ public class SecondsTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.SEC;
   }
 
-  public String formatTick() {
-    ChronoDate d = currTick;
+  public String format() {
     DateFormatter hourFormat = DateFormatHelper.getHourFormatter();
     int hourOfDay = Integer.valueOf(hourFormat.format(currTick.getTime()));
-    if (hourOfDay == 0 && d.getMinute() == 0 && d.getSecond() == 0) {
-      return dateFormat.dayAndMonth(d);
+    if (hourOfDay == 0 && currTick.getMinute() == 0 && currTick.getSecond() == 0) {
+      return dateFormat.dayAndMonth(currTick);
     }
-    else {
-      return dateFormat.hourMinuteSecond(d);
-    }
+    return super.format();
+  }
+  
+  public String format(ChronoDate tick) {
+    return dateFormat.hourMinuteSecond(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {

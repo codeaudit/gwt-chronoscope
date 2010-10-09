@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.render.domain;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
-import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 
 public class DaysTickFormatter extends DateTickFormatter {
 
@@ -15,8 +14,8 @@ public class DaysTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.DAY;
   }
 
-  public String formatTick() {
-    return dateFormat.dayAndMonth(currTick);
+  public String format(ChronoDate tick) {
+    return dateFormat.dayAndMonth(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
