@@ -1,10 +1,14 @@
 package org.timepedia.chronoscope.client.render.domain;
 
+import java.util.Date;
+
+import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
+import org.timepedia.chronoscope.client.util.date.FastChronoDate;
 
 /**
  * Provides functionality for rendering the date/time ticks in a context-sensitive
@@ -13,9 +17,9 @@ import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  * @author Chad Takahashi &lt;chad@timepedia.org&gt;
  */
-public abstract class DateTickFormatter extends TickFormatter {
+public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
   
-  protected DateFormatHelper dateFormat = new DateFormatHelper();
+  protected static DateFormatHelper dateFormat = new DateFormatHelper();
   
   protected ChronoDate currTick = ChronoDate.getSystemDate();
   
@@ -92,15 +96,35 @@ public abstract class DateTickFormatter extends TickFormatter {
     currTick.setTime(timestamp);
   }
   
+  private static DateFormatter ymf = dateFormat.getDateFormatter("yyyy-MMM");
+  private static DateFormatter ymdf = dateFormat.getDateFormatter("yyyy-MMM-dd");
+  
   @Override
-  public String getIntervalLabel(Interval interval) {
-    String ret = "";
-    setTick(interval.getStart());
-    ret += formatTick();
-    ret += " - ";
-    setTick(interval.getEnd());
-    ret += formatTick();
-    return ret;
+  public String getRangeLabel(Interval interval) {
+    FastChronoDate i = new FastChronoDate(interval.getStart());
+    FastChronoDate e = new FastChronoDate(interval.getEnd());
+    long a = (long)interval.getStart() / 1000;
+    long b = (long)interval.getEnd() / 1000;
+    if (timeUnitTickInterval != TimeUnit.MONTH || timeUnitTickInterval == TimeUnit.MIN || timeUnitTickInterval == TimeUnit.MS) {
+//      if (dateFormat.day(i).equals(dateFormat.day(e)))
+//        return ymdf.format(i.getTime()) + ":       " + format(i) + " - " + format(e);
+//      else  
+        return ymf.format(i.getTime()) + ", " + dateFormat.day(i) + "/" + format(i) + " - " + dateFormat.day(e) + "/" + format(e); 
+    }
+    return getRangeLabelCompact(interval);
+  }
+  
+  @Override
+  public String getRangeLabelCompact(Interval interval) {
+    FastChronoDate i = new FastChronoDate(interval.getStart());
+    FastChronoDate e = new FastChronoDate(interval.getEnd());
+    return format(i) + " - " + format(e);
+  }
+  
+
+  @Override
+  public String format() {
+    return format(currTick);
   }
 
 }

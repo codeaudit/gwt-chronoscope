@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DayOfWeek;
 
 public class WeeksTickFormatter extends DateTickFormatter {
@@ -13,8 +14,8 @@ public class WeeksTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.WEEK;
   }
 
-  public String formatTick() {
-    return dateFormat.yearAndWeek(currTick);
+  public String format(ChronoDate tick) {
+    return dateFormat.yearAndWeek(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {

@@ -1,8 +1,9 @@
 package org.timepedia.chronoscope.client.render.domain;
 
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.exporter.client.Export;
+import org.timepedia.exporter.client.ExportPackage;
+import org.timepedia.exporter.client.Exportable;
 
 /**
  * Factory for obtaining {@link DateTickFormatter} objects that provide 
@@ -11,7 +12,7 @@ import org.timepedia.exporter.client.Export;
  * @author chad takahashi
  */
 @ExportPackage("chronoscope")
-public final class DateTickFormatterFactory extends TickFormatterFactory implements
+public final class DateTickFormatterFactory extends TickFormatterFactory<ChronoDate> implements
     Exportable {
 
   @Export
@@ -19,7 +20,7 @@ public final class DateTickFormatterFactory extends TickFormatterFactory impleme
   }
 
   @Override
-  protected TickFormatter createRootTickFormatter() {
+  protected TickFormatter<ChronoDate> createRootTickFormatter() {
     return new MilleniumTickFormatter();
   }
   

@@ -124,7 +124,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         // Quantized tick date may have gone off the left edge; need to guard
         // against this case.
         if (tickScreenPos >= bounds.x) {
-          String tickLabel = tickFormatter.formatTick();
+          String tickLabel = tickFormatter.format();
           boolean bold = tickFormatter.isBoundary(idealTickStep);
           drawTick(layer, plot, bounds, tickScreenPos, TICK_HEIGHT, bold);
           drawTickLabel(layer, bounds, tickScreenPos, tickLabel, bold, labelWidth);

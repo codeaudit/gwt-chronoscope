@@ -33,9 +33,10 @@ public final class DateFormatHelper {
     return DateFormatterFactory.getInstance().getDateFormatter(format);
   }
 
-  private static final DateFormatter hourFormatter = getDateFormatter("H");
-  private static final DateFormatter hourMinuteFormatter = getDateFormatter("H:mm");
-  private static final DateFormatter hourMinuteSecFormatter = getDateFormatter("H:mm:ss");
+  private static final DateFormatter dayFormatter = getDateFormatter("dd");
+  private static final DateFormatter hourFormatter = getDateFormatter("HH");
+  private static final DateFormatter hourMinuteFormatter = getDateFormatter("HH:mm");
+  private static final DateFormatter hourMinuteSecFormatter = getDateFormatter("HH:mm:ss");
   
 
   /**
@@ -79,7 +80,11 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String dayAndMonth(ChronoDate d) {
-    return pad(d.getDay()) + "-" + formatMonth(d);
+    return day(d) + "-" + formatMonth(d);
+  }
+
+  public String dayMonthAndYear(ChronoDate d) {
+    return d.getYear() + "-" + pad(d.getDay()) + "-" + formatMonth(d);
   }
 
   /**
@@ -89,7 +94,11 @@ public final class DateFormatHelper {
    */
   public String hour(int hourOfDay) {
     return HOURS_OF_DAY[hourOfDay];
-    // return pad(hourOfDay) + ":00";
+  }
+  
+  public String day(ChronoDate d) {
+   // FIXME: return pad(d.getDay()) does not work with tz (check this domain 1281715500 1281792900);
+    return dayFormatter.format(d.getTime());
   }
   
   /**

@@ -1,6 +1,7 @@
 package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 /**
  *
@@ -15,8 +16,8 @@ public class MilleniumTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.MILLENIUM;
   }
 
-  public String formatTick() {
-    int year = currTick.getYear();
+  public String format(ChronoDate tick) {
+    int year = tick.getYear();
     return String.valueOf(year) + (year < -9999 ? "y"
         : (year < 0 ? " BCE" : ""));
   }

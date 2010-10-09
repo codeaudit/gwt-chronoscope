@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
@@ -20,11 +21,16 @@ public class HoursTickFormatter extends DateTickFormatter {
   }
   
   @Override
-  public String formatTick() {
+  public String format() {
     if (0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()))) {
         return dateFormat.dayAndMonth(currTick);
     }
-    return dateFormat.hourAndMinute(currTick);
+    return format(currTick);
+  }
+
+  @Override
+  public String format(ChronoDate tick) {
+    return dateFormat.hourAndMinute(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
@@ -53,6 +59,5 @@ public class HoursTickFormatter extends DateTickFormatter {
     currTick.setTime(d.getTime());
     currTick.truncate(this.timeUnitTickInterval);
   }
-
 
 }

@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render.domain;
 import java.util.Date;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
+import org.timepedia.chronoscope.client.util.date.ChronoDate;
 
 public class MonthsTickFormatter extends DateTickFormatter {
 
@@ -14,8 +15,8 @@ public class MonthsTickFormatter extends DateTickFormatter {
     this.timeUnitTickInterval = TimeUnit.MONTH;
   }
 
-  public String formatTick() {
-    return dateFormat.monthAndYear(currTick);
+  public String format(ChronoDate tick) {
+    return dateFormat.monthAndYear(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
