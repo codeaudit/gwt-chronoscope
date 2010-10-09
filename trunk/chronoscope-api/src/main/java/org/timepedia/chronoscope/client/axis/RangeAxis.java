@@ -206,7 +206,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   public RangeAxis(String rangeLabel, String axisId) {
     super(rangeLabel, axisId);
-
     tickLabelNumberFormatter = defaultTickLabelNumberFormatter
         = new DefaultTickLabelNumberFormatter();
   }
@@ -265,6 +264,10 @@ public class RangeAxis extends ValueAxis implements Exportable {
     ticks = computeLinearTickPositions(rangeMin, rangeMax,
             rangeAxisHeight, labelLineHeight,
             rangeOveriddenLow, rangeOveriddenHigh);
+    
+    if (ticks.length == 0) {
+      return ticks;
+    }
 
     if (rangeOveriddenLow) {
       adjustedRangeMin = rangeMin;
@@ -422,12 +425,24 @@ public class RangeAxis extends ValueAxis implements Exportable {
     allowScientificNotation = enable;
   }
 
+  /**
+   * Setting to <tt>true</tt> will cause the range-Y to be between min and max
+   * values of the visible domain, making this range calculate each time the zoom
+   * or the domain is changed, otherwise the range-Y is fixed to the min and max
+   * values of all the domain.
+   * 
+   * @param autoZoom
+   */
   @Export
   public void setAutoZoomVisibleRange(boolean autoZoom) {
-    this.autoZoom = autoZoom;
-    plot.damageAxes();
-    adjustAbsRanges();
-    plot.reloadStyles();
+    if (this.autoZoom != autoZoom) {
+      this.autoZoom = autoZoom;
+      if (plot != null) {
+        plot.damageAxes();
+        adjustAbsRanges();
+        plot.reloadStyles();
+      }
+    }
   }
 
   public void setAxisIndex(int axisIndex) {
