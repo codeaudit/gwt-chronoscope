@@ -112,8 +112,10 @@ public class OverviewAxisMouseMoveHandler extends
    * records the initial X value position of the grab relative to the hilite region (used to reset to middle)
    */
   public static void hiliteRelativeGrabX(XYPlot xyPlot, int x) {
-    int hiliteX = (int) xyPlot.getOverviewAxisPanel().getHighlightBounds().x;
-    hiliteRelativeGrabX = x - hiliteX;
+    Bounds highlightBounds = xyPlot.getOverviewAxisPanel().getHighlightBounds();
+    if ( highlightBounds != null) {
+      hiliteRelativeGrabX = x - (int)highlightBounds.x;
+    }
   }
   
   private static void log(Object msg) {
