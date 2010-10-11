@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
+import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 public class MonthsTickFormatter extends DateTickFormatter {
 
@@ -16,7 +17,8 @@ public class MonthsTickFormatter extends DateTickFormatter {
   }
 
   public String format(ChronoDate tick) {
-    return dateFormat.monthAndYear(tick);
+    //return dateFormat.monthAndYear(tick);
+    return DateFormatHelper.yearMonthFormatter.format(tick.getTime());
   }
 
   public int getSubTickStep(int primaryTickStep) {

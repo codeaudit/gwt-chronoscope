@@ -5,7 +5,6 @@ import java.util.Date;
 import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
-import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 /**
  * @author chad takahashi
@@ -22,15 +21,15 @@ public class HoursTickFormatter extends DateTickFormatter {
   
   @Override
   public String format() {
-    if (0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()))) {
-        return dateFormat.dayAndMonth(currTick);
+    if (0 == Integer.valueOf(dateFormat.day(currTick))) {
+        return dateFormat.monthDay(currTick);
     }
     return format(currTick);
   }
 
   @Override
   public String format(ChronoDate tick) {
-    return dateFormat.hourAndMinute(tick);
+    return dateFormat.hourMinute(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
@@ -47,7 +46,7 @@ public class HoursTickFormatter extends DateTickFormatter {
   
   @Override
   public boolean isBoundary(int tickStep) {
-    return 0 == Integer.valueOf(DateFormatHelper.getHourFormatter().format(currTick.getTime()));
+    return 0 == Integer.valueOf(dateFormat.hour(currTick));
   }
  
   @SuppressWarnings("deprecation")

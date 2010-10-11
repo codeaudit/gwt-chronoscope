@@ -15,7 +15,7 @@ public class DaysTickFormatter extends DateTickFormatter {
   }
 
   public String format(ChronoDate tick) {
-    return dateFormat.dayAndMonth(tick);
+    return dateFormat.monthDay(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
