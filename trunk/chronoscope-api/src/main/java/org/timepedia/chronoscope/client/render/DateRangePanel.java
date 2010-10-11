@@ -6,8 +6,6 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
-import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 
@@ -44,7 +42,6 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
     initGssProperties(domainAxisPanel.view.getGssProperties(this, ""));
     labelProperties = domainAxisPanel.view.getGssProperties(new GssElementImpl(
         "label", getParentGssElement()), "");
-
     resizeToIdealWidth();
   }
 

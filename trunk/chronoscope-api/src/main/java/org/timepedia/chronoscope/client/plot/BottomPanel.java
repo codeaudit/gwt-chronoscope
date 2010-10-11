@@ -104,7 +104,7 @@ final class BottomPanel extends AuxiliaryPanel {
     if (domainAxisLayer == null) {
       initLayer();
     }
-
+    
     compositePanel.setPosition(0, 0);
     compositePanel.layout();
     
@@ -132,6 +132,8 @@ final class BottomPanel extends AuxiliaryPanel {
     ArgChecker.isNonNegative(width, "width");
     myBounds.width = width;
     compositePanel.setWidth(width);
+    domainAxisPanel.getBounds().width = width;
+    overviewAxisPanel.getBounds().width = width;
     layout();
   }
   
