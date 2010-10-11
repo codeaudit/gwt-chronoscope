@@ -307,7 +307,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
         >= creditsLabel.getBounds().x;
     if (ChronoscopeOptions.isShowCreditsEnabled() && !collision) {
       layer.save();
-      layer.setFillColor(Color.LIGHTGREY);
+      layer.setStrokeColor(Color.GRAY);
       creditsLabel.draw(layer);
       layer.restore();
     }
