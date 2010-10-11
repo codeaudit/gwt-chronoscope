@@ -152,7 +152,10 @@ public class OverviewAxisPanel extends AxisPanel {
       bounds.height = 1; // TEMP
     }
 
-    bounds.width = view.getWidth();
+    // default width for now
+    if (bounds.width <= 0) {
+      bounds.width = view.getWidth();
+    }
   }
   
   public void setOverviewLayer(Layer overviewLayer) {

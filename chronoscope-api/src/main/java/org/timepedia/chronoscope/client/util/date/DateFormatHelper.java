@@ -1,140 +1,97 @@
 package org.timepedia.chronoscope.client.util.date;
 
-import org.timepedia.chronoscope.client.util.MathUtil;
 import org.timepedia.chronoscope.client.util.DateFormatter;
-
-import java.util.Date;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 
 /**
  * Utilities for formatting a {@link ChronoDate} into different date
  * representations.
- *
- * @author chad takahashi
  */
 public final class DateFormatHelper {
 
-  static final String[] MONTH_LABELS = createMonthLabels();
-
-  // Used by pad(int) to efficiently convert ints in the range [0..59] to a
-  // zero-padded 2-digit string.
-  static final String[] TWO_DIGIT_NUMS = new String[]{"00", "01", "02", "03",
-      "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15",
-      "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
-      "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-      "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51",
-      "52", "53", "54", "55", "56", "57", "58", "59",};
-
-  private static final String[] HOURS_OF_DAY = createHoursOfDayLabels();
-
-  
-  
   public static DateFormatter getDateFormatter(String format) {
     return DateFormatterFactory.getInstance().getDateFormatter(format);
   }
 
-  private static final DateFormatter dayFormatter = getDateFormatter("dd");
-  private static final DateFormatter hourFormatter = getDateFormatter("HH");
-  private static final DateFormatter hourMinuteFormatter = getDateFormatter("HH:mm");
-  private static final DateFormatter hourMinuteSecFormatter = getDateFormatter("HH:mm:ss");
+  public static final DateFormatter hourMinuteSecFormatter = getDateFormatter("HH:mm:ss");
+  public static final DateFormatter hourMinuteFormatter = getDateFormatter("HH:mm");
+  public static final DateFormatter hourFormatter = getDateFormatter("HH");
+  public static final DateFormatter dayFormatter = getDateFormatter("dd");
+  public static final DateFormatter monthFormatter = getDateFormatter("MMM");
+  public static final DateFormatter monthDayFormatter = getDateFormatter("MMM-dd");
+  public static final DateFormatter yearMonthDayFormatter = getDateFormatter("yyyy-MMM-dd");
+  public static final DateFormatter yearMonthFormatter = getDateFormatter("yyyy-MMM");
+  public static final DateFormatter yearFormatter = getDateFormatter("yyyy");
+  public static final DateFormatter twoDigitYearFormatter = getDateFormatter("yy");
   
-
-  /**
-   * Uses GWT DateTimeFormat class to obtain hour-of-day labels (e.g. "9am").
-   */
-  private static String[] createHoursOfDayLabels() {
-    DateFormatter fmt = getDateFormatter("H"); // h=hour, a=AM/PM
-    String[] hourLabels = new String[24];
-    for (int h = 0; h < hourLabels.length; h++) {
-      int hr = h;
-      if (hr < 0) { hr = 23; }
-      hourLabels[h] = fmt
-          .format(new Date(1990 - 1900, 0, 1, hr, 0, 0).getTime());
-    }
-    return hourLabels;
+  public String hourMinuteSec(ChronoDate d) {
+    return hourMinuteSec(d.getTime());
   }
 
-  /**
-   * Uses GWT DateTimeFormat class to obtain abbreviated month labels to ensure
-   * local-specificity.
-   */
-  private static String[] createMonthLabels() {
-    DateFormatter fmt = getDateFormatter("MMM"); // "Jan", "Feb", ...
-    String[] monthLabels = new String[12];
-    for (int m = 0; m < monthLabels.length; m++) {
-      monthLabels[m] = fmt.format(new Date(1970 - 1970, m, 1).getTime());
-    }
-    return monthLabels;
+  public String hourMinuteSec(double d) {
+    return hourMinuteSecFormatter.format(d);
   }
 
-  /**
-   * Returns an abbreviated month string for the specified date.
-   */
-  private static String formatMonth(ChronoDate d) {
-    return MONTH_LABELS[d.getMonth()];
+  public String hourMinute(ChronoDate d) {
+    return hourMinute(d.getTime());
   }
 
-  /**
-   * Formats day and month as "dd-MMM" (e.g. "31-Oct").
-   *
-   * @param d - The date to be formatted
-   */
-  public String dayAndMonth(ChronoDate d) {
-    return day(d) + "-" + formatMonth(d);
-  }
-
-  public String dayMonthAndYear(ChronoDate d) {
-    return d.getYear() + "-" + pad(d.getDay()) + "-" + formatMonth(d);
-  }
-
-  /**
-   * Formats the hour of the day.
-   *
-   * @param hourOfDay - a value in the range [0, 23]
-   */
-  public String hour(int hourOfDay) {
-    return HOURS_OF_DAY[hourOfDay];
+  public String hourMinute(double d) {
+    return hourMinuteFormatter.format(d);
   }
   
+  public String hour(ChronoDate d) {
+    return hour(d.getTime());
+  }
+
+  public String hour(double d) {
+    return hourFormatter.format(d);
+  }
   public String day(ChronoDate d) {
-   // FIXME: return pad(d.getDay()) does not work with tz (check this domain 1281715500 1281792900);
-    return dayFormatter.format(d.getTime());
+    return day(d.getTime());
+  }
+
+  public String day(double d) {
+    return dayFormatter.format(d);
+  }
+  public String monthDay(ChronoDate d) {
+    return monthDay(d.getTime());
+  }
+
+  public String monthDay(double d) {
+    return monthDayFormatter.format(d);
+  }
+  public String yearMonthDay(ChronoDate d) {
+    return yearMonthDay(d.getTime());
+  }
+
+  public String yearMonthDay(double d) {
+    return yearMonthDayFormatter.format(d);
   }
   
-  /**
-   * Formats the hour of the day.
-   *
-   * @param d - The date to be formatted
-   */
-  public String slowHour(ChronoDate d) {
-    return hourFormatter.format(d.getTime());
+  public String yearMonth(ChronoDate d) {
+    return yearMonth(d.getTime());
   }
 
-  /**
-   * Formats hour and minute as "hh:mm".
-   *
-   * @param d - The date to be formatted
-   */
-  public String hourAndMinute(ChronoDate d) {
-    return hourMinuteFormatter.format(d.getTime());
+  public String yearMonth(double d) {
+    return yearMonthFormatter.format(d);
+  }
+  
+  public String year(ChronoDate d) {
+    return year(d.getTime());
   }
 
-  /**
-   * Formats hour minute and second as "hh:mm:ss".
-   *
-   * @param d - The date to be formatted
-   */
-  public String hourMinuteSecond(ChronoDate d) {
-    return hourMinuteSecFormatter.format(d.getTime());
+  public String year(double d) {
+    return yearFormatter.format(d);
   }
-
-  /**
-   * Formats month and year as "mmm'yy" (e.g. "Aug-23").
-   *
-   * @param d - The date to be formatted
-   */
-  public String monthAndYear(ChronoDate d) {
-    return formatMonth(d) + "'" + twoDigitYear(d);
+  
+  public String twoDigitYear(ChronoDate d) {
+    return twoDigitYear(d.getTime());
+  }
+  
+  public String twoDigitYear(double d) {
+    return twoDigitYearFormatter.format(d);
   }
 
   /**
@@ -151,8 +108,7 @@ public final class DateFormatHelper {
    * returns "06", pad(59) returns "59").
    */
   public String pad(int num) {
-    return TWO_DIGIT_NUMS[num];
-    // return num < 10 ? "0" + num : "" + num;
+    return num < 10 ? "0" : "" + num;
   }
 
   /**
@@ -162,20 +118,8 @@ public final class DateFormatHelper {
    */
   public String tenthOfSecond(ChronoDate d) {
     int tenthSecond = MathUtil.mod((int) d.getTime() / 100, 10);
-    return hourMinuteSecond(d) + "." + pad(tenthSecond);
+    return hourMinuteSec(d) + "." + pad(tenthSecond);
   }
 
-  /**
-   * Formats a 2 digit year string from the specified date. For example, the
-   * date '2006-05-25' returns the string "06".
-   */
-  public String twoDigitYear(ChronoDate d) {
-    String yr = String.valueOf(d.getYear());
-    return yr.substring(yr.length() - 2);
-  }
-
-  public static DateFormatter getHourFormatter(){
-    return hourFormatter;
-  }
 
 }

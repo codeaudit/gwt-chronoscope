@@ -98,20 +98,49 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
   
   private static DateFormatter ymf = dateFormat.getDateFormatter("yyyy-MMM");
   private static DateFormatter ymdf = dateFormat.getDateFormatter("yyyy-MMM-dd");
+  private static DateFormatter mdf = dateFormat.getDateFormatter("MMM-dd");
+  private static DateFormatter df = dateFormat.getDateFormatter("dd");
+  private static DateFormatter yf = dateFormat.getDateFormatter("yyyy");
   
   @Override
   public String getRangeLabel(Interval interval) {
     FastChronoDate i = new FastChronoDate(interval.getStart());
     FastChronoDate e = new FastChronoDate(interval.getEnd());
-    long a = (long)interval.getStart() / 1000;
-    long b = (long)interval.getEnd() / 1000;
-    if (timeUnitTickInterval != TimeUnit.MONTH || timeUnitTickInterval == TimeUnit.MIN || timeUnitTickInterval == TimeUnit.MS) {
-//      if (dateFormat.day(i).equals(dateFormat.day(e)))
-//        return ymdf.format(i.getTime()) + ":       " + format(i) + " - " + format(e);
-//      else  
-        return ymf.format(i.getTime()) + ", " + dateFormat.day(i) + "/" + format(i) + " - " + dateFormat.day(e) + "/" + format(e); 
+    
+    DateFormatter common = null;
+    DateFormatter prev = null;
+    boolean useformat = true;
+    if (timeUnitTickInterval.ms() < TimeUnit.DAY.ms()) {
+      if (i.getYear() != e.getYear() || i.getMonth() != e.getMonth()) {
+        common = DateFormatHelper.yearFormatter;
+        prev = DateFormatHelper.monthDayFormatter;
+      } else if (!dateFormat.day(i).equals(dateFormat.day(e))) {
+        common = DateFormatHelper.yearMonthFormatter;
+        prev = DateFormatHelper.dayFormatter;
+      } else {
+        common = DateFormatHelper.yearMonthDayFormatter;
+      }
+    } else if (timeUnitTickInterval == TimeUnit.DAY) {
+      prev = DateFormatHelper.yearMonthDayFormatter;
+      useformat = false;
     }
-    return getRangeLabelCompact(interval);
+
+    
+    String ret = "";
+    if (common != null) {
+      ret += common.format(i.getTime()) + ", ";
+    }
+    if (prev != null) {
+      if (false == useformat) {
+        ret += prev.format(i.getTime()) + " - " + prev.format(e.getTime());
+      } else {
+        ret += prev.format(i.getTime()) + "/" + format(i) + " - " + prev.format(e.getTime()) + "/" + format(e);
+      }
+    } else {
+      ret += getRangeLabelCompact(interval);
+    }
+    
+    return ret;
   }
   
   @Override

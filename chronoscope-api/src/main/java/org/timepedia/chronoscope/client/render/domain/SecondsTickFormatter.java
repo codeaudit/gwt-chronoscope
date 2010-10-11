@@ -2,8 +2,6 @@ package org.timepedia.chronoscope.client.render.domain;
 
 import org.timepedia.chronoscope.client.util.TimeUnit;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
-import org.timepedia.chronoscope.client.util.DateFormatter;
-import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 
 public class SecondsTickFormatter extends DateTickFormatter {
 
@@ -16,16 +14,15 @@ public class SecondsTickFormatter extends DateTickFormatter {
   }
 
   public String format() {
-    DateFormatter hourFormat = DateFormatHelper.getHourFormatter();
-    int hourOfDay = Integer.valueOf(hourFormat.format(currTick.getTime()));
+    int hourOfDay = Integer.valueOf(dateFormat.day(currTick));
     if (hourOfDay == 0 && currTick.getMinute() == 0 && currTick.getSecond() == 0) {
-      return dateFormat.dayAndMonth(currTick);
+      return dateFormat.monthDay(currTick);
     }
     return super.format();
   }
   
   public String format(ChronoDate tick) {
-    return dateFormat.hourMinuteSecond(tick);
+    return dateFormat.hourMinuteSec(tick);
   }
 
   public int getSubTickStep(int primaryTickStep) {
