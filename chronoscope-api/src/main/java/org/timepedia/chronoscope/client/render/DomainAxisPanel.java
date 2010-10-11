@@ -113,14 +113,13 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     while (stillEnoughSpace) {
       double tickScreenPos = this.domainToScreenX(tickFormatter.getTickDomainValue(), bounds);
+      stillEnoughSpace = tickScreenPos + labelWidthDiv2 < boundsRightX;
       
-      stillEnoughSpace = (tickScreenPos + labelWidthDiv2 < boundsRightX);
-
 //      log("tickScreenPos=" + tickScreenPos + 
 //          "; tickDomainValue=" + (long)tickFormatter.getTickDomainValue() +
 //          "; boundsRightX=" + boundsRightX);
 
-      if (stillEnoughSpace) {
+      if ((tickScreenPos - labelWidthDiv2) > 0 && stillEnoughSpace) {
         // Quantized tick date may have gone off the left edge; need to guard
         // against this case.
         if (tickScreenPos >= bounds.x) {
@@ -189,7 +188,10 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT
         + creditsLabel.getBounds().height + 1;
 
-    bounds.width = view.getWidth(); // default width for now
+    // default width for now
+    if (bounds.width <= 0) {
+      bounds.width = view.getWidth(); 
+    }
   }
 
   @Export
@@ -284,9 +286,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   }
 
   private double domainToScreenX(double dataX, Bounds bounds) {
-    // FIXME: DomainAxisPanel bounds is different than plot, so use the plot algorithm 
-    // return valueAxis.dataToUser(dataX) * bounds.width;
-    return plot.domainToScreenX(dataX, 0);
+    return bounds.width * valueAxis.dataToUser(dataX);
   }
 
   private void drawAxisLabels(Layer layer, Bounds bounds) {
