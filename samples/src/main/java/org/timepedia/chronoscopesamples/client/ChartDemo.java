@@ -1,25 +1,31 @@
 package org.timepedia.chronoscopesamples.client;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.RootPanel;
-
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.Overlay;
 import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.io.DatasetReader;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
 import org.timepedia.chronoscope.client.browser.Chronoscope;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
-import org.timepedia.chronoscope.client.data.mock.MockDatasetFactory;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.overlays.Marker;
 import org.timepedia.chronoscope.client.overlays.OverlayClickListener;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * @author Ray Cromwell <ray@timepedia.org>
@@ -47,7 +53,7 @@ public class ChartDemo implements EntryPoint {
       // Chronoscope.enableHistorySupport(true);
       Chronoscope.setFontBookRendering(true);
       ChronoscopeOptions.setErrorReporting(true);
-      Chronoscope.setMicroformatsEnabled(true);
+      Chronoscope.setMicroformatsEnabled(false);
       Chronoscope.initialize();
 
       Chronoscope chronoscope = Chronoscope.getInstance();
@@ -83,12 +89,34 @@ public class ChartDemo implements EntryPoint {
         }
       });
 
-      RootPanel.get("chartdemo").add(chartPanel);
+      
+      FocusPanel p = new FocusPanel();
+      VerticalPanel v = new VerticalPanel();
+      p.add(v);
+      RootPanel.get().add(p);
 
-    } catch (Exception e) {
+      final HTML h = new HTML("adsfffffffffffffffffffffff"); 
+      v.add(h);
+
+      p.addFocusHandler(new FocusHandler() {
+        public void onFocus(FocusEvent event) {
+          h.setText("focus");
+        }
+      });
+      
+      p.addKeyPressHandler(new KeyPressHandler() {
+        public void onKeyPress(KeyPressEvent event) {
+          h.setText("" + (cursor++));
+        }
+      });
+      
+      v.add(chartPanel);
+      
+      } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
+  int cursor = 0;
   
 }

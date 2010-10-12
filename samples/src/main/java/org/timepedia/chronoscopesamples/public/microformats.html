@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Chronoscope - Timeseries Visualization Tools</title>
+	<style type="text/gss">
+     axislegend labels {
+		 font-size:9pt;
+		 //column-width: 30px;
+		 column-count: 4;
+		 icon-width: 10px;
+		 icon-height: 10px;
+     }
+	</style>    
+</head>
+<body>
+<script>
+</script>
+<script type="text/javascript" src="micro.nocache.js"></script>
+
+<div id="chartdemo"></div>
+
+
+<table id="microformatdemo" class="cmf-chart">
+    <colgroup>
+      <col id="col1" class="cmf-dateformat" title="yyyy-MM-dd-HH:mm">
+      <col id="col2" class="cmf-numberformat" title="#,##0.00">parsePatternparsePattern
+      <col id="col3" class="cmf-numberformat" title="#,##0.00">
+      <col id="col4" class="cmf-numberformat" title="#,##0.00">
+      <col id="col5" class="cmf-numberformat" title="#,##0.00">
+      <col id="col6" class="cmf-numberformat" title="#,##0.00">
+      <col id="col7" class="cmf-numberformat" title="#,##0.00">
+      <col id="col8" class="cmf-numberformat" title="#,##0.00">
+      <col id="col9" class="cmf-numberformat" title="#,##0.00">
+      <col id="col10" class="cmf-numberformat" title="#,##0.00">
+    </colgroup>
+    <thead>
+        <tr>
+            <th id="serie1">Time</th>
+            <th id="serie2" axis="$">Line-1111</th>
+            <th id="serie3" axis="$">Line-2</th>
+            <th id="serie4" axis="$">Line-3</th>
+            <th id="serie5" axis="$">Line-4</th>
+            <th id="serie6" axis="$">Line-5</th>
+            <th id="serie7" axis="$">Line-6</th>
+            <th id="serie8" axis="$">Line-7</th>
+            <th id="serie9" axis="$">Line-8</th>
+            <th id="serie10" axis="$">Line-9</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1969-12-31-21:00</td>
+            <td>1000</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1969-12-31-22:00</td>
+            <td>3500</td>
+            <td>1010</td>
+            <td>1330</td>
+            <td>1980</td>
+            <td>470</td>
+            <td>2800</td>
+            <td>3700</td>
+            <td>2400</td>
+            <td>300</td>
+        </tr>
+        <tr>
+            <td>1969-12-31-23:00</td>
+            <td>3100</td>
+            <td>101</td>
+            <td>1230</td>
+            <td>1980</td>
+            <td>2970</td>
+            <td>300</td>
+            <td>2700</td>
+            <td>2300</td>
+            <td>300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-00:00</td>
+            <td>3200</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-01:00</td>
+            <td>3250</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-02:00</td>
+            <td>3300</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-03:00</td>
+            <td>3325</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-04:00</td>
+            <td>1900</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-05:00</td>
+            <td>1800</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-06:00</td>
+            <td>2000</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-07:00</td>
+            <td>2100</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+        <tr>
+            <td>1970-01-01-08:00</td>
+            <td>2200</td>
+            <td>1010</td>
+            <td>1030</td>
+            <td>980</td>
+            <td>970</td>
+            <td>800</td>
+            <td>1700</td>
+            <td>2000</td>
+            <td>2300</td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    As you can see, in <a accesskey="G" href="#microformatdemo:1/1/1954"
+                          class="cmf-marker">1954<span
+        class="cmf-infowindow">GDP Popup<br>GDP Grew Considerably</span></a>,
+    the Gross Dosmestic Product grew considerably. However, in <a accesskey="D" href="#microformatdemo:1/1/1960"
+                                                                  class="cmf-marker">1960<span
+        class="cmf-infowindow">GDP Popup<br>GDP dropped alot.</span></a>
+    the GDP dropped alot.
+</p>
+
+
+    
+</body>
+</html>

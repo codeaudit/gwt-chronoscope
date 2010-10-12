@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<!--    <link rel="stylesheet" href="Chronoscope.gss" type="text/gss"> -->
+    
+    <style type="text/gss">
+
+point { line-thickness: 2px;  radius: 2px; }
+
+axislegend line { line-thickness: 8px;}
+
+series.s0 line { color: #0000ff; }
+series.s0 point { background-color:#0000ff; color: #0000cc; }
+
+series.s1 line { color: #ff0000; }
+series.s1 point { background-color:#ff0000; color: #cc0000; }
+
+series.s2 line { color: #00ff00; }
+series.s2 point { background-color:#00ff00; color: #00cc00; }
+
+series.s3 line { color: #aabbcc; }
+series.s3 point { background-color:#aabbcc; color: #778899; }
+
+series.s0, series.s1, series.s2, series.s3 { group: jenga; }
+
+
+crosshair { visibility: visible; }
+
+</style>
+
+    <script type="text/javascript" src="dash.js"></script>
+    <script type="text/javascript" src="jagged.js"></script>
+    <script type="text/javascript" src="dffdata-nomip-ds.js"></script>
+    <script type="text/javascript" src="dffdatamip-ds.js"></script>
+    <script type="text/javascript" src="odd_display_jagged.js"></script>
+
+    <script type="text/javascript" src="slow.nocache.js"></script>
+    
+</head>
+<body>
+<script>
+    <div id="chartdemo"></div>
+</body>

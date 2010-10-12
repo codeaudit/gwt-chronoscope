@@ -1,0 +1,164 @@
+
+
+fill {
+  background-color: transparent;
+  opacity: 0;
+}
+
+tick {
+  color: black;
+  border-width: 1px;
+}
+
+grid {
+  color: transparent;
+  width: 0;
+  border-width: 0;
+  opacity: 0.05;
+  visibility: hidden;
+}
+
+axes axis {
+  background-color: white
+}
+
+axes axis {
+  color: black;
+}
+
+axis label {
+  font-size: 10pt;
+}
+
+
+line.focus {
+  color: red;
+}
+
+.s1 line, axis.a1 label, axis.a1, axis.a1 tick {
+  color: rgb( 245, 86, 95 );
+}
+
+.s1 fill {
+  background-color: rgb( 245, 86, 95 );
+  opacity: 0.4;
+}
+
+fill {
+  background-color: transparent;
+  opacity: 0.4;
+}
+
+fill.disabled {
+  background-color: rgba( 0, 0, 0, 0 );
+  opacity: 0;
+}
+
+bar {
+  color: #008000;
+  background-color: #00FF00;
+  width: 10px;
+}
+
+bar.disabled {
+  background-image: none;
+}
+
+axis.a0 label, axis.a0 {
+  color: rgb( 70, 118, 118 );
+}
+
+point {
+  color: #FFFFFF;
+  background-color: #000080;
+  line-thickness: 1px;
+  border-width: 1px;
+}
+
+.s0 line, axis.a0 tick {
+  color: rgb( 70, 118, 118 );
+}
+
+.s0 fill {
+  background-color: transparent;
+  opacity: 0.4;
+}
+
+.s0 point {
+  color: #008000;
+  background-color: #004000
+}
+
+shadow {
+  width: 2px;
+  top: 2px;
+  left: 2px;
+  color: gray
+}
+
+point {
+  width: 2px;
+  border-width: 1px;
+  visibility: hidden
+}
+
+point.hover {
+  color: red;
+  width: 3px;
+  background-color: white;
+  visibility: visible;
+}
+
+point.focus {
+  color: gray;
+  width: 5px;
+  border-style: solid;
+  border-width: 2px;
+  visibility: visible;
+}
+
+line {
+  border-width: 1px;
+  line-thickness: 1px;
+}
+
+point shadow {
+  width: 1px;
+}
+
+series.disabled line {
+  opacity: 0.2
+}
+
+series.disabled bar {
+  opacity: 0.2
+}
+
+series.disabled point {
+  visibility:hidden
+}
+
+series.hover point {
+  visibility:visible
+}
+
+series.focus point {
+  visibility:visible
+}
+
+label {
+  background-color: rgba( 0, 0, 0, 0 );
+  opacity: 0;
+  color: black
+}
+
+marker {
+  background-color: red;
+  color: black;
+  border-left-width: 1px;
+  font-family: Helvetica;
+  font-size: 9pt;
+}
+
+
+

@@ -22,7 +22,27 @@
 
   <properties>
     <gwt.module>org.timepedia.chronoscopesamples.ChronoscopeSamples</gwt.module>
+    <gwt.name>samples</gwt.name>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>slow</id>
+      <properties>
+        <gwt.module>org.timepedia.chronoscopesamples.ChartDemoSlowIE</gwt.module>
+        <gwt.name>slow</gwt.name>
+        <gwt.outputstyle>PRETTY</gwt.outputstyle>
+      </properties>
+    </profile>
+    <profile>
+      <id>tz</id>
+      <properties>
+        <gwt.module>org.timepedia.chronoscopesamples.ChartDemoTZ</gwt.module>
+        <gwt.name>tz</gwt.name>
+        <gwt.outputstyle>OBFUSCATED</gwt.outputstyle>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <outputDirectory>${project.build.directory}/www/WEB-INF/classes</outputDirectory>
@@ -37,6 +57,22 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+            <plugin>
+              <artifactId>maven-clean-plugin</artifactId>
+              <configuration>
+                <filesets>
+                  <fileset><directory>src/main/webapp/jagged</directory></fileset>
+                  <fileset><directory>src/main/webapp/slow</directory></fileset>
+                  <fileset><directory>src/main/webapp/micro</directory></fileset>
+                  <fileset><directory>src/main/webapp/tz</directory></fileset>
+                  <fileset><directory>src/main/webapp/WEB-INF/classes</directory></fileset>
+                  <fileset><directory>tomcat</directory></fileset>
+                  <fileset><directory>www-test</directory></fileset>
+                  <fileset><directory>.gwt-tmp</directory></fileset>
+                </filesets>
+               <port>9999</port>
+              </configuration>
+            </plugin>
     </plugins>
   </build>
 
