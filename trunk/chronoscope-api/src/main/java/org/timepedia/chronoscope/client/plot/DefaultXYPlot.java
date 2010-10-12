@@ -52,6 +52,8 @@ import org.timepedia.chronoscope.client.render.RenderState;
 import org.timepedia.chronoscope.client.render.StringSizer;
 import org.timepedia.chronoscope.client.render.XYPlotRenderer;
 import org.timepedia.chronoscope.client.render.ZoomListener;
+import org.timepedia.chronoscope.client.render.domain.TickFormatter;
+import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.DateFormatter;
@@ -61,6 +63,7 @@ import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.chronoscope.client.util.Util;
 import org.timepedia.chronoscope.client.util.date.ChronoDate;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
+import org.timepedia.chronoscope.client.util.date.FastChronoDate;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -218,8 +221,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private ExportableHandlerManager handlerManager = new ExportableHandlerManager(this);
 
-  private DateFormatter crosshairFmt = null;
-
   public DefaultXYPlot() {
     overlays = new ArrayList<Overlay>();
     plotNumber = globalPlotNumber++;
@@ -285,6 +286,12 @@ public class DefaultXYPlot<T extends Tuple2D>
           // now 0 should really set to 0 offset from UTC, if you want local use OffsetBrowserLocal
           // ChronoDate.setTimeZoneOffsetInMilliseconds(ChronoDate.getLocalTimeZoneOffsetInMilliseconds());
       // }
+      
+      
+      for (int i=0; i < getDatasets().size(); i++) {
+        Dataset s = getDatasets().get(i);
+        System.out.println("MCM --- " + s.getClass().getName());
+      }
       topPanel.getCompositePanel().draw();
       bottomPanel.draw();
   }
@@ -1277,6 +1284,14 @@ public class DefaultXYPlot<T extends Tuple2D>
     topPanel.clearDrawCaches();
     rangePanel.clearDrawCaches();
   }
+  
+  @SuppressWarnings("unchecked")
+  private TickFormatter<ChronoDate> getTickFormater() {
+    TickFormatterFactory<ChronoDate> fact =  bottomPanel.getDomainAxisPanel().getTickFormatterFactory();
+    return fact.findBestFormatter(getDomain().length());
+  }
+  
+  DateFormatter crosshairFmt;
 
   private void drawCrossHairs(Layer hoverLayer) {
     if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
@@ -1288,16 +1303,22 @@ public class DefaultXYPlot<T extends Tuple2D>
       if (hoverX > -1) {
         hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
         int hx = hoverX;
-        int hy = hoverY;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
 
         if (ChronoscopeOptions.isCrosshairDateTimeFormat()) {
-          crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(ChronoscopeOptions.getCrosshairDateTimeFormat());
-          hoverLayer.setStrokeColor(crosshairProperties.color);
-          String label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
-          hx += dx < getDomain().midpoint() ? 1.0
-              : -1 - hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
+          if (crosshairFmt == null && !"auto".equals(ChronoscopeOptions.getCrosshairDateTimeFormat())) {
+            crosshairFmt = DateFormatterFactory.getInstance().getDateFormatter(ChronoscopeOptions.getCrosshairDateTimeFormat());
+          }
+          String label;
+          if (crosshairFmt != null) {
+            label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
+          } else {
+            label = getTickFormater().formatCrosshair(new FastChronoDate(dx));
+          }
+          int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
+          hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
+          hoverLayer.setStrokeColor(crosshairProperties.color);
           hoverLayer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
         }
 
@@ -1890,11 +1911,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       crosshairProperties = view.getGssProperties(crosshairElement, "");
       if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
         ChronoscopeOptions.setVerticalCrosshairEnabled(true);
-        if (crosshairProperties.dateFormat != null) {
-          ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
-        } else {
-          ChronoscopeOptions.setCrosshairDateTimeFormat("yy/MMM/dd HH:mm");
-        }
+        ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
       }
 
       crosshairLabelsProperties = view.getGssPropertiesBySelector("crosshair labels");
@@ -1988,7 +2005,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.setHeight(centerPlotHeight);
     rangePanel.setWidth(viewWidth);
     rangePanel.layout();
-
+    
     return plotBounds;
   }
 

@@ -151,6 +151,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 //    if (dataSet.getNumSamples() < 2) {
 //      return;
 //    }
+    
 
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;
@@ -179,9 +180,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
           .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
       renderState.setPassNumber(pass);
 
-      renderer.beginCurve(layer, renderState);
-
       Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
+
+      renderer.beginCurve(layer, renderState);
       int methodCallCount = 0;
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
          if (tupleItr.hasNext()){
