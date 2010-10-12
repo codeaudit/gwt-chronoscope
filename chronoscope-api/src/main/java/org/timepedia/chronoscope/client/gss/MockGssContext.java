@@ -90,7 +90,7 @@ public class MockGssContext extends GssContext {
     p.valueVisible = true;
     p.labelVisible = false;
     p.transparency = 0.75f;
-    p.dateFormat = "MM/dd:HH:mm";
+    p.dateFormat = "auto";
   }
 
   private void configLabelsProps(GssProperties p, GssElement elt) {

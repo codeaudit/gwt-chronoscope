@@ -96,12 +96,6 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
     currTick.setTime(timestamp);
   }
   
-  private static DateFormatter ymf = dateFormat.getDateFormatter("yyyy-MMM");
-  private static DateFormatter ymdf = dateFormat.getDateFormatter("yyyy-MMM-dd");
-  private static DateFormatter mdf = dateFormat.getDateFormatter("MMM-dd");
-  private static DateFormatter df = dateFormat.getDateFormatter("dd");
-  private static DateFormatter yf = dateFormat.getDateFormatter("yyyy");
-  
   @Override
   public String getRangeLabel(Interval interval) {
     FastChronoDate i = new FastChronoDate(interval.getStart());
@@ -141,6 +135,15 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
     }
     
     return ret;
+  }
+  
+  public String formatCrosshair(ChronoDate tick){
+    if (timeUnitTickInterval.ms() == TimeUnit.MONTH.ms()) {
+      return DateFormatHelper.yearMonthDayFormatter.format(tick.getTime());
+    } else  if (timeUnitTickInterval.ms() <= TimeUnit.DAY.ms()) {
+      return DateFormatHelper.yearMonthDayFormatter.format(tick.getTime()) + ", " + super.formatCrosshair(tick);
+    }
+    return super.formatCrosshair(tick);
   }
   
   @Override

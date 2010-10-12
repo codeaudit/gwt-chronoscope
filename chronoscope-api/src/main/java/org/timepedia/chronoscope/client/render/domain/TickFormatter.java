@@ -107,8 +107,12 @@ public abstract class TickFormatter<T> {
     return format();
   }
   
+  public String formatCrosshair(T tick){
+    return getSubFormatter() == null ? format(tick) : getSubFormatter().format(tick);
+  }
+  
   /**
-   * Formats the parameter timestamp as a String.
+   * Formats the parameter tick as a String.
    */
   public abstract String format(T tick);
   
