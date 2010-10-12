@@ -6,13 +6,14 @@ import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.domain.TickFormatter;
 import org.timepedia.chronoscope.client.render.domain.TickFormatterFactory;
+import org.timepedia.chronoscope.client.util.DateFormatter;
+import org.timepedia.chronoscope.client.util.Interval;
+import org.timepedia.chronoscope.client.util.date.DateFormatHelper;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.Exportable;
 
 /**
- * Draws a date range (e.g. "11/25/1995 - 02/17/2007").
- * 
- * @author Chad Takahashi
+ * Draws a date range
  */
 public class DateRangePanel extends AbstractPanel implements SelfResizing,
     GssElement, Exportable {
@@ -36,6 +37,10 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
   DomainAxisPanel domainAxisPanel;
   GssProperties labelProperties;
   String dateRangeActive;
+  DateFormatter dateFormater;
+  String dateDelim = " - ";
+  DateFormatter dateFormaterCompact;
+  String dateDelimCompact = " - ";
 
   public void init(Layer layer, DomainAxisPanel domainAxisPanel) {
     this.domainAxisPanel = domainAxisPanel;
@@ -59,34 +64,47 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
   }
   
   public void resizeToMinimalWidth() {
-    dateRangeActive = getTickFormater().getRangeLabelCompact(domainAxisPanel.plot.getDomain());
+    Interval i = domainAxisPanel.plot.getDomain();
+    if (dateFormater != null) {
+      dateRangeActive = dateFormaterCompact.format(i.getStart()) + dateDelimCompact + dateFormater.format(i.getEnd());
+    } else {
+      dateRangeActive = getTickFormater().getRangeLabelCompact(domainAxisPanel.plot.getDomain());
+    }
     bounds.width = stringSizer.getWidth(dateRangeActive, labelProperties);
   }
 
   public void resizeToIdealWidth() {
-    dateRangeActive = getTickFormater().getRangeLabel(domainAxisPanel.plot.getDomain());
+    Interval i = domainAxisPanel.plot.getDomain();
+    if (dateFormater != null) {
+      dateRangeActive = dateFormater.format(i.getStart()) + dateDelim + dateFormater.format(i.getEnd());
+    } else {
+      dateRangeActive = getTickFormater().getRangeLabel(i);
+    }
     bounds.width = stringSizer.getWidth(dateRangeActive, labelProperties);
   }
 
   @Export
-  @Deprecated
   public void setDateRangeFormat(String dateFormat) {
+    if (!"auto".equals(dateFormat)) {
+      dateFormater = DateFormatHelper.getDateFormatter(dateFormat);
+    }
   }
-  
 
   @Export
-  @Deprecated
   public void setCompactDateRangeFormat(String compactDateFormat) {
+    if (!"auto".equals(compactDateFormat)) {
+      dateFormaterCompact = DateFormatHelper.getDateFormatter(compactDateFormat);
+    }
   }
 
   @Export
-  @Deprecated
   public void setDateDelim(String dateDelim) {
+    this.dateDelim = dateDelim;
   }
 
   @Export
-  @Deprecated
-  public void setCompactDateDelim(String compactDateDelim) {
+  public void setCompactDateDelim(String dateDelimCompact) {
+    this.dateDelimCompact = dateDelimCompact;
   }
 
 }
