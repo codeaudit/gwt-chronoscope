@@ -287,11 +287,6 @@ public class DefaultXYPlot<T extends Tuple2D>
           // ChronoDate.setTimeZoneOffsetInMilliseconds(ChronoDate.getLocalTimeZoneOffsetInMilliseconds());
       // }
       
-      
-      for (int i=0; i < getDatasets().size(); i++) {
-        Dataset s = getDatasets().get(i);
-        System.out.println("MCM --- " + s.getClass().getName());
-      }
       topPanel.getCompositePanel().draw();
       bottomPanel.draw();
   }
@@ -300,7 +295,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void setTimeZoneOffsetBrowserLocal(int offsetHours) {
     // if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
      if ((offsetHours > -14) && (offsetHours < 14)) {
-        ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000 + ChronoDate.getLocalTimeZoneOffsetInMilliseconds());
+        ChronoDate.setTimeZoneOffsetBrowserLocal(offsetHours*60*60*1000);
      }
      topPanel.getCompositePanel().draw();
      bottomPanel.draw();
@@ -1304,6 +1299,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
         int hx = hoverX;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
+        ChronoDate cronoDate = new FastChronoDate(dx);
 
         if (ChronoscopeOptions.isCrosshairDateTimeFormat()) {
           if (crosshairFmt == null && !"auto".equals(ChronoscopeOptions.getCrosshairDateTimeFormat())) {
@@ -1311,9 +1307,9 @@ public class DefaultXYPlot<T extends Tuple2D>
           }
           String label;
           if (crosshairFmt != null) {
-            label = ChronoDate.formatDateByTimeZone(crosshairFmt, dx);
+            label = crosshairFmt.format(cronoDate.getOffsetTime());
           } else {
-            label = getTickFormater().formatCrosshair(new FastChronoDate(dx));
+            label = getTickFormater().formatCrosshair(cronoDate);
           }
           int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;

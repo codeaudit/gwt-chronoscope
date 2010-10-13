@@ -1,11 +1,9 @@
 package org.timepedia.chronoscope.client.util.date;
 
-import com.google.gwt.i18n.client.TimeZone;
+import java.util.Date;
+
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.TimeUnit;
-
-import java.util.Date;
-import org.timepedia.chronoscope.client.util.DateFormatter;
 
 /**
  * A specialized date class for use with the Chronoscope framework.
@@ -14,9 +12,9 @@ import org.timepedia.chronoscope.client.util.DateFormatter;
  */
 public abstract class ChronoDate {
 
-  private static double localTimeZoneOffsetInMilliseconds=(new Date()).getTimezoneOffset() * 60 * 1000;
+  private static Double localTimeZoneOffsetInMilliseconds = null;
 
-  private static double timeZoneOffsetInMilliseconds=localTimeZoneOffsetInMilliseconds;
+  private static double timeZoneOffsetInMilliseconds = 0;
         
   /**
    * Factory method that creates a new date object for the specified timeStamp.
@@ -183,39 +181,34 @@ public abstract class ChronoDate {
    */
   public abstract ChronoDate truncate(TimeUnit timeUnit);
 
-  /**
-   * If you have to consider time zone,convert the current time zone to set time zone
-   * @return Local time zone and set the time zone difference between the value
-   */
-  public static double timeZoneConverter() {
-      return timeZoneOffsetInMilliseconds;
-  }
-
-  /**
-   * If you need a String date, and consider the set time zone or the local time zone 
-   * @param dateFormatter
-   * @param d
-   * @return String date about timezone
-   */
-  public static String formatDateByTimeZone(DateFormatter dateFormatter,double d){
-
-      // 100ms ~ equal
-    if((Math.abs(timeZoneOffsetInMilliseconds-localTimeZoneOffsetInMilliseconds)>100)){
-     TimeZone timeZone=TimeZone.createTimeZone((int)timeZoneOffsetInMilliseconds/(60*1000));
-     return dateFormatter.format(d, timeZone);
-    }
-    return dateFormatter.format(d);
-  }
-
   public static double getTimeZoneOffsetInMilliseconds() {
-      return timeZoneOffsetInMilliseconds;
+    return timeZoneOffsetInMilliseconds;
   }
 
   public static double getLocalTimeZoneOffsetInMilliseconds() {
-      return localTimeZoneOffsetInMilliseconds;
+    return localTimeZoneOffsetInMilliseconds;
   }
 
-  public static void setTimeZoneOffsetInMilliseconds(double timeZoneOffsetInMilliseconds) {
-      ChronoDate.timeZoneOffsetInMilliseconds = timeZoneOffsetInMilliseconds;
+  public static void setTimeZoneOffsetInMilliseconds(double mseconds) {
+    timeZoneOffsetInMilliseconds = mseconds;
   }
+
+  public static void setTimeZoneOffsetBrowserLocal(double mseconds) {
+    localTimeZoneOffsetInMilliseconds = mseconds; 
+  }
+
+  /**
+   * Return the timestamp of this date but considering the offsets configured.
+   */
+  @SuppressWarnings("deprecation")
+  public double getOffsetTime() {
+    double increment = timeZoneOffsetInMilliseconds;
+    if (localTimeZoneOffsetInMilliseconds != null) {
+      increment += (new Date((long)getTime())).getTimezoneOffset() * 60 * 1000;
+      increment += localTimeZoneOffsetInMilliseconds;
+    }
+    return getTime() + increment;
+  }
+
+  
 }

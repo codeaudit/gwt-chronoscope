@@ -26,7 +26,7 @@ public final class DateFormatHelper {
   public static final DateFormatter twoDigitYearFormatter = getDateFormatter("yy");
   
   public String hourMinuteSec(ChronoDate d) {
-    return hourMinuteSec(d.getTime());
+    return hourMinuteSec(d.getOffsetTime());
   }
 
   public String hourMinuteSec(double d) {
@@ -34,7 +34,7 @@ public final class DateFormatHelper {
   }
 
   public String hourMinute(ChronoDate d) {
-    return hourMinute(d.getTime());
+    return hourMinute(d.getOffsetTime());
   }
 
   public String hourMinute(double d) {
@@ -42,28 +42,28 @@ public final class DateFormatHelper {
   }
   
   public String hour(ChronoDate d) {
-    return hour(d.getTime());
+    return hour(d.getOffsetTime());
   }
 
   public String hour(double d) {
     return hourFormatter.format(d);
   }
   public String day(ChronoDate d) {
-    return day(d.getTime());
+    return day(d.getOffsetTime());
   }
 
   public String day(double d) {
     return dayFormatter.format(d);
   }
   public String monthDay(ChronoDate d) {
-    return monthDay(d.getTime());
+    return monthDay(d.getOffsetTime());
   }
 
   public String monthDay(double d) {
     return monthDayFormatter.format(d);
   }
   public String yearMonthDay(ChronoDate d) {
-    return yearMonthDay(d.getTime());
+    return yearMonthDay(d.getOffsetTime());
   }
 
   public String yearMonthDay(double d) {
@@ -71,7 +71,7 @@ public final class DateFormatHelper {
   }
   
   public String yearMonth(ChronoDate d) {
-    return yearMonth(d.getTime());
+    return yearMonth(d.getOffsetTime());
   }
 
   public String yearMonth(double d) {
@@ -79,7 +79,7 @@ public final class DateFormatHelper {
   }
   
   public String year(ChronoDate d) {
-    return year(d.getTime());
+    return year(d.getOffsetTime());
   }
 
   public String year(double d) {
@@ -87,7 +87,7 @@ public final class DateFormatHelper {
   }
   
   public String twoDigitYear(ChronoDate d) {
-    return twoDigitYear(d.getTime());
+    return twoDigitYear(d.getOffsetTime());
   }
   
   public String twoDigitYear(double d) {
@@ -117,7 +117,7 @@ public final class DateFormatHelper {
    * @param d - The date to be formatted
    */
   public String tenthOfSecond(ChronoDate d) {
-    int tenthSecond = MathUtil.mod((int) d.getTime() / 100, 10);
+    int tenthSecond = MathUtil.mod((int) d.getOffsetTime() / 100, 10);
     return hourMinuteSec(d) + "." + pad(tenthSecond);
   }
 
