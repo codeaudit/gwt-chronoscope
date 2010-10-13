@@ -12,7 +12,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
  */
 public abstract class ChronoDate {
 
-  private static Double localTimeZoneOffsetInMilliseconds = null;
+  private static double localTimeZoneOffsetInMilliseconds = 0;
 
   private static double timeZoneOffsetInMilliseconds = 0;
         
@@ -202,10 +202,10 @@ public abstract class ChronoDate {
    */
   @SuppressWarnings("deprecation")
   public double getOffsetTime() {
-    double increment = timeZoneOffsetInMilliseconds;
-    if (localTimeZoneOffsetInMilliseconds != null) {
-      increment += (new Date((long)getTime())).getTimezoneOffset() * 60 * 1000;
-      increment += localTimeZoneOffsetInMilliseconds;
+    double increment = localTimeZoneOffsetInMilliseconds;
+    if (timeZoneOffsetInMilliseconds != 0) {
+      increment = (new Date((long)getTime())).getTimezoneOffset() * 60 * 1000;
+      increment += timeZoneOffsetInMilliseconds;
     }
     return getTime() + increment;
   }
