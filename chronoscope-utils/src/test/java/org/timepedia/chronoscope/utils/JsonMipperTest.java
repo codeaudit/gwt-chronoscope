@@ -19,11 +19,13 @@ public class JsonMipperTest extends TestCase {
 
     s = mipper.mipJsonString("[{id: 'id', domainscale: 1000, domain: [1,2], range: [3,4], label: 'label', axis: '$'}," +
     		"{id: 'id2', domainscale: 1000, domain: [1,2], range: [3,4], label: 'label', axis: '$'}]");
-    assertEquals("[{id:'id',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0},{id:'id2',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}]", s.replaceAll("\\s+", ""));
+    assertEquals("[{id:'id',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}," +
+    		"{id:'id2',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}]", s.replaceAll("\\s+", ""));
     
     s = mipper.mipJsonString("[{id: 'id', domainscale: 1000, domain: [1,2], range: [3,4], label: 'label', axis: '$'}," +
         "{id: 'id2', domainscale: 1000, domain: [1,2], range: [3,4], label: 'label', axis: '$'}]");
-    assertEquals("[{id:'id',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0},{id:'id2',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}]", s.replaceAll("\\s+", ""));
+    assertEquals("[{id:'id',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}," +
+    		"{id:'id2',label:'label',axis:'$',mipped:true,domain:[[1000.0,2000.0],[1000.0]],range:[[3.0,4.0],[3.5]],rangeTop:2000.0,rangeBottom:1000.0}]", s.replaceAll("\\s+", ""));
   }
 
   
