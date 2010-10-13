@@ -1,7 +1,5 @@
 package org.timepedia.chronoscope.client.render.domain;
 
-import java.util.Date;
-
 import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.MathUtil;
@@ -122,13 +120,13 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
     
     String ret = "";
     if (common != null) {
-      ret += common.format(i.getTime()) + ", ";
+      ret += common.format(i.getOffsetTime()) + ", ";
     }
     if (prev != null) {
       if (false == useformat) {
-        ret += prev.format(i.getTime()) + " - " + prev.format(e.getTime());
+        ret += prev.format(i.getOffsetTime()) + " - " + prev.format(e.getOffsetTime());
       } else {
-        ret += prev.format(i.getTime()) + "/" + format(i) + " - " + prev.format(e.getTime()) + "/" + format(e);
+        ret += prev.format(i.getOffsetTime()) + "/" + format(i) + " - " + prev.format(e.getOffsetTime()) + "/" + format(e);
       }
     } else {
       ret += getRangeLabelCompact(interval);
@@ -139,9 +137,9 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
   
   public String formatCrosshair(ChronoDate tick){
     if (timeUnitTickInterval.ms() == TimeUnit.MONTH.ms()) {
-      return DateFormatHelper.yearMonthDayFormatter.format(tick.getTime());
+      return DateFormatHelper.yearMonthDayFormatter.format(tick.getOffsetTime());
     } else  if (timeUnitTickInterval.ms() <= TimeUnit.DAY.ms()) {
-      return DateFormatHelper.yearMonthDayFormatter.format(tick.getTime()) + ", " + super.formatCrosshair(tick);
+      return DateFormatHelper.yearMonthDayFormatter.format(tick.getOffsetTime()) + ", " + super.formatCrosshair(tick);
     }
     return super.formatCrosshair(tick);
   }

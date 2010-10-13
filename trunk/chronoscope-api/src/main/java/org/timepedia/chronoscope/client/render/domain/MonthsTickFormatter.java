@@ -18,7 +18,7 @@ public class MonthsTickFormatter extends DateTickFormatter {
 
   public String format(ChronoDate tick) {
     //return dateFormat.monthAndYear(tick);
-    return DateFormatHelper.yearMonthFormatter.format(tick.getTime());
+    return DateFormatHelper.yearMonthFormatter.format(tick.getOffsetTime());
   }
 
   public int getSubTickStep(int primaryTickStep) {
