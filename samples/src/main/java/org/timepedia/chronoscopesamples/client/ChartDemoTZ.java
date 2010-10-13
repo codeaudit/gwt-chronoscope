@@ -72,9 +72,21 @@ public class ChartDemoTZ implements EntryPoint {
         theplot.setTimeZoneOffsetUTC(0);
       }
     });
+    Button b4 = new Button("local offset 0 (UTC)", new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        theplot.setTimeZoneOffsetBrowserLocal(0);
+      }
+    });
+    Button b5 = new Button("local offset -1", new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        theplot.setTimeZoneOffsetBrowserLocal(-1);
+      }
+    });
     RootPanel.get().add(b1);
     RootPanel.get().add(b2);
     RootPanel.get().add(b3);
+    RootPanel.get().add(b4);
+    RootPanel.get().add(b5);
     RootPanel.get().add(chartPanel);
   }
 }
