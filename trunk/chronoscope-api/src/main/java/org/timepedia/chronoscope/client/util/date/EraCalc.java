@@ -104,7 +104,7 @@ public abstract class EraCalc {
     scratchDate.setMonth(0);
     scratchDate.setDate(1);
     if (year < 2000) {
-      // Date.UTC(1,2,3,4,5,6);
+      // Date.UTC(1,2,3,4,5,6);  // TODO - unused, but UTC vs local issue ?
       scratchDate.setYear(year-1900);
       return scratchDate.getTime();
     }

@@ -157,9 +157,4 @@ public abstract class DateTickFormatter extends TickFormatter<ChronoDate> {
     return format(currTick);
   }
 
-  @Override
-  public void setTimeZoneOffsetInMilliseconds(int ms) {
-    currTick.setTimeZoneOffsetInMilliseconds(ms);
-  }
-
 }
