@@ -98,7 +98,7 @@ public class FlashView extends GwtView
       }
 
       public double getTime() {
-        return new Date().getTime();
+        return System.currentTimeMillis();
       }
 
       public void run() {
@@ -251,7 +251,9 @@ public class FlashView extends GwtView
        initialize(element, width, height, true, gssContext,
         new ViewReadyCallback() {
            @Override
-           public void onViewReady(View view) {} });
+           public void onViewReady(View view) {
+           }
+        });
     }
 
     onAttach();

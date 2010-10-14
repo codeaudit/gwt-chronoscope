@@ -94,6 +94,28 @@ public class BrowserCanvas extends Canvas {
     }
     return layer;
   }
+  /*
+  public Layer createLayer(String layerId, Bounds b) {
+    Layer layer = getLayer(layerId);
+    if (layer == null) {
+      layer = new BrowserLayer(this, layerId, b);
+      id2Layer.put(layer.getLayerId(), layer);
+      DOM.appendChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
+      layer.setFillColor(Color.TRANSPARENT);
+      layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
+    } else {
+      layer.clear();
+      layer.clearTextLayer(layer.getLayerId());
+      if (null != b) {
+        layer.getBounds().x = b.x;
+        layer.getBounds().y = b.y;
+        layer.getBounds().width = b.width;
+        layer.getBounds().height = b.height;
+      }
+    }
+
+    return layer;
+  } */
 
   public LinearGradient createLinearGradient(double x, double y, double w,
       double h) {
@@ -112,7 +134,16 @@ public class BrowserCanvas extends Canvas {
   public Element createTextDiv() {
     return rootLayer.createTextDiv();
   }
+  /*
+  public void disposeLayer(String layerId) {
+    Layer layer = getLayer(layerId);
+    if (null == layer) {
+      return;
+    }
 
+    id2Layer.remove(layerId);
+    DOM.removeChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
+  } */
   public void disposeLayer(String layerId) {
     Layer layer = getLayer(layerId);
     if (layer != null) {
@@ -120,6 +151,7 @@ public class BrowserCanvas extends Canvas {
     }
     id2Layer.remove(layerId);
   }
+
 
   public void drawImage(Layer layer, double x, double y, double width,
       double height) {
