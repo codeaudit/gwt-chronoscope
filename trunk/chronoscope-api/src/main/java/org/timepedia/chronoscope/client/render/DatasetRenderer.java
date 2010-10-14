@@ -76,6 +76,31 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return "auto".equals(width) ? 8d : Double.valueOf(width.substring(0, width.length()-2));
   }
 
+  public void clear() {
+    parentGssElement = null;
+
+    gssDisabledFillProps = null;
+    gssDisabledLineProps = null;
+    gssDisabledPointProps = null;
+
+    gssFillProps = null;
+    gssLineProps = null;
+    gssPointProps = null;
+
+    gssFocusFillProps = null;
+    gssFocusLineProps = null;
+    gssFocusPointProps = null;
+
+    gssActiveFillProps = null;
+    gssActiveLineProps = null;
+    gssActivePointProps = null;
+
+    gssFocusGuidelineProps = null;
+    gssHoverProps = null;
+    gssLegendProps = null;
+
+    plot = null;
+  }
   /**
    * Called for each visible data point, typically a segment is added to the
    * current drawing path, unless a more sophisticated shape like a bar chart is

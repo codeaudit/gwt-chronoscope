@@ -8,6 +8,7 @@ import java.util.Date;
  * @author chad takahashi
  */
 public abstract class EraCalc {
+  private static Date scratchDate = new Date(0,0,1);
   static final GregorianConstants gregorianConstants = new GregorianConstants();
   
   private static final int[] DAYS_IN_MONTH_LEAPYEAR = {
@@ -100,16 +101,18 @@ public abstract class EraCalc {
    * specified year.
    */
   static double getTimestampForYear(int year) {
+    scratchDate.setMonth(0);
+    scratchDate.setDate(1);
     if (year < 2000) {
-        Date.UTC(1,2,3,4,5,6);
-
-      return new Date(year - 1900, 0, 1).getTime();
-
+      // Date.UTC(1,2,3,4,5,6);
+      scratchDate.setYear(year-1900);
+      return scratchDate.getTime();
     }
     
     final double numMillisIn4centuries = 
           gregorianConstants.msIn4centuryPeriod;
-    double y2k_timestamp = new Date(2000 - 1900, 0, 1).getTime();
+    scratchDate.setYear(2000-1900);
+    double y2k_timestamp = scratchDate.getTime();
 
     final int numLeapCenturies = (year - 2000) / 400;
     final int nearestLeapCentury = 2000 + (numLeapCenturies * 400);

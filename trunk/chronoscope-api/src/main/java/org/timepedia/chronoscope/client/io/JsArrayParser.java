@@ -15,6 +15,7 @@ import java.util.Date;
  * @author chad takahashi
  */
 public final class JsArrayParser {
+  private static Date javaDate = new Date(); // scratch date
 
   /**
    * Parses the specified jsArray object into a double[] array.
@@ -52,7 +53,7 @@ public final class JsArrayParser {
 
     double aVal[] = new double[len];
     for (int i = 0; i < len; i++) {
-      Date javaDate = new Date((long) df.parse(jsArray.get(i)));
+      javaDate.setTime((long) df.parse(jsArray.get(i)));
       chronoDate.set().year(javaDate.getYear() + 1900)
           .month(javaDate.getMonth()).day(javaDate.getDate())
           .hour(javaDate.getHours()).min(javaDate.getMinutes())

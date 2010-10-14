@@ -100,6 +100,11 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
   }
 
   protected void loadDataset(DatasetRequest request) {
+    if (mipMapChain != null) {
+      mipMapChain.clear();
+      mipMapChain = null;
+    }
+
     mipMapChain = loadTupleData(request);
     computeIntervals(request);
   }
@@ -170,7 +175,10 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
   private MipMapChain loadTupleData(DatasetRequest datasetReq) {
     final int rangeTupleLength = datasetReq.getTupleLength() - 1;
 
-    MipMapChain mipMapChain = null;
+    if (mipMapChain != null) {
+      mipMapChain.clear();
+      mipMapChain = null;
+    }
 
     if (datasetReq instanceof DatasetRequest.MultiRes) {
       // multiDomain and multiRange explicitly specified in request object.

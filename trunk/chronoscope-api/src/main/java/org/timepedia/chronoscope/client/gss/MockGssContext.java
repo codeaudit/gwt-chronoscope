@@ -98,7 +98,8 @@ public class MockGssContext extends GssContext {
 
       p.labelVisible = "axislegend".equals(parentType) ? true : false;
       p.valueVisible = "crosshair".equals(parentType) ? true : false;
-
+      p.transparency = "crosshair".equals(parentType) ? 0.75f : 1.0f;
+      p.fontSize = "crosshair".equals(parentType) ? "8pt" : "9pt";
       p.lineThickness = 1;
 
       p.color = Color.BLACK; // datasetColorMap.get(elt);
@@ -187,9 +188,10 @@ public class MockGssContext extends GssContext {
     p.lineThickness = 2;
 
     p.color = datasetColorMap.get(elt);
-    p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
+    // p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
+    p.bgColor = datasetColorMap.get(elt);
 
-    p.transparency = isFocus ? 0.75 : 0.25;
+    p.transparency = isFocus ? 1.0 : 0.5;
     p.transparency = isDisabled ? 0.0 : p.transparency;
 
     // Determines the color of the point's outer ring

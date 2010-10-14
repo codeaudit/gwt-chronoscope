@@ -108,8 +108,9 @@ public class GssSelector {
         if (className == null) {
           return true;
         } else {
-          String type = gssElem.getTypeClass();
-          if(type == null) type = "";
+          // TODO - not used?
+          // String type = gssElem.getTypeClass();
+          // if(type == null) type = "";
           return (gssElem.getTypeClass()+" "+pseudoElt).contains(className);
         }
       }

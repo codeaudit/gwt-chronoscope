@@ -4,10 +4,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.chronoscope.client.util.Array2D;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An ordered set of {@link MipMap} objects, where each MipMap represents
@@ -18,7 +15,7 @@ import java.util.Map;
 public class MipMapChain {
   private Map<String,MipMap> name2mipmap;
   private List<MipMap> mipMaps;
-  private final int rangeTupleSize;
+  private int rangeTupleSize;
   
   private Array2D mipMappedDomain;
   private Array2D[] mipMappedRangeTuples;
@@ -72,6 +69,14 @@ public class MipMapChain {
         }
       }
     }
+  }
+
+  public void clear() {
+    this.mipMappedDomain = null;
+    this.mipMappedRangeTuples = null;
+    this.rangeTupleSize = 0;
+    this.mipMaps.clear();
+    this.name2mipmap.clear();
   }
   
   void addMipLevel() {

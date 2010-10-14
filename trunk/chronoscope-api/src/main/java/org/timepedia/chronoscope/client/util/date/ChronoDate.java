@@ -11,6 +11,7 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
  * @author chad takahashi
  */
 public abstract class ChronoDate {
+  private static Date scratch = new Date();
 
   private static double localTimeZoneOffsetInMilliseconds = 0;
 
@@ -32,7 +33,7 @@ public abstract class ChronoDate {
    * Returns a date representing the current time/date.
    */
   public static final ChronoDate getSystemDate() {
-    return get(new Date().getTime());
+    return get(System.currentTimeMillis());
   }
 
   public abstract boolean isLeapYear();
@@ -204,7 +205,8 @@ public abstract class ChronoDate {
   public double getOffsetTime() {
     double increment = localTimeZoneOffsetInMilliseconds;
     if (timeZoneOffsetInMilliseconds != 0) {
-      increment = (new Date((long)getTime())).getTimezoneOffset() * 60 * 1000;
+      scratch.setTime((long)getTime());
+      increment = scratch.getTimezoneOffset() * 60 * 1000;
       increment += timeZoneOffsetInMilliseconds;
     }
     return getTime() + increment;

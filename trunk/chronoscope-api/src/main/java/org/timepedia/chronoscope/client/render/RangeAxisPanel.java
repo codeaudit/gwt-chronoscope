@@ -185,7 +185,7 @@ public class RangeAxisPanel extends AxisPanel {
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
     if ("inside".equals(gssProperties.tickPosition)) {
-      dir = isLeft ? 7 : -labelWidth - 7;
+      dir = isLeft ? 5 : -labelWidth - 5;
     }
 
     layer.save();

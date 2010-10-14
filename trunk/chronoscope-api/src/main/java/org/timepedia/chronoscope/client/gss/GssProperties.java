@@ -283,4 +283,24 @@ public class GssProperties implements Exportable {
   public void setWidth(int width) {
     this.width = width;
   }
+
+  @Export
+  public void setValueVisibility(boolean visibility) {
+    this.valueVisible = visibility;
+  }
+
+  public boolean getValueVisibility() {
+    return valueVisible;
+  }
+
+  @Export
+  public void setLabelVisibility(boolean visibility) {
+    this.valueVisible = visibility;
+  }
+
+  public boolean getLabelVisibility() {
+    return valueVisible;
+  }
+
+
 }
