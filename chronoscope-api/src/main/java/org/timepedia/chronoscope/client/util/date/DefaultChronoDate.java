@@ -10,10 +10,12 @@ import java.util.Date;
  * @author chad takahashi
  */
 public final class DefaultChronoDate extends ChronoDate {
-  private Date d;
-  
+  private Date d = new Date();
+  private Date maskedDate = new Date(100,0,1);
+  private FastChronoDate fd = new FastChronoDate(0);
+
   public DefaultChronoDate(double timeStamp) {
-    this.d = new Date((long)timeStamp);
+    d.setTime((long)timeStamp);
   }
 
   @Override
@@ -144,36 +146,46 @@ public final class DefaultChronoDate extends ChronoDate {
 
   @Override
   public ChronoDate truncate(TimeUnit timeUnit) {
-    Date maskedDate;
+    maskedDate.setYear(0);
+    maskedDate.setMonth(0);
+    maskedDate.setDate(1);
+
     switch (timeUnit) {
       case YEAR:
-        maskedDate = new Date(d.getYear(), 0, 1);
+        maskedDate.setYear(d.getYear());
+        d = maskedDate;
         break;
       case MONTH:
-        maskedDate = new Date(d.getYear(), d.getMonth(), 1);
+        maskedDate.setYear(d.getYear());
+        maskedDate.setMonth(d.getMonth());
+        maskedDate.setDate(1);
+        d = maskedDate;
         break;
       case WEEK:
-        FastChronoDate fd=new FastChronoDate(d.getTime());
+        fd.setTime(d.getTime());
         fd.truncate(TimeUnit.WEEK);
-        maskedDate = new Date((long)fd.getTime());
+        maskedDate.setTime((long)fd.getTime());
+        d = maskedDate;
         break;
       case DAY:
-        maskedDate = new Date(d.getYear(), d.getMonth(), d.getDate());
+        maskedDate.setYear(d.getYear());
+        maskedDate.setMonth(d.getMonth());
+        maskedDate.setDate(d.getDate());
+        d = maskedDate;
         break;
       case HOUR:
-        maskedDate = new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(), 0, 0);
+        d.setMinutes(0);
+        d.setSeconds(0);
         break;
       case MIN:
-        maskedDate = new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), 0);
+        d.setSeconds(0);
         break;
       case SEC:
-        maskedDate = new Date(d.getYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
         break;
       default:
         throw new IllegalArgumentException("Unsupported time unit: " + timeUnit);
     }
     
-    this.d = maskedDate;
     return this;
   }
 

@@ -8,6 +8,8 @@ import org.timepedia.chronoscope.client.util.DateFormatter;
 import java.util.Date;
 
 public class GWTDateFormatter implements DateFormatter {
+  // re-using a scratch Date in order to avoid new Date()
+  private static Date d = new Date();
 
   private DateTimeFormat fmt;
 
@@ -16,15 +18,16 @@ public class GWTDateFormatter implements DateFormatter {
   }
 
   public String format(double timestamp) {
-    return fmt.format(new Date((long) timestamp));
+    d.setTime((long) timestamp);
+    return fmt.format(d);
   }
 
   public String format(double timestamp, TimeZone timeZone) {
-    return fmt.format(new Date((long) timestamp), timeZone);
+    d.setTime((long)timestamp);
+    return fmt.format(d, timeZone);
   }
 
   public double parse(String date) {
-    Date d = new Date();
     d.setMonth(0);
     d.setDate(1);
     d.setHours(0);
@@ -34,6 +37,5 @@ public class GWTDateFormatter implements DateFormatter {
     fmt.parse(date, 0, d);
     return d.getTime();
   }
-
 
 }

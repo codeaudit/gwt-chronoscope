@@ -231,4 +231,8 @@ public abstract class TickFormatter<T> {
   public abstract String getRangeLabel(Interval interval);
   
   public abstract String getRangeLabelCompact(Interval interval);
+
+  public void setTimeZoneOffsetInMilliseconds(int ms) {
+    // ...
+  }
 }
