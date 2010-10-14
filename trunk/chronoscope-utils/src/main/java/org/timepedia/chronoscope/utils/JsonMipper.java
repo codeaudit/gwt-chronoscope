@@ -30,7 +30,8 @@ import com.google.gwt.i18n.client.TimeZone;
  * @author manolo carrasco monino
  */
 public class JsonMipper {
-  
+  private static Date d = new Date();
+
   public static class GwtJsonArrayNumber implements JsonArrayNumber {
     private JSONArray jsa;
     
@@ -165,11 +166,13 @@ public class JsonMipper {
     }
 
     public String format(double timestamp) {
-      return fmt.format(new Date((long) timestamp));
+      d.setTime((long) timestamp);
+      return fmt.format(d);
     }
 
     public String format(double timestamp, TimeZone timezone) {
-        return fmt.format(new Date((long) timestamp));
+      d.setTime((long) timestamp);
+      return fmt.format(d); // FIXME: TZ
     }
 
     public double parse(String date) {
