@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 public class JDKDateFormatter implements DateFormatter {
-
+    private static Date d = new Date();
     private SimpleDateFormat fmt;
 
     public JDKDateFormatter(String format) {
@@ -22,12 +22,14 @@ public class JDKDateFormatter implements DateFormatter {
     }
 
     public String format(double timestamp) {
-      return fmt.format(new Date((long) timestamp));
+      d.setTime((long) timestamp);
+      return fmt.format(d);
     }
 
     public String format(double timestamp, TimeZone timezone) {
+      d.setTime((long)timestamp);
+      return fmt.format(d); //FIXME
       // FIXME return fmt.format(new Date((long) timestamp), timeZoneOffset);
-        return fmt.format(new Date((long) timestamp)); // FIXME
     }
 
     public double parse(String date) {
