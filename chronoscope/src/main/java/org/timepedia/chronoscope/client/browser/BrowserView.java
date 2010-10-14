@@ -90,7 +90,7 @@ public class BrowserView extends GwtView
       }
 
       public double getTime() {
-        return new Date().getTime();
+        return System.currentTimeMillis();
       }
 
       public void run() {

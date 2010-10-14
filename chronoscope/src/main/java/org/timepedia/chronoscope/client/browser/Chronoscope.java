@@ -498,13 +498,19 @@ public class Chronoscope
 
   /**
    */
-  public ChartPanel createChartPanel(String id,
-      JsArray<JsonDatasetJSO> datasets, ViewReadyCallback listener) {
+  public ChartPanel createChartPanel(String id, JsArray<JsonDatasetJSO> datasets, ViewReadyCallback listener) {
     Element elem = DOM.getElementById(id);
+    /*
+    ChartPanel panel = createChartPanel(elem, createDatasets(datasets),
+            DOM.getElementPropertyInt(elem, "clientWidth"),
+            DOM.getElementPropertyInt(elem, "clientHeight"),
+            listener);
+    elem = null;
+    return panel;*/
+
     int width = DOM.getElementPropertyInt(elem, "clientWidth");
     int height = DOM.getElementPropertyInt(elem, "clientHeight");
-    return createChartPanel(elem, createDatasets(datasets), width, height,
-        listener);
+    return createChartPanel(elem, createDatasets(datasets), width, height, listener);
   }
 
   /**
@@ -545,7 +551,6 @@ public class Chronoscope
         cpanel.attach();
       }
     }
-
     return cpanel;
   }
 
@@ -627,8 +632,7 @@ public class Chronoscope
 
   protected void onChronoscopeLoad() {
     try {
-      JavaScriptObject foo = ExporterUtil.wrap(this);
-      chronoscopeLoaded(foo);
+      chronoscopeLoaded(ExporterUtil.wrap(this));
     } catch (Exception e) {
       if (ChronoscopeOptions.isErrorReportingEnabled()) {
         Window.alert("Chronoscope Failed to Initialize because " + e);

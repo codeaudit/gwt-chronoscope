@@ -45,6 +45,13 @@ public abstract class DomTextLayer extends AbstractLayer {
     super(canvas);
   }
 
+
+  public void clear() {
+    layers.clear();
+    // metricMap.clear();
+  }
+
+
   public void clearTextLayer(String layerName) {
     TextLayer layer = (TextLayer) layers.get(layerName);
     if (layer != null) {
@@ -114,10 +121,13 @@ public abstract class DomTextLayer extends AbstractLayer {
     }
     DOM.setInnerHTML(textDiv, "<nobr>" + label + "</nobr>");
     DOM.appendChild(layerElem, textDiv);
+    // textDiv = null;
+    // layerElem = null;
+    // layer = null;
   }
 
    /**
-    * Add Semi Transparent Background.
+    * Add Semi Transparent Background.  Deprecated.
     */
     public void addSemiTransparentBackground(double x, double y, String label, String fontFamily,
             String fontWeight, String fontSize, String opacity, TextLayer layer, Element layerElem) {
@@ -134,6 +144,7 @@ public abstract class DomTextLayer extends AbstractLayer {
         DOM.setStyleAttribute(textDivBackground, "cursor", "pointer");
         DOM.setInnerHTML(textDivBackground, "<nobr>" + label + "</nobr>");
         DOM.appendChild(layerElem, textDivBackground);
+        // textDivBackground = null;
     }
 
     /**
@@ -197,6 +208,7 @@ public abstract class DomTextLayer extends AbstractLayer {
       layer.layerElem = layerElem;
       layer.bounds = new Bounds(0, 0, getWidth(), getHeight());
       layers.put(layerName, layer);
+      // layerElem = null;
     }
     return layer;
   }
@@ -302,7 +314,12 @@ public abstract class DomTextLayer extends AbstractLayer {
       int adv = rfm.getAdvance(c);
       x1 += sign * adv * Math.cos(angle);
       y1 += sign * adv * Math.sin(angle);
+      //elem = null;
     }
+    // ci = null;
+    // b = null;
+    // layerElem = null;
+    // layer = null;
   }
 
   private native Element getDocumentElement() /*-{
@@ -311,15 +328,14 @@ public abstract class DomTextLayer extends AbstractLayer {
 
   private Element getMetricDiv() {
     if (metricDiv == null) {
-      Element div = DOM.createDiv();
-      DOM.setStyleAttribute(div, "position", "absolute");
-      DOM.setStyleAttribute(div, "padding", "0px");
-      DOM.setStyleAttribute(div, "margin", "0px");
-      DOM.setStyleAttribute(div, "border", "0px");
-      DOM.setStyleAttribute(div, "visibility", "hidden");
+      metricDiv = DOM.createDiv();
+      DOM.setStyleAttribute(metricDiv, "position", "absolute");
+      DOM.setStyleAttribute(metricDiv, "padding", "0px");
+      DOM.setStyleAttribute(metricDiv, "margin", "0px");
+      DOM.setStyleAttribute(metricDiv, "border", "0px");
+      DOM.setStyleAttribute(metricDiv, "visibility", "hidden");
       DOM.appendChild(
-          ((CssGssViewSupport) getCanvas().getView()).getGssCssElement(), div);
-      metricDiv = div;
+          ((CssGssViewSupport) getCanvas().getView()).getGssCssElement(), metricDiv);
     }
     return metricDiv;
   }

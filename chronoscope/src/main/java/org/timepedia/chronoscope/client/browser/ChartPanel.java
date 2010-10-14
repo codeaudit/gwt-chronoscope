@@ -59,7 +59,7 @@ public class ChartPanel extends Composite implements Exportable {
     Datasets<Tuple2D> d = new Datasets<Tuple2D>(datasets);
     plot.setDatasets(d);
     plot.init();
-    plot.redraw();
+    plot.redraw(true);
   }
   
   /**

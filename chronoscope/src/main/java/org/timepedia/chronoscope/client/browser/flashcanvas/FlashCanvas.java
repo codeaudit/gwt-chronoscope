@@ -29,8 +29,8 @@ import java.util.Iterator;
 
 public class FlashCanvas extends Canvas {
 
-  public static String FLASH_ALTERNATIVES =
-          "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>\n";
+  public static String FLASH_ALTERNATIVES = "\n<!-- chart not visible in browser without canvas element -->\n";   // TODO - make this configurable.
+          // "<p>Modern browsers such as Chrome, Safari, Firefox, or Internet Explorer 9 use javascript and HTML (rather than Flash) for a faster charting experience.</p>\n";
 
   public static String FLASH_ADVICE =
         "<p>If you're using Internet Explorer 6, 7, or 8 you need to enable or install Flash Player to experience these charts.</p>\n" +
@@ -336,10 +336,8 @@ public class FlashCanvas extends Canvas {
   public void disposeLayer(String layerId) {
     Layer layer = getLayer(layerId);
     if (layer != null) {
-      if (layer != null) {
-        flashDisposeLayer(canvasId, layerId);
-        //         DOM.removeChild(canvasElement, ( (FlashLayer) layer ).getLayerElement());
-      }
+      flashDisposeLayer(canvasId, layerId);
+      // DOM.removeChild(canvasElement, ( (FlashLayer) layer ).getLayerElement());
     }
     id2Layer.remove(layerId);
   }
