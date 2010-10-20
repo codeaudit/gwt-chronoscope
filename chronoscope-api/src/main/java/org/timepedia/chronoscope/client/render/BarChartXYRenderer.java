@@ -36,6 +36,8 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
 
+    addClickable(dataX, dataY, ux, uy);
+
     ChronoDate d = ChronoDate.get(dataX);
 
     if (methodCallCount == 0) {

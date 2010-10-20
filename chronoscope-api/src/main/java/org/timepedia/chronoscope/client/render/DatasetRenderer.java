@@ -3,22 +3,31 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
+import org.timepedia.chronoscope.client.data.AbstractDataset;
+import org.timepedia.chronoscope.client.data.FlyweightTuple;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.data.RenderedPoint;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.Array1D;
 import org.timepedia.chronoscope.client.util.DateFormatter;
 import org.timepedia.chronoscope.client.util.Interval;
+import org.timepedia.chronoscope.client.util.JavaArray2D;
 import org.timepedia.chronoscope.client.util.date.DateFormatterFactory;
 import org.timepedia.exporter.client.Exportable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import static org.timepedia.chronoscope.client.render.DatasetLegendPanel.LEGEND_ICON_PAD;
 import static org.timepedia.chronoscope.client.render.DatasetLegendPanel.LEGEND_ICON_SIZE;
+
 
 /**
  * Responsible for visually rendering a {@link Dataset} onto a {@link Layer}.
@@ -26,11 +35,107 @@ import static org.timepedia.chronoscope.client.render.DatasetLegendPanel.LEGEND_
 public abstract class DatasetRenderer<T extends Tuple2D>
     implements GssElement, Exportable {
 
-  private boolean isGssInitialized = false;
+  protected boolean isGssInitialized = false;
 
   private boolean customInstalled = false;
 
   private DateFormatter guideLineDateFmt;
+
+  // protected HashMap<String, FlyweightTuple> regions = new HashMap<String, FlyweightTuple>();  // for hit detection of points, features, etc
+
+  protected HashMap<String, HashSet<Tuple2D>> regions = new HashMap<String, HashSet<Tuple2D>>();  // for hit detection of points, features, etc
+
+  protected double DOMAIN_REGIONS = 32d;
+  protected double RANGE_REGIONS = 8d;
+
+  // hit detection range =~  org.timepedia.chronoscope.client.plot.DefaultXYPlot.MAX_FOCUS_DIST;
+  protected double HIT_DISTANCE = 8d;
+
+  private String[] scratchRegions;
+
+  private HashSet<String> scratchX = new HashSet<String>(3);
+  private HashSet<String> scratchY = new HashSet<String>(3);
+
+  public void clearRegions() {
+    regions.clear();
+  }
+
+
+  protected String[] getRegions(double plotX, double plotY) {
+    Bounds b = plot.getBounds();
+    if (plotX < 0) { plotX = 0; }
+    if (plotX > b.width) { plotX = b.width; }
+    if (plotY < 0) { plotY = 0; }
+    if (plotY > b.height) { plotY = b.height; }
+    scratchX.clear();
+    scratchY.clear();
+
+
+    scratchX.add(naturalize((plotX / b.width) * DOMAIN_REGIONS));
+
+    double px = plotX - HIT_DISTANCE;
+    px = Math.max(0, px);
+    scratchX.add(naturalize((px / b.width) * DOMAIN_REGIONS));
+
+    px = plotX + HIT_DISTANCE;
+    px = Math.min(b.width, px);
+    scratchX.add(naturalize((px / b.width) * DOMAIN_REGIONS));
+
+
+    scratchY.add(naturalize((plotY / b.height) * RANGE_REGIONS));
+
+    double py = plotY - HIT_DISTANCE;
+    py  = Math.max(0, py);
+    scratchY.add(naturalize((py / b.height) * RANGE_REGIONS));
+
+    py = plotY + HIT_DISTANCE;
+    py = Math.min(b.height, py);
+    scratchY.add(naturalize((py / b.height) * RANGE_REGIONS));
+
+    String[] X = scratchX.toArray(new String[scratchX.size()]);
+    String[] Y = scratchY.toArray(new String[scratchY.size()]);
+    scratchRegions = new String[X.length * Y.length];
+    int l = 0;
+    for (int i=0; i < X.length; i++) {
+      for (int j=0; j < Y.length; j++) {
+        scratchRegions[l] = X[i] + "," + Y[j];
+        l++;
+      }
+    }
+
+    return scratchRegions;
+  }
+
+  protected void regionalize(double domain, double range, double plotX, double plotY) {
+    String[] re = getRegions(plotX, plotY);
+    for (int i=0; i<re.length; i++) {
+      if (null == regions.get(re[i])) {
+        regions.put(re[i], new HashSet<Tuple2D>());
+      }
+      regions.get(re[i]).add(new RenderedPoint(domain, range, plotX, plotY));
+    }
+  }
+
+  private String naturalize(double d) {
+    String s = String.valueOf(Math.ceil(d));
+    int i = s.indexOf('.');
+    if ( i > -1) {
+      s = s.substring(0,i);
+    }
+    return s;
+  }
+
+  public void addClickable(double domain, double range, double plotX, double plotY) {
+    regionalize(domain, range, plotX, plotY);
+  }
+
+  public HashSet<Tuple2D> getClickable(int plotX, int plotY) {
+    Bounds b = plot.getBounds();
+    String d = naturalize((plotX / b.width) * DOMAIN_REGIONS);
+    String r = naturalize((plotY / b.height) * RANGE_REGIONS);
+
+    return regions.get(d+","+r);
+  }
 
   public boolean isCustomInstalled() {
     return customInstalled;
@@ -122,9 +227,9 @@ public abstract class DatasetRenderer<T extends Tuple2D>
         int hx = x;
         double dx = ((DefaultXYPlot) plot).windowXtoDomain(hx + ((DefaultXYPlot) plot).getBounds().x);
         String label = guideLineDateFmt.format(dx);
-        hx += dx < plot.getDomain().midpoint() ? 1.0 : -1 - layer.stringWidth(label, "Verdana", "", "9pt");
+        hx += dx < plot.getDomain().midpoint() ? 1.0 : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
 
-        layer.drawText(hx, 5.0, label, "Verdana", "", "9pt", textLayer, Cursor.DEFAULT);
+        layer.drawText(hx, 0, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
       }
       layer.restore();
   }
@@ -154,7 +259,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
       }
 
       layer.beginPath();
-      layer.moveTo(x, y);
+      layer.moveTo(x+LEGEND_ICON_PAD, y);
       // layer.setLineWidth(alineProp.lineThickness);
       String height = gssLegendProps.iconHeight;
       if(height.equals("auto")){
@@ -252,6 +357,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   public final void setParentGssElement(GssElement parentGssElement) {
     this.parentGssElement = parentGssElement;
+    isGssInitialized = false;
   }
 
   public final void setPlot(XYPlot<T> plot) {
@@ -266,11 +372,18 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     GssElement fillElement = new GssElementImpl("fill", parentGssElement);
     GssElement pointElement = new GssElementImpl("point", parentGssElement);
 
+    gssFillProps = view.getGssProperties(fillElement, "");
+    gssLineProps = view.getGssProperties(this, "");
+    gssPointProps = view.getGssProperties(pointElement, "");
+
     gssDisabledFillProps = view.getGssProperties(fillElement, "disabled");
     gssDisabledLineProps = view.getGssProperties(this, "disabled");
     gssDisabledPointProps = view.getGssProperties(pointElement, "disabled");
-    gssFillProps = view.getGssProperties(fillElement, "");
+
+    gssFocusFillProps = view.getGssProperties(fillElement, "focus");
+    gssFocusLineProps = view.getGssProperties(this, "focus");
     gssFocusPointProps = view.getGssProperties(pointElement, "focus");
+
     gssFocusGuidelineProps = view.getGssProperties(new GssElementImpl("guideline", pointElement), "focus");
     if (gssFocusGuidelineProps.dateFormat != null) {
       this.guideLineDateFmt = DateFormatterFactory.getInstance()
@@ -278,8 +391,6 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     }
 
     gssHoverProps = view.getGssProperties(pointElement, "hover");
-    gssLineProps = view.getGssProperties(this, "");
-    gssPointProps = view.getGssProperties(pointElement, "");
 
     gssLegendProps = view.getGssProperties(new GssElementImpl("axislegend" , parentGssElement), "");
 

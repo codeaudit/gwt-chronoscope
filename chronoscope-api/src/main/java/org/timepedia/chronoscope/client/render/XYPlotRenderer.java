@@ -146,6 +146,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     Dataset<T> dataSet = dds.dataset;
     DatasetRenderer<T> renderer = dds.getRenderer();
+    renderer.clearRegions();
 
     // TODO: add new method to detect non-drawable datasets
 //    if (dataSet.getNumSamples() < 2) {

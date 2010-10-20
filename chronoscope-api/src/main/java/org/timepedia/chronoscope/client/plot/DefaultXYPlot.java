@@ -1,10 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -26,6 +22,8 @@ import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
+import org.timepedia.chronoscope.client.data.tuple.Tuple3D;
+import org.timepedia.chronoscope.client.data.tuple.Tuple5D;
 import org.timepedia.chronoscope.client.event.ChartClickEvent;
 import org.timepedia.chronoscope.client.event.ChartClickHandler;
 import org.timepedia.chronoscope.client.event.PlotChangedEvent;
@@ -111,7 +109,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   private static int globalPlotNumber = 0;
 
   private static final String LAYER_HOVER = "hoverLayer";
-
+  private static final String LAYER_OVERLAY = "overlayLayer";
   private static final String LAYER_PLOT = "plotLayer";
 
   // The maximum distance that the mouse pointer can stray from a candidate
@@ -197,7 +195,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private RangePanel rangePanel;
 
-  private Layer plotLayer, hoverLayer;
+  private Layer plotLayer, hoverLayer, overlayLayer;
 
   private int[] hoverPoints;
 
@@ -211,7 +209,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private ArrayList<Overlay> overlays;
 
-  private Bounds plotBounds;
+  private Bounds plotBounds, hoverBounds;
 
   private XYPlotRenderer<T> plotRenderer;
 
@@ -279,7 +277,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   
   @Export
   public void setTimeZoneOffsetUTC(int offsetHours) {
-      // if ((offsetHours >= -12 && offsetHours < 0) || (offsetHours > 0 && offsetHours <= 13)) {
       if ((offsetHours > -14) && (offsetHours < 14)) {
         ChronoDate.setTimeZoneOffsetInMilliseconds(offsetHours*60*60*1000);
       }// else { // == 0
@@ -288,6 +285,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       // }
       
       topPanel.getCompositePanel().draw();
+      redraw(true);
       bottomPanel.draw();
   }
 
@@ -298,6 +296,7 @@ public class DefaultXYPlot<T extends Tuple2D>
         ChronoDate.setTimeZoneOffsetBrowserLocal(offsetHours*60*60*1000);
      }
      topPanel.getCompositePanel().draw();
+     redraw(true);
      bottomPanel.draw();
   }
 
@@ -381,14 +380,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     // save original endpoints so they can be restored later
     Interval origVisPlotDomain = getDomain().copy();
     getWidestDomain().copyTo(getDomain());
-    Canvas backingCanvas = view.getCanvas();
+    // Canvas backingCanvas = view.getCanvas();
     // backingCanvas.beginFrame();
     overviewLayer.save();
     overviewLayer.clear();
     overviewLayer.setVisibility(false);
-      
     overviewLayer.setFillColor(Color.TRANSPARENT);
-
     overviewLayer.fillRect(0, 0, overviewLayer.getWidth(), overviewLayer.getHeight());
 
     Bounds oldBounds = plotBounds;
@@ -494,8 +491,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public Layer getHoverLayer() {
-//    return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
     return hoverLayer;
+    // return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
   }
 
   public int[] getHoverPoints() {
@@ -791,29 +788,28 @@ public class DefaultXYPlot<T extends Tuple2D>
    * the center plot is redrawn unconditionally.
    */
   public void redraw(boolean forceCenterPlotRedraw) {
-    Canvas backingCanvas = view.getCanvas();
-    backingCanvas.beginFrame();
+    view.getCanvas().beginFrame();
     plotLayer.save();
     // if on a low performance device, don't re-render axes or legend
     // when animating
     final boolean canDrawFast = !(isAnimating() &&
             ChronoscopeOptions.isAnimationPreview() && ChronoscopeOptions.isLowPerformance());
 
-    final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain);
+    final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain)
+            || ChronoscopeOptions.isVerticalCrosshairEnabled();
 
     Layer hoverLayer = getHoverLayer();
+    clearHoverLayer();
+
+    clearOverlayLayer(overlayLayer);
 
     // Draw the hover points, but not when the plot is currently animating.
-    if (isAnimating) {
-      hoverLayer.save();
-      hoverLayer.clear();
-      hoverLayer.clearTextLayer("crosshair");
-      hoverLayer.restore();
+    if (isAnimating || hoverX < 1) {
+      // ...
     } else {
       plotRenderer.drawHoverPoints(hoverLayer);
+      drawCrossHairs(hoverLayer);
     }
-
-    drawCrossHairs(hoverLayer);
 
     if (plotDomainChanged) {
       plotLayer.clear();
@@ -831,7 +827,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotLayer.restore();
 
       if (canDrawFast) {
-        drawOverlays(plotLayer);
+        drawOverlays(overlayLayer);
       }
     }
 
@@ -840,7 +836,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       drawPlotHighlight(hoverLayer);
     }
     plotLayer.restore();
-    backingCanvas.endFrame();
+    view.getCanvas().endFrame();
     visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
   }
@@ -926,8 +922,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.getRangeAxes()[dataset].setAutoZoomVisibleRange(autoZoom);
   }
 
-  public void setDatasetRenderer(int datasetIndex,
-      DatasetRenderer<T> renderer) {
+  public void setDatasetRenderer(int datasetIndex, DatasetRenderer<T> renderer) {
     ArgChecker.isNotNull(renderer, "renderer");
     renderer.setCustomInstalled(true);
     this.plotRenderer.setDatasetRenderer(datasetIndex, renderer);
@@ -961,7 +956,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       double rangeY = windowYtoRange(y, i);
       NearestPoint nearest = this.nearestSingleton;
       findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
-
       if (nearest.dist < minNearestDist) {
         nearestPt = nearest.pointIndex;
         nearestSer = i;
@@ -970,6 +964,31 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
 
+   /* FIXME - this doesn't work yet.
+
+    for (int i = 0; i < datasets.size(); i++) {
+      NearestPoint nearest = this.nearestSingleton;
+
+      HashSet<Tuple2D> nearby = getDatasetRenderer(i).getClickable(x, y);
+      if ((null != nearby) && (nearby.size()>0)) {
+        Iterator<Tuple2D> clique = nearby.iterator();
+        while(clique.hasNext()) {
+         Tuple2D pt = clique.next();
+         double domainX = pt.getDomain();
+         double rangeY = pt.getRange0();
+         findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
+          if (nearest.dist < minNearestDist) {
+           nearestPt = nearest.pointIndex;
+           nearestSer = i;
+           minNearestDist = nearest.dist;
+           nearestDim = nearest.dim;
+          }
+        }
+      }
+    }
+
+   */
+
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
       setFocusAndNotifyView(nearestSer, nearestPt, nearestDim);
@@ -977,7 +996,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       setFocusAndNotifyView(null);
     }
 
-    redraw();
+    redraw(true);
     return somePointHasFocus;
   }
 
@@ -1034,7 +1053,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (isDirty) {
       fireHoverEvent();
     }
-    redraw();
+    redraw(true);
 
     return isCloseToCurve;
   }
@@ -1159,11 +1178,10 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   Layer initLayer(Layer layer, String layerPrefix, Bounds layerBounds) {
-    Canvas canvas = view.getCanvas();
     if (layer != null) {
-      canvas.disposeLayer(layer);
+      view.getCanvas().disposeLayer(layer);
     }
-    return canvas.createLayer(layerPrefix + plotNumber, layerBounds);
+    return view.getCanvas().createLayer(layerPrefix + plotNumber, layerBounds);
   }
 
   private void animateTo(final double destDomainOrigin,
@@ -1225,7 +1243,7 @@ public class DefaultXYPlot<T extends Tuple2D>
             zoomFactor * lerpFactor));
         final double domainStart = domainCenter - domainLength / 2;
         visibleDomain.setEndpoints(domainStart, domainStart + domainLength);
-        redraw();
+        redraw(true);
 
         if (lerpFactor < 1) {
           t.schedule(10);
@@ -1288,6 +1306,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   
   DateFormatter crosshairFmt;
 
+  public void clearHoverLayer() {
+    hoverLayer.save();
+    hoverLayer.clearTextLayer("crosshair");
+    hoverLayer.clearRect(0, 0, hoverLayer.getWidth(), hoverLayer.getHeight());
+    hoverLayer.restore();
+  }
+
   private void drawCrossHairs(Layer hoverLayer) {
     if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
       hoverLayer.save();
@@ -1295,7 +1320,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.setFillColor(crosshairProperties.color);
       hoverLayer.setTransparency((float)crosshairProperties.transparency);
 
-      if (hoverX > -1) {
+      if (hoverX > 0) {
         hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
         int hx = hoverX;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
@@ -1315,7 +1340,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
           hoverLayer.setStrokeColor(crosshairProperties.color);
-          hoverLayer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+          hoverLayer.drawText(hx, 0, label, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
         }
 
           int nearestPt = NO_SELECTION;
@@ -1372,8 +1397,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
                   hoverLayer.setStrokeColor(Color.BLACK);
                   hx = hoverX + (int) (dx < getDomain().midpoint() ? 1.0
-                      : -1 - hoverLayer
-                          .stringWidth(rLabel, "Helvetica", "", "9pt"));
+                      : -1 - hoverLayer.stringWidth(rLabel, "Helvetica", "", "9pt"));
 
                   // Add the label positions for layout and display later
                   labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, crosshairLabelsProperties, hoverLayer));
@@ -1462,7 +1486,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                         //All labels shows on the right between the region 0-0.25
                         LabelLayoutPoint point = overlapList.get(overlapList.size() - 1);
                         point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
                         double beforePointHx = point.hx;
                         int textLength = point.labelText.length() * 7;
                         for (int j = overlapList.size() - 2; j >= 0; j--) {
@@ -1475,7 +1499,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                         //All labels shows on the left between the region 0.75-1
                         LabelLayoutPoint point = overlapList.get(0);
                         point.layer.setStrokeColor(point.gssProperties.color);
-                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                        point.layer.drawText(point.hx, point.dy, point.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
                         double beforePointHx = point.hx;
                         for (int j = 1; j < overlapList.size(); j++) {
                             LabelLayoutPoint nextPoint = overlapList.get(j);
@@ -1579,7 +1603,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
         LabelLayoutPoint(double hx, double dy, String labelText, GssProperties props, Layer layer) {
             this.hx = hx;
-            this.dy = dy;
+            this.dy = dy - 10; // move labels up an em or so
             this.labelText = labelText;
             this.gssProperties = props;
             this.layer = layer;
@@ -1628,12 +1652,21 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     }
 
+
+
+  public void clearOverlayLayer(Layer layer) {
+    layer.save();
+    layer.clearTextLayer("overlays");
+    layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
+    layer.restore();
+  }
+
   /**
    * Draws the overlays (e.g. markers) onto the center plot.
    */
   private void drawOverlays(Layer layer) {
     layer.save();
-    layer.clearTextLayer("overlays");
+    clearOverlayLayer(layer);
     layer.setTextLayerBounds("overlays",
         new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
 
@@ -1931,8 +1964,12 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     plotLayer = initLayer(plotLayer, LAYER_PLOT, plotBounds);
 
-    hoverLayer = initLayer(hoverLayer, LAYER_HOVER, plotBounds);
+    hoverBounds = new Bounds(plotBounds.x, plotBounds.y, plotBounds.width, plotBounds.height);
+    hoverLayer = initLayer(hoverLayer, LAYER_HOVER, hoverBounds);
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
+
+    overlayLayer = initLayer(overlayLayer, LAYER_OVERLAY, plotBounds);
+    overlayLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
 
     topPanel.initLayer();
     rangePanel.initLayer();
@@ -2065,8 +2102,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
   }
 
-  private void setFocusAndNotifyView(int datasetIndex, int pointIndex,
-      int nearestDim) {
+  private void setFocusAndNotifyView(int datasetIndex, int pointIndex, int nearestDim) {
 
     boolean damage = false;
     if (!multiaxis) {
@@ -2169,7 +2205,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return getRangeAxis(datasetIndex).userToData(userY);
   }
 
-    // TODO - these can probably all be eliminated
+    // TODO - these should go elsewhere
 
     @Export
     @Override

@@ -39,9 +39,12 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   public void drawCurvePart(Layer layer, T point, int methodCallCount, RenderState renderState) {
     // gssActiveLineProps = (plot.getFocus() != null) ? gssDisabledLineProps : gssLineProps;
     gssActiveLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
+    double dataX = point.getDomain();
+    double dataY = point.getRange0();
+    double ux = plot.domainToScreenX(dataX, datasetIndex);
+    double uy = plot.rangeToScreenY(dataY, datasetIndex);
 
-    double ux = plot.domainToScreenX(point.getDomain(), datasetIndex);
-    double uy = plot.rangeToScreenY(point.getRange0(), datasetIndex);
+    addClickable(dataX, dataY, ux, uy);
 
     // guard webkit bug, coredump if draw two identical lineTo in a row
     if (gssActiveLineProps.visible) {
@@ -67,20 +70,19 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
   @Override
   public void drawHoverPoint(Layer layer, T point, int datasetIndex) {
-    GssProperties layerProps = this.gssHoverProps;
-    if (!layerProps.visible) {
+    if (!gssHoverProps.visible) {
       return;
     }
     
-    if (layerProps.size < 1) {
-      layerProps.size = 1;
+    if (gssHoverProps.size < 1) {
+      gssHoverProps.size = 1;
     }
 
     final double dataX = point.getDomain();
     final double dataY = point.getRange0();
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
-    drawPoint(ux, uy, layer, layerProps);
+    drawPoint(ux, uy, layer, gssHoverProps);
   }
 
 
@@ -113,13 +115,13 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       }
 
       if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {
-
+        // addClickable(point, ux, uy);
         drawPoint(ux, uy, layer, gssProps);
         lx = ux;
         ly = uy;
       }
-
     }
+    gssProps = null;
   }
 
   @Override
@@ -175,8 +177,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
   /**
    * Draws a point at the specified screen coordinates
    */
-  private void drawPoint(double ux, double uy, Layer layer,
-      GssProperties gssProps) {
+  private void drawPoint(double ux, double uy, Layer layer, GssProperties gssProps) {
     layer.setFillColor(gssProps.bgColor);
     layer.setLineWidth(gssProps.lineThickness);
     layer.setShadowBlur(gssProps.shadowBlur);
