@@ -232,8 +232,9 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   public String getTypeClass() {
     return typeClass;
   }
-
-  public void drawGuideLine(Layer layer, int x) {
+  // NOTE - DatasetRenderer.drawGuideLine is for points with guidelines (eg point:focus guideline) this is for marker guidelines
+  // TODO - DRY
+   public void drawGuideLine(Layer layer, int x) {
     if(guideLineProps == null) return;
     
     layer.save();
@@ -249,9 +250,9 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
           .windowXtoDomain(hx + ((DefaultXYPlot) plot).getBounds().x);
       String label = guideLineDateFmt.format(dx);
       hx += dx < plot.getDomain().midpoint() ? 1.0
-          : -1 - layer.stringWidth(label, "Helvetica", "", "9pt");
+          : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
       // TODO - factor hard-coded font out 
-      layer.drawText(hx, 5.0, label, "Helvetica", "", "9pt", "overlays", Cursor.CONTRASTED);
+      layer.drawText(hx, 0, label, "Helvetica", "", "8pt", "overlays", Cursor.CONTRASTED);
     }
     layer.restore();
   }

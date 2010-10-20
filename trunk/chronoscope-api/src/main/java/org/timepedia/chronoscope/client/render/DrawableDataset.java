@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 
 /**
  * Represents a dataset along with all the associated information needed to 
