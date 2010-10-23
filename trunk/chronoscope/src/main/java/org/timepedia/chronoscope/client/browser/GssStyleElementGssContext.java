@@ -62,6 +62,7 @@ public class GssStyleElementGssContext extends BrowserGssContext implements
       } else {
         callback.run();
         dequeue();
+        gssContext.initialized = true;
       }
     }
     
@@ -124,9 +125,14 @@ public class GssStyleElementGssContext extends BrowserGssContext implements
     return gssContext.getPropertiesBySelector(gssSelector);
   }
 
+  
   @Override
   public void initialize(Element cssgss,
       final OnGssInitializedCallback mcallback) {
+    
+    if (gssContext.initialized) {
+      return;
+    }
     
     super.initialize(cssgss, mcallback);
     
@@ -172,6 +178,7 @@ public class GssStyleElementGssContext extends BrowserGssContext implements
       new GssLoader(toLoad, mcallback);
     } else {
       mcallback.run();
+      gssContext.initialized = true;
     }
   }
   
