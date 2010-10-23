@@ -1,7 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.HistoryManager;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext.OnGssInitializedCallback;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -40,7 +39,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
 
   private ChartEventHandler chartEventHandler;
 
-  private GssContext gssContext;
+  private static GssContext gssContext;
 
   private View view;
 
@@ -209,17 +208,16 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     cssgss = DOM.createDiv();
     DOM.setStyleAttribute(cssgss, "width", "0px");
     DOM.setStyleAttribute(cssgss, "height", "0px");
-    DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(),
-        "id")
-        + "style");
+    DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(), "id") + "style");
     DOM.setElementAttribute(cssgss, "class", "chrono");
     appendBody(cssgss);
     super.onAttach();
 
     if (gssContext == null) {
-      gssContext = GWT.create(BrowserGssContext.class);
-      ((BrowserGssContext)gssContext).initialize(cssgss, new OnGssInitializedCallback() {
+      final BrowserGssContext ctx = GWT.create(BrowserGssContext.class);
+      ctx.initialize(cssgss, new OnGssInitializedCallback() {
         public void run() {
+          gssContext = ctx;
           initView();
         }
       });

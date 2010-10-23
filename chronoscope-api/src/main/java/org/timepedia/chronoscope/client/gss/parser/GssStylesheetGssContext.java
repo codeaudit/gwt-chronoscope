@@ -19,6 +19,7 @@ import java.util.Map;
 public class GssStylesheetGssContext extends DefaultGssContext {
 
   private List<GssRule> rules = new ArrayList<GssRule>();
+  public boolean initialized = false;
 
   private Map<GssElement, GssProperties> propertyMap
       = new HashMap<GssElement, GssProperties>();
