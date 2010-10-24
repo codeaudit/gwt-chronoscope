@@ -13,7 +13,7 @@
 
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
-    if(window.location.href.indexOf("_force_flash") != -1) return "force";      
+    if(window.location.href.indexOf("_force_flash") != -1) return "force";
     if(navigator.plugins) {
       var x = navigator.plugins['Shockwave Flash'];
       if(x) {
@@ -38,8 +38,7 @@
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
   </replace-with>
 
-  <replace-with
-      class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="user.agent" value="ie6"/>
     <when-property-is name="hasflash" value="yes"/>
@@ -51,13 +50,23 @@
     <when-property-is name="hasflash" value="yes"/>
   </replace-with>       <!-- TODO - test in ie8 -->
 
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.NoFlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="ie6"/>
+    <when-property-is name="hasflash" value="no"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.NoFlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="ie8"/>
+    <when-property-is name="hasflash" value="no"/>
+  </replace-with>       
+
   <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="hasflash" value="force"/>
   </replace-with>
  
-  <set-property name="export" value="no"/>
-  <!-- set-property name="hasflash" value="yes" / -->
   
    <replace-with class="org.timepedia.chronoscope.client.browser.ChartEventHandler">
     <when-type-is class="org.timepedia.chronoscope.client.browser.ChartEventHandler"/>
@@ -69,7 +78,19 @@
     <when-property-is name="user.agent" value="gecko1_8"/>
   </replace-with>
 
-
-
-  <stylesheet src="theme/chrome/chrome.css" />
+  <!-- Do not enable export by default, so the library can be used in gwt applications
+      which don't export anything to javascript -->
+  <set-property name="export" value="no"/>
+  
+  <!-- By default do not increase the number of permutations -->
+  <set-property name="hasflash" value="yes"/>
+  <!-- Set the property to yes,force to use flash in non IE browsers when passing ?_force_flash parameter -->
+  <!-- <set-property name="hasflash" value="yes,force"/>-->
+  <!-- Set the property to yes,no to show a message in IE when flash is not installed -->  
+  <!-- <set-property name="hasflash" value="yes,no"/>-->
+  <!-- Set the property to force to use flash in all browsers -->  
+  <!-- <set-property name="hasflash" value="force"/>-->
+  
+  <!-- By default do not load customized chrome.css, load it in your app if you have any css issue -->
+  <!-- <stylesheet src="theme/chrome/chrome.css" />-->
 </module>
