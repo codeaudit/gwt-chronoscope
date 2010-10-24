@@ -17,7 +17,7 @@ public class GssContextTest extends GWTTestCase {
     return null;
   }
 
-  public void testChildrenWithId() {
+  public void atestChildrenWithId() {
     GssElement gssElem = new GssElementImpl("series", null, "s1 mid");
     GssStylesheetGssContext gss=new GssStylesheetGssContext();
     GssProperties p = gss.getProperties(gssElem, "");
@@ -30,13 +30,24 @@ public class GssContextTest extends GWTTestCase {
     assertEquals(false, p.visible);
   }
 
-  public void testChildrenSeriesWithId() {
+  public void atestChildrenSeriesWithId() {
     GssStylesheetGssContext gss=new GssStylesheetGssContext("series.s1 fill {color: black}; series.#mid fill {visibility: hidden; color: red}; series.s1 fill {color: green}; ");
     GssElement gssElem = new GssElementImpl("series", null, "s1 #mid");
     GssElement gssFill = new GssElementImpl("fill", gssElem);
     GssProperties p = gss.getProperties(gssFill, "");
 
     assertEquals("#ff0000", p.color.toString());
+    assertEquals(false, p.visible);
+  }
+  
+  public void testOverviewVisibility() {
+    GssStylesheetGssContext gss=new GssStylesheetGssContext("overview { visiblity: hidden; }");
+    GssElement gssElm = new GssElementImpl("overview", null);
+    GssProperties p = gss.getProperties(gssElm, "");
+    assertEquals(true, p.visible);
+
+    gss=new GssStylesheetGssContext("overview { visibility: hidden; }");
+    p = gss.getProperties(gssElm, "");
     assertEquals(false, p.visible);
   }
     
