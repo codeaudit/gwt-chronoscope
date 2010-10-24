@@ -1,6 +1,10 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -15,15 +19,12 @@ import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
-import org.timepedia.chronoscope.client.data.tuple.Tuple3D;
-import org.timepedia.chronoscope.client.data.tuple.Tuple5D;
 import org.timepedia.chronoscope.client.event.ChartClickEvent;
 import org.timepedia.chronoscope.client.event.ChartClickHandler;
 import org.timepedia.chronoscope.client.event.PlotChangedEvent;
@@ -1940,7 +1941,9 @@ public class DefaultXYPlot<T extends Tuple2D>
       crosshairProperties = view.getGssProperties(crosshairElement, "");
       if (crosshairProperties.gssSupplied && crosshairProperties.visible) {
         ChronoscopeOptions.setVerticalCrosshairEnabled(true);
-        ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
+        if (!ChronoscopeOptions.isCrosshairDateTimeFormat()) {
+          ChronoscopeOptions.setCrosshairDateTimeFormat(crosshairProperties.dateFormat);
+        }
       }
 
       crosshairLabelsProperties = view.getGssPropertiesBySelector("crosshair labels");
