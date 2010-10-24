@@ -79,7 +79,7 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
     //
 
     OverviewAxisPanel oaPanel = plot.getOverviewAxisPanel();
-    if (oaPanel != null) {
+    if (oaPanel != null && oaPanel.getLayer() != null) {
       Bounds layerBounds = oaPanel.getLayer().getBounds();
       Bounds oaPanelBounds = oaPanel.getBounds();
       double viewOffsetX = layerBounds.x + oaPanel.getLayerOffsetX();
