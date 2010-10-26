@@ -23,11 +23,13 @@ public final class ChartMouseDownHandler
     int x = getLocalX(event);
     int y = getLocalY(event);
 
-    int overviewX = (int)chart.getPlot().getBounds().x;
-    Bounds highlightBounds = chart.getPlot().getOverviewAxisPanel().getHighlightBounds();
-    if ( highlightBounds != null) {
-       int hiliteX = (int) highlightBounds.x;
-       OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX((x - overviewX) - hiliteX);
+    if (y > (chart.getView().getHeight() - chart.getPlot().getOverviewAxisPanel().getBounds().height)) {
+      int overviewX = (int)chart.getPlot().getBounds().x;
+      Bounds highlightBounds = chart.getPlot().getOverviewAxisPanel().getHighlightBounds();
+      if ( highlightBounds != null) {
+        int hiliteX = (int) highlightBounds.x;
+        OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX((x - overviewX) - hiliteX);
+      }
     }
 
     boolean handled;
