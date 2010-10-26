@@ -45,7 +45,7 @@ public interface Layer {
 
   int Z_LAYER_AXIS = 2;
 
-  int Z_LAYER_HIGHLIGHT = 3;
+  int Z_LAYER_OVERLAY = 3;
 
   int Z_LAYER_HOVER = 4;
 

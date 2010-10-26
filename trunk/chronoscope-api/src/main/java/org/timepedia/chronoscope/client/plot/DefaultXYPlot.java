@@ -1,10 +1,6 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -24,6 +20,7 @@ import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.data.DatasetListener;
 import org.timepedia.chronoscope.client.data.MipMap;
+import org.timepedia.chronoscope.client.data.RenderedPoint;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.event.ChartClickEvent;
 import org.timepedia.chronoscope.client.event.ChartClickHandler;
@@ -491,6 +488,11 @@ public class DefaultXYPlot<T extends Tuple2D>
         + visDomain.length() + ")";
   }
 
+  public Layer getOverlayLayer() {
+    return overlayLayer;
+  }
+
+
   public Layer getHoverLayer() {
     return hoverLayer;
     // return initLayer(hoverLayer, LAYER_HOVER, plotBounds);
@@ -577,8 +579,7 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void maxZoomOut() {
     pushHistory();
-    animateTo(widestDomain.getStart(), widestDomain.length(),
-      PlotMovedEvent.MoveType.ZOOMED);
+    animateTo(widestDomain.getStart(), widestDomain.length(), PlotMovedEvent.MoveType.ZOOMED);
   }
 
   public boolean maxZoomTo(int x, int y) {
@@ -760,13 +761,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
         PlotMovedEvent.MoveType.ZOOMED);
   }
-
+  // NOTE - really this is rangeToPlotY
   public double rangeToScreenY(Tuple2D pt, int datasetIndex, int dim) {
     DatasetRenderer dr = getDatasetRenderer(datasetIndex);
     return plotBounds.height
         - getRangeAxis(datasetIndex).dataToUser(dr.getRangeValue(pt, dim)) * plotBounds.height;
   }
-  
+  // NOTE - really this is rangeToPlotY
   public double rangeToScreenY(double dataY, int datasetIndex) {
     return plotBounds.height
         - getRangeAxis(datasetIndex).dataToUser(dataY) * plotBounds.height;
@@ -801,7 +802,6 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     Layer hoverLayer = getHoverLayer();
     clearHoverLayer();
-
     clearOverlayLayer(overlayLayer);
 
     // Draw the hover points, but not when the plot is currently animating.
@@ -951,7 +951,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     int nearestSer = 0;
     int nearestDim = 0;
     double minNearestDist = MAX_FOCUS_DIST;
-
+    /*
     for (int i = 0; i < datasets.size(); i++) {
       double domainX = windowXtoDomain(x);
       double rangeY = windowYtoRange(y, i);
@@ -964,31 +964,32 @@ public class DefaultXYPlot<T extends Tuple2D>
         nearestDim = nearest.dim;
       }
     }
+   */
 
-   /* FIXME - this doesn't work yet.
-
+    int plotX = x - (int)plotBounds.x;
+    int plotY = y - (int)plotBounds.y;
+    if (plotX < 0 || plotY < 0) { return false; }
     for (int i = 0; i < datasets.size(); i++) {
       NearestPoint nearest = this.nearestSingleton;
-
-      HashSet<Tuple2D> nearby = getDatasetRenderer(i).getClickable(x, y);
+      HashSet<RenderedPoint> nearby = getDatasetRenderer(i).getClickable(plotX, plotY);
       if ((null != nearby) && (nearby.size()>0)) {
-        Iterator<Tuple2D> clique = nearby.iterator();
+        Iterator<RenderedPoint> clique = nearby.iterator();
         while(clique.hasNext()) {
-         Tuple2D pt = clique.next();
-         double domainX = pt.getDomain();
-         double rangeY = pt.getRange0();
-         findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
-          if (nearest.dist < minNearestDist) {
-           nearestPt = nearest.pointIndex;
-           nearestSer = i;
-           minNearestDist = nearest.dist;
-           nearestDim = nearest.dim;
+          RenderedPoint pt = clique.next();
+          // double domainX = pt.getDomain();
+          // double rangeY = pt.getRange0();
+          double sx = pt.getPlotX();
+          double sy = pt.getPlotY();
+          double distance = DistanceFormula.XY.dist(plotX, plotY, sx, sy);
+          if (distance < minNearestDist) {
+            nearestPt = pt.getDomainIndex();
+            nearestSer = pt.getDatasetIndex();
+            minNearestDist = distance;
+            nearestDim = pt.getDimension();
           }
         }
       }
     }
-
-   */
 
     final boolean somePointHasFocus = pointExists(nearestPt);
     if (somePointHasFocus) {
@@ -1030,7 +1031,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
     // True iff one or more hoverPoints have changed since the last call to this method
     boolean isDirty = false;
-
+    if (this.hoverX < 0 || this.hoverY < 0) { return false; }
     NearestPoint nearestHoverPt = this.nearestSingleton;
     for (int i = 0; i < datasets.size(); i++) {
       double dataX = windowXtoDomain(x);
@@ -1143,12 +1144,17 @@ public class DefaultXYPlot<T extends Tuple2D>
   }
 
   public double windowXtoDomain(double x) {
-    return bottomPanel.getDomainAxisPanel().getValueAxis()
-        .userToData(windowXtoUser(x));
+    return bottomPanel.getDomainAxisPanel().getValueAxis().userToData(windowXtoUser(x));
   }
+
 
   public double windowXtoUser(double x) {
     return (x - plotBounds.x) / plotBounds.width;
+  }
+
+  private double windowYtoRange(int y, int datasetIndex) {
+    double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
+    return getRangeAxis(datasetIndex).userToData(userY);
   }
 
   @Export
@@ -1337,11 +1343,11 @@ public class DefaultXYPlot<T extends Tuple2D>
           } else {
             label = getTickFormater().formatCrosshair(cronoDate);
           }
-          int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "9pt");
+          int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "8pt");
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
           hoverLayer.setStrokeColor(crosshairProperties.color);
-          hoverLayer.drawText(hx, 0, label, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+          hoverLayer.drawText(hx, -2, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         }
 
           int nearestPt = NO_SELECTION;
@@ -1398,7 +1404,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
                   hoverLayer.setStrokeColor(Color.BLACK);
                   hx = hoverX + (int) (dx < getDomain().midpoint() ? 1.0
-                      : -1 - hoverLayer.stringWidth(rLabel, "Helvetica", "", "9pt"));
+                      : -1 - hoverLayer.stringWidth(rLabel, "Helvetica", "", "8pt"));
 
                   // Add the label positions for layout and display later
                   labelPointList.add(new LabelLayoutPoint(hx, dy, rLabel, crosshairLabelsProperties, hoverLayer));
@@ -1554,7 +1560,7 @@ public class DefaultXYPlot<T extends Tuple2D>
                     //Only one point
                     LabelLayoutPoint pendingPoint = overlapList.get(0);
                     pendingPoint.layer.setStrokeColor(pendingPoint.gssProperties.color);
-                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
                 }
             }
         }
@@ -1569,7 +1575,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     private double drawLabelOnCrossHairLeft(LabelLayoutPoint nextPoint, double beforePointHx) {
         nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
         beforePointHx -= nextPoint.labelText.length() * 7;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         return beforePointHx;
     }
 
@@ -1583,7 +1589,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     private List<Number> drawLabelOnCrossHairRight(LabelLayoutPoint nextPoint, double beforePointHx, int textLength) {
         nextPoint.layer.setStrokeColor(nextPoint.gssProperties.color);
         beforePointHx += textLength;
-        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "9pt", "crosshair", Cursor.CONTRASTED);
+        nextPoint.layer.drawText(beforePointHx, nextPoint.dy, nextPoint.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         textLength = nextPoint.labelText.length() * 7;
         List<Number> beforeInfor = new ArrayList<Number>();
         beforeInfor.add(0, beforePointHx);
@@ -1667,7 +1673,7 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   private void drawOverlays(Layer layer) {
     layer.save();
-    clearOverlayLayer(layer);
+    // clearOverlayLayer(layer);
     layer.setTextLayerBounds("overlays",
         new Bounds(0, 0, layer.getBounds().width, layer.getBounds().height));
 
@@ -1972,7 +1978,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     hoverLayer.setLayerOrder(Layer.Z_LAYER_HOVER);
 
     overlayLayer = initLayer(overlayLayer, LAYER_OVERLAY, plotBounds);
-    overlayLayer.setLayerOrder(Layer.Z_LAYER_HIGHLIGHT);
+    overlayLayer.setLayerOrder(Layer.Z_LAYER_OVERLAY);
 
     topPanel.initLayer();
     rangePanel.initLayer();
@@ -2203,10 +2209,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     redraw();
   }
 
-  private double windowYtoRange(int y, int datasetIndex) {
-    double userY = (plotBounds.height - (y - plotBounds.y)) / plotBounds.height;
-    return getRangeAxis(datasetIndex).userToData(userY);
-  }
 
     // TODO - these should go elsewhere
 

@@ -43,7 +43,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   // protected HashMap<String, FlyweightTuple> regions = new HashMap<String, FlyweightTuple>();  // for hit detection of points, features, etc
 
-  protected HashMap<String, HashSet<Tuple2D>> regions = new HashMap<String, HashSet<Tuple2D>>();  // for hit detection of points, features, etc
+  protected HashMap<String, HashSet<RenderedPoint>> regions = new HashMap<String, HashSet<RenderedPoint>>();  // for hit detection of points, features, etc
 
   protected double DOMAIN_REGIONS = 32d;
   protected double RANGE_REGIONS = 8d;
@@ -55,6 +55,9 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
   private HashSet<String> scratchX = new HashSet<String>(3);
   private HashSet<String> scratchY = new HashSet<String>(3);
+
+  protected int focusDimension = 0;
+  // private int focus = 0;
 
   public void clearRegions() {
     regions.clear();
@@ -106,18 +109,18 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return scratchRegions;
   }
 
-  protected void regionalize(double domain, double range, double plotX, double plotY) {
+  protected void regionalize(int datasetIndex, int domainIndex, int dim, double domain, double range, double plotX, double plotY) {
     String[] re = getRegions(plotX, plotY);
     for (int i=0; i<re.length; i++) {
       if (null == regions.get(re[i])) {
-        regions.put(re[i], new HashSet<Tuple2D>());
+        regions.put(re[i], new HashSet<RenderedPoint>());
       }
-      regions.get(re[i]).add(new RenderedPoint(domain, range, plotX, plotY));
+      regions.get(re[i]).add(new RenderedPoint(datasetIndex, domainIndex, dim, domain, range, plotX, plotY));
     }
   }
 
   private String naturalize(double d) {
-    String s = String.valueOf(Math.ceil(d));
+    String s = String.valueOf(Math.floor(d));
     int i = s.indexOf('.');
     if ( i > -1) {
       s = s.substring(0,i);
@@ -125,11 +128,11 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return s;
   }
 
-  public void addClickable(double domain, double range, double plotX, double plotY) {
-    regionalize(domain, range, plotX, plotY);
+  public void addClickable(int datasetIndex, int domainIndex, int dim, double domain, double range, double plotX, double plotY) {
+    regionalize(datasetIndex, domainIndex, dim, domain, range, plotX, plotY);
   }
 
-  public HashSet<Tuple2D> getClickable(int plotX, int plotY) {
+  public HashSet<RenderedPoint> getClickable(int plotX, int plotY) {
     Bounds b = plot.getBounds();
     String d = naturalize((plotX / b.width) * DOMAIN_REGIONS);
     String r = naturalize((plotY / b.height) * RANGE_REGIONS);
@@ -211,17 +214,22 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * current drawing path, unless a more sophisticated shape like a bar chart is
    * being rendered.
    */
-  public abstract void drawCurvePart(Layer layer, T tuplDataPoint, int methodCallCount, RenderState renderState);
+  public abstract void drawCurvePart(int datasetIndex, int domainIndex, Layer layer, T tuplDataPoint, int methodCallCount, RenderState renderState);
 
 
   public void drawGuideLine(Layer layer, int x) {
       layer.save();
-      String textLayer = "plotTextLayer";
+      String textLayer = "overlays";
+      layer.clearTextLayer(textLayer);
+
       layer.setFillColor(gssFocusGuidelineProps.color);
       double lt = Math.max(gssFocusGuidelineProps.lineThickness, 1);
       int coffset = (int) Math.floor(lt / 2.0);
 
       layer.fillRect(x - coffset, 0, lt, layer.getBounds().height);
+
+      // for now, don't bother drawing label on point guidelines
+      /**
       if (gssFocusGuidelineProps.dateFormat != null) {
         layer.setStrokeColor(Color.BLACK);
         int hx = x;
@@ -230,7 +238,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
         hx += dx < plot.getDomain().midpoint() ? 1.0 : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
 
         layer.drawText(hx, 0, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
-      }
+      } */
       layer.restore();
   }
 
@@ -259,7 +267,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
       }
 
       layer.beginPath();
-      layer.moveTo(x+LEGEND_ICON_PAD, y);
+      layer.moveTo(LEGEND_ICON_PAD + x, y);
       // layer.setLineWidth(alineProp.lineThickness);
       String height = gssLegendProps.iconHeight;
       if(height.equals("auto")){
@@ -277,10 +285,10 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
       String width = gssLegendProps.iconWidth;
       if(width.equals("auto")){
-          layer.lineTo(x + LEGEND_ICON_SIZE, y);
+          layer.lineTo(LEGEND_ICON_PAD + x + LEGEND_ICON_SIZE, y);
       }else{
           double widthValue=Double.valueOf(width.substring(0, width.length()-2));
-          layer.lineTo(x + widthValue, y);
+          layer.lineTo(LEGEND_ICON_PAD + x + widthValue, y);
       }
 
       layer.stroke();
@@ -314,7 +322,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   /**
    * Draw an individual point of the given tuple.
    */
-  public abstract void drawPoint(Layer layer, T tupleDataPoint, RenderState renderState);
+  public abstract void drawPoint(int datasetIndex, int domainIndex, Layer layer, T tupleDataPoint, RenderState renderState);
 
   /**
    * Called after last data is plotted (last call to drawCurvePart), typically
@@ -426,9 +434,14 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return ds.getRangeExtrema(0);
   }
 
-  public int getFocusDimension(int pass) {
-    return 0;
+  public int getFocusDimension() {
+    return focusDimension;
   }
+
+  public int setFocusDimension(int focusDimension) {
+    return this.focusDimension = focusDimension;
+  }
+
 
   public int[] getLegendEntries(Dataset dataset) {
     return getPassOrder(dataset);

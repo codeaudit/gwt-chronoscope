@@ -36,15 +36,15 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
 
   @Override
-  public void drawCurvePart(Layer layer, T point, int methodCallCount, RenderState renderState) {
-    // gssActiveLineProps = (plot.getFocus() != null) ? gssDisabledLineProps : gssLineProps;
+  public void drawCurvePart(int datasetIndex, int domainIndex, Layer layer, T point, int methodCallCount, RenderState renderState) {
+    gssActiveLineProps = renderState.isFocused() ? gssFocusLineProps : gssLineProps;
     gssActiveLineProps = renderState.isDisabled() ? gssDisabledLineProps : gssLineProps;
     double dataX = point.getDomain();
     double dataY = point.getRange0();
     double ux = plot.domainToScreenX(dataX, datasetIndex);
     double uy = plot.rangeToScreenY(dataY, datasetIndex);
 
-    addClickable(dataX, dataY, ux, uy);
+    addClickable(datasetIndex, domainIndex, renderState.getPassNumber(), dataX, dataY, ux, uy);
 
     // guard webkit bug, coredump if draw two identical lineTo in a row
     if (gssActiveLineProps.visible) {
@@ -87,7 +87,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
 
 
   @Override
-  public void drawPoint(Layer layer, T point, RenderState renderState) {
+  public void drawPoint(int datasetIndex, int domainIndex, Layer layer, T point, RenderState renderState) {
     final boolean isFocused = renderState.isFocused();
     final double dataX = point.getDomain();
     final double dataY = point.getRange0();
@@ -111,11 +111,11 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       double uy = plot.rangeToScreenY(dataY, datasetIndex);
       double dx = ux - lx;
       if (isFocused && gssFocusGuidelineProps.visible) {
-        drawGuideLine(layer, (int) ux);
+       // FIXME - guideline not staying on the right point
+       //  drawGuideLine(plot.getOverlayLayer(), (int) ux);
       }
 
       if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {
-        // addClickable(point, ux, uy);
         drawPoint(ux, uy, layer, gssProps);
         lx = ux;
         ly = uy;

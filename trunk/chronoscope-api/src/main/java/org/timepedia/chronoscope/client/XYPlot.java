@@ -220,6 +220,11 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   String getHistoryToken();
 
   /**
+   * Returns the layer onto which overlays are rendered.
+   */
+  Layer getOverlayLayer();
+
+  /**
    * Returns the layer onto which the hover points are rendered.
    */
   Layer getHoverLayer();

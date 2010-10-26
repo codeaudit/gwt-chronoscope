@@ -572,8 +572,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public double userToData(double userValue) {
-    return adjustedRangeMin + ((adjustedRangeMax - adjustedRangeMin)
-        * userValue);
+    return adjustedRangeMin + ((adjustedRangeMax - adjustedRangeMin) * userValue);
   }
 
   /**
