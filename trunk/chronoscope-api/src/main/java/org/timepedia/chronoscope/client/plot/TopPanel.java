@@ -147,6 +147,9 @@ final class TopPanel extends AuxiliaryPanel {
 
   public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
       legendAxisPanel.setlegendLabelGssProperty(visible, valueVisible, fontSize, iconWidth, iconHeight, columnWidth, columnCount);
+      if(isInitialized()){
+          plot.reloadStyles();
+      }
   }
 
 }

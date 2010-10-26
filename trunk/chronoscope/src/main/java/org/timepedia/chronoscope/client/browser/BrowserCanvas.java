@@ -43,6 +43,10 @@ public class BrowserCanvas extends Canvas {
     this.width = width;
     this.height = height;
     init(width, height);
+    BrowserView bv = (BrowserView) view;
+    DOM.appendChild(bv.getElement(), canvasElement);
+    rootLayer = (BrowserLayer) createLayer("rootLayer",
+        new Bounds(0, 0, width, height));
   }
 
   public void arc(double x, double y, double radius, double startAngle,
@@ -51,11 +55,6 @@ public class BrowserCanvas extends Canvas {
   }
 
   public void attach(View view, CanvasReadyCallback canvasReadyCallback) {
-    BrowserView bv = (BrowserView) view;
-    DOM.appendChild(bv.getElement(), canvasElement);
-    rootLayer = (BrowserLayer) createLayer("rootLayer",
-        new Bounds(0, 0, width, height));
-
     super.attach(view, canvasReadyCallback);
   }
 

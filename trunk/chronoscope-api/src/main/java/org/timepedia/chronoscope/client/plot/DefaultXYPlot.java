@@ -1128,6 +1128,10 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   @Export
   public void setSubPanelsEnabled(boolean enabled) {
+    if (!plotRenderer.isInitialized()) {
+        plotRenderer.resetMipMapLevels();
+	plotRenderer.sync();
+    }
     topPanel.setEnabled(enabled);
     bottomPanel.setEnabled(enabled);
     rangePanel.setEnabled(enabled);
@@ -1347,7 +1351,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
           hoverLayer.setStrokeColor(crosshairProperties.color);
-          hoverLayer.drawText(hx, -2, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
+          hoverLayer.drawText(hx, -12, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         }
 
           int nearestPt = NO_SELECTION;

@@ -78,8 +78,33 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     this.plot = plot;
     chart = new Chart();
     chart.setPlot(plot);
-
+    init();
   }
+
+  private void init(){
+    chartEventHandler = GWT.create(ChartEventHandler.class);
+    sinkEvents();
+
+    Element cssgss = null;
+    cssgss = DOM.createDiv();
+    DOM.setStyleAttribute(cssgss, "width", "0px");
+    DOM.setStyleAttribute(cssgss, "height", "0px");
+    DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(),"id")+ "style");
+    DOM.setElementAttribute(cssgss, "class", "chrono");
+    appendBody(cssgss);
+    
+    if (gssContext == null) {
+      gssContext = GWT.create(BrowserGssContext.class);
+      ((BrowserGssContext)gssContext).initialize(cssgss, new OnGssInitializedCallback() {
+          public void run() {
+	    initView();
+	  }
+	});
+    } else {
+	initView();
+    }
+  }
+    
 
   public void fireContextMenu(Event evt) {
     if (DOM.eventGetTypeString(evt) == "undefined") { return; }
@@ -153,11 +178,6 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * other view-centric operations.
    */
   public void onViewReady(View view) {
-    // configure chart
-    chart.setView(view);
-    chart.init();
-    plot.init(view);
-    
     viewReady = true;
     // possible leak source - FIXME
     // HistoryManager.putChart(id, chart);
@@ -200,36 +220,18 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
    * and therefore super.onAttach() is not called until onViewReady is invoked.
    */
   protected void onAttach() {
-
-    chartEventHandler = GWT.create(ChartEventHandler.class);
-    sinkEvents();
-
-    Element cssgss = null;
-    cssgss = DOM.createDiv();
-    DOM.setStyleAttribute(cssgss, "width", "0px");
-    DOM.setStyleAttribute(cssgss, "height", "0px");
-    DOM.setElementAttribute(cssgss, "id", DOM.getElementAttribute(getElement(), "id") + "style");
-    DOM.setElementAttribute(cssgss, "class", "chrono");
-    appendBody(cssgss);
     super.onAttach();
-
-    if (gssContext == null) {
-      final BrowserGssContext ctx = GWT.create(BrowserGssContext.class);
-      ctx.initialize(cssgss, new OnGssInitializedCallback() {
-        public void run() {
-          gssContext = ctx;
-          initView();
-        }
-      });
-    } else {
-      initView();
-    }
+    view.onAttach();
   }
   
   private void initView() {
     ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true,
         gssContext, PlotPanel.this);
-    view.onAttach();
+
+    // configure chart
+    chart.setView(view);
+    chart.init();
+    plot.init(view);
   }
 
   private native void appendBody(Element cssgss) /*-{
