@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Event;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.canvas.Bounds;
 
 /**
  * Handles the event where the user depresses a mouse button.
@@ -21,6 +22,13 @@ public final class ChartMouseDownHandler
     Chart chart = chartInfo.chart;
     int x = getLocalX(event);
     int y = getLocalY(event);
+
+    int overviewX = (int)chart.getPlot().getBounds().x;
+    Bounds highlightBounds = chart.getPlot().getOverviewAxisPanel().getHighlightBounds();
+    if ( highlightBounds != null) {
+       int hiliteX = (int) highlightBounds.x;
+       OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX((x - overviewX) - hiliteX);
+    }
 
     boolean handled;
 
@@ -49,7 +57,6 @@ public final class ChartMouseDownHandler
     }
 
     chartInfo.setHandled(handled);
-    OverviewAxisMouseMoveHandler.hiliteRelativeGrabX(chart.getPlot(), x);
   }
 }
 
