@@ -18,7 +18,7 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 public class OverviewAxisMouseMoveHandler extends
   AbstractEventHandler<MouseMoveHandler> implements MouseMoveHandler {
 
- private static int hiliteRelativeGrabX;
+  private static double hiliteRelativeGrabX;
     
   public void onMouseMove(MouseMoveEvent event) {
     ChartState chartInfo = getChartState(event);
@@ -85,6 +85,7 @@ public class OverviewAxisMouseMoveHandler extends
       // of the highlight window within the overview axis.
       //double hiliteLeftX = x - (hiliteBounds.width / 2.0);x will always be at the center of the hiliteBounds
 
+      // hiliteRelativeGrabX = hiliteBounds.x - x; //  = calcHiliteRelativeGrabX(plot, x);
       double hiliteLeftX = x - hiliteRelativeGrabX;
       double hiliteLeftDomainX = toDomainX(hiliteLeftX + viewOffsetX, plot);
      
@@ -96,7 +97,6 @@ public class OverviewAxisMouseMoveHandler extends
       hiliteLeftDomainX = MathUtil.bound(hiliteLeftDomainX, minHiliteDomain, maxHiliteDomain);
 
       plot.moveTo(hiliteLeftDomainX);
-      // hiliteRelativeGrabX(plot, x);
     }
   }
   
@@ -109,15 +109,12 @@ public class OverviewAxisMouseMoveHandler extends
   }
 
   /**
-   * records the initial X value position of the grab relative to the hilite region (used to reset to middle)
+   * record the initial X value position of the grab relative to the hilite region
    */
-  public static void hiliteRelativeGrabX(XYPlot xyPlot, int x) {
-    Bounds highlightBounds = xyPlot.getOverviewAxisPanel().getHighlightBounds();
-    if ( highlightBounds != null) {
-      hiliteRelativeGrabX = x - (int)highlightBounds.x;
-    }
+  public static void setHiliteRelativeGrabX(int relX) {
+    hiliteRelativeGrabX = Math.max(0,relX);
   }
-  
+
   private static void log(Object msg) {
     System.out.println("OverviewAxisMouseMoveHandler> " + msg);
   }
