@@ -147,7 +147,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
       numTicks--;
       axisStart += smoothInterval;
     }
-    
+    if(numTicks<1){
+        numTicks=1;
+    }
     double tickPositions[] = new double[numTicks];
     double tickValue = axisStart;
     for (int i = 0; i < tickPositions.length; i++) {

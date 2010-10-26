@@ -146,6 +146,7 @@ public class BrowserView extends GwtView
   public void initialize(final Element element, final int width,
       final int height, final boolean interactive, GssContext gssContext,
       final ViewReadyCallback callback) {
+    initContainer(element, viewWidth, viewHeight);
     super.initialize(width, height, false, gssContext, callback);
     DOM.setStyleAttribute(element, "height", height + "px");
     DOM.setStyleAttribute(element, "width", width + "px");
@@ -165,7 +166,6 @@ public class BrowserView extends GwtView
   }
 
   public void onAttach() {
-    initContainer(element, viewWidth, viewHeight);
     super.onAttach();
   }
 
