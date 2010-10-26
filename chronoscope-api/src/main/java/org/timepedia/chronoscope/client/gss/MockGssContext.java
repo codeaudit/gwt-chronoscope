@@ -89,7 +89,7 @@ public class MockGssContext extends GssContext {
     p.visible = false;
     p.valueVisible = true;
     p.labelVisible = false;
-    p.transparency = 0.75f;
+    p.transparency = 0.5f;
     p.dateFormat = "auto";
   }
 
@@ -134,6 +134,7 @@ public class MockGssContext extends GssContext {
     p.transparency = 0.1f;
     p.lineThickness = 2;
     p.visible = true;
+    p.fontSize = "8pt";
   }
   
   private void configFillProps(GssProperties p, GssElement elt) {
@@ -191,8 +192,8 @@ public class MockGssContext extends GssContext {
     // p.bgColor = isFocus ? p.color = datasetColorMap.get(elt) : Color.TRANSPARENT;
     p.bgColor = datasetColorMap.get(elt);
 
-    p.transparency = isFocus ? 1.0 : 0.5;
-    p.transparency = isDisabled ? 0.0 : p.transparency;
+    p.transparency = isFocus ? 0.75 : 0.5;
+    p.transparency = isDisabled ? 0.5 : p.transparency;
 
     // Determines the color of the point's outer ring
     // p.color = isFocus ? new Color("khaki") : new Color("olive");

@@ -131,7 +131,7 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
         plot.getInnerBounds().height);
     backingCanvas.drawText(x2 + 1, /*view.getPlotBounds().y+*/10, label,
         markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
-        markerLabelProperties.fontSize, layer, Cursor.CONTRASTED);
+        markerLabelProperties.fontSize, layer, Cursor.CLICKABLE);
     backingCanvas.restore();
   }
 

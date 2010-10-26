@@ -197,8 +197,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
               dataPt = tmpTuple;
             }
             // FIXME: refactor to remove cast
-            renderer
-                .drawCurvePart(layer, (T) dataPt, methodCallCount++, renderState);
+            renderer.drawCurvePart(datasetIndex, i, layer, (T) dataPt, methodCallCount++, renderState);
          } else {
              break;
          }
@@ -212,8 +211,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
         tupleItr = currMipMap.getTupleIterator(domainStartIdx);
         for (int i = domainStartIdx; i <= domainEndIdx; i++) {
           Tuple2D dataPt = tupleItr.next();
-          renderState.setFocused(focusSeries == datasetIndex && focusPoint == i
-              && renderer.getFocusDimension(pass) == focus.getDatasetIndex());
+          renderState.setFocused(focusSeries == datasetIndex && focusPoint == i && renderState.getPassNumber() == pass);
 
           if (calcRangeAsPercent) {
             LocalTuple tmpTuple = new LocalTuple();
@@ -222,7 +220,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
             dataPt = tmpTuple;
           }
           // FIXME: refactor to remove cast
-          renderer.drawPoint(layer, (T) dataPt, renderState);
+          renderer.drawPoint(datasetIndex, i, layer, (T) dataPt, renderState);
         }
         renderer.endPoints(layer, renderState);
       }

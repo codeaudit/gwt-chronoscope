@@ -28,15 +28,14 @@ public class BarChartXYRenderer<T extends Tuple2D> extends LineXYRenderer<T> {
   }
 
   @Override
-  public void drawCurvePart(Layer layer, T point, int methodCallCount, 
-      RenderState renderState) {
+  public void drawCurvePart(int datasetIndex, int domainIndex, Layer layer, T point, int methodCallCount, RenderState renderState) {
     
     final double dataX = point.getDomain();
     final double dataY = point.getRange0();
     final double ux = plot.domainToScreenX(dataX, datasetIndex);
     final double uy = plot.rangeToScreenY(dataY, datasetIndex);
 
-    addClickable(dataX, dataY, ux, uy);
+    addClickable(datasetIndex, domainIndex, renderState.getPassNumber(), dataX, dataY, ux, uy);
 
     ChronoDate d = ChronoDate.get(dataX);
 
