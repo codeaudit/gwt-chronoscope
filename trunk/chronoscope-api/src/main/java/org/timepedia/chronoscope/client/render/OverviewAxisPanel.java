@@ -39,6 +39,8 @@ public class OverviewAxisPanel extends AxisPanel {
   
   public void draw() {
 
+    bounds.width=plot.getBounds().width;
+
     gssLensProperties = view.getGssProperties(new GssElementImpl("lens", this), "");
     layer.drawImage(overviewLayer,
             0, 0, overviewLayer.getWidth(), bounds.height,

@@ -156,12 +156,15 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;
+    double focusDomainX = -1;
+
     if (focus == null) {
       focusSeries = -1;
       focusPoint = -1;
     } else {
       focusSeries = focus.getDatasetIndex();
       focusPoint = focus.getPointIndex();
+      focusDomainX = focus.getDomainX();
     }
 
     MipMap currMipMap = dds.currMipMap;
@@ -188,7 +191,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       for (int i = domainStartIdx; i <= domainEndIdx; i++) {
          if (tupleItr.hasNext()){
             Tuple2D dataPt = tupleItr.next();
-            renderState.setFocused(focusSeries == datasetIndex && focusPoint == i);
+            renderState.setFocused(focusSeries == datasetIndex && focusDomainX == dataPt.getDomain());
 
             if (calcRangeAsPercent) {
               LocalTuple tmpTuple = new LocalTuple();
@@ -211,7 +214,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
         tupleItr = currMipMap.getTupleIterator(domainStartIdx);
         for (int i = domainStartIdx; i <= domainEndIdx; i++) {
           Tuple2D dataPt = tupleItr.next();
-          renderState.setFocused(focusSeries == datasetIndex && focusPoint == i && renderState.getPassNumber() == pass);
+          renderState.setFocused(focusSeries == datasetIndex && focusPoint == i && focusDomainX == dataPt.getDomain() && renderState.getPassNumber() == pass);
 
           if (calcRangeAsPercent) {
             LocalTuple tmpTuple = new LocalTuple();

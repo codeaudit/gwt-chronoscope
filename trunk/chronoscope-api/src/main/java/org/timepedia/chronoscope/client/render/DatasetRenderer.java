@@ -229,7 +229,6 @@ public abstract class DatasetRenderer<T extends Tuple2D>
       layer.fillRect(x - coffset, 0, lt, layer.getBounds().height);
 
       // for now, don't bother drawing label on point guidelines
-      /**
       if (gssFocusGuidelineProps.dateFormat != null) {
         layer.setStrokeColor(Color.BLACK);
         int hx = x;
@@ -237,8 +236,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
         String label = guideLineDateFmt.format(dx);
         hx += dx < plot.getDomain().midpoint() ? 1.0 : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
 
-        layer.drawText(hx, 0, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
-      } */
+        layer.drawText(hx, -12, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
+      }
       layer.restore();
   }
 
