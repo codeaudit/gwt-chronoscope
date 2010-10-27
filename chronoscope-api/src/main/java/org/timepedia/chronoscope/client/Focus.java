@@ -9,6 +9,7 @@ public final class Focus {
   private int datasetIndex;
   private int pointIndex;
   private int dimensionIndex = 0;
+  private double domainX;
 
   /**
    * Constructs a <tt>Focus</tt> whose {@link #getDatasetIndex()} and
@@ -95,4 +96,14 @@ public final class Focus {
   public String toString() {
     return "datasetIndex=" + datasetIndex + ";pointIndex=" + pointIndex;
   }
+
+    public double getDomainX() {
+        return domainX;
+    }
+
+    public void setDomainX(double domainX) {
+        this.domainX = domainX;
+    }
+
+  
 }

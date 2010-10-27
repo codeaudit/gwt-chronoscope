@@ -951,54 +951,43 @@ public class DefaultXYPlot<T extends Tuple2D>
     int nearestSer = 0;
     int nearestDim = 0;
     double minNearestDist = MAX_FOCUS_DIST;
-    /*
-    for (int i = 0; i < datasets.size(); i++) {
-      double domainX = windowXtoDomain(x);
-      double rangeY = windowYtoRange(y, i);
-      NearestPoint nearest = this.nearestSingleton;
-      findNearestPt(domainX, rangeY, i, DistanceFormula.XY, nearest);
-      if (nearest.dist < minNearestDist) {
-        nearestPt = nearest.pointIndex;
-        nearestSer = i;
-        minNearestDist = nearest.dist;
-        nearestDim = nearest.dim;
-      }
-    }
-   */
+    boolean somePointHasFocus = false;
 
-    int plotX = x - (int)plotBounds.x;
-    int plotY = y - (int)plotBounds.y;
-    if (plotX < 0 || plotY < 0) { return false; }
-    for (int i = 0; i < datasets.size(); i++) {
-      NearestPoint nearest = this.nearestSingleton;
-      HashSet<RenderedPoint> nearby = getDatasetRenderer(i).getClickable(plotX, plotY);
-      if ((null != nearby) && (nearby.size()>0)) {
-        Iterator<RenderedPoint> clique = nearby.iterator();
-        while(clique.hasNext()) {
-          RenderedPoint pt = clique.next();
-          // double domainX = pt.getDomain();
-          // double rangeY = pt.getRange0();
-          double sx = pt.getPlotX();
-          double sy = pt.getPlotY();
-          double distance = DistanceFormula.XY.dist(plotX, plotY, sx, sy);
-          if (distance < minNearestDist) {
-            nearestPt = pt.getDomainIndex();
-            nearestSer = pt.getDatasetIndex();
-            minNearestDist = distance;
-            nearestDim = pt.getDimension();
+    if((x>=plotBounds.x)&&(x<=plotBounds.x+plotBounds.width)&&(y>=plotBounds.y)&&(y<=plotBounds.y+plotBounds.height)) {
+      int plotX = x - (int)plotBounds.x;
+      int plotY = y - (int)plotBounds.y;
+      if (plotX < 0 || plotY < 0) { return false; }
+      for (int i = 0; i < datasets.size(); i++) {
+        NearestPoint nearest = this.nearestSingleton;
+        HashSet<RenderedPoint> nearby = getDatasetRenderer(i).getClickable(plotX, plotY);
+        if ((null != nearby) && (nearby.size()>0)) {
+          Iterator<RenderedPoint> clique = nearby.iterator();
+          while(clique.hasNext()) {
+            RenderedPoint pt = clique.next();
+            // double domainX = pt.getDomain();
+            // double rangeY = pt.getRange0();
+            double sx = pt.getPlotX();
+            double sy = pt.getPlotY();
+            double distance = DistanceFormula.XY.dist(plotX, plotY, sx, sy);
+            if (distance < minNearestDist) {
+              nearestPt = pt.getDomainIndex();
+              nearestSer = pt.getDatasetIndex();
+              minNearestDist = distance;
+              nearestDim = pt.getDimension();
+            }
           }
         }
       }
+
+      somePointHasFocus = pointExists(nearestPt);
+      if (somePointHasFocus) {
+        setFocusAndNotifyView(nearestSer, nearestPt, nearestDim);
+      } else {
+        setFocusAndNotifyView(null);
+      }
+      redraw(true);
     }
 
-    final boolean somePointHasFocus = pointExists(nearestPt);
-    if (somePointHasFocus) {
-      setFocusAndNotifyView(nearestSer, nearestPt, nearestDim);
-    } else {
-      setFocusAndNotifyView(null);
-    }
-
-    redraw(true);
     return somePointHasFocus;
   }
 
@@ -1332,6 +1321,7 @@ public class DefaultXYPlot<T extends Tuple2D>
       hoverLayer.setTransparency((float)crosshairProperties.transparency);
 
       if (hoverX > 0) {
+        // consider painting crosshair line on overlay layer for Z order underneath (behind) the points
         hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
         int hx = hoverX;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
@@ -2131,6 +2121,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     this.focus.setDatasetIndex(datasetIndex);
     this.focus.setPointIndex(pointIndex);
     this.focus.setDimensionIndex(nearestDim);
+    double domainX = plotRenderer.getDrawableDataset(datasetIndex).currMipMap.getDomain().get(pointIndex);
+    this.focus.setDomainX(domainX);
 
     if (!multiaxis && damage) {
       damageAxes();
