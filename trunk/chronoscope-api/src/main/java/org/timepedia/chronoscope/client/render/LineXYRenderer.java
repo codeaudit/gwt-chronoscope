@@ -111,8 +111,8 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       double uy = plot.rangeToScreenY(dataY, datasetIndex);
       double dx = ux - lx;
       if (isFocused && gssFocusGuidelineProps.visible) {
-       // FIXME - guideline not staying on the right point
-       //  drawGuideLine(plot.getOverlayLayer(), (int) ux);
+
+      drawGuideLine(plot.getOverlayLayer(), (int) ux);
       }
 
       if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {
