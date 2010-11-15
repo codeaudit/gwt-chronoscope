@@ -55,7 +55,6 @@ public class ChartDemo implements EntryPoint {
       ChronoscopeOptions.setErrorReporting(true);
       Chronoscope.setMicroformatsEnabled(false);
       Chronoscope.initialize();
-
       Chronoscope chronoscope = Chronoscope.getInstance();
 
       final Datasets<Tuple2D> datasets = new Datasets<Tuple2D>();
@@ -83,34 +82,20 @@ public class ChartDemo implements EntryPoint {
           });
 
           XYPlot plot = view.getChart().getPlot();
+//          plot.setOverviewEnabled(false);
           //plot.setDatasetRenderer(1, new BarChartXYRenderer());
           plot.addOverlay(m);
           plot.redraw();
         }
       });
 
+      final ChartPanel chartPanel2 = Chronoscope
+      .createTimeseriesChart(dsArray, chartWidth, chartHeight);
       
-      FocusPanel p = new FocusPanel();
       VerticalPanel v = new VerticalPanel();
-      p.add(v);
-      RootPanel.get().add(p);
-
-      final HTML h = new HTML("adsfffffffffffffffffffffff"); 
-      v.add(h);
-
-      p.addFocusHandler(new FocusHandler() {
-        public void onFocus(FocusEvent event) {
-          h.setText("focus");
-        }
-      });
-      
-      p.addKeyPressHandler(new KeyPressHandler() {
-        public void onKeyPress(KeyPressEvent event) {
-          h.setText("" + (cursor++));
-        }
-      });
-      
       v.add(chartPanel);
+      v.add(chartPanel2);
+      RootPanel.get().add(v);
       
       } catch (Exception e) {
       e.printStackTrace();

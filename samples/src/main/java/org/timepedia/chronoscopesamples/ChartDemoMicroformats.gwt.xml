@@ -1,6 +1,8 @@
 <module rename-to="micro">
   <inherits name='org.timepedia.chronoscope.Chronoscope'/>
   <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoMicroformats'/>
+  
+  <stylesheet src="theme/chrome/chrome.css" />
 </module>
 
         
