@@ -106,7 +106,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
 
     List<Item> items = new LinkedList<Item>();
     for (int i = 0; i < numDatasets; i++) {
-      DatasetRenderer<?> renderer = plot.getDatasetRenderer(1);
+      DatasetRenderer<?> renderer = plot.getDatasetRenderer(i);
       renderer = plot.getDatasetRenderer(i);
       for (int d : renderer.getLegendEntries(plot.getDatasets().get(i))) {
         int hoverPoint = plot.getHoverPoints()[i];
@@ -150,7 +150,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
           }
 
           drawLeyend(layer, xCursor, yCursor, width, item);
-          xCursor += width + colSpacing;
+          xCursor += width + colSpacing -1;
         }
         yCursor += lblHeight;
       }
