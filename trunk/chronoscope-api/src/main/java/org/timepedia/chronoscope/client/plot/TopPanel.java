@@ -145,8 +145,8 @@ final class TopPanel extends AuxiliaryPanel {
       return compositePanel;
   }
 
-  public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
-      legendAxisPanel.setlegendLabelGssProperty(visible, valueVisible, fontSize, iconWidth, iconHeight, columnWidth, columnCount);
+  public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount, Boolean align){
+      legendAxisPanel.setlegendLabelGssProperty(visible, valueVisible, fontSize, iconWidth, iconHeight, columnWidth, columnCount, align);
       if(isInitialized()){
           plot.reloadStyles();
       }

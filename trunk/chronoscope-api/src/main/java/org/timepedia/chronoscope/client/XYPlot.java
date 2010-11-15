@@ -598,4 +598,10 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Set the number of columns for legends (0 = auto)
    */
   void setLegendLabelsColumnCount(int count);
+  
+  /**
+   * Set whether columns should be aligned (default false, unless ColumnCount is set)
+   */
+  void setLegendLabelsColumnAlignment(boolean align);
+  
 }
