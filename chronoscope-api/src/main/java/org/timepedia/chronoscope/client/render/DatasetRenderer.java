@@ -240,70 +240,28 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    * Render a small icon or sparkline representing this curve at the given x,y
    * screen coordinates, and return the the Bounds of the icon.
    */
-  // public abstract void drawLegendIcon(Layer layer, double x, double y, int dim);
-  public void drawLegendIcon(Layer layer, double x, double y, int dim) {
+  public void drawLegendIcon(Layer layer, double x, double y, double w, double h, int dim) {
       layer.save();
 
-      GssProperties alineProp, apointProp;
-
+      GssProperties alineProp;
       if (plot.getFocus() != null
           && plot.getFocus().getDatasetIndex() != this.datasetIndex) {
         alineProp = gssDisabledLineProps;
-        apointProp = gssDisabledPointProps;
       } else {
         alineProp = gssLineProps;
-        apointProp = gssPointProps;
       }
 
       layer.beginPath();
-      layer.moveTo(LEGEND_ICON_PAD + x, y);
-      // layer.setLineWidth(alineProp.lineThickness);
-      String height = gssLegendProps.iconHeight;
-      if(height.equals("auto")){
-          layer.setLineWidth(LEGEND_ICON_SIZE);
-      }else{
-         layer.setLineWidth(Double.valueOf(height.substring(0, height.length()-2)));
-      }
-
       layer.setShadowBlur(alineProp.shadowBlur);
       layer.setShadowColor(alineProp.shadowColor);
       layer.setShadowOffsetX(alineProp.shadowOffsetX);
       layer.setShadowOffsetY(alineProp.shadowOffsetY);
       layer.setStrokeColor(alineProp.color);
       layer.setTransparency((float) alineProp.transparency);
-
-      String width = gssLegendProps.iconWidth;
-      if(width.equals("auto")){
-          layer.lineTo(LEGEND_ICON_PAD + x + LEGEND_ICON_SIZE, y);
-      }else{
-          double widthValue=Double.valueOf(width.substring(0, width.length()-2));
-          layer.lineTo(LEGEND_ICON_PAD + x + widthValue, y);
-      }
-
+      layer.setLineWidth(h);
+      layer.moveTo(x, y);
+      layer.lineTo(x + w, y);
       layer.stroke();
-
-      /** eliminating point in legend icon for now.
-      if (apointProp.visible) {
-        layer.translate(x, y - apointProp.size / 2 + 1);
-        layer.beginPath();
-        layer.setFillColor(apointProp.bgColor);
-        layer.setTransparency((float) apointProp.transparency);
-        layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
-        layer.setShadowBlur(0);
-        layer.fill();
-        layer.beginPath();
-        layer.setLineWidth(apointProp.lineThickness);
-        if (apointProp.size < 1) {
-          apointProp.size = 1;
-        }
-        layer.arc(6, 0, apointProp.size, 0, 2 * Math.PI, 1);
-        layer.setLineWidth(apointProp.lineThickness);
-        layer.setShadowBlur(apointProp.shadowBlur);
-        layer.setStrokeColor(apointProp.color);
-        layer.stroke();
-      }
-      */
-
       layer.restore();
     }
 
@@ -431,13 +389,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
     return this.focusDimension = focusDimension;
   }
 
-
   public int[] getLegendEntries(Dataset dataset) {
     return getPassOrder(dataset);
-  }
-
-  public void drawLegendIcon(Layer layer, double lblX, double v) {
-    drawLegendIcon(layer, lblX, v, 0);
   }
 
   public double getRangeValue(Tuple2D tuple, int dimension) {

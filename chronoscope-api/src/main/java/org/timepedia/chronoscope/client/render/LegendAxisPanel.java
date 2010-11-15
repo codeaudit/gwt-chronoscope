@@ -274,7 +274,7 @@ public class LegendAxisPanel extends AxisPanel {
     layer.restore();
   }
 
-   public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount){
+   public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount, Boolean align){
        if(visible!=null){
            legendLabelsProperties.visible=visible;
        }
@@ -295,6 +295,9 @@ public class LegendAxisPanel extends AxisPanel {
        }
        if(columnCount!=null && columnCount > 0){
            legendLabelsProperties.columnCount=columnCount.toString();
+       }
+       if (align != null) {
+         legendLabelsProperties.columnAligned = align;
        }
   }
 

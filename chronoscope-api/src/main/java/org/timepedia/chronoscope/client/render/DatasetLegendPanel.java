@@ -27,6 +27,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
 
   // Dictates the X-padding between a legend icon and dataset label
   public static final double LEGEND_ICON_PAD = 2;
+  // Default icon width or height 
   public static final double LEGEND_ICON_SIZE = 6;
 
   // Dictates the X-padding between each dataset legend item
@@ -156,12 +157,18 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     }
 
   }
+  
+  
+  int aaa = 0;
 
   private void drawLeyend(Layer layer, double xCursor, double yCursor,
       double width, Item item) {
+    double iconHeight = Math.min(calcLegendIconHeight(), lblHeight);
     double iconWidth = calcLegendIconWidth();
     DatasetRenderer<?> renderer = plot.getDatasetRenderer(item.idx);
-    renderer.drawLegendIcon(layer, xCursor, yCursor + lblHeight - iconWidth - LEGEND_ICON_PAD, item.dimension);
+    
+    double yPos = yCursor + 2 + Math.ceil(((lblHeight - iconHeight)/2)); 
+    renderer.drawLegendIcon(layer, xCursor, yPos , iconWidth, iconHeight, item.dimension);
     layer.setStrokeColor(legendLabelsProperties.color);
     String seriesLabel = item.label;
     double labelSpace = width - item.pad;
@@ -178,8 +185,15 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
    */
   public double calcLegendIconWidth() {
     String width = legendLabelsProperties.iconWidth;
-    return "auto".equals(width) ? 8d : Double.valueOf(width.substring(0,
-        width.length() - 2));
+    return "auto".equals(width) ? LEGEND_ICON_SIZE : Double.valueOf(width.substring(0, width.length() - 2));
+  }
+  
+  /**
+   * Calculates the pixel height of the legend icon.
+   */
+  public double calcLegendIconHeight() {
+    String width = legendLabelsProperties.iconHeight;
+    return "auto".equals(width) ? LEGEND_ICON_SIZE : Double.valueOf(width.substring(0, width.length() - 2));
   }
 
   /**

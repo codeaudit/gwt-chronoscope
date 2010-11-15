@@ -2209,42 +2209,48 @@ public class DefaultXYPlot<T extends Tuple2D>
     @Export
     @Override
     public void showLegendLabels(boolean visible) {
-        topPanel.setlegendLabelGssProperty(visible, null, null, null, null, null, null);
+        topPanel.setlegendLabelGssProperty(visible, null, null, null, null, null, null, null);
     }
 
     @Export
     @Override
     public void showLegendLabelsValues(boolean visible) {
-        topPanel.setlegendLabelGssProperty(null, visible, null, null, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, visible, null, null, null, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsFontSize(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, null, pixels, null, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, pixels, null, null, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsIconWidth(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, null, null, pixels, null, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, pixels, null, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsIconHeight(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, null, null, null, pixels, null, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, pixels, null, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsColumnWidth(int pixels) {
-        topPanel.setlegendLabelGssProperty(null, null, null, null, null, pixels, null);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, null, pixels, null, null);
     }
 
     @Export
     @Override
     public void setLegendLabelsColumnCount(int count) {
-        topPanel.setlegendLabelGssProperty(null, null, null, null, null, null, count);
+        topPanel.setlegendLabelGssProperty(null, null, null, null, null, null, count, null);
+    }
+    
+    @Export
+    @Override
+    public void setLegendLabelsColumnAlignment(boolean align) {
+        topPanel.setlegendLabelGssProperty(null, null, null, null, null, null, null, align);
     }
 }
