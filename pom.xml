@@ -96,7 +96,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <!-- <version>1.3-SNAPSHOT</version> -->
+          <version>1.3-SNAPSHOT</version>
           <configuration>
             <logLevel>${gwt.loglevel}</logLevel>
             <style>${gwt.outputstyle}</style>
@@ -244,6 +244,13 @@
       <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
     </repository>
   </repositories>
+
+  <pluginRepositories>  
+    <pluginRepository>  
+      <id>codehaus.snapshots</id>  
+      <url>http://snapshots.repository.codehaus.org/</url>  
+    </pluginRepository>  
+  </pluginRepositories> 
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
