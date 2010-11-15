@@ -1,14 +1,8 @@
-<!-- module rename-to="widget" -->
-<module>
+<module rename-to="widget-dev">
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="org.timepedia.chronoscope.Chronoscope"/>
 
     <entry-point class='org.timepedia.chronoscope.widget.client.ChronoscopeWidget'/>
-
-    <!-- set-property name="user.agent" value="safari"/ -->
-    <!-- set-property name="hasflash" value="force"/ -->
-    <set-property name="hasflash" value="yes"/>
-    <set-property name="export" value="yes"/>
 
     <!-- normal mac dev, safari, no flash -->
     <!-- set-property name="user.agent" value="safari"/-->
@@ -20,5 +14,9 @@
     <!-- set-property name="hasflash" value="yes"/ -->
     <!-- set-property name="export" value="yes"/ -->
 
+    <!-- FF  -->
+    <set-property name="user.agent" value="gecko1_4"/>
+    <set-property name="hasflash" value="yes"/>
+    <set-property name="export" value="yes"/>
 
 </module>

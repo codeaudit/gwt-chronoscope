@@ -1,0 +1,47 @@
+<html>
+<head>
+<style type="text/gss">
+
+series.#other line {
+  color: green;
+  width: 4px;
+}
+
+series.s0 line {
+  color: blue;
+  width: 2px;
+}
+
+
+</style>
+
+
+<script type="text/javascript" src="dash.js"> </script>
+<script type="text/javascript" src="jagged.js"> </script>
+<script type="text/javascript" src="widget.nocache.js"> </script>
+<script type="text/javascript">
+
+var cont = 0;
+var data = [jagged, dash];
+
+var chrono, chart, plot;
+
+function onChronoscopeLoaded(instance) {
+    chronoscope.Chronoscope.setErrorReporting(true);
+    chrono = instance;
+    chart = chrono.createTimeseriesChartById("chart", data[cont++%2], 800, 400, function(view){});
+}
+
+function replaceChart() {
+    //chrono.replaceDatasets(chart, data[cont++%2]);
+    chart.replaceDatasets(data[cont++%2]);
+}
+
+</script>
+
+</head>
+<body>
+    <div id="chart" style="width: 800px; height: 400px"></div>
+    <button onClick="replaceChart();">replace</button>
+</body>
+</html>
