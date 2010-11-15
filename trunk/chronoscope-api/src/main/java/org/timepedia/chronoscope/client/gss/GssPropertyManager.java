@@ -483,10 +483,20 @@ public class GssPropertyManager {
     }
   };
 
+   public static final GssPropertyType GSS_COLUMN_ALIGN_PROPERTY
+      = new GssPropertyType("column-align", "", GssPropertyType.TypeUnits.STRING,
+      "In the legend axis panel, set the if the labels should be aligned in columns " +
+      "Example: column-align: true") {
+    @Override
+    public void setPropertyString(GssProperties props, String pval) {
+      props.columnAligned = "true".equals(pval);
+    }
+   };
+   
    public static final GssPropertyType GSS_COLUMN_COUNT_PROPERTY
-      = new GssPropertyType("column-count", "", GssPropertyType.TypeUnits.STRING,
-      "In the legend axis panel,set the column count of the legend labels in one line"+
-      "Like this: column-count: 3 or column-count:auto  ") {
+    = new GssPropertyType("column-count", "", GssPropertyType.TypeUnits.STRING,
+    "In the legend axis panel,set the column count of the legend labels in one line"+
+    "Like this: column-count: 3 or column-count:auto  ") {
     @Override
     public void setPropertyString(GssProperties props, String pval) {
       props.columnCount = pval;

@@ -1,6 +1,12 @@
 package org.timepedia.chronoscope.client.plot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
@@ -120,7 +126,8 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private static final int MAX_HOVER_DIST = 8;
 
-  private static final double MIN_PLOT_HEIGHT = 50;
+  private static final double MIN_PLOT_HEIGHT = 20;
+  private static final double MIN_BOTTOM_HEIGHT = 16;
 
   private static final double ZOOM_FACTOR = 1.50d;
 
@@ -144,10 +151,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       end = Math.max(end, mipMap.getDomain().getLast());
     }
     return end;
-  }
-
-  private static void log(Object msg) {
-    System.out.println("DefaultXYPlot> " + msg);
   }
 
   private static boolean pointExists(int pointIndex) {
@@ -1986,7 +1989,11 @@ public class DefaultXYPlot<T extends Tuple2D>
   private boolean isAnimatable() {
     return this.visDomain.length() != 0.0;
   }
-
+  
+  private double computePlotHeight() {
+    return view.getHeight() -  topPanel.getBounds().height - bottomPanel.getBounds().height;
+  }
+  
   /**
    * Perform layout on center plot and its surrounding panels.
    *
@@ -1994,54 +2001,45 @@ public class DefaultXYPlot<T extends Tuple2D>
    */
   private Bounds layoutAll() {
     final double viewWidth = view.getWidth();
-    final double viewHeight = view.getHeight();
 
-    // First, layout the auxiliary panels
-    bottomPanel.layout();
-    rangePanel.layout();
-    topPanel.layout();
+    plotBounds = new Bounds();
+    topPanel.getBounds().height=0;
+    bottomPanel.getBounds().height = MIN_BOTTOM_HEIGHT;
 
-    Bounds plotBounds = new Bounds();
-
-    double centerPlotHeight = viewHeight - topPanel.getBounds().height - bottomPanel.getBounds().height;
-
-    // If center plot too squished, remove the overview axis
-    if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-      if (bottomPanel.isOverviewVisible()) {
-        bottomPanel.setOverviewVisible(false);
-        centerPlotHeight = viewHeight - topPanel.getBounds().height
-            - bottomPanel.getBounds().height;
-      }
-    }
-
-    // If center plot still too squished, remove the legend axis
-    if (centerPlotHeight < MIN_PLOT_HEIGHT) {
-      if (topPanel.isEnabled()) {
+    // If center plot is too squished, remove legends 
+    if (topPanel.isEnabled()) {
+      topPanel.layout();
+      if (computePlotHeight() < MIN_PLOT_HEIGHT) {
+        topPanel.getBounds().height = 0;
         topPanel.setEnabled(false);
-        centerPlotHeight = viewHeight - topPanel.getBounds().height
-            - bottomPanel.getBounds().height;
       }
     }
 
+    // If center plot too squished, remove the overview
+    bottomPanel.layout();
+    if (bottomPanel.isOverviewVisible() && computePlotHeight() < MIN_PLOT_HEIGHT) {
+      bottomPanel.setOverviewVisible(false);
+      bottomPanel.getBounds().height = MIN_BOTTOM_HEIGHT;
+    }
+
+    rangePanel.setHeight(computePlotHeight());
+    rangePanel.setWidth(viewWidth);
+    rangePanel.layout();
+    rangePanel.setPosition(0, topPanel.getBounds().height);
+    
     // Set the center plot's bounds
     Bounds leftRangeBounds = rangePanel.getLeftSubPanel().getBounds();
     Bounds rightRangeBounds = rangePanel.getRightSubPanel().getBounds();
     plotBounds.x = leftRangeBounds.width;
     plotBounds.y = topPanel.getBounds().height;
-    plotBounds.height = centerPlotHeight;
-    plotBounds.width = viewWidth - leftRangeBounds.width
-        - rightRangeBounds.width;
+    plotBounds.height = leftRangeBounds.height;
+    plotBounds.width = viewWidth - leftRangeBounds.width - rightRangeBounds.width;
 
     // Set the positions of the auxiliary panels.
     topPanel.setPosition(0, 0);
     bottomPanel.setPosition(plotBounds.x, plotBounds.bottomY());
     bottomPanel.setWidth(plotBounds.width);
-    rangePanel.setPosition(0, plotBounds.y);
 
-    rangePanel.setHeight(centerPlotHeight);
-    rangePanel.setWidth(viewWidth);
-    rangePanel.layout();
-    
     return plotBounds;
   }
 

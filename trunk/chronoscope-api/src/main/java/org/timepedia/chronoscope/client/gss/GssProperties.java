@@ -75,6 +75,8 @@ public class GssProperties implements Exportable {
 
   public String columnCount = "auto";
 
+  public boolean columnAligned = false;
+
   public String iconWidth = "auto";
 
   public String iconHeight = "auto";
@@ -101,7 +103,7 @@ public class GssProperties implements Exportable {
         + "\ntransparency:" + transparency + "\nsize:" + size + "\nleft:"
         + left + "\ntop:" + top
         + "\niconWidth:" + iconWidth + "\niconHeight:" + iconHeight
-        + "\ncolumnWidth:" + columnWidth + "\ncolumnCount:" + columnCount;
+        + "\ncolumnWidth:" + columnWidth + "\ncolumnCount:" + columnCount + "\ncolumnAligned:" + columnAligned;
   }
 
   public String getDateFormat() {
@@ -301,6 +303,4 @@ public class GssProperties implements Exportable {
   public boolean getLabelVisibility() {
     return valueVisible;
   }
-
-
 }

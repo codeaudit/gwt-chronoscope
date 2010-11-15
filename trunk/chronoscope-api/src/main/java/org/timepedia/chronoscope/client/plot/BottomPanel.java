@@ -4,11 +4,9 @@ import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.*;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel.Position;
 import org.timepedia.chronoscope.client.util.ArgChecker;
-import org.timepedia.chronoscope.client.util.Interval;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +159,9 @@ final class BottomPanel extends AuxiliaryPanel {
   }
 
    public void setOverviewVisible(boolean overviewVisible){
+     if (overviewAxisPanel.visible == overviewVisible) {
+       return;
+     }
      overviewAxisPanel.visible = overviewVisible;
      if (overviewVisible && !this.enabled) {
         this.enabled = true;
@@ -282,6 +283,7 @@ final class BottomPanel extends AuxiliaryPanel {
 
   }
 
+  @SuppressWarnings("unused")
   private static void log(Object msg) {
     System.out.println("BottomPanel> " + msg);
   }
