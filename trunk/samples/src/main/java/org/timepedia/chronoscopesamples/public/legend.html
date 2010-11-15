@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<style type="text/css">
+.c {
+  border: solid 1px grey;
+  padding: 10px;
+}
+</style>
+
+    <style type="text/gss">
+	axis.range grid {visibility: visible }
+	axis { background-color: transparent; }
+	axislegend { background-color: transparent;}
+	plot { background-color: transparent; }
+	.chrono, plot, axes, axis { background-color: transparent; }
+	plot { background-color: #FFFFFF;}
+	axis.domain label { visibility: hidden }
+	overview { visibility: visible }
+	axislegend labels { font-size: 12px; }
+	axislegend labels { column-align: true; }
+	point { 
+	    color:#000000;
+	   	background-color:#000000;
+	    radius:2; 
+	}
+	fill { opacity:1.0; }
+    </style>
+
+	<script type="text/javascript" src="legend_overrun.json"></script>
+	<script type="text/javascript" src="no_graph_no_legend.json"></script>
+	<script type="text/javascript" src="no_legend.json"></script>
+    <script type="text/javascript" src="legend.nocache.js"></script>
+
+</head>
+<body>
+    <div id=buttons></div>
+    <table><tr><td><div class="c" id="chartdemo"></div></td><td><div class="c" id="chartdemobig"></div></td></tr></table>
+</body>

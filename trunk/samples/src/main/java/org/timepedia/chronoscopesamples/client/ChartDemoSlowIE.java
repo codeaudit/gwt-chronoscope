@@ -26,7 +26,7 @@ public class ChartDemoSlowIE implements EntryPoint {
 
   Chronoscope chronoscope;
   ChartPanel chartPanel;
-  String [] datasetNames = {"dffdata", "odd_display_jagged", "dash", "jagged", "dffdatamip"};
+  String [] datasetNames = {"dash","dffdata", "odd_display_jagged",  "jagged", "dffdatamip"};
   Date d = new Date();
   int cont = 0;
   
@@ -55,7 +55,7 @@ public class ChartDemoSlowIE implements EntryPoint {
     Chronoscope.initialize();
 
     final int n = cont ++ % datasetNames.length;
-    String data_name = datasetNames[n];
+    String data_name = datasetNames[0];
     Dataset[] datasets = chronoscope.createDatasets(getJsons(data_name));
     chartPanel = Chronoscope.createTimeseriesChart(datasets, 450, 300);
     chartPanel.setReadyListener(new ViewReadyCallback() {
@@ -75,7 +75,7 @@ public class ChartDemoSlowIE implements EntryPoint {
     }
     
     final int n = cont ++ % datasetNames.length;
-    String data_name = datasetNames[n];
+    String data_name = datasetNames[1];
     chronoscope.replaceDatasets(chartPanel, getJsons(data_name));
     Date end = new Date();
     l(0, n, "" + (end.getTime() - start.getTime()));

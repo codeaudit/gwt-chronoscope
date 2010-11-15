@@ -1,5 +1,6 @@
 package org.timepedia.chronoscopesamples.client;
 
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.ChartPanel;
@@ -31,7 +32,8 @@ public class ChartDemoTZ implements EntryPoint {
   XYPlot theplot;
   
   public void onModuleLoad() {
-    
+    ChronoscopeOptions.setCrosshairDateTimeFormat("dd/MMM, HH:mm");
+
     Chronoscope chronoscope = Chronoscope.getInstance();
     Dataset[] datasets = chronoscope.createDatasets(getJsons("odd_display_jagged"));
     
@@ -42,6 +44,7 @@ public class ChartDemoTZ implements EntryPoint {
         theplot.getRangeAxis(0).setAutoZoomVisibleRange(true);
         
         Dataset d = theplot.getDatasets().get(0);
+        System.out.println(ChronoscopeOptions.getCrosshairDateTimeFormat());
         d.setIncrementalHandler(new IncrementalHandler() {
           
           public void onDataNeeded(Interval region, Dataset dataset, IncrementalDataResponse response) {
