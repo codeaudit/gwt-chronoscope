@@ -139,7 +139,6 @@ public class LegendAxisPanel extends AxisPanel {
   private double calcHeight() {
     double totalHeight = 0;
     totalHeight += zoomPanel.getBounds().height;
-    totalHeight += LEGEND_Y_TOP_PAD + LEGEND_Y_BOTTOM_PAD;
     if (legendLabelsProperties.visible) {
       totalHeight += dsLegendPanel.getBounds().height;
     }

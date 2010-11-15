@@ -174,16 +174,6 @@ public abstract class DatasetRenderer<T extends Tuple2D>
    */
   public abstract void beginPoints(Layer layer, RenderState renderState);
 
-  /**
-   * Calculates the pixel width of the legend icon.
-   */
-  // public abstract double calcLegendIconWidth(View view);
-  public double calcLegendIconWidth(View view) {
-    gssActiveLineProps = (plot.getFocus() != null) ? gssDisabledLineProps : gssLineProps;
-    String width= gssLegendProps.iconWidth;
-    return "auto".equals(width) ? 8d : Double.valueOf(width.substring(0, width.length()-2));
-  }
-
   public void clear() {
     parentGssElement = null;
 
