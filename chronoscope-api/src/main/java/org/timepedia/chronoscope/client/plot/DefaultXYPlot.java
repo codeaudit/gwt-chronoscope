@@ -800,8 +800,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean canDrawFast = !(isAnimating() &&
             ChronoscopeOptions.isAnimationPreview() && ChronoscopeOptions.isLowPerformance());
 
-    final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain)
-            || ChronoscopeOptions.isVerticalCrosshairEnabled();
+    final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain);
+            // || ChronoscopeOptions.isVerticalCrosshairEnabled();
 
     Layer hoverLayer = getHoverLayer();
     clearHoverLayer();
@@ -1047,7 +1047,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (isDirty) {
       fireHoverEvent();
     }
-    redraw(true);
+    redraw();
 
     return isCloseToCurve;
   }
