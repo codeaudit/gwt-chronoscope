@@ -45,13 +45,6 @@ public abstract class DomTextLayer extends AbstractLayer {
     super(canvas);
   }
 
-
-  public void clear() {
-    layers.clear();
-    // metricMap.clear();
-  }
-
-
   public void clearTextLayer(String layerName) {
     TextLayer layer = (TextLayer) layers.get(layerName);
     if (layer != null) {
