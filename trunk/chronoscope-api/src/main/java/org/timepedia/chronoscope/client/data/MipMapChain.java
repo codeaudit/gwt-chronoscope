@@ -79,7 +79,9 @@ public class MipMapChain {
     this.mipMappedRangeTuples = null;
     this.rangeTupleSize = 0;
     this.mipMaps.clear();
-    this.name2mipmap.clear();
+    if (this.name2mipmap != null) {
+      this.name2mipmap.clear();
+    }
   }
   
   void addMipLevel() {
