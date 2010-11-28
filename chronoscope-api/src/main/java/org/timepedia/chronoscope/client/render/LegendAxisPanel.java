@@ -122,10 +122,16 @@ public class LegendAxisPanel extends AxisPanel {
     zoomPanel.init();
 
     dateRangePanel = new DateRangePanel();
-    // dateRangePanel.setGssProperties(labelProperties);
     dateRangePanel.setTextLayerName(textLayerName);
     dateRangePanel.setStringSizer(stringSizer);
     dateRangePanel.parent = this;
+
+    // TODO: MCM: Understand this, some times domainAxisPanel does not come with view or plot
+    // Example: ShowHide subpanels -> HideAll/ShowAll 
+    // dateRangePanel.setGssProperties(labelProperties);
+    plot.getDomainAxisPanel().setView(view);
+    plot.getDomainAxisPanel().setPlot(plot);
+    
     dateRangePanel.init(rootLayer, plot.getDomainAxisPanel());
   }
 
