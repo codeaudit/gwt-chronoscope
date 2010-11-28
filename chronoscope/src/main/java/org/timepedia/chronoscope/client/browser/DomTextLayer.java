@@ -328,14 +328,18 @@ public abstract class DomTextLayer extends AbstractLayer {
 
   private Element getMetricDiv() {
     if (metricDiv == null) {
-      metricDiv = DOM.createDiv();
-      DOM.setStyleAttribute(metricDiv, "position", "absolute");
-      DOM.setStyleAttribute(metricDiv, "padding", "0px");
-      DOM.setStyleAttribute(metricDiv, "margin", "0px");
-      DOM.setStyleAttribute(metricDiv, "border", "0px");
-      DOM.setStyleAttribute(metricDiv, "visibility", "hidden");
-      DOM.appendChild(
-          ((CssGssViewSupport) getCanvas().getView()).getGssCssElement(), metricDiv);
+      Element gssCssElement = ((CssGssViewSupport) getCanvas().getView()).getGssCssElement();
+      if (gssCssElement == null) {
+        System.out.println("WARN: DomTextLayer.getMetricDiv " + getCanvas().getClass().getName() + ".getView()" + " has null gssCssElement.");
+      } else {
+        metricDiv = DOM.createDiv();
+        DOM.setStyleAttribute(metricDiv, "position", "absolute");
+        DOM.setStyleAttribute(metricDiv, "padding", "0px");
+        DOM.setStyleAttribute(metricDiv, "margin", "0px");
+        DOM.setStyleAttribute(metricDiv, "border", "0px");
+        DOM.setStyleAttribute(metricDiv, "visibility", "hidden");
+        DOM.appendChild(gssCssElement, metricDiv);
+      }
     }
     return metricDiv;
   }
