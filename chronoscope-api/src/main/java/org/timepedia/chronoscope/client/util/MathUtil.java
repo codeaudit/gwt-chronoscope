@@ -144,7 +144,7 @@ public final class MathUtil {
   /**
    * Round down input value to nearest value of 10. e.g. 323 returns 100. 
    */
-  public static int roundToNearestPowerOfTen(double value) {
-    return (int) Math.pow(10, Math.floor(log10(value)));
+  public static double roundToNearestPowerOfTen(double value) {
+    return Math.pow(10, Math.floor(log10(value)));
   }
 }
