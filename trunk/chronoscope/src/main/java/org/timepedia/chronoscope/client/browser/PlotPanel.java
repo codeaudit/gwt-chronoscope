@@ -95,13 +95,14 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     
     if (gssContext == null) {
       gssContext = GWT.create(BrowserGssContext.class);
-      ((BrowserGssContext)gssContext).initialize(cssgss, new OnGssInitializedCallback() {
-          public void run() {
-	    initView();
-	  }
-	});
+      ((BrowserGssContext) gssContext).initialize(cssgss,
+          new OnGssInitializedCallback() {
+            public void run() {
+              initView();
+            }
+          });
     } else {
-	initView();
+      initView();
     }
   }
     
@@ -232,6 +233,7 @@ public class PlotPanel extends Widget implements ViewReadyCallback,
     chart.setView(view);
     chart.init();
     plot.init(view);
+    onViewReady(view);
   }
 
   private native void appendBody(Element cssgss) /*-{
