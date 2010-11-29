@@ -531,26 +531,31 @@ public class Chronoscope
    */
   @Export("createTimeseriesChartWithElement")
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
-      int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
+      int chartWidth, int chartHeight, final ViewReadyCallback readyListener) {
 
-    boolean wasDomElementProvided = (elem != null);
+    final boolean wasDomElementProvided = (elem != null);
 
     if (!wasDomElementProvided) {
       elem = DOM.createDiv();
     }
 
-    ChartPanel cpanel = newChartPanel();
+    final ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);
-    cpanel.setViewReadyCallback(readyListener);
     cpanel.setDimensions(chartWidth, chartHeight);
+    cpanel.setViewReadyCallback(new ViewReadyCallback() {
+      // Wait until async gss has been loaded.
+      public void onViewReady(View view) {
+        if (wasDomElementProvided) {
+          cpanel.attach();
+        }
+        if (readyListener != null) {
+          readyListener.onViewReady(view);
+        }
+      }
+    });
     cpanel.init();
 
-    if (wasDomElementProvided) {
-      if (Document.get().getBody().isOrHasChild(elem)) {
-        cpanel.attach();
-      }
-    }
     return cpanel;
   }
 
