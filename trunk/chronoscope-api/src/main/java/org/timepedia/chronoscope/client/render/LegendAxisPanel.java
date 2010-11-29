@@ -189,9 +189,8 @@ public class LegendAxisPanel extends AxisPanel {
       zooms.add(new ZoomInterval("max", Double.MAX_VALUE).filterExempt(true));
     } else {
       Interval domainExtrema = plot.getDatasets().getDomainExtrema();
-      int startPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getStart());
-      int endPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getEnd());
-
+      double startPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getStart());
+      double endPower = MathUtil.roundToNearestPowerOfTen(domainExtrema.getEnd());
       while (startPower <= endPower) {
         zooms.add(new ZoomInterval("" + startPower / 2, startPower / 2));
         zooms.add(new ZoomInterval("" + startPower, startPower));
