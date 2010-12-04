@@ -38,7 +38,7 @@ public class ChartPanel extends Composite implements Exportable {
     plot = (DefaultXYPlot)createPlot(datasets);
     plotPanel = new PlotPanel(domElement, plot, width, height, viewReadyCallback);
 
-    initWidget(plotPanel);
+//    initWidget(plotPanel);
   }
   
   public void setDimensions(int width, int height) {
@@ -101,14 +101,16 @@ public class ChartPanel extends Composite implements Exportable {
 
   @Export
   public void detach() {
-    onDetach();
-    if (getElement() != null) {
-      try {
-        getElement().getParentElement().removeChild(getElement());
-      } catch (Exception e) {
-        GWT.log("Can't detach " + e, e);
-      }
-    }
+    plotPanel.removeFromParent();
+    plotPanel.getElement().removeFromParent();
+//  onDetach();
+//    if (getElement() != null) {
+//      try {
+//        getElement().getParentElement().removeChild(getElement());
+//      } catch (Exception e) {
+//        GWT.log("Can't detach " + e, e);
+//      }
+//    }
   }
 
   @Export
