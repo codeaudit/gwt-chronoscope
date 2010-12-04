@@ -546,16 +546,12 @@ public class Chronoscope
     cpanel.setViewReadyCallback(new ViewReadyCallback() {
       // Wait until async gss has been loaded.
       public void onViewReady(View view) {
-        if (wasDomElementProvided) {
-          cpanel.attach();
-        }
         if (readyListener != null) {
           readyListener.onViewReady(view);
         }
       }
     });
     cpanel.init();
-
     return cpanel;
   }
 
