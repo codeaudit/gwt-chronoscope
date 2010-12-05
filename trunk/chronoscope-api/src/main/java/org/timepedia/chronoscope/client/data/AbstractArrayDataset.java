@@ -213,5 +213,15 @@ public abstract class AbstractArrayDataset<T extends Tuple2D>
     return new MipMapChain(mipMappedDomain, mipMappedRangeTuples);
   }
   
+  // TODO: MCM check if any of the implementations need override this
+  public void clear() {
+    axisIds = null;
+    rangeIntervals = null;
+    rawData.clear();
+    rawData = null;
+    mipMapChain.clear();
+    mipMapChain = null;
+  }
+  
 
 }

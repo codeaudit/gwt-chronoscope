@@ -272,5 +272,22 @@ public final class JavaArray2D implements Array2D {
     public double[] toArray() {
       return Util.copyArray(backingArray(), size());
     }
+
+    public void clear() {
+      parentArray.clear();
+    }
+  }
+
+  @Override
+  public void clear() {
+    for (int i=0; i < a.length; i++){
+      a[i] = null;
+    }
+    a = null;
+    columnCounts = null;
+    for (int i=0; i < rows.length; i++) {
+      rows[i].clear();
+    }
+    rows = null;
   }
 }

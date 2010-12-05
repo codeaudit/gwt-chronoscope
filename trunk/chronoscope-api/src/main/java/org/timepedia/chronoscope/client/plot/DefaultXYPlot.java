@@ -165,7 +165,7 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   boolean firstDraw = true;
 
-  PortableTimer changeTimer = null;
+  private PortableTimer changeTimer = null;
 
   private int hoverX;
 
@@ -1307,7 +1307,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return fact.findBestFormatter(getDomain().length());
   }
   
-  DateFormatter crosshairFmt;
+  private DateFormatter crosshairFmt;
 
   public void clearHoverLayer() {
     hoverLayer.save();
@@ -2252,5 +2252,44 @@ public class DefaultXYPlot<T extends Tuple2D>
     @Override
     public void setLegendLabelsColumnAlignment(boolean align) {
         topPanel.setlegendLabelGssProperty(null, null, null, null, null, null, null, align);
+    }
+
+    @Override
+    public void clear() {
+      // TODO: MCM check if there are objects which could be cleared
+      animationContinuation = null;
+      animationTimer = null;
+      background = null;
+      bottomPanel = null;
+      changeTimer = null;
+      crosshairFmt = null;
+      crosshairLabelsProperties = null;
+      crosshairProperties = null;
+      if (datasets != null) {
+        datasets.clear();
+        datasets = null;
+      }
+      focus = null;
+      handlerManager = null;
+      hoverBounds = null;
+      hoverLayer = null;
+      innerBounds = null;
+      lastVisDomain = null;
+      overlayLayer = null;
+      if (overlays != null) {
+        overlays.clear();
+        overlays = null;
+      }
+      plotBounds = null;
+      plotRenderer = null;
+      rangePanel = null;
+      stringSizer = null;
+      topPanel = null;
+      if (view != null) {
+        view.clear();
+        view = null;
+      }
+      visDomain = null;
+      widestDomain = null;
     }
 }

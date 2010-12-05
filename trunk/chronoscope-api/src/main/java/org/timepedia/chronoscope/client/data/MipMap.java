@@ -1,7 +1,8 @@
 package org.timepedia.chronoscope.client.data;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayNumber;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -10,9 +11,6 @@ import org.timepedia.chronoscope.client.util.Array2D;
 import org.timepedia.chronoscope.client.util.ExtremaArrayFunction;
 import org.timepedia.chronoscope.client.util.Interval;
 import org.timepedia.chronoscope.client.util.Util;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Represents a version of a {@link Dataset} at a decreased level
@@ -192,6 +190,18 @@ public class MipMap {
    */
   public int size() {
     return this.domain.size();
+  }
+  
+  public void clear() {
+    domain.clear();
+    domain = null;
+    flyweightTuple.clear();
+    flyweightTuple = null;
+    rangeExtrema = null;
+    for (Array1D a: rangeTuples) {
+      a.clear();
+    }
+    rangeTuples = null;
   }
   
 }

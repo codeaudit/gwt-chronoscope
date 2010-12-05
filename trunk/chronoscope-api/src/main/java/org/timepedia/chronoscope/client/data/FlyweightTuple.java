@@ -70,4 +70,12 @@ public final class FlyweightTuple implements Tuple5D {
   public void setDataPointIndex(int dataPointIndex) {
     this.dataPointIndex = dataPointIndex;
   }
+  
+  public void clear() {
+    domainData = null;
+    for (int i = 0; i < rangeTupleData.length; i++) {
+      rangeTupleData[i] = null;
+    }
+    rangeTupleData = null;
+  }
 }

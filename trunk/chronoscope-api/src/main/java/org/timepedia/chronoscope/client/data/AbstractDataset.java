@@ -137,6 +137,11 @@ public abstract class AbstractDataset<T extends Tuple2D>
     public double[] toArray() {
       return backingArray();
     }
+
+    @Override
+    public void clear() {
+      backingArray = null;
+    }
   }
 
   public MipMapRegion getBestMipMapForInterval(Interval region, int maxSamples, int lodBias) {
