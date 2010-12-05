@@ -128,5 +128,9 @@ public class UtilTest extends TestCase {
     public String toJson() {
       return null;
     }
+
+    public void clear() {
+      domain = null;
+    }
   }
 }

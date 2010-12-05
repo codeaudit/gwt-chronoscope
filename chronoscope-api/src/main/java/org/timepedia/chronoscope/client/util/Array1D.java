@@ -50,4 +50,6 @@ public interface Array1D {
    * Returns a copy of this array as a primitive double array.
    */
   double[] toArray();
+  
+  void clear();
 }

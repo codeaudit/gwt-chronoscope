@@ -48,5 +48,7 @@ public interface Array2D {
    * Assigns the value at the specified row and column
    */
   void set(int rowIdx, int colIdx, double value);
+  
+  public void clear();
 
 }

@@ -147,4 +147,6 @@ public interface Dataset<T extends Tuple2D> extends Exportable {
   void setIncrementalHandler(IncrementalHandler handler);
 
   String toJson();
+  
+  void clear();
 }

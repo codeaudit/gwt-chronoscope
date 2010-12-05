@@ -5,6 +5,7 @@ import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
+import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.data.tuple.Tuple2D;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -15,12 +16,12 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.timepedia.chronoscope.client.canvas.View;
 
 @ExportPackage("chronoscope")
 public class ChartPanel extends Composite implements Exportable {
@@ -37,7 +38,6 @@ public class ChartPanel extends Composite implements Exportable {
     
     plot = (DefaultXYPlot)createPlot(datasets);
     plotPanel = new PlotPanel(domElement, plot, width, height, viewReadyCallback);
-
 //    initWidget(plotPanel);
   }
   
@@ -54,8 +54,8 @@ public class ChartPanel extends Composite implements Exportable {
    * @param datasets 
    *         json array of the new datasets
    */
-  public void replaceDatasets(Dataset[] datasets) {
-    this.datasets = datasets;
+  public void replaceDatasets(Dataset[] dsets) {
+    setDatasets(dsets);
     Datasets<Tuple2D> d = new Datasets<Tuple2D>(datasets);
     plot.setDatasets(d);
     plot.init();
@@ -75,8 +75,11 @@ public class ChartPanel extends Composite implements Exportable {
     replaceDatasets(Chronoscope.getInstance().createDatasets(jsonDatasets));
   }
   
-  public void setDatasets(Dataset[] datasets) {
-    this.datasets = datasets;
+  public void setDatasets(Dataset[] dsets) {
+    for (int i  = 0; datasets != null &&  i < datasets.length; i++) {
+      datasets[i].clear();
+    }
+    this.datasets = dsets;
   }
   
   public void setDomElement(Element element) {
@@ -101,18 +104,20 @@ public class ChartPanel extends Composite implements Exportable {
 
   @Export
   public void detach() {
+    for (Dataset<?> d: datasets) {
+      d.clear();
+    }
+    datasets = null;
+    domElement = null;
+    plot.clear();
+    plot = null;
+    viewReadyCallback = null;
+    
     plotPanel.removeFromParent();
     plotPanel.getElement().removeFromParent();
-//  onDetach();
-//    if (getElement() != null) {
-//      try {
-//        getElement().getParentElement().removeChild(getElement());
-//      } catch (Exception e) {
-//        GWT.log("Can't detach " + e, e);
-//      }
-//    }
+    plotPanel = null;
   }
-
+  
   @Export
   public Chart getChart() {
     return plotPanel.getChart();
@@ -147,8 +152,8 @@ public class ChartPanel extends Composite implements Exportable {
       return plotPanel.getView();
   }
 
-    public PlotPanel getPlotPanel() {
-        return plotPanel;
-    }
+  public PlotPanel getPlotPanel() {
+      return plotPanel;
+  }
 
 }

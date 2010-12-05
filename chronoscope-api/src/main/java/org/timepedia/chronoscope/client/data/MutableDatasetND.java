@@ -235,4 +235,13 @@ public class MutableDatasetND<T extends Tuple2D> extends AbstractArrayDataset<T>
       l.onDatasetChanged(ds, domainStart, domainEnd);
     }
   }
+
+  @Override
+  public void clear() {
+    for (int i = 0; i < listeners.size(); i++) {
+      listeners.get(i).clear();
+    }
+    listeners.clear();
+    mipMapStrategy = null;
+  }
 }

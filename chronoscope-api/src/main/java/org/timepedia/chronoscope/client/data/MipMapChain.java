@@ -75,12 +75,20 @@ public class MipMapChain {
   }
 
   public void clear() {
-    this.mipMappedDomain = null;
-    this.mipMappedRangeTuples = null;
-    this.rangeTupleSize = 0;
-    this.mipMaps.clear();
-    if (this.name2mipmap != null) {
-      this.name2mipmap.clear();
+    mipMappedDomain.clear();
+    mipMappedDomain = null;
+    for (Array2D a : mipMappedRangeTuples) {
+      a.clear();
+    }
+    mipMappedRangeTuples = null;
+    mipMaps.clear();
+    mipMaps = null;
+    if (name2mipmap != null) {
+      for (MipMap m : name2mipmap.values()) {
+        m.clear();
+      }
+      name2mipmap.clear();
+      name2mipmap = null;
     }
   }
   

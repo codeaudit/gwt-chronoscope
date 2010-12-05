@@ -264,4 +264,15 @@ public abstract class View implements Exportable {
   public GssProperties getGssPropertiesBySelector(String gssSelector) {
     return gssContext.getPropertiesBySelector(gssSelector);
   }
+
+  public void clear() {
+    // TODO: MCM check if there are objects which could be cleared
+    backingCanvas = null;
+    callback = null;
+    chart = null;
+    contextMenu = null;
+    frontCanvas = null;
+    gssContext = null;
+    menuFactory = null;
+  }
 }

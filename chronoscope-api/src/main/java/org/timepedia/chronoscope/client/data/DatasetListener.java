@@ -31,4 +31,6 @@ public interface DatasetListener<T extends Tuple2D> {
    */
   void onDatasetAdded(Dataset<T> dataset);
   
+  void clear();
+  
 }

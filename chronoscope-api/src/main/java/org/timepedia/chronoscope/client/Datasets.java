@@ -391,6 +391,11 @@ public final class Datasets<T extends Tuple2D>
         }
       }
     }
+
+    @Override
+    public void clear() {
+      datasets = null;
+    }
   }
 
   public String toJson() {
@@ -409,5 +414,33 @@ public final class Datasets<T extends Tuple2D>
       ret += datasets.get(i).toString();
     }
     return ret;
+  }
+  
+  private boolean cleared = false;
+  public void clear() {
+    if (cleared) {
+      return;
+    }
+    cleared = true;
+    if (datasets != null) {
+      for (Dataset<?> d: datasets) {
+        d.clear();
+      }
+      datasets.clear();
+      datasets = null;
+    }
+    if (listeners != null) {
+      for (DatasetListener<?> d: listeners) {
+        d.clear();
+      }
+      listeners.clear();
+      listeners = null;
+    }
+    myDatasetListener = null;
+    // TODO: MCM check if it is necessary clear a Command
+    if (pending != null) {
+      pending.clear();
+      pending = null;
+    }
   }
 }
