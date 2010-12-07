@@ -28,6 +28,19 @@ public class ChartState {
   private int originY;
 
   private HandlerManager handlerLookup;
+  
+  static ChartState instance;
+  
+  private ChartState(){
+    
+  }
+  
+  public static ChartState getInstance() {
+    if (instance == null) {
+      instance = new ChartState();
+    }
+    return instance;
+  }
 
   public int getClientX() {
     return clientX;

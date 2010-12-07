@@ -1,0 +1,17 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+             xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+             xmlns:u='urn:import:org.timepedia.chronoscope.client.browser.ui'>
+    <g:VerticalPanel>
+      <g:Label ui:field="label" text="This is a demo using chronoscope with gwt Ui-Builder"></g:Label>
+      <g:HTML>
+        <hr/>
+        Some text before the chart
+      </g:HTML>
+      <g:Button ui:field="button">Resize</g:Button>
+      <u:ChronoUI ui:field="chart" datasetsVarName="__datasets" width="200" height="100"></u:ChronoUI>
+     <g:HTML>
+        <hr/>
+        Some text After the chart
+      </g:HTML>      
+    </g:VerticalPanel>
+</ui:UiBinder>

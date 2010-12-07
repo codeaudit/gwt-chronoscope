@@ -26,8 +26,9 @@ public abstract class ComponentFactory {
     //GWT.log("TESTING: ComponentFactory: available mipmap strategies: " + name2mipmapStrategy.keySet(), null);
     MipMapStrategy mms = name2mipmapStrategy.get(name);
     if (mms == null) {
-      throw new IllegalArgumentException(
-          "Can't find MipMapStrategy associated with " + "name '" + name + "'");
+      return name2mipmapStrategy.values().iterator().next();
+//      throw new IllegalArgumentException(
+//          "Can't find MipMapStrategy associated with " + "name '" + name + "'");
     }
     return mms;
   }

@@ -533,12 +533,6 @@ public class Chronoscope
   public ChartPanel createChartPanel(Element elem, Dataset[] datasets,
       int chartWidth, int chartHeight, final ViewReadyCallback readyListener) {
 
-    final boolean wasDomElementProvided = (elem != null);
-
-    if (!wasDomElementProvided) {
-      elem = DOM.createDiv();
-    }
-
     final ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
     cpanel.setDomElement(elem);
@@ -551,7 +545,7 @@ public class Chronoscope
         }
       }
     });
-    cpanel.init();
+    cpanel.initialize();
     return cpanel;
   }
 

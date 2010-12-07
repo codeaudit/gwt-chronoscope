@@ -129,7 +129,7 @@ public class BrowserView extends GwtView
    * up
    */
   public void focus() {
-    focusImpl.focus(containerDiv);
+//    focusImpl.focus(containerDiv);
   }
 
   /**
@@ -238,9 +238,9 @@ public class BrowserView extends GwtView
   protected void initContainer(Element element, int width, int height) {
     this.rootElem = element;
     this.containerDiv = focusImpl.createFocusable();
+//    this.containerDiv = DOM.createDiv();
     DOM.setInnerHTML(rootElem, "");
-    DOM.setElementAttribute(containerDiv, "id",
-    DOM.getElementAttribute(rootElem, "id") + "container");
+    DOM.setElementAttribute(containerDiv, "id", DOM.getElementAttribute(rootElem, "id") + "container");
     DOM.setIntStyleAttribute(containerDiv, "width", width);
     DOM.setIntStyleAttribute(containerDiv, "height", height);
     DOM.setStyleAttribute(containerDiv, "position", "relative");

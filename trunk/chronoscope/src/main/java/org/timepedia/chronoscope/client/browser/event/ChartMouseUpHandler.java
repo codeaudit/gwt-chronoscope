@@ -46,7 +46,7 @@ public final class ChartMouseUpHandler
     chartInfo.getCompoundUIAction().cancel();
     chart.setCursor(Cursor.DEFAULT);
 
-    ((DOMView) chart.getView()).focus();
+//    ((DOMView) chart.getView()).focus();
 
     if (event.getNativeButton() == Event.BUTTON_RIGHT) {
       ((DefaultXYPlot) chart.getPlot()).fireContextMenuEvent(x, y);

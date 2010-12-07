@@ -1,18 +1,16 @@
 package org.timepedia.chronoscope.client.browser.event;
 
+import org.timepedia.chronoscope.client.Overlay;
+import org.timepedia.chronoscope.client.XYPlot;
+import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.overlays.Draggable;
+import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
+
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.dom.client.NativeEvent;
-
-import org.timepedia.chronoscope.client.Overlay;
-import org.timepedia.chronoscope.client.XYPlot;
-import org.timepedia.chronoscope.client.browser.ChartEventHandler;
-import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.overlays.Draggable;
-import org.timepedia.chronoscope.client.render.OverviewAxisPanel;
 
 /**
  * @author Chad Takahashi
@@ -25,7 +23,7 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
   protected int tabKeyEventCode = Event.ONKEYDOWN;
 
   public ChartState getChartState(DomEvent event) {
-    return (ChartState) ChartEventHandler.getChartState();
+    return ChartState.getInstance();
   }
 
   public int getLocalX(DomEvent event) {

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<style type="text/gss">
+series.s0 line { color: #0000ff; }
+series.s1 line { color: #ff0000; }
+series.s2 line { color: #00ff00; }
+ 
+series.s0, series.s1, series.s2 { group: jenga; }        
+series.jenga { display: stacked-line }
+ 
+crosshair { visibility: visible; date-format: MM/yyyy; }
+</style>
+
+    <script type="text/javascript" src="ui.nocache.js"></script>
+    
+</head>
+<body>
+<script>
+var __datasets = [];
+
+var first = {"id":"first","label":"first",
+    "dtformat": "yy","domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+    "axis":"$","range": [100, 200, 300, 250, 150, 345, 275, 200] };
+__datasets.push(first);
+
+var second = {"id":"second","label":"second",
+    "dtformat": "yy","domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+    "axis":"$","range": [120, 130, 340, 275, 250, 375, 245, 230] };
+__datasets.push(second);
+ 
+var third = {"id":"third","label":"third",
+     "axis":"$","dtformat": "yy",
+    "domain": ["90", "91", "92", "93", "94", "95", "96","97"],
+     "range": [  80,   40,   90,  110,  222,   74,   24,  42] };
+ 
+__datasets.push(third);
+
+</script>
+</body>
+</html>
+
