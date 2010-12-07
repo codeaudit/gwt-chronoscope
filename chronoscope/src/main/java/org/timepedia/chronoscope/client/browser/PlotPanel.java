@@ -84,6 +84,8 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
   public HandlerRegistration addDoubleClickHandler(DoubleClickHandler handler) {
     return addDomHandler(handler, DoubleClickEvent.getType());
   }
+  
+  private boolean initialized = false;
 
   /**
    * Instantiates a chart widget using the given DOM element as a container,
@@ -229,7 +231,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     chart.redraw();
     if (readyListener != null) {
       readyListener.onViewReady(view);
-      // run once
+      // run just once
       readyListener = null;
     }
   }
@@ -250,18 +252,24 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
    */
   protected void onAttach() {
     super.onAttach();
-    if (view != null) {
+    if (initialized && view != null) {
       view.onAttach();
     }
   }
 
   private void initView() {
+
     ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true,
         gssContext, this);
-
+    
     // configure chart
     chart.setView(view);
     chart.init();
+    if (isAttached()) {
+      view.onAttach();
+    }
+    
+    initialized = true;
   }
 
   private native void appendBody(Element cssgss) /*-{
