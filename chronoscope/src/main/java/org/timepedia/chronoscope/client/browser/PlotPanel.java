@@ -3,6 +3,19 @@ package org.timepedia.chronoscope.client.browser;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext.OnGssInitializedCallback;
+import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartKeyDownHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartKeyPressHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartKeyUpHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseClickHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseDownHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseMoveHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseOutHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseOverHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseUpHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartMouseWheelHandler;
+import org.timepedia.chronoscope.client.browser.event.ChartState;
+import org.timepedia.chronoscope.client.browser.event.OverviewAxisMouseMoveHandler;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.canvas.ViewReadyCallback;
 import org.timepedia.chronoscope.client.gss.GssContext;
@@ -10,41 +23,105 @@ import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 
-/**
- * ChartPanel is a GWT Widget that intercepts events and translates them to the
- * Chart interface as well as creating a View instance for the chart to render
- * with. All client-side browser-specific classes reside in the browser
- * subpackage to ensure the portability of the rest of Chronoscope to other
- * environments (Applet, Servlet, etc)
- * <p/>
- * ChartPanel at the moment only handles XYPlots, but in the future will be
- * extended to handle other chart types. See the project wiki for more details.
- * <p/>
- * <p/>
- * A simple way to construct a chart looks like this:
- * <p/>
- * 
- * <pre>
- * ChartPanel chartPanel = new ChartPanel(myDatasets);
- * RootPanel.get("someid").add(chartPanel);
- * </pre>
- * 
- * @author Ray Cromwell &lt;ray@timepedia.org&gt;
- */
-public class PlotPanel extends HTML implements ViewReadyCallback,
-    ResizeHandler, SafariKeyboardConstants {
+public class PlotPanel extends FocusPanel implements ViewReadyCallback,
+    SafariKeyboardConstants {
 
-  private ChartEventHandler chartEventHandler;
+  MouseDownHandler mouseDownHandler = new ChartMouseDownHandler();
+  MouseUpHandler mouseUpHandler = new ChartMouseUpHandler();
+  MouseOutHandler mouseOutHandler = new ChartMouseOutHandler();
+  MouseOverHandler mouseOverHandler = new ChartMouseOverHandler();
+  MouseMoveHandler mouseMoveHandler = new ChartMouseMoveHandler();
+  MouseMoveHandler mouseMoveHandlerOverview = new OverviewAxisMouseMoveHandler();
+  MouseWheelHandler mouseWheelHandler = new ChartMouseWheelHandler();
+  ClickHandler mouseClickHandler = new ChartMouseClickHandler();
+  DoubleClickHandler dblClickHandler = new ChartDblClickHandler();
+  KeyDownHandler keyDownHandler = new ChartKeyDownHandler();
+  KeyUpHandler keyUpHandler = new ChartKeyUpHandler();
+  KeyPressHandler keyPressHandler = new ChartKeyPressHandler();
+
+  public PlotPanel() {
+    addMouseDownHandler(mouseDownHandler);
+    addMouseUpHandler(mouseUpHandler);
+    addMouseOutHandler(mouseOutHandler);
+    addMouseOverHandler(mouseOverHandler);
+    addMouseMoveHandler(mouseMoveHandlerOverview);
+    addMouseMoveHandler(mouseMoveHandler);
+    addMouseWheelHandler(mouseWheelHandler);
+    addClickHandler(mouseClickHandler);
+    addDoubleClickHandler(dblClickHandler);
+    addKeyDownHandler(keyDownHandler);
+    addKeyUpHandler(keyUpHandler);
+    addKeyPressHandler(keyPressHandler);
+    addKeyDownHandler(keyDownHandler);
+
+    view = (View) GWT.create(DOMView.class);
+    chart = new Chart();
+  }
+
+  /**
+   * This method is here because GWT 2.0.x does not have it and we don't want to 
+   * depend on GWT 2.1.0 yet.
+   */
+  public HandlerRegistration addDoubleClickHandler(DoubleClickHandler handler) {
+    return addDomHandler(handler, DoubleClickEvent.getType());
+  }
+
+  /**
+   * Instantiates a chart widget using the given DOM element as a container,
+   * creating a DefaultXYPlot using the given datasets, with a
+   * ViewReadyCallback. If the container is null it creates
+   */
+  public void init(XYPlot<?> plot, int chartWidth, int chartHeight) {
+
+    ArgChecker.isNotNull(plot, "plot");
+
+    disableContextMenu(getElement());
+
+    this.plot = plot;
+    this.chartWidth = chartWidth;
+    this.chartHeight = chartHeight;
+
+    chart.setPlot(plot);
+
+    Element cssgss = DOM.createDiv();
+    DOM.setStyleAttribute(cssgss, "width", "0px");
+    DOM.setStyleAttribute(cssgss, "height", "0px");
+    DOM.setElementAttribute(cssgss, "id",
+        DOM.getElementAttribute(getElement(), "id") + "style");
+    DOM.setElementAttribute(cssgss, "class", "chrono");
+    appendBody(cssgss);
+
+    if (gssContext == null) {
+      gssContext = GWT.create(BrowserGssContext.class);
+      ((BrowserGssContext) gssContext).initialize(cssgss,
+          new OnGssInitializedCallback() {
+            public void run() {
+              initView();
+            }
+          });
+    } else {
+      initView();
+    }
+  }
 
   private static GssContext gssContext;
 
@@ -66,66 +143,6 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
 
   private int KEYEVENTS = Event.KEYEVENTS;
 
-  /**
-   * Instantiates a chart widget using the given DOM element as a container,
-   * creating a DefaultXYPlot using the given datasets, with a
-   * ViewReadyCallback.
-   * If the container is null it creates
-   */
-  public PlotPanel(Element container, XYPlot<?> plot, int chartWidth,
-      int chartHeight, ViewReadyCallback readyListener) {
-    
-    super(container != null ? container: DOM.createDiv());
-    
-    if (Document.get().getBody().isOrHasChild(getElement())) {
-      onAttach();
-      RootPanel.detachOnWindowClose(this);
-    }
-    
-    chartEventHandler = GWT.create(ChartEventHandler.class);
-    chartEventHandler.sinkEvents(this);
-    
-    // Fixme: Resize is not working right now
-    // Window.addResizeHandler(this);
-    disableContextMenu(getElement());
-    
-    ArgChecker.isNotNull(plot, "plot");
-    view = (View) GWT.create(DOMView.class);
-
-    this.plot = plot;
-    this.chartWidth = chartWidth;
-    this.chartHeight = chartHeight;
-    this.readyListener = readyListener;
-
-    chart = new Chart();
-    chart.setPlot(plot);
-    init();
-  }
-
-  private void init() {
-
-    Element cssgss = null;
-    cssgss = DOM.createDiv();
-    DOM.setStyleAttribute(cssgss, "width", "0px");
-    DOM.setStyleAttribute(cssgss, "height", "0px");
-    DOM.setElementAttribute(cssgss, "id",
-    DOM.getElementAttribute(getElement(), "id") + "style");
-    DOM.setElementAttribute(cssgss, "class", "chrono");
-    appendBody(cssgss);
-
-    if (gssContext == null) {
-      gssContext = GWT.create(BrowserGssContext.class);
-      ((BrowserGssContext) gssContext).initialize(cssgss,
-          new OnGssInitializedCallback() {
-            public void run() {
-              initView();
-            }
-          });
-    } else {
-      initView();
-    }
-  }
-
   public void fireContextMenu(Event evt) {
     if (DOM.eventGetTypeString(evt) == "undefined") {
       return;
@@ -137,7 +154,7 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
     int x = DOM.eventGetClientX(evt);
     int y = DOM.eventGetClientY(evt) + Window.getScrollTop();
 
-    ((DefaultXYPlot) getChart().getPlot()).fireContextMenuEvent(x, y);
+    ((DefaultXYPlot<?>) getChart().getPlot()).fireContextMenuEvent(x, y);
     DOM.eventCancelBubble(evt, true);
     DOM.eventPreventDefault(evt);
   }
@@ -168,6 +185,7 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
       return;
     }
 
+    // TODO: MCM move this to handlers
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click). Otherwise, DOM.eventGetClientX()
     // will throw an exception.
@@ -185,15 +203,14 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
       y = -1;
     }
 
-    boolean wasChartEventHandled = chartEventHandler.handleChartEvent(evt,
-        chart, x, y, originX, originY);
-
-    if (wasChartEventHandled) {
-      DOM.eventCancelBubble(evt, true);
-      DOM.eventPreventDefault(evt);
-    } else {
-      super.onBrowserEvent(evt);
-    }
+    ChartState chartInfo = ChartState.getInstance();
+    chartInfo.chart = chart;
+    chartInfo.setHandled(false);
+    chartInfo.setClientX(x);
+    chartInfo.setClientY(y);
+    chartInfo.setOriginX(originX);
+    chartInfo.setOriginY(originY);
+    super.onBrowserEvent(evt);
   }
 
   /**
@@ -204,25 +221,16 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
    */
   public void onViewReady(View view) {
     viewReady = true;
+    plot.init(view);
+
     // possible leak source - FIXME
     // HistoryManager.putChart(id, chart);
+    
     chart.redraw();
     if (readyListener != null) {
       readyListener.onViewReady(view);
-    }
-  }
-
-  /**
-   * FIXME - Window/Chart/View resizing doesn't work right now.
-   */
-  public void onResize(ResizeEvent resize) { // int width, int height) {
-    if (view != null) {
-      Element elem = ((DOMView) view).getElement();
-      if (elem != null) {
-        // view.resize(resize.getWidth(), resize.getHeight());
-        // DOM.getElementPropertyInt(elem, "clientWidth"),
-        // DOM.getElementPropertyInt(elem, "clientHeight"));
-      }
+      // run once
+      readyListener = null;
     }
   }
 
@@ -249,14 +257,11 @@ public class PlotPanel extends HTML implements ViewReadyCallback,
 
   private void initView() {
     ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true,
-        gssContext, PlotPanel.this);
+        gssContext, this);
 
     // configure chart
     chart.setView(view);
     chart.init();
-    plot.init(view);
-    onViewReady(view);
-    view.onAttach();
   }
 
   private native void appendBody(Element cssgss) /*-{

@@ -126,6 +126,7 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Any cached drawings within the top, bottom, or range axis panels are 
    * flushed and redrawn on next update.
    */
+  @Export
   void damageAxes();
 
   /**

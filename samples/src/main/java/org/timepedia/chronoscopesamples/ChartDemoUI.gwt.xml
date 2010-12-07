@@ -1,0 +1,6 @@
+<module rename-to="ui">
+  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+  <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoUI'/>
+</module>
+
+        

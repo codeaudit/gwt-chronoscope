@@ -28,11 +28,13 @@ public class ChartDemoLegend implements EntryPoint {
   {
     chronoscope.createTimeseriesChart("chartdemo", getJsons(data), 223, 197, new ViewReadyCallback() {
       public void onViewReady(View view) {
+        System.out.println("OK: " + view);
       }
     });
     
     chronoscope2.createTimeseriesChart("chartdemobig", getJsons(data), 600, 500, new ViewReadyCallback() {
       public void onViewReady(View view) {
+        System.out.println("OK2: " + view);
       }
     });
   }

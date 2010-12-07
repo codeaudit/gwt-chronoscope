@@ -16,19 +16,27 @@ import org.timepedia.chronoscope.client.Chart;
 public class ChartMouseWheelHandler extends AbstractEventHandler<MouseWheelHandler> implements MouseWheelHandler {
 
   public void onMouseWheel(MouseWheelEvent event) {
-    ChartState chartInfo = getChartState(event);
-    Chart chart = chartInfo.chart;
+    try {
+      ChartState chartInfo = getChartState(event);
+      Chart chart = chartInfo.chart;
 
-    int wheelDir = event.getNativeEvent().getMouseWheelVelocityY();
-    boolean isMouseWheelUp = (wheelDir <= 0);
-    if (isMouseWheelUp) {
-      chart.nextZoom();
-    }
-    else {
-      chart.prevZoom();
+      int wheelDir = event.getNativeEvent().getMouseWheelVelocityY();
+      boolean isMouseWheelUp = (wheelDir <= 0);
+      if (isMouseWheelUp) {
+        chart.nextZoom();
+      }
+      else {
+        chart.prevZoom();
+      }
+      
+      chartInfo.setHandled(true);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     
-    chartInfo.setHandled(true);
+    // Do not move scroll
+    event.preventDefault();
   }
 
 }

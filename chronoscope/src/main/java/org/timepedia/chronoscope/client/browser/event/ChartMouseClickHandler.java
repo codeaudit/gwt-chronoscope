@@ -24,7 +24,7 @@ public class ChartMouseClickHandler extends AbstractEventHandler<ClickHandler>
     int y = getLocalY(event);
     chart.click(x, y);
 
-    ((DOMView) chart.getView()).focus();
+//    ((DOMView) chart.getView()).focus();
     ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
   }
