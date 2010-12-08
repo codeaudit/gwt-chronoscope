@@ -29,12 +29,13 @@ public class ChartDemoJS implements EntryPoint {
     }
 
     Chronoscope.setMicroformatsEnabled(true);
-//    ChronoscopeOptions.setErrorReporting(true);
+    ChronoscopeOptions.setErrorReporting(true);
     Chronoscope.getInstance();
   }
 
   private class ClientExceptionHandler implements GWT.UncaughtExceptionHandler {
     public void onUncaughtException(Throwable cause) {
+      System.out.println(cause.toString());
       GWT.log(cause.toString(), cause);
     }
   }

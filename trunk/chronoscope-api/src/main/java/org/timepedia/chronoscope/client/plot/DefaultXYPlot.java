@@ -357,6 +357,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return false;
   }
 
+  @Export
   public void damageAxes() {
     rangePanel.clearDrawCaches();
     bottomPanel.clearDrawCaches();
