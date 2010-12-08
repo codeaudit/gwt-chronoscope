@@ -34,11 +34,10 @@ var third = {"id":"third","label":"third","partitionStrategy":"calendar","axis":
      "range": [  80,   40,   90,  110,  222,   74,   24,  42] };
 __datasets.push(third);
 
-
-var theplot;
+var chartPanel;
 
 function mutate() {
-    var datasets = theplot.getDatasets();
+    var datasets = plot.getDatasets();
     datasets.beginMutation();
     var dataset = datasets.getById("first");
     dataset.mutate([new Date(1991, 0, 1).getTime(), new Date(1992, 0, 1).getTime()],
@@ -46,18 +45,21 @@ function mutate() {
     datasets.endMutation();
 }
 
+function changeFormat() {
+	plot.getAxis(0).setTickNumberFormat("#,###.00");
+	plot.damageAxes();
+	plot.maxZoomOut();
+}
+
 function onChronoscopeLoaded(chrono) {  
-  chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
-	try {
-	    //view.getChart().redraw();
-	    theplot = view.getChart().getPlot();
-	} catch(e) {
-		alert(e);
-	}
+  chartPanel = chrono.createTimeseriesChartById("chart", __datasets, 480, 320, function(view) {
+	 plot = view.getChart().getPlot();
   });
 }
 </script>
     <button onClick="mutate();">Mutate</button>
+    <button onClick="changeFormat();">Format</button>
+    
     <div id="chart"></div>
     
 </body>
