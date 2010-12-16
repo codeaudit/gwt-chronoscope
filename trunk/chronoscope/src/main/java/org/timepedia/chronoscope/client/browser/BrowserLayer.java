@@ -6,6 +6,9 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
+import org.timepedia.chronoscope.client.Cursor;
+
+import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
@@ -14,21 +17,29 @@ import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.canvas.CanvasFontMetrics;
+
 import org.timepedia.chronoscope.client.render.LinearGradient;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 
-/**
+/**                     f
  * An implementation of the Layer interface using the Safari/WHATWG Javascript
  * CANVAS.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
-public class BrowserLayer extends DomTextLayer {
+public class BrowserLayer extends AbstractLayer {
 
   private static final String[] compositeModes = {"copy", "source-atop",
       "source-in", "source-out", "source-over", "destination-atop",
       "destination-in", "destination-out", "destination-over", "darker",
       "lighter", "xor"};
+
+  private static final String[] TEXT_ALIGN = {
+      "start", "end", "left", "right", "center"};
+
+  private static final String[] TEXT_BASELINE = {
+      "top", "hanging", "middle", "alphabetic", "ideographic", "bottom"};
 
   private static int layerCount = 0;
 
@@ -74,6 +85,14 @@ public class BrowserLayer extends DomTextLayer {
     if (width != 0 && height != 0) {
       clearRect0(ctx, x, y, width, height);
     }
+  }
+
+  public void clear() {
+      clear0(ctx, canvas);
+  }
+
+  public void clearTextLayer(String textLayer) {
+      clear();
   }
 
   public void clip(double x, double y, double width, double height) {
@@ -146,7 +165,7 @@ public class BrowserLayer extends DomTextLayer {
   }
 
   @Override
-  protected int canvasStringWidth(String label, String fontFamily,
+  public int stringWidth(String label, String fontFamily,
       String fontWeight, String fontSize) {
     return csw(ctx, label, fontSize + " "+ fontFamily);
   }
@@ -156,7 +175,36 @@ public class BrowserLayer extends DomTextLayer {
     return ctx.measureText(label).width;
   }-*/;
 
+  /* this is a hack because there is no height
+     ... but it usually works. */
   @Override
+  public int stringHeight(String label, String fontFamily,
+      String fontWeight, String fontSize) {
+    return csw(ctx, "h", fontSize + " "+ fontFamily)*2;
+  }
+
+  // TODO - alignment
+
+public void drawText(double x, double y, String label, String fontFamily,
+      String fontWeight, String fontSize, String layerName,
+      Cursor cursorStyle) {
+
+    if (cursorStyle == Cursor.CONTRASTED) {
+        this.setShadowColor(Color.WHITE);
+        this.setShadowOffsetX(-1);
+        this.setShadowOffsetY(0);
+       // fontsize =  Double.valueOf(fontSize.substring(0, fontSize.length() - 2));
+    }
+
+    fillText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_BOTTOM]);
+
+    if (cursorStyle == Cursor.CLICKABLE) {
+      // DOsM.setStyleAttribute(textDiv, "textDecoration", "underline");
+      // DOM.setStyleAttribute(textDiv, "cursor", "pointer");
+    }
+
+  }
+
   protected void fillText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
     fillText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
@@ -169,6 +217,19 @@ public class BrowserLayer extends DomTextLayer {
     ctx.fillText(label, x, y);
   }-*/;
 
+  // TODO - alignment
+
+  protected void strokeText(String label, double x, double y, String fontFamily,
+      String fontSize, String baseline) {
+    strokeText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
+  }
+
+  private native void strokeText0(JavaScriptObject ctx, String label, double x,
+      double y, String font, String baseline) /*-{
+    ctx.font = font;
+    ctx.textBaseline = baseline;
+    ctx.strokeText(label, x, y);
+  }-*/;
   public Element getElement() {
     return canvas;
   }
@@ -368,6 +429,12 @@ public class BrowserLayer extends DomTextLayer {
     return ctx;
   }
 
+  public void setTextLayerBounds(String layerName, Bounds bounds) {
+    this.bounds = new Bounds(bounds);
+    this.setVisibility(true);
+  }
+
+
   void init(Bounds b) {
     layerContainer = DOM.createElement("div");
     this.bounds = new Bounds(b);
@@ -395,6 +462,14 @@ public class BrowserLayer extends DomTextLayer {
     ctx = getCanvasContext(canvas);
     DOM.appendChild(layerContainer, canvas);
   }
+
+  private native void clear0(JavaScriptObject ctx, Element can) /*-{
+       ctx.clearRect(0, 0, can.width, can.height);
+       var _width = can.width;
+       can.width = 1;
+       can.width = _width;
+    }-*/;
+
 
   private native void clearRect0(JavaScriptObject ctx, double x, double y,
       double width, double height) /*-{

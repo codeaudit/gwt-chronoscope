@@ -23,8 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * An implementation of Canvas that creates a CANVAS tag per Layer, as well as
- * using DIVs and images to render text on the CANVAS
+ * An implementation of Canvas that creates a CANVAS tag per Layer,
  */
 public class BrowserCanvas extends Canvas {
 
@@ -88,8 +87,16 @@ public class BrowserCanvas extends Canvas {
       layer = new BrowserLayer(this, layerId, b);
       id2Layer.put(layer.getLayerId(), layer);
       DOM.appendChild(canvasElement, ((BrowserLayer) layer).getLayerElement());
-      layer.setFillColor(Color.TRANSPARENT);
-      layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
+      layer.clear();
+    } else {
+      layer.clear();
+      // layer.clearTextLayer(layer.getLayerId());
+      if (null != b) { // TODO - more sensible setBounds
+        layer.getBounds().x = b.x;
+        layer.getBounds().y = b.y;
+        layer.getBounds().width = b.width;
+        layer.getBounds().height = b.height;
+      }
     }
     return layer;
   }
@@ -130,9 +137,9 @@ public class BrowserCanvas extends Canvas {
     return rootLayer.createRadialGradient(x0, y0, r0, x1, y1, r1);
   }
 
-  public Element createTextDiv() {
-    return rootLayer.createTextDiv();
-  }
+//  public Element createTextDiv() {
+//    return rootLayer.createTextDiv();
+//  }
   /*
   public void disposeLayer(String layerId) {
     Layer layer = getLayer(layerId);
@@ -237,9 +244,9 @@ public class BrowserCanvas extends Canvas {
     return rootLayer.getStrokeColor();
   }
 
-  public DomTextLayer.TextLayer getTextLayer(String layerName) {
-    return rootLayer.getTextLayer(layerName);
-  }
+//  public DomTextLayer.TextLayer getTextLayer(String layerName) {
+//    return rootLayer.getTextLayer(layerName);
+//  }
 
   public String getTransparency() {
     return rootLayer.getTransparency();
@@ -357,9 +364,9 @@ public class BrowserCanvas extends Canvas {
     rootLayer.setStrokeColor(p);
   }
 
-  public void setTextLayerBounds(String layerName, Bounds bounds) {
-    rootLayer.setTextLayerBounds(layerName, bounds);
-  }
+  // public void setTextLayerBounds(String layerName, Bounds bounds) {
+  //   rootLayer.setTextLayerBounds(layerName, bounds);
+  // }
 
   public void setTransparency(float value) {
     rootLayer.setTransparency(value);
@@ -388,6 +395,7 @@ public class BrowserCanvas extends Canvas {
     rootLayer.translate(x, y);
   }
 
+  // TODO - init with id to prevent making too many, or make id idempotent
   void init(int width, int height) {
     canvasElement = DOM.createDiv();
     DOM.setElementAttribute(canvasElement, "width", "" + width);

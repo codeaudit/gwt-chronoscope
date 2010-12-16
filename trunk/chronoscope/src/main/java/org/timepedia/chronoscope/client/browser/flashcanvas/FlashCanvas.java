@@ -580,9 +580,9 @@ public class FlashCanvas extends Canvas {
     rootLayer.setStrokeColor(p);
   }
 
-  public void setTextLayerBounds(String layerName, Bounds bounds) {
-    rootLayer.setTextLayerBounds(layerName, bounds);
-  }
+  // public void setTextLayerBounds(String layerName, Bounds bounds) {
+  //   rootLayer.setTextLayerBounds(layerName, bounds);
+  // }
 
   public void setTransparency(float value) {
     rootLayer.setTransparency(value);
