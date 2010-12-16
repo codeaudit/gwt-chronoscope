@@ -18,10 +18,12 @@ import java.util.HashMap;
 
 /**
  * A class that implements text rendering by positioning DIVs with text or
- * images over the canvas.
+ * images over the canvas. Deprecated because most canvas implementations
+ * include text support now.
  *
  * @author Ray Cromwell &lt;ray@timepedia.org&gt;
  */
+@Deprecated
 public abstract class DomTextLayer extends AbstractLayer {
 
   public static class TextLayer {
