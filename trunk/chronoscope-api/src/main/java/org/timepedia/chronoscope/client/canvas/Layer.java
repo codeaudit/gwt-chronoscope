@@ -40,14 +40,23 @@ public interface Layer {
   int XOR = 11;
 
   int Z_LAYER_BACKGROUND = 0;
-
   int Z_LAYER_PLOTAREA = 1;
-
   int Z_LAYER_AXIS = 2;
+  int Z_LAYER_OVERLAY = 4;
+  int Z_LAYER_HOVER = 3;
 
-  int Z_LAYER_OVERLAY = 3;
+  int TEXT_ALIGN_START = 0;
+  int TEXT_ALIGN_END = 1;
+  int TEXT_ALIGN_LEFT = 2;
+  int TEXT_ALIGN_RIGHT = 3;
+  int TEXT_ALIGN_CENTER = 4;
 
-  int Z_LAYER_HOVER = 4;
+  int TEXT_BASELINE_TOP = 0;
+  int TEXT_BASELINE_HANGING = 1;
+  int TEXT_BASELINE_MIDDLE = 2;
+  int TEXT_BASELINE_ALPHABETIC = 3;
+  int TEXT_BASELINE_IDEOGRAPHIC = 4;
+  int TEXT_BASELINE_BOTTOM = 5;
 
   void arc(double x, double y, double radius, double startAngle,
       double endAngle, int clockwise);
@@ -99,6 +108,7 @@ public interface Layer {
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart);
 
+  // TODO - deprecate and switch to filltext, stroketext
   /**
    * Draw text at the given x,y coordinates within this layer, on the given
    * textLayer
