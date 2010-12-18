@@ -22,7 +22,7 @@ import org.timepedia.chronoscope.client.canvas.CanvasFontMetrics;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 
-/**                     f
+/**
  * An implementation of the Layer interface using the Safari/WHATWG Javascript
  * CANVAS.
  *
@@ -44,16 +44,21 @@ public class BrowserLayer extends AbstractLayer {
   private static int layerCount = 0;
 
   private Element canvas;
+  private Element canvasText;
 
   private JavaScriptObject ctx;
+  private JavaScriptObject ctxText;
 
   private String strokeColor;
+  private Color _strokeColor;
 
   private String fillColor;
+  private Color _fillColor;
 
   private Bounds bounds;
 
   private final String layerId;
+  private final String layerIdText;
 
   private Element layerContainer;
 
@@ -64,6 +69,7 @@ public class BrowserLayer extends AbstractLayer {
   public BrowserLayer(Canvas canvas, String layerId, Bounds b) {
     super(canvas);
     this.layerId = layerId;
+    this.layerIdText = layerId+"text";
     init(b);
   }
 
@@ -92,7 +98,7 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public void clearTextLayer(String textLayer) {
-      clear();
+      // clear0(ctxText, canvasText);
   }
 
   public void clip(double x, double y, double width, double height) {
@@ -189,17 +195,27 @@ public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName,
       Cursor cursorStyle) {
 
+    Color _prevStrokeColor = _strokeColor;
+    Color _prevFillColor = _fillColor;
+
     if (cursorStyle == Cursor.CONTRASTED) {
-        this.setShadowColor(Color.WHITE);
-        this.setShadowOffsetX(-1);
-        this.setShadowOffsetY(0);
-       // fontsize =  Double.valueOf(fontSize.substring(0, fontSize.length() - 2));
+        setLineWidth(2);
+        setStrokeColor(Color.WHITE);
+        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+        setStrokeColor(_prevStrokeColor);
+    } else {
+        setLineWidth(1);
+        setStrokeColor(Color.WHITE);
+        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+        setStrokeColor(_prevStrokeColor);
     }
 
-    fillText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_BOTTOM]);
+    setFillColor(_strokeColor);
+    fillText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+    setFillColor(_prevFillColor);
 
     if (cursorStyle == Cursor.CLICKABLE) {
-      // DOsM.setStyleAttribute(textDiv, "textDecoration", "underline");
+      // DOM.setStyleAttribute(textDiv, "textDecoration", "underline");
       // DOM.setStyleAttribute(textDiv, "cursor", "pointer");
     }
 
@@ -207,7 +223,7 @@ public void drawText(double x, double y, String label, String fontFamily,
 
   protected void fillText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
-    fillText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
+    fillText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
   }
 
   private native void fillText0(JavaScriptObject ctx, String label, double x,
@@ -221,7 +237,7 @@ public void drawText(double x, double y, String label, String fontFamily,
 
   protected void strokeText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
-    strokeText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
+    strokeText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
   }
 
   private native void strokeText0(JavaScriptObject ctx, String label, double x,
@@ -323,6 +339,7 @@ public void drawText(double x, double y, String label, String fontFamily,
   }
 
   public void setFillColor(Color c) {
+    _fillColor = c;
     String color = c.getCSSColor();
 
     if ("transparent".equals(color)) {
@@ -347,6 +364,10 @@ public void drawText(double x, double y, String label, String fontFamily,
 
     DOM.setIntStyleAttribute(canvas, "zIndex", zorder);
     DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder);
+
+    DOM.setIntStyleAttribute(canvasText, "zIndex", zorder+1);
+    DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder+1);
+
     this.zorder = zorder;
   }
 
@@ -392,6 +413,7 @@ public void drawText(double x, double y, String label, String fontFamily,
   }
 
   public void setStrokeColor(Color c) {
+    _strokeColor = c;
     String color = c.getCSSColor();
     if ("transparent".equals(color)) {
       color = "rgba(0,0,0,0)";
@@ -439,18 +461,28 @@ public void drawText(double x, double y, String label, String fontFamily,
     layerContainer = DOM.createElement("div");
     this.bounds = new Bounds(b);
     canvas = DOM.createElement("canvas");
+    canvasText = DOM.createElement("canvas");
+
     String lc = String.valueOf(layerCount++);
     DOM.setElementAttribute(layerContainer, "id", "_lc_" + layerId + lc);
     DOM.setElementAttribute(canvas, "id", "_cv_" + layerId + lc);
 
     DOM.setElementAttribute(canvas, "width", "" + b.width);
     DOM.setElementAttribute(canvas, "height", "" + b.height);
-
-    DOM.setStyleAttribute(layerContainer, "width", "" + b.width + "px");
-    DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "width", "" + b.width + "px");
     DOM.setStyleAttribute(canvas, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "position", "relative");
+
+    DOM.setElementAttribute(canvasText, "width", "" + b.width);
+    DOM.setElementAttribute(canvasText, "height", "" + b.height);
+    DOM.setStyleAttribute(canvasText, "width", "" + b.width + "px");
+    DOM.setStyleAttribute(canvasText, "height", "" + b.height + "px");
+    DOM.setStyleAttribute(canvasText, "position", "relative");
+
+
+    DOM.setStyleAttribute(layerContainer, "width", "" + b.width + "px");
+    DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
+
     DOM.setStyleAttribute(layerContainer, "visibility", "visible");
     DOM.setStyleAttribute(layerContainer, "position", "absolute");
 
@@ -460,7 +492,11 @@ public void drawText(double x, double y, String label, String fontFamily,
     DOM.setStyleAttribute(layerContainer, "overflow", "visible");
 
     ctx = getCanvasContext(canvas);
+    ctxText = getCanvasContext(canvas);
+
     DOM.appendChild(layerContainer, canvas);
+    DOM.appendChild(layerContainer, canvasText);
+
   }
 
   private native void clear0(JavaScriptObject ctx, Element can) /*-{

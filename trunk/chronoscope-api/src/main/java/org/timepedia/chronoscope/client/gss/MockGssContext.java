@@ -86,6 +86,7 @@ public class MockGssContext extends GssContext {
   
   private void configCrosshairProps(GssProperties p) {
     p.color = Color.GRAY;
+    p.bgColor = Color.GRAY;
     p.visible = false;
     p.valueVisible = true;
     p.labelVisible = false;
@@ -165,7 +166,7 @@ public class MockGssContext extends GssContext {
   }
 
   private void configOverviewLensProps(GssProperties p) {
-    p.color = Color.LIGHTGREY;
+    p.color = Color.LIGHTGRAY;
     p.transparency = 0.5;
     p.lineThickness = 1;
     p.borderBottom=0;
@@ -240,11 +241,14 @@ public class MockGssContext extends GssContext {
   private void configTickProps(GssProperties p) {
     p.lineThickness = 1;
     p.color = Color.GRAY;
+    p.bgColor = Color.TRANSPARENT;
   }
   
   private void configLabelProps(GssProperties p) {
     p.tickAlign = "above";
     p.fontSize="9pt";
+    p.color = Color.GRAY;
+    p.bgColor = Color.TRANSPARENT;
   }
 
   /**

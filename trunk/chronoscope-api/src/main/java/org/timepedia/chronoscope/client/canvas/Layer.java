@@ -40,10 +40,10 @@ public interface Layer {
   int XOR = 11;
 
   int Z_LAYER_BACKGROUND = 0;
-  int Z_LAYER_PLOTAREA = 1;
-  int Z_LAYER_AXIS = 2;
-  int Z_LAYER_OVERLAY = 4;
-  int Z_LAYER_HOVER = 3;
+  int Z_LAYER_PLOTAREA = 2;
+  int Z_LAYER_AXIS = 10;
+  int Z_LAYER_OVERLAY = 8;
+  int Z_LAYER_HOVER = 6;
 
   int TEXT_ALIGN_START = 0;
   int TEXT_ALIGN_END = 1;
@@ -108,7 +108,6 @@ public interface Layer {
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart);
 
-  // TODO - deprecate and switch to filltext, stroketext
   /**
    * Draw text at the given x,y coordinates within this layer, on the given
    * textLayer

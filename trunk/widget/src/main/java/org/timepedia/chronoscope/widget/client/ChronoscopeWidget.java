@@ -17,8 +17,7 @@ public class ChronoscopeWidget implements EntryPoint {
   public void onModuleLoad() {
     GWT.setUncaughtExceptionHandler(new ClientExceptionHandler());
     Chronoscope.setMicroformatsEnabled(true);
-    ChronoscopeOptions.setErrorReporting(false);
-    Chronoscope.setFontBookRendering(true);
+    ChronoscopeOptions.setErrorReporting(true);
     Chronoscope.getInstance();
   }
 
