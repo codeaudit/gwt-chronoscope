@@ -232,7 +232,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   public String getTypeClass() {
     return typeClass;
   }
-  // NOTE - DatasetRenderer.drawGuideLine is for points with guidelines (eg point:focus guideline) this is for marker guidelines
+  // NOTE - DatasetRenderer.drawFocusPointGuideLine is for points with guidelines (eg point:focus guideline) this is for marker guidelines
   // TODO - DRY
    public void drawGuideLine(Layer layer, int x) {
     if(guideLineProps == null) return;

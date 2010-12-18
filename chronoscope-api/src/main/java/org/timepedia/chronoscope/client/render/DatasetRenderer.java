@@ -207,18 +207,22 @@ public abstract class DatasetRenderer<T extends Tuple2D>
   public abstract void drawCurvePart(int datasetIndex, int domainIndex, Layer layer, T tuplDataPoint, int methodCallCount, RenderState renderState);
 
 
-  public void drawGuideLine(Layer layer, int x) {
+  public void drawFocusPointGuideLine(Layer layer, int x) {
       layer.save();
       String textLayer = "overlays";
       layer.clearTextLayer(textLayer);
 
-      layer.setFillColor(gssFocusGuidelineProps.color);
+      // layer.setFillColor(gssFocusGuidelineProps.color);
+
+      // layer.setFillColor(gssFocusPointProps.color);
+
       double lt = Math.max(gssFocusGuidelineProps.lineThickness, 1);
       int coffset = (int) Math.floor(lt / 2.0);
 
       layer.fillRect(x - coffset, 0, lt, layer.getBounds().height);
 
       // for now, don't bother drawing label on point guidelines
+      /*
       if (gssFocusGuidelineProps.dateFormat != null) {
         layer.setStrokeColor(Color.BLACK);
         int hx = x;
@@ -228,6 +232,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
 
         layer.drawText(hx, -12, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
       }
+      */
       layer.restore();
   }
 

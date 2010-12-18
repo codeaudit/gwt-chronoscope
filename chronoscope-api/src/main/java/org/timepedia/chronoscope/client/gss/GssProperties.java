@@ -39,7 +39,7 @@ public class GssProperties implements Exportable {
 
   public double shadowBlur = 0;
 
-  public Color shadowColor = Color.LIGHTGREY;
+  public Color shadowColor = Color.LIGHTGRAY;
 
   public double shadowOffsetX = 0;
 

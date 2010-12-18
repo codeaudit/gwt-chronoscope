@@ -112,7 +112,7 @@ public class LineXYRenderer<T extends Tuple2D> extends DatasetRenderer<T>
       double dx = ux - lx;
       if (isFocused && gssFocusGuidelineProps.visible) {
 
-      drawGuideLine(plot.getOverlayLayer(), (int) ux);
+      drawFocusPointGuideLine(layer, (int) ux);
       }
 
       if (lx == -1 || isFocused || dx > (gssProps.size * 2 + 4)) {

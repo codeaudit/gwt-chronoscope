@@ -72,9 +72,12 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
   public void draw() {
     if (!GRID_ONLY) {
-      clearAxis(layer, bounds);
+      // clearAxis(layer, bounds);
       drawHorizontalLine(layer, bounds);
     }
+
+      drawHorizontalLine(layer, bounds);
+
 
     // TODO: cache this based on domainWidth(?)  
     // This stuff shouldn't change in the case where the user is just scrolling 
@@ -254,8 +257,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
     layer.setFillColor(gssProperties.bgColor);
-    layer.fillRect(bounds.x - 1, bounds.y - 1, bounds.width + 2,
-        bounds.height + 2);
+    layer.setStrokeColor(gssProperties.color);
+  //  layer.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 //    layer.setStrokeColor("rgba(0,0,0,0)");
 //    layer.setLineWidth(0.0);
 //    layer.setShadowColor("rgba(0,0,0,0)");
@@ -315,11 +318,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   }
 
   private void drawHorizontalLine(Layer layer, Bounds bounds) {
-    layer.setStrokeColor(tickProperties.color);
-    layer.setLineWidth(tickProperties.lineThickness);
-    layer.moveTo(bounds.x, bounds.y);
-    layer.lineTo(bounds.rightX(), bounds.y);
-    layer.stroke();
+    layer.setFillColor(tickProperties.color);
+    layer.fillRect(bounds.x, bounds.y,bounds.rightX(),bounds.y+tickProperties.lineThickness);
   }
 
   private void drawTick(Layer layer, XYPlot plot, Bounds bounds, double ux,
@@ -345,8 +345,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   private void drawTickLabel(Layer layer, Bounds bounds, double ux,
       String tickLabel, boolean bold, double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
-    layer.setFillColor(labelProperties.bgColor);
-    layer.drawText(3 + ux - tickLabelWidth / 2, 5 + bounds.y, tickLabel,
+    layer.setFillColor(labelProperties.color);
+    layer.drawText(2.5 + ux - tickLabelWidth / 2, 5 + bounds.y, tickLabel,
         gssProperties.fontFamily, bold ? "bold" : gssProperties.fontWeight,
         gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }

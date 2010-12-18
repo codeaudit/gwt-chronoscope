@@ -812,8 +812,11 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (isAnimating || hoverX < 1) {
       // ...
     } else {
-      plotRenderer.drawHoverPoints(hoverLayer);
-      drawCrossHairs(hoverLayer);
+        // hoverLayer.save();
+        // hoverLayer.clear();
+        drawCrossHairs(hoverLayer);
+        plotRenderer.drawHoverPoints(hoverLayer);
+        // hoverLayer.restore();
     }
 
     if (plotDomainChanged) {
@@ -1319,14 +1322,14 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   private void drawCrossHairs(Layer hoverLayer) {
     if (ChronoscopeOptions.isVerticalCrosshairEnabled() && hoverX > -1) {
-      hoverLayer.save();
-      hoverLayer.clearTextLayer("crosshair");
-      hoverLayer.setFillColor(crosshairProperties.color);
+      // hoverLayer.clearTextLayer("crosshair");
+      hoverLayer.setFillColor(crosshairProperties.bgColor);
+      hoverLayer.setStrokeColor(crosshairProperties.color);
       hoverLayer.setTransparency((float)crosshairProperties.transparency);
 
       if (hoverX > 0) {
         // consider painting crosshair line on overlay layer for Z order underneath (behind) the points
-        hoverLayer.fillRect(hoverX, 0, 1, hoverLayer.getBounds().height);
+        hoverLayer.fillRect(hoverX-0.5, 0.5, 1, hoverLayer.getBounds().height);
         int hx = hoverX;
         double dx = windowXtoDomain(hoverX + plotBounds.x);
         ChronoDate cronoDate = new FastChronoDate(dx);
@@ -1344,7 +1347,6 @@ public class DefaultXYPlot<T extends Tuple2D>
           int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "8pt");
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
-          hoverLayer.setStrokeColor(crosshairProperties.color);
           hoverLayer.drawText(hx, -12, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         }
 
@@ -1414,12 +1416,13 @@ public class DefaultXYPlot<T extends Tuple2D>
           }
         }
 
-      hoverLayer.restore();
     }
 
     if (ChronoscopeOptions.isHorizontalCrosshairEnabled() && hoverY > -1) {
       hoverLayer.save();
-      hoverLayer.setFillColor(crosshairProperties.color);
+      hoverLayer.setFillColor(crosshairProperties.bgColor);
+      hoverLayer.setStrokeColor(crosshairProperties.color);
+      hoverLayer.setTransparency((float)crosshairProperties.transparency);
       hoverLayer.fillRect(0, hoverY, hoverLayer.getBounds().width, 1);
       hoverLayer.restore();
     }

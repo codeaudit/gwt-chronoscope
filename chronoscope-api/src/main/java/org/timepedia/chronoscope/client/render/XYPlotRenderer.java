@@ -265,8 +265,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
   }
 
   public void drawHoverPoints(Layer layer) {
-    layer.save();
-    layer.clear();
 
     int[] hoverPoints = plot.getHoverPoints();
 
@@ -296,7 +294,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
       }
     }
 
-    layer.restore();
   }
 
   public DrawableDataset<T> getDrawableDataset(int datasetIndex) {

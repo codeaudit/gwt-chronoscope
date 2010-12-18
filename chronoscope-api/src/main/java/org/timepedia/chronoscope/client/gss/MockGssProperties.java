@@ -19,7 +19,7 @@ public class MockGssProperties extends GssProperties implements Exportable {
     this.left = 0;
     this.top = 0;
     this.shadowBlur = 0;
-    this.shadowColor = Color.LIGHTGREY;
+    this.shadowColor = Color.LIGHTGRAY;
     this.shadowOffsetX = 0;
     this.shadowOffsetY = 0;
     this.size = 1;

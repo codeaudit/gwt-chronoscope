@@ -83,7 +83,7 @@ public class Color implements PaintStyle {
       put("lightcoral", "f08080");
       put("lightcyan", "e0ffff");
       put("lightgoldenrodyellow", "fafad2");
-      put("lightgrey", "d3d3d3");
+      put("lightgray", "d3d3d3");
       put("lightgreen", "90ee90");
       put("lightpink", "ffb6c1");
       put("lightsalmon", "ffa07a");
@@ -166,8 +166,9 @@ public class Color implements PaintStyle {
   public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
   public static final Color WHITE = new Color("white");
   public static final Color BLACK = new Color("black");
+  public static final Color DIMGRAY = new Color("dimgray");
   public static final Color GREEN = new Color("green");
-  public static final Color LIGHTGREY = new Color("lightgrey");
+  public static final Color LIGHTGRAY = new Color("lightgray");
   public static final Color GRAY = new Color("gray");
 
   private int rgba = 0;
