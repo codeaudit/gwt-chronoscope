@@ -8,7 +8,7 @@
         Some text before the chart
       </g:HTML>
       <g:Button ui:field="button">Resize</g:Button>
-      <u:ChronoUI ui:field="chart" datasetsVarName="__datasets" width="200" height="100"></u:ChronoUI>
+      <u:ChronoUI ui:field="chart" styleName="aClass" datasetsVarName="__datasets" width="200" height="100"></u:ChronoUI>
      <g:HTML>
         <hr/>
         Some text After the chart

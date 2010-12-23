@@ -1,5 +1,5 @@
 <module rename-to="slow">
-  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+  <inherits name='org.timepedia.chronoscopesamples.Common'/>
   <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoSlowIE'/>
 </module>
 

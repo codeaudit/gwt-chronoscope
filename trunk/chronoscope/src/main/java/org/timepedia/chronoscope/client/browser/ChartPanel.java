@@ -250,8 +250,17 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
    * you can add multiple series to the chart.
    * 
    */
-  public void setDatasetVarName(String name) {
-    JsonDatasetJSO jaDataset = getJsonDataset(name);
+  public void setDatasetVarName(String... names) {
+    if (names.length == 0) {
+      return;
+    }
+    if (names.length > 1) {
+      for (String name: names) {
+        setDatasetVarName(name);
+      }
+      return;
+    }
+    JsonDatasetJSO jaDataset = getJsonDataset(names[0]);
     Dataset dataset = Chronoscope.getInstance().getDatasetReader().createDatasetFromJson(
         new GwtJsonDataset(jaDataset));
     if (datasets == null) {

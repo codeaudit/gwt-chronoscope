@@ -62,7 +62,6 @@ public abstract class GwtView extends View implements DOMView {
     content.setStyleName("chrono-infoWindow-content");
     pp.setWidget(content);
     pp.setPopupPosition(getElement().getAbsoluteLeft() + (int)x, getElement().getAbsoluteTop() + (int)y);
-//    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x, DOM.getAbsoluteTop(getElement()) + (int) y);
 
     GssProperties markerProperties = gssContext.getPropertiesBySelector("marker");
     if (markerProperties != null) {

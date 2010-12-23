@@ -1,5 +1,5 @@
 <module rename-to="js">
-  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+  <inherits name='org.timepedia.chronoscopesamples.Common'/>
   <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoJS'/>
   <set-property name="export" value="yes"/>
 </module>
