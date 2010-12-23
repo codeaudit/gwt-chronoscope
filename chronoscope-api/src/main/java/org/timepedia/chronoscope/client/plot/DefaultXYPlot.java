@@ -814,9 +814,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     boolean running = false;
     boolean force = false;
     int gracePeriode;
+    Long last;
+    
     private RedrawTimer() {
-      gracePeriode = ChronoscopeOptions.isLowPerformance() ? 250 : 50;
+      ChronoscopeOptions.setLowPerformance(true);
+      gracePeriode = ChronoscopeOptions.isLowPerformance() ? 300 : 50;
     }
+    
     public void run() {
       try {
         Long start = new Date().getTime();
@@ -830,12 +834,24 @@ public class DefaultXYPlot<T extends Tuple2D>
       }
     }
     public void redraw(boolean f) {
-      System.out.println("RedrawTimer, itercetpred call to redraw(" + f + ") running:" + running);
+      System.out.println("RedrawTimer, itercepted call to redraw(" + f + "), running:" + running);
       force = force || f;
-      if (!running) {
-        running = true;
+      if (!running || ChronoscopeOptions.isLowPerformance()) {
         schedule(gracePeriode);
       }
+    }
+    
+    public void schedule(int delayMillis) {
+      int l = delayMillis;
+      if (!running) {
+        running = true;
+        last = new Date().getTime();
+      } else {
+        cancel();
+        l = Math.max(50, (int)(delayMillis - (new Date().getTime() - last)));
+      }
+      System.out.println("s " + l);
+      super.schedule(l);
     }
   }
   
