@@ -40,6 +40,10 @@ import com.google.gwt.user.client.ui.impl.FocusImpl;
 @ExportPackage("chronoscope")
 public class FlashView extends GwtView
     implements Exportable, CssGssViewSupport, DOMView {
+  
+  public FlashView() {
+    ChronoscopeOptions.setLowPerformance(true);
+  }
 
   abstract static class BrowserTimer extends Timer implements PortableTimer {
 
