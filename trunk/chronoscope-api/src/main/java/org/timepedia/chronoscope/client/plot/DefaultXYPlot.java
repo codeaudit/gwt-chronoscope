@@ -809,24 +809,32 @@ public class DefaultXYPlot<T extends Tuple2D>
    * 
    * TODO: study the code and avoid redraw(true) when possible.  
    */
-  RedrawTimer redrawTimer = new RedrawTimer();
-  class RedrawTimer extends Timer {
+  private RedrawTimer redrawTimer = new RedrawTimer();
+  private class RedrawTimer extends Timer {
     boolean running = false;
     boolean force = false;
+    int gracePeriode;
+    private RedrawTimer() {
+      gracePeriode = ChronoscopeOptions.isLowPerformance() ? 250 : 50;
+    }
     public void run() {
-      Long start = new Date().getTime();
-      System.out.println("Executing realRedraw force=" + force);
-      realRedraw(force);
-      System.out.println("realRedraw force=" + force + " took: " + (new Date().getTime() - start) + "ms.");
-      running = false;
-      force = false;
+      try {
+        Long start = new Date().getTime();
+        System.out.println("Executing realRedraw force=" + force);
+        realRedraw(force);
+        System.out.println("realRedraw force=" + force + " took: " + (new Date().getTime() - start) + "ms.");
+        running = false;
+        force = false;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     public void redraw(boolean f) {
       System.out.println("RedrawTimer, itercetpred call to redraw(" + f + ") running:" + running);
       force = force || f;
       if (!running) {
         running = true;
-        schedule(150);
+        schedule(gracePeriode);
       }
     }
   }
@@ -848,7 +856,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating || hoverX < 1) {
       // ...
-    } else {
+    } else if (hoverLayer != null){
       hoverLayer.save();
       hoverLayer.clear();
       drawCrossHairs(hoverLayer);
