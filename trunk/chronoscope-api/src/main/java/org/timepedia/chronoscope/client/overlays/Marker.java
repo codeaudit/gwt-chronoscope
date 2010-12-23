@@ -171,8 +171,8 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
       currentWindow.setPosition(plot.domainToWindowX(domainX, datasetIdx),
           plot.rangeToWindowY(rangeY, datasetIdx) + 5);
     }
-    x = drawOval(labelWidth, labelHeight, markerProps, backingCanvas, x, y, yp,
-        arcDirection);
+    x = drawOval(labelWidth + 1, labelHeight - 3, markerProps, backingCanvas,
+        x, y, yp, arcDirection);
 
     backingCanvas
         .drawText(x, y, label, markerProps.fontFamily, markerProps.fontWeight,

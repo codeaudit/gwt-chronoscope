@@ -1,14 +1,5 @@
 package org.timepedia.chronoscope.client.browser.flashcanvas;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.impl.FocusImpl;
-
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
@@ -19,6 +10,7 @@ import org.timepedia.chronoscope.client.browser.BrowserInfoWindow;
 import org.timepedia.chronoscope.client.browser.CssGssViewSupport;
 import org.timepedia.chronoscope.client.browser.DOMView;
 import org.timepedia.chronoscope.client.browser.GwtView;
+import org.timepedia.chronoscope.client.browser.nullcanvas.NullCanvas;
 import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
@@ -32,9 +24,14 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
 
-import org.timepedia.chronoscope.client.browser.nullcanvas.NullCanvas;
-
-import java.util.Date;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 /**
  * A realization of a View on the browser using a Flash implementation of the HTML Canvas API.
@@ -174,21 +171,6 @@ public class FlashView extends GwtView
   public void onAttach() {
     initContainer(element, viewWidth, viewHeight);
     super.onAttach();
-  }
-
-  /**
-   * Opens an HTML popup info window at the given screen coordinates (within the
-   * plot bounds)
-   */
-  public InfoWindow createInfoWindow(String html, double x, double y) {
-    final PopupPanel pp = new PopupPanel(true);
-    pp.setStyleName("chrono-infoWindow");
-    pp.setWidget(new HTML(html));
-    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
-        DOM.getAbsoluteTop(getElement()) + (int) y);
-    DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
-    pp.show();
-    return new BrowserInfoWindow(this, pp);
   }
 
   public native double remainder(double numerator, double modulus) /*-{
