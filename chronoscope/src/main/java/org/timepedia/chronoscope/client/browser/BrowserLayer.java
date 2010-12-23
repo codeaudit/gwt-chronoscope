@@ -1,26 +1,23 @@
 package org.timepedia.chronoscope.client.browser;
 
+import org.timepedia.chronoscope.client.ChronoscopeOptions;
+import org.timepedia.chronoscope.client.Cursor;
+import org.timepedia.chronoscope.client.canvas.AbstractLayer;
+import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.Canvas;
+import org.timepedia.chronoscope.client.canvas.CanvasImage;
+import org.timepedia.chronoscope.client.canvas.CanvasPattern;
+import org.timepedia.chronoscope.client.canvas.Color;
+import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.canvas.PaintStyle;
+import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.render.LinearGradient;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
-
-import org.timepedia.chronoscope.client.Cursor;
-
-import org.timepedia.chronoscope.client.canvas.AbstractLayer;
-import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.canvas.Canvas;
-import org.timepedia.chronoscope.client.canvas.CanvasPattern;
-import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.PaintStyle;
-import org.timepedia.chronoscope.client.canvas.RadialGradient;
-import org.timepedia.chronoscope.client.canvas.CanvasImage;
-import org.timepedia.chronoscope.client.canvas.Color;
-import org.timepedia.chronoscope.client.canvas.CanvasFontMetrics;
-
-import org.timepedia.chronoscope.client.render.LinearGradient;
-import org.timepedia.chronoscope.client.ChronoscopeOptions;
 
 /**
  * An implementation of the Layer interface using the Safari/WHATWG Javascript
@@ -44,7 +41,6 @@ public class BrowserLayer extends AbstractLayer {
   private static int layerCount = 0;
 
   private Element canvas;
-  private Element canvasText;
 
   private JavaScriptObject ctx;
   private JavaScriptObject ctxText;
@@ -365,7 +361,6 @@ public void drawText(double x, double y, String label, String fontFamily,
     DOM.setIntStyleAttribute(canvas, "zIndex", zorder);
     DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder);
 
-    DOM.setIntStyleAttribute(canvasText, "zIndex", zorder+1);
     DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder+1);
 
     this.zorder = zorder;
@@ -461,7 +456,6 @@ public void drawText(double x, double y, String label, String fontFamily,
     layerContainer = DOM.createElement("div");
     this.bounds = new Bounds(b);
     canvas = DOM.createElement("canvas");
-    canvasText = DOM.createElement("canvas");
 
     String lc = String.valueOf(layerCount++);
     DOM.setElementAttribute(layerContainer, "id", "_lc_" + layerId + lc);
@@ -472,13 +466,6 @@ public void drawText(double x, double y, String label, String fontFamily,
     DOM.setStyleAttribute(canvas, "width", "" + b.width + "px");
     DOM.setStyleAttribute(canvas, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "position", "relative");
-
-    DOM.setElementAttribute(canvasText, "width", "" + b.width);
-    DOM.setElementAttribute(canvasText, "height", "" + b.height);
-    DOM.setStyleAttribute(canvasText, "width", "" + b.width + "px");
-    DOM.setStyleAttribute(canvasText, "height", "" + b.height + "px");
-    DOM.setStyleAttribute(canvasText, "position", "relative");
-
 
     DOM.setStyleAttribute(layerContainer, "width", "" + b.width + "px");
     DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
@@ -495,8 +482,6 @@ public void drawText(double x, double y, String label, String fontFamily,
     ctxText = getCanvasContext(canvas);
 
     DOM.appendChild(layerContainer, canvas);
-    DOM.appendChild(layerContainer, canvasText);
-
   }
 
   private native void clear0(JavaScriptObject ctx, Element can) /*-{
