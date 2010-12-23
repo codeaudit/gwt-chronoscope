@@ -1,15 +1,5 @@
 package org.timepedia.chronoscope.client.browser;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.impl.FocusImpl;
-
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.InfoWindow;
@@ -26,7 +16,12 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.Exporter;
 
-import java.util.Date;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 /**
  * A realization of a View on the browser using Safari JavaScript CANVAS and DOM
@@ -167,20 +162,6 @@ public class BrowserView extends GwtView
 
   public void onAttach() {
     super.onAttach();
-  }
-
-  /**
-   * Opens an HTML popup info window at the given screen coordinates (within the
-   * plot bounds)
-   */
-
-  public InfoWindow createInfoWindow(String html, double x, double y) {
-    final PopupPanel pp = new DecoratedPopupPanel(true);
-    pp.setWidget(new HTML(html));
-    pp.setPopupPosition(DOM.getAbsoluteLeft(getElement()) + (int) x,
-        DOM.getAbsoluteTop(getElement()) + (int) y);
-    DOM.setStyleAttribute(pp.getElement(), "zIndex", "99999");
-    return new BrowserInfoWindow(this, pp);
   }
 
   public native double remainder(double numerator, double modulus) /*-{
