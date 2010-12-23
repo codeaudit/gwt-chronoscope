@@ -1,5 +1,5 @@
 <module rename-to="tz">
-  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+  <inherits name='org.timepedia.chronoscopesamples.Common'/>
   <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoTZ'/>
 </module>
 

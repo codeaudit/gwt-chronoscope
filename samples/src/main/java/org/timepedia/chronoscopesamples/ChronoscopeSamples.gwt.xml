@@ -1,19 +1,6 @@
 <module rename-to="samples">
-
-  <inherits name='com.google.gwt.user.User'/>
-  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
-
-  <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemo'/>
-
-<!--
-  <replace-with class="org.timepedia.chronoscopesamples.client.ShawnGssContext">
-    <when-type-is
-        class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
-    <none>
-      <when-property-is name="user.agent" value="ie6"/>
-    </none>
-  </replace-with>
--->
+  <inherits name='org.timepedia.chronoscopesamples.Common'/>
+  <entry-point class='org.timepedia.chronoscopesamples.client.ChartDemoSamples'/>
 </module>
 
         

@@ -1,6 +1,9 @@
 <module>
-  <inherits name='org.timepedia.chronoscopesamples.Common'/>
-
+  
+  <inherits name='org.timepedia.chronoscope.Chronoscope'/>
+  
+  <set-property name="user.agent" value="gecko1_8,ie8,safari"/>
+  
 <!--
   <replace-with class="org.timepedia.chronoscopesamples.client.ShawnGssContext">
     <when-type-is
@@ -9,10 +12,7 @@
       <when-property-is name="user.agent" value="ie6"/>
     </none>
   </replace-with>
-  <set-property name="user.agent" value="safari"/>
-  <set-property name="hasflash" value="yes"/>
--->
-
+-->  
 </module>
 
         

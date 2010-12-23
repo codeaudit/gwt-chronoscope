@@ -248,6 +248,18 @@ public class Chronoscope
         .createChartPanel((Element) null, datasets, chartWidth, chartHeight,
             null);
   }
+  
+  public static ChartPanel createTimeseriesChartWithDatasetVarName(String... varname) {
+    ChartPanel c = new ChartPanel();
+    c.setDatasetVarName(varname);
+    return c;
+  }
+
+  public static ChartPanel createTimeseriesChartWithDatasetsVarName(String name) {
+    ChartPanel c = new ChartPanel();
+    c.setDatasetsVarName(name);
+    return c;
+  }
 
 //    public static PlotPanel createStackedTimeseriesChart(Dataset[] datasets, Dataset[] datasets2) {
 //        Chart chart = new Chart();
