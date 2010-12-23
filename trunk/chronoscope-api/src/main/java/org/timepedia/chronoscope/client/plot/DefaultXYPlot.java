@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +75,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 
 /**
  * A DefaultXYPlot is responsible for drawing the main chart area (excluding
@@ -781,6 +783,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     return plotBounds.y + rangeToScreenY(rangeY, datasetIndex);
   }
 
+  
   @Export
   public void redraw() {
     redraw(firstDraw);
@@ -789,11 +792,46 @@ public class DefaultXYPlot<T extends Tuple2D>
 
   /**
    * If <tt>forceCenterPlotRedraw==false</tt>, the center plot (specifically the
-   * datasets and overlays) is only redrawn when the state of
-   * <tt>this.plotDomain</tt> changes. Otherwise if <tt>forceDatasetRedraw==true</tt>,
-   * the center plot is redrawn unconditionally.
+   * datasets and overlays) is redrawn only when the state of <tt>this.plotDomain</tt>
+   * changes. 
+   * Otherwise if <tt>forceDatasetRedraw==true</tt>, the center plot is redrawn 
+   * unconditionally.
    */
-  public void redraw(boolean forceCenterPlotRedraw) {
+  public void redraw(boolean force) {
+    redrawTimer.redraw(force);
+  }
+
+  /**
+   * This is a hack:
+   * This timer schedules a redraw for a few milliseconds, so as
+   * new redraws comming in this interval are ignored.
+   * This improves performance in IE.
+   * 
+   * TODO: study the code and avoid redraw(true) when possible.  
+   */
+  RedrawTimer redrawTimer = new RedrawTimer();
+  class RedrawTimer extends Timer {
+    boolean running = false;
+    boolean force = false;
+    public void run() {
+      Long start = new Date().getTime();
+      System.out.println("Executing realRedraw force=" + force);
+      realRedraw(force);
+      System.out.println("realRedraw force=" + force + " took: " + (new Date().getTime() - start) + "ms.");
+      running = false;
+      force = false;
+    }
+    public void redraw(boolean f) {
+      System.out.println("RedrawTimer, itercetpred call to redraw(" + f + ") running:" + running);
+      force = force || f;
+      if (!running) {
+        running = true;
+        schedule(150);
+      }
+    }
+  }
+  
+  private void realRedraw(boolean forceCenterPlotRedraw) {
     view.getCanvas().beginFrame();
     plotLayer.save();
     // if on a low performance device, don't re-render axes or legend
@@ -805,18 +843,17 @@ public class DefaultXYPlot<T extends Tuple2D>
             // || ChronoscopeOptions.isVerticalCrosshairEnabled();
 
     Layer hoverLayer = getHoverLayer();
-    clearHoverLayer();
     clearOverlayLayer(overlayLayer);
 
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating || hoverX < 1) {
       // ...
     } else {
-        // hoverLayer.save();
-        // hoverLayer.clear();
-        drawCrossHairs(hoverLayer);
-        plotRenderer.drawHoverPoints(hoverLayer);
-        // hoverLayer.restore();
+      hoverLayer.save();
+      hoverLayer.clear();
+      drawCrossHairs(hoverLayer);
+      plotRenderer.drawHoverPoints(hoverLayer);
+      hoverLayer.restore();
     }
 
     if (plotDomainChanged) {
@@ -833,11 +870,10 @@ public class DefaultXYPlot<T extends Tuple2D>
       plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
       drawPlot();
       plotLayer.restore();
-
-      if (canDrawFast) {
-        drawOverlays(overlayLayer);
-      }
     }
+    
+    // Overlays should be drawn always.
+    drawOverlays(overlayLayer);
 
     if (canDrawFast) {
       topPanel.draw();
@@ -1195,7 +1231,6 @@ public class DefaultXYPlot<T extends Tuple2D>
       final double destDomainLength, final PlotMovedEvent.MoveType eventType,
       final PortableTimerTask continuation, final boolean fence) {
     final DefaultXYPlot plot = this;
-
     if (!isAnimatable()) {
       return;
     }
@@ -1233,15 +1268,21 @@ public class DefaultXYPlot<T extends Tuple2D>
       boolean lastFrame = false;
 
       public void run(PortableTimer t) {
+        
+        // lerpFactor==1 means do just one step, better for low-performance devices (flash)
+        double lerpFactor = 1;
+        if (!ChronoscopeOptions.isLowPerformance()) {
+          if (startTime == 0) {
+            startTime = t.getTime();
+          }
+          double curTime = t.getTime();
+          lerpFactor = (curTime - startTime) / 300;
+          if (lerpFactor > 1) {
+            lerpFactor = 1;
+          }
+        }
+        
         isAnimating = true;
-        if (startTime == 0) {
-          startTime = t.getTime();
-        }
-        double curTime = t.getTime();
-        double lerpFactor = (curTime - startTime) / 300;
-        if (lerpFactor > 1) {
-          lerpFactor = 1;
-        }
 
         final double domainCenter =
             (destDomainMid - srcDomain.midpoint()) * lerpFactor + srcDomain

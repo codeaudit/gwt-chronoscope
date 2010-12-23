@@ -25,12 +25,12 @@ public class ChartDemoSamples implements EntryPoint {
 
   public void onModuleLoad() {
     try {
-
+      
       VerticalPanel v = new VerticalPanel();
       v.setSpacing(20);
       RootPanel.get().add(v);
       
-      final ChartPanel chartPanel = Chronoscope.createTimeseriesChartWithDatasetVarName(
+      ChartPanel chartPanel = Chronoscope.createTimeseriesChartWithDatasetVarName(
           "interestRates01", "interestRates02");
       chartPanel.getElement().getStyle().setCursor(Cursor.POINTER);
       chartPanel.setViewReadyCallback(new ViewReadyCallback() {
@@ -53,15 +53,14 @@ public class ChartDemoSamples implements EntryPoint {
       });
       v.add(chartPanel);
 
-//      final ChartPanel chartPanel2 = Chronoscope.createTimeseriesChartWithDatasetVarName(
-//          "interestRates01", "interestRates02");
-//      int chartWidth = 600;
-//      int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
-//      chartPanel2.setDimensions(chartWidth, chartHeight);
-//      chartPanel2.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-//      chartPanel2.getElement().getStyle().setPadding(5, Unit.PX);
-//      v.add(chartPanel2);
-
+      final ChartPanel chartPanel2 = Chronoscope.createTimeseriesChartWithDatasetVarName(
+          "interestRates01", "interestRates02");
+      int chartWidth = 600;
+      int chartHeight = (int) (chartWidth / GOLDEN__RATIO);
+      chartPanel2.setDimensions(chartWidth, chartHeight);
+      chartPanel2.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+      chartPanel2.getElement().getStyle().setPadding(5, Unit.PX);
+      v.add(chartPanel2);
 
     } catch (Exception e) {
       e.printStackTrace();
