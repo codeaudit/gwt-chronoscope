@@ -1,10 +1,8 @@
 package org.timepedia.chronoscope.client.browser.flashcanvas;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Timer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
@@ -23,9 +21,11 @@ import org.timepedia.chronoscope.client.canvas.RadialGradient;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 
 public class FlashCanvas extends Canvas {
 
@@ -80,8 +80,6 @@ public class FlashCanvas extends Canvas {
 
   private String readyFn = "";
 
-  private String clickHandlerFn = "";
-
   private JavaScriptObject ctx = null;
 
   public FlashCanvas(View view, int width, int height) {
@@ -109,8 +107,6 @@ public class FlashCanvas extends Canvas {
         } else {
           resyncLayers();
         }
-        exportClickHandler(clickHandlerFn);
-        addFlashClickHandler(canvasId, clickHandlerFn);
       }
     });
     DOM.appendChild(bv.getElement(), canvasElement);
@@ -123,21 +119,7 @@ public class FlashCanvas extends Canvas {
     DOM.setStyleAttribute(canvasElement, "top", "0px");
     DOM.setStyleAttribute(canvasElement, "left", "0px");
 
-    Element glassPane = DOM.createDiv();
-
-    DOM.setStyleAttribute(glassPane, "width", "" + width + "px");
-    DOM.setStyleAttribute(glassPane, "height", "" + height + "px");
-    DOM.setStyleAttribute(glassPane, "visibility", "visible");
-    DOM.setStyleAttribute(glassPane, "backgroundColor", "transparent");
-//        DOM.setStyleAttribute(glassPane, "border", "1px solid red");
-
-    DOM.setStyleAttribute(glassPane, "position", "absolute");
-    DOM.setStyleAttribute(glassPane, "top", "0px");
-    DOM.setStyleAttribute(glassPane, "left", "0px");
-    DOM.setStyleAttribute(glassPane, "zIndex", "0");
-    //    addOnClick(glassPane);
-
-    FlashResources flashResources = GWT.create(FlashResources.class);
+//    FlashResources flashResources = GWT.create(FlashResources.class);
 
     String swfUrl = Chronoscope
         .getURL(GWT.getModuleBaseURL()+"flcanvas.swf");//flashResources.flashCanvas().getUrl());
@@ -163,7 +145,7 @@ public class FlashCanvas extends Canvas {
             + "allowScriptAccess=\"always\" "
             + "pluginspage=\"" + codeBasePref + "://www.macromedia.com/go/getflashplayer\"> \n"
             + "</embed> \n" + "</object>");
-    DOM.appendChild(canvasElement, glassPane);
+    
     com.google.gwt.dom.client.Element oElement = canvasElement
         .getElementsByTagName("object").getItem(0);
     fixSWFInIE(oElement.getId(), oElement);
@@ -175,23 +157,6 @@ public class FlashCanvas extends Canvas {
        $wnd[id]=element;
      } catch(e) {}
   }-*/;
-
-  private void onFlashClick(int x, int y) {
-    getView().getChart().click(x, y);
-  }
-
-  private native void addFlashClickHandler(String canvasId,
-      String clickHandlerFn) /*-{
-        var flashCanvas = $wnd.navigator.appName.indexOf("Microsoft") != -1 ? $wnd[canvasId] : $doc[canvasId];
-        flashCanvas && flashCanvas.createCanvas && flashCanvas.addClickListener(clickHandlerFn);
-  }-*/;
-
-  private native void exportClickHandler(String clickHandlerFn) /*-{
-        var _this=this;
-        $wnd[clickHandlerFn] = function(x,y) {
-            _this.@org.timepedia.chronoscope.client.browser.flashcanvas.FlashCanvas::onFlashClick(II)(x,y);
-        }
-    }-*/;
 
   public void beginFrame() {
     super.beginFrame();
@@ -580,10 +545,6 @@ public class FlashCanvas extends Canvas {
     rootLayer.setStrokeColor(p);
   }
 
-  // public void setTextLayerBounds(String layerName, Bounds bounds) {
-  //   rootLayer.setTextLayerBounds(layerName, bounds);
-  // }
-
   public void setTransparency(float value) {
     rootLayer.setTransparency(value);
   }
@@ -639,14 +600,8 @@ public class FlashCanvas extends Canvas {
   void init(int width, int height) {
     canvasElement = DOM.createDiv();
     readyFn = "canvasReadyFn" + this.canvasId;
-    clickHandlerFn = "clickHandlerFn" + this.canvasId;
-
     clearFlashDisplayList();
   }
-
-  private native void addOnClick(Element glassPane) /*-{
-       glassPane.onclick = function() { alert('hellobar!'); }    
-    }-*/;
 
   private native void exportReadyFn(String readyFn, View view,
       CanvasReadyCallback canvasReadyCallback) /*-{

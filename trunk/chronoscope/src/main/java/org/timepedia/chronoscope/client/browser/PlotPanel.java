@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.browser;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext.OnGssInitializedCallback;
+import org.timepedia.chronoscope.client.browser.event.CaptureFocusHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartKeyDownHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartKeyPressHandler;
@@ -57,8 +58,14 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
   KeyDownHandler keyDownHandler = new ChartKeyDownHandler();
   KeyUpHandler keyUpHandler = new ChartKeyUpHandler();
   KeyPressHandler keyPressHandler = new ChartKeyPressHandler();
+  
 
   public PlotPanel() {
+    CaptureFocusHandler setFocusHandler = new CaptureFocusHandler(this);
+    addMouseDownHandler(setFocusHandler);
+    addFocusHandler(setFocusHandler);
+    addBlurHandler(setFocusHandler);
+    
     addMouseDownHandler(mouseDownHandler);
     addMouseUpHandler(mouseUpHandler);
     addMouseOutHandler(mouseOutHandler);
@@ -72,7 +79,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     addKeyUpHandler(keyUpHandler);
     addKeyPressHandler(keyPressHandler);
     addKeyDownHandler(keyDownHandler);
-
+    
     view = (View) GWT.create(DOMView.class);
     chart = new Chart();
   }
