@@ -8,7 +8,6 @@ import org.timepedia.chronoscope.client.browser.event.ChartDblClickHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartKeyDownHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartKeyPressHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartKeyUpHandler;
-import org.timepedia.chronoscope.client.browser.event.ChartMouseClickHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartMouseDownHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartMouseMoveHandler;
 import org.timepedia.chronoscope.client.browser.event.ChartMouseOutHandler;
@@ -24,7 +23,6 @@ import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -53,13 +51,11 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
   MouseMoveHandler mouseMoveHandler = new ChartMouseMoveHandler();
   MouseMoveHandler mouseMoveHandlerOverview = new OverviewAxisMouseMoveHandler();
   MouseWheelHandler mouseWheelHandler = new ChartMouseWheelHandler();
-  ClickHandler mouseClickHandler = new ChartMouseClickHandler();
   DoubleClickHandler dblClickHandler = new ChartDblClickHandler();
   KeyDownHandler keyDownHandler = new ChartKeyDownHandler();
   KeyUpHandler keyUpHandler = new ChartKeyUpHandler();
   KeyPressHandler keyPressHandler = new ChartKeyPressHandler();
   
-
   public PlotPanel() {
     CaptureFocusHandler setFocusHandler = new CaptureFocusHandler(this);
     addMouseDownHandler(setFocusHandler);
@@ -73,7 +69,6 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     addMouseMoveHandler(mouseMoveHandlerOverview);
     addMouseMoveHandler(mouseMoveHandler);
     addMouseWheelHandler(mouseWheelHandler);
-    addClickHandler(mouseClickHandler);
     addDoubleClickHandler(dblClickHandler);
     addKeyDownHandler(keyDownHandler);
     addKeyUpHandler(keyUpHandler);

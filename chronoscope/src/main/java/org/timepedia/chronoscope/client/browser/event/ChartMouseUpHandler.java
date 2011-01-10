@@ -51,6 +51,9 @@ public final class ChartMouseUpHandler
 
     if (event.getNativeButton() == Event.BUTTON_RIGHT) {
       ((DefaultXYPlot) chart.getPlot()).fireContextMenuEvent(x, y);
+    } else {
+      // fire click, in mouse up events this fixes click on flash view.
+      chart.click(x, y);
     }
 
     chartInfo.setHandled(true);
