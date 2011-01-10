@@ -1,5 +1,6 @@
 package org.timepedia.chronoscope.client.browser;
 
+import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
@@ -184,10 +185,21 @@ public class BrowserLayer extends AbstractLayer {
       String fontWeight, String fontSize) {
     return csw(ctx, "h", fontSize + " "+ fontFamily)*2;
   }
+  
+  public void drawRotatedText(double x, double y, double angle, String label,
+      String fontFamily, String fontWeight, String fontSize, String layerName,
+      Chart chart) {
+    translate(bounds.width / 2, bounds.height / 2);
+    rotate(angle);
+    int w = stringWidth(label, fontFamily, fontWeight, fontSize);
+    int h = stringHeight(label, fontFamily, fontWeight, fontSize);
+    drawText(-w/2, -h/2, label, fontFamily, fontWeight, fontSize, layerName, null);
+    rotate(- angle);
+    translate(- bounds.width / 2, - bounds.height / 2);
+  }
 
   // TODO - alignment
-
-public void drawText(double x, double y, String label, String fontFamily,
+  public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName,
       Cursor cursorStyle) {
 
@@ -221,7 +233,7 @@ public void drawText(double x, double y, String label, String fontFamily,
       String fontSize, String baseline) {
     fillText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
   }
-
+  
   private native void fillText0(JavaScriptObject ctx, String label, double x,
       double y, String font, String baseline) /*-{
     ctx.font = font;
@@ -230,7 +242,6 @@ public void drawText(double x, double y, String label, String fontFamily,
   }-*/;
 
   // TODO - alignment
-
   protected void strokeText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
     strokeText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
