@@ -888,17 +888,17 @@ public class DefaultXYPlot<T extends Tuple2D>
     if (plotDomainChanged) {
       plotLayer.clear();
       drawBackground();
-
-      rangePanel.draw();
-
-      if (canDrawFast) {
-        bottomPanel.draw();
-      }
-
       plotLayer.save();
       plotLayer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
       drawPlot();
       plotLayer.restore();
+
+      // rangePanel should be drawn after the plot 
+      rangePanel.draw();
+      
+      if (canDrawFast) {
+        bottomPanel.draw();
+      }
     }
     
     // Overlays should be drawn always.
