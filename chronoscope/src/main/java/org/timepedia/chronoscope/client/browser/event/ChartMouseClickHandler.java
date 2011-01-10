@@ -1,11 +1,9 @@
 package org.timepedia.chronoscope.client.browser.event;
 
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-
 import org.timepedia.chronoscope.client.Chart;
-import org.timepedia.chronoscope.client.browser.DOMView;
-import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 
 /**
  * Handles the event where the user clicks on the chart.
@@ -24,8 +22,6 @@ public class ChartMouseClickHandler extends AbstractEventHandler<ClickHandler>
     int y = getLocalY(event);
     chart.click(x, y);
 
-//    ((DOMView) chart.getView()).focus();
-    ((DefaultXYPlot)chart.getPlot()).redraw(true);
     chartInfo.setHandled(true);
   }
 }

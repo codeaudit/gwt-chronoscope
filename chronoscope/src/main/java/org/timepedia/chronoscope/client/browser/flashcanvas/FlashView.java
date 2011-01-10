@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.browser.flashcanvas;
 import org.timepedia.chronoscope.client.ChronoscopeMenu;
 import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.InfoWindow;
 import org.timepedia.chronoscope.client.browser.BrowserChronoscopeMenuFactory;
 import org.timepedia.chronoscope.client.browser.BrowserGssContext;
 import org.timepedia.chronoscope.client.browser.BrowserInfoWindow;
@@ -22,16 +21,12 @@ import org.timepedia.chronoscope.client.util.PortableTimerTask;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.Exporter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.impl.FocusImpl;
 
 /**
  * A realization of a View on the browser using a Flash implementation of the HTML Canvas API.
@@ -48,9 +43,6 @@ public class FlashView extends GwtView
   abstract static class BrowserTimer extends Timer implements PortableTimer {
 
   }
-
-  static final FocusImpl focusImpl = FocusImpl.getFocusImplForPanel();
-
 
   private static int getClientHeightRecursive(Element element) {
     int height = DOM.getElementPropertyInt(element, "clientHeight");
@@ -77,10 +69,6 @@ public class FlashView extends GwtView
   }
 
   protected Element rootElem, containerDiv;
-
-  private Element element;
-
-  private String id;
 
   /**
    * Create a menu and return it
@@ -118,12 +106,9 @@ public class FlashView extends GwtView
   }
 
   public void exportFunctions() {
-    Exporter exporter = (Exporter) GWT.create(FlashView.class);
-    exporter.export();
-    Exporter exporter2 = (Exporter) GWT.create(BrowserInfoWindow.class);
-    exporter2.export();
-     Exporter exporter3 = (Exporter) GWT.create(MockGssProperties.class);
-    exporter3.export();
+    GWT.create(FlashView.class);
+    GWT.create(BrowserInfoWindow.class);
+    GWT.create(MockGssProperties.class);
   }
 
   /**
@@ -133,15 +118,7 @@ public class FlashView extends GwtView
   }
 
   /**
-   * Use an internal focus listener to ensure keyboard focus events are picked
-   * up
-   */
-  public void focus() {
-    focusImpl.focus(containerDiv);
-  }
-
-  /**
-   * The DIV containing the canvas and other misc elements
+   * The DIV containing the canvas
    */
   public Element getElement() {
     return containerDiv;
@@ -157,8 +134,7 @@ public class FlashView extends GwtView
     super.initialize(width, height, false, gssContext, callback);
     DOM.setStyleAttribute(element, "height", height + "px");
     DOM.setStyleAttribute(element, "width", width + "px");
-    this.element = element;
-    id = DOM.getElementAttribute(element, "id");
+    this.rootElem = element;
     menuFactory = new BrowserChronoscopeMenuFactory();
   }
 
@@ -173,7 +149,7 @@ public class FlashView extends GwtView
   }
 
   public void onAttach() {
-    initContainer(element, viewWidth, viewHeight);
+    initContainer();
     super.onAttach();
   }
 
@@ -224,49 +200,34 @@ public class FlashView extends GwtView
   @Override
   public void resize(int width, int height) {
     if (ChronoscopeOptions.isFlashFallbackEnabled()) {
-
-    super.resize(width, height);
-    initialize(element, width, height, true, gssContext,
-        new ViewReadyCallback() {
-          @Override
-          public void onViewReady(View view) {
-            view.getChart().reloadStyles();
-          }
-        });
+      super.resize(width, height);
+      initialize(rootElem, width, height, true, gssContext,
+          new ViewReadyCallback() {
+            @Override
+            public void onViewReady(View view) {
+              view.getChart().reloadStyles();
+            }
+          });
     } else {
-       initialize(element, width, height, true, gssContext,
-        new ViewReadyCallback() {
-           @Override
-           public void onViewReady(View view) {
-           }
-        });
+      initialize(rootElem, width, height, true, gssContext, null);
     }
-
     onAttach();
   }
 
-  protected void initContainer(Element element, int width, int height) {
-    this.rootElem = element;
+  protected void initContainer() {
     if (ChronoscopeOptions.isFlashFallbackEnabled()) {
-
-    this.containerDiv = focusImpl.createFocusable();
-    DOM.setInnerHTML(rootElem, "");
-    DOM.setElementAttribute(containerDiv, "id",
-        DOM.getElementAttribute(rootElem, "id") + "container");
-    DOM.setIntStyleAttribute(containerDiv, "width", width);
-    DOM.setIntStyleAttribute(containerDiv, "height", height);
-    DOM.setStyleAttribute(containerDiv, "position", "relative");
-
-    DOM.appendChild(rootElem, containerDiv);
-    DOM.setStyleAttribute(containerDiv, "height", height + "px");
-    DOM.setStyleAttribute(containerDiv, "width", width + "px");
-  } else {
-    DOM.setInnerHTML(rootElem, FlashCanvas.FLASH_ALTERNATIVES);
+      this.containerDiv = DOM.createDiv();
+      DOM.setInnerHTML(rootElem, "");
+      String ri = rootElem.getId();
+      if (ri != null && !ri.isEmpty()) {
+        containerDiv.setId(ri + "container");
+      }
+      DOM.setStyleAttribute(containerDiv, "position", "relative");
+      DOM.appendChild(rootElem, containerDiv);
+    } else {
+      DOM.setInnerHTML(rootElem, FlashCanvas.FLASH_ALTERNATIVES);
+    }
   }
-
-  }
-
-
 
   private void setCursorImpl(String cssCursor) {
     getElement().getStyle().setProperty("cursor", cssCursor);

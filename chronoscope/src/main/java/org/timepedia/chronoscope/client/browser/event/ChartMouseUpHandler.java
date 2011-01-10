@@ -40,13 +40,14 @@ public final class ChartMouseUpHandler
         HistoryManager.pushHistory();
       }
       chart.setAnimating(false);
+      
+      // FIXME: this produces several unneeded redraws, if we remove this, dragging does not 
+      // redraw correctly, so algorithm  in mouse move should be reviewd
       ((DefaultXYPlot) chart.getPlot()).redraw(true);
     }
 
     chartInfo.getCompoundUIAction().cancel();
     chart.setCursor(Cursor.DEFAULT);
-
-//    ((DOMView) chart.getView()).focus();
 
     if (event.getNativeButton() == Event.BUTTON_RIGHT) {
       ((DefaultXYPlot) chart.getPlot()).fireContextMenuEvent(x, y);

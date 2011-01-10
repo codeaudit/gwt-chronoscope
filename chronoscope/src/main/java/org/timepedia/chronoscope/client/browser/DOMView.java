@@ -12,9 +12,6 @@ public interface DOMView {
 
   public void exportFunctions();
 
-  @Deprecated
-  public void focus();
-
   public Element getElement();
 
   public void initialize(final Element element, final int width,

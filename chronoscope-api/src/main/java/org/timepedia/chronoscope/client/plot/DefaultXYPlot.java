@@ -94,6 +94,8 @@ public class DefaultXYPlot<T extends Tuple2D>
   protected static double MAX_WIDTH_FACTOR = 1.1;
 
   private boolean legendOverridden;
+  
+  private double lastZoomDomain = 0;
 
   private class ExportableHandlerManager extends HandlerManager {
 
@@ -630,11 +632,14 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void nextFocus() {
     shiftFocus(+1);
   }
-
+  
   public void nextZoom() {
     pushHistory();
     double nDomain = fixDomainWidth(visDomain.length() / ZOOM_FACTOR);
-    animateTo(visDomain.midpoint() - nDomain / 2, nDomain, PlotMovedEvent.MoveType.ZOOMED);
+    if (lastZoomDomain != nDomain) {
+      lastZoomDomain = nDomain;
+      animateTo(visDomain.midpoint() - nDomain / 2, nDomain, PlotMovedEvent.MoveType.ZOOMED);
+    }
   }
   
   public void onDatasetsReplaced(Datasets<T> datasets){
@@ -764,8 +769,11 @@ public class DefaultXYPlot<T extends Tuple2D>
   public void prevZoom() {
     pushHistory();
     double nDomain = fixDomainWidth(visDomain.length() * ZOOM_FACTOR);
-    animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
-        PlotMovedEvent.MoveType.ZOOMED);
+    if (lastZoomDomain != nDomain) {
+      lastZoomDomain = nDomain;
+      animateTo(visDomain.midpoint() - nDomain / 2, nDomain,
+          PlotMovedEvent.MoveType.ZOOMED);
+    }
   }
   // NOTE - really this is rangeToPlotY
   public double rangeToScreenY(Tuple2D pt, int datasetIndex, int dim) {
@@ -787,7 +795,6 @@ public class DefaultXYPlot<T extends Tuple2D>
   @Export
   public void redraw() {
     redraw(firstDraw);
-    firstDraw = false;
   }
 
   /**
@@ -817,7 +824,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     Long last;
     
     private RedrawTimer() {
-      ChronoscopeOptions.setLowPerformance(true);
       gracePeriode = ChronoscopeOptions.isLowPerformance() ? 300 : 50;
     }
     
@@ -850,7 +856,6 @@ public class DefaultXYPlot<T extends Tuple2D>
         cancel();
         l = Math.max(50, (int)(delayMillis - (new Date().getTime() - last)));
       }
-      System.out.println("s " + l);
       super.schedule(l);
     }
   }
@@ -872,7 +877,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     // Draw the hover points, but not when the plot is currently animating.
     if (isAnimating || hoverX < 1) {
       // ...
-    } else if (hoverLayer != null){
+    } else if (hoverLayer != null && !firstDraw ){
       hoverLayer.save();
       hoverLayer.clear();
       drawCrossHairs(hoverLayer);
@@ -907,6 +912,8 @@ public class DefaultXYPlot<T extends Tuple2D>
     view.getCanvas().endFrame();
     visDomain.copyTo(lastVisDomain);
     view.flipCanvas();
+    
+    firstDraw = false;
   }
 
   @Export
@@ -972,7 +979,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     });
     changeTimer.schedule(1000);
 
-    redraw();
+    redraw(true);
   }
 
   public void setAnimating(boolean animating) {
@@ -1049,12 +1056,11 @@ public class DefaultXYPlot<T extends Tuple2D>
       somePointHasFocus = pointExists(nearestPt);
       if (somePointHasFocus) {
         setFocusAndNotifyView(nearestSer, nearestPt, nearestDim);
+        redraw(true);
       } else {
         setFocusAndNotifyView(null);
       }
-      redraw(true);
     }
-
     return somePointHasFocus;
   }
 
