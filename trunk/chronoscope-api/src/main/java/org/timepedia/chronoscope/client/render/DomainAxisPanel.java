@@ -188,7 +188,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
   public void layout() {
     Layer rootLayer = view.getCanvas().getRootLayer();
 
-    bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT
+    bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT +
         + creditsLabel.getBounds().height + 1;
 
     // default width for now
@@ -297,7 +297,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     layer.setStrokeColor(labelProperties.color);
     layer.setTransparency((float)gssProperties.transparency);
 
-    final double textRowY = bounds.bottomY() - creditsLabel.getBounds().height;
+    final double textRowY = bounds.bottomY() - 2;
     final double halfLabelWidth = domainAxisLabel.getBounds().width / 2;
 
     domainAxisLabel.setLocation(bounds.midpointX() - halfLabelWidth, textRowY);
@@ -346,7 +346,8 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
       String tickLabel, boolean bold, double tickLabelWidth) {
     layer.setStrokeColor(labelProperties.color);
     layer.setFillColor(labelProperties.color);
-    layer.drawText(2.5 + ux - tickLabelWidth / 2, 5 + bounds.y, tickLabel,
+    // TODO - rather than y+14 this is the use case for passing alignment top
+    layer.drawText(2.5 + ux - tickLabelWidth / 2, bounds.y + 16, tickLabel,
         gssProperties.fontFamily, bold ? "bold" : gssProperties.fontWeight,
         gssProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }

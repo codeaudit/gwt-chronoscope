@@ -100,7 +100,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
 
     final boolean onlyCalcSize = (b != null);
     double xCursor = bounds.x;
-    double yCursor = bounds.y;
+    double yCursor = bounds.y + lblHeight;
     int numDatasets = plot.getDatasets().size();
     double padding = calcLegendIconWidth() + LEGEND_ICON_PAD;
 
@@ -127,7 +127,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     } else {
       ncols = Integer.valueOf(legendLabelsProperties.columnCount);
     }
-    List<List<Item>> rows = DatasetLegendPanel.getLeyendRows(items,  bounds.width, colSpacing, ncols);
+    List<List<Item>> rows = DatasetLegendPanel.getLegendRows(items, bounds.width, colSpacing, ncols);
 
     if (onlyCalcSize) {
       b.x = this.bounds.x;
@@ -149,7 +149,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
             width = firstRowItem.len + firstRowItem.pad;
           }
 
-          drawLeyend(layer, xCursor, yCursor, width, item);
+          drawLegend(layer, xCursor, yCursor, width, item);
           xCursor += width + colSpacing -1;
         }
         yCursor += lblHeight;
@@ -157,17 +157,14 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     }
 
   }
-  
-  
-  int aaa = 0;
 
-  private void drawLeyend(Layer layer, double xCursor, double yCursor,
-      double width, Item item) {
+  private void drawLegend(Layer layer, double xCursor, double yCursor,
+                          double width, Item item) {
     double iconHeight = Math.min(calcLegendIconHeight(), lblHeight);
     double iconWidth = calcLegendIconWidth();
     DatasetRenderer<?> renderer = plot.getDatasetRenderer(item.idx);
     
-    double yPos = yCursor + 2 + Math.ceil(((lblHeight - iconHeight)/2)); 
+    double yPos = yCursor - Math.ceil((lblHeight - iconHeight)/2);  // + 2 + Math.ceil(((lblHeight - iconHeight)/2));
     renderer.drawLegendIcon(layer, xCursor, yPos , iconWidth, iconHeight, item.dimension);
     layer.setStrokeColor(legendLabelsProperties.color);
     String seriesLabel = item.label;
@@ -241,19 +238,18 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
   public static int UNALIGNED_COLS = -1;
   public static int ALIGNED_COLS = 0;
 
-  static public List<List<Item>> getLeyendRows(List<Item> items,
-      double maxWidth, double padding, int cols) {
+  static public List<List<Item>> getLegendRows(List<Item> items,
+                                               double maxWidth, double padding, int cols) {
     if (cols == UNALIGNED_COLS) {
       return getLeyendRowsUnalignedColums(items, maxWidth, padding);
     } else if (cols == ALIGNED_COLS) {
-      return getLeyendRowsAlignedColums(items, maxWidth, padding);
+      return getLegendRowsAlignedColumns(items, maxWidth, padding);
     } else {
-      return getLeyendRowsFixedColums(items, cols);
+      return getLegendRowsFixedColumns(items, cols);
     }
   }
 
-  static private List<List<Item>> getLeyendRowsFixedColums(List<Item> items,
-      int ncols) {
+  static private List<List<Item>> getLegendRowsFixedColumns(List<Item> items, int ncols) {
     List<List<Item>> ret = new LinkedList<List<Item>>();
     if (items == null || items.size() == 0) {
       return ret;
@@ -270,8 +266,8 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     return ret;
   }
 
-  static private List<List<Item>> getLeyendRowsAlignedColums(List<Item> items,
-      double maxWidth, double padding) {
+  static private List<List<Item>> getLegendRowsAlignedColumns(List<Item> items,
+                                                              double maxWidth, double padding) {
     Collections.sort(items);
     List<List<Item>> ret = new LinkedList<List<Item>>();
     if (items == null || items.size() == 0) {
