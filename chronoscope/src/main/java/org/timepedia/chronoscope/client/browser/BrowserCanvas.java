@@ -172,8 +172,10 @@ public class BrowserCanvas extends Canvas {
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
+    rootLayer.save();
     rootLayer.drawRotatedText(x, y, angle, label, fontFamily, fontWeight,
         fontSize, layerName, chart);
+    rootLayer.restore();
   }
 
   public void drawText(double x, double y, String label, String fontFamily,

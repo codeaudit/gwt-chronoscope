@@ -44,7 +44,6 @@ public class BrowserLayer extends AbstractLayer {
   private Element canvas;
 
   private JavaScriptObject ctx;
-  private JavaScriptObject ctxText;
 
   private String strokeColor;
   private Color _strokeColor;
@@ -189,13 +188,15 @@ public class BrowserLayer extends AbstractLayer {
   public void drawRotatedText(double x, double y, double angle, String label,
       String fontFamily, String fontWeight, String fontSize, String layerName,
       Chart chart) {
-    translate(bounds.width / 2, bounds.height / 2);
+    // translate(bounds.width / 2, bounds.height / 2);
+    translate(x, y);
     rotate(angle);
     int w = stringWidth(label, fontFamily, fontWeight, fontSize);
     int h = stringHeight(label, fontFamily, fontWeight, fontSize);
-    drawText(-w/2, -h/2, label, fontFamily, fontWeight, fontSize, layerName, null);
+    drawText(0, 0, label, fontFamily, fontWeight, fontSize, layerName, null);
     rotate(- angle);
-    translate(- bounds.width / 2, - bounds.height / 2);
+    translate(-x, -y);
+    // translate(- bounds.width / 2, - bounds.height / 2);
   }
 
   // TODO - alignment
@@ -209,17 +210,17 @@ public class BrowserLayer extends AbstractLayer {
     if (cursorStyle == Cursor.CONTRASTED) {
         setLineWidth(2);
         setStrokeColor(Color.WHITE);
-        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_ALPHABETIC]);
         setStrokeColor(_prevStrokeColor);
     } else {
         setLineWidth(1);
         setStrokeColor(Color.WHITE);
-        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+        strokeText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_ALPHABETIC]);
         setStrokeColor(_prevStrokeColor);
     }
 
     setFillColor(_strokeColor);
-    fillText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_TOP]);
+    fillText(label, x, y, fontFamily, fontSize, TEXT_BASELINE[TEXT_BASELINE_ALPHABETIC]);
     setFillColor(_prevFillColor);
 
     if (cursorStyle == Cursor.CLICKABLE) {
@@ -231,7 +232,7 @@ public class BrowserLayer extends AbstractLayer {
 
   protected void fillText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
-    fillText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
+    fillText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
   }
   
   private native void fillText0(JavaScriptObject ctx, String label, double x,
@@ -244,7 +245,7 @@ public class BrowserLayer extends AbstractLayer {
   // TODO - alignment
   protected void strokeText(String label, double x, double y, String fontFamily,
       String fontSize, String baseline) {
-    strokeText0(ctxText, label, x,y, fontSize+" "+fontFamily, baseline);
+    strokeText0(ctx, label, x,y, fontSize+" "+fontFamily, baseline);
   }
 
   private native void strokeText0(JavaScriptObject ctx, String label, double x,
@@ -490,7 +491,6 @@ public class BrowserLayer extends AbstractLayer {
     DOM.setStyleAttribute(layerContainer, "overflow", "visible");
 
     ctx = getCanvasContext(canvas);
-    ctxText = getCanvasContext(canvas);
 
     DOM.appendChild(layerContainer, canvas);
   }
