@@ -1418,7 +1418,7 @@ public class DefaultXYPlot<T extends Tuple2D>
           int labelWidth = hoverLayer.stringWidth(label, "Helvetica", "", "8pt");
           hx += dx < getDomain().midpoint() ? 1.0 : -1 - labelWidth;
 
-          hoverLayer.drawText(hx, -12, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
+          hoverLayer.drawText(hx, 0, label, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
         }
 
           int nearestPt = NO_SELECTION;
@@ -1632,7 +1632,8 @@ public class DefaultXYPlot<T extends Tuple2D>
                     //Only one point
                     LabelLayoutPoint pendingPoint = overlapList.get(0);
                     pendingPoint.layer.setStrokeColor(pendingPoint.gssProperties.color);
-                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy, pendingPoint.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
+                    // TODO - find out where the adjustment is made to take it out
+                    pendingPoint.layer.drawText(pendingPoint.hx, pendingPoint.dy + 8, pendingPoint.labelText, "Helvetica", "", "8pt", "crosshair", Cursor.CONTRASTED);
                 }
             }
         }

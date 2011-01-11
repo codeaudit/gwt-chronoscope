@@ -45,7 +45,7 @@ public class Label {
   public void draw(Layer layer) {
     layer.save();
 
-    layer.drawText(bounds.x, bounds.y, text, 
+    layer.drawText(bounds.x, bounds.bottomY(), text,
         fontFamily, fontWeight, fontSize,
         textLayerName, Cursor.DEFAULT);
 

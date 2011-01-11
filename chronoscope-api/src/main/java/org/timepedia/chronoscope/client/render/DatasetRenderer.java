@@ -256,14 +256,15 @@ public abstract class DatasetRenderer<T extends Tuple2D>
         alineProp = gssLineProps;
       }
 
-      layer.beginPath();
-      layer.setShadowBlur(alineProp.shadowBlur);
-      layer.setShadowColor(alineProp.shadowColor);
-      layer.setShadowOffsetX(alineProp.shadowOffsetX);
-      layer.setShadowOffsetY(alineProp.shadowOffsetY);
-      layer.setStrokeColor(alineProp.color);
+      // layer.setShadowBlur(alineProp.shadowBlur);
+      // layer.setShadowColor(alineProp.shadowColor);
+      // layer.setShadowOffsetX(alineProp.shadowOffsetX);
+      // layer.setShadowOffsetY(alineProp.shadowOffsetY);
+
       layer.setTransparency((float) alineProp.transparency);
       layer.setLineWidth(h);
+      layer.setStrokeColor(alineProp.color);
+      layer.beginPath();
       layer.moveTo(x, y);
       layer.lineTo(x + w, y);
       layer.stroke();

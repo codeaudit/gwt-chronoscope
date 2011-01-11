@@ -37,7 +37,7 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
   DomainAxisPanel domainAxisPanel;
   GssProperties labelProperties;
   String dateRangeActive;
-  DateFormatter dateFormater;
+  DateFormatter dateFormatter;
   String dateDelim = " - ";
   DateFormatter dateFormaterCompact;
   String dateDelimCompact = " - ";
@@ -52,7 +52,7 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
 
   public void draw() {
     layer.setStrokeColor(labelProperties.color);
-    layer.drawText(bounds.x, bounds.y, dateRangeActive,
+    layer.drawText(bounds.x, bounds.bottomY(), dateRangeActive,
         labelProperties.fontFamily, labelProperties.fontWeight,
         labelProperties.fontSize, textLayerName, Cursor.DEFAULT);
   }
@@ -65,8 +65,8 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
   
   public void resizeToMinimalWidth() {
     Interval i = domainAxisPanel.plot.getDomain();
-    if (dateFormater != null) {
-      dateRangeActive = dateFormaterCompact.format(i.getStart()) + dateDelimCompact + dateFormater.format(i.getEnd());
+    if (dateFormatter != null) {
+      dateRangeActive = dateFormaterCompact.format(i.getStart()) + dateDelimCompact + dateFormatter.format(i.getEnd());
     } else {
       dateRangeActive = getTickFormater().getRangeLabelCompact(domainAxisPanel.plot.getDomain());
     }
@@ -75,18 +75,19 @@ public class DateRangePanel extends AbstractPanel implements SelfResizing,
 
   public void resizeToIdealWidth() {
     Interval i = domainAxisPanel.plot.getDomain();
-    if (dateFormater != null) {
-      dateRangeActive = dateFormater.format(i.getStart()) + dateDelim + dateFormater.format(i.getEnd());
+    if (dateFormatter != null) {
+      dateRangeActive = dateFormatter.format(i.getStart()) + dateDelim + dateFormatter.format(i.getEnd());
     } else {
       dateRangeActive = getTickFormater().getRangeLabel(i);
     }
     bounds.width = stringSizer.getWidth(dateRangeActive, labelProperties);
+    bounds.height = stringSizer.getHeight(dateRangeActive, labelProperties);
   }
 
   @Export
   public void setDateRangeFormat(String dateFormat) {
     if (!"auto".equals(dateFormat)) {
-      dateFormater = DateFormatHelper.getDateFormatter(dateFormat);
+      dateFormatter = DateFormatHelper.getDateFormatter(dateFormat);
     }
   }
 

@@ -40,9 +40,9 @@ public class RangeAxisPanel extends AxisPanel {
     final String valueAxisLabel = valueAxis.getLabel();
 
     maxLabelWidth =
-        stringSizer.getRotatedWidth(getDummyLabel(), gssProperties, 0) + 10;
+        stringSizer.getRotatedWidth(getDummyLabel(), gssProperties, 0) + 8;
     maxLabelHeight =
-        stringSizer.getRotatedHeight(getDummyLabel(), gssProperties, 0) + 10;
+        stringSizer.getRotatedHeight(getDummyLabel(), gssProperties, 0) + 1;
     axisLabelWidth = stringSizer
         .getRotatedWidth(valueAxisLabel, gssProperties, rotationAngle);
     axisLabelHeight = stringSizer
@@ -161,16 +161,17 @@ public class RangeAxisPanel extends AxisPanel {
       boolean isLeft = getParentPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
 
-      double dir = isLeft ? 0 : (isInnerMost ? 0 : maxLabelWidth + 1);
+      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 2);
       double x = bounds.x + dir;
-      double y = bounds.y + (bounds.height / 2) - (axisLabelHeight / 2);
+      double y = bounds.y + ((bounds.height - maxLabelHeight) / 2) + (axisLabelHeight / 2);
       layer.setStrokeColor(labelProperties.color);
       String label = valueAxis.getLabel();
-
+      layer.save();
       layer
           .drawRotatedText(x, y, rotationAngle, label, gssProperties.fontFamily,
               gssProperties.fontWeight, gssProperties.fontSize, textLayerName,
               chart);
+      layer.restore();
     }
   }
 
@@ -192,7 +193,8 @@ public class RangeAxisPanel extends AxisPanel {
 
     double alignAdjust = Math.floor(-labelHeight / 2.0);
     if ("above".equals(labelProperties.tickAlign)) {
-      alignAdjust = -labelHeight;
+      // alignAdjust = -labelHeight;
+      alignAdjust = -2;
       dir = 1;
 
       if (isInnerMost(isLeft)) {
@@ -231,8 +233,7 @@ public class RangeAxisPanel extends AxisPanel {
         dir = isLeft ? bounds.width - maxLabelWidth - 1 : maxLabelWidth + 1;
       }
     }
-    double topY, height;
-    layer.fillRect(bounds.x + dir, bounds.y, tickProperties.lineThickness,
+    layer.fillRect(bounds.x + dir, bounds.y + maxLabelHeight, tickProperties.lineThickness,
         bounds.height);
   }
 
@@ -258,9 +259,8 @@ public class RangeAxisPanel extends AxisPanel {
 
     // Determines the horizontal length (in pixels) of each range axis tick
     final int tickWidth = 5;
-
-    double uy = bounds.y + (bounds.height - ((range - rangeLow) / rangeInterval
-        * bounds.height));
+    double tickPixelHeight = ((range - rangeLow) / rangeInterval) * bounds.height;
+    double uy = bounds.y + maxLabelHeight + (bounds.height - tickPixelHeight);
 
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? (bounds.width - tickWidth) : 0);

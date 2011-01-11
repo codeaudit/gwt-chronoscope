@@ -22,32 +22,32 @@ public class LeyendTest extends TestCase {
   }
 
   public void testDistributeLeyendItemsAlignedColums() {
-    List<List<Item>> rows = DatasetLegendPanel.getLeyendRows(generateItems(), 12, 0, DatasetLegendPanel.UNALIGNED_COLS);
+    List<List<Item>> rows = DatasetLegendPanel.getLegendRows(generateItems(), 12, 0, DatasetLegendPanel.UNALIGNED_COLS);
     Assert.assertEquals(4, rows.size());
     Assert.assertEquals(2, rows.get(0).size());
     Assert.assertEquals(5, rows.get(3).size());
   }
 
   public void testDistributeLeyendUnlignedColums() {
-    List<List<Item>> rows = DatasetLegendPanel.getLeyendRows(generateItems(), 18, 0, DatasetLegendPanel.ALIGNED_COLS);
+    List<List<Item>> rows = DatasetLegendPanel.getLegendRows(generateItems(), 18, 0, DatasetLegendPanel.ALIGNED_COLS);
     Assert.assertEquals(4, rows.size());
     Assert.assertEquals(3, rows.get(0).size());
 
-    rows = DatasetLegendPanel.getLeyendRows(generateItems(), 15, 0, DatasetLegendPanel.ALIGNED_COLS);
+    rows = DatasetLegendPanel.getLegendRows(generateItems(), 15, 0, DatasetLegendPanel.ALIGNED_COLS);
     Assert.assertEquals(6, rows.size());
 
-    rows = DatasetLegendPanel.getLeyendRows(generateItems(), 12, 0, DatasetLegendPanel.ALIGNED_COLS);
+    rows = DatasetLegendPanel.getLegendRows(generateItems(), 12, 0, DatasetLegendPanel.ALIGNED_COLS);
     Assert.assertEquals(6, rows.size());
     Assert.assertEquals(2, rows.get(0).size());
     Assert.assertEquals(2, rows.get(1).size());
     Assert.assertEquals(2, rows.get(2).size());
 
-    rows = DatasetLegendPanel.getLeyendRows(generateItems(), 11, 0, DatasetLegendPanel.ALIGNED_COLS);
+    rows = DatasetLegendPanel.getLegendRows(generateItems(), 11, 0, DatasetLegendPanel.ALIGNED_COLS);
     Assert.assertEquals(8, rows.size());
   }
 
   public void testDistributeLeyendItemsFixedColums() {
-    List<List<Item>> rows = DatasetLegendPanel.getLeyendRows(generateItems(), 0, 0, 4);
+    List<List<Item>> rows = DatasetLegendPanel.getLegendRows(generateItems(), 0, 0, 4);
     Assert.assertEquals(3, rows.size());
     Assert.assertEquals(4, rows.get(0).size());
     Assert.assertEquals(3, rows.get(2).size());

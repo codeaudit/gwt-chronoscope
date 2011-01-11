@@ -112,12 +112,12 @@ public class ZoomPanel extends AbstractPanel implements
     }
     
     double xCursor = bounds.x;
-    drawZoomLink(layer, xCursor, bounds.y, zoomPrefix.value, false);
+    drawZoomLink(layer, xCursor, bounds.height, zoomPrefix.value, false);
     xCursor += zoomPrefix.pixelWidth + space.pixelWidth;
 
     int i = 0;
     for (ZoomInterval zoom : zooms) {
-      drawZoomLink(layer, xCursor, bounds.y, zoom.getName(), true);
+      drawZoomLink(layer, xCursor, bounds.height, zoom.getName(), true);
       xCursor += zoomLinkWidths[i++] + space.pixelWidth;
     }
   }

@@ -260,8 +260,8 @@ public class RangeAxis extends ValueAxis implements Exportable {
     final double rangeMin = autoZoom ? this.visRangeMin : this.absRangeMin;
     final double rangeMax = autoZoom ? this.visRangeMax : this.absRangeMax;
 
-    double labelLineHeight = Math.min(axisPanel.getMaxLabelHeight(), 15.0);
-    double rangeAxisHeight = axisPanel.getBounds().height;
+    double labelLineHeight = Math.min(axisPanel.getMaxLabelHeight(), 14); // TODO - use axisLabelHeight
+    double rangeAxisHeight = axisPanel.getBounds().height - labelLineHeight;
 
     ticks = computeLinearTickPositions(rangeMin, rangeMax,
             rangeAxisHeight, labelLineHeight,
