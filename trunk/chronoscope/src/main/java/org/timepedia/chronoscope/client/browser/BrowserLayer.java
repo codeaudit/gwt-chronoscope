@@ -191,8 +191,8 @@ public class BrowserLayer extends AbstractLayer {
     // translate(bounds.width / 2, bounds.height / 2);
     translate(x, y);
     rotate(angle);
-    int w = stringWidth(label, fontFamily, fontWeight, fontSize);
-    int h = stringHeight(label, fontFamily, fontWeight, fontSize);
+    // int w = stringWidth(label, fontFamily, fontWeight, fontSize);
+    // int h = stringHeight(label, fontFamily, fontWeight, fontSize);
     drawText(0, 0, label, fontFamily, fontWeight, fontSize, layerName, null);
     rotate(- angle);
     translate(-x, -y);
