@@ -161,7 +161,7 @@ public class RangeAxisPanel extends AxisPanel {
       boolean isLeft = getParentPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
 
-      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 2);
+      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 4);
       double x = bounds.x + dir;
       double y = bounds.y + ((bounds.height - maxLabelHeight) / 2) + (axisLabelHeight / 2);
       layer.setStrokeColor(labelProperties.color);

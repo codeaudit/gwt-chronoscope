@@ -230,7 +230,7 @@ public abstract class DatasetRenderer<T extends Tuple2D>
         String label = guideLineDateFmt.format(dx);
         hx += dx < plot.getDomain().midpoint() ? 1.0 : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
 
-        layer.drawText(hx, -12, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
+        layer.drawText(hx, plot.getInnerBounds().y + 10, label, "Helvetica", "", "8pt", textLayer, Cursor.CONTRASTED);
       }
       */
       layer.restore();
