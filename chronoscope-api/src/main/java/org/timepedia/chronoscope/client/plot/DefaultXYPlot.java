@@ -871,7 +871,12 @@ public class DefaultXYPlot<T extends Tuple2D>
     final boolean plotDomainChanged = forceCenterPlotRedraw || !visDomain.approx(lastVisDomain);
             // || ChronoscopeOptions.isVerticalCrosshairEnabled();
 
+    if (firstDraw || canDrawFast) {
+        topPanel.draw();
+    }
+
     Layer hoverLayer = getHoverLayer();
+    clearHoverLayer(); // TODO - clear the hover points but keep crosshair if visible
     clearOverlayLayer(overlayLayer);
 
     // Draw the hover points, but not when the plot is currently animating.
@@ -905,7 +910,6 @@ public class DefaultXYPlot<T extends Tuple2D>
     drawOverlays(overlayLayer);
 
     if (canDrawFast) {
-      topPanel.draw();
       drawPlotHighlight(hoverLayer);
     }
     plotLayer.restore();
