@@ -175,7 +175,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
         x, y, yp, arcDirection);
 
     backingCanvas
-        .drawText(x, y, label, markerProps.fontFamily, markerProps.fontWeight,
+        .drawText(x, y + 12, label, markerProps.fontFamily, markerProps.fontWeight,
             markerProps.fontSize, layer, Cursor.CONTRASTED);
     backingCanvas.restore();
   }
@@ -252,7 +252,7 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
       hx += dx < plot.getDomain().midpoint() ? 1.0
           : -1 - layer.stringWidth(label, "Helvetica", "", "8pt");
       // TODO - factor hard-coded font out 
-      layer.drawText(hx, 10, label, "Helvetica", "", "8pt", "overlays", Cursor.CLICKABLE);
+      layer.drawText(hx, plot.getInnerBounds().y + 10, label, "Helvetica", "", "8pt", "overlays", Cursor.CLICKABLE);
     }
     layer.restore();
   }
