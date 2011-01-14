@@ -129,14 +129,14 @@ public class DomainBarMarker implements Exportable, Overlay, GssElement {
     backingCanvas.fillRect(x, /*view.getPlotBounds().y*/0, x2 - x,
         /*view.getPlotBounds().y+*/
         plot.getInnerBounds().height);
-    backingCanvas.drawText(x2 + 1, /*view.getPlotBounds().y+*/10, label,
+    backingCanvas.drawText(x2 + 1,plot.getInnerBounds().y + 20  , label,
         markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
         markerLabelProperties.fontSize, layer, Cursor.CLICKABLE);
     backingCanvas.restore();
   }
 
   public void fire(GwtEvent event) {
-    //To change body of implemented methods use File | Settings | File Templates.
+
   }
 
   public void fireOverlayClickListener(int x, int y) {

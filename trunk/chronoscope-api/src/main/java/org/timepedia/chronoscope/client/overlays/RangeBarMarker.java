@@ -106,7 +106,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
     final double textStartX = x + 25;
     
     if (labelHeight + 4 < Math.abs(y1 - y2)) {
-      backingCanvas.drawText(textStartX, y1 + 2, label, markerLabelProperties.fontFamily,
+      backingCanvas.drawText(textStartX, y1 + labelHeight + 2, label, markerLabelProperties.fontFamily,
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer, Cursor.CLICKABLE);
     } else if (y1 - labelHeight - 4 < plot.getInnerBounds().y) {
@@ -114,7 +114,7 @@ public class RangeBarMarker implements Exportable, Overlay, GssElement {
           markerLabelProperties.fontWeight, markerLabelProperties.fontSize,
           layer, Cursor.CONTRASTED);
     } else {
-      backingCanvas.drawText(textStartX, y1 - labelHeight - 2, label,
+      backingCanvas.drawText(textStartX, y1 + labelHeight + 2, label,
           markerLabelProperties.fontFamily, markerLabelProperties.fontWeight,
           markerLabelProperties.fontSize, layer, Cursor.CONTRASTED);
     }
