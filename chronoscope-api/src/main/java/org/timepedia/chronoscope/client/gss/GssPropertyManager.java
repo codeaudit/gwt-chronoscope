@@ -10,8 +10,8 @@ import java.util.Map;
 
 /**
  * Single point of entry to register all GssElements types and Properties Useful
- * for auto-generating JavaDoc and auto-extending Batik as well as processing
- * syntactic sugar CSS into real CSS (e.g. 'line-thickness' -> 'border-width')
+ * for auto-generating JavaDoc.
+ *  TODO - GssElements declared elsewhere should show up in the javadoc.
  */
 public class GssPropertyManager {
 
@@ -280,13 +280,21 @@ public class GssPropertyManager {
     }
   };
 
+  // TODO - number format of tick labels should be targeted to axis unit/label since several
+  // series might share an axis, eg "kb" or "$" and it would be difficult to resolve conflicting
+  // axis tick label number formats for several series sharing the same unit. Alternatively all
+  // range or all domain tick labels might be targeted.  Either way, we don't have a good way to
+  // target by unit/label in gss right now.
   public static final GssPropertyType GSS_NUMBER_FORMAT_PROPERTY
       = new GssPropertyType("number-format", "", GssPropertyType.TypeUnits.STRING,
-      "Specifies the number format for values displayed") {
+      "Specifies the number format for values displayed" +
+      "Example:" +
+      "axes: number-format: scientific; /* scientific notation */ "+
+      "axes:") {
 
     @Override
     public void setPropertyString(GssProperties props, String pval) {
-      props.dateFormat = pval;
+      props.numberFormat = pval;
     }
   };
   

@@ -555,6 +555,13 @@ public class DefaultXYPlot<T extends Tuple2D>
   public RangeAxis getRangeAxis(int datasetIndex) {
     return rangePanel.getRangeAxes()[datasetIndex];
   }
+  /**
+    * Return the axis-y referenced by axisId (usually the units)
+    */
+  @Export("getAxis")
+  public RangeAxis getRangeAxis(String units) {
+    return rangePanel.getRangeAxis(units);
+  }
 
   public int getRangeAxisCount() {
     return rangePanel.getRangeAxes().length;
