@@ -2,6 +2,9 @@ package org.timepedia.chronoscope.client.gss;
 
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
+import org.timepedia.chronoscope.client.render.RangeAxisPanel.TickPosition;
+import org.timepedia.chronoscope.client.render.RangeAxisPanel.TickAlignment;
+
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -47,9 +50,9 @@ public class GssProperties implements Exportable {
 
   public double size = 5;
 
-  public String tickAlign = "middle";
+  public String tickAlign = TickAlignment.MIDDLE.toString();
 
-  public String tickPosition = "outside";
+  public String tickPosition = TickPosition.OUTSIDE.toString();
 
   public int top = 0;
 
@@ -64,6 +67,8 @@ public class GssProperties implements Exportable {
   public String display = "auto";
 
   public String dateFormat = null;
+
+  public String numberFormat = null;
 
   public String group = null;
   
@@ -106,6 +111,7 @@ public class GssProperties implements Exportable {
         + "\ncolumnWidth:" + columnWidth + "\ncolumnCount:" + columnCount + "\ncolumnAligned:" + columnAligned;
   }
 
+  @Export
   public String getDateFormat() {
     return dateFormat;
   }
@@ -113,6 +119,16 @@ public class GssProperties implements Exportable {
   @Export
   public void setDateFormat(String dateFormat) {
     this.dateFormat = dateFormat;
+  }
+
+  @Export
+  public String getNumberFormat() {
+    return numberFormat;
+  }
+
+  @Export
+  public void setNumberFormat(String numberFormat) {
+    this.numberFormat = numberFormat;
   }
 
   public String getFontFamily() {

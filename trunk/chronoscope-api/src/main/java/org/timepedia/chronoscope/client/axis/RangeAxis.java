@@ -362,6 +362,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return new Interval(absRangeMin, absRangeMax);
   }
 
+  @Export
   public double getScale() {
     return scale;
   }
@@ -370,14 +371,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
     return tickLabelNumberFormatter;
   }
 
+  @Export
   public boolean isAllowAutoScale() {
     return allowAutoScale;
   }
 
+  @Export
   public boolean isAllowScientificNotation() {
     return allowScientificNotation;
   }
 
+  @Export
   public boolean isAutoZoomVisibleRange() {
     return autoZoom;
   }
@@ -385,14 +389,17 @@ public class RangeAxis extends ValueAxis implements Exportable {
   /**
    * See {@link #setCalcRangeAsPercent(boolean)}
    */
+  @Export
   public boolean isCalcRangeAsPercent() {
     return calcRangeAsPercent;
   }
 
+  @Export
   public boolean isForceScientificNotation() {
     return forceScientificNotation;
   }
 
+  @Export
   public boolean isScientificNotationOn() {
     return scientificNotationOn;
   }
@@ -408,7 +415,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   /**
    * If set to true, allow axis ticks to be scaled automatically by powers of
-   * thousand if they exceeed maxDigits settings. For example, if max digits is
+   * thousand if they exceed maxDigits settings. For example, if max digits is
    * 4, then the number 25000 will be rendered as 25, and the axis label will be
    * modified to include the word "Thousands". setAllowScientificNotation() will
    * override this and take priority, as well as setScale().

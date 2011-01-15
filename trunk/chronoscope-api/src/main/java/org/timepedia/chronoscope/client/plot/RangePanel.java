@@ -102,6 +102,10 @@ final public class RangePanel extends AuxiliaryPanel {
     return rangeAxes == null ? new RangeAxis[]{}: rangeAxes;
   }
 
+  public RangeAxis getRangeAxis(String rangeAxisId) {
+     return id2rangeAxis.get(rangeAxisId);
+  }
+
   public CompositeAxisPanel getRightSubPanel() {
     return rightPanel;
   }

@@ -3,8 +3,8 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.axis.RangeAxis;
+import org.timepedia.chronoscope.client.axis.Timeline;
 import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
@@ -18,8 +18,32 @@ import org.timepedia.chronoscope.client.util.MathUtil;
 public class RangeAxisPanel extends AxisPanel {
 
   public enum TickPosition {
+    INSIDE, OUTSIDE;
 
-    INSIDE, OUTSIDE
+    public static TickPosition is(String s) {
+      try {
+        return valueOf(s.trim().toUpperCase());
+      } catch (Exception e) {
+        return INSIDE;
+      }
+    }
+    public String toString(){
+        return name().toLowerCase();
+    }
+  }
+  public enum TickAlignment {
+    ABOVE, MIDDLE, BELOW;
+
+    public static TickAlignment is(String s) {
+      try {
+        return valueOf(s.trim().toUpperCase());
+      } catch (Exception e) {
+        return ABOVE;
+      }
+    }
+    public String toString(){
+        return name().toLowerCase();
+    }
   }
 
   private double axisLabelWidth, axisLabelHeight;
@@ -161,7 +185,7 @@ public class RangeAxisPanel extends AxisPanel {
       boolean isLeft = getParentPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
 
-      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 4);
+      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 2);
       double x = bounds.x + dir;
       double y = bounds.y + ((bounds.height - maxLabelHeight) / 2) + (axisLabelHeight / 2);
       layer.setStrokeColor(labelProperties.color);
@@ -185,14 +209,14 @@ public class RangeAxisPanel extends AxisPanel {
             gssProperties.fontSize);
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? -5 - labelWidth : 5 - bounds.width);
-    if ("inside".equals(gssProperties.tickPosition)) {
+    if (TickPosition.INSIDE == TickPosition.is(gssProperties.tickPosition)) {
       dir = isLeft ? 5 : -labelWidth - 5;
     }
 
     layer.save();
 
     double alignAdjust = Math.floor(-labelHeight / 2.0);
-    if ("above".equals(labelProperties.tickAlign)) {
+    if (TickAlignment.ABOVE == TickAlignment.is(labelProperties.tickAlign)) {
       // alignAdjust = -labelHeight;
       alignAdjust = -2;
       dir = 1;
@@ -226,7 +250,7 @@ public class RangeAxisPanel extends AxisPanel {
     layer.setFillColor(tprop.color);
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? bounds.width : 0);
-    if ("inside".equals(gssProperties.tickPosition)) {
+    if (TickPosition.INSIDE == TickPosition.is(gssProperties.tickPosition)) {
       if (isInnerMost(isLeft)) {
         dir = isLeft ? bounds.width : -1;
       } else {
@@ -264,7 +288,7 @@ public class RangeAxisPanel extends AxisPanel {
 
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? (bounds.width - tickWidth) : 0);
-    if ("inside".equals(gssProperties.tickPosition)) {
+    if (TickPosition.INSIDE == TickPosition.is(gssProperties.tickPosition)) {
       if (isInnerMost(isLeft)) {
         dir = isLeft ? (bounds.width + 1) : -tickWidth;
       } else {
@@ -297,8 +321,11 @@ public class RangeAxisPanel extends AxisPanel {
   }
 
   private TickPosition getTickPosition() {
-    return "inside".equals(gssProperties.tickPosition) ? TickPosition.INSIDE
-        : TickPosition.OUTSIDE;
+      return TickPosition.is(gssProperties.tickPosition);
+  }
+
+  private TickAlignment getTickAlignment() {
+      return TickAlignment.is(gssProperties.tickAlign);
   }
 
   private boolean isInnerMost(boolean isLeftPanel) {
