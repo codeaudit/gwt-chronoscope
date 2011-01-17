@@ -95,6 +95,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
+          <version>${gwt.maven}</version>
           <configuration>
             <logLevel>${gwt.loglevel}</logLevel>
             <style>${gwt.outputstyle}</style>
@@ -227,7 +228,8 @@
   </repositories>
 
   <properties>
-    <gwtversion>2.0.4</gwtversion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <gwtversion>2.1.1</gwtversion>
     <gwtexporterversion>2.0.10</gwtexporterversion>
     <gwt.loglevel>INFO</gwt.loglevel>
     <gwt.outputstyle>OBF</gwt.outputstyle>
@@ -237,6 +239,7 @@
     <gwt.soyc>false</gwt.soyc>
     <gwt.xdisable>true</gwt.xdisable>
     <gwt.draft>false</gwt.draft>
+    <gwt.maven>2.1.0-1</gwt.maven>
   </properties>
 
   <profiles>
@@ -245,6 +248,14 @@
       <properties>
        <gwtversion>1.6.4</gwtversion>
        <gwtexporterversion>2.06</gwtexporterversion>
+       <gwt.maven>1.2</gwt.maven>
+      </properties>
+    </profile>
+    <profile>
+      <id>gwt-2.0</id>
+      <properties>
+       <gwtversion>2.0.4</gwtversion>
+       <gwt.maven>1.2</gwt.maven>
       </properties>
     </profile>
     <profile>
