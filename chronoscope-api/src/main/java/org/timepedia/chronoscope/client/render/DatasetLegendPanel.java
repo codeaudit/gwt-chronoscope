@@ -28,7 +28,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
   // Dictates the X-padding between a legend icon and dataset label
   public static final double LEGEND_ICON_PAD = 2;
   // Default icon width or height 
-  public static final double LEGEND_ICON_SIZE = 6;
+  public static final double LEGEND_ICON_SIZE = 7;
 
   // Dictates the X-padding between each dataset legend item
   static final int DATASET_LEGEND_PAD = 6;
@@ -164,7 +164,9 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     double iconWidth = calcLegendIconWidth();
     DatasetRenderer<?> renderer = plot.getDatasetRenderer(item.idx);
     
-    double yPos = yCursor - Math.ceil((lblHeight - iconHeight)/2);  // + 2 + Math.ceil(((lblHeight - iconHeight)/2));
+    double yPos = yCursor - iconHeight - LEGEND_ICON_PAD + 1;
+    // Math.ceil((lblHeight - iconHeight)/2) - LEGEND_ICON_PAD;
+    // + 2 + Math.ceil(((lblHeight - iconHeight)/2));
     renderer.drawLegendIcon(layer, xCursor, yPos , iconWidth, iconHeight, item.dimension);
     layer.setStrokeColor(legendLabelsProperties.color);
     String seriesLabel = item.label;
@@ -211,7 +213,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
         rlabel = dataset.getRangeLabel();
       }
     }
-    String lbl = rlabel + rangeAxis.getLabelSuffix();
+    String lbl = rlabel; // + rangeAxis.getLabelSuffix();
 
     final boolean doShowRangeValue = (pointIdx > -1);
     if (doShowRangeValue && valueVisible) {
