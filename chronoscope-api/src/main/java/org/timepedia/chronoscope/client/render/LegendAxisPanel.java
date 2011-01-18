@@ -45,14 +45,14 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   public void draw() {
-    final int labelHeight = (int) this.zoomPanel.bounds.height;
+    final int zoomHeight = (int) this.zoomPanel.bounds.height;
     clearAxis(layer, bounds);
 
     // Position and size the panels
     zoomPanel.setPosition(bounds.x, bounds.y);
     layoutPanels(bounds);
     topRightJustify(dateRangePanel, bounds);
-    dsLegendPanel.setPosition(bounds.x, bounds.y + labelHeight + LEGEND_Y_TOP_PAD);
+    dsLegendPanel.setPosition(bounds.x, bounds.y + zoomHeight + LEGEND_Y_TOP_PAD);
 
     // Draw the panels
     zoomPanel.draw();
