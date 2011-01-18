@@ -262,12 +262,8 @@ public abstract class DatasetRenderer<T extends Tuple2D>
       // layer.setShadowOffsetY(alineProp.shadowOffsetY);
 
       layer.setTransparency((float) alineProp.transparency);
-      layer.setLineWidth(h);
-      layer.setStrokeColor(alineProp.color);
-      layer.beginPath();
-      layer.moveTo(x, y);
-      layer.lineTo(x + w, y);
-      layer.stroke();
+      layer.setFillColor(alineProp.color);
+      layer.fillRect(x, y, w, h);
       layer.restore();
     }
 
