@@ -189,7 +189,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     Layer rootLayer = view.getCanvas().getRootLayer();
 
     bounds.height = getLabelHeight(rootLayer, "X") + TICK_HEIGHT +
-        + creditsLabel.getBounds().height + 1;
+        + getLabelHeight(rootLayer, CREDITS) + 1;
 
     // default width for now
     if (bounds.width <= 0) {
@@ -232,7 +232,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     if (creditsLabel == null) {
       creditsLabel = new Label(CREDITS, this.textLayerName, rootLayer,
-          "Helvetica", "normal", "9pt");
+          "Helvetica", "normal", "8pt");
     }
   }
 
@@ -297,7 +297,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     layer.setStrokeColor(labelProperties.color);
     layer.setTransparency((float)gssProperties.transparency);
 
-    final double textRowY = bounds.bottomY() - 2;
+    final double textRowY = bounds.height - creditsLabel.getBounds().height;
     final double halfLabelWidth = domainAxisLabel.getBounds().width / 2;
 
     domainAxisLabel.setLocation(bounds.midpointX() - halfLabelWidth, textRowY);
@@ -305,7 +305,7 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
 
     // only show if enabled and a collision with the axis label is avoided
     // TODO - better PAD
-    creditsLabel.setLocation(bounds.rightX() - creditsLabel.getBounds().width - 20, textRowY);
+    creditsLabel.setLocation(bounds.rightX() - creditsLabel.getBounds().width , textRowY);
     final boolean collision = domainAxisLabel.getBounds().rightX()
         >= creditsLabel.getBounds().x;
     if (ChronoscopeOptions.isShowCreditsEnabled() && !collision) {
