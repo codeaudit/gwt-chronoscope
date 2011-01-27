@@ -41,6 +41,11 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 
+import static com.google.gwt.user.client.Event.KEYEVENTS;
+import static com.google.gwt.user.client.Event.ONMOUSEOUT;
+import static com.google.gwt.user.client.Event.ONMOUSEWHEEL;
+import static com.google.gwt.user.client.Event.ONMOUSEUP;
+
 public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     SafariKeyboardConstants {
 
@@ -145,8 +150,6 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
 
   private boolean viewReady;
 
-  private int KEYEVENTS = Event.KEYEVENTS;
-
   public void fireContextMenu(Event evt) {
     if (DOM.eventGetTypeString(evt) == "undefined") {
       return;
@@ -193,7 +196,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click). Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = (KEYEVENTS & evt.getTypeInt()) == 0;
+    boolean screenCoordinatesRelevant = ((KEYEVENTS  & evt.getTypeInt()) == 0) || ((ONMOUSEOUT & evt.getTypeInt()) == 0);
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
