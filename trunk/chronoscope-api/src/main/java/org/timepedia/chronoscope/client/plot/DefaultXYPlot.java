@@ -322,12 +322,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   public double calcDisplayY(int datasetIdx, int pointIdx, int dimension) {
     DrawableDataset dds = plotRenderer.getDrawableDataset(datasetIdx);
     RangeAxis ra = getRangeAxis(datasetIdx);
-    double y = dds.getRenderer()
-        .getRangeValue(dds.currMipMap.getTuple(pointIdx), dimension);
-
+    double y = dds.getRenderer().getRangeValue(dds.currMipMap.getTuple(pointIdx), dimension);
     if (ra.isCalcRangeAsPercent()) {
       double refY = plotRenderer.calcReferenceY(ra, dds);
-      y = RangeAxis.calcPrctDiff(refY, y);
+      // Interval rangeExtrema = dds.currMipMap.getRangeExtrema(dimension);
+      Interval rangeExtrema = ra.getExtrema();
+      return rangeExtrema.getPercentChange(refY, y);
     }
 
     return y;
@@ -366,6 +366,7 @@ public class DefaultXYPlot<T extends Tuple2D>
     rangePanel.clearDrawCaches();
     bottomPanel.clearDrawCaches();
     topPanel.clearDrawCaches();
+    firstDraw = true; // "fresh" draw ...
   }
 
   public double domainToScreenX(double dataX, int datasetIndex) {
@@ -558,11 +559,12 @@ public class DefaultXYPlot<T extends Tuple2D>
   /**
     * Return the axis-y referenced by axisId (usually the units)
     */
-  @Export("getAxis")
+  @Export("getRangeAxis")
   public RangeAxis getRangeAxis(String units) {
     return rangePanel.getRangeAxis(units);
   }
 
+  @Export
   public int getRangeAxisCount() {
     return rangePanel.getRangeAxes().length;
   }
@@ -786,12 +788,14 @@ public class DefaultXYPlot<T extends Tuple2D>
   public double rangeToScreenY(Tuple2D pt, int datasetIndex, int dim) {
     DatasetRenderer dr = getDatasetRenderer(datasetIndex);
     return plotBounds.height
-        - getRangeAxis(datasetIndex).dataToUser(dr.getRangeValue(pt, dim)) * plotBounds.height;
+        - getRangeAxis(datasetIndex).dataToUser(dr.getRangeValue(pt, dim))
+          * (plotBounds.height - getRangeAxis(datasetIndex).getTickLabelHeight());
   }
   // NOTE - really this is rangeToPlotY
   public double rangeToScreenY(double dataY, int datasetIndex) {
-    return plotBounds.height
-        - getRangeAxis(datasetIndex).dataToUser(dataY) * plotBounds.height;
+    return plotBounds.height -
+        getRangeAxis(datasetIndex).dataToUser(dataY)
+            * (plotBounds.height - getRangeAxis(datasetIndex).getTickLabelHeight());
   }
 
   public double rangeToWindowY(double rangeY, int datasetIndex) {
@@ -812,7 +816,11 @@ public class DefaultXYPlot<T extends Tuple2D>
    * unconditionally.
    */
   public void redraw(boolean force) {
-    redrawTimer.redraw(force);
+    if (!firstDraw) {
+      redrawTimer.redraw(force);
+    } else {
+      realRedraw(force);
+    }
   }
 
   /**

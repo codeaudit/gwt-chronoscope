@@ -11,4 +11,6 @@ import org.timepedia.exporter.client.ExportClosure;
 public interface TickLabelNumberFormatter {
 
   public String format(double value);
+
+  public String getFormat();
 }

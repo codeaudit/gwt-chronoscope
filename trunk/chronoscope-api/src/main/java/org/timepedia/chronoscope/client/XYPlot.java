@@ -526,11 +526,13 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
    * Visible or hidden the mini-chart overview below the center plot
    * panel.
    */
+  @Export
   void setOverviewVisible(boolean overviewVisible);
 
   /**
    * Returns true if mini-chart overview on x-axis is visible.
    */
+  @Export
   boolean isOverviewVisible();
 
   /**

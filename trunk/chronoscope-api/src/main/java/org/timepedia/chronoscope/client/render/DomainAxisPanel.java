@@ -304,7 +304,6 @@ public class DomainAxisPanel extends AxisPanel implements Exportable {
     domainAxisLabel.draw(layer);
 
     // only show if enabled and a collision with the axis label is avoided
-    // TODO - better PAD
     creditsLabel.setLocation(bounds.rightX() - creditsLabel.getBounds().width , textRowY);
     final boolean collision = domainAxisLabel.getBounds().rightX()
         >= creditsLabel.getBounds().x;

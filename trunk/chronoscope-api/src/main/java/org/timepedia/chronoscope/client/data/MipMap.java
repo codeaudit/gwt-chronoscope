@@ -122,8 +122,8 @@ public class MipMap {
    * Return the range extreme for this mipmap
 
    */
-  public Interval getRangeExtrema(int coordinate) {
-    return this.rangeExtrema[coordinate];
+  public Interval getRangeExtrema(int mipMapIndex) {
+    return this.rangeExtrema[mipMapIndex];
   }
 
   /**

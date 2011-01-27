@@ -46,7 +46,7 @@ public class RangeAxisPanel extends AxisPanel {
     }
   }
 
-  private double axisLabelWidth, axisLabelHeight;
+  private double axisLabelWidth;
 
   private boolean boundsSet;
 
@@ -62,15 +62,12 @@ public class RangeAxisPanel extends AxisPanel {
 
   public void computeLabelWidths(View view) {
     final String valueAxisLabel = valueAxis.getLabel();
-
     maxLabelWidth =
         stringSizer.getRotatedWidth(getDummyLabel(), gssProperties, 0) + 8;
     maxLabelHeight =
         stringSizer.getRotatedHeight(getDummyLabel(), gssProperties, 0) + 1;
     axisLabelWidth = stringSizer
         .getRotatedWidth(valueAxisLabel, gssProperties, rotationAngle);
-    axisLabelHeight = stringSizer
-        .getRotatedHeight(valueAxisLabel, gssProperties, rotationAngle);
   }
 
   public void draw() {
@@ -142,6 +139,7 @@ public class RangeAxisPanel extends AxisPanel {
     }
   }
 
+  // TODO - not as variable as height, but axisLabelWidth is per axis, unlike maxLabelWidth
   private double calcWidth() {
     double w = 0.0;
     final double widthBuffer = 5;
@@ -185,11 +183,13 @@ public class RangeAxisPanel extends AxisPanel {
       boolean isLeft = getParentPosition() == Position.LEFT;
       boolean isInnerMost = isInnerMost(isLeft);
 
-      double dir = isLeft ? axisLabelWidth + 2: (isInnerMost ? 4 : maxLabelWidth + 2);
+      double dir = isLeft ? axisLabelWidth - 4: (isInnerMost ? 4 : maxLabelWidth + 2);
       double x = bounds.x + dir;
-      double y = bounds.y + ((bounds.height - maxLabelHeight) / 2) + (axisLabelHeight / 2);
-      layer.setStrokeColor(labelProperties.color);
       String label = valueAxis.getLabel();
+      int labelHeight = stringSizer.getRotatedHeight(label, gssProperties, rotationAngle);
+      double y = bounds.y + ((bounds.height - maxLabelHeight) / 2) + (labelHeight / 2);
+      layer.setStrokeColor(labelProperties.color);
+
       layer.save();
       layer
           .drawRotatedText(x, y, rotationAngle, label, gssProperties.fontFamily,
@@ -284,7 +284,7 @@ public class RangeAxisPanel extends AxisPanel {
     // Determines the horizontal length (in pixels) of each range axis tick
     final int tickWidth = 5;
     double tickPixelHeight = ((range - rangeLow) / rangeInterval) * bounds.height;
-    double uy = bounds.y + maxLabelHeight + (bounds.height - tickPixelHeight);
+    double uy = Math.round(bounds.y + maxLabelHeight + (bounds.height - tickPixelHeight));
 
     boolean isLeft = getParentPosition() == Position.LEFT;
     double dir = (isLeft ? (bounds.width - tickWidth) : 0);
@@ -300,8 +300,8 @@ public class RangeAxisPanel extends AxisPanel {
     layer.save();
     layer.setFillColor(getTickProps(tickProperties).color);
     layer.setTransparency(1);
-
-    layer.fillRect(bounds.x + dir, uy, tickWidth, tickProperties.lineThickness);
+    double ux = Math.round(bounds.x + dir);
+    layer.fillRect(ux, uy, tickWidth, tickProperties.lineThickness);
     if (gridProperties.visible && uy != bounds.bottomY()) {
       layer.setFillColor(gridProperties.color);
       layer.setTransparency((float) gridProperties.transparency);
@@ -316,8 +316,7 @@ public class RangeAxisPanel extends AxisPanel {
 
   private String getDummyLabel() {
     int maxDig = RangeAxis.MAX_DIGITS;
-    return "0" + ((maxDig == 1) ? ""
-        : "." + "000000000".substring(0, maxDig - 1));
+    return "0" + ((maxDig == 1) ? "" : "." + "000000000".substring(0, maxDig - 1));
   }
 
   private TickPosition getTickPosition() {

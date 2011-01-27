@@ -37,11 +37,8 @@ public class Marker extends DraggableOverlay implements GssElement, Exportable {
   protected DateFormatter guideLineDateFmt;
 
   private static enum MarkerShape {
-
-    BALLOON, TEARDROP
+    BALLOON, TEARDROP;
   }
-
-  ;
 
   // Determines how high (stretched-out) the marker is.
   private static final int MARKER_HEIGHT = 15;

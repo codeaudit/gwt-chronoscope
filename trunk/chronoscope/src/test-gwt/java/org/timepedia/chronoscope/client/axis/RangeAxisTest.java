@@ -81,4 +81,32 @@ public class RangeAxisTest extends junit.framework.TestCase {
             // TODO - assert monotonicity of RangeAxisRenderer.computeLabelFormat over labels 
         }
     }
+
+    public void testCalcRangeAxisScale() {
+        double min, max;
+        int expect, int calc;
+        String msg;
+      /*
+        scale (.00040404, .000808, -6);
+
+        scale (.001, .999, 0);
+
+        scale (32498732343, .000000000000000000000001, 9);
+
+        scale (.0000000000123012302130, -0.0000002387238273, -12);
+
+        scale (-10000000, 10000000, 6);
+
+        scale(-100000000,1239812938, 6);
+
+        scale (.000001, 232938293829839283, 15 * 3);
+
+        scale (-.023, 100000, 3 * 3);
+        */
+    }
+
+    private void scale(double min, double max, int expect) {
+        calc = RangeAxis.calcRangeAxisScale(min, max);
+        assertEquals("calcRangeAxisScale("+min+","+max+") = " + calc + " != " + expect,  expect,  actual);
+    }
 }
