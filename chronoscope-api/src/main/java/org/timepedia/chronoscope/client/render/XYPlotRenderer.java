@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.timepedia.chronoscope.client.data.AbstractDataset;
+import org.timepedia.chronoscope.client.util.MathUtil;
 
 /**
  * Responsible for iterating over {@link Dataset}s in a defined drawing order,
@@ -100,21 +101,24 @@ public class XYPlotRenderer<T extends Tuple2D> {
       int domainStartIdx = bestMipMapRegion.getStartIndex();
       int domainEndIdx = bestMipMapRegion.getEndIndex();
       domainStartIdx = Math.max(0, domainStartIdx - 1);
-//      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples() - 1);
+      domainEndIdx = Math.min(domainEndIdx, dataSet.getNumSamples()-1);
 
       drawableDataset.visDomainStartIndex = domainStartIdx;
       drawableDataset.visDomainEndIndex = domainEndIdx;
 
       RangeAxis rangeAxis = plot.getRangeAxis(datasetIdx);
       Interval visRange = calcVisibleRange(bestMipMap, domainStartIdx,
-          domainEndIdx, drawableDataset.getRenderer());
+       domainEndIdx, drawableDataset.getRenderer());
 
       if (rangeAxis.isCalcRangeAsPercent()) {
-        final double refY = calcReferenceY(rangeAxis, drawableDataset);
-        double maxY = visRange.getEnd();
-        double minY = visRange.getStart();
-        visRange.setEndpoints(RangeAxis.calcPrctDiff(refY, minY),
-            RangeAxis.calcPrctDiff(refY, maxY));
+        DatasetRenderer dr = plot.getDatasetRenderer(datasetIdx);
+        Interval rangeExtrema = dr.getRangeExtrema(drawableDataset.currMipMap);
+
+        double refY = calcReferenceY(rangeAxis, drawableDataset);
+        double pmin = rangeExtrema.getPercentChange(refY, visRange.getStart());
+        double pmax = rangeExtrema.getPercentChange(refY, visRange.getEnd());
+
+        rangeAxis.setVisibleRange(pmin, pmax);
       }
 
       rangeAxis.adjustVisibleRange(
@@ -136,6 +140,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
       rangeMin = Math.min(rangeMin, y);
       rangeMin = Math.min(rangeMin, pt.getRange0());
       rangeMax = Math.max(rangeMax, y);
+      rangeMax = Math.max(rangeMax, pt.getRange0());
     }
 
     return new Interval(rangeMin, rangeMax);
@@ -152,7 +157,6 @@ public class XYPlotRenderer<T extends Tuple2D> {
 //    if (dataSet.getNumSamples() < 2) {
 //      return;
 //    }
-    
 
     Focus focus = plot.getFocus();
     int focusSeries, focusPoint;
@@ -180,8 +184,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
     int[] passOrder = renderer.getPassOrder(dataSet);
     for (int pass : passOrder) {
-      renderState
-          .setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
+      renderState.setDisabled((focusSeries != -1) && (focusSeries != datasetIndex));
       renderState.setPassNumber(pass);
 
       Iterator<Tuple2D> tupleItr = currMipMap.getTupleIterator(domainStartIdx);
@@ -195,8 +198,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
             if (calcRangeAsPercent) {
               LocalTuple tmpTuple = new LocalTuple();
-              tmpTuple.setXY(dataPt.getDomain(),
-                  RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+              Interval rangeExtrema = dds.currMipMap.getRangeExtrema(pass);
+              double pctY = rangeExtrema.getPercentChange(refY, dataPt.getRange0());
+              tmpTuple.setXY(dataPt.getDomain(), pctY);
               dataPt = tmpTuple;
             }
             // FIXME: refactor to remove cast
@@ -218,8 +222,9 @@ public class XYPlotRenderer<T extends Tuple2D> {
 
           if (calcRangeAsPercent) {
             LocalTuple tmpTuple = new LocalTuple();
-            tmpTuple.setXY(dataPt.getDomain(),
-                RangeAxis.calcPrctDiff(refY, dataPt.getRange0()));
+            Interval rangeExtrema = dds.currMipMap.getRangeExtrema(pass);
+            double pctY = rangeExtrema.getPercentChange(refY, dataPt.getRange0());
+            tmpTuple.setXY(dataPt.getDomain(), pctY);
             dataPt = tmpTuple;
           }
           // FIXME: refactor to remove cast
@@ -283,11 +288,11 @@ public class XYPlotRenderer<T extends Tuple2D> {
           // dataPt object's state
           final double hoverX = dataPt.getDomain();
           final double hoverY = dataPt.getRange0();
-
+          Interval rangeExtrema = dds.currMipMap.getRangeExtrema(i);
           final double refY = calcReferenceY(rangeAxis, dds);
-
+          double pctY = rangeExtrema.getPercentChange(refY, hoverY);
           LocalTuple tmpTuple = new LocalTuple();
-          tmpTuple.setXY(hoverX, RangeAxis.calcPrctDiff(refY, hoverY));
+          tmpTuple.setXY(hoverX, pctY);
           dataPt = (T) (Object) tmpTuple;
         }
         dds.getRenderer().drawHoverPoint(layer, dataPt, i);
@@ -507,8 +512,7 @@ public class XYPlotRenderer<T extends Tuple2D> {
   }
 
   public double calcReferenceY(RangeAxis ra, DrawableDataset dds) {
-    final int refYIndex = ra.isAutoZoomVisibleRange() ? dds.visDomainStartIndex
-        : 0;
+    final int refYIndex = ra.isAutoZoomVisibleRange() ? dds.visDomainStartIndex : 0;
     return dds.getRenderer().getRange(dds.currMipMap.getTuple(refYIndex));
   }
 

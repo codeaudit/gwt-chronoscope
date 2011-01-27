@@ -55,6 +55,9 @@ public abstract class ValueAxis implements Exportable {
   /**
    * Gets the short label representing the units of this axis (m/s, $, etc)
    */
+
+  // TODO - export as axis.id rather than axis.getId() ?
+  @Export("getId")
   public String getAxisId() {
     return axisId;
   }
@@ -78,7 +81,7 @@ public abstract class ValueAxis implements Exportable {
    * Sets the short label representing this axis ($, m/s, etc)
    * @param axisId
    */
-  @Export
+  @Export("setId")
   public void setAxisId(String axisId) {
     //TODO: this needs to update DefaultXYPlot's internal maps
     this.axisId = axisId;

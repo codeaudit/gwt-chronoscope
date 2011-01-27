@@ -14,8 +14,7 @@ series.jenga { display: stacked-line }
 crosshair { visibility: visible; date-format: MM/yyyy; }
 
 </style>
-    <script type="text/javascript" src="js.nocache.js"></script>
-
+<script type="text/javascript" src="js.nocache.js"></script>
 <script type="text/javascript">
 var __datasets = [];
 
@@ -35,6 +34,7 @@ var third = {"id":"third","label":"third","partitionStrategy":"calendar","axis":
 __datasets.push(third);
 
 var chartPanel;
+var plot;
 
 function mutate() {
     var datasets = plot.getDatasets();
@@ -57,9 +57,11 @@ function onChronoscopeLoaded(chrono) {
   });
 }
 </script>
+<body>
     <button onClick="mutate();">Mutate</button>
     <button onClick="changeFormat();">Format</button>
     
     <div id="chart"></div>
     
 </body>
+</html>

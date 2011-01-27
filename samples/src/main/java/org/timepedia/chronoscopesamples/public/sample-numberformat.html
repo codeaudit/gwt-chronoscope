@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<style type="text/css">
+body, p, dl, dt, dd {
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 9pt;
+    font-weight: normal;
+}
+dt {
+  margin-top:1em;
+}
+sup {
+  font-size:75%;
+  vertical-align: .9ex;
+}
+
+
+table, th, td, input {
+  border-spacing: 0px;
+  border: 0;
+  text-align:left;
+  color: gray;
+  vertical-align:middle;
+}
+td, th {
+  border:1px 0 0 0 solid darkgray;
+}
+th {
+  font-size:9pt;
+  font-weight:bold;
+}
+tfoot, tfoot tr, tfoot td {
+    border:0px;
+}
+
+input[type=text] {
+  border: 1px solid gray;
+  width:120px;
+  height:14px;
+}
+
+</style>
+<style type="text/gss">
+
+point { line-thickness: 2px;  radius: 2px; }
+
+axislegend line { line-thickness: 8px;}
+
+series.s0 line { color: #0000ff; }
+series.s0 point { background-color:#0000ff; color: #0000cc; }
+
+series.s1 line { color: #ff0000; }
+series.s1 point { background-color:#ff0000; color: #cc0000; }
+
+series.s2 line { color: #00ff00; }
+series.s2 point { background-color:#00ff00; color: #00cc00; }
+
+series.s3 line { color: #aabbcc; }
+series.s3 point { background-color:#aabbcc; color: #778899; }
+
+series.s0, series.s1, series.s2, series.s3 { group: jenga; }
+
+crosshair { visibility: visible; }
+
+</style>
+<script type="text/javascript" src="numberformat.nocache.js"></script>
+<script type="text/javascript">
+    var plot;
+    var panel
+    var __datasets = [];
+
+    var bignums = {
+         "id":"bignums",
+         "axis":"sum",
+         "label":"flows",
+         "domainscale":1000,
+         "domain":[1288163040,1288163100,1288163160,1288163220,1288163280,1288163340,1288163400,1288163460,1288163520,1288163580,1288163640,1288163700,1288163760,1288163820,1288163880,1288163940,1288164000,1288164060,1288164120,1288164180,1288164240,1288164300,1288164360,1288164420,1288164480,1288164540,1288164600,1288164660,1288164720,1288164780,1288164840,1288164900,1288164960,1288165020,1288165080,1288165140,1288165200,1288165260,1288165320,1288165380,1288165440,1288165500,1288165560,1288165620,1288165680,1288165740,1288165800,1288165860,1288165920,1288165980,1288166040,1288166100,1288166160,1288166220,1288166280,1288166340,1288166400,1288166460,1288166520,1288166580,1288166640,1288166700,1288166760,1288166820,1288166880,1288166940,1288167000,1288167060,1288167120,1288167180,1288167240,1288167300,1288167360,1288167420,1288167480,1288167540,1288167600,1288167660,1288167720,1288167780,1288167840,1288167900,1288167960,1288168020,1288168080,1288168140,1288168200,1288168260,1288168320,1288168380,1288168440,1288168500,1288168560,1288168620,1288168680,1288168740,1288168800,1288168860,1288168920,1288168980,1288169040,1288169100,1288169160,1288169220,1288169280,1288169340,1288169400,1288169460,1288169520,1288169580,1288169640,1288169700,1288169760,1288169820,1288169880,1288169940,1288170000,1288170060,1288170120,1288170180,1288170240,1288170300,1288170360,1288170420,1288170480,1288170540,1288170600,1288170660,1288170720,1288170780,1288170840,1288170900,1288170960,1288171020,1288171080,1288171140,1288171200,1288171260,1288171320,1288171380,1288171440,1288171500,1288171560,1288171620,1288171680,1288171740,1288171800,1288171860,1288171920,1288171980,1288172040,1288172100,1288172160,1288172220,1288172280,1288172340,1288172400,1288172460,1288172520,1288172580,1288172640,1288172700,1288172760,1288172820,1288172880,1288172940,1288173000,1288173060,1288173120,1288173180,1288173240,1288173300,1288173360,1288173420,1288173480,1288173540,1288173600,1288173660,1288173720,1288173780,1288173840,1288173900,1288173960,1288174020,1288174080,1288174140,1288174200,1288174260,1288174320,1288174380,1288174440,1288174500,1288174560,1288174620,1288174680,1288174740,1288174800,1288174860,1288174920,1288174980,1288175040,1288175100,1288175160,1288175220,1288175280,1288175340,1288175400,1288175460,1288175520,1288175580,1288175640,1288175700,1288175760,1288175820,1288175880,1288175940,1288176000,1288176060,1288176120,1288176180,1288176240,1288176300,1288176360,1288176420,1288176480,1288176540,1288176600,1288176660,1288176720,1288176780,1288176840,1288176900,1288176960,1288177020,1288177080,1288177140,1288177200,1288177260,1288177320,1288177380,1288177440,1288177500,1288177560,1288177620,1288177680,1288177740,1288177800,1288177860,1288177920,1288177980,1288178040,1288178100,1288178160,1288178220,1288178280,1288178340,1288178400,1288178460,1288178520,1288178580,1288178640,1288178700,1288178760,1288178820,1288178880,1288178940,1288179000,1288179060,1288179120,1288179180,1288179240,1288179300,1288179360,1288179420,1288179480,1288179540,1288179600,1288179660,1288179720,1288179780,1288179840,1288179900,1288179960,1288180020,1288180080,1288180140,1288180200,1288180260,1288180320,1288180380,1288180440,1288180500,1288180560,1288180620,1288180680,1288180740,1288180800,1288180860,1288180920,1288180980,1288181040,1288181100,1288181160,1288181220,1288181280,1288181340,1288181400,1288181460,1288181520,1288181580,1288181640,1288181700,1288181760,1288181820,1288181880,1288181940,1288182000,1288182060,1288182120,1288182180,1288182240,1288182300,1288182360,1288182420,1288182480,1288182540,1288182600,1288182660,1288182720,1288182780,1288182840,1288182900,1288182960,1288183020,1288183080,1288183140,1288183200,1288183260,1288183320,1288183380,1288183440,1288183500,1288183560,1288183620,1288183680,1288183740,1288183800,1288183860,1288183920,1288183980,1288184040,1288184100,1288184160,1288184220,1288184280,1288184340,1288184400,1288184460,1288184520,1288184580,1288184640],
+         "range":[2.5381448E7,2.4564298E7,2.8527611E7,2.7940829E7,2.8766307E7,3.0027947E7,3.3227677E7,3.2134533E7,3.1089735E7,3.5336466E7,3.3681038E7,3.200989E7,2.9052378E7,2.7802591E7,3.0502758E7,3.1922697E7,2.6918582E7,2.6499307E7,2.2873507E7,2.456244E7,2.2124908E7,1.6853211E7,1.7555167E7,1.7851687E7,2.3224455E7,2.2871179E7,2.1561899E7,2.2666834E7,2.836486E7,2.7993685E7,2.9567039E7,3.1815777E7,2.8282922E7,3.482688E7,2.6092961E7,2.3041967E7,1.6986582E7,1.9998787E7,1.634853E7,1.6767016E7,2.0406496E7,2.0177041E7,1.9714224E7,1.8898358E7,2.1331046E7,1.8490242E7,1.664615E7,1.4279478E7,1.6924691E7,1.9126675E7,1.7493495E7,1.9748595E7,2.4827082E7,2.1877786E7,2.3831931E7,2.191301E7,2.1262192E7,2.6861093E7,3.3763346E7,1.9960774E7,3.5484915E7,2.8463836E7,2.1523137E7,2.4079812E7,2.281511E7,2.3006402E7,2.4727425E7,2.0044503E7,2.345191E7,2.1652959E7,2.2814271E7,2.4750489E7,2.9282948E7,2.1526966E7,2.2635577E7,2.3908059E7,2.0383044E7,2.0749842E7,1.8325921E7,2.1870208E7,2.8074795E7,3.5571451E7,2.3404122E7,2.6055925E7,2.6159639E7,2.2955257E7,1.7284988E7,1.8155737E7,1.7125433E7,1.5636006E7,1.8833477E7,2.5200443E7,2.1153606E7,2.1375607E7,2.9258685E7,3.6072869E7,2.8327966E7,2.4252086E7,2.1726751E7,2.1995748E7,2.869009E7,2.147756E7,2.4997981E7,2.4463746E7,2.4132569E7,2.9862092E7,3.4398745E7,3.8987252E7,3.2798819E7,3.2996441E7,3.6446699E7,2.7187486E7,1.6425092E7,1.7595436E7,1.7905083E7,1.8873114E7,3.6398004E7,2.6466832E7,2.4278026E7,3.1156421E7,3.1049417E7,2.6789571E7,2.1436453E7,2.6194838E7,2.3714552E7,2.2045022E7,1.7836334E7,1.8325084E7,1.6437541E7,1.7137926E7,1.9559702E7,3.1572564E7,2.0335851E7,2.1457794E7,2.5842522E7,2.9865037E7,2.818087E7,2.9078034E7,2.7488935E7,2.1138315E7,1.70635E7,2.1450947E7,1.7275767E7,1.7694155E7,1.7596593E7,2.0551718E7,2.1043266E7,2.1231598E7,2.2178074E7,2.2349082E7,2.8074303E7,2.2500738E7,1.9603666E7,2.5619873E7,2.3189196E7,1.8109641E7,2.2408248E7,2.1567797E7,2.2020235E7,2.3112355E7,2.0707338E7,2.2361996E7,1.8344655E7,2.6550328E7,1.805052E7,1.6467499E7,2.2308216E7,1.9664143E7,1.9920691E7,2.2027784E7,2.855589E7,2.4120477E7,1.9547166E7,1.7035769E7,1.6756964E7,1.94152E7,2.2170005E7,2.3568223E7,2.4106377E7,2.2147076E7,2.2077353E7,2.6206443E7,2.1504194E7,2.0200165E7,1.767543E7,1.8894053E7,2.1033142E7,2.1028098E7,1.8283137E7,2.0385601E7,2.4103782E7,2.0541391E7,1.9338398E7,1.9054118E7,2.1764401E7,2.0868649E7,1.8321863E7,1.8047412E7,2.8903871E7,2.2706931E7,1.7965435E7,1.8012502E7,2.1154729E7,2.0138623E7,1.8276945E7,1.704584E7,1.715655E7,2.1169223E7,2.0608739E7,2.1922432E7,2.2695026E7,2.3890442E7,2.3451783E7,2.2272529E7,2.6766502E7,2.2345505E7,2.7218479E7,2.788028E7,2.9582541E7,2.4707381E7,2.2510738E7,2.1145128E7,1.9100341E7,2.1608654E7,2.1309449E7,2.1111656E7,2.2224069E7,2.0063935E7,2.6218711E7,2.7797537E7,1.897208E7,2.2131581E7,4.5226636E7,2.5523798E7,2.9911774E7,2.6153523E7,2.7863809E7,2.8259446E7,2.8637918E7,2.7164714E7,2.537702E7,2.4648271E7,2.8610202E7,2.8172378E7,2.8939689E7,2.9871631E7,3.4128664E7,3.2217805E7,3.1093512E7,3.5367142E7,3.3645676E7,3.2090011E7,3.0151125E7,2.7955939E7,2.9651231E7,3.1923631E7,2.6840329E7,2.6674868E7,2.2962225E7,2.5888864E7,2.0665392E7,1.7724111E7,1.6998139E7,1.9314249E7,2.3145364E7,2.2870715E7,2.0243569E7,2.1185414E7,2.715479E7,2.799048E7,3.0781763E7,3.0676867E7,2.7070365E7,3.4706128E7,2.6164946E7,2.3129043E7,1.6217961E7,2.0798192E7,1.6929454E7,1.6761518E7,2.1470743E7,2.0166191E7,1.962908E7,1.8897109E7,2.1327337E7,1.7605814E7,1.672802E7,1.5334414E7,1.6914131E7,1.9953245E7,1.7493333E7,1.9749935E7,2.4661398E7,2.1796012E7,2.3833131E7,2.182866E7,2.1261143E7,2.6992139E7,3.3712707E7,1.9956491E7,3.4521579E7,2.7591867E7,2.0682215E7,2.3904793E7,2.2808788E7,2.3004818E7,2.4565708E7,2.0045413E7,2.4241769E7,2.1571353E7,2.2649831E7,2.4873708E7,2.9027236E7,2.151323E7,2.2718727E7,2.2961866E7,2.0461653E7,2.0748176E7,1.8573062E7,2.1777487E7,2.8935125E7,3.4697716E7,2.4685751E7,2.5186956E7,2.6073269E7,2.3031524E7,1.7206829E7,1.8239832E7,1.7206865E7,1.5479931E7,1.8999662E7,2.5200241E7,2.1155929E7,2.1537901E7,2.9292365E7,3.5996201E7,2.8327216E7,2.4501086E7,2.1646895E7,2.1995962E7,2.8687736E7,2.1397039E7,2.5152967E7,2.4463378E7,2.4212853E7,3.0812897E7,3.4239854E7,3.9008598E7,3.2798157E7,3.2916241E7,3.6452187E7,2.7180177E7,1.6431164E7,1.7468487E7,1.814436E7,1.8791202E7,3.5587759E7,2.6466852E7,2.4196366E7,0.0,0.0]
+        };
+     __datasets.push(bignums);
+
+    var dose = {
+         "id":"dose",
+         "axis":"mL",
+         "label":"dose",
+         "domainscale":1000,
+          "domain":[1288163040,1288165200,1288169400,1288175100,1288179960,
+                     1288180680,1288181100,1288183380,1288183800,1288184340],
+          "range": [-300, -200, -100, -50, 25,
+                      -75,  -25,   50, 100, 300]
+         }
+     __datasets.push(dose);
+
+    var smallnums = {
+        "id":"displacement",
+        "axis":"m",
+        "label":"displacement",
+        "domainscale":1000,
+        "domain":[1288163040,1288165200,1288169400,1288175100,1288179960,
+                   1288180680,1288181100,1288183380,1288183800,1288184340],
+        "range": [2.8766307E-9, -3.044402794E-7, 3.3227677E-7, -3.2134533E-9, 0.2323223E-8,
+                   3.1089735E-8, 3.533642266E-7, -0.1089735E-9, 0.2333333E-7, 5.4455555E-8]
+    }
+    __datasets.push(smallnums);
+
+
+
+    function onChronoscopeLoaded(chrono) {
+      // chrono.setAnimationPreview(false);
+      panel = chrono.createTimeseriesChartById("chart", __datasets, 467, 281,
+               function(view) {
+                   plot = view.getChart().getPlot();
+               });
+      inspectAxes();
+    }
+
+
+    function createCheckBox(cbid, handler) {
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.id = cbid;
+      cb.name = cbid;
+      cb.onclick = handler;
+      return cb;
+    }
+
+    function createTextInput(txid, handler) {
+      var tx = document.createElement("input");
+      tx.type = "text";
+      tx.id = txid;
+      tx.name = txid;
+      tx.onblur = handler;
+      return tx;
+    }
+
+
+
+
+    var fractions = {
+         "id":"fractions",
+         "axis":"grams",
+         "label":"grain weight",
+         "domainscale":1000,
+         "domain":[1288163220,1288163280,1288163340,1288163400,1288163460,1288163520,1288163580,1288163640,1288163700,1288163760,1288163820,1288163880,1288163940,1288164000,1288164060,1288164120,1288164180,1288164240,1288164300,1288164360,1288164420,1288164480,1288164540,1288164600,1288164660,1288164720,1288164780,1288164840,1288164900,1288164960,1288165020,1288165080,1288165140,1288165200,1288165260,1288165320,1288165380,1288165440,1288165500,1288165560,1288165620,1288165680,1288165740,1288165800,1288165860,1288165920,1288165980,1288166040,1288166100,1288166160,1288166220,1288166280,1288166340,1288166400,1288166460,1288166520,1288166580,1288166640,1288166700,1288166760,1288166820,1288166880,1288166940,1288167000,1288167060,1288167120,1288167180,1288167240,1288167300,1288167360,1288167420,1288167480,1288167540,1288167600,1288167660,1288167720,1288167780,1288167840,1288167900,1288167960,1288168020,1288168080,1288168140,1288168200,1288168260,1288168320,1288168380,1288168440,1288168500,1288168560,1288168620,1288168680,1288168740,1288168800,1288168860,1288168920,1288168980,1288169040,1288169100,1288169160,1288169220,1288169280,1288169340,1288169400,1288169460,1288169520,1288169580,1288169640,1288169700,1288169760,1288169820,1288169880,1288169940,1288170000,1288170060,1288170120,1288170180,1288170240,1288170300,1288170360,1288170420,1288170480,1288170540,1288170600,1288170660,1288170720,1288170780,1288170840,1288170900,1288170960,1288171020,1288171080,1288171140,1288171200,1288171260,1288171320,1288171380,1288171440,1288171500,1288171560,1288171620,1288171680,1288171740,1288171800,1288171860,1288171920,1288171980,1288172040,1288172100,1288172160,1288172220,1288172280,1288172340,1288172400,1288172460,1288172520,1288172580,1288172640,1288172700,1288172760,1288172820,1288172880,1288172940,1288173000,1288173060,1288173120,1288173180,1288173240,1288173300,1288173360,1288173420,1288173480,1288173540,1288173600,1288173660,1288173720,1288173780,1288173840,1288173900,1288173960,1288174020,1288174080,1288174140,1288174200,1288174260,1288174320,1288174380,1288174440,1288174500,1288174560,1288174620,1288174680,1288174740,1288174800,1288174860,1288174920,1288174980,1288175040,1288175100,1288175160,1288175220,1288175280,1288175340,1288175400,1288175460,1288175520,1288175580,1288175640,1288175700,1288175760,1288175820,1288175880,1288175940,1288176000,1288176060,1288176120,1288176180,1288176240,1288176300,1288176360,1288176420,1288176480,1288176540,1288176600,1288176660,1288176720,1288176780,1288176840,1288176900,1288176960,1288177020,1288177080,1288177140,1288177200,1288177260,1288177320,1288177380,1288177440,1288177500,1288177560,1288177620,1288177680,1288177740,1288177800,1288177860,1288177920,1288177980,1288178040,1288178100,1288178160,1288178220,1288178280,1288178340,1288178400,1288178460,1288178520,1288178580,1288178640,1288178700,1288178760,1288178820,1288178880,1288178940,1288179000,1288179060,1288179120,1288179180,1288179240,1288179300,1288179360,1288179420,1288179480,1288179540,1288179600,1288179660,1288179720,1288179780,1288179840,1288179900,1288179960,1288180020,1288180080,1288180140,1288180200,1288180260,1288180320,1288180380,1288180440,1288180500,1288180560,1288180620,1288180680,1288180740,1288180800,1288180860,1288180920,1288180980,1288181040,1288181100,1288181160,1288181220,1288181280,1288181340,1288181400,1288181460,1288181520,1288181580,1288181640,1288181700,1288181760,1288181820,1288181880,1288181940,1288182000,1288182060,1288182120,1288182180,1288182240,1288182300,1288182360,1288182420,1288182480,1288182540,1288182600,1288182660,1288182720,1288182780,1288182840,1288182900,1288182960,1288183020,1288183080,1288183140,1288183200,1288183260,1288183320,1288183380,1288183440,1288183500,1288183560,1288183620,1288183680,1288183740,1288183800,1288183860,1288183920,1288183980,1288184040,1288184100],
+         "range":[1.708333329E-10,2.8766307E-9,3.0027947E-7,3.3227677E-7,3.2134533E-9,3.1089735E-8,3.5336466E-7,3.3681038E-9,3.200989E-7,2.9052378E-7,2.7802591E-7,3.0502758E-9,3.1922697E-9,2.6918582E-9,2.6499307E-9,2.2873507E-9,2.456244E-9,2.2124908E-9,1.6853211E-9,1.7555167E-9,1.7851687E-9,2.3224455E-9,2.2871179E-9,2.1561899E-9,2.2666834E-9,2.836486E-9,2.7993685E-9,2.9567039E-9,3.1815777E-9,2.8282922E-9,3.482688E-9,2.6092961E-9,2.3041967E-9,1.6986582E-9,1.9998787E-9,1.634853E-9,1.6767016E-9,2.0406496E-9,2.0177041E-9,1.9714224E-9,1.8898358E-9,2.1331046E-9,1.8490242E-9,1.664615E-9,1.4279478E-9,1.6924691E-9,1.9126675E-9,1.7493495E-9,1.9748595E-9,2.4827082E-9,2.1877786E-9,2.3831931E-9,2.191301E-9,2.1262192E-9,2.6861093E-9,3.3763346E-9,1.9960774E-9,3.5484915E-9,2.8463836E-9,2.1523137E-9,2.4079812E-9,2.281511E-9,2.3006402E-9,2.4727425E-9,2.0044503E-9,2.345191E-9,2.1652959E-9,2.2814271E-9,2.4750489E-9,2.9282948E-9,2.1526966E-9,2.2635577E-9,2.3908059E-9,2.0383044E-9,2.0749842E-9,1.8325921E-9,2.1870208E-9,2.8074795E-9,3.5571451E-9,2.3404122E-9,2.6055925E-9,2.6159639E-9,2.2955257E-9,1.7284988E-9,1.8155737E-9,1.7125433E-9,1.5636006E-9,1.8833477E-9,2.5200443E-9,2.1153606E-9,2.1375607E-9,2.9258685E-9,3.6072869E-9,2.8327966E-9,2.4252086E-9,2.1726751E-9,2.1995748E-9,2.869009E-9,2.147756E-9,2.4997981E-9,2.4463746E-9,2.4132569E-9,2.9862092E-9,3.4398745E-9,3.8987252E-9,3.2798819E-9,3.2996441E-9,3.6446699E-9,2.7187486E-9,1.6425092E-9,1.7595436E-9,1.7905083E-9,1.8873114E-9,3.6398004E-9,2.6466832E-9,2.4278026E-9,3.1156421E-9,3.1049417E-9,2.6789571E-9,2.1436453E-9,2.6194838E-9,2.3714552E-9,2.2045022E-9,1.7836334E-9,1.8325084E-9,1.6437541E-9,1.7137926E-9,1.9559702E-9,3.1572564E-9,2.0335851E-9,2.1457794E-9,2.5842522E-9,2.9865037E-9,2.818087E-9,2.9078034E-9,2.7488935E-9,2.1138315E-9,1.70635E-9,2.1450947E-9,1.7275767E-9,1.7694155E-9,1.7596593E-9,2.0551718E-9,2.1043266E-9,2.1231598E-9,2.2178074E-9,2.2349082E-9,2.8074303E-9,2.2500738E-9,1.9603666E-9,2.5619873E-9,2.3189196E-9,1.8109641E-9,2.2408248E-9,2.1567797E-9,2.2020235E-9,2.3112355E-9,2.0707338E-9,2.2361996E-9,1.8344655E-9,2.6550328E-9,1.805052E-9,1.6467499E-9,2.2308216E-9,1.9664143E-9,1.9920691E-9,2.2027784E-9,2.855589E-9,2.4120477E-9,1.9547166E-9,1.7035769E-9,1.6756964E-9,1.94152E-9,2.2170005E-9,2.3568223E-9,2.4106377E-9,2.2147076E-9,2.2077353E-9,2.6206443E-9,2.1504194E-9,2.0200165E-9,1.767543E-9,1.8894053E-9,2.1033142E-9,2.1028098E-9,1.8283137E-9,2.0385601E-9,2.4103782E-9,2.0541391E-9,1.9338398E-9,1.9054118E-9,2.1764401E-9,2.0868649E-9,1.8321863E-9,1.8047412E-9,2.8903871E-9,2.2706931E-9,1.7965435E-9,1.8012502E-9,2.1154729E-9,2.0138623E-9,1.8276945E-9,1.704584E-9,1.715655E-9,2.1169223E-9,2.0608739E-9,2.1922432E-9,2.2695026E-9,2.3890442E-9,2.3451783E-9,2.2272529E-9,2.6766502E-9,2.2345505E-9,2.7218479E-9,2.788028E-9,2.9582541E-9,2.4707381E-9,2.2510738E-9,2.1145128E-9,1.9100341E-9,2.1608654E-9,2.1309449E-9,2.1111656E-9,2.2224069E-9,2.0063935E-9,2.6218711E-9,2.7797537E-9,1.897208E-9,2.2131581E-9,4.5226636E-9,2.5523798E-9,2.9911774E-9,2.6153523E-9,2.7863809E-9,2.8259446E-9,2.8637918E-9,2.7164714E-9,2.537702E-9,2.4648271E-9,2.8610202E-9,2.8172378E-9,2.8939689E-9,2.9871631E-9,3.4128664E-9,3.2217805E-9,3.1093512E-9,3.5367142E-9,3.3645676E-9,3.2090011E-9,3.0151125E-9,2.7955939E-9,2.9651231E-9,3.1923631E-9,2.6840329E-9,2.6674868E-9,2.2962225E-9,2.5888864E-9,2.0665392E-9,1.7724111E-9,1.6998139E-9,1.9314249E-9,2.3145364E-9,2.2870715E-9,2.0243569E-9,2.1185414E-9,2.715479E-9,2.799048E-9,3.0781763E-9,3.0676867E-9,2.7070365E-9,3.4706128E-9,2.6164946E-9,2.3129043E-9,1.6217961E-9,2.0798192E-8,1.6929454E-8,1.6761518E-8,2.1470743E-8,2.0166191E-8,1.962908E-8,1.8897109E-8,2.1327337E-8,1.7605814E-8,1.672802E-8,1.5334414E-8,1.6914131E-8,1.9953245E-8,1.7493333E-8,1.9749935E-8,2.4661398E-8,2.1796012E-8,2.3833131E-8,2.182866E-8,2.1261143E-8,2.6992139E-8,3.3712707E-8,1.9956491E-8,3.4521579E-8,2.7591867E-9,2.0682215E-9,2.3904793E-9,2.2808788E-9,2.3004818E-9,2.4565708E-9,2.0045413E-9,2.4241769E-9,2.1571353E-9,2.2649831E-9,2.4873708E-8,2.9027236E-8,2.151323E-9,2.2718727E-9,2.2961866E-8,2.0461653E-8,2.0748176E-8,1.8573062E-8,2.1777487E-8,2.8935125E-8,3.4697716E-8,2.4685751E-8,2.5186956E-8,2.6073269E-8,2.3031524E-8,1.7206829E-10,1.8239832E-9,1.7206865E-9,1.5479931E-9,1.8999662E-9,2.5200241E-9,2.1155929E-9,2.1537901E-9,2.9292365E-8,3.5996201E-9,2.8327216E-8,2.4501086E-8,2.1646895E-7,2.1995962E-7,2.8687736E-7,2.1397039E-7,2.5152967E-8,2.4463378E-9,2.4212853E-9,3.0812897E-8,3.4239854E-9,3.9008598E-8,3.2798157E-8,3.2916241E-8,3.6452187E-8,2.7180177E-8,1.6431164E-9,1.7468487E-9]
+        };
+     __datasets.push(fractions);
+
+
+    var dose = {
+         "id":"dose",
+         "axis":"mL",
+         "label":"dose",
+         "domainscale":1000,
+         "domain":  [1288155555,1288165567,1288165699,1288165860,1288166460,1288166700,1288166820,1288166940,1288168020,1288168200,
+                    1288168320,1288168560,1288168800,1288169580,1288169820,1288170060,1288170300,1288171440,1288171680,1288171740,
+                    1288172040,1288172220,1288173300,1288173540,1288173780,1288174020,1288175760,1288176000,1288176060,1288176120,
+                    1288176360,1288176600,1288177500,1288178760,1288179360,1288179999,1288180199,1288181772,1288181898,1288182120,
+                    1288182180,1288182240,1288182300,1288182360,1288182420,1288182540,1288182600,1288183020,1288184040,1288888880],
+          "range":[-300, -200, -100, -50, 25, 5, 1, 0, 1, 5,
+                      10, 50, 25, 100, -200, -100, 150, 200, 300, 250,
+                    225, 188.23, 44, 234, 249, 250, 000, -1, -22.222, 99,
+                    -45, -90, -180, -100, -200, -250, -50, -25, -75, -100,
+                    -200, -300, -200, -100, 100, 200, 300, 222, 111, 22]
+         }
+     __datasets.push(dose);
+
+
+                // plot.setAutoZoomVisibleRange(true);
+                // plot.getAxis(0).setAutoZoomVisibleRange(true);
+                // plot.getRangeAxis("height").setAutoZoomVisibleRange(true);
+
+
+    function inspectAxes() {
+      var tbody = document.getElementById("numberformats-tbody");
+
+      for (var i=0; i <  plot.getRangeAxisCount(); i++) {
+        var tr, td, label, cb, tx;
+
+        var axis = plot.getAxis(i);
+        var units = axis.getId();
+
+        tr = tbody.insertRow(tbody.rows.length);
+
+        td = tr.insertCell(tr.cells.length);
+        td.appendChild(document.createTextNode(i));
+
+        td = tr.insertCell(tr.cells.length);
+        td.appendChild(document.createTextNode(units));
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        tx = createTextInput(units+"-numberformat", function(e) {
+              var axid = (e.srcElement||e.target).id.split('-')[0];
+              var ax = plot.getRangeAxis(axid);
+              ax.setTickNumberFormat((e.srcElement||e.target).value);
+              update(ax);
+            });
+        // label.appendChild(document.createTextNode("numberformat"));
+        label.appendChild(tx);
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        tx = createTextInput(units+"-scale",  function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setScale((e.srcElement||e.target).value);
+            update(ax);
+          });
+        // label.appendChild(document.createTextNode("scale"));
+        label.appendChild(tx);
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-percentage",  function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setCalcRangeAsPercent(!ax.isCalcRangeAsPercent());
+            update(ax); });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("%"));
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-autoscale", function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setAllowAutoScale(!ax.isAllowAutoScale());
+            update(ax);
+          });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("auto scale"));
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-autozoom", function(e) {
+             var axid = (e.srcElement||e.target).id.split('-')[0];
+             var ax = plot.getRangeAxis(axid);
+             ax.setAutoZoomVisibleRange(!ax.isAutoZoomVisibleRange());
+             update(ax);
+           });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("zoom visible range"));
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-scale-si", function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setScaleSI(!ax.isScaleSI());
+            update(ax);
+          });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("SI scaling"));
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-allow-scientific", function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setAllowScientificNotation(!ax.isAllowScientificNotation());
+            update(ax);
+          });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("allow scientific"));
+
+
+        td = tr.insertCell(tr.cells.length);
+        label = document.createElement("label");
+        td.appendChild(label);
+        cb = createCheckBox(units+"-force-scientific", function(e) {
+            var axid = (e.srcElement||e.target).id.split('-')[0];
+            var ax = plot.getRangeAxis(axid);
+            ax.setForceScientificNotation(!ax.isForceScientificNotation());
+            update(ax);
+          });
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode("force scientific"));
+
+        update(axis);
+    }
+  }
+
+  function update(axis) {
+    var units = axis.getId();
+
+    document.getElementById(units+"-percentage").checked = axis.isCalcRangeAsPercent();
+
+    document.getElementById(units+"-scale").value = axis.getScale();
+    document.getElementById(units+"-autoscale").checked = axis.isAllowAutoScale();
+    document.getElementById(units+"-autozoom").checked = axis.isAutoZoomVisibleRange();
+    document.getElementById(units+"-scale-si").checked = axis.isScaleSI();
+
+    document.getElementById(units+"-allow-scientific").checked = axis.isAllowScientificNotation();
+    document.getElementById(units+"-force-scientific").checked = axis.isForceScientificNotation();
+
+    document.getElementById(units+"-numberformat").value = axis.getTickNumberFormat();
+
+    plot.damageAxes();
+    plot.redraw();
+  }
+
+
+</script>
+</head>
+<body>
+<form>
+<table id="numberformats-table">
+  <thead>
+     <tr>
+        <th>axis</th><th>units</th><th>numberformat</th><th>scale</th><th colspan="5">options</th><!-- th colspan="2">scientific</th><th>numberformat</th -->
+     </tr>
+  </thead>
+  <tfoot><tr></tr></tfoot>
+  <tbody id="numberformats-tbody">
+
+  </tbody>
+</table></form>
+
+
+<div id="chart"></div>
+
+
+
+<h3>Range Axis Tick Label Options</h3>
+
+<dl>
+    <dt>scale</dt>
+    <dd>Scaling factor for tick axis labels; defaults to 1 (no scaling) if NaN</dd>
+
+
+    <dt>scaleSI</dt>
+    <dd>Engineering-stye factor of 10<super>3</super> and render scaled labels with SI symbol suffix.  E.g. 45,000,000: 45M and 98,000: 98k</dd>
+
+    <dt>isAutoScale</dt>
+    <dd>Numbers wider than 4 digits wide will by default scaleSI</dd>
+
+
+    <dt>isForceScientificNotation</dt>
+    <dd>Use "E" or Exponential style scientific notation; eg 45,000,000: 45 E6 and 98,000: 98 E3 </dd>
+
+    <dt>isAllowScientificNotation</dt>
+    <dd>Numbers wider than 4 digits wide will scaleScientific</dd>
+</dl>
+
+
+<h3>Numberformat Patterns</h3>
+ <p>
+ Formatting and parsing are based on customizable patterns that can include a
+ combination of literal characters and special characters that act as
+ placeholders and are replaced by their localized counterparts. Many
+ characters in a pattern are taken literally; they are matched during parsing
+ and output unchanged during formatting. Special characters, on the other
+ hand, stand for other characters, strings, or classes of characters. For
+ example, the '<code>#</code>' character is replaced by a localized digit.
+ </p>
+
+ <p>
+ Often the replacement character is the same as the pattern character. In the
+ U.S. locale, for example, the '<code>,</code>' grouping character is
+ replaced by the same character '<code>,</code>'. However, the replacement
+ is still actually happening, and in a different locale, the grouping
+ character may change to a different character, such as '<code>.</code>'.
+ Some special characters affect the behavior of the formatter by their
+ presence. For example, if the percent character is seen, then the value is
+ multiplied by 100 before being displayed.
+ </p>
+
+ <p>
+ The characters listed below are used in patterns. Localized symbols use the
+ corresponding characters taken from corresponding locale symbol collection,
+ which can be found in the properties files residing in the
+ <code><nobr>com.google.gwt.i18n.client.constants</nobr></code>. To insert
+ a special character in a pattern as a literal (that is, without any special
+ meaning) the character must be quoted. There are some exceptions to this
+ which are noted below.
+ </p>
+
+ <table>
+ <tr>
+ <th>Symbol</th>
+ <th>Location</th>
+ <th>Localized?</th>
+ <th>Meaning</th>
+
+ </tr>
+
+ <tr>
+ <td><code>0</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Digit</td>
+
+ </tr>
+
+ <tr>
+ <td><code>#</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Digit, zero shows as absent</td>
+
+ </tr>
+
+ <tr>
+ <td><code>.</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Decimal separator or monetary decimal separator</td>
+
+ </tr>
+
+ <tr>
+ <td><code>-</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Minus sign</td>
+
+ </tr>
+
+ <tr>
+ <td><code>,</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Grouping separator</td>
+
+ </tr>
+
+ <tr>
+ <td><code>E</code></td>
+ <td>Number</td>
+ <td>Yes</td>
+ <td>Separates mantissa and exponent in scientific notation; need not be
+ quoted in prefix or suffix</td>
+
+ </tr>
+
+ <tr>
+ <td><code>;</code></td>
+ <td>Subpattern boundary</td>
+ <td>Yes</td>
+ <td>Separates positive and negative subpatterns</td>
+
+ </tr>
+
+ <tr>
+ <td><code>%</code></td>
+ <td>Prefix or suffix</td>
+ <td>Yes</td>
+ <td>Multiply by 100 and show as percentage</td>
+
+ </tr>
+
+
+ <tr>
+ <td><code>'</code></td>
+ <td>Prefix or suffix</td>
+ <td>No</td>
+ <td>Used to quote special characters in a prefix or suffix; for example,
+ <code>"'#'#"</code> formats <code>123</code> to <code>"#123"</code>;
+ to create a single quote itself, use two in succession, such as
+ <code>"# o''clock"</code></td>
+
+ </tr>
+
+ </table>
+
+ <p>
+ A <code>NumberFormat</code> pattern contains a postive and negative
+ subpattern separated by a semicolon, such as
+ <code>"#,##0.00;(#,##0.00)"</code>. Each subpattern has a prefix, a
+ numeric part, and a suffix. If there is no explicit negative subpattern, the
+ negative subpattern is the localized minus sign prefixed to the positive
+ subpattern. That is, <code>"0.00"</code> alone is equivalent to
+ <code>"0.00;-0.00"</code>. If there is an explicit negative subpattern, it
+ serves only to specify the negative prefix and suffix; the number of digits,
+ minimal digits, and other characteristics are ignored in the negative
+ subpattern. That means that <code>"#,##0.0#;(#)"</code> has precisely the
+ same result as <code>"#,##0.0#;(#,##0.0#)"</code>.
+ </p>
+
+ <p>
+ The prefixes, suffixes, and various symbols used for infinity, digits,
+ thousands separators, decimal separators, etc. may be set to arbitrary
+ values, and they will appear properly during formatting. However, care must
+ be taken that the symbols and strings do not conflict, or parsing will be
+ unreliable. For example, the decimal separator and thousands separator should
+ be distinct characters, or parsing will be impossible.
+ </p>
+
+ <p>
+ The grouping separator is a character that separates clusters of integer
+ digits to make large numbers more legible. It commonly used for thousands,
+ but in some locales it separates ten-thousands. The grouping size is the
+ number of digits between the grouping separators, such as 3 for "100,000,000"
+ or 4 for "1 0000 0000".
+ </p>
+
+
+</body>
+</html>
+
+
+
+

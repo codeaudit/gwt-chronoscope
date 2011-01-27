@@ -139,7 +139,22 @@ public class Interval implements Exportable {
       return start + (ratio * (end - start));
     }
   }
-  
+
+  /**
+   * Returns a value in the range [-1..1] representing the percent change
+   * between a reference point and a delta point on this interval.  For example,
+   * if interval i is [10, 20], then <tt>i.getPercentChange(15,10)</tt>
+   * would return <tt>-0.5</tt>.
+   */
+  public double getPercentChange(double ref, double delta) {
+    if (end == start) {
+      return 0.0;
+    }
+    else {
+      return ((delta - start) - (ref - start)) / (end - start);
+    }
+  }
+
   /**
    * The value of the ending point of this interval.
    */
@@ -176,7 +191,7 @@ public class Interval implements Exportable {
    */
   @Export
   public double length() {
-    return end - start;
+    return Math.abs(end - start);
   }
 
   /**
