@@ -37,12 +37,12 @@ It is packaged in a library ready to use in any Gwt application. This document d
  * We'll use a json file for the [Datasets dataset], so put it in your `war/` foder and make sure it should be in the format: 
 {{{
   dataset = {
-    "id": "unrate",                                         // Unique id for this dataset
-    "domainscale": 1000,                                    // Scale
-    "domain": [-694306739,-691628339,-689122739,-686444339], // UTC time in milliseconds
-    "range":  [3.4, 3.8, 4.0, 3.9,],                        // Values
-    "label":  "Unemployment",                               // Dataset label
-    "axis":   "percent"                                     // Chart unit
+    "id": "unrate",                                           // Unique id for this dataset
+    "domainscale": 1000,                                      // Scale
+    "domain": [-694306739,-691628339,-689122739,-686444339],  // UTC time in milliseconds
+    "range":  [3.4, 3.8, 4.0, 3.9,],                          // Values
+    "label":  "Unemployment",                                 // Dataset label
+    "axis":   "percent"                                       // Chart unit
   }
 }}}
 
