@@ -104,29 +104,6 @@ public class HelloChart implements EntryPoint {
 }
 }}}
 
-= Configuring the !FontRendered servlet =
-Chronoscope cames with a servlet able to serve rotated fonts to be displayed in your chart Y axis.
-To enable it you have to put these lines in your `web.xml` file:
-Note: this method is obsolete and deprecated in current browsers (most now support text rotation).
-{{{
-<web-app>
-  <servlet>
-    <servlet-name>fr</servlet-name>
-    <servlet-class>org.timepedia.chronoscope.server.servlet.FontRenderer</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>fr</servlet-name>
-    <url-pattern>/hellochart/fr</url-pattern>
-  </servlet-mapping>
-</web-app>
-}}}
-
-Nevertheless you could also use the font service deployed in the timipedia.org site:
-{{{
-Chronoscope.setFontBookServiceEndpoint("http://api.timepedia.org/fr");
-}}}
-
 
 = Exporting the Chronoscope Javascript API = 
 You could use the Chronoscope API from native javascript in your pages simply exporting it during the compilation of your application.
