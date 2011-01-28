@@ -48,7 +48,7 @@ It is packaged in a library ready to use in any Gwt application. This document d
 
  * Modify the index.html `webAppCreator` made, and add a script tag to load the data:
 {{{
-  <script language='javascript' src='dataset.js'></script>
+  <script type='text/javascript' src='dataset.js'></script>
 }}}
 
 = Use chronoscope in your javacode = 
