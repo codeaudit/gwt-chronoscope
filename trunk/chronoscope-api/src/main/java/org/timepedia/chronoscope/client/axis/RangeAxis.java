@@ -150,7 +150,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
 
 
-    int numTicks = (int) (axisHeight/(1.75 * tickLabelHeight));
+    int numTicks = (int) (axisHeight/(2.0 * tickLabelHeight));
     numTicks = MAX_TICKS < numTicks ? MAX_TICKS : numTicks;
     // if values straddle zero, try to make zero one of the ticks
     boolean spansZero = !zeroish(lrangeHigh) && !zeroish(lrangeLow) && (lrangeHigh * lrangeLow < 0);
@@ -158,16 +158,18 @@ public class RangeAxis extends ValueAxis implements Exportable {
     double larger = Math.max(lrangeLow, lrangeHigh);
     // int ticksInSmaller = (int)(numTicks * (range-larger)/range);
     // double roughInterval = spansZero ? range/(numTicks - 2): range/(numTicks - 2);
-    double roughInterval = spansZero? larger/(numTicks - 3) : range/(numTicks - 2);
-    final int logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
-    final double exponent = Math.pow(10, logRange);
+    // double roughInterval = spansZero? larger/(numTicks - 3) : range/(numTicks - 2);
+
+    double roughInterval = range / (1.0 * (numTicks - 1));
+
+    int logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
+    double exponent = Math.pow(10, logRange);
     int smoothSigDigits = (int) (roughInterval / exponent);
     smoothSigDigits = smoothSigDigits % 5 == 0 ? smoothSigDigits : smoothSigDigits - (int) MathUtil.mod(smoothSigDigits, 5.0);
     double smoothInterval = smoothSigDigits * exponent;
-    double roundedStart = lrangeLow - MathUtil.mod(lrangeLow, 5.0 * exponent);
-    double axisStart = forceLowestTick ? lrangeLow : roundedStart;
     double epsilon = smoothInterval/2.0;
-    double edge;
+    double edge = larger % smoothInterval;
+      /*
     if (forceHighestTick) {
       if (spansZero) {
         // back off if crowded
@@ -175,7 +177,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
         if (!zeroish(edge) && (epsilon > edge)) {
             // numTicks = numTicks > 3 ? numTicks - 1 : numTicks + 1;
             numTicks = numTicks > 5 ? numTicks - 2 : numTicks++;
-            roughInterval = (range/(numTicks-1));
+            roughInterval = range/(numTicks-1);
+            numTicks = (int) (range / roughInterval) + 1;
+
+            logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
+            exponent = Math.pow(10, logRange);
+            roughInterval = range/(numTicks -1);
             smoothSigDigits = (int) (roughInterval / exponent);
             smoothInterval = smoothSigDigits * exponent;
         }
@@ -184,18 +191,41 @@ public class RangeAxis extends ValueAxis implements Exportable {
         edge = lrangeHigh % smoothInterval;
         if (!zeroish(edge) && (epsilon > edge)) {
             // numTicks = numTicks > 2 ? numTicks - 1 : numTicks + 1;
-            numTicks--;
-            roughInterval = range/(numTicks - 2);
+            // numTicks--;
+            roughInterval = range/(numTicks - 1);
+            numTicks = (int) (range/roughInterval) + 1;
+
+            logRange = ((int) Math.floor(Math.log10(roughInterval))) - 1;
+            exponent = Math.pow(10, logRange);
+            roughInterval = range/(numTicks-1);
             smoothSigDigits = (int) (roughInterval / exponent);
             smoothInterval = smoothSigDigits * exponent;
         }
       }
-    }
+    } */
 
     tickLabelSigDig = String.valueOf(smoothSigDigits*numTicks).length();
+    // double roundedStart = lrangeLow - MathUtil.mod(lrangeLow, 5.0 * exponent);
+    double roundedStart = lrangeLow < 0 ? Math.ceil(-lrangeLow/smoothInterval) * smoothInterval :
+            Math.floor(lrangeLow/smoothInterval) * smoothInterval;
+    double tickValue = forceLowestTick ? lrangeLow : roundedStart;
+
+    if (spansZero) {
+      int posTicks = numTicks - (int)Math.floor(-tickValue/smoothInterval);
+      double delta = lrangeHigh - posTicks*smoothInterval;
+      if (delta > epsilon) {
+        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
+      }
+    } else {
+      double delta = lrangeHigh - numTicks*smoothInterval - tickValue;
+      if (delta > epsilon) {
+        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
+      }
+    }
+
     double tickPositions[] = new double[numTicks];
-    double tickValue = axisStart;
-    tickPositions[0] = axisStart;
+
+    tickPositions[0] = tickValue;
     for (int i = 1; i < tickPositions.length; i++) {
       if (tickValue < 0) {
          int negIntervals = (int) ((Math.abs(tickValue)-epsilon)/smoothInterval);
