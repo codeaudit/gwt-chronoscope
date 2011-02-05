@@ -44,7 +44,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private static final String SIposPrefix[] = {"", "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta"};
 
     //  private static final String SInegSymbol[] = {"", "m", "mu", "n", "p", "f", "a", "z", "y"};
-  private static final String SInegSymbol[] = {"", "m", 0x03BC, "n", "p", "f", "a", "z", "y"};
+  private static final String SInegSymbol[] = {"", "m", "0x03BC", "n", "p", "f", "a", "z", "y"};
   private static final String SInegPrefix[] =  {"", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yocto"};
 
   private class DefaultTickLabelNumberFormatter implements TickLabelNumberFormatter {
