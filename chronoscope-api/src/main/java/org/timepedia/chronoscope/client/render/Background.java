@@ -8,6 +8,5 @@ import org.timepedia.chronoscope.client.canvas.Layer;
  */
 public interface Background {
 
-  void paint(XYPlot plot, Layer layer, double domainOrigin,
-      double currentDomain);
+  void paint(XYPlot plot, Layer layer, double domainOrigin, double currentDomain);
 }

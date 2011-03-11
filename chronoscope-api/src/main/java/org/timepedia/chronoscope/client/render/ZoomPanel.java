@@ -33,9 +33,20 @@ public class ZoomPanel extends AbstractPanel implements
   private boolean compactMode = false;
   private boolean isMetricsComputed = false;
   private boolean doShow = true;
-  
+
   public ZoomPanel() {
     this.listeners = new ArrayList<ZoomListener>();
+  }
+
+  public void dispose() {
+    super.dispose();
+    listeners.clear();
+    listeners = null;
+    zooms = null;
+  }
+
+  public void remove(Panel panel) {
+    return; // no sub panels
   }
 
   public String getType() {
@@ -51,23 +62,27 @@ public class ZoomPanel extends AbstractPanel implements
   }
 
   public void init() {
-    bounds.height = stringSizer.getHeight("X", gssProperties);
-    
+    bounds.height = StringSizer.getHeight(layer, "X", gssProperties);
     // Store the short and long versions of the following strings
     // so that during layout, the container can choose the best fit.
     spaceShort = new UIString("", 2);
-    spaceLong = new UIString("", stringSizer.getWidth(SPACE, gssProperties) + 1);
+    spaceLong = new UIString("", StringSizer.getWidth(layer, SPACE, gssProperties) + 1);
     zoomPrefixShort = new UIString("", 0);
-    zoomPrefixLong = new UIString(ZOOM_PREFIX, stringSizer.getWidth(ZOOM_PREFIX, gssProperties));
-    
+    zoomPrefixLong = new UIString(ZOOM_PREFIX, StringSizer.getWidth(layer, ZOOM_PREFIX, gssProperties));
+
+
+    layer.save();
+
     computeMetrics();
-    
+
     if (compactMode) {
       resizeToMinimalWidth();
     }
     else {
       resizeToIdealWidth();
     }
+
+    layer.restore();
   }
 
   public ZoomIntervals getZoomIntervals() {
@@ -103,7 +118,8 @@ public class ZoomPanel extends AbstractPanel implements
     if (!doShow) {
       return;
     }
-    
+    layer.save();
+
     layer.setStrokeColor(gssProperties.color);
 
     if (!isMetricsComputed) {
@@ -120,6 +136,8 @@ public class ZoomPanel extends AbstractPanel implements
       drawZoomLink(layer, xCursor, bounds.height, zoom.getName(), true);
       xCursor += zoomLinkWidths[i++] + space.pixelWidth;
     }
+
+    layer.restore();
   }
 
   public void show(boolean b) {
@@ -137,7 +155,7 @@ public class ZoomPanel extends AbstractPanel implements
     int i = 0;
     for (ZoomInterval zoom : zooms) {
       //fullZoomStringWidth += space.pixelWidth;
-      int w = stringSizer.getWidth(zoom.getName(), gssProperties);
+      int w = StringSizer.getWidth(layer, zoom.getName(), gssProperties);
       zoomLinkWidths[i++] = w;
       //fullZoomStringWidth += w;
     }
@@ -181,6 +199,7 @@ public class ZoomPanel extends AbstractPanel implements
       space = spaceShort;
       bounds.width = calcPanelWidth();
     }
+    layer.setBounds(bounds);
     compactMode = true;
   }
 
@@ -190,6 +209,7 @@ public class ZoomPanel extends AbstractPanel implements
       space = spaceLong;
       bounds.width = calcPanelWidth();
     }
+    layer.setBounds(bounds);
     compactMode = false;
   }
 

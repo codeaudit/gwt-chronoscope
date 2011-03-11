@@ -6,29 +6,52 @@
   <inherits name='com.google.gwt.i18n.I18N'/>
   <inherits name="com.google.gwt.inject.Inject"/>
   <inherits name="org.timepedia.chronoscope.ChronoscopeAPI"/>
+  <!--<inherits name='org.timepedia.exporter.Exporter'/>-->
   <!-- inherits name="com.google.gwt.user.theme.chrome.Chrome"/ -->
-   
- <inherits name='org.timepedia.exporter.Exporter'/>
 
 
   <define-property name="hasflash" values="yes,no,force"/>
   <property-provider name="hasflash"><![CDATA[
-    if(window.location.href.indexOf("_force_flash") != -1) return "force";
-    if(navigator.plugins) {
-      var x = navigator.plugins['Shockwave Flash'];
-      if(x) {
-        var desc = x.description;
-        var ind = desc.indexOf('.');
-        if(ind > -1 && desc.charAt(ind-1) == '9') return "yes";
+  if(window.location.href.indexOf("_force_flash") != -1) return "force";
+
+  if(navigator.plugins) {
+    var MIN_FLASH_VERSION=9;
+    var x = navigator.plugins['Shockwave Flash'];
+    if(x) {
+      var d = x.description;
+      if (d && navigator.mimeTypes) {
+        var m = navigator.mimeTypes["application/x-shockwave-flash"];
+        if (m && m.enabledPlugin) {
+          var playerVersion=[];
+          d = d.replace(/^.*\s+(\S+\s+\S+$)/, "$1");
+          playerVersion[0] = parseInt(d.replace(/^(.*)\..*$/, "$1"), 10);
+          playerVersion[1] = parseInt(d.replace(/^.*\.(.*)\s.*$/, "$1"), 10);
+          playerVersion[2] = /[a-zA-Z]/.test(d) ? parseInt(d.replace(/^.*[a-zA-Z]+(.*)$/, "$1"), 10) : 0;
+          if(playerVersion[0] >= MIN_FLASH_VERSION) {
+            return "yes";
+          }
+        }
       }
     }
-    if(navigator.userAgent.indexOf("MSIE") != -1) {
-      var axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.9");
-      if(axo != null && axo != undefined) return "yes";
-    }
-    return "no";
-    ]]>
+  }
+
+  if(navigator.userAgent.indexOf("MSIE") != -1) {
+    var axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
+    if(axo) return "yes";
+  }
+
+  return "no";
+  ]]>
   </property-provider>
+
+  <!-- By default do not increase the number of permutations -->
+  <!--<set-property name="hasflash" value="yes"/>-->
+  <!-- Set the property to yes,force to use flash in non IE browsers when passing ?_force_flash parameter -->
+  <set-property name="hasflash" value="yes,force"/>
+  <!-- Set the property to yes,no to show a message in IE when flash is not installed -->
+  <!-- <set-property name="hasflash" value="yes,no"/>-->
+  <!-- Set the property to force to use flash in all browsers -->
+  <!-- <set-property name="hasflash" value="force"/>-->
 
   <replace-with class="org.timepedia.chronoscope.client.browser.GssStyleElementGssContext">
     <when-type-is class="org.timepedia.chronoscope.client.browser.BrowserGssContext"/>
@@ -40,14 +63,52 @@
 
   <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="webkit"/>
+    <when-property-is name="hasflash" value="force"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="gecko1_8"/>
+    <when-property-is name="hasflash" value="force"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="gecko"/>
+    <when-property-is name="hasflash" value="force"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
+    <when-property-is name="user.agent" value="safari"/>
+    <when-property-is name="hasflash" value="force"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObjectImpl">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObject"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="user.agent" value="ie6"/>
     <when-property-is name="hasflash" value="yes"/>
+  </replace-with>
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObjectIE">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObject"/>
+    <when-property-is name="user.agent" value="ie6"/>
   </replace-with>
 
   <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.FlashView">
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="user.agent" value="ie8"/>
     <when-property-is name="hasflash" value="yes"/>
+  </replace-with>       <!-- TODO - test in ie8 -->
+
+  <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObjectIE">
+    <when-type-is class="org.timepedia.chronoscope.client.browser.flashcanvas.SwfObject"/>
+    <when-property-is name="user.agent" value="ie8"/>
   </replace-with>       <!-- TODO - test in ie8 -->
 
   <replace-with class="org.timepedia.chronoscope.client.browser.flashcanvas.NoFlashView">
@@ -66,8 +127,8 @@
     <when-type-is class="org.timepedia.chronoscope.client.browser.DOMView"/>
     <when-property-is name="hasflash" value="force"/>
   </replace-with>
- 
-  
+
+
    <replace-with class="org.timepedia.chronoscope.client.browser.ChartEventHandler">
     <when-type-is class="org.timepedia.chronoscope.client.browser.ChartEventHandler"/>
   </replace-with>
@@ -81,16 +142,7 @@
   <!-- Do not enable export by default, so the library can be used in gwt applications
       which don't export anything to javascript -->
   <set-property name="export" value="no"/>
-  
-  <!-- By default do not increase the number of permutations -->
-  <set-property name="hasflash" value="yes"/>
-  <!-- Set the property to yes,force to use flash in non IE browsers when passing ?_force_flash parameter -->
-  <!-- <set-property name="hasflash" value="yes,force"/>-->
-  <!-- Set the property to yes,no to show a message in IE when flash is not installed -->  
-  <!-- <set-property name="hasflash" value="yes,no"/>-->
-  <!-- Set the property to force to use flash in all browsers -->  
-  <!-- <set-property name="hasflash" value="force"/>-->
-  
+
   <!-- By default do not load customized chrome.css, load it in your app if you have any css issue -->
   <!-- <stylesheet src="theme/chrome/chrome.css" />-->
 </module>

@@ -60,7 +60,17 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
   KeyDownHandler keyDownHandler = new ChartKeyDownHandler();
   KeyUpHandler keyUpHandler = new ChartKeyUpHandler();
   KeyPressHandler keyPressHandler = new ChartKeyPressHandler();
-  
+
+  private static GssContext gssContext;
+  private View view;
+  private Chart chart;
+  private XYPlot<?> plot;
+  private String id;
+  private int chartWidth;
+  private int chartHeight;
+  private ViewReadyCallback readyListener;
+  private boolean viewReady;
+
   public PlotPanel() {
     CaptureFocusHandler setFocusHandler = new CaptureFocusHandler(this);
     addMouseDownHandler(setFocusHandler);
@@ -82,6 +92,14 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     
     view = (View) GWT.create(DOMView.class);
     chart = new Chart();
+  }
+
+  public void dispose() {
+    gssContext = null;
+    view = null;
+    chart = null;
+    plot = null;
+    readyListener = null;
   }
 
   /**
@@ -132,23 +150,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     }
   }
 
-  private static GssContext gssContext;
 
-  private View view;
-
-  private Chart chart;
-
-  private XYPlot<?> plot;
-
-  private String id;
-
-  private int chartWidth;
-
-  private int chartHeight;
-
-  private ViewReadyCallback readyListener;
-
-  private boolean viewReady;
 
   public void fireContextMenu(Event evt) {
     if (DOM.eventGetTypeString(evt) == "undefined") {
@@ -188,7 +190,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
    */
   @Override
   public void onBrowserEvent(Event evt) {
-    if (!isAttached() || !viewReady) {
+    if (!isAttached() || !viewReady || !initialized) {
       return;
     }
 
@@ -196,7 +198,9 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
     // Only request (x,y) coordinates if they're available/relevant
     // (e.g. mouse move, mouse click). Otherwise, DOM.eventGetClientX()
     // will throw an exception.
-    boolean screenCoordinatesRelevant = ((KEYEVENTS  & evt.getTypeInt()) == 0) || ((ONMOUSEOUT & evt.getTypeInt()) == 0);
+    boolean screenCoordinatesRelevant = ((KEYEVENTS  & evt.getTypeInt()) == 0)
+            || ((ONMOUSEOUT & evt.getTypeInt()) == 0)
+            || ((ONMOUSEWHEEL & evt.getTypeInt()) == 0);
 
     int x, y;
     int originX = DOM.getAbsoluteLeft(getElement());
@@ -264,8 +268,7 @@ public class PlotPanel extends FocusPanel implements ViewReadyCallback,
 
   private void initView() {
 
-    ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true,
-        gssContext, this);
+    ((DOMView) view).initialize(getElement(), chartWidth, chartHeight, true, gssContext, this);
     
     // configure chart
     chart.setView(view);

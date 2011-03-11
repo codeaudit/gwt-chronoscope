@@ -34,6 +34,18 @@ public class Bounds {
     }
 
     /**
+     * Construct outer Bounds of two Bounds
+     * eg new Bounds((0,0,10,100), (100,100,200,300)) = (0,0,200,300)
+     */
+    public Bounds(Bounds b1, Bounds b2) {
+        x = Math.min(b1.x, b2.x);
+        width = Math.max((b1.x + b1.width - x), (b2.x + b2.width - x));
+
+        y = Math.min(b1.y, b2.y);
+        height = Math.max((b1.y + b1.height - y), (b2.y + b2.height - y));
+    }
+
+    /**
      * Default constructor that initializes x, y, width, and height to 0.
      */
     public Bounds() {

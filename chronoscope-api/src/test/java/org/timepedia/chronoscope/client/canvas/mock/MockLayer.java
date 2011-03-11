@@ -48,6 +48,9 @@ public class MockLayer extends AbstractLayer {
     this.bounds = bounds;
   }
 
+  public void dispose() {
+    // ...
+  }
   public void arc(double x, double y, double radius, double startAngle,
       double endAngle, int clockwise) {
   }
@@ -116,6 +119,9 @@ public class MockLayer extends AbstractLayer {
     return bounds;
   }
 
+  public void setBounds (Bounds bounds) {
+    this.bounds = bounds;
+  }
   public double getHeight() {
     return bounds.height;
   }

@@ -3,7 +3,6 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
-import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.gss.GssProperties;
 import org.timepedia.chronoscope.client.render.domain.DateTickFormatterFactory;
 import org.timepedia.chronoscope.client.util.ArgChecker;
@@ -16,29 +15,42 @@ import org.timepedia.chronoscope.client.util.TimeUnit;
  */
 public class LegendAxisPanel extends AxisPanel {
 
-  /**
-   * Dictates the Y-padding between the top of the legend item bounds and the
-   * bottom of the zoom and date range panels.
-   */
-  private static final int LEGEND_Y_TOP_PAD = 2;
-
-  /**
-   * Dictates the Y-padding between the bottom of the legend item bounds and the
-   * top of the plot panel.
-   */
-
-  private static final int LEGEND_Y_BOTTOM_PAD = 2;
-
   private DateRangePanel dateRangePanel;
-
   private DatasetLegendPanel dsLegendPanel;
-
-  private ZoomListener zoomListener;
-
   private ZoomPanel zoomPanel;
 
+  private ZoomListener zoomListener;
   private GssProperties legendLabelsProperties;
 
+  public void dispose() {
+    super.dispose();
+    if (null != dateRangePanel) { dateRangePanel.dispose(); }
+    if (null != dsLegendPanel) { dsLegendPanel.dispose(); }
+    if (null != zoomPanel) { zoomPanel.dispose(); }
+    legendLabelsProperties = null;
+  }
+
+  public void reset() {
+    super.reset();
+    if (null != dateRangePanel) { dateRangePanel.reset(); }
+    if (null != dsLegendPanel) { dsLegendPanel.reset(); }
+    if (null != zoomPanel) { zoomPanel.reset(); }
+    if (null != zoomListener) { zoomListener = null; }
+
+  }
+
+  public void remove(Panel panel) {
+    if (null != panel) {
+      if (panel.equals(dateRangePanel)) {
+        dateRangePanel = null;
+      } else if (panel.equals(dsLegendPanel)) {
+        dsLegendPanel = null;
+      } else if (panel.equals(zoomPanel)) {
+        zoomPanel = null;
+        zoomListener = null;
+      }
+    }
+  }
   public boolean click(int x, int y) {
     zoomPanel.setPosition(bounds.x, bounds.y);
     return zoomPanel.click(x, y);
@@ -46,13 +58,12 @@ public class LegendAxisPanel extends AxisPanel {
 
   public void draw() {
     final int zoomHeight = (int) this.zoomPanel.bounds.height;
-    clearAxis(layer, bounds);
+    // clearAxis(layer, bounds);
 
     // Position and size the panels
-    zoomPanel.setPosition(bounds.x, bounds.y);
-    layoutPanels(bounds);
-    topRightJustify(dateRangePanel, bounds);
-    dsLegendPanel.setPosition(bounds.x, bounds.y + zoomHeight + LEGEND_Y_TOP_PAD);
+    // zoomPanel.setPosition(bounds.x, bounds.y);
+    // topRightJustify(dateRangePanel, bounds);
+    // dsLegendPanel.setPosition(bounds.x, bounds.y + zoomHeight + LEGEND_Y_TOP_PAD);
 
     // Draw the panels
     zoomPanel.draw();
@@ -73,66 +84,143 @@ public class LegendAxisPanel extends AxisPanel {
 
   @Override
   public void setLayer(Layer layer) {
-    super.setLayer(layer);
-    
-    dsLegendPanel.setLayer(layer);
-    zoomPanel.setLayer(layer);
-    dateRangePanel.setLayer(layer);
+    if (null == layer) { return; } else
+    if (layer.equals(this.layer)) { return; } else
+    if (this.layer != null) {
+      this.layer.dispose();
+    }
+    this.layer = layer;
+    if (null != dsLegendPanel) {  dsLegendPanel.setLayer(layer); }
   }
   
   @Override
   public void layout() {
     bounds.height = calcHeight();
     bounds.width = view.getWidth();
-  }
-  
-  @Override
-  protected void initHook() {
-    ArgChecker.isNotNull(plot, "plot");
-    ArgChecker.isNotNull(zoomListener, "zoomListener");
+    log("layout "+bounds);
+//    if (null != layer) {
+//      layer.save();
+//
+//      if(!bounds.equals(layer.getBounds())){
+//        layer.setBounds(bounds);
+//      }
+//
+//      layer.restore();
+//    }
+    layoutPanels(bounds);
 
-    legendLabelsProperties = view.getGssPropertiesBySelector("axislegend labels");
-    if (legendLabelsProperties == null) {
-        legendLabelsProperties = view.getGssProperties(new GssElementImpl("labels", this),"");
+    Layer zlayer = zoomPanel.getLayer();
+    if (null != zlayer) {
+      zlayer.save();
+
+      if(!zoomPanel.getBounds().equals(zlayer.getBounds())){
+        zlayer.setBounds(zoomPanel.getBounds());
+        // log("layout zoomPanel bounds:"+zoomPanel.getBounds() + " "+zoomPanel.getLayer().getLayerId()+zoomPanel.getLayer().getBounds());
+      }
+
+      zlayer.restore();
     }
+
+    Layer drlayer = dateRangePanel.getLayer();
+    if (null != drlayer) {
+      drlayer.save();
+
+      if(!dateRangePanel.getBounds().equals(drlayer.getBounds())){
+        drlayer.setBounds(dateRangePanel.getBounds());
+        // log("layout zoomPanel bounds:"+zoomPanel.getBounds() + " "+zoomPanel.getLayer().getLayerId()+zoomPanel.getLayer().getBounds());
+      }
+
+      drlayer.restore();
+    }
+  }
+
+  private void initZoomPanel() {
     ZoomIntervals zoomIntervals = createDefaultZoomIntervals(plot);
     final double minInterval = Math.max(0, plot.getDatasets().getMinInterval());
     Interval domainExtrema = plot.getDatasets().getDomainExtrema();
     zoomIntervals.applyFilter(domainExtrema, minInterval);
-
-    Layer rootLayer = view.getCanvas().getRootLayer();
-
-    dsLegendPanel = new DatasetLegendPanel();
-    dsLegendPanel.setGssProperties(labelProperties);
-    dsLegendPanel.setLegendLabelsProperties(legendLabelsProperties);
-    dsLegendPanel.setPlot(plot);
-    dsLegendPanel.setView(view);
-    dsLegendPanel.setTextLayerName(textLayerName);
-    dsLegendPanel.setStringSizer(stringSizer);
-    dsLegendPanel.parent = this;
-    dsLegendPanel.init();
-
-    zoomPanel = new ZoomPanel();
+    if (null == zoomPanel) {
+      zoomPanel = new ZoomPanel();
+    }
+    if (null == zoomPanel.getLayer()) {
+      zoomPanel.setLayer(view.getCanvas().createLayer(Layer.ZOOMLEVEL, bounds));
+    }
+    zoomPanel.parent = this;
     zoomPanel.setGssProperties(labelProperties);
-    zoomPanel.setTextLayerName(textLayerName);
+    zoomPanel.setTextLayerName(Layer.ZOOMLEVEL);
     zoomPanel.addListener(zoomListener);
     zoomPanel.setZoomIntervals(zoomIntervals);
-    zoomPanel.setStringSizer(stringSizer);
-    zoomPanel.parent = this;
     zoomPanel.init();
 
-    dateRangePanel = new DateRangePanel();
-    dateRangePanel.setTextLayerName(textLayerName);
-    dateRangePanel.setStringSizer(stringSizer);
+  }
+
+  private void initDSLegendPanel() {
+    legendLabelsProperties = view.getGssPropertiesBySelector("axislegend labels");
+    if (legendLabelsProperties == null) {
+      legendLabelsProperties = view.getGssProperties(new GssElementImpl("labels", this),"");
+    }
+    if (null == dsLegendPanel) {
+      dsLegendPanel = new DatasetLegendPanel();
+    }
+    if (null == dsLegendPanel.getLayer()) {
+      // dsLegendPanel.setLayer(view.getCanvas().createLayer(Layer.LEGEND, bounds));
+      dsLegendPanel.setLayer(layer);
+    }
+
+    dsLegendPanel.setPlot(plot);
+    dsLegendPanel.setView(view);
+    dsLegendPanel.setGssProperties(labelProperties);
+    dsLegendPanel.setLegendLabelsProperties(legendLabelsProperties);
+    // dsLegendPanel.setTextLayerName(textLayerName);
+    // push down by zoom height for zoom visibility
+    // dsLegendPanel.setLayerOffset(0, zoomPanel.getBounds().height);
+    dsLegendPanel.setPosition(0,zoomPanel.getBounds().height);
+    dsLegendPanel.parent = this;
+    dsLegendPanel.init();
+  }
+
+  private void initDateRangePanel() {
+    if (null == dateRangePanel) {
+      dateRangePanel = new DateRangePanel();
+    }
+    if (null == dateRangePanel.getLayer()) {
+      dateRangePanel.setLayer(view.getCanvas().createLayer(Layer.DATERANGE, bounds));
+    }
+    dateRangePanel.setGssProperties(labelProperties);
+    dateRangePanel.setTextLayerName(Layer.DATERANGE);
     dateRangePanel.parent = this;
+    dateRangePanel.setPlot(plot);
+    dateRangePanel.setView(view);
+    dateRangePanel.init();
+  }
+  @Override
+  protected void initHook() {
+    ArgChecker.isNotNull(plot, "plot");
+    ArgChecker.isNotNull(view, "view");
+    ArgChecker.isNotNull(zoomListener, "zoomListener");
 
     // TODO: MCM: Understand this, some times domainAxisPanel does not come with view or plot
-    // Example: ShowHide subpanels -> HideAll/ShowAll 
-    // dateRangePanel.setGssProperties(labelProperties);
-    plot.getDomainAxisPanel().setView(view);
-    plot.getDomainAxisPanel().setPlot(plot);
-    
-    dateRangePanel.init(rootLayer, plot.getDomainAxisPanel());
+    // Example: ShowHide subpanels -> HideAll/ShowAll
+    // plot.getDomainAxisPanel().setView(view);
+    // plot.getDomainAxisPanel().setPlot(plot);
+
+    if (null == layer) {
+      layer = view.getCanvas().createLayer(Layer.LEGEND, bounds);
+    } else
+    if (bounds != null) {
+      layer.save();
+
+      if (!bounds.equals(layer.getBounds())) {
+        layer.setBounds(bounds);
+        layer.clear();
+      }
+
+      layer.restore();
+    }
+    log("legendAxisPanel layer bounds"+layer.getLayerId() + " bounds: "+getBounds());
+    initZoomPanel();
+    initDateRangePanel();
+    initDSLegendPanel();
   }
 
   public void setZoomListener(ZoomListener l) {
@@ -151,6 +239,7 @@ public class LegendAxisPanel extends AxisPanel {
     return totalHeight;
   }
 
+/*
   private void clearAxis(Layer layer, Bounds bounds) {
     layer.save();
     layer.setFillColor(gssProperties.bgColor);
@@ -162,6 +251,7 @@ public class LegendAxisPanel extends AxisPanel {
     layer.restore();
     layer.clearTextLayer(textLayerName);
   }
+*/
 
   private static void copyState(Bounds source, Bounds target) {
     target.x = source.x;
@@ -202,34 +292,26 @@ public class LegendAxisPanel extends AxisPanel {
   }
 
   /**
-   * Currently, this method natively lays out the ZoomPanel and DateRangePanel on
+   * Currently, this method naively lays out the ZoomPanel and DateRangePanel on
    * the X-axis. Ultimately, layout rules and heuristics will be split out into
    * a separate LayoutStrategy interface of some sort.
-   */ // TODO show/hide from GSS
+   */
   private void layoutPanels(Bounds parentBounds) {
-    // The minimum distance allowed between the zoom panel and the dataset
-    // legend panel.
     final int minCushion = 3;
-
-    double parentWidth = parentBounds.width;
-
-    dateRangePanel.resizeToIdealWidth();
-    zoomPanel.resizeToIdealWidth();
     zoomPanel.show(true);
     double idealZoomPanelWidth = zoomPanel.getBounds().width;
 
     // First, see if the panels in their prettiest form will
     // fit within the container's bounds
-    double cushion = parentWidth - zoomPanel.getBounds().width - dateRangePanel.getBounds().width;
+    double cushion = view.getWidth() - zoomPanel.getBounds().width - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
 
     // Doesn't fit? Then compress only the date range panel
     dateRangePanel.resizeToMinimalWidth();
-    topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - idealZoomPanelWidth
-        - dateRangePanel.getBounds().width;
+    // topRightJustify(dateRangePanel, parentBounds);
+    cushion = view.getWidth() - idealZoomPanelWidth - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -237,18 +319,16 @@ public class LegendAxisPanel extends AxisPanel {
     // Still doesn't fit? Then compress only the zoom link panel
     zoomPanel.resizeToMinimalWidth();
     dateRangePanel.resizeToIdealWidth();
-    topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - zoomPanel.getBounds().width
-        - dateRangePanel.getBounds().width;
+    // topRightJustify(dateRangePanel, parentBounds);
+    cushion = view.getWidth() - zoomPanel.getBounds().width - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
 
     // Still doesn't fit? Then compress both panels
     dateRangePanel.resizeToMinimalWidth();
-    topRightJustify(dateRangePanel, parentBounds);
-    cushion = parentWidth - zoomPanel.getBounds().width
-        - dateRangePanel.getBounds().width;
+    // topRightJustify(dateRangePanel, parentBounds);
+    cushion = view.getWidth() - zoomPanel.getBounds().width - dateRangePanel.getBounds().width;
     if (cushion >= minCushion) {
       return;
     }
@@ -265,19 +345,6 @@ public class LegendAxisPanel extends AxisPanel {
     panel.setPosition(parentBounds.rightX() - panel.getBounds().width, parentBounds.y);
   }
 
-  /**
-   * For debugging purposes
-   */ // TODO expose show/hide in GSS
-  private static void hiliteBounds(Bounds b, Layer layer) {
-    layer.save();
-
-    layer.setLayerOrder(Layer.Z_LAYER_PLOTAREA);
-    // layer.setTransparency(.35f);
-    layer.setFillColor(new Color("#50D0FF"));
-    layer.fillRect(b.x, b.y, b.width, b.height);
-
-    layer.restore();
-  }
 
    public void setlegendLabelGssProperty(Boolean visible,Boolean valueVisible,Integer fontSize,Integer iconWidth,Integer iconHeight,Integer columnWidth,Integer columnCount, Boolean align){
        if(visible!=null){
@@ -305,5 +372,8 @@ public class LegendAxisPanel extends AxisPanel {
          legendLabelsProperties.columnAligned = align;
        }
   }
+    private static void log (String msg) {
+      System.out.println(msg);
+    }
 
 }

@@ -34,8 +34,7 @@ public class GssBackground implements Background, GssElement {
     return null;
   }
 
-  public void paint(XYPlot plot, Layer layer, double domainOrigin,
-      double currentDomain) {
+  public void paint(XYPlot plot, Layer layer, double domainOrigin, double currentDomain) {
     layer.save();
     Bounds b = layer.getBounds();
     if (gssPlotProperties.bgColor instanceof CanvasPattern) {
@@ -48,18 +47,9 @@ public class GssBackground implements Background, GssElement {
       layer.fill();
     } else {
       layer.translate(0, 0);
-//            layer.scale(b.width, b.height);
-//            layer.clearRect(0, 0, b.width, b.height);
       layer.setComposite(Layer.COPY);
       layer.setFillColor(gssPlotProperties.bgColor);
-//      layer.beginPath();
-//      layer.translate(0,0);
-//      layer.scale(b.width, b.height);
       layer.fillRect(0, 0, b.width, b.height);
-//      layer.fill();
-//            layer.beginPath();
-    //  layer.fillRect(0-1, 0-1, b.width, b.height);
-//            layer.fill();
     }
     layer.restore();
   }

@@ -1,11 +1,12 @@
 <module rename-to="widget">
-
+  <inherits name="com.google.gwt.user.User"/>
   <inherits name="org.timepedia.chronoscope.Chronoscope"/>
     
   <entry-point class="org.timepedia.chronoscope.widget.client.ChronoscopeWidget"/>
 
-  <!-- <extend-property name="locale" values="en,en_DE,de_DE"/> -->
-  <!-- <set-property name="user.agent" value="ie6,ie8,gecko1_8"/>-->
+  <set-property name="hasflash" value="yes,force"/>
+  <set-property name="export" value="yes"/>
+
   <add-linker name="xs"/>
-  <set-property name="export" value="yes"/>    
+
 </module>

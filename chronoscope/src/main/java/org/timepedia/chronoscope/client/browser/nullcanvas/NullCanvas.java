@@ -8,6 +8,10 @@ public class NullCanvas extends Canvas {
         super(view);
     }
 
+    public void dispose() {
+        // ...
+    }
+
     @Override
     public Layer createLayer(String layerId, Bounds bounds) {
         return null;

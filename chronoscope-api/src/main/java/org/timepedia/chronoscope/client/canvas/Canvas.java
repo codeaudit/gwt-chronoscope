@@ -2,7 +2,7 @@ package org.timepedia.chronoscope.client.canvas;
 
 /**
  * Fundamental graphics rendering system of Chronoscope <p/> Canvas is the
- * fundamental graphcis rendering system of Chronoscope. Developed as an
+ * fundamental graphics rendering system of Chronoscope. Developed as an
  * extended abstraction around the Browser (Safari) Canvas, it is used
  * throughout Chronoscope. Developers wishing to extend Chronoscope to other
  * rendering systems (Swing/Java2D, Flash, Silverlight, etc) should start here.
@@ -10,20 +10,13 @@ package org.timepedia.chronoscope.client.canvas;
  * named layers on which draw calls occur. Canvas permits a command buffering
  * abstraction through beginFrame() and endFrame(). beginFrame() may be used on
  * some implementations to lock a surface for update. No actual rendering is
- * guaranteed to take place until endFrame(). <p/> Prior to settling on CANVAS
- * for browser based rendering, Timepedia prototyped a number of rendering
- * techniques, including SVG, VML, Javascript->AppletCanvas, Flash, Silverlight,
- * and Server-side. Our initial results were that SVG and VML implementations
- * were currently too slow to support the interactivity we desired. We
- * implemented CANVAS first, but we fully expect that Flash will become the
- * preferred cross-browser Canvas for Chronoscope in the near future.
+ * guaranteed to take place until endFrame().
  */
 public abstract class Canvas {
 
   private View view;
 
   protected Canvas(View view) {
-    super();
     this.view = view;
   }
 
@@ -64,6 +57,11 @@ public abstract class Canvas {
   public void disposeLayer(Layer layer) {
     disposeLayer(layer.getLayerId());
   }
+
+  /**
+   * Free the resources associated with a Canvas: all layers, etc
+   */
+   public abstract void dispose();
 
   /**
    * Flush the graphics pipline, flatten all layers, and render to the screen

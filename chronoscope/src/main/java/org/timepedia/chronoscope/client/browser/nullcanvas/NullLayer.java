@@ -31,6 +31,10 @@ public class NullLayer extends AbstractLayer{
         // ...
     }
 
+    public void dispose() {
+        // ...
+    }
+
     @Override
     public LinearGradient createLinearGradient(double startx, double starty, double endx, double endy) {
         return null;  // ...
@@ -153,6 +157,11 @@ public class NullLayer extends AbstractLayer{
 
     @Override
     public void scale(double sx, double sy) {
+        // ...
+    }
+
+    @Override
+    public void setBounds(Bounds bounds) {
         // ...
     }
 

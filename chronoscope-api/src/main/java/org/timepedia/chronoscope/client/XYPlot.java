@@ -221,6 +221,16 @@ public interface XYPlot<T extends Tuple2D> extends Exportable {
   String getHistoryToken();
 
   /**
+   * Returns the layer onto which range axes ticks and labels 'inside' the plot area are rendered.
+   */
+  Layer getPlotRangeLayer();
+
+  /**
+   * Returns the layer onto which domain axes ticks and labels 'inside' the plot area are rendered.
+   */
+  Layer getPlotDomainLayer();
+
+  /**
    * Returns the layer onto which overlays are rendered.
    */
   Layer getOverlayLayer();

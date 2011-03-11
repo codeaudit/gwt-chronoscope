@@ -28,6 +28,7 @@ public final class ChartMouseUpHandler
     XYPlot plot = chart.getPlot();
     int x = getLocalX(event);
     int y = getLocalY(event);
+    OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX(Double.NaN);
 
     CompoundUIAction uiAction = chartInfo.getCompoundUIAction();
     if (uiAction.isSelecting()) {

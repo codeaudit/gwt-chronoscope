@@ -1,8 +1,9 @@
 package org.timepedia.chronoscope.client.plot;
 
+import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.render.Panel;
-import org.timepedia.chronoscope.client.render.StringSizer;
+//import org.timepedia.chronoscope.client.render.StringSizer;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
 /**
@@ -17,8 +18,16 @@ abstract class AuxiliaryPanel implements Panel {
   protected boolean enabled = true;
   protected boolean initialized = false;
   protected DefaultXYPlot plot;
-  protected StringSizer stringSizer;
   protected View view;
+
+  public void dispose() {
+    plot = null;
+    view = null;
+  }
+
+  public void remove(Panel panel) {
+    return; // no sub panels
+  }
 
   protected abstract void drawHook();
   
@@ -52,7 +61,6 @@ abstract class AuxiliaryPanel implements Panel {
   public final void init() {
     ArgChecker.isNotNull(plot, "plot");
     ArgChecker.isNotNull(view, "view");
-    ArgChecker.isNotNull(stringSizer, "stringSizer");
     initHook();
     initialized = true;
   }
@@ -72,10 +80,6 @@ abstract class AuxiliaryPanel implements Panel {
   
   public void setPlot(DefaultXYPlot plot) {
     this.plot = plot;
-  }
-  
-  public void setStringSizer(StringSizer stringSizer) {
-    this.stringSizer = stringSizer;
   }
   
   public void setView(View view) {

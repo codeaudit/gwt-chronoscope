@@ -5,13 +5,13 @@ import org.timepedia.chronoscope.client.ChronoscopeOptions;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.canvas.AbstractLayer;
 import org.timepedia.chronoscope.client.canvas.Bounds;
-import org.timepedia.chronoscope.client.canvas.Canvas;
 import org.timepedia.chronoscope.client.canvas.CanvasImage;
 import org.timepedia.chronoscope.client.canvas.CanvasPattern;
 import org.timepedia.chronoscope.client.canvas.Color;
 import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.PaintStyle;
 import org.timepedia.chronoscope.client.canvas.RadialGradient;
+import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -39,34 +39,119 @@ public class BrowserLayer extends AbstractLayer {
   private static final String[] TEXT_BASELINE = {
       "top", "hanging", "middle", "alphabetic", "ideographic", "bottom"};
 
-  private static int layerCount = 0;
-
-  private Element canvas;
 
   private JavaScriptObject ctx;
 
   private String strokeColor;
-  private Color _strokeColor;
+  private Color _strokeColor=Color.GRAY;
 
   private String fillColor;
-  private Color _fillColor;
+  private Color _fillColor=Color.TRANSPARENT;
 
-  private Bounds bounds;
+  private LinearGradient linearGradient;
+  private RadialGradient radialGradient;
 
-  private final String layerId;
-  private final String layerIdText;
+  private Bounds bounds = new Bounds();
 
-  private Element layerContainer;
+  private String layerId, divElementId, canvasElementId;
+
+  private Element layerDivElement, layerCanvasElement;
 
   private int zorder;
 
   private int scrollLeft;
 
-  public BrowserLayer(Canvas canvas, String layerId, Bounds b) {
+  private float transparency;
+
+  // DEBUG HACK
+  public boolean SHOW_BOXES = false;
+
+  public BrowserLayer(BrowserCanvas canvas, String layerId, Bounds bounds) {
     super(canvas);
-    this.layerId = layerId;
-    this.layerIdText = layerId+"text";
-    init(b);
+    String baseId = canvas.getView().getViewId()+"bl"+(int)(99.9 * Math.random());
+    divElementId = baseId +"_"+ layerId;
+    canvasElementId = baseId + "cv_" + layerId;
+    this.layerId=layerId;
+    createLayerDiv(canvas, bounds);
+    setLayerOrder(Layer.Z_ORDER.indexOf(layerId) * 3);
+    setBounds(bounds);
+
+    if (canvas.isAttached() && layerCanvasElement!=null) {
+      onAttach();
+    }
+  }
+
+  public void createLayerDiv(BrowserCanvas canvas, Bounds bounds) {
+    layerDivElement = DOM.createElement("div");
+    // layerDivElement.addClassName("chrono-layer");
+    DOM.setStyleAttribute(layerDivElement, "overflow", "hidden");
+    DOM.setElementAttribute(layerDivElement, "id", divElementId);
+    initDivElement(layerDivElement, bounds);
+
+    layerCanvasElement = DOM.createElement("canvas");
+    DOM.setElementAttribute(layerCanvasElement, "id", canvasElementId);
+    initCanvasElement(layerCanvasElement);
+
+    positionDomElements(layerDivElement, layerCanvasElement, bounds);
+
+    Element parent = canvas.getElement();
+    if ((parent != null) && (layerDivElement != null) && (layerCanvasElement != null)) {
+      DOM.appendChild(layerDivElement, layerCanvasElement);
+      DOM.appendChild(parent, layerDivElement);
+    }
+
+    if(SHOW_BOXES) {
+      DOM.setStyleAttribute(layerDivElement, "border", "1px dashed orange");
+    }
+    // return layerDivElement;
+  }
+
+  private static void positionDomElements(Element div, Element can, Bounds bounds) {
+    DOM.setStyleAttribute(div, "width", "" + (int) bounds.width + "px");
+    DOM.setStyleAttribute(div, "height", "" + (int) bounds.height + "px");
+    DOM.setStyleAttribute(div, "top", (int) bounds.y + "px");
+    DOM.setStyleAttribute(div, "left", (int) bounds.x + "px");
+
+    DOM.setElementPropertyInt(can, "width", (int)bounds.width);
+    DOM.setElementPropertyInt(can, "height", (int)bounds.height);
+  }
+
+  private static void initDivElement(Element div, Bounds bounds) {
+    DOM.setStyleAttribute(div, "position", "absolute");
+    DOM.setStyleAttribute(div, "visibility", "visible");
+  }
+
+  private static void initCanvasElement(Element can) {
+    DOM.setStyleAttribute(can, "position", "absolute");
+    DOM.setStyleAttribute(can, "top", "0px");
+    DOM.setStyleAttribute(can, "left", "0px");
+    // DOM.setStyleAttribute(can, "top", (int) bounds.y + "px");
+    // DOM.setStyleAttribute(can, "left", (int) bounds.x + "px");
+  }
+
+
+  public void dispose() {
+    linearGradient = null;
+    radialGradient = null;
+    bounds = null;
+    ctx = null;
+
+    // remove from the id2layer map in BrowserCanvas
+    ((BrowserCanvas)getCanvas()).remove(layerId);
+
+    // remove from the DOM
+    if (null != layerCanvasElement ) {
+      if (layerCanvasElement.hasParentElement()) {
+        layerCanvasElement.removeFromParent();
+      }
+      layerCanvasElement = null;
+    }
+    if (null != layerDivElement) {
+      if (layerDivElement.hasParentElement()) {
+        layerDivElement.removeFromParent();
+      }
+      layerDivElement = null;
+    }
   }
 
   public native void arc(double x, double y, double radius, double startAngle,
@@ -84,16 +169,24 @@ public class BrowserLayer extends AbstractLayer {
   }*/
 
   public void clearRect(double x, double y, double width, double height) {
+    log(layerId + " clearRect "+x+", "+y+" w:"+width+" h:"+height);
+    if (null == ctx) {
+      log(layerId + " clearRect null ctx");
+      return;
+    }
     if (width != 0 && height != 0) {
       clearRect0(ctx, x, y, width, height);
     }
   }
 
   public void clear() {
-      clear0(ctx, canvas);
+    if ((null==ctx)||(null==layerCanvasElement)) { return; }
+    log(layerId+".clear()");
+    clear0(ctx, layerCanvasElement);
   }
 
   public void clearTextLayer(String textLayer) {
+      log(layerId+" cleartTextLayer "+textLayer);
       // clear0(ctxText, canvasText);
   }
 
@@ -108,8 +201,7 @@ public class BrowserLayer extends AbstractLayer {
     closePath0(ctx);
   }
 
-  public LinearGradient createLinearGradient(double x, double y, double w,
-      double h) {
+  public LinearGradient createLinearGradient(double x, double y, double w, double h) {
     return new BrowserLinearGradient(this, x, y, w, h);
   }
 
@@ -155,6 +247,7 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public void fill() {
+    if (null == ctx) { return; }
     fill0(ctx);
   }
 
@@ -164,6 +257,15 @@ public class BrowserLayer extends AbstractLayer {
 
   public Bounds getBounds() {
     return bounds;
+  }
+
+  public void setBounds(Bounds bounds) {
+    log("setBounds "+layerId + " bounds: "+ bounds);
+    if (null == bounds) { return; }
+    this.bounds = new Bounds(bounds);
+    if (null != layerDivElement) {
+      positionDomElements(layerDivElement, layerCanvasElement, bounds);
+    }
   }
 
   @Override
@@ -182,6 +284,7 @@ public class BrowserLayer extends AbstractLayer {
   @Override
   public int stringHeight(String label, String fontFamily,
       String fontWeight, String fontSize) {
+    if (null == ctx) { return 12; } // FIXME
     return csw(ctx, "h", fontSize + " "+ fontFamily)*2;
   }
   
@@ -203,7 +306,7 @@ public class BrowserLayer extends AbstractLayer {
   public void drawText(double x, double y, String label, String fontFamily,
       String fontWeight, String fontSize, String layerName,
       Cursor cursorStyle) {
-
+    log(layerId + " drawText " +x+", "+y+" " + label + " " +fontSize + " " + layerName + " "+cursorStyle);
     Color _prevStrokeColor = _strokeColor;
     Color _prevFillColor = _fillColor;
 
@@ -255,7 +358,7 @@ public class BrowserLayer extends AbstractLayer {
     ctx.strokeText(label, x, y);
   }-*/;
   public Element getElement() {
-    return canvas;
+    return layerCanvasElement;
   }
 
   public double getHeight() {
@@ -263,11 +366,15 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public float getLayerAlpha() {
-    return DOM.getIntStyleAttribute(canvas, "opacity");
+    return DOM.getIntStyleAttribute(layerDivElement, "opacity");
   }
 
-  public Element getLayerElement() {
-    return layerContainer;
+  public Element getLayerDivElement() {
+    return layerDivElement;
+  }
+
+  public Element getLayerCanvasElement() {
+    return layerCanvasElement;
   }
 
   public String getLayerId() {
@@ -295,7 +402,7 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public boolean isVisible() {
-    return DOM.getStyleAttribute(layerContainer, "visibility")
+    return DOM.getStyleAttribute(DOM.getElementById(divElementId), "visibility")
         .equals("visible");
   }
 
@@ -329,7 +436,8 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public void scale(double sx, double sy) {
-      assert sx > 0.0 : "Scale X is zero";
+    log(layerId+ "scle "+sx+", "+sy );
+     assert sx > 0.0 : "Scale X is zero";
       assert sy > 0.0 : "Scale Y is zero";
       scale0(sx, sy);
   }
@@ -365,20 +473,29 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public void setLayerAlpha(float alpha) {
-    DOM.setStyleAttribute(canvas, "opacity", "" + alpha);
+    DOM.setStyleAttribute(DOM.getElementById(divElementId), "opacity", "" + alpha);
   }
 
+  /**
+   * Sets the z-index (z order) for the canvas element and enclosing div.
+   * Because the enclosing div elements are +1, the Layer.Z_ORDER.indexOf(layerId) should be
+   * multiplied by, for example, 3 in order to make room for the div elements, etc.
+   *
+   * @param zorder z-index of the canvas DOM element, the DIV wrapper z-index will be zOrder+1
+   */
   public void setLayerOrder(int zorder) {
-
-    DOM.setIntStyleAttribute(canvas, "zIndex", zorder);
-    DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder);
-
-    DOM.setIntStyleAttribute(layerContainer, "zIndex", zorder+1);
+    if (zorder < 0) { return; }
+    DOM.setIntStyleAttribute(layerCanvasElement, "zIndex", zorder);
+    DOM.setIntStyleAttribute(layerDivElement, "zIndex", zorder+1);
 
     this.zorder = zorder;
   }
 
   public void setLinearGradient(LinearGradient lingrad) {
+    linearGradient = lingrad;
+    if (null==ctx) {
+      return;
+    }
     try {
       setGradient0(ctx, ((BrowserLinearGradient) lingrad).getNative());
     } catch (Throwable t) {
@@ -393,12 +510,15 @@ public class BrowserLayer extends AbstractLayer {
     }-*/;
 
   public void setRadialGradient(RadialGradient radialGradient) {
-    setGradient0(ctx, ((BrowserRadialGradient) radialGradient).getNative());
+    this.radialGradient = radialGradient;
+    if (null != ctx) {
+      setGradient0(ctx, ((BrowserRadialGradient) radialGradient).getNative());
+    }
   }
 
   public void setScrollLeft(int i) {
     scrollLeft = i;
-    DOM.setStyleAttribute(canvas, "left", i + "px");
+    DOM.setStyleAttribute(layerCanvasElement, "left", i + "px");
   }
 
   public void setShadowBlur(double width) {
@@ -437,12 +557,13 @@ public class BrowserLayer extends AbstractLayer {
   }
 
   public void setTransparency(float value) {
+    transparency = value;
+    if (null == ctx) { return; }
     setTransparency0(ctx, value);
   }
 
   public void setVisibility(boolean visibility) {
-    DOM.setStyleAttribute(layerContainer, "visibility",
-        visibility ? "visible" : "hidden");
+    DOM.setStyleAttribute(layerDivElement, "visibility", visibility ? "visible" : "hidden");
   }
 
   public native void stroke() /*-{
@@ -450,28 +571,60 @@ public class BrowserLayer extends AbstractLayer {
     }-*/;
 
   public void translate(double x, double y) {
+    log(layerId + "translate "+x+", "+y);
     translate0(ctx, x, y);
   }
 
-  JavaScriptObject getContext() {
-
+  public JavaScriptObject getContext() {
+    if ((ctx == null) && (null != layerCanvasElement)) {
+      onAttach();
+    }
     return ctx;
   }
 
   public void setTextLayerBounds(String layerName, Bounds bounds) {
-    this.bounds = new Bounds(bounds);
-    this.setVisibility(true);
+    log(getLayerId()+getBounds() + " setTextLayerBounds" + bounds);
+    setBounds(bounds);
+    setVisibility(true); // TODO - move this somewhere else
   }
 
-
-  void init(Bounds b) {
-    layerContainer = DOM.createElement("div");
+  /**
+   * For future reference:
+   *
+   *  ChartPanel.onAttach
+   *   PlotPanel.onAttach
+   *    BrowserView.onAttach
+   *     View.onAttach
+   *      BrowserCanvas.attach
+   *       Canvas.attach
+   *        View.onCanvasReady
+   *         View.allCanvasReady
+   *          BrowserView.init
+   *           BrowserCanvas.onAttach
+   *            BrowserLayer.onAttach : you are here
+   */
+  public void onAttach() {
+    if (null != layerCanvasElement) {
+      ctx = getCanvasContext(layerCanvasElement);
+      if (null != ctx) {
+        if (null != linearGradient) {
+            setLinearGradient(linearGradient);
+        }
+        if (null != radialGradient){
+            setRadialGradient(radialGradient);
+        }
+      }
+    }
+  }
+  /*
+  void onAttach(Bounds b) {
     this.bounds = new Bounds(b);
-    canvas = DOM.createElement("canvas");
-
-    String lc = String.valueOf(layerCount++);
-    DOM.setElementAttribute(layerContainer, "id", "_lc_" + layerId + lc);
-    DOM.setElementAttribute(canvas, "id", "_cv_" + layerId + lc);
+    Element layerDivElement = DOM.createElement("div");
+    layerDivElement.setId("lc"+layerId);
+    // DOM.setElementAttribute(layerDivElement, "id","lc"+layerId);
+    Element canvas = DOM.createElement("canvas");
+    canvas.setId(layerId);
+    // DOM.setElementAttribute(canvas, "id", getLayerId());
 
     DOM.setElementAttribute(canvas, "width", "" + b.width);
     DOM.setElementAttribute(canvas, "height", "" + b.height);
@@ -479,21 +632,21 @@ public class BrowserLayer extends AbstractLayer {
     DOM.setStyleAttribute(canvas, "height", "" + b.height + "px");
     DOM.setStyleAttribute(canvas, "position", "relative");
 
-    DOM.setStyleAttribute(layerContainer, "width", "" + b.width + "px");
-    DOM.setStyleAttribute(layerContainer, "height", "" + b.height + "px");
+    DOM.setStyleAttribute(layerDivElement, "width", "" + b.width + "px");
+    DOM.setStyleAttribute(layerDivElement, "height", "" + b.height + "px");
 
-    DOM.setStyleAttribute(layerContainer, "visibility", "visible");
-    DOM.setStyleAttribute(layerContainer, "position", "absolute");
+    DOM.setStyleAttribute(layerDivElement, "visibility", "visible");
+    DOM.setStyleAttribute(layerDivElement, "position", "absolute");
 
-    DOM.setStyleAttribute(layerContainer, "overflow", "hidden");
-    DOM.setStyleAttribute(layerContainer, "top", b.y + "px");
-    DOM.setStyleAttribute(layerContainer, "left", b.x + "px");
-    DOM.setStyleAttribute(layerContainer, "overflow", "visible");
+    DOM.setStyleAttribute(layerDivElement, "overflow", "hidden");
+    DOM.setStyleAttribute(layerDivElement, "top", b.y + "px");
+    DOM.setStyleAttribute(layerDivElement, "left", b.x + "px");
+    DOM.setStyleAttribute(layerDivElement, "overflow", "visible");
 
     ctx = getCanvasContext(canvas);
-
-    DOM.appendChild(layerContainer, canvas);
-  }
+    layerDivElement.appendChild(canvas);
+    // DOM.appendChild(layerDivElement, canvas);
+  } */
 
   private native void clear0(JavaScriptObject ctx, Element can) /*-{
        ctx.clearRect(0, 0, can.width, can.height);
@@ -533,7 +686,9 @@ public class BrowserLayer extends AbstractLayer {
     }-*/;
 
   private native JavaScriptObject getCanvasContext(Element elem) /*-{
-        return elem.getContext("2d");
+        if (!!elem. getContext){
+          return elem.getContext("2d");
+        }
     }-*/;
 
   private String getFillColor() {
@@ -605,4 +760,9 @@ public class BrowserLayer extends AbstractLayer {
   private native void translate0(JavaScriptObject ctx, double x, double y) /*-{
         ctx.translate(x,y);
     }-*/;
+
+    private static void log (String msg) {
+      System.out.println("BrowserLayer> "+ msg);
+    }
+
 }

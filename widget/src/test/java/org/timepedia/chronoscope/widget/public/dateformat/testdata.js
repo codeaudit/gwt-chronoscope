@@ -2289,8 +2289,8 @@ data.push({id:'DEPTHSHEADP',domain:datesarray,range:DEPTHSHEADP,label:'Saugkopft
 data.push({id:'DENSITYP',domain:datesarray,range:DENSITYP,label:'Gemischdichte Bb',axis:'t/m3'});
 data.push({id:'DENSITYS',domain:datesarray,range:DENSITYS,label:'Gemischdichte Sb',axis:'t/m3'});
 
-new chronoscope.DomainAxisMarker(1214293608000, 'S', 0);
-new chronoscope.DomainAxisMarker(1214293608000, 'S', 0);
+/* new chronoscope.DomainAxisMarker(1214293608000, 'S', 0);
+new chronoscope.DomainAxisMarker(1214293608000, 'S', 0); */
 
 markers.push(barmarker(new Date(1214277811000), new Date(1214279244000), ""));
 

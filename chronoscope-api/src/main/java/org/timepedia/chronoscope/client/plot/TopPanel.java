@@ -2,13 +2,13 @@ package org.timepedia.chronoscope.client.plot;
 
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.render.AxisPanel;
 import org.timepedia.chronoscope.client.render.CompositeAxisPanel;
 import org.timepedia.chronoscope.client.render.LegendAxisPanel;
 import org.timepedia.chronoscope.client.render.Panel;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.timepedia.chronoscope.client.render.DatasetLegendPanel;
 
 /**
  * Represents the auxiliary panel on the top of the center dataset plot.
@@ -18,11 +18,26 @@ import org.timepedia.chronoscope.client.render.DatasetLegendPanel;
 final class TopPanel extends AuxiliaryPanel {
   private CompositeAxisPanel compositePanel;
   private LegendAxisPanel legendAxisPanel;
-  private Layer layer;
-  private Bounds myBounds;
-  
+  private Bounds bounds;
+
+  public static int DEFAULT_HEIGHT=32;
+
   public TopPanel() {
-    myBounds = new Bounds(0, 0, 30, 10);
+    bounds = new Bounds();
+  }
+
+  public void dispose() {
+    super.dispose();
+    if (null != compositePanel) { compositePanel.dispose(); }
+    if (null != legendAxisPanel) { legendAxisPanel.dispose(); }
+    bounds=null;
+  }
+
+  public void remove(Panel panel) {
+    if (null != panel) {
+      if (panel.equals(compositePanel)) { compositePanel = null; } else
+      if (panel.equals(legendAxisPanel)) { legendAxisPanel = null; }
+    }
   }
   
   public boolean click(int x, int y) {
@@ -30,7 +45,7 @@ final class TopPanel extends AuxiliaryPanel {
   }
   
   public Bounds getBounds() {
-    return myBounds;
+    return bounds;
   }
   
   public int getChildCount() {
@@ -44,7 +59,8 @@ final class TopPanel extends AuxiliaryPanel {
   }
   
   public Layer getLayer() {
-    return this.layer;
+    return compositePanel.getLayer();
+    // return legendAxisPanel.getLayer();
   }
   
   public double getLayerOffsetX() {
@@ -61,19 +77,34 @@ final class TopPanel extends AuxiliaryPanel {
     return null;
   }
 
-  public void initLayer() {
-    Bounds layerBounds = getBounds();
-    layer = plot.initLayer(layer, "topLayer", layerBounds);
-    layer.setLayerOrder(Layer.Z_LAYER_AXIS);
-    this.compositePanel.setLayer(layer);
+  private void initLayer() {
+    log("initLayer");
+    // compositePanel.setLayer(view.getCanvas().createLayer(Layer.TOP, bounds));
+    setLayer(view.getCanvas().createLayer(Layer.TOP, bounds));
   }
-  
+
   @Override
   public void layout() {
-    compositePanel.setPosition(0, 0);
     compositePanel.layout();
-    myBounds.height = compositePanel.getBounds().height;
-    myBounds.width = compositePanel.getBounds().width;
+    bounds.height = compositePanel.getBounds().height;
+    bounds.width = compositePanel.getBounds().width;
+    log("layout bounds"+ bounds +" composite bounds:"+compositePanel.getBounds());
+    // if(null != compositePanel.getLayer()) {
+      // log("compositePanel layer bounds:"+compositePanel.getLayer().getBounds());
+      // if (compositePanel.getLayer().getBounds().width > bounds.width) {
+       //  compositePanel.getLayer().setBounds(bounds);
+      // }
+    //}
+  }
+
+  public void setLayer(Layer layer) {
+    if (layer == null) {
+      log("setLayer null");
+      return;
+    }
+
+    // log(" setLayer "+layer.getLayerId() + " layer.bounds: "+layer.getBounds() + " bounds: "+bounds);
+    compositePanel.setLayer(layer);
   }
 
   public void setLayerOffset(double x, double y) {
@@ -81,20 +112,26 @@ final class TopPanel extends AuxiliaryPanel {
   }
 
   public final void setPosition(double x, double y) {
-    boolean positionChanged = !(x == myBounds.x && y == myBounds.y);
+    boolean positionChanged = !(x == bounds.x && y == bounds.y);
     
     if (positionChanged) {
-      myBounds.x = x;
-      myBounds.y = y;
+      bounds.x = x;
+      bounds.y = y;
+      compositePanel.setPosition(x,y);
     }
-    
-    if (layer == null || positionChanged) {
+    log("setPosition "+x+" "+y);
+    if (((null != compositePanel) && (compositePanel.getLayer() == null)) || positionChanged) {
       initLayer();
     }
   }
   
   @Override
   protected void drawHook() {
+    log("TopPanel drawHook initialized?"+isInitialized() + " child count:"+compositePanel.getChildCount());
+    if (!isInitialized()) {
+      return;
+    }
+
     if (compositePanel.getChildCount() == 0) {
       return;
     }
@@ -103,14 +140,35 @@ final class TopPanel extends AuxiliaryPanel {
   
   @Override
   protected void initHook() {
-    final String panelName = "topPanel" + plot.plotNumber; 
-    this.compositePanel = new CompositeAxisPanel(panelName,
-        CompositeAxisPanel.Position.TOP, plot, view);
-    this.compositePanel.setStringSizer(stringSizer);
-    this.compositePanel.setParent(this);
-    
-    if (this.isEnabled()) {
+    if(null == bounds) { bounds = new Bounds(0, 0, view.getWidth(), 0); }
+
+    initCompositePanel();
+    initLayer();
+    if (isEnabled()) {
       initLegendAxisPanel();
+    }
+    hookup();
+  }
+
+  private void initCompositePanel() {
+    if (null == compositePanel) {
+      compositePanel = new CompositeAxisPanel(Layer.TOP, CompositeAxisPanel.Position.TOP, plot, view);
+    } else {
+      compositePanel.reset(Layer.TOP, CompositeAxisPanel.Position.TOP, plot, view);
+    }
+    compositePanel.setBounds(bounds);
+    compositePanel.setParent(this);
+  }
+
+  private void hookup(){
+    if (isEnabled()) {
+      if (legendAxisPanel != null && !compositePanel.getChildren().contains(legendAxisPanel)){
+        compositePanel.add(legendAxisPanel);
+      }
+    }
+    clearDrawCaches();
+    if (isInitialized()) {
+     //  plot.reloadStyles();
     }
   }
 
@@ -121,24 +179,28 @@ final class TopPanel extends AuxiliaryPanel {
     }
     
     if (enabled) {
-      initLegendAxisPanel();
-    }
-    else { // disable the legend
+      initHook();
+    } else { // disable the legend
       if (legendAxisPanel != null) {
+        legendAxisPanel.setBounds(new Bounds(0,0,1,1));
         compositePanel.remove(legendAxisPanel);
+        initHook();
       }
     }
   }
   
   private void initLegendAxisPanel() {
-    if (legendAxisPanel == null) {
+    if (null == legendAxisPanel) {
       legendAxisPanel = new LegendAxisPanel();
+    } else {
+      legendAxisPanel.reset();
     }
-    else {
-      compositePanel.remove(legendAxisPanel);
-    }
+    legendAxisPanel.setView(view);
+    legendAxisPanel.setPlot(plot);
     legendAxisPanel.setZoomListener(plot);
-    compositePanel.add(legendAxisPanel);
+    legendAxisPanel.init();
+    legendAxisPanel.layout();
+    // legendAxisPanel.setBounds(bounds);
   }
 
   public CompositeAxisPanel getCompositePanel() {
@@ -150,6 +212,15 @@ final class TopPanel extends AuxiliaryPanel {
       if(isInitialized()){
           plot.reloadStyles();
       }
+  }
+
+  public void clearDrawCaches() {
+    super.clearDrawCaches();
+    // ...
+  }
+
+  private static void log (String msg) {
+    System.out.println("TopPanel> "+msg);
   }
 
 }

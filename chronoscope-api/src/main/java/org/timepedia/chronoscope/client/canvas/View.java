@@ -42,6 +42,8 @@ public abstract class View implements Exportable {
 
   private ChronoscopeMenu contextMenu = null;
 
+  protected String viewId = "view"+(int)(999.9*Math.random());
+
   public void canvasSetupDone() {
     getCanvas().canvasSetupDone();
   }
@@ -134,6 +136,9 @@ public abstract class View implements Exportable {
     return viewWidth;
   }
 
+  public String getViewId() {
+    return viewId;
+  }
   /**
    * Create a view with the given dimensions, GssContext, calling the
    * ViewReadyCallback when all Canvases are created and the view layer is
@@ -265,13 +270,21 @@ public abstract class View implements Exportable {
     return gssContext.getPropertiesBySelector(gssSelector);
   }
 
-  public void clear() {
+  public void dispose() {
     // TODO: MCM check if there are objects which could be cleared
+    if (null != backingCanvas) {
+      backingCanvas.dispose();
+    }
     backingCanvas = null;
+
+    if (null != frontCanvas) {
+      frontCanvas.dispose();
+    }
+    frontCanvas = null;
+
     callback = null;
     chart = null;
     contextMenu = null;
-    frontCanvas = null;
     gssContext = null;
     menuFactory = null;
   }

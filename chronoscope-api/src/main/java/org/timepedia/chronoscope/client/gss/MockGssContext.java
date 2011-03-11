@@ -226,7 +226,7 @@ public class MockGssContext extends GssContext {
     p.color = Color.GRAY;
     p.tickPosition = "inside";
     p.bgColor = Color.TRANSPARENT;
-    p.fontSize = "9pt";
+    p.fontSize = "8pt";
     p.display = "framed"; // use actual min, max to denote range axis frame
   }
 

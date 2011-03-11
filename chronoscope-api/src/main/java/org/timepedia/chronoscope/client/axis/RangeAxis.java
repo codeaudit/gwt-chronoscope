@@ -24,7 +24,7 @@ import org.timepedia.exporter.client.Exportable;
 
 public class RangeAxis extends ValueAxis implements Exportable {
 
-  private static int MAX_TICKS = 8; // the default max number of ticks
+  private static int MAX_TICKS = 10; // the default max number of ticks
 
   private static final String posExponentLabels[] = {"", "(tens)", "(hundreds)",
         "(thousands)", "(tens of thousands)", "(hundreds of thousands)",
@@ -129,7 +129,6 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private double[] computeLinearTickPositions(double lrangeLow,
       double lrangeHigh, double axisHeight, double tickLabelHeight,
       boolean forceLowestTick, boolean forceHighestTick) {
-
     // TESTING
     forceHighestTick = true;
     forceLowestTick = true; // isCalcRangeAsPercent() ? true : forceLowestTick;
@@ -151,12 +150,12 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
 
 
-    int numTicks = (int) (axisHeight/(2.0 * tickLabelHeight));
+    int numTicks = (int) (axisHeight/(2.5 * tickLabelHeight));
     numTicks = MAX_TICKS < numTicks ? MAX_TICKS : numTicks;
     // if values straddle zero, try to make zero one of the ticks
     boolean spansZero = !zeroish(lrangeHigh) && !zeroish(lrangeLow) && (lrangeHigh * lrangeLow < 0);
-    double range = Math.abs(lrangeHigh - lrangeLow);
     double larger = Math.max(lrangeLow, lrangeHigh);
+    double range = Math.abs(lrangeHigh - lrangeLow);
     // int ticksInSmaller = (int)(numTicks * (range-larger)/range);
     // double roughInterval = spansZero ? range/(numTicks - 2): range/(numTicks - 2);
     // double roughInterval = spansZero? larger/(numTicks - 3) : range/(numTicks - 2);
@@ -169,7 +168,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
     smoothSigDigits = smoothSigDigits % 5 == 0 ? smoothSigDigits : smoothSigDigits - (int) MathUtil.mod(smoothSigDigits, 5.0);
     double smoothInterval = smoothSigDigits * exponent;
     double epsilon = smoothInterval/2.0;
-    double edge = larger % smoothInterval;
+    // double edge = MathUtil.mod(larger,smoothInterval);
+
+
       /*
     if (forceHighestTick) {
       if (spansZero) {
@@ -207,43 +208,65 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
     tickLabelSigDig = String.valueOf(smoothSigDigits*numTicks).length();
     // double roundedStart = lrangeLow - MathUtil.mod(lrangeLow, 5.0 * exponent);
-    double roundedStart = lrangeLow < 0 ? Math.ceil(-lrangeLow/smoothInterval) * smoothInterval :
+    double roundedStart = lrangeLow < 0 ? -Math.ceil(-lrangeLow/smoothInterval) * smoothInterval :
             Math.floor(lrangeLow/smoothInterval) * smoothInterval;
+    if (lrangeLow > 0 && (lrangeLow + smoothInterval) == 0) {
+      roundedStart = 0;
+    }
     double tickValue = forceLowestTick ? lrangeLow : roundedStart;
 
     if (spansZero) {
-      int posTicks = numTicks - (int)Math.floor(-tickValue/smoothInterval);
-      double delta = lrangeHigh - posTicks*smoothInterval;
-      if (delta > epsilon) {
-        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
-      }
-    } else {
-      double delta = lrangeHigh - numTicks*smoothInterval - tickValue;
-      if (delta > epsilon) {
-        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
-      }
-    }
+      int posTicks = (int) Math.floor(lrangeHigh / smoothInterval);
+      int negTicks = (int) Math.ceil(Math.abs(lrangeLow / smoothInterval));
+      numTicks = posTicks + negTicks + 1; // +1 for zero/axis tick
+    }   //      double delta = lrangeHigh - posTicks*smoothInterval;
+        //      if (delta > epsilon) {
+        //        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
 
+      else {
+      numTicks = (int)Math.ceil((range)/smoothInterval);
+//      double delta = lrangeHigh - smoothTicks*smoothInterval - roundedStart;
+//      if (delta > epsilon) {
+//        numTicks += (int) Math.ceil((delta-epsilon)/smoothInterval);
+//      }
+    }
+    // TODO - confirm various non-zero crossing cases have round numbered tick labels
     double tickPositions[] = new double[numTicks];
 
     tickPositions[0] = tickValue;
     for (int i = 1; i < tickPositions.length; i++) {
+      if (tickValue >= 0 && forceLowestTick && (1 == i)) {
+        if (smoothInterval *.88 > roundedStart+smoothInterval-tickValue) {
+          tickValue = roundedStart + 2*smoothInterval;
+        } else {
+          tickValue = roundedStart + smoothInterval;
+        }
+      } else
       if (tickValue < 0) {
-         int negIntervals = (int) ((Math.abs(tickValue)-epsilon)/smoothInterval);
-         if (negIntervals > 0) {
-           tickValue = - smoothInterval * negIntervals;
+         int negIntervals = (int) (Math.abs(tickValue*.75)/smoothInterval);
+         if (negIntervals > 1) {
+           if ((tickValue - smoothInterval*negIntervals) < smoothInterval) {
+             tickValue =  -smoothInterval * (negIntervals-1);
+           } else {
+            tickValue = - smoothInterval * negIntervals;
+           }
          } else {
-           double testtick = tickValue + smoothInterval;
-           if (Math.abs(testtick) < Math.abs(epsilon)) { // if close to zero but still negative, use zero
+           tickValue += smoothInterval;
+           if (Math.abs(tickValue) < Math.abs(epsilon)) { // if close to zero but still negative, use zero
                tickValue = 0;
-           } else if ((testtick * tickValue) < 0) { // if crossed from neg to pos, use zero
+           } else if ((tickValue * (tickValue - smoothInterval) < 0)) { // if crossed from neg to pos, use zero
                tickValue = 0;
            }
          }
       } else {
           int posIntervals = (int) (Math.abs(lrangeHigh - epsilon - tickValue)/(smoothInterval));
+          double lastTick = forceHighestTick ? lrangeHigh : smoothInterval * posIntervals;
+          if ((tickPositions.length-2 == i)
+          && ((lastTick - (tickValue + smoothInterval)) < (.88 * smoothInterval))) {
+            tickValue = lastTick;
+          } else
           if ((tickPositions.length-1)== i) {
-            tickValue = forceHighestTick ? lrangeHigh : smoothInterval * posIntervals;
+            tickValue = lastTick;
           } else {
             tickValue += smoothInterval;
           }
@@ -275,7 +298,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
 
   private double adjustedRangeMin = Double.POSITIVE_INFINITY, adjustedRangeMax = Double.NEGATIVE_INFINITY;
 
-  private RangeAxisPanel axisPanel;
+  private RangeAxisPanel rangeAxisPanel;
 
   private boolean rangeOveriddenLow, rangeOveriddenHigh;
 
@@ -292,10 +315,9 @@ public class RangeAxis extends ValueAxis implements Exportable {
   private TickLabelNumberFormatter tickLabelNumberFormatter;
 
   private int tickLabelSigDig;
-
   private double absAxisLength, visAxisLength;
-
   private double tickLabelHeight;
+  private double rangeAxisHeight;
 
   private View view;
 
@@ -360,8 +382,11 @@ public class RangeAxis extends ValueAxis implements Exportable {
     final double rangeMin = autoZoom ? this.visRangeMin : this.absRangeMin;
     final double rangeMax = autoZoom ? this.visRangeMax : this.absRangeMax;
 
-    tickLabelHeight = Math.min(axisPanel.getMaxLabelHeight(), 12);
-    double rangeAxisHeight = axisPanel.getBounds().height - tickLabelHeight;
+    // tickLabelHeight = Math.min(rangeAxisPanel.getMaxLabelHeight(), 12);
+    // rangeAxisPanel height might not be set yet, so use 75% of view height as initial estimate=
+    // double rangeAxisHeight = rangeAxisPanel.getBounds().height < 20 ?
+       //     view.getHeight()*0.75 : rangeAxisPanel.getBounds().height;
+    // rangeAxisHeight -= rangeAxisHeight > tickLabelHeight*2 ? tickLabelHeight : 0;
 
     ticks = computeLinearTickPositions(rangeMin, rangeMax,
             rangeAxisHeight, tickLabelHeight,
@@ -406,7 +431,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public RangeAxisPanel getAxisPanel() {
-    return this.axisPanel;
+    return this.rangeAxisPanel;
   }
 
   public Interval getExtrema() {
@@ -600,7 +625,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   }
 
   public void setAxisPanel(RangeAxisPanel r) {
-    this.axisPanel = r;
+    this.rangeAxisPanel = r;
   }
 
   /**
@@ -649,7 +674,7 @@ public class RangeAxis extends ValueAxis implements Exportable {
   public void setLabel(String label) {
     super.setLabel(label);
     plot.damageAxes();
-    axisPanel.computeLabelWidths(view);
+    rangeAxisPanel.computeLabelWidths(view);
   }
 
   public void setPlot(XYPlot plot) {
@@ -714,8 +739,16 @@ public class RangeAxis extends ValueAxis implements Exportable {
     }
   }
 
+  public void setRangeAxisHeight(double rangeAxisHeight) {
+    this.rangeAxisHeight = rangeAxisHeight;
+  }
+
   public void setShowExponents(boolean showExponents) {
     this.showExponents = showExponents;
+  }
+
+  public void setTickLabelHeight(double tickLabelHeight){
+    this.tickLabelHeight = tickLabelHeight;
   }
 
   /**
