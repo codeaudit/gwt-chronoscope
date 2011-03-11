@@ -6,6 +6,10 @@ import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
 import org.timepedia.chronoscope.client.render.LinearGradient;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Layer is a core Chronoscope drawing abstraction <p/> It is the key
  * immediate-mode render API used for drawing shapes, corresponding very close
@@ -39,11 +43,82 @@ public interface Layer {
 
   int XOR = 11;
 
-  int Z_LAYER_BACKGROUND = 0;
-  int Z_LAYER_PLOTAREA = 2;
-  int Z_LAYER_AXIS = 10;
-  int Z_LAYER_OVERLAY = 8;
-  int Z_LAYER_HOVER = 6;
+  // layers in roughly increasing order of expected redraw
+  public static String ROOT = "rootLayer";  // use background instead
+
+  public static String BACKGROUND = "backgroundLayer";
+
+  public static String TOP = "topLayer";
+  public static String DATERANGE = "daterangeLayer";
+  public static String ZOOMLEVEL = "zoomlevelLayer";
+  public static String LEGEND = "legendLayer";
+
+  public static String OVERVIEW_SMALL = "overviewSmallLayer";
+  public static String OVERVIEW_SMALL_MASK = "overviewSmallMaskLayer";
+  public static String OVERVIEW_SMALL_OVERLAY = "overviewSmallOverlayLayer";
+
+  public static String RANGE_AXIS = "rangeAxisLayer";
+  public static String RANGE_AXIS_LEFT = "rangeAxisLeftLayer";
+  public static String RANGE_AXIS_RIGHT = "rangeAxisRightLayer";
+  public static String RANGE_AXIS_OVERLAY = "rangeAxisOverlayLayer";
+  public static String RANGE_AXIS_HOVER = "rangeAxisHoverLayer";
+
+  public static String BOTTOM = "bottomLayer"; // bottom-most on screen enclosing overview, etc  not lowest z-order
+  public static String DOMAIN_AXIS = "domainAxisLayer";
+  public static String DOMAIN_AXIS_OVERLAY = "domainAxisOverlayLayer";
+  public static String DOMAIN_AXIS_HOVER = "domainAxisHoverLayer";
+
+  public static String PLOTAREA = "plotLayer";
+  public static String PLOTAREA_OVERLAY = "plotOverlayLayer";
+  public static String PLOTAREA_HOVER = "plotHoverLayer";
+  public static String PLOTAREA_RANGE = "plotRangeLayer"; // axes lines, ticks, labels drawn on plot area
+  public static String PLOTAREA_DOMAIN = "plotDomainLayer"; // axes lines, ticks, labels drawn on plot area
+
+  public static String OVERVIEW_LARGE = "overviewLargeLayer";
+  public static String OVERVIEW_LARGE_OVERLAY = "overviewLargeOverlayLayer";
+
+  /**
+   * Z_ORDER.indexOf(layerID)*3 can be used for the layer's Z_order as long as the layerID is from the options above
+   *   of course layers here are listed in increasing Z order
+   */
+  public static List<String> Z_ORDER = new ArrayList<String>(){
+    private static final long serialVersionUID = 1L;
+    {
+      add(ROOT); // deprecated
+      add(BACKGROUND);
+
+      add(TOP);
+      add(LEGEND);
+      add(ZOOMLEVEL);
+      add(DATERANGE);
+
+      add(PLOTAREA);
+      add(PLOTAREA_OVERLAY);
+      add(PLOTAREA_HOVER);
+      add(PLOTAREA_RANGE);
+      add(PLOTAREA_DOMAIN);
+
+      add(OVERVIEW_SMALL);
+      add(OVERVIEW_SMALL_OVERLAY);
+      add(OVERVIEW_SMALL_MASK);
+
+      add(RANGE_AXIS);
+      add(RANGE_AXIS_LEFT);
+      add(RANGE_AXIS_RIGHT);
+      add(RANGE_AXIS_OVERLAY);
+      add(RANGE_AXIS_HOVER);
+
+      add(BOTTOM);
+      add(DOMAIN_AXIS);
+      add(DOMAIN_AXIS_OVERLAY);
+      add(DOMAIN_AXIS_HOVER);
+
+      add(OVERVIEW_LARGE);
+      add(OVERVIEW_LARGE_OVERLAY);
+
+    }
+  };
+
 
   int TEXT_ALIGN_START = 0;
   int TEXT_ALIGN_END = 1;
@@ -72,6 +147,8 @@ public interface Layer {
    * text drawn that was tagged with this layer.
    */
   void clearTextLayer(String textLayer);
+
+  void dispose();
 
   void clip(double x, double y, double width, double height);
 
@@ -125,6 +202,8 @@ public interface Layer {
    * Return the bounds (within the Canvas/View) of this layer
    */
   Bounds getBounds();
+
+  void setBounds(Bounds b);
 
   /**
    * Return the Canvas which created this Layer

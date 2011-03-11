@@ -19,15 +19,16 @@ import java.util.Iterator;
 public class DefaultDisplayListImpl implements DisplayList {
 
   interface Cmd {
-
     void exec();
   }
 
   private String id;
+  // TODO - consider using the id here to eliminate all the layer.save() calls
+  //  used to push the layer selection onto the display list
 
   private Layer layer;
 
-  private ArrayList cmdBuffer = new ArrayList();
+  private ArrayList<Cmd> cmdBuffer = new ArrayList<Cmd>();
 
   public DefaultDisplayListImpl(String id, Layer layer) {
     this.id = id;
@@ -52,6 +53,7 @@ public class DefaultDisplayListImpl implements DisplayList {
   }
 
   public void clear() {
+    log(getLayerId()+" clear()");
     cmdBuffer.add(new Cmd() {
       public void exec() {
         layer.clear();
@@ -61,6 +63,7 @@ public class DefaultDisplayListImpl implements DisplayList {
 
   public void clearRect(final double x, final double y, final double width,
       final double height) {
+    log(getLayerId()+" clearRect "+x+", "+y+" "+width + " "+height);
     cmdBuffer.add(new Cmd() {
       public void exec() {
         layer.clearRect(x, y, width, height);
@@ -69,6 +72,7 @@ public class DefaultDisplayListImpl implements DisplayList {
   }
 
   public void clearTextLayer(final String textLayer) {
+    log(getLayerId() + "clearTextLayer "+textLayer);
     cmdBuffer.add(new Cmd() {
       public void exec() {
         layer.clearTextLayer(textLayer);
@@ -94,7 +98,13 @@ public class DefaultDisplayListImpl implements DisplayList {
   }
 
   public DisplayList createDisplayList(String id) {
+    log("createDisplayList "+id);
     return layer.createDisplayList(id);
+  }
+
+  public void dispose() {
+    layer=null;
+    cmdBuffer.clear();
   }
 
   public LinearGradient createLinearGradient(double startx, double starty,
@@ -197,6 +207,10 @@ public class DefaultDisplayListImpl implements DisplayList {
 
   public Bounds getBounds() {
     return layer.getBounds();
+  }
+
+  public void setBounds(Bounds b) {
+    layer.setBounds(b);
   }
 
   public Canvas getCanvas() {
@@ -481,5 +495,9 @@ public class DefaultDisplayListImpl implements DisplayList {
         layer.translate(x, y);
       }
     });
+  }
+
+  private static void log(String msg){
+    System.out.println("DefaultDisplayListImpl> "+msg);
   }
 }

@@ -22,10 +22,10 @@ public class BrowserInfoWindow implements InfoWindow, Exportable {
 
   private final PopupPanel pp;
 
-  private DOMView browserView;
+  private GwtView view;
 
-  public BrowserInfoWindow(DOMView browserView, PopupPanel pp) {
-    this.browserView = browserView;
+  public BrowserInfoWindow(GwtView view, PopupPanel pp) {
+    this.view = view;
     this.pp = pp;
     manager = new HandlerManager(this);
     pp.addPopupListener(new PopupListener() {
@@ -43,8 +43,8 @@ public class BrowserInfoWindow implements InfoWindow, Exportable {
 
   @Export
   public void setPosition(double x, double y) {
-    pp.setPopupPosition(DOM.getAbsoluteLeft(browserView.getElement()) + (int) x,
-        DOM.getAbsoluteTop(browserView.getElement()) + (int) y);
+    pp.setPopupPosition(DOM.getAbsoluteLeft(view.getElement()) + (int) x,
+        DOM.getAbsoluteTop(view.getElement()) + (int) y);
   }
 
   @Export("addCloseHandler")

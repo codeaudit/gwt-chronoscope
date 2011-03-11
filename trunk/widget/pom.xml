@@ -20,8 +20,11 @@
     </dependency>
   </dependencies>
 
+
+
   <properties>
-    <gwt.module>org.timepedia.chronoscope.widget.ChronoscopeWidget</gwt.module>
+    <gwt.module>org.timepedia.chronoscope.widget.ChronoscopeWidget${gwt.modulesuffix}</gwt.module>
+    <!-- gwt.module>org.timepedia.chronoscope.widget.ChronoscopeWidget</gwt.module -->
     <gwt.name>widget</gwt.name>
   </properties>
 

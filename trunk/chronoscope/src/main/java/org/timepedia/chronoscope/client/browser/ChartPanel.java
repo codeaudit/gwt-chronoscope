@@ -21,7 +21,6 @@ import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
@@ -43,9 +42,8 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
   }-*/;
 
   private boolean autoResize = false;
-  private String containerId;
   private Dataset[] datasets;
-  private Element domElement;
+  private String targetElementId;
   private boolean initialized = false;
   private DefaultXYPlot plot;
   private PlotPanel plotPanel;
@@ -65,23 +63,22 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
 
   public void onDetach() {
     super.onDetach();
-    clear();
+    dispose();
     plotPanel = null;
   }
   
   @Export
   public void detach() {
-    clear();
+    dispose();
     this.removeFromParent();
     plotPanel = null;
   }
   
-  private void clear() {
+  private void dispose() {
     for (Dataset<?> d : datasets) {
       d.clear();
     }
     datasets = null;
-    domElement = null;
     plot.clear();
     plot = null;
   }
@@ -124,22 +121,23 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
     plotPanel.init(plot, width, height);
 
     Window.addResizeHandler(this);
-
+    // Element target = DOM.getElementById(targetElementId);
+    // targetElementId = DOM.getElementAttribute(target, "id");
     // Attach to the root panel if it is not already attached
     if (!isAttached()) {
-      if (containerId == null && domElement != null
-          && Document.get().getBody().isOrHasChild(domElement)) {
-        containerId = domElement.getAttribute("id");
-        if (containerId == null || containerId.isEmpty()) {
-          // Generate a random Id,
-          containerId = String.valueOf(Math.random()).replaceAll("[^\\d]", "");
-          domElement.setId(containerId);
-        }
-      }
-      if (containerId != null && RootPanel.get(containerId) != null) {
-        RootPanel.get(containerId).clear();
-        DOM.getElementById(containerId).setInnerHTML("");
-        RootPanel.get(containerId).add(this);
+//      if (targetElementId == null
+//         // && target != null
+//          && Document.get().getBody().isOrHasChild(target)) {
+//        if (targetElementId == null || targetElementId.isEmpty()) {
+//          // Generate a random Id,
+//          targetElementId = "cp"+(int)(Math.random()*999.9);
+//          target.setId(targetElementId);
+//        }
+//      }
+      if ((targetElementId != null) && (RootPanel.get(targetElementId) != null)) {
+        RootPanel rootPanel = RootPanel.get(targetElementId); //.dispose();
+        // DOM.getElementById(targetElementId).setInnerHTML("");
+        rootPanel.add(this);
       }
     }
   }
@@ -182,7 +180,7 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
    * similar to re-create the graph but the performance is better especially
    * when using flash canvas.
    * 
-   * @param datasets json array of the new datasets
+   * @param dsets json array of the new datasets
    */
   public void replaceDatasets(Dataset[] dsets) {
     setDatasets(dsets);
@@ -276,16 +274,13 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
     resize(width, height);
   }
 
-  public void setDomElement(Element element) {
-    this.domElement = element;
-  }
-
-  /**
-   * Set the id of an element already present in the page where this chart
-   * should be appended to
-   */
-  public void setDomElementId(String id) {
-    this.containerId = id;
+  public void setTargetElement(Element element) {
+    if (element == null){ return; }
+    targetElementId = DOM.getElementAttribute(element, "id");
+    if (null == targetElementId || targetElementId.isEmpty()) {
+      targetElementId = "cp"+(int)(Math.random()*999.9);
+      DOM.setElementAttribute(element, "id", targetElementId);
+    }
   }
 
   public void setGssContext(GssContext gssContext) {
@@ -313,6 +308,6 @@ public class ChartPanel extends Composite implements Exportable, ResizeHandler {
    */
   @Deprecated 
   public void setReadyListener(ViewReadyCallback viewReadyCallback) {
-    setViewReadyCallback(viewReadyCallback);    
+    setViewReadyCallback(viewReadyCallback);
   }
 }

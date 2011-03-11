@@ -53,7 +53,7 @@ public final class ChartMouseMoveHandler
         event.stopPropagation();
         event.preventDefault();
       }
-    } else if (plot.getBounds().inside(x, y)) {
+    } else if ((null != plot) && (null != plot.getBounds()) && (plot.getBounds().inside(x, y))) {
       if (chart.setHover(x, y)) {
         chart.setCursor(Cursor.CLICKABLE);
       } else {

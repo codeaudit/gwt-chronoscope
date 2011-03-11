@@ -64,7 +64,7 @@ public abstract class AbstractEventHandler<T extends EventHandler> {
     Bounds plotBounds = plot.getBounds();
 
     // First check if (x,y) hit the center plot
-    if (plotBounds.inside(x, y)) {
+    if ((null != plotBounds) && (plotBounds.inside(x, y))) {
       Overlay o = plot.getOverlayAt(x, y);
       if (o != null && (o instanceof Draggable) && ((Draggable)o).isDraggable()) {
         return o;

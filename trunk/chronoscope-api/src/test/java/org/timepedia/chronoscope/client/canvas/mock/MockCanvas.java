@@ -38,6 +38,11 @@ public class MockCanvas extends Canvas {
     layers.remove(layerId);
   }
 
+  public void dispose() {
+    for (String layerId:layers.keySet()) {
+      disposeLayer(layerId);
+    }
+  }
   public Layer getLayer(String layerId) {
     return layers.get(layerId);
   }

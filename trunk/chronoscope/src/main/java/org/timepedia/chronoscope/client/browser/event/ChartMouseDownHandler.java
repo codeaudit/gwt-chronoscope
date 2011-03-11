@@ -28,10 +28,10 @@ public final class ChartMouseDownHandler
       Bounds highlightBounds = chart.getPlot().getOverviewAxisPanel().getHighlightBounds();
       if ( highlightBounds != null) {
         int hiliteX = (int) highlightBounds.x;
-        OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX((x - overviewX) - hiliteX);
+        System.out.println("   MOUSEDOWN    x:"+x+" overviewX:"+overviewX+" hiliteX:"+hiliteX);
+        OverviewAxisMouseMoveHandler.setHiliteRelativeGrabX((double)((x - overviewX) - hiliteX));
       }
     }
-
     boolean handled;
 
     if (event.getNativeButton() == Event.BUTTON_RIGHT) {

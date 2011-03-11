@@ -20,11 +20,30 @@ public abstract class AbstractPanel implements Panel, Exportable {
   protected Bounds bounds = new Bounds();
   protected GssProperties gssProperties;
   protected Layer layer;  
-  protected String textLayerName;
-  protected StringSizer stringSizer;
+  protected String textLayerName;  // TODO - eliminate textlayers and just have layers
   protected Panel parent;
 
   private double layerOffsetX, layerOffsetY;
+
+  public void dispose() {
+    if (null != layer) {
+      // layer.clearTextLayer(getTextLayerName());
+      layer.dispose();
+      layer = null;
+    }
+    if (null != parent) {
+      parent.remove(this);
+      parent = null;
+    }
+    gssProperties = null;
+    textLayerName = null;
+  }
+
+  public void reset() {
+    log("reset");
+    this.layer = null;
+    this.bounds = new Bounds();
+  }
 
   public final void setGssProperties(GssProperties gssProperties) {
     this.gssProperties = gssProperties;
@@ -59,7 +78,16 @@ public abstract class AbstractPanel implements Panel, Exportable {
   }
   
   public void setLayer(Layer layer) {
+    if (null == layer) { return; } else
+    if (layer.equals(this.layer)) { return; } else
+    if (this.layer != null) {
+      log(this.layer.getLayerId()+".dispose()");
+      this.layer.dispose();
+    }
+    log("setLayer "+layer.getLayerId() + " layer.bounds: "+layer.getBounds() + " bounds:"+bounds);
+
     this.layer = layer;
+    this.textLayerName = layer.getLayerId();
   }
   
   public void setLayerOffset(double x, double y) {
@@ -80,24 +108,39 @@ public abstract class AbstractPanel implements Panel, Exportable {
   }
 
   public final void setPosition(double x, double y) {
+    log("setPosition "+x+", "+y);
     bounds.setPosition(x, y);
-    
-    Panel parentPanel = getParent();
-    layerOffsetX = x + parentPanel.getLayerOffsetX();
-    layerOffsetY = y + parentPanel.getLayerOffsetY();
+    if (null == layer) { return; }
+
+    layer.save();
+
+    Bounds lb = layer.getBounds();
+    if (!bounds.equals(lb)) {
+      lb.setPosition(x,y);
+      layer.setBounds(lb);
+    }
+
+    layer.restore();
+
+    // Panel parentPanel = getParent();
+    // layerOffsetX = x + parentPanel.getLayerOffsetX();
+    // layerOffsetY = y + parentPanel.getLayerOffsetY();
+    // log ("setPosition "+parentPanel.getBounds() +" offset:"
+       //     + parentPanel.getLayerOffsetX()+ "," +parentPanel.getLayerOffsetY());
+    // log ("setPosition offset:"+layerOffsetX + ", "+layerOffsetY);
   }
 
-  public void layout() {
-  }
+  public void layout() { }
 
-  public final void setStringSizer(StringSizer stringSizer) {
-    this.stringSizer = stringSizer;
-  }
-  
   public String toString() {
     String layerBounds = (null==layer) ? "null" : layer.getBounds().toString();
     return "bounds=" + this.bounds +
         "; layerOffset=(" + layerOffsetX + ", " + layerOffsetY + ")" +
         "; layerBounds=" + layerBounds;
   }
+
+  private static void log (String msg) {
+    System.out.println("AbstractPanel>  "+msg);
+  }
+
 }

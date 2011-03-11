@@ -18,8 +18,7 @@ import org.timepedia.chronoscope.client.util.ArgChecker;
 import org.timepedia.exporter.client.Exportable;
 
 /**
- * UI panel containing the dataset legend (a colored line followed by the
- * dataset's name).
+ * UI panel containing the dataset legend (colored icon followed by the dataset's name).
  * 
  * @author Chad Takahashi
  */
@@ -29,24 +28,37 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
   public static final double LEGEND_ICON_PAD = 2;
   // Default icon width or height 
   public static final double LEGEND_ICON_SIZE = 7;
-
   // Dictates the X-padding between each dataset legend item
-  static final int DATASET_LEGEND_PAD = 6;
-
+  public static final int DATASET_LEGEND_PAD = 6;
   // Dictates the Y-padding between legend labels and plot
-  static final int LEGEND_PLOT_PAD = 5;
-
-  private double lblHeight;
-
-  private int colSpacing = DATASET_LEGEND_PAD;
-
+  public static final int LEGEND_PLOT_PAD = 6;
+  // Dictates spacing between legend columns
+  private static int colSpacing = DATASET_LEGEND_PAD;
+  // Dictates whether column alignment will be attempted
   private boolean colAlignment = false;
 
+  private double lblHeight;
   private GssProperties legendLabelsProperties;
-
   private XYPlot<?> plot;
-
   private View view;
+
+  public void dispose() {
+    super.dispose();
+    legendLabelsProperties = null;
+    plot = null;
+    view = null;
+  }
+
+  public void reset () {
+    super.reset();
+    plot = null;
+    view = null;
+    legendLabelsProperties = null;
+  }
+
+  public void remove (Panel panel) {
+    return; // no sub panels to remove
+  }
 
   public String getType() {
     return "legend";
@@ -65,13 +77,16 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(gssProperties, "gssProperties");
 
-    lblHeight = stringSizer.getHeight("X", gssProperties);
+    layer.save();
+
+    lblHeight = StringSizer.getHeight(layer, "(X)", gssProperties);
     colAlignment = legendLabelsProperties.columnAligned;
-
     this.bounds.width = view.getWidth();
-
     Bounds b = calcBounds(layer, plot.getDatasets().size());
-    this.bounds.height = b.height;
+    bounds.height = b.height;
+    layer.setBounds(bounds);
+
+    layer.restore();
   }
 
   public void setPlot(XYPlot<?> plot) {
@@ -97,22 +112,22 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
   }
 
   private void draw(Layer layer, Bounds b) {
+    layer.save();
 
     final boolean onlyCalcSize = (b != null);
-    double xCursor = bounds.x;
-    double yCursor = bounds.y + lblHeight;
+    double xCursor = 0; //  bounds.x;
+    double yCursor = lblHeight; // bounds.y + lblHeight;
     int numDatasets = plot.getDatasets().size();
     double padding = calcLegendIconWidth() + LEGEND_ICON_PAD;
 
     List<Item> items = new LinkedList<Item>();
     for (int i = 0; i < numDatasets; i++) {
       DatasetRenderer<?> renderer = plot.getDatasetRenderer(i);
-      renderer = plot.getDatasetRenderer(i);
       for (int d : renderer.getLegendEntries(plot.getDatasets().get(i))) {
         int hoverPoint = plot.getHoverPoints()[i];
 
         String seriesLabel = createDatasetLabel(plot, i, hoverPoint, d,  legendLabelsProperties.valueVisible);
-        double lblWidth = stringSizer.getWidth(seriesLabel, legendLabelsProperties);
+        double lblWidth = StringSizer.getWidth(layer, seriesLabel, legendLabelsProperties);
 
         if (lblWidth <= 0) {
           lblWidth = bounds.width;
@@ -130,14 +145,14 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     List<List<Item>> rows = DatasetLegendPanel.getLegendRows(items, bounds.width, colSpacing, ncols);
 
     if (onlyCalcSize) {
-      b.x = this.bounds.x;
-      b.y = this.bounds.y;
+      b.x = this.bounds.x; // TODO - 0?
+      b.y = this.bounds.y; // TODO - 0?
       b.width = bounds.width;
-      b.height = (rows.size() - 1) * lblHeight + LEGEND_PLOT_PAD;
+      b.height = (rows.size()) * lblHeight + LEGEND_PLOT_PAD;
     } else {
       double colwidth = (bounds.width - (colSpacing * (ncols - 1))) / ncols;
       for (List<Item> row : rows) {
-        xCursor = bounds.x;
+        xCursor = 0; // bounds.x;
         for (int i = 0; i < row.size(); i++) {
           Item item = row.get(i);
 
@@ -155,7 +170,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
         yCursor += lblHeight;
       }
     }
-
+    layer.restore();
   }
 
   private void drawLegend(Layer layer, double xCursor, double yCursor,
@@ -172,7 +187,7 @@ public class DatasetLegendPanel extends AbstractPanel implements GssElement, Exp
     String seriesLabel = item.label;
     double labelSpace = width - item.pad;
     if (labelSpace < item.len) {
-      seriesLabel = stringSizer.wrapText(seriesLabel, gssProperties, labelSpace);
+      seriesLabel = StringSizer.wrapText(layer, seriesLabel, gssProperties, labelSpace);
     }
     layer.drawText(xCursor + item.pad, yCursor, seriesLabel,
         legendLabelsProperties.fontFamily, legendLabelsProperties.fontWeight,

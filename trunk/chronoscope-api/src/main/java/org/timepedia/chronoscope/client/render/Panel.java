@@ -72,4 +72,14 @@ public interface Panel {
 
   void layout();
 
+  /**
+   * release resources
+   */
+  void dispose();
+
+  /**
+   * clear references to child panels
+   * @param panel
+   */
+  void remove(Panel panel);
 }

@@ -29,17 +29,25 @@ public class Label {
   
   private void init(String text, String textLayerName, Layer layer,
       String fontFamily, String fontWeight, String fontSize) {
-    
+
     this.text = text;
     this.textLayerName = textLayerName;
     this.fontFamily = fontFamily;
     this.fontWeight = fontWeight;
     this.fontSize = fontSize;
-    
+
     bounds.x = 0;
     bounds.y = 0;
+    layer.save();
     bounds.height = layer.stringHeight(text, this.fontFamily, this.fontWeight, this.fontSize); 
     bounds.width = layer.stringWidth(text, this.fontFamily, this.fontWeight, this.fontSize);
+    layer.restore();
+  }
+
+  public boolean isEmpty() {
+    if (null == text) { return true; } else
+    if (text.trim().isEmpty()) { return true; }
+    return false;
   }
 
   public void draw(Layer layer) {
@@ -71,5 +79,9 @@ public class Label {
   public void setLocation(double x, double y) {
     bounds.x = x;
     bounds.y = y;
+  }
+
+  private static void log(String msg) {
+    System.out.print("Label> "+msg);
   }
 }

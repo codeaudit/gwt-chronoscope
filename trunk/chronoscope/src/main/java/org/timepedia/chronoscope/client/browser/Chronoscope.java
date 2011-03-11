@@ -6,6 +6,7 @@ import org.timepedia.chronoscope.client.ComponentFactory;
 import org.timepedia.chronoscope.client.Dataset;
 import org.timepedia.chronoscope.client.Datasets;
 import org.timepedia.chronoscope.client.XYDataSource;
+import org.timepedia.chronoscope.client.browser.flashcanvas.SwfObject;
 import org.timepedia.chronoscope.client.browser.json.GwtJsonDataset;
 import org.timepedia.chronoscope.client.browser.json.JsonDatasetJSO;
 import org.timepedia.chronoscope.client.browser.theme.Theme;
@@ -33,7 +34,6 @@ import org.timepedia.exporter.client.ExporterUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
@@ -142,7 +142,6 @@ public class Chronoscope
   }
 
   public interface URLResolver {
-
     public String resolveURL(String url);
   }
 
@@ -158,10 +157,6 @@ public class Chronoscope
   private static Theme currentTheme;
 
   private static boolean microformatsEnabled = false;
-
-  private static boolean fontBookRenderingEnabled = false;
-
-  private static String fontBookServiceEndpoint;
 
   private static Chronoscope instance;
 
@@ -225,16 +220,14 @@ public class Chronoscope
   public ChartPanel createTimeseriesChart(String id,
       JsArray<JsonDatasetJSO> jsonDatasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
-    ChartPanel chart = createTimeseriesChart(DOM.getElementById(id),
-        createDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
-    return chart;
+    return createTimeseriesChart(id, createDatasets(jsonDatasets), chartWidth, chartHeight, readyListener);
   }
  
   /**
   * Replace the datasets on a chart and redraw all the elements in the chart.
   * It is like doing a detach and a create of a graph but the performance is better specially 
   * with flash canvas.
-  *  
+  *
   */
   @Export
   public ChartPanel replaceDatasets(ChartPanel chartPanel, JsArray<JsonDatasetJSO> jsonDatasets) {
@@ -277,24 +270,32 @@ public class Chronoscope
   public static ChartPanel createTimeseriesChart(Element elem,
       Dataset[] datasets, int chartWidth, int chartHeight,
       ViewReadyCallback readyListener) {
-    return getInstance()
-        .createChartPanel(elem, datasets, chartWidth, chartHeight,
-            readyListener);
+    return getInstance().createChartPanel(elem, datasets, chartWidth, chartHeight, readyListener);
   }
 
-  public static ChartPanel createTimeseriesChart(String elementId,
+  public static ChartPanel createTimeseriesChart(String id,
       Dataset[] datasets, int chartWidth, int chartHeight) {
-    return createTimeseriesChart(elementId, datasets, chartWidth, chartHeight,
-        null);
+    return createTimeseriesChart(id, datasets, chartWidth, chartHeight, null);
   }
 
   /**
    */
   public static ChartPanel createTimeseriesChart(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyCallback) {
-    return createTimeseriesChart(DOM.getElementById(id), datasets, chartWidth,
-        chartHeight, readyCallback);
+    return createTimeseriesChart(DOM.getElementById(id), datasets,
+            chartWidth, chartHeight, readyCallback);
   }
+
+//  public static Element getOrCreateElement(String id) {
+//    if (null == id) { return DOM.createDiv(); }
+//
+//    Element e = DOM.getElementById(id);
+//    if (null == e) {
+//      e = DOM.createDiv();
+//      e.setId(id);
+//    }
+//    return e;
+//  }
 
   public DatasetReader getDatasetReader() {
     return datasetReader;
@@ -357,7 +358,7 @@ public class Chronoscope
   }
 
   public static boolean isFontBookRenderingEnabled() {
-    return fontBookRenderingEnabled;
+    return false;
   }
 
   public static boolean isMicroformatsEnabled() {
@@ -478,18 +479,19 @@ public class Chronoscope
    */
   @Export @Deprecated
   public static void setFontBookServiceEndpoint(String endpoint) {
-    fontBookServiceEndpoint = endpoint;
+    return; // fontBookServiceEndpoint = endpoint;
   }
 
   @Export @Deprecated
   public static void setFontBookRendering(boolean enabled) {
-    fontBookRenderingEnabled = enabled;
+    return; // fontBookRenderingEnabled = enabled;
   }
 
   @Deprecated
   public static String getFontBookServiceEndpoint() {
-    return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
-        + "fr" : fontBookServiceEndpoint;
+    return "";
+      // return fontBookServiceEndpoint == null ? "http://api.timepedia.org/widget/"
+      //  + "fr" : fontBookServiceEndpoint;
   }
 
 
@@ -530,8 +532,7 @@ public class Chronoscope
   @Export("createTimeseriesChartByIdSized")
   public ChartPanel createChartPanel(String id, Dataset[] datasets,
       int chartWidth, int chartHeight, ViewReadyCallback readyListener) {
-    return createChartPanel(DOM.getElementById(id), datasets, chartWidth,
-        chartHeight, readyListener);
+    return createChartPanel(id, datasets, chartWidth, chartHeight, readyListener);
   }
 
   @Inject
@@ -547,7 +548,7 @@ public class Chronoscope
 
     final ChartPanel cpanel = newChartPanel();
     cpanel.setDatasets(datasets);
-    cpanel.setDomElement(elem);
+    cpanel.setTargetElement(elem);
     cpanel.setDimensions(chartWidth, chartHeight);
     cpanel.setViewReadyCallback(new ViewReadyCallback() {
       // Wait until async gss has been loaded.
@@ -570,7 +571,7 @@ public class Chronoscope
       //TODO: hack, we need a more general purpose way of ensuring this
       //stuff is injected on a per platform basis (not GWT specific)
       // Force initialization of platform specific factories
-      GWT.create(DOMView.class);
+      GWT.create(GwtView.class);
       if (currentTheme == null) {
         Chronoscope.useGwtTheme(Theme.CHROME);
       }
@@ -609,6 +610,8 @@ public class Chronoscope
     Exporter dexporter = GWT.create(ArrayDataset2D.class);
 
     Exporter exporterMarker = (Exporter) GWT.create(Marker.class);
+
+    // Exporter exporterRangeAxis = (Exporter) GWT.create(RangeAxis.class);
 
     Exporter exporterRangeMarker = (Exporter) GWT.create(RangeBarMarker.class);
 

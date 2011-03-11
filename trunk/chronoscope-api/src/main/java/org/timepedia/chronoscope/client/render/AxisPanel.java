@@ -3,6 +3,7 @@ package org.timepedia.chronoscope.client.render;
 import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
+import org.timepedia.chronoscope.client.canvas.Layer;
 import org.timepedia.chronoscope.client.canvas.View;
 import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.gss.GssProperties;
@@ -16,20 +17,37 @@ import org.timepedia.exporter.client.Export;
  * 1 or more axis panels can be added to a {@link CompositeAxisPanel}.
  */
 @ExportPackage("chronoscope")
-public abstract class AxisPanel extends AbstractPanel implements GssElement
-, Exportable {
-
+public abstract class AxisPanel extends AbstractPanel implements GssElement, Exportable {
   // if true, only render gridlines into the plots, render nothing else.
   public static final boolean GRID_ONLY = false;
   
   protected GssProperties labelProperties;
-  
-  protected XYPlot plot;
-  
   protected ValueAxis valueAxis;
-
+  protected XYPlot<?> plot;
   protected View view;
-  
+
+  public void dispose() {
+    super.dispose();
+    plot = null;
+    view = null;
+    valueAxis = null;
+    labelProperties = null;
+  }
+
+  // reset re-uses layers, dispose disposes layers
+  public void reset() {
+    super.reset();
+    log("reset");
+    this.plot = null;
+    this.view = null;
+    this.valueAxis = null;
+    this.labelProperties = null;
+  }
+
+  public void remove (Panel panel) {
+    return; // no sub panels
+  }
+
   public final GssElement getParentGssElement() {
     return (CompositeAxisPanel)this.parent;
   }
@@ -40,10 +58,40 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement
   }
   
   public void setBounds(Bounds b) {
+    log("setBounds "+getType() + " " +b);
     this.bounds = new Bounds(b);
+    if (null != layer) {
+      layer.save();
+
+      if (!b.equals(layer.getBounds())
+       && null != parent && !layer.equals(parent.getLayer())) {
+
+        layer.setBounds(b);
+        log(layer.getLayerId() + " " + layer.getBounds());
+      }
+
+      layer.restore();
+    }
   }
+
+  public void setWidth(double width) {
+    this.bounds.width = width;
+    if (null != layer) {
+      layer.save();
+
+      if(!bounds.equals(layer.getBounds())) {
+        Bounds lb = layer.getBounds();
+        log(layer.getLayerId() + " was:" + this.layer.getBounds());
+        layer.setBounds(new Bounds(lb.x, lb.y, width, lb.height));
+        log(layer.getLayerId() + " now:" + this.layer.getBounds());
+      }
+
+      layer.restore();
+    }
+  }
+
   
-  public final void setPlot(XYPlot plot) {
+  public final void setPlot(XYPlot<?> plot) {
     this.plot = plot;
   }
   
@@ -64,20 +112,23 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement
   public final void init() {
     ArgChecker.isNotNull(view, "view");
     ArgChecker.isNotNull(plot, "plot");
-    
-    CompositeAxisPanel parentAxisPanel = (CompositeAxisPanel)this.parent;
+
+    // CompositeAxisPanel parentAxisPanel = (CompositeAxisPanel)this.parent;
     // FIXME
     gssProperties = view.getGssProperties(this, "");
     labelProperties = view.getGssProperties(new GssElementImpl("label", this), "");
-    textLayerName = parentAxisPanel.getName() + parentAxisPanel.indexOf(this);    
+    // textLayerName =  parentAxisPanel.getName(); //  + parentAxisPanel.indexOf(this);
     initHook();
   }
-  
+
   public abstract void layout();
   
   /**
    * Subclasses may provide additional initialization steps.
    */
   protected abstract void initHook();
-  
+
+  private static void log(String msg){
+    System.out.println("AxisPanel> "+msg);
+  }
 }

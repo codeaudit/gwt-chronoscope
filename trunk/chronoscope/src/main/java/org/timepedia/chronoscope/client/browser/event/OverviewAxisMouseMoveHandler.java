@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 
 import org.timepedia.chronoscope.client.Chart;
 import org.timepedia.chronoscope.client.Cursor;
-import org.timepedia.chronoscope.client.XYPlot;
 import org.timepedia.chronoscope.client.axis.ValueAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.plot.DefaultXYPlot;
@@ -25,7 +24,7 @@ public class OverviewAxisMouseMoveHandler extends
     Chart chart = chartInfo.chart;
     DefaultXYPlot plot = (DefaultXYPlot)chartInfo.chart.getPlot();
     
-    if (!plot.isOverviewVisible()) {
+    if (null == plot.getBounds() || !plot.isOverviewVisible()) {
       return;
     }
     
@@ -40,8 +39,8 @@ public class OverviewAxisMouseMoveHandler extends
     Bounds plotBounds = plot.getBounds();
     int x = getLocalX(event) - (int)plotBounds.x;
     int y = getLocalY(event) - (int)plotBounds.bottomY();
-    
-    final boolean isInAxisBounds = overviewAxisBounds.inside(x, y);
+
+    final boolean isInAxisBounds = null == hiliteBounds ? false: overviewAxisBounds.inside(x, y);
     final boolean isDragging = uiAction.isDragging(overviewAxis);
     
     //log("onMouseMove(" + x + ", " + y + ")" + ": inAxisBounds=" + isInAxisBounds + "; uiAction.startX=" + uiAction.getEndX());
@@ -57,7 +56,8 @@ public class OverviewAxisMouseMoveHandler extends
     }
     // else, mouse is outside of overview axis, so don't mess with cursor.
     
-    final double viewOffsetX = plotBounds.x;
+    // final double viewOffsetX = plotBounds.x;
+    final double viewOffsetX = 0;
     
     if (uiAction.isSelecting(overviewAxis)) {
       chart.setAnimating(true);
@@ -74,6 +74,7 @@ public class OverviewAxisMouseMoveHandler extends
         endDomainX = tmp;
       }
       // Set the current highlight region in the plot
+      //  TODO - think about setting highlightPanel.bounds instead
       plot.setHighlight(startDomainX, endDomainX);
       plot.getDomain().setEndpoints(startDomainX, endDomainX);
       plot.redraw();
@@ -85,7 +86,6 @@ public class OverviewAxisMouseMoveHandler extends
       // of the highlight window within the overview axis.
       //double hiliteLeftX = x - (hiliteBounds.width / 2.0);x will always be at the center of the hiliteBounds
 
-      // hiliteRelativeGrabX = hiliteBounds.x - x; //  = calcHiliteRelativeGrabX(plot, x);
       double hiliteLeftX = x - hiliteRelativeGrabX;
       double hiliteLeftDomainX = toDomainX(hiliteLeftX + viewOffsetX, plot);
      
@@ -111,8 +111,8 @@ public class OverviewAxisMouseMoveHandler extends
   /**
    * record the initial X value position of the grab relative to the hilite region
    */
-  public static void setHiliteRelativeGrabX(int relX) {
-    hiliteRelativeGrabX = Math.max(0,relX);
+  public static void setHiliteRelativeGrabX(Double relX) {
+    hiliteRelativeGrabX = relX; //  Math.max(0,relX);
   }
 
   private static void log(Object msg) {
