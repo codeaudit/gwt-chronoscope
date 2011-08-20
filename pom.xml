@@ -6,7 +6,7 @@
   <groupId>org.timepedia.chronoscope</groupId>
   <artifactId>chronoscope-project</artifactId>
   <packaging>pom</packaging>
-  <version>2.0-SNAPSHOT</version>
+  <version>2.1-SNAPSHOT</version>
   <name>Chronoscope Project</name>
   <url>http://timepedia.org/chronoscope</url>
   <description>Chronoscope is a charting and visualization platform developed with GWT.</description>
@@ -98,7 +98,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>2.1.0</version>
+          <version>${gwtmaven}</version>
           <configuration>
             <logLevel>${gwt.loglevel}</logLevel>
             <style>${gwt.outputstyle}</style>
@@ -246,6 +246,10 @@
       <id>timefire</id>
       <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
     </repository>
+    <repository>
+      <id>gquery-plugins</id><!-- gin -->
+      <url>http://gwtquery-plugins.googlecode.com/svn/mavenrepo</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>  
@@ -257,7 +261,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gwtversion>2.1.0</gwtversion>
+    <gwtversion>2.3.0</gwtversion>
+    <gwtmaven>2.3.0</gwtmaven>
     <gwt.loglevel>INFO</gwt.loglevel>
     <gwt.outputstyle>OBF</gwt.outputstyle>
     <gwt.modulesuffix />
@@ -300,7 +305,6 @@
     <profile>
       <id>prod</id>
       <properties>
-        <gwtversion>2.1.0</gwtversion>
         <gwt.loglevel>ERROR</gwt.loglevel>
         <gwt.outputstyle>OBF</gwt.outputstyle>
         <gwt.xdisable>true</gwt.xdisable>
@@ -347,7 +351,7 @@
     <dependency>
       <groupId>org.timepedia.exporter</groupId>
       <artifactId>gwtexporter</artifactId>
-      <version>2.0.10</version>
+      <version>2.3.0</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -357,10 +361,31 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt.inject</groupId>
+      <groupId>com.googlecode.gwt.inject</groupId>
       <artifactId>gin</artifactId>
-      <version>1.0</version>
+      <version>1.5</version>
+      <classifier>2.2.0</classifier>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice-assistedinject</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

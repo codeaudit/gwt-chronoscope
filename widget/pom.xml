@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-project</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.1-SNAPSHOT</version>
   </parent>
 
   <name>Chronoscope Chart Widget</name>
