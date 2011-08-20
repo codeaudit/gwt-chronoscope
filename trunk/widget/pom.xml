@@ -45,9 +45,14 @@
             <phase>prepare-package</phase>
             <configuration>
               <tasks>
-                <echo message="about to copy" />
+                <echo message="Coping chronoscope.js" />
                 <copy file="target/widget/widget/widget.nocache.js" tofile="target/widget/widget/chronoscope.js" />
                 <copy file="target/widget/widget/widget.nocache.js" tofile="target/widget/widget/scope.js" />
+                <echo message="Changing version file" />
+                <exec dir="${basedir}" executable="sh"
+                  output="${project.build.directory}/widget/widget/version.txt">
+                  <arg line="-c '(echo Chronoscope-Version: ${version}; echo Subversion-Info:; svn info)'"/>
+                </exec>
               </tasks>
             </configuration>
             <goals>
