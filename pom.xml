@@ -60,25 +60,14 @@
     <module>chronoscope-api</module>
     <module>chronoscope</module>
     <module>widget</module>
-    <module>samples</module>
-    <!-- module>chronoscope-utils</module -->
   </modules>
 
-  <!-- 
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>timepedia-deploy</id>
-      <url>svn:https://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-  </distributionManagement>
-  -->  
   <!--
     Deploy artifacts in a local folder and then I can do a commit so as there is only a svn log in the project
   -->
   <distributionManagement>
     <repository>
-      <uniqueVersion>false</uniqueVersion>
+      <uniqueVersion>true</uniqueVersion>
       <id>local-folder</id>
       <url>file:mavenrepo</url>
     </repository>
@@ -238,17 +227,12 @@
       <url>http://download.java.net/maven/2/</url>
     </repository>
     <repository>
-      <id>timepedia</id>
-      <!-- url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url -->
-      <url>file:mavenrepo</url>
+      <id>chronoscope</id>
+      <url>http://gwt-chronoscope.googlecode.com/svn/mavenrepo/</url>
     </repository>
     <repository>
       <id>timefire</id>
       <url>http://timefire-repository.googlecode.com/svn/mavenrepo/</url>
-    </repository>
-    <repository>
-      <id>gquery-plugins</id><!-- gin -->
-      <url>http://gwtquery-plugins.googlecode.com/svn/mavenrepo</url>
     </repository>
   </repositories>
 
@@ -361,7 +345,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.googlecode.gwt.inject</groupId>
+      <groupId>com.google.gwt.inject</groupId>
       <artifactId>gin</artifactId>
       <version>1.5</version>
       <classifier>2.2.0</classifier>

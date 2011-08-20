@@ -5,7 +5,8 @@
   <parent>
     <groupId>org.timepedia.chronoscope</groupId>
     <artifactId>chronoscope-gviz-project</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Chronoscope GViz Gadget</name>
@@ -22,7 +23,7 @@
     <dependency>
       <groupId>com.google.gwt.google-apis</groupId>
       <artifactId>gwt-gadgets</artifactId>
-      <version>1.2.0</version>
+      <version>1.2.1.rc1</version>
     </dependency>
 
     <dependency>
@@ -50,6 +51,28 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>version</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <echo message="Changing version file" />
+                <exec dir="${basedir}" executable="sh"
+                  output="${project.build.directory}/gadget/gadget/version.txt">
+                  <arg line="-c '(echo Chronoscope-Version: ${artifactId}-${version}; echo Subversion-Info:; svn info)'"/>
+                </exec>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
