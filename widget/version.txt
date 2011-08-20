@@ -1,2 +1,13 @@
-Revision: $Revision: 1032 $
-Version: 1.86-SNAPSHOT
+Chronoscope-Version: 2.1-SNAPSHOT
+Subversion-Info:
+Path: .
+URL: https://gwt-chronoscope.googlecode.com/svn/trunk/widget
+Repository Root: https://gwt-chronoscope.googlecode.com/svn
+Repository UUID: 5cd50543-e33d-0410-8f10-d7e7bb9d3266
+Revision: 1337
+Node Kind: directory
+Schedule: normal
+Last Changed Author: manuel.carrasco.m
+Last Changed Rev: 1335
+Last Changed Date: 2011-08-20 09:02:46 +0200 (Sat, 20 Aug 2011)
+
