@@ -1,29 +1,21 @@
-.chrono, .chrono * {
+#chartcontainer, #chrono, .chrono, .chronoscope, #chartcontainer *, .chrono * {
   outline: none !important;
   -moz-outline: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+
 }
 
-axes, axis, plot, label, line, point, shadow, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, fill {
-
-  color: white;
-  background-color: red;
+axes, axis, plot, label, line, point, series, axislegend, bar, barmarker, domainmarker, marker, rangemarker, axislegend, overview, tick, fill {
+  color: #ffffff;
+  background-color: transparent;
   width: 2px;
   height: 2px;
   font-size: 9pt;
   border-left-width: 1px;
   left: 1px;
   top: 1px;
-
-}
-
-fill {
-  background-color: transparent;
-  opacity: 0;
-
-}
-
-.chrono, .chronoscope, .cmf-chart {
-  -moz-outline: none; 
 }
 
 .cmf-infowindow {
@@ -35,8 +27,8 @@ fill {
 }
 
 .chrono-MenuBar {
-  background-color: #C3D9FF;
-  border: 1px solid #87B3FF;
+  background-color: #cecece;
+  border: 1px solid #cccccc;
   cursor: default;
 }
 
@@ -44,15 +36,15 @@ fill {
   max-width: 200px;
   background-color: white;
   padding: 8px;
-  -moz-border-radius: 10%;
-  border: 1px solid #87B3FF;
-  font-family: Verdana;
+  -moz-border-radius: 0;
+  border: 1px solid #cccccc;
+  font-family: Helvetica;
   font-size: 90%;
 }
 
 .chrono-MenuBar .chrono-MenuItem {
   padding: 1px 4px 1px 4px;
-  font-size: smaller;
+  font-size: 9pt;
   cursor: default;
 }
 
@@ -71,13 +63,9 @@ grid {
 }
 
 axes axis {
-  background-color: white
-}
-
-axes axis {
-
-  font-family: Verdana;
-  font-size: 10pt;
+  background-color: white;
+  font-family: Helvetica;
+  font-size: 9pt;
   color: black;
 }
 
@@ -87,12 +75,8 @@ plot {
   background-color: transparent;
 }
 
-plot {
-  background-color: white
-}
-
 axis label {
-  font-size: 10pt;
+  font-size: 9pt;
 }
 
 line {
@@ -112,7 +96,7 @@ line.focus {
   opacity: 0.4;
 }
 
-fill {
+fill fill {
   background-color: transparent;
   opacity: 0.4;
 }
@@ -188,7 +172,7 @@ point.focus {
 }
 
 line {
-  line-thickness:3px;
+  line-thickness:2px;
 }
 
 point shadow {
@@ -227,16 +211,16 @@ label {
 }
 
 marker {
-  background-color: lightgray;
-  color: black;
+  background-color: #229922;
+  color: #33cc33;
   border-left-width: 1px;
-  font-family: Verdana;
+  font-family: Helvetica;
   font-size: 9pt;
 }
 
 overview {
-  background-color: #99CCFF;
-  color: #0099FF;
+  background-color: #dddddd;
+  color: #cccccc;
   opacity: 0.4;
   border-width:1px;
 }
