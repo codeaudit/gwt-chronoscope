@@ -85,15 +85,13 @@ public class ChronoscopeVisualization implements Exportable {
     dontfire = true;
     cp.getChart().prevZoom();
   }
-  //not supported until gwt expoter allows overloaded exports
 
-//  @Export
-//  public void pageRight() {
-//    dontfire = true;
-//    cp.getChart().pageRight(1.0);
-//  }
+  @Export
+  public void pageRight() {
+    dontfire = true;
+    cp.getChart().pageRight(1.0);
+  }
 
-  //
 
   @Export
   public void pageRight(double amt) {
@@ -101,13 +99,11 @@ public class ChronoscopeVisualization implements Exportable {
     cp.getChart().pageRight(MathUtil.bound(amt, 0.0, 1.0));
   }
 
-  //not supported until gwt expoter allows overloaded exports
-
-//  @Export
-//  public void pageLeft() {
-//    dontfire = true;
-//    cp.getChart().pageRight(1.0);
-//  }
+  @Export
+  public void pageLeft() {
+    dontfire = true;
+    cp.getChart().pageRight(1.0);
+  }
 
   @Export
   public void pageLeft(double amt) {
@@ -159,12 +155,14 @@ public class ChronoscopeVisualization implements Exportable {
       ((DefaultGssContext) gssContext)
           .setShowAxisLabels(!"false".equals(opts.get("axisLabels")));
       cp.setGssContext(gssContext);
-      cp.getChart().getPlot()
-          .setOverviewEnabled(!"false".equals(opts.get("overview")));
-      cp.getChart().getPlot()
-          .setLegendEnabled(!"false".equals(opts.get("legend")));
+
       cp.setReadyListener(new ViewReadyCallback() {
         public void onViewReady(View view) {
+          
+          cp.getChart().getPlot().setOverviewEnabled(
+              !"false".equals(opts.get("overview")));
+          cp.getChart().getPlot().setLegendEnabled(
+              !"false".equals(opts.get("legend")));
 
           for (Marker m : ms) {
             view.getChart().getPlot().addOverlay(m);
@@ -188,10 +186,14 @@ public class ChronoscopeVisualization implements Exportable {
           });
           plot.addPlotHoverHandler(new PlotHoverHandler() {
             public void onHover(PlotHoverEvent event) {
-              GVizEventHelper
-                  .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
-                      GVizEventHelper.HOVER_EVENT,
-                      wrapJSArray(event.getHoverPoints()));
+              try {
+                GVizEventHelper
+                .trigger(ExporterUtil.wrap(ChronoscopeVisualization.this),
+                    GVizEventHelper.HOVER_EVENT,
+                    wrapJSArray(event.getHoverPoints()));
+              } catch (Exception e) {
+                System.err.println("Exception when triggering Hover event: " + e.getMessage());
+              }
             }
 
             private JavaScriptObject wrapJSArray(int[] hoverPoints) {
@@ -228,6 +230,7 @@ public class ChronoscopeVisualization implements Exportable {
 
       RootPanel.get(id).add(cp);
     } catch (Exception e) {
+      e.printStackTrace();
       RootPanel.get(id).add(new Label(
           "There was an error setting up the chart: " + e.getMessage()));
     }
@@ -267,7 +270,7 @@ public class ChronoscopeVisualization implements Exportable {
   private InfoWindow currentInfoWindow = null;
 
   @Export
-  InfoWindow openInfoWindow(JavaScriptObject selection, String html) {
+  public InfoWindow openInfoWindow(JavaScriptObject selection, String html) {
     if (currentInfoWindow != null) {
       currentInfoWindow.close();
     }
@@ -298,7 +301,7 @@ public class ChronoscopeVisualization implements Exportable {
   }
 
   @Export
-  void setSelection(JavaScriptObject selection) {
+  public void setSelection(JavaScriptObject selection) {
     Properties sel = JavascriptHelper.jsArrGet(selection, 0).cast();
     dontfire = true;
 
