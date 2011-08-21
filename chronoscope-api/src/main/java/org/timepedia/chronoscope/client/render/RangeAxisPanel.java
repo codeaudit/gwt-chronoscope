@@ -16,6 +16,10 @@ import org.timepedia.chronoscope.client.util.MathUtil;
  */
 public class RangeAxisPanel extends AxisPanel {
 
+  public RangeAxisPanel() {
+    new RuntimeException().printStackTrace();
+  }
+
   public enum TickPosition {
     INSIDE, OUTSIDE;
 
@@ -198,8 +202,8 @@ public class RangeAxisPanel extends AxisPanel {
       boolean isInnerMost = isInnerMost(isLeft);
 
       double x = isLeft ?
-           (isInnerMost ? layer.getWidth() - axisLabelWidth : axisLabelWidth) :
-           (isInnerMost ? layer.getWidth() - axisLabelWidth : maxLabelWidth + 2);
+           (isInnerMost ? layer.getWidth() - axisLabelWidth : axisLabelWidth) + 5:
+           (isInnerMost ? layer.getWidth() - axisLabelWidth : maxLabelWidth + 2) - 1;
       String label = valueAxis.getLabel();
 
       layer.save();
