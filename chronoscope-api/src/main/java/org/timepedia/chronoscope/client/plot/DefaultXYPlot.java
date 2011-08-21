@@ -898,10 +898,10 @@ public class DefaultXYPlot<T extends Tuple2D>
       if (canDrawFast) {
         bottomPanel.draw();
       }
+      
+      drawOverlays(overlayLayer);
     }
     
-    // Overlays should be drawn always.
-    drawOverlays(overlayLayer);
 
     if(SHOW_BOXES){
       drawBoxes();
