@@ -4,6 +4,7 @@ import org.timepedia.chronoscope.client.axis.DomainAxis;
 import org.timepedia.chronoscope.client.axis.OverviewAxis;
 import org.timepedia.chronoscope.client.canvas.Bounds;
 import org.timepedia.chronoscope.client.canvas.Layer;
+import org.timepedia.chronoscope.client.gss.GssElement;
 import org.timepedia.chronoscope.client.render.*;
 import org.timepedia.chronoscope.client.util.ArgChecker;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * 
  * @author chad takahashi
  */
-final class BottomPanel extends AuxiliaryPanel {
+final class BottomPanel extends AuxiliaryPanel implements GssElement {
   // Contains all sub-panels
   // private CompositeAxisPanel compositePanel;
 
@@ -413,5 +414,20 @@ final class BottomPanel extends AuxiliaryPanel {
 
   public boolean click(int x, int y) {
     return domainAxisPanel.click(x,y);
+  }
+
+  @Override
+  public GssElement getParentGssElement() {
+    return null;
+  }
+
+  @Override
+  public String getType() {
+    return "bottom-panel";
+  }
+
+  @Override
+  public String getTypeClass() {
+    return null;
   }
 }
