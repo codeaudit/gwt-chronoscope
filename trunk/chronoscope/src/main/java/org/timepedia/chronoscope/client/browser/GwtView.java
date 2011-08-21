@@ -98,7 +98,7 @@ public abstract class GwtView extends View implements DOMView {
 
   public static void initDivElement(Element div, Bounds bounds) {
     DOM.setStyleAttribute(div, "overflow", "hidden");
-    DOM.setStyleAttribute(div, "position", "absolute");
+//    DOM.setStyleAttribute(div, "position", "absolute");
     DOM.setStyleAttribute(div, "visibility", "visible");
   }
 
