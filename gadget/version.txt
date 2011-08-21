@@ -4,10 +4,10 @@ Path: .
 URL: https://gwt-chronoscope.googlecode.com/svn/trunk/gviz/gviz-gadget
 Repository Root: https://gwt-chronoscope.googlecode.com/svn
 Repository UUID: 5cd50543-e33d-0410-8f10-d7e7bb9d3266
-Revision: 1338
+Revision: 1345
 Node Kind: directory
 Schedule: normal
 Last Changed Author: manuel.carrasco.m
-Last Changed Rev: 1279
-Last Changed Date: 2010-11-15 19:01:27 +0100 (Mon, 15 Nov 2010)
+Last Changed Rev: 1345
+Last Changed Date: 2011-08-20 14:55:45 +0200 (Sat, 20 Aug 2011)
 
