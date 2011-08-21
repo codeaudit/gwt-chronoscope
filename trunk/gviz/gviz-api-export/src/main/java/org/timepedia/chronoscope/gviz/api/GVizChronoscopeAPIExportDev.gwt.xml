@@ -6,9 +6,8 @@
   <inherits name="org.timepedia.chronoscope.gviz.api.GVizChronoscopeAPI" />
   <entry-point class="org.timepedia.chronoscope.gviz.api.client.GVizChronoscopeAPI" />
   <set-property name="export" value="yes"/>
-  <set-property name="user.agent" value="safari"/>
+  <set-property name="user.agent" value="gecko1_8,safari"/>
   <set-property name="hasflash" value="yes"/>
-
-  <add-linker name="xs"/>
+<!--   <add-linker name="xs"/> -->
 </module>
     
