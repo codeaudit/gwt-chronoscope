@@ -49,7 +49,7 @@ public abstract class AxisPanel extends AbstractPanel implements GssElement, Exp
   }
 
   public final GssElement getParentGssElement() {
-    return (CompositeAxisPanel)this.parent;
+    return (GssElement)this.parent;
   }
 
   @Export
