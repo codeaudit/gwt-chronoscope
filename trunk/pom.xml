@@ -59,7 +59,7 @@
   <modules>
     <module>chronoscope-api</module>
     <module>chronoscope</module>
-    <module>widget</module>
+    <!-- <module>widget</module> -->
   </modules>
 
   <!--
@@ -335,7 +335,7 @@
     <dependency>
       <groupId>org.timepedia.exporter</groupId>
       <artifactId>gwtexporter</artifactId>
-      <version>2.3.0</version>
+      <version>2.3.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -343,6 +343,19 @@
           <artifactId>gwt-user</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt.inject</groupId>
