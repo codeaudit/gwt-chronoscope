@@ -1780,22 +1780,13 @@ public class DefaultXYPlot<T extends Tuple2D>
     }
 
 
-
-//  public void clearOverlayLayer(Layer layer) {
-//    layer.save();
-//    layer.clear();
-//    // layer.clearTextLayer(layer.getLayerId());
-//    // layer.clearRect(0, 0, layer.getWidth(), layer.getHeight());
-//    layer.restore();
-//  }
-
   /**
    * Draws the overlays (e.g. markers) onto the center plot.
    */
   private void drawOverlays(Layer layer) {
-//    layer.save();
-//    layer.clear();
-//    layer.restore();
+    layer.save();
+    layer.clear();
+    layer.restore();
 
     for (Overlay o : overlays) {
       if (null != o) { o.draw(layer, "overlays"); }
