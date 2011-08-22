@@ -13,7 +13,7 @@ Chronoscope is an interactive time series chart that can be used as an embedded 
 <html>
  <head>
   <script src="http://www.google.com/jsapi"></script>
-  <script src="http://api.timepedia.org/gviz/"></script>
+  <script src="http://gwt-chronoscope.googlecode.com/svn/gviz/chronoscope.js"></script>
   <script> 
 	  var c, table; 
 	  function drawVisualization() { 
@@ -237,4 +237,3 @@ You can load the visualization using synchronous, or asynchronous techniques. Du
 We do not retain any data other than standard web traffic analytics data when you use our public site to get the Chronoscope Google Visualization API (http://api.timepedia.org/gviz/). 
 
 In a future version we'll offer an option where people can publish data they wish to share, in which case data meant to be shared would be retained. 
-
