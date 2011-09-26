@@ -20,7 +20,7 @@ Previously you have to load the chart data.
 <html>
  <head>
   <script type="text/javascript" src="dataset.js"></script>
-  <script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/widget.js"></script>
+  <script type="text/javascript" src="http://gwt-chronoscope.googlecode.com/svn/widget/chronoscpe.js"></script>
   <script type="text/javascript">
     function onChronoscopeLoaded(chrono) {
      var data = [dataset];
